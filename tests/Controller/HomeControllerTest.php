@@ -4,7 +4,7 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class PostControllerTest extends WebTestCase
+class HomeControllerTest extends WebTestCase
 {
     public function testShowRendersCorrectly(): void
     {
