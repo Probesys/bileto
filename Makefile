@@ -5,9 +5,11 @@ USER = $(shell id -u):$(shell id -g)
 ifdef NO_DOCKER
 	PHP = php
 	COMPOSER = composer
+	CONSOLE = php bin/console
 else
 	PHP = ./docker/bin/php
 	COMPOSER = ./docker/bin/composer
+	CONSOLE = ./docker/bin/console
 endif
 
 ifndef COVERAGE
@@ -42,6 +44,29 @@ docker-clean: ## Clean the Docker stuff
 .PHONY: install
 install: ## Install the dependencies
 	$(COMPOSER) install
+
+.PHONY: db-setup
+db-setup: ## Setup the database
+	$(CONSOLE) doctrine:database:create
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+
+.PHONY: db-migrate
+db-migrate: ## Migrate the database
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+
+.PHONY: db-reset
+db-reset: ## Reset the database
+ifndef FORCE
+	$(error Please run the operation with FORCE=true)
+endif
+	$(CONSOLE) doctrine:database:drop --force
+	$(CONSOLE) doctrine:database:create
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+	$(CONSOLE) cache:clear
+
+.PHONY: migration
+migration: ## Generate a database migration from entities changes
+	$(CONSOLE) make:migration
 
 .PHONY: test
 test: ## Run the test suite
