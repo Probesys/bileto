@@ -46,6 +46,7 @@ install: ## Install the dependencies
 .PHONY: test
 test: ## Run the test suite
 	$(PHP) ./bin/phpunit \
+		-c .phpunit.xml.dist \
 		$(COVERAGE) --whitelist ./src \
 		--testdox \
 		$(PHPUNIT_FILTER) \
