@@ -1,0 +1,12 @@
+#!/bin/bash
+
+SCRIPT_PATH=$(dirname $(realpath -s $0))
+export COMPOSE_PROJECT_NAME=probesuite
+export COMPOSE_FILE=$SCRIPT_PATH/../docker-compose.yml
+export USER=$(id -u):$(id -g)
+
+if [ -z `docker-compose ps -q php` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q php)` ]; then
+    docker-compose run -T --rm --no-deps php php "$@"
+else
+    docker-compose exec -T php php "$@"
+fi
