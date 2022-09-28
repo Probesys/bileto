@@ -10,6 +10,22 @@ else
 	COMPOSER = ./docker/bin/composer
 endif
 
+ifndef COVERAGE
+	COVERAGE = --coverage-html ./coverage
+endif
+
+ifdef FILE
+	PHPUNIT_FILE = $(FILE)
+else
+	PHPUNIT_FILE = ./tests
+endif
+
+ifdef FILTER
+	PHPUNIT_FILTER = --filter=$(FILTER)
+else
+	PHPUNIT_FILTER =
+endif
+
 .PHONY: docker-start
 docker-start: ## Start a development server with Docker
 	@echo "Running webserver on http://localhost:8000"
@@ -26,6 +42,14 @@ docker-clean: ## Clean the Docker stuff
 .PHONY: install
 install: ## Install the dependencies
 	$(COMPOSER) install
+
+.PHONY: test
+test: ## Run the test suite
+	$(PHP) ./bin/phpunit \
+		$(COVERAGE) --whitelist ./src \
+		--testdox \
+		$(PHPUNIT_FILTER) \
+		$(PHPUNIT_FILE)
 
 .PHONY: lint
 lint: ## Execute the linter (PHPStan and PHP_CodeSniffer)
