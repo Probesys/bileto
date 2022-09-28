@@ -4,6 +4,8 @@ Welcome on the ProbeSuite repository. ProbeSuite is a code name for our future s
 
 It is written with [Symfony](https://symfony.com/) 6.1 and works with [PHP](https://www.php.net/) 8.1.
 
+At the moment, the only database officially supported is PostgreSQL 14.
+
 ## Developer guide
 
 ### Setup the development environment (Docker)
@@ -24,6 +26,12 @@ Install the dependencies:
 $ make install
 ```
 
+Setup the database:
+
+```console
+$ make db-setup
+```
+
 Start the development server:
 
 ```console
@@ -40,6 +48,7 @@ There are few scripts to allow to execute commands in the Docker container easil
 $ ./docker/bin/php
 $ ./docker/bin/composer
 $ ./docker/bin/console
+$ ./docker/bin/psql
 ```
 
 ### Executing tests and linters
@@ -59,3 +68,23 @@ $ make lint-fix
 ```
 
 The linters and the tests are executed on the CI, so you'll have to make sure they pass.
+
+### Updating the application
+
+Pull the changes with Git:
+
+```console
+$ git pull
+```
+
+Execute the migrations:
+
+```console
+$ make db-migrate
+```
+
+Sometimes, you may also have to rebuild the Docker image:
+
+```console
+$ make docker-build
+```
