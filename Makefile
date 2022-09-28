@@ -27,6 +27,10 @@ docker-clean: ## Clean the Docker stuff
 install: ## Install the dependencies
 	$(COMPOSER) install
 
+.PHONY: lint
+lint: ## Execute the linter (PHPStan)
+	$(PHP) vendor/bin/phpstan analyse -c .phpstan.neon
+
 .PHONY: help
 help:
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
