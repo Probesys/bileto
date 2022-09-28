@@ -19,6 +19,20 @@ jobs:
                 operating-system: [ubuntu-22.04]
                 php-versions: ['8.1']
 
+        services:
+            postgres:
+                image: postgres:14-alpine
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                ports:
+                    - 5432/tcp
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
         name: PHP ${{ matrix.php-versions }} CI
 
         steps:
@@ -44,8 +58,15 @@ jobs:
         - name: Install dependencies
           run: make install
 
+        - name: Setup the database
+          run: make db-setup
+          env:
+              DATABASE_URL: "postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/probesuite?serverVersion=14&charset=utf8"
+
         - name: Run the linters
           run: make lint
 
         - name: Run the test suite
           run: make test
+          env:
+              DATABASE_URL: "postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/probesuite?serverVersion=14&charset=utf8"
