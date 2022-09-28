@@ -28,8 +28,13 @@ install: ## Install the dependencies
 	$(COMPOSER) install
 
 .PHONY: lint
-lint: ## Execute the linter (PHPStan)
+lint: ## Execute the linter (PHPStan and PHP_CodeSniffer)
 	$(PHP) vendor/bin/phpstan analyse -c .phpstan.neon
+	$(PHP) vendor/bin/phpcs
+
+.PHONY: lint-fix
+lint-fix: ## Fix the errors detected by the linters (PHP_CodeSniffer)
+	$(PHP) vendor/bin/phpcbf
 
 .PHONY: help
 help:
