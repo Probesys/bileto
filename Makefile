@@ -86,6 +86,10 @@ lint: ## Execute the linter (PHPStan and PHP_CodeSniffer)
 lint-fix: ## Fix the errors detected by the linters (PHP_CodeSniffer)
 	$(PHP) vendor/bin/phpcbf
 
+.PHONY: tree
+tree:  ## Display the structure of the application
+	tree -I 'vendor|var|coverage' --dirsfirst -CA
+
 .PHONY: help
 help:
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
