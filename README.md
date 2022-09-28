@@ -32,6 +32,8 @@ $ make docker-start
 
 And open [localhost:8000](http://localhost:8000).
 
+### Working in the Docker containers
+
 There are few scripts to allow to execute commands in the Docker container easily:
 
 ```console
@@ -39,3 +41,21 @@ $ ./docker/bin/php
 $ ./docker/bin/composer
 $ ./docker/bin/console
 ```
+
+### Executing tests and linters
+
+You can execute the tests with:
+
+```console
+$ make test
+```
+
+And the linters with:
+
+```console
+$ make lint
+$ # or to fix errors
+$ make lint-fix
+```
+
+The linters and the tests are executed on the CI, so you'll have to make sure they pass.
