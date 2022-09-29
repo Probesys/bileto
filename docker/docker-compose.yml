@@ -27,3 +27,9 @@ services:
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
+
+    # database:
+    #     image: mariadb:10.6
+    #     restart: unless-stopped
+    #     environment:
+    #       - MARIADB_ROOT_PASSWORD=mariadb

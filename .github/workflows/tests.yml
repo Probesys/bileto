@@ -1,0 +1,75 @@
+name: Continuous Integration
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+
+env:
+    NO_DOCKER: true
+    COVERAGE: --coverage-text
+
+jobs:
+    postgresql:
+        runs-on: ubuntu-22.04
+
+        services:
+            postgres:
+                image: postgres:14-alpine
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        name: Tests over PostgreSQL 14
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Setup the CI
+              uses: ./.github/actions/setup
+              with:
+                  php-version: 8.1
+
+            - name: Run the test suite
+              run: make test
+              env:
+                  DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/probesuite?serverVersion=14&charset=utf8"
+
+    mariadb:
+        runs-on: ubuntu-22.04
+
+        services:
+            mariadb:
+                image: mariadb:10.6
+                ports:
+                    - 3306:3306
+                env:
+                    MARIADB_ROOT_PASSWORD: mariadb
+                options: >-
+                    --health-cmd="mysqladmin ping"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+
+        name: Tests over MariaDB 10.6
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Setup the CI
+              uses: ./.github/actions/setup
+              with:
+                  php-version: 8.1
+
+            - name: Run the test suite
+              run: make test
+              env:
+                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/probesuite?serverVersion=mariadb-10.6.10'

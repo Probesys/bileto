@@ -1,0 +1,32 @@
+name: Linters
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+
+env:
+    NO_DOCKER: true
+
+jobs:
+    run:
+        runs-on: ${{ matrix.operating-system }}
+
+        strategy:
+            matrix:
+                operating-system: [ubuntu-22.04]
+                php-versions: ['8.1']
+
+        name: Lint PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }}
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Setup the CI
+              uses: ./.github/actions/setup
+              with:
+                  php-version: ${{ matrix.php-versions }}
+
+            - name: Run the linters
+              run: make lint

@@ -16,14 +16,35 @@ final class Version20220928142616CreateUser extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE "user" (id INT NOT NULL, PRIMARY KEY(id))');
+        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
+        if ($dbPlatform === 'postgresql') {
+            $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
+            $this->addSql(<<<SQL
+                CREATE TABLE "user" (
+                    id INT NOT NULL,
+                    PRIMARY KEY(id)
+                );
+            SQL);
+        } elseif ($dbPlatform === 'mysql') {
+            $this->addSql(<<<SQL
+                CREATE TABLE `user` (
+                    id INT AUTO_INCREMENT NOT NULL,
+                    PRIMARY KEY(id)
+                )
+                DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+            SQL);
+        }
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
-        $this->addSql('DROP TABLE "user"');
+        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
+        if ($dbPlatform === 'postgresql') {
+            $this->addSql('CREATE SCHEMA public');
+            $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
+            $this->addSql('DROP TABLE "user"');
+        } elseif ($dbPlatform === 'mysql') {
+            $this->addSql('DROP TABLE `user`');
+        }
     }
 }
