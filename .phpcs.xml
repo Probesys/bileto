@@ -9,4 +9,8 @@
     <arg name="extensions" value="php,css,js" />
 
     <rule ref="PSR12" />
+
+    <rule ref="Squiz.NamingConventions.ValidVariableName">
+        <exclude name="Squiz.NamingConventions.ValidVariableName.PrivateNoUnderscore"/>
+    </rule>
 </ruleset>
