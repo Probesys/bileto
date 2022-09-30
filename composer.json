@@ -7,6 +7,8 @@
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-pdo": "*",
+        "ext-zip": "*",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.13",
@@ -21,6 +23,10 @@
         "symfony/yaml": "6.1.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
+    },
+    "suggest": {
+        "ext-pdo_mysql": "*",
+        "ext-pdo_pgsql": "*"
     },
     "config": {
         "allow-plugins": {
