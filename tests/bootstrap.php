@@ -16,6 +16,7 @@ $kernel->boot();
 
 $application = new Symfony\Bundle\FrameworkBundle\Console\Application($kernel);
 $application->setAutoExit(false);
+$output = new \Symfony\Component\Console\Output\NullOutput();
 
 $commands = [
     'doctrine:database:drop --force --if-exists',
@@ -24,7 +25,7 @@ $commands = [
 ];
 foreach ($commands as $command) {
     $input = new \Symfony\Component\Console\Input\StringInput($command);
-    $result = $application->run($input);
+    $result = $application->run($input, $output);
     if ($result !== 0) {
         exit($result);
     }
