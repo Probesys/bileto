@@ -40,7 +40,6 @@ final class Version20220928142616CreateUser extends AbstractMigration
     {
         $dbPlatform = $this->connection->getDatabasePlatform()->getName();
         if ($dbPlatform === 'postgresql') {
-            $this->addSql('CREATE SCHEMA public');
             $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
             $this->addSql('DROP TABLE "user"');
         } elseif ($dbPlatform === 'mysql') {
