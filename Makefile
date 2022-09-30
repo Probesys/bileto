@@ -59,7 +59,7 @@ db-reset: ## Reset the database
 ifndef FORCE
 	$(error Please run the operation with FORCE=true)
 endif
-	$(CONSOLE) doctrine:database:drop --force
+	$(CONSOLE) doctrine:database:drop --force --if-exists
 	$(CONSOLE) doctrine:database:create
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
 	$(CONSOLE) cache:clear
