@@ -4,4 +4,10 @@
     <p>
         Hello ProbeSuite!
     </p>
+
+    <form action="{{ path('logout') }}" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+
+        <button id="form-logout-submit" type="submit">Logout</button>
+    </form>
 {% endblock %}
