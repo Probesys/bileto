@@ -2,17 +2,16 @@
 
 namespace App\Tests;
 
-use App\Entity;
-use App\Tests;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\NullOutput;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 class MigrationsTest extends KernelTestCase
 {
-    use Tests\DatabaseResetterHelper;
+    use ResetDatabase;
 
     /** @var Application */
     private $application;
@@ -25,23 +24,6 @@ class MigrationsTest extends KernelTestCase
         $kernel = self::createKernel();
         $this->application = new Application($kernel);
         $this->application->setAutoExit(false);
-    }
-
-    /**
-     * @after
-     */
-    public function resetDatabase(): void
-    {
-        $output = new NullOutput();
-
-        // make sure to reset the database structure to its initial state
-        $input = new StringInput('doctrine:schema:drop --force');
-        $result = $this->application->run($input, $output);
-        $this->assertSame(Command::SUCCESS, $result);
-
-        $input = new StringInput('doctrine:schema:create');
-        $result = $this->application->run($input, $output);
-        $this->assertSame(Command::SUCCESS, $result);
     }
 
     public function testMigrationsUpWork(): void

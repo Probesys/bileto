@@ -2,26 +2,27 @@
 
 namespace App\Tests\Command\Users;
 
-use App\Entity;
-use App\Tests;
+use App\Factory\UserFactory;
+use App\Tests\CommandTestsHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
+use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 class CreateCommandTest extends KernelTestCase
 {
-    use Tests\CommandTestsHelper;
-    use Tests\EntityManagerHelper;
-    use Tests\DatabaseResetterHelper;
+    use Factories;
+    use CommandTestsHelper;
+    use ResetDatabase;
 
     public function testExecuteCreatesAUser(): void
     {
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
-        $userRepository = self::getRepository(Entity\User::class);
         $email = 'alix@example.com';
         $password = 'secret';
 
-        $this->assertSame(0, $userRepository->count([]));
+        $this->assertSame(0, UserFactory::count());
 
         $tester = self::executeCommand('app:users:create', [
             $email,
@@ -33,10 +34,10 @@ class CreateCommandTest extends KernelTestCase
             "The user \"{$email}\" has been created.\n",
             $tester->getDisplay()
         );
-        $user = $userRepository->findOneBy([]);
+        $user = UserFactory::first();
         $this->assertNotNull($user);
         $this->assertSame($email, $user->getEmail());
-        $this->assertTrue($passwordHasher->isPasswordValid($user, $password));
+        $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $password));
         $this->assertSame(['ROLE_USER'], $user->getRoles());
     }
 
@@ -44,11 +45,10 @@ class CreateCommandTest extends KernelTestCase
     {
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
-        $userRepository = self::getRepository(Entity\User::class);
         $email = 'alix@example.com';
         $password = 'secret';
 
-        $this->assertSame(0, $userRepository->count([]));
+        $this->assertSame(0, UserFactory::count());
 
         $tester = self::executeCommand('app:users:create', [], [
             '--email' => $email,
@@ -60,10 +60,10 @@ class CreateCommandTest extends KernelTestCase
             "The user \"{$email}\" has been created.\n",
             $tester->getDisplay()
         );
-        $user = $userRepository->findOneBy([]);
+        $user = UserFactory::first();
         $this->assertNotNull($user);
         $this->assertSame($email, $user->getEmail());
-        $this->assertTrue($passwordHasher->isPasswordValid($user, $password));
+        $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $password));
         $this->assertSame(['ROLE_USER'], $user->getRoles());
     }
 
@@ -71,11 +71,10 @@ class CreateCommandTest extends KernelTestCase
     {
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
-        $userRepository = self::getRepository(Entity\User::class);
         $email = 'alix';
         $password = 'secret';
 
-        $this->assertSame(0, $userRepository->count([]));
+        $this->assertSame(0, UserFactory::count());
 
         $tester = self::executeCommand('app:users:create', [], [
             '--email' => $email,
@@ -87,18 +86,17 @@ class CreateCommandTest extends KernelTestCase
             "The email \"{$email}\" is not a valid email.\n",
             $tester->getErrorOutput()
         );
-        $this->assertSame(0, $userRepository->count([]));
+        $this->assertSame(0, UserFactory::count());
     }
 
     public function testExecuteFailsIfEmailIsEmpty(): void
     {
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
-        $userRepository = self::getRepository(Entity\User::class);
         $email = ' ';
         $password = 'secret';
 
-        $this->assertSame(0, $userRepository->count([]));
+        $this->assertSame(0, UserFactory::count());
 
         $tester = self::executeCommand('app:users:create', [], [
             '--email' => $email,
@@ -110,24 +108,20 @@ class CreateCommandTest extends KernelTestCase
             "The email is required.\n",
             $tester->getErrorOutput()
         );
-        $this->assertSame(0, $userRepository->count([]));
+        $this->assertSame(0, UserFactory::count());
     }
 
     public function testExecuteFailsIfEmailExists(): void
     {
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
-        $userRepository = self::getRepository(Entity\User::class);
         $email = 'alix@example.com';
         $password = 'secret';
+        UserFactory::createOne([
+            'email' => $email,
+        ]);
 
-        $user = new Entity\User();
-        $user->setEmail($email);
-        $user->setPassword('');
-        self::$entityManager->persist($user);
-        self::$entityManager->flush();
-
-        $this->assertSame(1, $userRepository->count([]));
+        $this->assertSame(1, UserFactory::count());
 
         $tester = self::executeCommand('app:users:create', [], [
             '--email' => $email,
@@ -139,6 +133,6 @@ class CreateCommandTest extends KernelTestCase
             "The email \"{$email}\" is already used.\n",
             $tester->getErrorOutput()
         );
-        $this->assertSame(1, $userRepository->count([]));
+        $this->assertSame(1, UserFactory::count());
     }
 }
