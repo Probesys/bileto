@@ -19,6 +19,7 @@ final class Version20220930143409RenameUserInUsers extends AbstractMigration
         $dbPlatform = $this->connection->getDatabasePlatform()->getName();
         if ($dbPlatform === 'postgresql') {
             $this->addSql('ALTER TABLE "user" RENAME TO "users"');
+            $this->addSql('ALTER SEQUENCE "user_id_seq" RENAME TO "users_id_seq"');
         } elseif ($dbPlatform === 'mysql') {
             $this->addSql('ALTER TABLE `user` RENAME TO `users`');
         }
@@ -29,6 +30,7 @@ final class Version20220930143409RenameUserInUsers extends AbstractMigration
         $dbPlatform = $this->connection->getDatabasePlatform()->getName();
         if ($dbPlatform === 'postgresql') {
             $this->addSql('ALTER TABLE "users" RENAME TO "user"');
+            $this->addSql('ALTER SEQUENCE "users_id_seq" RENAME TO "user_id_seq"');
         } elseif ($dbPlatform === 'mysql') {
             $this->addSql('ALTER TABLE `users` RENAME TO `user`');
         }
