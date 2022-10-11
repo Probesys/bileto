@@ -6,6 +6,8 @@ It is written with [Symfony](https://symfony.com/) 6.1 and works with [PHP](http
 
 At the moment, the only database officially supported is PostgreSQL 14.
 
+Bileto is licensed under [GNU Affero General Public License v3.0 or later](LICENSE.txt).
+
 ## Developer guide
 
 ### Setup the development environment (Docker)

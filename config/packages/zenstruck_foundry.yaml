@@ -1,3 +1,7 @@
+# This file is part of Bileto.
+# Copyright 2022 Probesys
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 when@dev: &dev
     # See full configuration: https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#full-default-bundle-configuration
     zenstruck_foundry:

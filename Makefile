@@ -1,3 +1,7 @@
+# This file is part of Bileto.
+# Copyright (C) 2022 Probesys
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 .DEFAULT_GOAL := help
 
 USER = $(shell id -u):$(shell id -g)

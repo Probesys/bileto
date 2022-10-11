@@ -19,6 +19,7 @@ Pull request checklist:
 - [ ] accessibility has been tested
 - [ ] tests are updated
 - [ ] French locale is synchronized
+- [ ] copyright notice is updated
 - [ ] documentation is updated (including comments, commit messages, migration notes…)
 
 _If you think one of the item isn’t applicable to the PR, please check it
