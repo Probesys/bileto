@@ -68,6 +68,11 @@ endif
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
 	$(CONSOLE) cache:clear
 
+.PHONY: i18n-extract
+i18n-extract: ## Extract translations
+	$(CONSOLE) translation:extract --format=yaml --force en_GB
+	$(CONSOLE) translation:extract --format=yaml --force fr_FR
+
 .PHONY: migration
 migration: ## Generate a database migration from entities changes
 	$(CONSOLE) make:migration

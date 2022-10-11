@@ -1,0 +1,5 @@
+home.show.hello: "Bonjour Bileto\_!"
+home.show.logout: 'Se déconnecter'
+login.index.email: 'Adresse email'
+login.index.login: 'Se connecter'
+login.index.password: 'Mot de passe'

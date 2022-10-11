@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -17,7 +18,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Table(name: '`users`')]
 #[UniqueEntity(
     fields: 'email',
-    message: 'The email {{ value }} is already used.',
+    message: new TranslatableMessage('user.email.not_unique', [], 'validators'),
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -28,10 +29,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(
-        message: 'The email is required.',
+        message: new TranslatableMessage('user.email.required', [], 'validators'),
     )]
     #[Assert\Email(
-        message: 'The email {{ value }} is not a valid email.',
+        message: new TranslatableMessage('user.email.invalid', [], 'validators'),
     )]
     private ?string $email = null;
 

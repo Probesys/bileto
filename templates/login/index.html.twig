@@ -9,7 +9,7 @@
 {% block body %}
     {% if error %}
         <p role="alert" data-test="alert-error">
-            {{ error.messageKey|trans(error.messageData, 'security') }}
+            {{ error.messageKey | trans(error.messageData, 'security') }}
         </p>
     {% endif %}
 
@@ -17,15 +17,21 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
         <div>
-            <label for="username">Email</label>
+            <label for="username">
+                {{ 'login.index.email' | trans }}
+            </label>
             <input type="text" id="username" name="_username" value="{{ last_username }}" required/>
         </div>
 
         <div>
-            <label for="password">Password</label>
+            <label for="password">
+                {{ 'login.index.password' | trans }}
+            </label>
             <input type="password" id="password" name="_password" required />
         </div>
 
-        <button id="form-login-submit" type="submit">Login</button>
+        <button id="form-login-submit" type="submit">
+            {{ 'login.index.login' | trans }}
+        </button>
     </form>
 {% endblock %}

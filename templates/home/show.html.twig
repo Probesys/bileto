@@ -8,12 +8,14 @@
 
 {% block body %}
     <p>
-        Hello Bileto!
+        {{ 'home.show.hello' | trans }}
     </p>
 
     <form action="{{ path('logout') }}" method="post">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
 
-        <button id="form-logout-submit" type="submit">Logout</button>
+        <button id="form-logout-submit" type="submit">
+            {{ 'home.show.logout' | trans }}
+        </button>
     </form>
 {% endblock %}

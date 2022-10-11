@@ -87,7 +87,7 @@ class CreateCommandTest extends KernelTestCase
 
         $this->assertSame(Command::INVALID, $tester->getStatusCode());
         $this->assertSame(
-            "The email \"{$email}\" is not a valid email.\n",
+            "The email \"{$email}\" is not a valid address.\n",
             $tester->getErrorOutput()
         );
         $this->assertSame(0, UserFactory::count());
