@@ -1,6 +1,6 @@
-# ProbeSuite (code name)
+# Bileto
 
-Welcome on the ProbeSuite repository. ProbeSuite is a code name for our future software of service desk and IT asset management.
+Welcome on the Bileto repository. Bileto is our future software of service desk and IT asset management.
 
 It is written with [Symfony](https://symfony.com/) 6.1 and works with [PHP](https://www.php.net/) 8.1.
 
@@ -17,7 +17,7 @@ First, make sure to install [Docker Engine](https://docs.docker.com/engine/insta
 Clone the repository:
 
 ```console
-$ git clone https://github.com/Probesys/probesuite.git
+$ git clone https://github.com/Probesys/bileto.git
 ```
 
 Install the dependencies:

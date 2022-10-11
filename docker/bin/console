@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT_PATH=$(dirname $(realpath -s $0))
-export COMPOSE_PROJECT_NAME=probesuite
+export COMPOSE_PROJECT_NAME=bileto
 export COMPOSE_FILE=$SCRIPT_PATH/../docker-compose.yml
 export USER=$(id -u):$(id -g)
 

@@ -21,7 +21,7 @@ class HomeControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('p', 'Hello ProbeSuite!');
+        $this->assertSelectorTextContains('p', 'Hello Bileto!');
     }
 
     public function testShowRedirectsToLoginIfNotConnected(): void

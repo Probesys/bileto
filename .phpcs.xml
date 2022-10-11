@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP_CodeSniffer" xsi:noNamespaceSchemaLocation="phpcs.xsd">
-    <description>The coding standard for ProbeSuite.</description>
+    <description>The coding standard for Bileto.</description>
 
     <file>public/index.php</file>
     <file>src</file>

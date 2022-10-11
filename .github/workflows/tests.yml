@@ -41,7 +41,7 @@ jobs:
             - name: Run the test suite
               run: make test
               env:
-                  DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/probesuite?serverVersion=14&charset=utf8"
+                  DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/bileto?serverVersion=14&charset=utf8"
 
     mariadb:
         runs-on: ubuntu-22.04
@@ -72,4 +72,4 @@ jobs:
             - name: Run the test suite
               run: make test
               env:
-                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/probesuite?serverVersion=mariadb-10.6.10'
+                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/bileto?serverVersion=mariadb-10.6.10'
