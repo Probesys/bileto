@@ -10,10 +10,12 @@ ifdef NO_DOCKER
 	PHP = php
 	COMPOSER = composer
 	CONSOLE = php bin/console
+	NPM = npm
 else
 	PHP = ./docker/bin/php
 	COMPOSER = ./docker/bin/composer
 	CONSOLE = ./docker/bin/console
+	NPM = ./docker/bin/npm
 endif
 
 ifndef COVERAGE
@@ -48,6 +50,7 @@ docker-clean: ## Clean the Docker stuff
 .PHONY: install
 install: ## Install the dependencies
 	$(COMPOSER) install
+	$(NPM) install
 
 .PHONY: db-setup
 db-setup: ## Setup the database

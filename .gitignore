@@ -3,8 +3,10 @@
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
+/public/assets/
 /var/
 /vendor/
+/node_modules/
 
 .phpunit.result.cache
 /phpunit.xml

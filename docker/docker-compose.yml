@@ -14,6 +14,15 @@ services:
         links:
             - database
 
+    bundler:
+        image: node:18-alpine
+        restart: unless-stopped
+        command: npm run watch
+        working_dir: /app
+        volumes:
+            - ..:/app:z
+        user: $USER
+
     nginx:
         image: nginx:alpine
         restart: unless-stopped

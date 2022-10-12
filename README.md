@@ -50,6 +50,7 @@ There are few scripts to allow to execute commands in the Docker container easil
 $ ./docker/bin/php
 $ ./docker/bin/composer
 $ ./docker/bin/console
+$ ./docker/bin/npm
 $ ./docker/bin/psql
 ```
 
