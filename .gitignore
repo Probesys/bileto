@@ -4,6 +4,7 @@
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /public/assets/
+/public/manifest.json
 /var/
 /vendor/
 /node_modules/

@@ -28,4 +28,4 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Twig\ViteTagsExtension:
         arguments:
-            - "%kernel.project_dir%/public/assets/manifest.json"
+            - "%kernel.project_dir%/public/manifest.json"

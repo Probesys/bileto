@@ -3,8 +3,8 @@
   "license": "AGPL-3.0-or-later",
   "repository": "github:Probesys/bileto",
   "scripts": {
-    "watch": "vite build --config .vite.config.js --mode development --watch",
-    "build": "vite build --config .vite.config.js",
+    "watch": "vite build --config .vite/vite.config.js --mode development --watch",
+    "build": "vite build --config .vite/vite.config.js",
     "lint-js": "eslint assets/javascripts/",
     "lint-js-fix": "eslint --fix assets/javascripts/",
     "lint-css": "stylelint assets/stylesheets/**/*.css",

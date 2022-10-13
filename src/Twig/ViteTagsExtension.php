@@ -56,7 +56,7 @@ class ViteTagsExtension extends AbstractExtension
             return '';
         }
 
-        $assetUrl = $this->assetPackages->getUrl("/assets/{$filename}");
+        $assetUrl = $this->assetPackages->getUrl($filename);
         return <<<HTML
             <script src="{$assetUrl}"></script>
         HTML;
@@ -69,7 +69,7 @@ class ViteTagsExtension extends AbstractExtension
             return '';
         }
 
-        $assetUrl = $this->assetPackages->getUrl("/assets/{$filename}");
+        $assetUrl = $this->assetPackages->getUrl($filename);
         return <<<HTML
             <link rel="stylesheet" href="{$assetUrl}">
         HTML;

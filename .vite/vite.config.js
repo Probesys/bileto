@@ -1,10 +1,15 @@
 import { defineConfig } from 'vite';
+import emptyAssetsDirPlugin from './empty-assets-dir-plugin.js';
 
 const path = require('path');
 
 export default defineConfig({
     publicDir: false,
     appType: 'custom',
+
+    plugins: [
+        emptyAssetsDirPlugin(),
+    ],
 
     resolve:{
         alias:{
@@ -13,10 +18,11 @@ export default defineConfig({
     },
 
     build: {
-        outDir: 'public/assets',
-        assetsDir: '.',
+        outDir: 'public',
+        assetsDir: 'assets',
         sourcemap: true,
         manifest: true,
+        emptyOutDir: false,
         rollupOptions: {
             input: {
                 'application': './assets/javascripts/application.js',
