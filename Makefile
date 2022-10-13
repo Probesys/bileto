@@ -93,10 +93,14 @@ test: ## Run the test suite
 lint: ## Execute the linter (PHPStan and PHP_CodeSniffer)
 	$(PHP) vendor/bin/phpstan analyse -c .phpstan.neon
 	$(PHP) vendor/bin/phpcs
+	$(NPM) run lint-js
+	$(NPM) run lint-css
 
 .PHONY: lint-fix
 lint-fix: ## Fix the errors detected by the linters (PHP_CodeSniffer)
 	$(PHP) vendor/bin/phpcbf
+	$(NPM) run lint-js-fix
+	$(NPM) run lint-css-fix
 
 .PHONY: tree
 tree:  ## Display the structure of the application
