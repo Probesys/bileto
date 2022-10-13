@@ -8,6 +8,10 @@ At the moment, the only database officially supported is PostgreSQL 14.
 
 Bileto is licensed under [GNU Affero General Public License v3.0 or later](LICENSE.txt).
 
+## Contributing
+
+Ideas, bug reports and contributions are welcome. Please follow [the contributing guide](CONTRIBUTING.md).
+
 ## Developer guide
 
 ### Setup the development environment (Docker)
