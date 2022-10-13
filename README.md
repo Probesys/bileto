@@ -12,6 +12,23 @@ Bileto is licensed under [GNU Affero General Public License v3.0 or later](LICEN
 
 Ideas, bug reports and contributions are welcome. Please follow [the contributing guide](CONTRIBUTING.md).
 
+## Credits
+
+Bileto relies on a bunch of other projects:
+
+- [ESLint](https://eslint.org/)
+- [Font Awesome icons](https://fontawesome.com)
+- [PHP\_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+- [PHPUnit](https://phpunit.de/)
+- [Radix UI Colors](https://www.radix-ui.com/colors)
+- [Stimulus](https://stimulus.hotwired.dev/)
+- [Stylelint](https://stylelint.io/)
+- [Symfony](https://symfony.com/)
+- [Turbo](https://turbo.hotwired.dev/)
+- [Vite](https://vitejs.dev/)
+
+Thanks to their authors!
+
 ## Developer guide
 
 ### Setup the development environment (Docker)
