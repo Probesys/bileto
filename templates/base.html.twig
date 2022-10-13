@@ -4,7 +4,7 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 <!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
+<html lang="{{ app.request.locale|locale_to_bcp47 }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
