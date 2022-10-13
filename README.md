@@ -46,6 +46,11 @@ $ make docker-start
 
 And open [localhost:8000](http://localhost:8000).
 
+A note about the `make` commands: they might feel magic, but they are not!
+They are just shortcuts for common commands.
+If you want to know what they do, you can open the [Makefile](Makefile) and locates the command that you are interested in.
+They are hopefully easily readable by newcomers.
+
 ### Working in the Docker containers
 
 There are few scripts to allow to execute commands in the Docker container easily:
