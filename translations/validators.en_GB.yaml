@@ -1,7 +1,3 @@
-user.email.invalid: 'The email {{ value }} is not a valid address.'
-user.email.not_unique: 'The email {{ value }} is already used.'
-user.email.required: 'The email is required.'
-
 'This value should be false.': 'This value should be false.'
 'This value should be true.': 'This value should be true.'
 'This value should be of type {{ type }}.': 'This value should be of type {{ type }}.'
@@ -102,3 +98,6 @@ Error: Error
 'This value is not a valid CSS color.': 'This value is not a valid CSS color.'
 'This value is not a valid CIDR notation.': 'This value is not a valid CIDR notation.'
 'The value of the netmask should be between {{ min }} and {{ max }}.': 'The value of the netmask should be between {{ min }} and {{ max }}.'
+'The email {{ value }} is already used.': 'The email {{ value }} is already used.'
+'The email is required.': 'The email is required.'
+'The email {{ value }} is not a valid address.': 'The email {{ value }} is not a valid address.'

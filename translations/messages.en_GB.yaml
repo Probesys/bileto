@@ -1,5 +1,7 @@
-home.show.hello: 'Hello Bileto!'
-home.show.logout: Logout
-login.index.email: 'Email address'
-login.index.login: Login
-login.index.password: Password
+'Hello Bileto!': 'Hello Bileto!'
+Logout: Logout
+'Log in': 'Log in'
+Error: Error
+'Email address': 'Email address'
+Password: Password
+Login: Login

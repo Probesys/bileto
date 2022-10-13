@@ -1,0 +1,54 @@
+/* This file is part of Bileto. */
+/* Copyright 2022 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+button,
+.button {
+    display: inline-block;
+    padding: 0.5rem 1.75rem;
+
+    color: var(--color-grey12);
+    font-family: inherit;
+    font-size: 1em;
+    line-height: 1.5;
+
+    background-color: var(--color-grey6);
+    background-image: linear-gradient(to bottom, rgb(0 0 0 / 0%), rgb(0 0 0 / 5%));
+    box-shadow: 0 1px 2px var(--color-grey8);
+    border: 1px solid var(--color-grey8);
+    border-radius: 0.75rem;
+
+    transition:
+        background-color 0.2s ease-in-out,
+        border-color 0.2s ease-in-out;
+
+    cursor: pointer;
+}
+
+button:hover,
+button:focus,
+.button:hover,
+.button:focus {
+    background-color: var(--color-grey7);
+}
+
+button:active,
+.button:active {
+    background-color: var(--color-grey8);
+}
+
+.button--primary {
+    color: var(--color-primary12);
+
+    background-color: var(--color-primary6);
+    border-color: var(--color-primary8);
+}
+
+.button--primary:hover,
+.button--primary:focus {
+    background-color: var(--color-primary7);
+}
+
+.button--primary:active {
+    background-color: var(--color-primary8);
+}

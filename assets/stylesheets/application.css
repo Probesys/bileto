@@ -1,3 +1,87 @@
 /* This file is part of Bileto. */
 /* Copyright 2022 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+@import "./_reset.css";
+@import "./_colors.css";
+@import "./utils/flow.css";
+@import "./utils/wrapper.css";
+@import "./components/alerts.css";
+@import "./components/buttons.css";
+@import "./components/forms.css";
+@import "./components/layout.css";
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 10px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    color: var(--color-grey12);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen-Sans,
+        Ubuntu,
+        Cantarell,
+        "Helvetica Neue",
+        sans-serif;
+    font-size: 18px;
+
+    background: var(--color-grey2);
+}
+
+@media (min-width: 800px) {
+    body {
+        font-size: 22px;
+    }
+}
+
+*:focus {
+    outline: 0.3rem solid var(--color-primary9);
+}
+
+.sr-only {
+    position: absolute;
+
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+
+    width: 1px;
+    height: 1px;
+}
+
+.js-only {
+    display: none;
+}
+
+@media (max-width: 799px) {
+    .no-mobile {
+        display: none;
+    }
+}
+
+@media (min-width: 800px) {
+    .only-mobile {
+        display: none;
+    }
+}
+
+.turbo-progress-bar {
+    position: fixed;
+    top: 0;
+
+    height: 0.5rem;
+
+    background: linear-gradient(to right, var(--color-primary7), var(--color-primary9));
+}

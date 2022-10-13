@@ -7,15 +7,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <p>
-        {{ 'home.show.hello' | trans }}
-    </p>
+    <main class="layout__body wrapper-small wrapper--center flow">
+        <h1>{{ 'Hello Bileto!' | trans }}</h1>
 
-    <form action="{{ path('logout') }}" method="post">
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+        <form action="{{ path('logout') }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
 
-        <button id="form-logout-submit" type="submit">
-            {{ 'home.show.logout' | trans }}
-        </button>
-    </form>
+            <div class="form__actions">
+                <button id="form-logout-submit" type="submit">
+                    {{ 'Logout' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
 {% endblock %}

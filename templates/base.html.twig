@@ -7,8 +7,10 @@
 <html lang="{{ app.request.locale }}">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{% block title %}Bileto{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🤝</text></svg>">
 
         {% block javascripts %}
             {{ vite_javascript_tag('assets/javascripts/application.js') }}
@@ -20,6 +22,14 @@
     </head>
 
     <body>
+        <nav class="layout__header">
+            <div class="wrapper-large wrapper--center">
+                <a class="layout__header-home" href="{{ path('home') }}">
+                    🤝 Bileto
+                </a>
+            </div>
+        </nav>
+
         {% block body %}{% endblock %}
     </body>
 </html>

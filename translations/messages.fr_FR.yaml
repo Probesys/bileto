@@ -1,5 +1,7 @@
-home.show.hello: "Bonjour Bileto\_!"
-home.show.logout: 'Se déconnecter'
-login.index.email: 'Adresse email'
-login.index.login: 'Se connecter'
-login.index.password: 'Mot de passe'
+'Hello Bileto!': "Bonjour Bileto\_!"
+Logout: 'Se déconnecter'
+'Log in': 'Connexion'
+Error: Erreur
+'Email address': 'Adresse email'
+Password: 'Mot de passe'
+Login: 'Se connecter'

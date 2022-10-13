@@ -6,32 +6,46 @@
 
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ 'Log in' | trans }}{% endblock %}
+
 {% block body %}
-    {% if error %}
-        <p role="alert" data-test="alert-error">
-            {{ error.messageKey | trans(error.messageData, 'security') }}
-        </p>
-    {% endif %}
+    <main class="layout__body wrapper-small wrapper--center">
+        <h1>{{ 'Log in' | trans }}</h1>
 
-    <form action="{{ path('login') }}" method="post">
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <form action="{{ path('login') }}" method="post" class="flow">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-        <div>
-            <label for="username">
-                {{ 'login.index.email' | trans }}
-            </label>
-            <input type="text" id="username" name="_username" value="{{ last_username }}" required/>
-        </div>
+            {% if error %}
+                <div class="alert alert--error" role="alert" data-turbo-cache="false" data-test="alert-error">
+                    <div class="alert__title">{{ 'Error' | trans }}</div>
 
-        <div>
-            <label for="password">
-                {{ 'login.index.password' | trans }}
-            </label>
-            <input type="password" id="password" name="_password" required />
-        </div>
+                    <p class="alert__message">
+                        {{ error.messageKey | trans(error.messageData, 'security') }}
+                    </p>
+                </div>
+            {% endif %}
 
-        <button id="form-login-submit" type="submit">
-            {{ 'login.index.login' | trans }}
-        </button>
-    </form>
+            <div class="flow-small">
+                <label for="username">
+                    {{ 'Email address' | trans }}
+                </label>
+
+                <input type="text" id="username" name="_username" value="{{ last_username }}" required/>
+            </div>
+
+            <div class="flow-small">
+                <label for="password">
+                    {{ 'Password' | trans }}
+                </label>
+
+                <input type="password" id="password" name="_password" required />
+            </div>
+
+            <div class="form__actions">
+                <button id="form-login-submit" class="button--primary" type="submit">
+                    {{ 'Login' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
 {% endblock %}

@@ -18,7 +18,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Table(name: '`users`')]
 #[UniqueEntity(
     fields: 'email',
-    message: new TranslatableMessage('user.email.not_unique', [], 'validators'),
+    message: new TranslatableMessage('The email {{ value }} is already used.', [], 'validators'),
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -29,10 +29,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('user.email.required', [], 'validators'),
+        message: new TranslatableMessage('The email is required.', [], 'validators'),
     )]
     #[Assert\Email(
-        message: new TranslatableMessage('user.email.invalid', [], 'validators'),
+        message: new TranslatableMessage('The email {{ value }} is not a valid address.', [], 'validators'),
     )]
     private ?string $email = null;
 

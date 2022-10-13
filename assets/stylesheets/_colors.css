@@ -1,0 +1,70 @@
+/* This file is part of Bileto. */
+/* Copyright 2022 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+/**
+ * These colors come from https://www.radix-ui.com/colors
+ * Understanding the scale: https://www.radix-ui.com/docs/colors/palette-composition/understanding-the-scale
+ *
+ * In short:
+ * 1 - 2: Subtle backgrounds, main app background, subtle component
+ *        backgrounds (e.g. striped table, card, sidebar)
+ * 3 - 5: Component backgrounds (normal, hover and pressed/selected states)
+ *        +1 for call-to-actions components
+ * 6 - 8: Borders (subtle, interactive, interactive-hovered)
+ * 9 - 10: Solid backgrounds (normal and hover states)
+ * 11 - 12: Text (low-contrast and hight-contrast
+ */
+:root {
+    --color-error1: #fffcfc;
+    --color-error2: #fff8f7;
+    --color-error3: #fff0ee;
+    --color-error4: #ffe6e2;
+    --color-error5: #fdd8d3;
+    --color-error6: #fac7be;
+    --color-error7: #f3b0a2;
+    --color-error8: #ea9280;
+    --color-error9: #e54d2e;
+    --color-error10: #db4324;
+    --color-error11: #ca3214;
+    --color-error12: #341711;
+
+    --color-grey1: #fbfcfd;
+    --color-grey2: #f8f9fa;
+    --color-grey3: #f8f9fa;
+    --color-grey4: #eceef0;
+    --color-grey5: #e6e8eb;
+    --color-grey6: #dfe3e6;
+    --color-grey7: #d7dbdf;
+    --color-grey8: #c1c8cd;
+    --color-grey9: #889096;
+    --color-grey10: #7e868c;
+    --color-grey11: #687076;
+    --color-grey12: #11181c;
+
+    --color-primary1: #fbfdff;
+    --color-primary2: #f5faff;
+    --color-primary3: #edf6ff;
+    --color-primary4: #e1f0ff;
+    --color-primary5: #cee7fe;
+    --color-primary6: #b7d9f8;
+    --color-primary7: #96c7f2;
+    --color-primary8: #5eb0ef;
+    --color-primary9: #0090ff;
+    --color-primary10: #0081f1;
+    --color-primary11: #006adc;
+    --color-primary12: #00254d;
+
+    --color-success1: #fbfefc;
+    --color-success2: #f2fcf5;
+    --color-success3: #e9f9ee;
+    --color-success4: #ddf3e4;
+    --color-success5: #ccebd7;
+    --color-success6: #b4dfc4;
+    --color-success7: #92ceac;
+    --color-success8: #5bb98c;
+    --color-success9: #30a46c;
+    --color-success10: #299764;
+    --color-success11: #18794e;
+    --color-success12: #153226;
+}
