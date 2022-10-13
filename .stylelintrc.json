@@ -16,14 +16,16 @@
             }
         ],
 
-        "comment-empty-line-before": null,
-
-        "custom-property-empty-line-before": [
+        "comment-empty-line-before": [
             "always",
             {
                 "ignore": ["after-comment"]
             }
         ],
+
+        "custom-property-empty-line-before": null,
+
+        "selector-class-pattern": null,
 
         "order/properties-order": [
             {
