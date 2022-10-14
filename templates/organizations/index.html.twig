@@ -1,0 +1,45 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Organizations' | trans }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <h1>{{ 'Organizations' | trans }}</h1>
+
+        <div class="wrapper-large wrapper--center flow">
+            {% if organizations %}
+                <a class="anchor--action" href="{{ path('new organization') }}">
+                    {{ 'New organization' | trans }}
+                </a>
+
+                <div class="grid grid--cols4">
+                    {% for organization in organizations %}
+                        <div class="card" data-test="organization-item">
+                            <div class="card__title">
+                                {{ organization.name }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text--center flow-large">
+                    <p data-test="organizations-placeholder">
+                        {{ 'You have not yet created an organization.' | trans }}
+                    </p>
+
+                    <p class="text--big">
+                        <a class="anchor--action" href="{{ path('new organization') }}">
+                            {{ 'New organization' | trans }}
+                        </a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

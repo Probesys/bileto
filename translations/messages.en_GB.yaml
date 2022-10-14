@@ -5,3 +5,10 @@ Error: Error
 'Email address': 'Email address'
 Password: Password
 Login: Login
+Organizations: Organizations
+'New organization': 'New organization'
+'You have not yet created an organization.': 'You have not yet created an organization.'
+'Back (organizations)': 'Back (organizations)'
+'Organization name': 'Organization name'
+'(max. 255 characters)': '(max. 255 characters)'
+'Create the organization': 'Create the organization'

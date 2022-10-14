@@ -11,13 +11,13 @@
 }
 
 .flow > * + * {
-    margin-top: 1.5rem;
+    margin-top: 2rem;
 }
 
 .flow-large > * + * {
-    margin-top: 1.75rem;
+    margin-top: 3rem;
 }
 
 .flow-larger > * + * {
-    margin-top: 2.5rem;
+    margin-top: 4rem;
 }

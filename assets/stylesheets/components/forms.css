@@ -27,6 +27,24 @@ input:focus {
     border-color: var(--color-primary8);
 }
 
+input[aria-invalid] {
+    background-color: var(--color-error2);
+    border-color: var(--color-error11);
+}
+
+.form__error {
+    padding-left: 1.25em;
+
+    color: var(--color-error11);
+    font-size: 0.9em;
+    font-weight: bold;
+
+    background-image: url("../../icons/circle-exclamation-error.svg");
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 1em;
+}
+
 .form__actions {
     display: flex;
 
