@@ -53,17 +53,25 @@
 }
 
 .layout__body {
-    padding: 2rem 1rem;
+    padding: 2rem 1rem 4rem;
 
     background-color: var(--color-grey1);
     box-shadow: 0 1px 3px var(--color-grey7);
+}
+
+.layout__body--small {
+    max-width: 600px;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 @media (min-width: 800px) {
     .layout__body {
         padding-right: 2rem;
         padding-left: 2rem;
+    }
 
+    .layout__body--small {
         border-radius: 0.5rem;
     }
 }
