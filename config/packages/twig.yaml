@@ -4,6 +4,9 @@
 
 twig:
     default_path: '%kernel.project_dir%/templates'
+    globals:
+        errors: []
+        error: null
 
 when@test:
     twig:
