@@ -44,6 +44,12 @@
             </div>
         </nav>
 
+        {% if block("back") is defined %}
+            <div class="layout__back">
+                {{ block("back") }}
+            </div>
+        {% endif %}
+
         {% block body %}{% endblock %}
     </body>
 </html>
