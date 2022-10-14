@@ -104,3 +104,5 @@ Error: Erreur
 'The name {{ value }} is already used.': 'Le nom {{ value }} est déjà utilisé.'
 'The name is required.': 'Le nom est obligatoire.'
 'The name must be {{ limit }} characters maximum.': 'Le nom doit faire {{ limit }} caractères maximum.'
+'The color scheme is required.': 'Le schéma de couleurs est obligatoire.'
+'The color scheme {{ value }} is not a valid choice.': 'Le schéma de couleurs {{ value }} n’est pas un choix valide.'

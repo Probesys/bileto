@@ -68,7 +68,7 @@
     padding: 2rem 1rem 4rem;
 
     background-color: var(--color-grey1);
-    box-shadow: 0 1px 3px var(--color-grey7);
+    box-shadow: 0 1px 3px var(--color-box-shadow);
 }
 
 .layout__body--small {

@@ -27,6 +27,8 @@
 
         "selector-class-pattern": null,
 
+        "property-no-vendor-prefix": null,
+
         "order/properties-order": [
             {
                 "groupName": "heading",

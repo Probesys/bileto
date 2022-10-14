@@ -16,7 +16,7 @@ input {
     line-height: 1.5;
 
     background-color: var(--color-grey1);
-    box-shadow: 2px 2px 3px var(--color-grey5) inset;
+    box-shadow: 2px 2px 3px var(--color-box-shadow) inset;
     border: 0.25rem solid var(--color-grey7);
     border-radius: 0.5rem;
 
@@ -28,6 +28,52 @@ input:focus {
 }
 
 input[aria-invalid] {
+    background-color: var(--color-error2);
+    border-color: var(--color-error11);
+}
+
+select {
+    width: 100%;
+    padding: 0.5rem;
+
+    color: inherit;
+    font-family: inherit;
+    font-size: 1em;
+    text-overflow: ellipsis;
+
+    background-color: var(--color-grey3);
+    border: 0.25rem solid var(--color-grey7);
+    border-radius: 0.5rem;
+
+    transition:
+        background-color 0.2s ease-in-out,
+        border-color 0.2s ease-in-out;
+}
+
+select:not([multiple]) {
+    padding-right: 3.5rem;
+
+    background-image: url("../../icons/angle-down.svg");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem top 58%;
+    background-size: 2.5rem;
+
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+[data-color-scheme="dark"] select:not([multiple]) {
+    background-image: url("../../icons/angle-down-light.svg");
+}
+
+select:not([disabled]):hover,
+select:not([disabled]):focus {
+    background-color: var(--color-primary4);
+    border-color: var(--color-primary8);
+}
+
+select[aria-invalid] {
     background-color: var(--color-error2);
     border-color: var(--color-error11);
 }

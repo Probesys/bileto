@@ -12,3 +12,10 @@ Organizations: Organisations
 'Organization name': 'Nom de l’organisation'
 '(max. 255 characters)': '(max. 255 caractères)'
 'Create the organization': 'Créer l’organisation'
+'Menu of %email%': 'Menu de %email%'
+Preferences: Préférences
+'Color scheme': 'Schéma de couleurs'
+Auto: Auto
+Light: Clair
+Dark: Sombre
+'Save the changes': 'Enregistrer les modifications'

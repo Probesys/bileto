@@ -48,6 +48,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\Column(length: 255, options: ['default' => 'auto'])]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('The color scheme is required.', [], 'validators'),
+    )]
+    #[Assert\Choice(
+        choices: ['auto', 'light', 'dark'],
+        message: new TranslatableMessage('The color scheme {{ value }} is not a valid choice.', [], 'validators'),
+    )]
+    private ?string $colorScheme = 'auto';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -115,5 +125,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getColorScheme(): ?string
+    {
+        return $this->colorScheme;
+    }
+
+    public function setColorScheme(string $colorScheme): self
+    {
+        $this->colorScheme = $colorScheme;
+
+        return $this;
     }
 }

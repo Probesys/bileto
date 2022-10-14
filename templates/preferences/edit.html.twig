@@ -1,0 +1,73 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Preferences' | trans }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <h1>{{ 'Preferences' | trans }}</h1>
+
+        <form
+            action="{{ path('update preferences') }}"
+            method="post"
+            class="wrapper-small wrapper--center flow"
+            data-turbo="false" {# The form can change attributes of the <html> tag, so we need to force the refresh of the page. #}
+        >
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('update preferences') }}">
+
+            {% if error %}
+                <div class="alert alert--error" role="alert" data-turbo-cache="false" data-test="alert-error">
+                    <div class="alert__title">{{ 'Error' | trans }}</div>
+
+                    <p class="alert__message">
+                        {{ error }}
+                    </p>
+                </div>
+            {% endif %}
+
+            <div class="flow-small">
+                <label for="color-scheme">
+                    {{ 'Color scheme' | trans }}
+                </label>
+
+                {% if errors.colorScheme is defined %}
+                    <p class="form__error" role="alert" id="color-scheme-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.colorScheme }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="color-scheme"
+                    name="colorScheme"
+                    {% if errors.colorScheme is defined %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-errormessage="color-scheme-error"
+                    {% endif %}
+                >
+                    <option value="auto" {{ colorScheme == 'auto' ? 'selected' }}>
+                        {{ 'Auto' | trans }}
+                    </option>
+                    <option value="light" {{ colorScheme == 'light' ? 'selected' }}>
+                        {{ 'Light' | trans }}
+                    </option>
+                    <option value="dark" {{ colorScheme == 'dark' ? 'selected' }}>
+                        {{ 'Dark' | trans }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form__actions">
+                <button id="form-update-preferences-submit" class="button--primary" type="submit">
+                    {{ 'Save the changes' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}

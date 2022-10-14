@@ -15,7 +15,9 @@
  * 9 - 10: Solid backgrounds (normal and hover states)
  * 11 - 12: Text (low-contrast and hight-contrast
  */
-:root {
+[data-color-scheme="light"] {
+    color-scheme: light;
+
     --color-error1: #fffcfc;
     --color-error2: #fff8f7;
     --color-error3: #fff0ee;
@@ -67,4 +69,6 @@
     --color-success10: #299764;
     --color-success11: #18794e;
     --color-success12: #153226;
+
+    --color-box-shadow: rgb(0 0 0 / 12%);
 }

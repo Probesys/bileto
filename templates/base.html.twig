@@ -4,7 +4,11 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 <!DOCTYPE html>
-<html lang="{{ app.request.locale|locale_to_bcp47 }}">
+<html
+    lang="{{ app.request.locale|locale_to_bcp47 }}"
+    data-color-scheme="{{ app.user ? app.user.colorScheme : 'auto' }}"
+    data-controller="color-scheme"
+>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -49,6 +53,13 @@
                             data-turbo-cache="false"
                         >
                             <div class="popup__title">{{ app.user.email }}</div>
+
+                            <a class="popup__item" href="{{ path('preferences') }}" role="menuitem">
+                                {{ icon('palette') }}
+                                {{ 'Preferences' | trans }}
+                            </a>
+
+                            <div class="popup__separator"></div>
 
                             <form action="{{ path('logout') }}" method="post" role="menuitem">
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
