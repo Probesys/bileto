@@ -101,3 +101,6 @@ Error: Erreur
 'The email {{ value }} is already used.': 'L’email {{ value }} est déjà utilisé.'
 'The email is required.': 'L’email est obligatoire.'
 'The email {{ value }} is not a valid address.': 'L’email {{ value }} n’est pas une adresse valide.'
+'The name {{ value }} is already used.': 'Le nom {{ value }} est déjà utilisé.'
+'The name is required.': 'Le nom est obligatoire.'
+'The name must be {{ limit }} characters maximum.': 'Le nom doit faire {{ limit }} caractères maximum.'

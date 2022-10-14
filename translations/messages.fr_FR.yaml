@@ -1,7 +1,14 @@
 'Hello Bileto!': "Bonjour Bileto\_!"
 Logout: 'Se déconnecter'
-'Log in': 'Connexion'
+'Log in': Connexion
 Error: Erreur
 'Email address': 'Adresse email'
 Password: 'Mot de passe'
 Login: 'Se connecter'
+Organizations: Organisations
+'New organization': 'Nouvelle organisation'
+'You have not yet created an organization.': 'Vous n’avez pas encore créé d’organisation.'
+'Back (organizations)': 'Retour (organisations)'
+'Organization name': 'Nom de l’organisation'
+'(max. 255 characters)': '(max. 255 caractères)'
+'Create the organization': 'Créer l’organisation'
