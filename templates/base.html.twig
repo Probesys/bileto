@@ -23,10 +23,24 @@
 
     <body>
         <nav class="layout__header">
-            <div class="wrapper-large wrapper--center">
+            <div class="layout__header-container">
                 <a class="layout__header-home" href="{{ path('home') }}">
                     🤝 Bileto
                 </a>
+
+                {% if app.user %}
+                    <div class="layout__header-extend"></div>
+
+                    <form action="{{ path('logout') }}" method="post">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+
+                        <div class="form__actions">
+                            <button id="form-logout-submit" type="submit">
+                                {{ 'Logout' | trans }}
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
             </div>
         </nav>
 
