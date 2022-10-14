@@ -14,6 +14,6 @@ class HomeController extends BaseController
     #[Route('/', name: 'home', methods: ['GET', 'HEAD'])]
     public function show(): Response
     {
-        return $this->render('home/show.html.twig');
+        return $this->redirectToRoute('organizations');
     }
 }

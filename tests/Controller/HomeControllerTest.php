@@ -16,7 +16,7 @@ class HomeControllerTest extends WebTestCase
     use Factories;
     use ResetDatabase;
 
-    public function testShowRendersCorrectly(): void
+    public function testShowRedirectsToOrganizationsIfConnected(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -24,8 +24,7 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Hello Bileto!');
+        $this->assertResponseRedirects('/organizations', 302);
     }
 
     public function testShowRedirectsToLoginIfNotConnected(): void
