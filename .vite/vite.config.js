@@ -13,7 +13,7 @@ export default defineConfig({
 
     resolve:{
         alias:{
-            '@' : path.resolve(__dirname, './assets/javascripts')
+            '@' : path.resolve(__dirname, '../assets/javascripts')
         },
     },
 
