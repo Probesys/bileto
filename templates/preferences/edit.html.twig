@@ -31,6 +31,37 @@
             {% endif %}
 
             <div class="flow-small">
+                <label for="locale">
+                    {{ icon('language') }}
+                    {{ 'Language' | trans }}
+                </label>
+
+                {% if errors.locale is defined %}
+                    <p class="form__error" role="alert" id="locale-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.locale }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="locale"
+                    name="locale"
+                    {% if errors.locale is defined %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-errormessage="locale-error"
+                    {% endif %}
+                >
+                    <option value="en_GB" {{ locale == 'en_GB' ? 'selected' }}>
+                        English
+                    </option>
+                    <option value="fr_FR" {{ locale == 'fr_FR' ? 'selected' }}>
+                        Français
+                    </option>
+                </select>
+            </div>
+
+            <div class="flow-small">
                 <label for="color-scheme">
                     {{ 'Color scheme' | trans }}
                 </label>

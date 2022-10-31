@@ -106,3 +106,5 @@ Error: Error
 'The name must be {{ limit }} characters maximum.': 'The name must be {{ limit }} characters maximum.'
 'The color scheme is required.': 'The color scheme is required.'
 'The color scheme {{ value }} is not a valid choice.': 'The color scheme {{ value }} is not a valid choice.'
+'The language is required.': 'The language is required.'
+'The language {{ value }} is not a valid choice.': 'The language {{ value }} is not a valid choice.'

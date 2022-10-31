@@ -43,19 +43,24 @@ class PreferencesControllerTest extends WebTestCase
         $client = static::createClient();
         $initialColorScheme = 'light';
         $newColorScheme = 'dark';
-        $user = UserFactory::createOne(['
-            colorScheme' => $initialColorScheme,
+        $initialLocale = 'en_GB';
+        $newLocale = 'fr_FR';
+        $user = UserFactory::createOne([
+            'colorScheme' => $initialColorScheme,
+            'locale' => $initialLocale,
         ]);
         $client->loginUser($user->object());
 
         $client->request('GET', '/preferences');
         $crawler = $client->submitForm('form-update-preferences-submit', [
             'colorScheme' => $newColorScheme,
+            'locale' => $newLocale,
         ]);
 
         $this->assertResponseRedirects('/preferences', 302);
         $user->refresh();
         $this->assertSame($newColorScheme, $user->getColorScheme());
+        $this->assertSame($newLocale, $user->getLocale());
     }
 
     public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
@@ -63,8 +68,11 @@ class PreferencesControllerTest extends WebTestCase
         $client = static::createClient();
         $initialColorScheme = 'light';
         $newColorScheme = 'dark';
-        $user = UserFactory::createOne(['
-            colorScheme' => $initialColorScheme,
+        $initialLocale = 'en_GB';
+        $newLocale = 'fr_FR';
+        $user = UserFactory::createOne([
+            'colorScheme' => $initialColorScheme,
+            'locale' => $initialLocale,
         ]);
         $client->loginUser($user->object());
 
@@ -72,10 +80,12 @@ class PreferencesControllerTest extends WebTestCase
         $crawler = $client->submitForm('form-update-preferences-submit', [
             '_csrf_token' => 'not the token',
             'colorScheme' => $newColorScheme,
+            'locale' => $newLocale,
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
         $user->refresh();
         $this->assertSame($initialColorScheme, $user->getColorScheme());
+        $this->assertSame($initialLocale, $user->getLocale());
     }
 }

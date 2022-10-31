@@ -58,6 +58,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $colorScheme = 'auto';
 
+    #[ORM\Column(length: 5, options: ['default' => 'en_GB'])]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('The language is required.', [], 'validators'),
+    )]
+    #[Assert\Choice(
+        choices: ['en_GB', 'fr_FR'],
+        message: new TranslatableMessage('The language {{ value }} is not a valid choice.', [], 'validators'),
+    )]
+    private ?string $locale = 'en_GB';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +145,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setColorScheme(string $colorScheme): self
     {
         $this->colorScheme = $colorScheme;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): self
+    {
+        $this->locale = $locale;
 
         return $this;
     }
