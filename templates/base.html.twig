@@ -31,15 +31,34 @@
                 {% if app.user %}
                     <div class="layout__header-extend"></div>
 
-                    <form action="{{ path('logout') }}" method="post">
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                    <details
+                        class="popup"
+                        data-controller="popup"
+                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside keydown->popup#closeOnEscape"
+                    >
+                        <summary class="popup__opener" title="{{ 'Menu of %email%' | trans({'%email%': app.user.email}) }}">
+                            <span class="layout__header-avatar">{{ icon('circle-user') }}</span>
+                            <span class="sr-only">
+                                {{ 'Menu of %email%' | trans({'%email%': app.user.email}) }}
+                            </span>
+                        </summary>
 
-                        <div class="form__actions">
-                            <button id="form-logout-submit" type="submit">
-                                {{ 'Logout' | trans }}
-                            </button>
-                        </div>
-                    </form>
+                        <nav
+                            class="popup__container popup__container--large popup__container--left flow-small"
+                            role="menu"
+                            data-turbo-cache="false"
+                        >
+                            <div class="popup__title">{{ app.user.email }}</div>
+
+                            <form action="{{ path('logout') }}" method="post" role="menuitem">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                                <button class="popup__item" id="form-logout-submit" type="submit">
+                                    {{ icon('logout') }}
+                                    {{ 'Logout' | trans }}
+                                </button>
+                            </form>
+                        </nav>
+                    </details>
                 {% endif %}
             </div>
         </nav>
