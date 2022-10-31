@@ -53,6 +53,9 @@ class OrganizationsController extends BaseController
         $organization = new Organization();
         $organization->setName($name);
 
+        $uid = $orgaRepository->generateUid();
+        $organization->setUid($uid);
+
         $errors = $validator->validate($organization);
         if (count($errors) > 0) {
             return $this->renderBadRequest('organizations/new.html.twig', [
@@ -64,5 +67,13 @@ class OrganizationsController extends BaseController
         $orgaRepository->save($organization, true);
 
         return $this->redirectToRoute('organizations');
+    }
+
+    #[Route('/organizations/{uid}', name: 'organization', methods: ['GET', 'HEAD'])]
+    public function show(Organization $organization): Response
+    {
+        return $this->redirectToRoute('organization tickets', [
+            'uid' => $organization->getUid(),
+        ]);
     }
 }

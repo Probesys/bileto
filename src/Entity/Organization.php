@@ -17,6 +17,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: 'name',
     message: new TranslatableMessage('The name {{ value }} is already used.', [], 'validators'),
 )]
+#[UniqueEntity(
+    fields: 'uid',
+    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+)]
 class Organization
 {
     #[ORM\Id]
@@ -34,6 +38,9 @@ class Organization
     )]
     private ?string $name = null;
 
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $uid = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -47,6 +54,18 @@ class Organization
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(string $uid): self
+    {
+        $this->uid = $uid;
 
         return $this;
     }
