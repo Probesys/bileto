@@ -29,3 +29,7 @@ services:
     App\Twig\ViteTagsExtension:
         arguments:
             - "%kernel.project_dir%/public/manifest.json"
+
+    App\Twig\IconExtension:
+        arguments:
+            - "%kernel.project_dir%/assets/icons"
