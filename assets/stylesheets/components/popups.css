@@ -1,0 +1,133 @@
+/* This file is part of Bileto. */
+/* Copyright 2022 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.popup {
+    position: relative;
+
+    display: inline-block;
+}
+
+.popup__opener {
+    list-style: none;
+}
+
+.popup__opener::-webkit-details-marker {
+    display: none;
+}
+
+.popup__opener:focus {
+    outline: 0;
+}
+
+.popup__opener:focus > * {
+    outline: 0.3rem solid var(--color-primary9);
+}
+
+.popup__container {
+    position: fixed;
+    z-index: 100;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    padding: 1.5rem;
+
+    font-size: 0.9em;
+
+    background-color: var(--color-primary3);
+    border-top: 0.3rem solid var(--color-primary6);
+}
+
+@media (min-width: 800px) {
+    .popup__container {
+        position: absolute;
+        bottom: auto;
+
+        min-width: 27rem;
+
+        box-shadow: 1px 2px 3px 1px var(--color-box-shadow);
+        border: 0.3rem solid var(--color-primary6);
+        border-radius: 0.75rem;
+    }
+
+    .popup__container--large {
+        min-width: 31rem;
+    }
+
+    .popup__container--bottom {
+        left: 50%;
+
+        margin-top: 0.5rem;
+        margin-right: auto;
+        margin-left: auto;
+
+        transform: translateX(-50%);
+    }
+
+    .popup__container--left {
+        right: 0;
+        left: auto;
+
+        margin-top: 0.5rem;
+    }
+}
+
+.popup__title {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.popup__separator {
+    height: 0.25rem;
+
+    background-color: var(--color-primary6);
+    border-radius: 0.75rem;
+}
+
+.popup__item {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 0.5rem;
+
+    color: var(--color-grey12);
+    text-align: left;
+    text-decoration: none;
+
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+    border: 0.25rem solid transparent;
+    border-radius: 0.75rem;
+
+    transition: none;
+
+    transition:
+        background-color 0.2s ease-in-out,
+        border-color 0.2s ease-in-out;
+}
+
+@media (min-width: 800px) {
+    .popup__item {
+        white-space: nowrap;
+    }
+}
+
+.popup__item:hover,
+.popup__item:focus {
+    color: var(--color-grey12);
+
+    background-color: var(--color-primary5);
+    border-color: var(--color-primary8);
+}
+
+.popup__item:active {
+    background-color: var(--color-primary6);
+}
+
+.popup__item .icon {
+    margin-right: 0.25rem;
+}

@@ -5,4 +5,7 @@
 import * as Turbo from '@hotwired/turbo'; // eslint-disable-line no-unused-vars
 import { Application } from '@hotwired/stimulus';
 
-const application = Application.start(); // eslint-disable-line no-unused-vars
+import PopupController from '@/controllers/popup_controller.js';
+
+const application = Application.start();
+application.register('popup', PopupController);
