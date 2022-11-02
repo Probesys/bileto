@@ -140,6 +140,12 @@ class Ticket
         return $this->type;
     }
 
+    public function getTypeLabel(): ?string
+    {
+        $typesWithLabels = self::getTypesWithLabels();
+        return $typesWithLabels[$this->type];
+    }
+
     public function setType(string $type): self
     {
         $this->type = $type;
@@ -150,6 +156,12 @@ class Ticket
     public function getStatus(): ?string
     {
         return $this->status;
+    }
+
+    public function getStatusLabel(): ?string
+    {
+        $statusesWithLabels = self::getStatusesWithLabels();
+        return $statusesWithLabels[$this->status];
     }
 
     public function setStatus(string $status): self
@@ -176,6 +188,12 @@ class Ticket
         return $this->urgency;
     }
 
+    public function getUrgencyLabel(): ?string
+    {
+        $weightsWithLabels = self::getWeightsWithLabels();
+        return $weightsWithLabels[$this->urgency];
+    }
+
     public function setUrgency(string $urgency): self
     {
         $this->urgency = $urgency;
@@ -188,6 +206,12 @@ class Ticket
         return $this->impact;
     }
 
+    public function getImpactLabel(): ?string
+    {
+        $weightsWithLabels = self::getWeightsWithLabels();
+        return $weightsWithLabels[$this->impact];
+    }
+
     public function setImpact(string $impact): self
     {
         $this->impact = $impact;
@@ -198,6 +222,12 @@ class Ticket
     public function getPriority(): ?string
     {
         return $this->priority;
+    }
+
+    public function getPriorityLabel(): ?string
+    {
+        $weightsWithLabels = self::getWeightsWithLabels();
+        return $weightsWithLabels[$this->priority];
     }
 
     public function setPriority(string $priority): self
@@ -255,6 +285,29 @@ class Ticket
             'pending' => new TranslatableMessage('Pending'),
             'resolved' => new TranslatableMessage('Resolved'),
             'closed' => new TranslatableMessage('Closed'),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getTypesWithLabels(): array
+    {
+        return [
+            'request' => new TranslatableMessage('Request'),
+            'incident' => new TranslatableMessage('Incident'),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getWeightsWithLabels(): array
+    {
+        return [
+            'low' => new TranslatableMessage('Low'),
+            'medium' => new TranslatableMessage('Medium'),
+            'high' => new TranslatableMessage('High'),
         ];
     }
 }

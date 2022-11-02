@@ -15,10 +15,82 @@
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <h1>
-            {{ ticket.title }}
-            <span class="text--secondary">#{{ ticket.id }}</span>
-        </h1>
+    <main class="layout__body flow-larger tickets-show">
+        <div class="wrapper-large wrapper--center flow">
+            <h1>
+                {{ ticket.title }}
+                <span class="ticket__id">#{{ ticket.id }}</span>
+            </h1>
+
+            <div class="text--center">
+                {{ organization.name }}
+            </div>
+
+            <div class="text--center">
+                <span class="ticket__status ticket__status--{{ ticket.status }}" title="{{ 'Status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
+
+                <span class="text--small">
+                    <strong>{{ ticket.createdBy.email }}</strong>
+                    {{ 'opened this <strong>%type%</strong>' | trans({ '%type%': ticket.typeLabel | trans }) | raw }}
+                    {{ 'on %date%' | trans({ '%date%': ticket.createdAt.format('Y-m-d') }) }}
+                </span>
+            </div>
+        </div>
+
+        <div class="wrapper-small wrapper--center flow-larger">
+            <div class="flow">
+                <div class="text--secondary">
+                    {{ icon('user-group') }}
+                    <strong>{{ 'Actors' | trans }}</strong>
+                </div>
+
+                <div>
+                    <p class="text--secondary">
+                        {{ 'Requester' | trans }}
+                    </p>
+                    <p>
+                        {{ ticket.requester.email }}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text--secondary">
+                        {{ 'Assignee' | trans }}
+                    </p>
+                    <p>
+                        {% if ticket.assignee %}
+                            {{ ticket.assignee.email }}
+                        {% else %}
+                            <strong>{{ 'Unassigned' | trans }}</strong>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="flow">
+                <div class="text--secondary">
+                    {{ icon('priority') }}
+                    <strong>{{ 'Priority' | trans }}</strong>
+                </div>
+
+                <div class="ticket__priority">
+                    {{ ticket.priorityLabel | trans }}
+                </div>
+
+                <p>
+                    <span class="text--secondary">
+                        {{ 'Urgency:' | trans }}
+                    </span>
+                    {{ ticket.urgencyLabel | trans }}
+                </p>
+
+                <p>
+                    <span class="text--secondary">
+                        {{ 'Impact:' | trans }}
+                    </span>
+                    {{ ticket.impactLabel | trans }}
+                </p>
+            </div>
+        </div>
     </main>
 {% endblock %}
