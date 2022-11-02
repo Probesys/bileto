@@ -91,6 +91,7 @@ class TicketsControllerTest extends WebTestCase
             'title' => $title,
             'requesterId' => $requester->getId(),
             'assigneeId' => $assignee->getId(),
+            'status' => 'assigned',
         ]);
 
         Time::unfreeze();
@@ -103,7 +104,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertEquals($now, $ticket->getCreatedAt());
         $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
         $this->assertSame('request', $ticket->getType());
-        $this->assertSame('new', $ticket->getStatus());
+        $this->assertSame('assigned', $ticket->getStatus());
         $this->assertSame('medium', $ticket->getUrgency());
         $this->assertSame('medium', $ticket->getImpact());
         $this->assertSame('medium', $ticket->getPriority());

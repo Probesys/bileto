@@ -40,6 +40,8 @@ class TicketsController extends BaseController
             'title' => '',
             'requesterId' => '',
             'assigneeId' => '',
+            'status' => 'new',
+            'statuses' => Ticket::getStatusesWithLabels(),
             'users' => $users,
         ]);
     }
@@ -65,6 +67,9 @@ class TicketsController extends BaseController
         /** @var string $assigneeId */
         $assigneeId = $request->request->get('assigneeId', '');
 
+        /** @var string $status */
+        $status = $request->request->get('status', 'new');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -76,6 +81,8 @@ class TicketsController extends BaseController
                 'title' => $title,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
                 'users' => $users,
                 'error' => $this->csrfError(),
             ]);
@@ -88,6 +95,8 @@ class TicketsController extends BaseController
                 'title' => $title,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
                 'users' => $users,
                 'errors' => [
                     'requester' => new TranslatableMessage('The requester must exist.'),
@@ -103,6 +112,8 @@ class TicketsController extends BaseController
                     'title' => $title,
                     'requesterId' => $requesterId,
                     'assigneeId' => $assigneeId,
+                    'status' => $status,
+                    'statuses' => Ticket::getStatusesWithLabels(),
                     'users' => $users,
                     'errors' => [
                         'assignee' => new TranslatableMessage('The assignee must exist.'),
@@ -115,6 +126,7 @@ class TicketsController extends BaseController
 
         $ticket = new Ticket();
         $ticket->setTitle($title);
+        $ticket->setStatus($status);
 
         $uid = $ticketRepository->generateUid();
         $ticket->setUid($uid);
@@ -135,6 +147,8 @@ class TicketsController extends BaseController
                 'title' => $title,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
                 'users' => $users,
                 'errors' => $this->formatErrors($errors),
             ]);

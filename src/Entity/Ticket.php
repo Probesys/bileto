@@ -242,4 +242,19 @@ class Ticket
 
         return $this;
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getStatusesWithLabels(): array
+    {
+        return [
+            'new' => new TranslatableMessage('New'),
+            'assigned' => new TranslatableMessage('Assigned'),
+            'in_progress' => new TranslatableMessage('In progress'),
+            'pending' => new TranslatableMessage('Pending'),
+            'resolved' => new TranslatableMessage('Resolved'),
+            'closed' => new TranslatableMessage('Closed'),
+        ];
+    }
 }

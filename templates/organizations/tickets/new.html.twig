@@ -139,6 +139,37 @@
                 </div>
             </div>
 
+            <div class="flow-small">
+                <label for="status">
+                    {{ icon('status') }}
+                    {{ 'Status' | trans }}
+                </label>
+
+                {% if errors.status is defined %}
+                    <p class="form__error" role="alert" id="status-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.status }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="status"
+                    name="status"
+                    required
+                    {% if errors.status is defined %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-errormessage="status-error"
+                    {% endif %}
+                >
+                    {% for value, label in statuses %}
+                        <option value="{{ value }}" {{ value == status ? 'selected' }}>
+                            {{ label | trans }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="form__actions">
                 <button id="form-create-ticket-submit" class="button--primary" type="submit">
                     {{ 'Create the ticket' | trans }}
