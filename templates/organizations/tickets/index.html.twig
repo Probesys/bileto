@@ -21,5 +21,21 @@
         <div class="text--center">
             {{ organization.name }}
         </div>
+
+        <div class="wrapper-large wrapper--center flow">
+            <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                {{ 'New ticket' | trans }}
+            </a>
+
+            <ul>
+                {% for ticket in tickets %}
+                    <li>
+                        <a href="{{ path('ticket', {'uid': ticket.uid}) }}">
+                            {{ ticket.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </main>
 {% endblock %}

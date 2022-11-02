@@ -1,0 +1,24 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ "#{ticket.title} (##{ticket.id}) – #{organization.name}" }}{% endblock %}
+
+{% block back %}
+    <a href="{{ path('organization tickets', {'uid': organization.uid}) }}">
+        {{ 'Back (tickets)' | trans }}
+    </a>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <h1>
+            {{ ticket.title }}
+            <span class="text--secondary">#{{ ticket.id }}</span>
+        </h1>
+    </main>
+{% endblock %}

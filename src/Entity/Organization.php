@@ -7,6 +7,8 @@
 namespace App\Entity;
 
 use App\Repository\OrganizationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -41,6 +43,15 @@ class Organization
     #[ORM\Column(length: 20, unique: true)]
     private ?string $uid = null;
 
+    /** @var Collection<int, Ticket> $tickets */
+    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Ticket::class)]
+    private Collection $tickets;
+
+    public function __construct()
+    {
+        $this->tickets = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,5 +79,13 @@ class Organization
         $this->uid = $uid;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
     }
 }
