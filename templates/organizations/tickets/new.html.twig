@@ -69,6 +69,76 @@
                 />
             </div>
 
+            <div class="grid grid--cols2">
+                <div class="flow-small">
+                    <label for="requester">
+                        {{ icon('user') }}
+                        {{ 'Requester' | trans }}
+                    </label>
+
+                    {% if errors.requester is defined %}
+                        <p class="form__error" role="alert" id="requester-error">
+                            <span class="sr-only">{{ 'Error' | trans }}</span>
+                            {{ errors.requester }}
+                        </p>
+                    {% endif %}
+
+                    <select
+                        id="requester"
+                        name="requesterId"
+                        required
+                        {% if errors.requester is defined %}
+                            autofocus
+                            aria-invalid="true"
+                            aria-errormessage="requester-error"
+                        {% endif %}
+                    >
+                        {% for user in users %}
+                            <option value="{{ user.id }}" {{ user.id == requesterId ? 'selected' }}>
+                                {{ user.email }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="flow-small">
+                    <label for="assignee">
+                        {{ icon('headset') }}
+                        {{ 'Assignee' | trans }}
+                        <small class="text--secondary">
+                            {{ '(optional)' | trans }}
+                        </small>
+                    </label>
+
+                    {% if errors.assignee is defined %}
+                        <p class="form__error" role="alert" id="assignee-error">
+                            <span class="sr-only">{{ 'Error' | trans }}</span>
+                            {{ errors.assignee }}
+                        </p>
+                    {% endif %}
+
+                    <select
+                        id="assignee"
+                        name="assigneeId"
+                        {% if errors.assignee is defined %}
+                            autofocus
+                            aria-invalid="true"
+                            aria-errormessage="assignee-error"
+                        {% endif %}
+                    >
+                        <option value="">
+                            {{ 'Unassigned' | trans }}
+                        </option>
+
+                        {% for user in users %}
+                            <option value="{{ user.id }}" {{ user.id == assigneeId ? 'selected' }}>
+                                {{ user.email }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
             <div class="form__actions">
                 <button id="form-create-ticket-submit" class="button--primary" type="submit">
                     {{ 'Create the ticket' | trans }}

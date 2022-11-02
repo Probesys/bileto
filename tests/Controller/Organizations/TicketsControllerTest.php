@@ -75,7 +75,11 @@ class TicketsControllerTest extends WebTestCase
         $now = new \DateTimeImmutable('2022-11-02');
         Time::freeze($now);
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        list(
+            $user,
+            $requester,
+            $assignee
+        ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
         $title = 'My ticket';
@@ -85,6 +89,8 @@ class TicketsControllerTest extends WebTestCase
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
         $crawler = $client->submitForm('form-create-ticket-submit', [
             'title' => $title,
+            'requesterId' => $requester->getId(),
+            'assigneeId' => $assignee->getId(),
         ]);
 
         Time::unfreeze();
@@ -101,8 +107,8 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame('medium', $ticket->getUrgency());
         $this->assertSame('medium', $ticket->getImpact());
         $this->assertSame('medium', $ticket->getPriority());
-        $this->assertNull($ticket->getRequester());
-        $this->assertNull($ticket->getAssignee());
+        $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
+        $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
     }
 
