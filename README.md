@@ -24,6 +24,7 @@ Bileto relies on a bunch of other projects:
 - [Stimulus](https://stimulus.hotwired.dev/)
 - [Stylelint](https://stylelint.io/)
 - [Symfony](https://symfony.com/)
+- [TinyMCE](https://www.tiny.cloud/tinymce/)
 - [Turbo](https://turbo.hotwired.dev/)
 - [Vite](https://vitejs.dev/)
 

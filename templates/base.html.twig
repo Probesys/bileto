@@ -6,6 +6,7 @@
 <!DOCTYPE html>
 <html
     lang="{{ app.request.locale|locale_to_bcp47 }}"
+    data-locale="{{ app.request.locale }}"
     data-color-scheme="{{ app.user ? app.user.colorScheme : 'auto' }}"
     data-controller="color-scheme"
 >
@@ -17,6 +18,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🤝</text></svg>">
 
         {% block javascripts %}
+            <script src="{{ asset('tinymce/tinymce.min.js') }}" defer data-turbo-track="reload"></script>
             {{ vite_javascript_tag('assets/javascripts/application.js') }}
         {% endblock %}
 
