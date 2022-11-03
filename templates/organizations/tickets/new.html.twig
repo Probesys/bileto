@@ -69,6 +69,27 @@
                 />
             </div>
 
+            <div class="flow-small">
+                {% if errors.content is defined %}
+                    <p class="form__error" role="alert" id="message-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.content }}
+                    </p>
+                {% endif %}
+
+                <textarea
+                    id="message"
+                    name="message"
+                    required
+                    data-controller="tinymce"
+                    {% if errors.content is defined %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-errormessage="message-error"
+                    {% endif %}
+                >{{ message }}</textarea>
+            </div>
+
             <div class="grid grid--cols2">
                 <div class="flow-small">
                     <label for="requester">

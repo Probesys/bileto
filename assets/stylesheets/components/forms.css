@@ -6,7 +6,8 @@ label {
     display: block;
 }
 
-input {
+input,
+textarea {
     width: 100%;
     padding: 0.5rem 0.75rem;
 
@@ -23,11 +24,18 @@ input {
     transition: border-color 0.2s ease-in-out;
 }
 
-input:focus {
+textarea {
+    max-width: 100%;
+    min-height: 15rem;
+}
+
+input:focus,
+textarea:focus {
     border-color: var(--color-primary8);
 }
 
-input[aria-invalid] {
+input[aria-invalid],
+textarea[aria-invalid] {
     background-color: var(--color-error2);
     border-color: var(--color-error11);
 }

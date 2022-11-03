@@ -7,11 +7,14 @@
 namespace App\Controller\Organizations;
 
 use App\Controller\BaseController;
+use App\Entity\Message;
 use App\Entity\Organization;
 use App\Entity\Ticket;
+use App\Repository\MessageRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Utils\Time;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,6 +41,7 @@ class TicketsController extends BaseController
         return $this->render('organizations/tickets/new.html.twig', [
             'organization' => $organization,
             'title' => '',
+            'message' => '',
             'requesterId' => '',
             'assigneeId' => '',
             'status' => 'new',
@@ -50,15 +54,21 @@ class TicketsController extends BaseController
     public function create(
         Organization $organization,
         Request $request,
+        MessageRepository $messageRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
         /** @var string $title */
         $title = $request->request->get('title', '');
+
+        /** @var string $messageContent */
+        $messageContent = $request->request->get('message', '');
+        $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
         /** @var string $requesterId */
         $requesterId = $request->request->get('requesterId', '');
@@ -78,6 +88,7 @@ class TicketsController extends BaseController
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                 'organization' => $organization,
                 'title' => $title,
+                'message' => $messageContent,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
                 'status' => $status,
@@ -92,6 +103,7 @@ class TicketsController extends BaseController
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                 'organization' => $organization,
                 'title' => $title,
+                'message' => $messageContent,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
                 'status' => $status,
@@ -109,6 +121,7 @@ class TicketsController extends BaseController
                 return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                     'organization' => $organization,
                     'title' => $title,
+                    'message' => $messageContent,
                     'requesterId' => $requesterId,
                     'assigneeId' => $assigneeId,
                     'status' => $status,
@@ -144,6 +157,31 @@ class TicketsController extends BaseController
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                 'organization' => $organization,
                 'title' => $title,
+                'message' => $messageContent,
+                'requesterId' => $requesterId,
+                'assigneeId' => $assigneeId,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
+                'users' => $users,
+                'errors' => $this->formatErrors($errors),
+            ]);
+        }
+
+        $message = new Message();
+        $message->setContent($messageContent);
+        $message->setCreatedAt(Time::now());
+        $message->setCreatedBy($user);
+        $message->setTicket($ticket);
+        $message->setIsPrivate(false);
+        $message->setIsSolution(false);
+        $message->setVia('webapp');
+
+        $errors = $validator->validate($message);
+        if (count($errors) > 0) {
+            return $this->renderBadRequest('organizations/tickets/new.html.twig', [
+                'organization' => $organization,
+                'title' => $title,
+                'message' => $messageContent,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
                 'status' => $status,
@@ -154,6 +192,7 @@ class TicketsController extends BaseController
         }
 
         $ticketRepository->save($ticket, true);
+        $messageRepository->save($message, true);
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

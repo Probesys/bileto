@@ -1,0 +1,20 @@
+# This file is part of Bileto.
+# Copyright 2022 Probesys
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+framework:
+    html_sanitizer:
+        sanitizers:
+            app.message_sanitizer:
+                allow_safe_elements: true
+
+                allowed_link_schemes: ['http', 'https', 'mailto']
+                allow_relative_links: false
+
+                allowed_media_schemes: ['http', 'https']
+                allow_relative_medias: false
+
+                force_attributes:
+                    a:
+                        rel: noopener noreferrer
+                        target: _blank

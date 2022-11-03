@@ -7,6 +7,7 @@
 namespace App\Tests\Controller\Organizations;
 
 use App\Entity\Organization;
+use App\Factory\MessageFactory;
 use App\Factory\OrganizationFactory;
 use App\Factory\TicketFactory;
 use App\Factory\UserFactory;
@@ -83,8 +84,10 @@ class TicketsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
         $title = 'My ticket';
+        $messageContent = 'My message';
 
         $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
 
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
         $crawler = $client->submitForm('form-create-ticket-submit', [
@@ -92,10 +95,12 @@ class TicketsControllerTest extends WebTestCase
             'requesterId' => $requester->getId(),
             'assigneeId' => $assignee->getId(),
             'status' => 'assigned',
+            'message' => $messageContent,
         ]);
 
         Time::unfreeze();
         $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
 
         $ticket = TicketFactory::first();
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
@@ -111,6 +116,44 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
         $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
+        $message = MessageFactory::first();
+        $this->assertSame($messageContent, $message->getContent());
+        $this->assertEquals($now, $message->getCreatedAt());
+        $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
+        $this->assertSame($ticket->getId(), $message->getTicket()->getId());
+        $this->assertFalse($message->isPrivate());
+        $this->assertFalse($message->isSolution());
+        $this->assertSame('webapp', $message->getVia());
+    }
+
+    public function testPostCreateSanitizesTheMessageContent(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $title = 'My ticket';
+        $messageContent = 'My message <style>body { background-color: pink; }</style>';
+
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
+        $crawler = $client->submitForm('form-create-ticket-submit', [
+            'title' => $title,
+            'message' => $messageContent,
+        ]);
+
+        Time::unfreeze();
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $message = MessageFactory::first();
+        $this->assertSame('My message', $message->getContent());
     }
 
     public function testPostCreateFailsIfTitleIsEmpty(): void
@@ -122,16 +165,19 @@ class TicketsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
         $title = '';
+        $messageContent = 'My message';
 
         $this->assertSame(0, TicketFactory::count());
 
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
         $crawler = $client->submitForm('form-create-ticket-submit', [
             'title' => $title,
+            'message' => $messageContent,
         ]);
 
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#title-error', 'The title is required.');
     }
 
@@ -144,17 +190,45 @@ class TicketsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
         $title = str_repeat('a', 256);
+        $messageContent = 'My message';
 
         $this->assertSame(0, TicketFactory::count());
 
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
         $crawler = $client->submitForm('form-create-ticket-submit', [
             'title' => $title,
+            'message' => $messageContent,
         ]);
 
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#title-error', 'The title must be 255 characters maximum.');
+    }
+
+    public function testPostCreateFailsIfMessageIsEmpty(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $title = 'My ticket';
+        $messageContent = '';
+
+        $this->assertSame(0, TicketFactory::count());
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
+        $crawler = $client->submitForm('form-create-ticket-submit', [
+            'title' => $title,
+            'message' => $messageContent,
+        ]);
+
+        Time::unfreeze();
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSelectorTextContains('#message-error', 'The content is required.');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
@@ -166,6 +240,7 @@ class TicketsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
         $title = 'My ticket';
+        $messageContent = 'My message';
 
         $this->assertSame(0, TicketFactory::count());
 
@@ -173,10 +248,12 @@ class TicketsControllerTest extends WebTestCase
         $crawler = $client->submitForm('form-create-ticket-submit', [
             '_csrf_token' => 'not the token',
             'title' => $title,
+            'message' => $messageContent,
         ]);
 
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
     }
 }

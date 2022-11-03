@@ -19,6 +19,7 @@ class TicketsController extends BaseController
     {
         return $this->render('tickets/show.html.twig', [
             'ticket' => $ticket,
+            'messages' => $ticket->getMessages(),
             'organization' => $ticket->getOrganization(),
         ]);
     }
