@@ -59,7 +59,6 @@ class TicketsController extends BaseController
 
         /** @var string $title */
         $title = $request->request->get('title', '');
-        $title = trim($title);
 
         /** @var string $requesterId */
         $requesterId = $request->request->get('requesterId', '');

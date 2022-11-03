@@ -178,7 +178,7 @@ class Ticket
 
     public function setTitle(string $title): self
     {
-        $this->title = $title;
+        $this->title = trim($title);
 
         return $this;
     }
