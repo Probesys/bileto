@@ -116,3 +116,5 @@ Error: Error
 'The urgency {{ value }} is not a valid urgency.': 'The urgency {{ value }} is not a valid urgency.'
 'The impact {{ value }} is not a valid impact.': 'The impact {{ value }} is not a valid impact.'
 'The priority {{ value }} is not a valid priority.': 'The priority {{ value }} is not a valid priority.'
+'The via {{ value }} is not a valid via.': 'The via {{ value }} is not a valid via.'
+'The content is required.': 'The content is required.'
