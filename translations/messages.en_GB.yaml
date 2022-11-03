@@ -20,3 +20,35 @@ Light: Light
 Dark: Dark
 'Save the changes': 'Save the changes'
 Language: Language
+'The requester must exist.': 'The requester must exist.'
+'The assignee must exist.': 'The assignee must exist.'
+New: New
+Assigned: Assigned
+'In progress': 'In progress'
+Pending: Pending
+Resolved: Resolved
+Closed: Closed
+'Tickets of %name%': 'Tickets of %name%'
+'New ticket': 'New ticket'
+'New ticket – %name%': 'New ticket – %name%'
+'Back (Tickets of %name%)': 'Back (Tickets of %name%)'
+'What’s the issue?': 'What’s the issue?'
+Requester: Requester
+Assignee: Assignee
+(optional): (optional)
+Unassigned: Unassigned
+Status: Status
+'Create the ticket': 'Create the ticket'
+Actors: Actors
+Request: Request
+Incident: Incident
+Low: Low
+Medium: Medium
+High: High
+'opened this <strong>%type%</strong>': 'opened this <strong>%type%</strong>'
+'on %date%': 'on %date%'
+Priority: Priority
+'Urgency:': 'Urgency:'
+'Impact:': 'Impact:'
+'Tickets – %name%': 'Tickets – %name%'
+'Back (tickets)': 'Back (tickets)'

@@ -1,0 +1,163 @@
+<?php
+
+// This file is part of Bileto.
+// Copyright 2022 Probesys
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+namespace App\Controller\Organizations;
+
+use App\Controller\BaseController;
+use App\Entity\Organization;
+use App\Entity\Ticket;
+use App\Repository\TicketRepository;
+use App\Repository\UserRepository;
+use App\Utils\Time;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+class TicketsController extends BaseController
+{
+    #[Route('/organizations/{uid}/tickets', name: 'organization tickets', methods: ['GET', 'HEAD'])]
+    public function index(Organization $organization): Response
+    {
+        return $this->render('organizations/tickets/index.html.twig', [
+            'organization' => $organization,
+            'tickets' => $organization->getTickets(),
+        ]);
+    }
+
+    #[Route('/organizations/{uid}/tickets/new', name: 'new organization ticket', methods: ['GET', 'HEAD'])]
+    public function new(
+        Organization $organization,
+        UserRepository $userRepository
+    ): Response {
+        $users = $userRepository->findBy([], ['email' => 'ASC']);
+        return $this->render('organizations/tickets/new.html.twig', [
+            'organization' => $organization,
+            'title' => '',
+            'requesterId' => '',
+            'assigneeId' => '',
+            'status' => 'new',
+            'statuses' => Ticket::getStatusesWithLabels(),
+            'users' => $users,
+        ]);
+    }
+
+    #[Route('/organizations/{uid}/tickets/new', name: 'create organization ticket', methods: ['POST'])]
+    public function create(
+        Organization $organization,
+        Request $request,
+        TicketRepository $ticketRepository,
+        UserRepository $userRepository,
+        ValidatorInterface $validator
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        /** @var string $title */
+        $title = $request->request->get('title', '');
+        $title = trim($title);
+
+        /** @var string $requesterId */
+        $requesterId = $request->request->get('requesterId', '');
+
+        /** @var string $assigneeId */
+        $assigneeId = $request->request->get('assigneeId', '');
+
+        /** @var string $status */
+        $status = $request->request->get('status', 'new');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        $users = $userRepository->findBy([], ['email' => 'ASC']);
+
+        if (!$this->isCsrfTokenValid('create organization ticket', $csrfToken)) {
+            return $this->renderBadRequest('organizations/tickets/new.html.twig', [
+                'organization' => $organization,
+                'title' => $title,
+                'requesterId' => $requesterId,
+                'assigneeId' => $assigneeId,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
+                'users' => $users,
+                'error' => $this->csrfError(),
+            ]);
+        }
+
+        $requester = $userRepository->find($requesterId);
+        if (!$requester) {
+            return $this->renderBadRequest('organizations/tickets/new.html.twig', [
+                'organization' => $organization,
+                'title' => $title,
+                'requesterId' => $requesterId,
+                'assigneeId' => $assigneeId,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
+                'users' => $users,
+                'errors' => [
+                    'requester' => new TranslatableMessage('The requester must exist.'),
+                ],
+            ]);
+        }
+
+        if ($assigneeId) {
+            $assignee = $userRepository->find($assigneeId);
+            if (!$assignee) {
+                return $this->renderBadRequest('organizations/tickets/new.html.twig', [
+                    'organization' => $organization,
+                    'title' => $title,
+                    'requesterId' => $requesterId,
+                    'assigneeId' => $assigneeId,
+                    'status' => $status,
+                    'statuses' => Ticket::getStatusesWithLabels(),
+                    'users' => $users,
+                    'errors' => [
+                        'assignee' => new TranslatableMessage('The assignee must exist.'),
+                    ],
+                ]);
+            }
+        } else {
+            $assignee = null;
+        }
+
+        $ticket = new Ticket();
+        $ticket->setTitle($title);
+        $ticket->setStatus($status);
+
+        $uid = $ticketRepository->generateUid();
+        $ticket->setUid($uid);
+
+        $ticket->setCreatedAt(Time::now());
+        $ticket->setCreatedBy($user);
+        $ticket->setOrganization($organization);
+
+        $ticket->setRequester($requester);
+        if ($assignee) {
+            $ticket->setAssignee($assignee);
+        }
+
+        $errors = $validator->validate($ticket);
+        if (count($errors) > 0) {
+            return $this->renderBadRequest('organizations/tickets/new.html.twig', [
+                'organization' => $organization,
+                'title' => $title,
+                'requesterId' => $requesterId,
+                'assigneeId' => $assigneeId,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
+                'users' => $users,
+                'errors' => $this->formatErrors($errors),
+            ]);
+        }
+
+        $ticketRepository->save($ticket, true);
+
+        return $this->redirectToRoute('ticket', [
+            'uid' => $ticket->getUid(),
+        ]);
+    }
+}

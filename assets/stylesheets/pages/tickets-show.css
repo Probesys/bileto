@@ -1,0 +1,27 @@
+/* This file is part of Bileto. */
+/* Copyright 2022 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.tickets-show .ticket__id {
+    margin-left: 1rem;
+
+    color: var(--color-grey11);
+}
+
+.tickets-show .ticket__status {
+    margin-right: 1rem;
+    padding: 0.75rem 1.5rem;
+
+    background-color: var(--color-grey5);
+    border-radius: 2.5rem;
+}
+
+.tickets-show .ticket__priority {
+    padding: 0.75rem 1.5rem;
+
+    font-weight: bold;
+    text-align: center;
+
+    background-color: var(--color-grey5);
+    border-radius: 0.5rem;
+}

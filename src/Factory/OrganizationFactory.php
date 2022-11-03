@@ -8,6 +8,7 @@ namespace App\Factory;
 
 use App\Entity\Organization;
 use App\Repository\OrganizationRepository;
+use App\Utils\Random;
 use Zenstruck\Foundry\RepositoryProxy;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -55,6 +56,7 @@ final class OrganizationFactory extends ModelFactory
     {
         return [
             'name' => self::faker()->text(),
+            'uid' => Random::hex(20),
         ];
     }
 

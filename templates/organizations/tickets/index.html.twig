@@ -1,0 +1,41 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Tickets – %name%' | trans({ '%name%': organization.name }) }}{% endblock %}
+
+{% block back %}
+    <a href="{{ path('organizations') }}">
+        {{ 'Back (organizations)' | trans }}
+    </a>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <h1>{{ 'Tickets' }}</h1>
+
+        <div class="text--center">
+            {{ organization.name }}
+        </div>
+
+        <div class="wrapper-large wrapper--center flow">
+            <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                {{ 'New ticket' | trans }}
+            </a>
+
+            <ul>
+                {% for ticket in tickets %}
+                    <li>
+                        <a href="{{ path('ticket', {'uid': ticket.uid}) }}">
+                            {{ ticket.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+{% endblock %}

@@ -7,6 +7,8 @@
 namespace App\Entity;
 
 use App\Repository\OrganizationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -16,6 +18,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(
     fields: 'name',
     message: new TranslatableMessage('The name {{ value }} is already used.', [], 'validators'),
+)]
+#[UniqueEntity(
+    fields: 'uid',
+    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
 class Organization
 {
@@ -34,6 +40,18 @@ class Organization
     )]
     private ?string $name = null;
 
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $uid = null;
+
+    /** @var Collection<int, Ticket> $tickets */
+    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Ticket::class)]
+    private Collection $tickets;
+
+    public function __construct()
+    {
+        $this->tickets = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -49,5 +67,25 @@ class Organization
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(string $uid): self
+    {
+        $this->uid = $uid;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
     }
 }

@@ -98,6 +98,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertResponseRedirects('/organizations', 302);
         $organization = OrganizationFactory::first();
         $this->assertSame($name, $organization->getName());
+        $this->assertSame(20, strlen($organization->getUid()));
     }
 
     public function testPostCreateFailsIfNameIsEmpty(): void
@@ -166,5 +167,17 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
         $this->assertSame(0, OrganizationFactory::count());
+    }
+
+    public function testGetShowRedirectsToTickets(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+
+        $client->request('GET', "/organizations/{$organization->getUid()}");
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
     }
 }

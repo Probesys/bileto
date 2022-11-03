@@ -6,27 +6,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Organization;
+use App\Entity\Ticket;
 use App\Utils\Random;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Organization>
+ * @extends ServiceEntityRepository<Ticket>
  *
- * @method Organization|null find($id, $lockMode = null, $lockVersion = null)
- * @method Organization|null findOneBy(array $criteria, array $orderBy = null)
- * @method Organization[]    findAll()
- * @method Organization[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Ticket|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Ticket|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Ticket[]    findAll()
+ * @method Ticket[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class OrganizationRepository extends ServiceEntityRepository
+class TicketRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Organization::class);
+        parent::__construct($registry, Ticket::class);
     }
 
-    public function save(Organization $entity, bool $flush = false): void
+    public function save(Ticket $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -35,7 +35,7 @@ class OrganizationRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Organization $entity, bool $flush = false): void
+    public function remove(Ticket $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
