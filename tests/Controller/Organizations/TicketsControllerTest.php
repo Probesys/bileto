@@ -126,6 +126,36 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame('webapp', $message->getVia());
     }
 
+    public function testPostCreateSanitizesTheMessageContent(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $title = 'My ticket';
+        $messageContent = 'My message <style>body { background-color: pink; }</style>';
+
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
+        $crawler = $client->submitForm('form-create-ticket-submit', [
+            'title' => $title,
+            'message' => $messageContent,
+        ]);
+
+        Time::unfreeze();
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $message = MessageFactory::first();
+        $this->assertSame('My message', $message->getContent());
+    }
+
     public function testPostCreateFailsIfTitleIsEmpty(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');

@@ -14,6 +14,7 @@ use App\Repository\MessageRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Utils\Time;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -56,7 +57,8 @@ class TicketsController extends BaseController
         MessageRepository $messageRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -66,6 +68,7 @@ class TicketsController extends BaseController
 
         /** @var string $messageContent */
         $messageContent = $request->request->get('message', '');
+        $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
         /** @var string $requesterId */
         $requesterId = $request->request->get('requesterId', '');
