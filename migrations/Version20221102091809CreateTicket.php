@@ -26,12 +26,12 @@ final class Version20221102091809CreateTicket extends AbstractMigration
             $this->addSql(<<<SQL
                 CREATE TABLE ticket (
                     id INT NOT NULL,
-                    createdBy_id INT NOT NULL,
+                    created_by_id INT NOT NULL,
                     requester_id INT DEFAULT NULL,
                     assignee_id INT DEFAULT NULL,
                     organization_id INT NOT NULL,
                     uid VARCHAR(20) NOT NULL,
-                    createdAt TIMESTAMP(0) WITH TIME ZONE NOT NULL,
+                    created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL,
                     type VARCHAR(32) DEFAULT 'request' NOT NULL,
                     status VARCHAR(32) DEFAULT 'new' NOT NULL,
                     title VARCHAR(255) NOT NULL,
@@ -42,15 +42,15 @@ final class Version20221102091809CreateTicket extends AbstractMigration
                 )
             SQL);
             $this->addSql('CREATE UNIQUE INDEX UNIQ_97A0ADA3539B0606 ON ticket (uid)');
-            $this->addSql('CREATE INDEX IDX_97A0ADA3B03A8386 ON ticket (createdBy_id)');
+            $this->addSql('CREATE INDEX IDX_97A0ADA3B03A8386 ON ticket (created_by_id)');
             $this->addSql('CREATE INDEX IDX_97A0ADA3ED442CF4 ON ticket (requester_id)');
             $this->addSql('CREATE INDEX IDX_97A0ADA359EC7D60 ON ticket (assignee_id)');
             $this->addSql('CREATE INDEX IDX_97A0ADA332C8A3DE ON ticket (organization_id)');
-            $this->addSql('COMMENT ON COLUMN ticket.createdAt IS \'(DC2Type:datetimetz_immutable)\'');
+            $this->addSql('COMMENT ON COLUMN ticket.created_at IS \'(DC2Type:datetimetz_immutable)\'');
             $this->addSql(<<<SQL
                 ALTER TABLE ticket
                 ADD CONSTRAINT FK_97A0ADA3B03A8386
-                FOREIGN KEY (createdBy_id)
+                FOREIGN KEY (created_by_id)
                 REFERENCES "users" (id) NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
             $this->addSql(<<<SQL
@@ -75,12 +75,12 @@ final class Version20221102091809CreateTicket extends AbstractMigration
             $this->addSql(<<<SQL
                 CREATE TABLE ticket (
                     id INT AUTO_INCREMENT NOT NULL,
-                    createdBy_id INT NOT NULL,
+                    created_by_id INT NOT NULL,
                     requester_id INT DEFAULT NULL,
                     assignee_id INT DEFAULT NULL,
                     organization_id INT NOT NULL,
                     uid VARCHAR(20) NOT NULL,
-                    createdAt DATETIME NOT NULL COMMENT '(DC2Type:datetimetz_immutable)',
+                    created_at DATETIME NOT NULL COMMENT '(DC2Type:datetimetz_immutable)',
                     type VARCHAR(32) DEFAULT 'request' NOT NULL,
                     status VARCHAR(32) DEFAULT 'new' NOT NULL,
                     title VARCHAR(255) NOT NULL,
@@ -88,7 +88,7 @@ final class Version20221102091809CreateTicket extends AbstractMigration
                     impact VARCHAR(32) DEFAULT 'medium' NOT NULL,
                     priority VARCHAR(32) DEFAULT 'medium' NOT NULL,
                     UNIQUE INDEX UNIQ_97A0ADA3539B0606 (uid),
-                    INDEX IDX_97A0ADA3B03A8386 (createdBy_id),
+                    INDEX IDX_97A0ADA3B03A8386 (created_by_id),
                     INDEX IDX_97A0ADA3ED442CF4 (requester_id),
                     INDEX IDX_97A0ADA359EC7D60 (assignee_id),
                     INDEX IDX_97A0ADA332C8A3DE (organization_id),
@@ -98,7 +98,7 @@ final class Version20221102091809CreateTicket extends AbstractMigration
             $this->addSql(<<<SQL
                 ALTER TABLE ticket
                 ADD CONSTRAINT FK_97A0ADA3B03A8386
-                FOREIGN KEY (createdBy_id)
+                FOREIGN KEY (created_by_id)
                 REFERENCES `users` (id)
             SQL);
             $this->addSql(<<<SQL
