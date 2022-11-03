@@ -58,7 +58,7 @@ class ViteTagsExtension extends AbstractExtension
 
         $assetUrl = $this->assetPackages->getUrl($filename);
         return <<<HTML
-            <script src="{$assetUrl}"></script>
+            <script src="{$assetUrl}" data-turbo-track="reload"></script>
         HTML;
     }
 
@@ -71,7 +71,7 @@ class ViteTagsExtension extends AbstractExtension
 
         $assetUrl = $this->assetPackages->getUrl($filename);
         return <<<HTML
-            <link rel="stylesheet" href="{$assetUrl}">
+            <link rel="stylesheet" href="{$assetUrl}" data-turbo-track="reload">
         HTML;
     }
 
