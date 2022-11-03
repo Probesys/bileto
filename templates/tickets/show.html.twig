@@ -37,59 +37,104 @@
             </div>
         </div>
 
-        <div class="wrapper-small wrapper--center flow-larger">
-            <div class="flow">
-                <div class="text--secondary">
-                    {{ icon('user-group') }}
-                    <strong>{{ 'Actors' | trans }}</strong>
-                </div>
+        <div class="ticket__layout grid">
+            <div class="ticket__timeline flow">
+                {% for message in messages %}
+                    <article class="message">
+                        <div class="message__avatar">
+                            {{ icon('circle-user') }}
+                            {% if message.createdBy == ticket.requester %}
+                                <span class="message__role">
+                                    {{ icon('user') }}
+                                    <span class="sr-only">
+                                        {{ 'Requester' | trans }}
+                                    </span>
+                                </span>
+                            {% elseif message.createdBy == ticket.assignee %}
+                                <span class="message__role">
+                                    {{ icon('headset') }}
+                                    <span class="sr-only">
+                                        {{ 'Assignee' | trans }}
+                                    </span>
+                                </span>
+                            {% endif %}
+                        </div>
 
-                <div>
-                    <p class="text--secondary">
-                        {{ 'Requester' | trans }}
-                    </p>
-                    <p>
-                        {{ ticket.requester.email }}
-                    </p>
-                </div>
+                        <div class="message__box">
+                            <div class="message__top">
+                                <div class="message__author">
+                                    {{ message.createdBy.email }}
+                                </div>
 
-                <div>
-                    <p class="text--secondary">
-                        {{ 'Assignee' | trans }}
-                    </p>
-                    <p>
-                        {% if ticket.assignee %}
-                            {{ ticket.assignee.email }}
-                        {% else %}
-                            <strong>{{ 'Unassigned' | trans }}</strong>
-                        {% endif %}
-                    </p>
-                </div>
+                                <div class="message__top-separator"></div>
+
+                                <div class="message__date">
+                                    {{ message.createdAt.format('Y-m-d') }}
+                                </div>
+                            </div>
+
+                            <div class="message__content flow">
+                                {{ message.content }}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
             </div>
 
-            <div class="flow">
-                <div class="text--secondary">
-                    {{ icon('priority') }}
-                    <strong>{{ 'Priority' | trans }}</strong>
+            <div class="ticket__info flow-larger">
+                <div class="flow">
+                    <div class="text--secondary">
+                        {{ icon('user-group') }}
+                        <strong>{{ 'Actors' | trans }}</strong>
+                    </div>
+
+                    <div>
+                        <p class="text--secondary">
+                            {{ 'Requester' | trans }}
+                        </p>
+                        <p>
+                            {{ ticket.requester.email }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text--secondary">
+                            {{ 'Assignee' | trans }}
+                        </p>
+                        <p>
+                            {% if ticket.assignee %}
+                                {{ ticket.assignee.email }}
+                            {% else %}
+                                <strong>{{ 'Unassigned' | trans }}</strong>
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
 
-                <div class="ticket__priority">
-                    {{ ticket.priorityLabel | trans }}
+                <div class="flow">
+                    <div class="text--secondary">
+                        {{ icon('priority') }}
+                        <strong>{{ 'Priority' | trans }}</strong>
+                    </div>
+
+                    <div class="ticket__priority">
+                        {{ ticket.priorityLabel | trans }}
+                    </div>
+
+                    <p>
+                        <span class="text--secondary">
+                            {{ 'Urgency:' | trans }}
+                        </span>
+                        {{ ticket.urgencyLabel | trans }}
+                    </p>
+
+                    <p>
+                        <span class="text--secondary">
+                            {{ 'Impact:' | trans }}
+                        </span>
+                        {{ ticket.impactLabel | trans }}
+                    </p>
                 </div>
-
-                <p>
-                    <span class="text--secondary">
-                        {{ 'Urgency:' | trans }}
-                    </span>
-                    {{ ticket.urgencyLabel | trans }}
-                </p>
-
-                <p>
-                    <span class="text--secondary">
-                        {{ 'Impact:' | trans }}
-                    </span>
-                    {{ ticket.impactLabel | trans }}
-                </p>
             </div>
         </div>
     </main>

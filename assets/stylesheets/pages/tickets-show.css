@@ -8,6 +8,27 @@
     color: var(--color-grey11);
 }
 
+@media (min-width: 1000px) {
+    .tickets-show .ticket__layout {
+        grid-template-columns: 1fr 300px;
+    }
+}
+
+@media (min-width: 1350px) {
+    .tickets-show .ticket__layout {
+        grid-gap: 5rem;
+        grid-template-columns: minmax(auto, 400px) minmax(800px, auto) 400px;
+    }
+
+    .tickets-show .ticket__timeline {
+        grid-column: 2 / 3;
+    }
+}
+
+.tickets-show .ticket__info {
+    font-size: 0.9em;
+}
+
 .tickets-show .ticket__status {
     margin-right: 1rem;
     padding: 0.75rem 1.5rem;
