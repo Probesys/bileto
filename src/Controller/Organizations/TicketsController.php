@@ -28,7 +28,7 @@ class TicketsController extends BaseController
     {
         return $this->render('organizations/tickets/index.html.twig', [
             'organization' => $organization,
-            'tickets' => $organization->getTickets(),
+            'tickets' => $organization->getOpenTickets()->toArray(),
         ]);
     }
 

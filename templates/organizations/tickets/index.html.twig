@@ -23,19 +23,108 @@
         </div>
 
         <div class="wrapper-large wrapper--center flow">
-            <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
-                {{ 'New ticket' | trans }}
-            </a>
+            {% if tickets %}
+                <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                    {{ 'New ticket' | trans }}
+                </a>
 
-            <ul>
-                {% for ticket in tickets %}
-                    <li>
-                        <a href="{{ path('ticket', {'uid': ticket.uid}) }}">
-                            {{ ticket.title }}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    {{ 'Opened on' | trans }}
+                                </th>
+
+                                <th class="text--right">
+                                    #
+                                    <span class="sr-only">
+                                        {{ 'Ticket number' | trans }}
+                                    </span>
+                                </th>
+
+                                <th>
+                                    {{ 'Title' | trans }}
+                                </th>
+
+                                <th>
+                                    {{ icon('user') }}
+                                    {{ 'Requester' | trans }}
+                                </th>
+
+                                <th>
+                                    {{ icon('headset') }}
+                                    {{ 'Assignee' | trans }}
+                                </th>
+
+                                <th>
+                                    {{ icon('status') }}
+                                    {{ 'Status' | trans }}
+                                </th>
+
+                                <th>
+                                    {{ icon('priority') }}
+                                    {{ 'Priority' | trans }}
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for ticket in tickets|sort((a, b) => b.createdAt <=> a.createdAt) %}
+                                <tr data-test="ticket-item">
+                                    <td>
+                                        {{ ticket.createdAt.format('Y-m-d') }}
+                                    </td>
+
+                                    <td class="text--right td--anchor">
+                                        <a tabindex="-1" href="{{ path('ticket', {'uid': ticket.uid}) }}">
+                                            {{ ticket.id }}
+                                        </a>
+                                    </td>
+
+                                    <td class="td--anchor">
+                                        <a href="{{ path('ticket', {'uid': ticket.uid}) }}">
+                                            {{ ticket.title }}
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.requester.email }}
+                                    </td>
+
+                                    <td>
+                                        {% if ticket.assignee %}
+                                            {{ ticket.assignee.email }}
+                                        {% else %}
+                                            {{ 'Unassigned' | trans }}
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.statusLabel | trans }}
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.priorityLabel | trans }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text--center flow-large">
+                    <p data-test="tickets-placeholder">
+                        {{ 'You have not yet created any ticket.' | trans }}
+                    </p>
+
+                    <p class="text--big">
+                        <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                            {{ 'New ticket' | trans }}
                         </a>
-                    </li>
-                {% endfor %}
-            </ul>
+                    </p>
+                </div>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

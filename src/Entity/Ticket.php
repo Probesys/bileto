@@ -21,6 +21,8 @@ class Ticket
     public const DEFAULT_TYPE = 'request';
 
     public const STATUSES = ['new', 'assigned', 'in_progress', 'pending', 'resolved', 'closed'];
+    public const OPEN_STATUSES = ['new', 'assigned', 'in_progress', 'pending'];
+    public const FINISHED_STATUSES = ['resolved', 'closed'];
     public const DEFAULT_STATUS = 'new';
 
     public const WEIGHTS = ['low', 'medium', 'high'];

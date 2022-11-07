@@ -7,12 +7,14 @@
 namespace App\Tests\Controller\Organizations;
 
 use App\Entity\Organization;
+use App\Entity\Ticket;
 use App\Factory\MessageFactory;
 use App\Factory\OrganizationFactory;
 use App\Factory\TicketFactory;
 use App\Factory\UserFactory;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -29,11 +31,36 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
+        $ticket = TicketFactory::createOne([
+            'title' => 'My ticket',
+            'organization' => $organization,
+            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+        ]);
 
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Tickets');
+        $this->assertSelectorTextContains('[data-test="ticket-item"]', 'My ticket');
+    }
+
+    public function testGetIndexDoesNotRenderFinishedTickets(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne([
+            'name' => 'My organization',
+        ]);
+        $ticket = TicketFactory::createOne([
+            'title' => 'My ticket',
+            'organization' => $organization,
+            'status' => Factory::faker()->randomElement(Ticket::FINISHED_STATUSES),
+        ]);
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorNotExists('[data-test="ticket-item"]');
     }
 
     public function testGetIndexRedirectsToLoginIfNotConnected(): void

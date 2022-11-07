@@ -9,6 +9,7 @@ namespace App\Entity;
 use App\Repository\OrganizationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -87,5 +88,18 @@ class Organization
     public function getTickets(): Collection
     {
         return $this->tickets;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getOpenTickets(): Collection
+    {
+        /** @var \Doctrine\ORM\PersistentCollection<int, Ticket> $tickets */
+        $tickets = $this->tickets;
+
+        $expression = Criteria::expr()->in('status', Ticket::OPEN_STATUSES);
+        $criteria = Criteria::create()->andWhere($expression);
+        return $tickets->matching($criteria);
     }
 }
