@@ -21,6 +21,7 @@ class TicketsController extends BaseController
             'ticket' => $ticket,
             'messages' => $ticket->getMessages(),
             'organization' => $ticket->getOrganization(),
+            'message' => '',
         ]);
     }
 }
