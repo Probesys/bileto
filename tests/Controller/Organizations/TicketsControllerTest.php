@@ -228,7 +228,7 @@ class TicketsControllerTest extends WebTestCase
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#message-error', 'The content is required.');
+        $this->assertSelectorTextContains('#message-error', 'The message is required.');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void

@@ -45,7 +45,7 @@ class Message
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The content is required.', [], 'validators'),
+        message: new TranslatableMessage('The message is required.', [], 'validators'),
     )]
     private string $content = '';
 

@@ -117,4 +117,4 @@ Error: Erreur
 'The impact {{ value }} is not a valid impact.': 'L’impact {{ value }} n’est pas un impact valide.'
 'The priority {{ value }} is not a valid priority.': 'La priorité {{ value }} n’est pas une priorité valide.'
 'The via {{ value }} is not a valid via.': 'Le via {{ value }} n’est pas un via valide.'
-'The content is required.': 'Le contenu est obligatoire.'
+'The message is required.': 'Le message est obligatoire.'
