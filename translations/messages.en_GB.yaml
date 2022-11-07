@@ -1,4 +1,3 @@
-'Hello Bileto!': 'Hello Bileto!'
 Logout: Logout
 'Log in': 'Log in'
 Error: Error
@@ -32,7 +31,6 @@ Closed: Closed
 'New ticket': 'New ticket'
 'New ticket – %name%': 'New ticket – %name%'
 'Back (Tickets of %name%)': 'Back (Tickets of %name%)'
-'What’s the issue?': 'What’s the issue?'
 Requester: Requester
 Assignee: Assignee
 (optional): (optional)
@@ -52,3 +50,4 @@ Priority: Priority
 'Impact:': 'Impact:'
 'Tickets – %name%': 'Tickets – %name%'
 'Back (tickets)': 'Back (tickets)'
+Title: Title
