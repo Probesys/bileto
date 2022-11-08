@@ -38,8 +38,94 @@
         </div>
 
         <div class="ticket__layout grid">
-            <div class="ticket__timeline">
-                {{ include('tickets/messages/_messages.html.twig') }}
+            <div class="ticket__timeline flow-large">
+                <div class="flow-large timeline">
+                    {% for message in messages %}
+                        <article class="message">
+                            <div class="message__avatar">
+                                {{ icon('circle-user') }}
+                                {% if message.createdBy == ticket.requester %}
+                                    <span class="message__role">
+                                        {{ icon('user') }}
+                                        <span class="sr-only">
+                                            {{ 'Requester' | trans }}
+                                        </span>
+                                    </span>
+                                {% elseif message.createdBy == ticket.assignee %}
+                                    <span class="message__role">
+                                        {{ icon('headset') }}
+                                        <span class="sr-only">
+                                            {{ 'Assignee' | trans }}
+                                        </span>
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="message__box">
+                                <div class="message__top">
+                                    <div class="message__author">
+                                        {{ message.createdBy.email }}
+                                    </div>
+
+                                    <div class="message__top-separator"></div>
+
+                                    <div class="message__date">
+                                        {{ message.createdAt.format('Y-m-d') }}
+                                    </div>
+                                </div>
+
+                                <div class="message__content flow">
+                                    {{ message.content | raw }}
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <form
+                    action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
+                    method="post"
+                    class="wrapper wrapper--center flow"
+                    data-turbo-preserve-scroll
+                >
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
+
+                    {% if error %}
+                        <div class="alert alert--error" role="alert" data-turbo-cache="false" data-test="alert-error">
+                            <div class="alert__title">{{ 'Error' | trans }}</div>
+
+                            <p class="alert__message">
+                                {{ error }}
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    <div class="flow-small">
+                        {% if errors.content is defined %}
+                            <p class="form__error" role="alert" id="message-error">
+                                <span class="sr-only">{{ 'Error' | trans }}</span>
+                                {{ errors.content }}
+                            </p>
+                        {% endif %}
+
+                        <textarea
+                            id="message"
+                            name="message"
+                            data-controller="tinymce"
+                            {% if errors.content is defined %}
+                                autofocus
+                                aria-invalid="true"
+                                aria-errormessage="message-error"
+                            {% endif %}
+                        >{{ message }}</textarea>
+                    </div>
+
+                    <div class="form__actions">
+                        <button id="form-create-message-submit" class="button--primary" type="submit">
+                            {{ 'Answer' | trans }}
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <div class="ticket__info flow-larger">

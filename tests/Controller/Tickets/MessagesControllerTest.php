@@ -19,7 +19,7 @@ class MessagesControllerTest extends WebTestCase
     use Factories;
     use ResetDatabase;
 
-    public function testPostCreateCreatesAMessageAndRenderMessages(): void
+    public function testPostCreateCreatesAMessageAndRedirects(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
         Time::freeze($now);
@@ -41,7 +41,7 @@ class MessagesControllerTest extends WebTestCase
         Time::unfreeze();
         $this->assertSame(1, MessageFactory::count());
 
-        $this->assertResponseIsSuccessful();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $message = MessageFactory::first();
         $this->assertSame($messageContent, $message->getContent());
         $this->assertEquals($now, $message->getCreatedAt());

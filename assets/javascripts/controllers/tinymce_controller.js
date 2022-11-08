@@ -13,6 +13,11 @@ export default class extends Controller {
             language = null; // Use the default language (en_US)
         }
 
+        let autofocus = '';
+        if (this.element.autofocus) {
+            autofocus = this.element.id;
+        }
+
         const configuration = {
             selector: '#' + this.element.id,
             skin: colorScheme === 'light' ? 'oxide' : 'oxide-dark',
@@ -28,6 +33,7 @@ export default class extends Controller {
             promotion: false,
             link_assume_external_targets: true,
             link_target_list: false,
+            auto_focus: autofocus,
         };
 
         window.tinymce.init(configuration);

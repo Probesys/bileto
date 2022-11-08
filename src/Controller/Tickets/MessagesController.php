@@ -38,9 +38,10 @@ class MessagesController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('create ticket message', $csrfToken)) {
-            return $this->renderBadRequest('tickets/messages/_messages.html.twig', [
+            return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
                 'messages' => $ticket->getMessages(),
+                'organization' => $ticket->getOrganization(),
                 'message' => $messageContent,
                 'error' => $this->csrfError(),
             ]);
@@ -57,9 +58,10 @@ class MessagesController extends BaseController
 
         $errors = $validator->validate($message);
         if (count($errors) > 0) {
-            return $this->renderBadRequest('tickets/messages/_messages.html.twig', [
+            return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
                 'messages' => $ticket->getMessages(),
+                'organization' => $ticket->getOrganization(),
                 'message' => $messageContent,
                 'errors' => $this->formatErrors($errors),
             ]);
@@ -67,10 +69,8 @@ class MessagesController extends BaseController
 
         $messageRepository->save($message, true);
 
-        return $this->render('tickets/messages/_messages.html.twig', [
-            'ticket' => $ticket,
-            'messages' => $ticket->getMessages(),
-            'message' => '',
+        return $this->redirectToRoute('ticket', [
+            'uid' => $ticket->getUid(),
         ]);
     }
 }
