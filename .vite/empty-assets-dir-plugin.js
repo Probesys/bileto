@@ -21,6 +21,10 @@ export default function emptyAssetsDirPlugin () {
                 if (err) throw err;
 
                 for (const filename of filenames) {
+                    if (filename === '.keep') {
+                        continue;
+                    }
+
                     fs.unlink(path.join(assetsFullDir, filename), (err) => {
                         if (err) throw err;
                     });

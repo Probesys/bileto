@@ -3,7 +3,8 @@
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-/public/assets/
+/public/assets/*
+!/public/assets/.keep
 /public/manifest.json
 /var/
 /vendor/
