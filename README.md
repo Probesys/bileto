@@ -50,19 +50,25 @@ Install the dependencies:
 $ make install
 ```
 
-Setup the database:
-
-```console
-$ make db-setup
-```
-
 Start the development server:
 
 ```console
 $ make docker-start
 ```
 
-And open [localhost:8000](http://localhost:8000).
+Setup the database:
+
+```console
+$ make db-setup
+```
+
+Create a user:
+
+```console
+$ ./docker/bin/console app:users:create --email=alix@example.com --password=secret
+```
+
+Open [localhost:8000](http://localhost:8000) and login with your user credentials.
 
 A note about the `make` commands: they might feel magic, but they are not!
 They are just shortcuts for common commands.
