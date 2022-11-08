@@ -10,6 +10,7 @@ use App\Controller\BaseController;
 use App\Entity\Message;
 use App\Entity\Ticket;
 use App\Repository\MessageRepository;
+use App\Repository\TicketRepository;
 use App\Utils\Time;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,7 @@ class MessagesController extends BaseController
         Ticket $ticket,
         Request $request,
         MessageRepository $messageRepository,
+        TicketRepository $ticketRepository,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
@@ -34,6 +36,9 @@ class MessagesController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
+        /** @var string $status */
+        $status = $request->request->get('status', '');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -43,6 +48,8 @@ class MessagesController extends BaseController
                 'messages' => $ticket->getMessages(),
                 'organization' => $ticket->getOrganization(),
                 'message' => $messageContent,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
                 'error' => $this->csrfError(),
             ]);
         }
@@ -63,11 +70,28 @@ class MessagesController extends BaseController
                 'messages' => $ticket->getMessages(),
                 'organization' => $ticket->getOrganization(),
                 'message' => $messageContent,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
+                'errors' => $this->formatErrors($errors),
+            ]);
+        }
+
+        $ticket->setStatus($status);
+
+        $errors = $validator->validate($ticket);
+        if (count($errors) > 0) {
+            return $this->renderBadRequest('tickets/messages/_messages.html.twig', [
+                'ticket' => $ticket,
+                'messages' => $ticket->getMessages(),
+                'message' => $messageContent,
+                'status' => $status,
+                'statuses' => Ticket::getStatusesWithLabels(),
                 'errors' => $this->formatErrors($errors),
             ]);
         }
 
         $messageRepository->save($message, true);
+        $ticketRepository->save($ticket, true);
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

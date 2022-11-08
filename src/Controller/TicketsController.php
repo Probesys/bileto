@@ -22,6 +22,8 @@ class TicketsController extends BaseController
             'messages' => $ticket->getMessages(),
             'organization' => $ticket->getOrganization(),
             'message' => '',
+            'status' => 'pending',
+            'statuses' => Ticket::getStatusesWithLabels(),
         ]);
     }
 }

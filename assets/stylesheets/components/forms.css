@@ -61,6 +61,10 @@ select {
         border-color 0.2s ease-in-out;
 }
 
+.form-group--inline select {
+    width: auto;
+}
+
 select:not([multiple]) {
     padding-right: 3.5rem;
 
@@ -87,6 +91,12 @@ select:not([disabled]):focus {
 select[aria-invalid] {
     background-color: var(--color-error2);
     border-color: var(--color-error11);
+}
+
+.form-group--inline {
+    display: flex;
+
+    align-items: center;
 }
 
 .form__error {
