@@ -18,7 +18,9 @@
 @import "./components/layout.css";
 @import "./components/lines.css";
 @import "./components/messages.css";
+@import "./components/modal.css";
 @import "./components/popups.css";
+@import "./components/spinners.css";
 @import "./components/tables.css";
 @import "./components/text.css";
 @import "./components/timelines.css";

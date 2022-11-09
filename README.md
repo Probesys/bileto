@@ -138,3 +138,31 @@ $ make icons
 ```
 
 Icons can be displayed in templates via the Twig function `icon()` (see [`IconExtension`](src/Twig/IconExtension.php)).
+
+### How to open a modal
+
+You need a button with the `data-controller="modal-opener"` and all the related attributes, e.g.:
+
+```twig
+<button
+    data-controller="modal-opener"
+    data-action="modal-opener#fetch"
+    data-modal-opener-href-value="{{ path('a route') }}"
+    aria-haspopup="dialog"
+    aria-controls="modal"
+>
+    Edit
+</button>
+```
+
+The `data-modal-opener-href-value` destination must extend the `modal.html.twig` template, e.g.:
+
+```twig
+{% extends 'modal.html.twig' %}
+
+{% block title %}Some modal title{% endblock %}
+
+{% block body %}
+    <p>The content of the modal</p>
+{% endblock %}
+```

@@ -1,0 +1,11 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<turbo-frame id="modal-content">
+    <h1 id="modal-title" class="modal__title">{% block title %}{% endblock %}</h1>
+
+    {% block body %}{% endblock %}
+</turbo-frame>

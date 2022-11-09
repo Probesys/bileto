@@ -8,6 +8,8 @@
     "rules": {
         "indentation": 4,
 
+        "at-rule-no-vendor-prefix": null,
+
         "declaration-empty-line-before": [
             "always",
             {

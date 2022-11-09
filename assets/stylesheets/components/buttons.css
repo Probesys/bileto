@@ -52,3 +52,13 @@ button:active,
 .button--primary:active {
     background-color: var(--color-primary8);
 }
+
+.button--icon {
+    padding: 0.75rem 1rem;
+
+    line-height: 1.2;
+
+    background-color: transparent;
+    background-image: none;
+    border-radius: 5rem;
+}

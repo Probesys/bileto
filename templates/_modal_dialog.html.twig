@@ -1,0 +1,43 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2020 - 2022 Marien Fressinaud (flusio)
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div
+    id="modal"
+    class="modal"
+    role="dialog"
+    data-controller="modal"
+    data-action="click->modal#closeOnMask"
+    aria-modal="true"
+    aria-hidden="true"
+    tabindex="-1"
+>
+    <section
+        class="modal__box"
+        data-modal-target="box"
+        role="document"
+    >
+        <header class="modal__header">
+            <button
+                type="button"
+                class="button--icon"
+                data-action="modal#close"
+                title="{{ 'Close this window' | trans }}"
+            >
+                {{ icon('close') }}
+                <span class="sr-only">
+                    {{ 'Close' | trans }}
+                </span>
+            </button>
+        </header>
+
+        <div data-modal-target="body" class="modal__body">
+            <turbo-frame data-modal-target="content">
+                <div class="spinner"></div>
+            </turbo-frame>
+        </div>
+    </section>
+</div>
