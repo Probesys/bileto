@@ -52,9 +52,9 @@
                     name="name"
                     value="{{ name }}"
                     required
+                    autofocus
                     maxlength="255"
                     {% if errors.name is defined %}
-                        autofocus
                         aria-invalid="true"
                         aria-errormessage="name-error"
                     {% endif %}

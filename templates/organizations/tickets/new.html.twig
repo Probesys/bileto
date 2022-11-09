@@ -60,9 +60,9 @@
                     name="title"
                     value="{{ title }}"
                     required
+                    autofocus
                     maxlength="255"
                     {% if errors.title is defined %}
-                        autofocus
                         aria-invalid="true"
                         aria-errormessage="title-error"
                     {% endif %}
