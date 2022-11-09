@@ -95,8 +95,8 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $this->assertResponseRedirects('/organizations', 302);
         $organization = OrganizationFactory::first();
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}", 302);
         $this->assertSame($name, $organization->getName());
         $this->assertSame(20, strlen($organization->getUid()));
     }

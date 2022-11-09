@@ -66,7 +66,9 @@ class OrganizationsController extends BaseController
 
         $orgaRepository->save($organization, true);
 
-        return $this->redirectToRoute('organizations');
+        return $this->redirectToRoute('organization', [
+            'uid' => $organization->getUid(),
+        ]);
     }
 
     #[Route('/organizations/{uid}', name: 'organization', methods: ['GET', 'HEAD'])]
