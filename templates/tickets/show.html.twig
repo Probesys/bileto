@@ -184,9 +184,27 @@
                 </div>
 
                 <div class="flow">
-                    <div class="text--secondary">
-                        {{ icon('priority') }}
-                        <strong>{{ 'Priority' | trans }}</strong>
+                    <div class="row text--secondary">
+                        <span>
+                            {{ icon('priority') }}
+                            <strong>{{ 'Priority' | trans }}</strong>
+                        </span>
+
+                        <div class="row__extend"></div>
+
+                        <button
+                            class="button--icon"
+                            data-controller="modal-opener"
+                            data-action="modal-opener#fetch"
+                            data-modal-opener-href-value="{{ path('edit ticket priority', { uid: ticket.uid }) }}"
+                            aria-haspopup="dialog"
+                            aria-controls="modal"
+                        >
+                            {{ icon('gear') }}
+                            <span class="sr-only">
+                                {{ 'Edit' | trans }}
+                            </span>
+                        </button>
                     </div>
 
                     <div class="ticket__priority">

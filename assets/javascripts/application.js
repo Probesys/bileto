@@ -6,6 +6,7 @@ import * as Turbo from '@hotwired/turbo'; // eslint-disable-line no-unused-vars
 import { Application } from '@hotwired/stimulus';
 
 import ColorSchemeController from '@/controllers/color_scheme_controller.js';
+import FormPriorityController from '@/controllers/form_priority_controller.js';
 import ModalController from '@/controllers/modal_controller.js';
 import ModalOpenerController from '@/controllers/modal_opener_controller.js';
 import PopupController from '@/controllers/popup_controller.js';
@@ -13,6 +14,7 @@ import TinymceController from '@/controllers/tinymce_controller.js';
 
 const application = Application.start();
 application.register('color-scheme', ColorSchemeController);
+application.register('form-priority', FormPriorityController);
 application.register('modal', ModalController);
 application.register('modal-opener', ModalOpenerController);
 application.register('popup', PopupController);

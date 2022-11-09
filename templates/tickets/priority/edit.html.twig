@@ -1,0 +1,134 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'Edit the priority' | trans }}{% endblock %}
+
+{% block body %}
+    <form
+        action="{{ path('update ticket priority', {'uid': ticket.uid}) }}"
+        method="post"
+        class="wrapper wrapper--center flow"
+        data-controller="form-priority"
+        data-turbo-preserve-scroll
+    >
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket priority') }}">
+
+        {% if error %}
+            <div class="alert alert--error" role="alert" data-turbo-cache="false" data-test="alert-error">
+                <div class="alert__title">{{ 'Error' | trans }}</div>
+
+                <p class="alert__message">
+                    {{ error }}
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="grid grid--cols2">
+            <div class="flow-small">
+                <label for="urgency">
+                    {{ 'Urgency' | trans }}
+                </label>
+
+                {% if errors.urgency is defined %}
+                    <p class="form__error" role="alert" id="urgency-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.urgency }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="urgency"
+                    name="urgency"
+                    required
+                    {% if errors.urgency is defined %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-errormessage="urgency-error"
+                    {% endif %}
+                    data-form-priority-target="urgency"
+                    data-action="form-priority#updatePriority"
+                >
+                    {% for value, label in weights %}
+                        <option value="{{ value }}" {{ value == urgency ? 'selected' }}>
+                            {{ label | trans }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flow-small">
+                <label for="impact">
+                    {{ 'Impact' | trans }}
+                </label>
+
+                {% if errors.impact is defined %}
+                    <p class="form__error" role="alert" id="impact-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.impact }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="impact"
+                    name="impact"
+                    required
+                    {% if errors.impact is defined %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-errormessage="impact-error"
+                    {% endif %}
+                    data-form-priority-target="impact"
+                    data-action="form-priority#updatePriority"
+                >
+                    {% for value, label in weights %}
+                        <option value="{{ value }}" {{ value == impact ? 'selected' }}>
+                            {{ label | trans }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="flow-small">
+            <label for="priority">
+                {{ 'Priority' | trans }}
+            </label>
+
+            {% if errors.priority is defined %}
+                <p class="form__error" role="alert" id="priority-error">
+                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                    {{ errors.priority }}
+                </p>
+            {% endif %}
+
+            <select
+                id="priority"
+                name="priority"
+                required
+                {% if errors.priority is defined %}
+                    autofocus
+                    aria-invalid="true"
+                    aria-errormessage="priority-error"
+                {% endif %}
+                data-form-priority-target="priority"
+            >
+                {% for value, label in weights %}
+                    <option value="{{ value }}" {{ value == priority ? 'selected' }}>
+                        {{ label | trans }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form__actions">
+            <button id="form-update-priority-submit" class="button--primary" type="submit">
+                {{ 'Save the changes' | trans }}
+            </button>
+        </div>
+    </form>
+{% endblock %}
