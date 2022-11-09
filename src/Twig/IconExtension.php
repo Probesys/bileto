@@ -6,6 +6,7 @@
 
 namespace App\Twig;
 
+use Symfony\Component\Asset\Packages;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -13,9 +14,12 @@ class IconExtension extends AbstractExtension
 {
     private string $pathToIcons = '';
 
-    public function __construct(string $pathToIcons)
+    private Packages $assetPackages;
+
+    public function __construct(string $pathToIcons, Packages $assetPackages)
     {
         $this->pathToIcons = $pathToIcons;
+        $this->assetPackages = $assetPackages;
     }
 
     public function getFunctions(): array
@@ -31,14 +35,11 @@ class IconExtension extends AbstractExtension
 
     public function icon(string $iconName): string
     {
-        $iconFilename = "{$this->pathToIcons}/{$iconName}.svg";
-        $iconContent = @file_get_contents($iconFilename);
-        if ($iconContent === false) {
-            throw new \Exception("Icon {$iconName} does not exist.");
-        }
-
-        return <<<HTML
-            <span class="icon icon--{$iconName}" aria-hidden="true">{$iconContent}</span>
-        HTML;
+        $modificationTime = @filemtime($this->pathToIcons);
+        $iconsUrl = $this->assetPackages->getUrl('icons.svg');
+        $svg = "<svg class=\"icon icon--{$iconName}\" aria-hidden=\"true\" width=\"24\" height=\"24\">";
+        $svg .= "<use xlink:href=\"{$iconsUrl}?{$modificationTime}#{$iconName}\"/>";
+        $svg .= '</svg>';
+        return $svg;
     }
 }

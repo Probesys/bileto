@@ -5,6 +5,7 @@
   "scripts": {
     "watch": "vite build --config .vite/vite.config.js --mode development --watch",
     "build": "vite build --config .vite/vite.config.js",
+    "build:icons": "svg-sprite --config .svg-sprite.json assets/icons/*.svg",
     "lint-js": "eslint assets/javascripts/",
     "lint-js-fix": "eslint --fix assets/javascripts/",
     "lint-css": "stylelint assets/stylesheets/**/*.css",
@@ -16,6 +17,7 @@
     "stylelint": "^14.13.0",
     "stylelint-config-standard": "^28.0.0",
     "stylelint-order": "^5.0.0",
+    "svg-sprite": "^2.0.1",
     "vite": "^3.1.0"
   },
   "dependencies": {

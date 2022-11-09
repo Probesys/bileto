@@ -35,4 +35,4 @@ services:
 
     App\Twig\IconExtension:
         arguments:
-            - "%kernel.project_dir%/assets/icons"
+            - "%kernel.project_dir%/public/icons.svg"

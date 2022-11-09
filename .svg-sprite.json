@@ -1,0 +1,9 @@
+{
+    "dest": "public",
+    "mode": {
+        "symbol": {
+            "dest": ".",
+            "sprite": "icons.svg"
+        }
+    }
+}

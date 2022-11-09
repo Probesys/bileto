@@ -80,6 +80,10 @@ i18n-extract: ## Extract translations
 migration: ## Generate a database migration from entities changes
 	$(CONSOLE) make:migration
 
+.PHONY: icons
+icons: ## Build the icons asset
+	$(NPM) run build:icons
+
 .PHONY: test
 test: ## Run the test suite
 	$(PHP) ./bin/phpunit \

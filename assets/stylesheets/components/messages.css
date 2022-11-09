@@ -45,15 +45,12 @@
     .message__role {
         width: 3rem;
         height: 3rem;
-        padding: 0.5rem;
     }
 }
 
 .message__role > .icon {
     width: 75%;
     height: 75%;
-
-    vertical-align: top;
 }
 
 .message__box {

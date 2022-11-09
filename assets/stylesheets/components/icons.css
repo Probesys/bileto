@@ -6,14 +6,9 @@
     display: inline-block;
     width: 1em;
     height: auto;
+    margin-top: 0.15em;
 
-    vertical-align: middle;
-}
-
-.icon svg {
-    display: inline-block;
-
-    vertical-align: text-top;
+    vertical-align: top;
 
     fill: currentcolor;
 }
