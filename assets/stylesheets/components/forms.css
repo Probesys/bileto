@@ -100,7 +100,7 @@ select[aria-invalid] {
 }
 
 .form__error {
-    padding-left: 1.25em;
+    padding-left: 1.75em;
 
     color: var(--color-error11);
     font-size: 0.9em;
@@ -108,8 +108,8 @@ select[aria-invalid] {
 
     background-image: url("../../icons/circle-exclamation-error.svg");
     background-repeat: no-repeat;
-    background-position: left center;
-    background-size: 1em;
+    background-position: 0.75rem center;
+    background-size: 1.1em;
 }
 
 .form__actions {
