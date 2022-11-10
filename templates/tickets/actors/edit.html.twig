@@ -1,0 +1,104 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'Edit the actors' | trans }}{% endblock %}
+
+{% block body %}
+    <form
+        action="{{ path('update ticket actors', {'uid': ticket.uid}) }}"
+        method="post"
+        class="wrapper wrapper--center flow"
+        data-turbo-preserve-scroll
+    >
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
+
+        {% if error %}
+            <div class="alert alert--error" role="alert" data-turbo-cache="false" data-test="alert-error">
+                <div class="alert__title">{{ 'Error' | trans }}</div>
+
+                <p class="alert__message">
+                    {{ error }}
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="flow-small">
+            <label for="requester">
+                {{ icon('user') }}
+                {{ 'Requester' | trans }}
+            </label>
+
+            {% if errors.requester is defined %}
+                <p class="form__error" role="alert" id="requester-error">
+                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                    {{ errors.requester }}
+                </p>
+            {% endif %}
+
+            <select
+                id="requester"
+                name="requesterId"
+                required
+                {% if errors.requester is defined %}
+                    autofocus
+                    aria-invalid="true"
+                    aria-errormessage="requester-error"
+                {% endif %}
+            >
+                {% for user in users %}
+                    <option value="{{ user.id }}" {{ user.id == requesterId ? 'selected' }}>
+                        {{ user.email }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="flow-small">
+            <label for="assignee">
+                {{ icon('headset') }}
+                {{ 'Assignee' | trans }}
+                <small class="text--secondary">
+                    {{ '(optional)' | trans }}
+                </small>
+            </label>
+
+            {% if errors.assignee is defined %}
+                <p class="form__error" role="alert" id="assignee-error">
+                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                    {{ errors.assignee }}
+                </p>
+            {% endif %}
+
+            <select
+                id="assignee"
+                name="assigneeId"
+                {% if errors.assignee is defined %}
+                    autofocus
+                    aria-invalid="true"
+                    aria-errormessage="assignee-error"
+                {% endif %}
+            >
+                <option value="">
+                    {{ 'Unassigned' | trans }}
+                </option>
+
+                {% for user in users %}
+                    <option value="{{ user.id }}" {{ user.id == assigneeId ? 'selected' }}>
+                        {{ user.email }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form__actions">
+            <button id="form-update-actors-submit" class="button--primary" type="submit">
+                {{ 'Save the changes' | trans }}
+            </button>
+        </div>
+    </form>
+{% endblock %}

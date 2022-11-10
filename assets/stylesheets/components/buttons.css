@@ -61,3 +61,19 @@ button:active,
     background-color: transparent;
     border-radius: 5rem;
 }
+
+.button--ghost {
+    padding: 0;
+
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+}
+
+.button--ghost:hover,
+.button--ghost:focus,
+.button--ghost:active {
+    background-color: transparent;
+}

@@ -155,9 +155,27 @@
 
             <div class="ticket__info flow-larger">
                 <div class="flow">
-                    <div class="text--secondary">
-                        {{ icon('user-group') }}
-                        <strong>{{ 'Actors' | trans }}</strong>
+                    <div class="row">
+                        <span class="text--secondary">
+                            {{ icon('user-group') }}
+                            <strong>{{ 'Actors' | trans }}</strong>
+                        </span>
+
+                        <div class="row__extend"></div>
+
+                        <button
+                            class="button--icon"
+                            data-controller="modal-opener"
+                            data-action="modal-opener#fetch"
+                            data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                            aria-haspopup="dialog"
+                            aria-controls="modal"
+                        >
+                            {{ icon('gear') }}
+                            <span class="sr-only">
+                                {{ 'Edit the actors' | trans }}
+                            </span>
+                        </button>
                     </div>
 
                     <div>
@@ -177,7 +195,16 @@
                             {% if ticket.assignee %}
                                 {{ ticket.assignee.email }}
                             {% else %}
-                                <strong>{{ 'Unassigned' | trans }}</strong>
+                                <button
+                                    class="button--ghost"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                                    aria-haspopup="dialog"
+                                    aria-controls="modal"
+                                >
+                                    <strong>{{ 'Unassigned' | trans }}</strong>
+                                </button>
                             {% endif %}
                         </p>
                     </div>
