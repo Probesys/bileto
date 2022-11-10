@@ -177,6 +177,21 @@ class Ticket
         return $statusesWithLabels[$this->status];
     }
 
+    public function getStatusBadgeColor(): ?string
+    {
+        if (
+            $this->status === 'new' ||
+            $this->status === 'assigned' ||
+            $this->status === 'in_progress'
+        ) {
+            return 'green';
+        } elseif ($this->status === 'pending') {
+            return 'blue';
+        } else {
+            return 'grey';
+        }
+    }
+
     public function setStatus(string $status): self
     {
         $this->status = $status;
@@ -241,6 +256,19 @@ class Ticket
     {
         $weightsWithLabels = self::getWeightsWithLabels();
         return $weightsWithLabels[$this->priority];
+    }
+
+    public function getPriorityBadgeColor(): ?string
+    {
+        if ($this->priority === 'low') {
+            return 'blue';
+        } elseif ($this->priority === 'medium') {
+            return 'orange';
+        } elseif ($this->priority === 'high') {
+            return 'red';
+        } else {
+            return 'grey';
+        }
     }
 
     public function setPriority(string $priority): self

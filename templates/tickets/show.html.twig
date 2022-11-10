@@ -27,7 +27,7 @@
             </div>
 
             <div class="text--center">
-                <span class="ticket__status ticket__status--{{ ticket.status }}" title="{{ 'Status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
+                <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'Status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
                 <span class="text--small">
                     <strong>{{ ticket.createdBy.email }}</strong>
@@ -233,8 +233,7 @@
                             </span>
                         </button>
                     </div>
-
-                    <div class="ticket__priority">
+                    <div class="ticket__priority badge badge--bold badge--{{ ticket.priorityBadgeColor }}">
                         {{ ticket.priorityLabel | trans }}
                     </div>
 

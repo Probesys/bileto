@@ -100,12 +100,16 @@
                                         {% endif %}
                                     </td>
 
-                                    <td>
-                                        {{ ticket.statusLabel | trans }}
+                                    <td class="text--center">
+                                        <span class="badge badge--{{ ticket.statusBadgeColor }}">
+                                            {{ ticket.statusLabel | trans }}
+                                        </span>
                                     </td>
 
-                                    <td>
-                                        {{ ticket.priorityLabel | trans }}
+                                    <td class="text--center">
+                                        <span class="badge badge--{{ ticket.priorityBadgeColor }}">
+                                            {{ ticket.priorityLabel | trans }}
+                                        </span>
                                     </td>
                                 </tr>
                             {% endfor %}
