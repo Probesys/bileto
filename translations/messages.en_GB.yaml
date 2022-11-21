@@ -43,7 +43,6 @@ Incident: Incident
 Low: Low
 Medium: Medium
 High: High
-'opened this <strong>%type%</strong>': 'opened this <strong>%type%</strong>'
 'on %date%': 'on %date%'
 Priority: Priority
 'Urgency:': 'Urgency:'
@@ -62,3 +61,8 @@ Close: Close
 Urgency: Urgency
 Impact: Impact
 'Edit the actors': 'Edit the actors'
+Actions: Actions
+'Turn into an incident': 'Turn into an incident'
+'Turn into a request': 'Turn into a request'
+'opened this <strong>request</strong>': 'opened this <strong>request</strong>'
+'opened this <strong>incident</strong>': 'opened this <strong>incident</strong>'

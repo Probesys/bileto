@@ -31,7 +31,13 @@
 
                 <span class="text--small">
                     <strong>{{ ticket.createdBy.email }}</strong>
-                    {{ 'opened this <strong>%type%</strong>' | trans({ '%type%': ticket.typeLabel | trans }) | raw }}
+
+                    {% if ticket.type == 'request' %}
+                        {{ 'opened this <strong>request</strong>' | trans | raw }}
+                    {% else %}
+                        {{ 'opened this <strong>incident</strong>' | trans | raw }}
+                    {% endif %}
+
                     {{ 'on %date%' | trans({ '%date%': ticket.createdAt.format('Y-m-d') }) }}
                 </span>
             </div>
@@ -154,6 +160,41 @@
             </div>
 
             <div class="ticket__info flow-larger">
+                <div class="text--right">
+                    <details
+                        class="popup"
+                        data-controller="popup"
+                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside keydown->popup#closeOnEscape"
+                    >
+                        <summary class="popup__opener">
+                            <span class="button">
+                                {{ icon('ellipsis') }}
+                                {{ 'Actions' | trans }}
+                            </span>
+                        </summary>
+
+                        <nav
+                            class="popup__container popup__container--left flow-small"
+                            role="menu"
+                        >
+                            <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
+                                {% if ticket.type == 'request' %}
+                                    <input type="hidden" name="type" value="incident">
+                                    <button id="form-update-type-submit" class="popup__item" type="submit" role="menuitem">
+                                        {{ 'Turn into an incident' | trans }}
+                                    </button>
+                                {% else %}
+                                    <input type="hidden" name="type" value="request">
+                                    <button id="form-update-type-submit" class="popup__item" type="submit" role="menuitem">
+                                        {{ 'Turn into a request' | trans }}
+                                    </button>
+                                {% endif %}
+                            </form>
+                        </nav>
+                    </details>
+                </div>
+
                 <div class="flow">
                     <div class="row">
                         <span class="text--secondary">
