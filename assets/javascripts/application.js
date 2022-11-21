@@ -10,6 +10,7 @@ import FormPriorityController from '@/controllers/form_priority_controller.js';
 import ModalController from '@/controllers/modal_controller.js';
 import ModalOpenerController from '@/controllers/modal_opener_controller.js';
 import PopupController from '@/controllers/popup_controller.js';
+import NewTicketController from '@/controllers/new_ticket_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
 
 const application = Application.start();
@@ -17,6 +18,7 @@ application.register('color-scheme', ColorSchemeController);
 application.register('form-priority', FormPriorityController);
 application.register('modal', ModalController);
 application.register('modal-opener', ModalOpenerController);
+application.register('new-ticket', NewTicketController);
 application.register('popup', PopupController);
 application.register('tinymce', TinymceController);
 

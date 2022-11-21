@@ -26,6 +26,7 @@
             action="{{ path('create organization ticket', {'uid': organization.uid}) }}"
             method="post"
             class="wrapper wrapper--center flow"
+            data-controller="new-ticket"
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization ticket') }}">
 
@@ -145,6 +146,8 @@
                             aria-invalid="true"
                             aria-errormessage="assignee-error"
                         {% endif %}
+                        data-action="new-ticket#updateStatus"
+                        data-new-ticket-target="assigneeSelect"
                     >
                         <option value="">
                             {{ 'Unassigned' | trans }}
@@ -181,6 +184,7 @@
                         aria-invalid="true"
                         aria-errormessage="status-error"
                     {% endif %}
+                    data-new-ticket-target="statusSelect"
                 >
                     {% for value, label in statuses %}
                         <option value="{{ value }}" {{ value == status ? 'selected' }}>
