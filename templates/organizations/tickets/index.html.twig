@@ -25,6 +25,7 @@
         <div class="wrapper-large wrapper--center flow">
             {% if tickets %}
                 <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                    {{ icon('plus') }}
                     {{ 'New ticket' | trans }}
                 </a>
 
@@ -124,6 +125,7 @@
 
                     <p class="text--big">
                         <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                            {{ icon('plus') }}
                             {{ 'New ticket' | trans }}
                         </a>
                     </p>
