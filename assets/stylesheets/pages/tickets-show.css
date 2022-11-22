@@ -41,3 +41,9 @@
 .tickets-show .ticket__info {
     font-size: 0.9em;
 }
+
+@media (min-width: 800px) {
+    .tickets-show .ticket__editor {
+        margin-left: 7rem;
+    }
+}
