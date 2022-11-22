@@ -7,6 +7,7 @@
 namespace App\Service;
 
 use App\Entity\Organization;
+use App\Entity\User;
 use App\Repository\TicketRepository;
 
 class TicketSearcher
@@ -34,6 +35,13 @@ class TicketSearcher
     public function setStatus(array|string $status): self
     {
         $this->criteria['status'] = $status;
+
+        return $this;
+    }
+
+    public function setAssignee(User|null $assignee): self
+    {
+        $this->criteria['assignee'] = $assignee ? $assignee->getId() : null;
 
         return $this;
     }

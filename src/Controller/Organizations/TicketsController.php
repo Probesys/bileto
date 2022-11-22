@@ -27,14 +27,31 @@ class TicketsController extends BaseController
     #[Route('/organizations/{uid}/tickets', name: 'organization tickets', methods: ['GET', 'HEAD'])]
     public function index(
         Organization $organization,
+        Request $request,
         TicketSearcher $ticketSearcher,
+        UserRepository $userRepository,
     ): Response {
+        /** @var string $assigneeUid */
+        $assigneeUid = $request->query->get('assignee', '');
+
         $ticketSearcher->setOrganization($organization);
         $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
+
+        if ($assigneeUid === 'none') {
+            $ticketSearcher->setAssignee(null);
+            $currentPage = 'to assign';
+        } elseif ($assigneeUid !== '') {
+            $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
+            $ticketSearcher->setAssignee($assignee);
+            $currentPage = 'owned';
+        } else {
+            $currentPage = 'all';
+        }
 
         return $this->render('organizations/tickets/index.html.twig', [
             'organization' => $organization,
             'tickets' => $ticketSearcher->getTickets(),
+            'currentPage' => $currentPage,
         ]);
     }
 

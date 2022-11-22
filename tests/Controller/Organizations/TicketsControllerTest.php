@@ -63,6 +63,58 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorNotExists('[data-test="ticket-item"]');
     }
 
+    public function testGetIndexCanFilterTicketsToAssign(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne([
+            'name' => 'My organization',
+        ]);
+        $ticketAssigned = TicketFactory::createOne([
+            'title' => 'Ticket assigned',
+            'organization' => $organization,
+            'assignee' => $user,
+        ]);
+        $ticketToAssign = TicketFactory::createOne([
+            'title' => 'Ticket to assign',
+            'organization' => $organization,
+            'assignee' => null,
+        ]);
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?assignee=none");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="ticket-item"]', 'Ticket to assign');
+        $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Ticket assigned');
+    }
+
+    public function testGetIndexCanFilterOwnedTickets(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne([
+            'name' => 'My organization',
+        ]);
+        $ticketOwned = TicketFactory::createOne([
+            'title' => 'Ticket owned',
+            'organization' => $organization,
+            'assignee' => $user,
+        ]);
+        $ticketAssigned = TicketFactory::createOne([
+            'title' => 'Ticket assigned to other',
+            'organization' => $organization,
+            'assignee' => UserFactory::createOne(),
+        ]);
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?assignee={$user->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="ticket-item"]', 'Ticket owned');
+        $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Ticket assigned to other');
+    }
+
     public function testGetIndexRedirectsToLoginIfNotConnected(): void
     {
         $client = static::createClient();
