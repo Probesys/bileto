@@ -51,14 +51,14 @@
                             <div class="message__avatar">
                                 {{ icon('circle-user') }}
                                 {% if message.createdBy == ticket.requester %}
-                                    <span class="message__role">
+                                    <span class="message__role" title="{{ 'Requester' | trans }}">
                                         {{ icon('user') }}
                                         <span class="sr-only">
                                             {{ 'Requester' | trans }}
                                         </span>
                                     </span>
                                 {% elseif message.createdBy == ticket.assignee %}
-                                    <span class="message__role">
+                                    <span class="message__role" title="{{ 'Assignee' | trans }}">
                                         {{ icon('headset') }}
                                         <span class="sr-only">
                                             {{ 'Assignee' | trans }}
