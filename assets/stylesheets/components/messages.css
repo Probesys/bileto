@@ -108,3 +108,9 @@
     background-color: var(--color-grey1);
     border-radius: 0 0 0.5rem 0.5rem;
 }
+
+.message__content * + p,
+.message__content * + ul,
+.message__content * + ol {
+    margin-top: 2rem;
+}
