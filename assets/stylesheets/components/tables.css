@@ -46,3 +46,23 @@ tbody tr:nth-child(even) {
 
     outline-offset: -0.3rem;
 }
+
+.col--size1 {
+    width: 5rem;
+}
+
+.col--size2 {
+    width: 10rem;
+}
+
+.col--size3 {
+    width: 15rem;
+}
+
+.col--size4 {
+    width: 20rem;
+}
+
+.col--size5 {
+    width: 25rem;
+}
