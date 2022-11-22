@@ -60,3 +60,21 @@
     color: var(--color-grey12);
     font-weight: bold;
 }
+
+.tickets-index .tickets__list-count {
+    float: right;
+
+    min-width: 2.5rem;
+    padding: 0.25rem 0.5rem;
+
+    font-size: 0.8em;
+    font-weight: normal;
+    text-align: center;
+
+    border: 1px solid currentcolor;
+    border-radius: 0.5rem;
+}
+
+.tickets-index a:not([aria-current="page"]) .tickets__list-count {
+    background-color: var(--color-primary3);
+}

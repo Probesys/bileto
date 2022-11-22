@@ -31,6 +31,9 @@ class TicketsController extends BaseController
         TicketSearcher $ticketSearcher,
         UserRepository $userRepository,
     ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         /** @var string $assigneeUid */
         $assigneeUid = $request->query->get('assignee', '');
 
@@ -51,6 +54,8 @@ class TicketsController extends BaseController
         return $this->render('organizations/tickets/index.html.twig', [
             'organization' => $organization,
             'tickets' => $ticketSearcher->getTickets(),
+            'countToAssign' => $ticketSearcher->countToAssign(),
+            'countOwned' => $ticketSearcher->countAssignedTo($user),
             'currentPage' => $currentPage,
         ]);
     }

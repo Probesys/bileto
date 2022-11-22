@@ -49,6 +49,12 @@
                             {{ currentPage == 'to assign' ? 'aria-current="page"' }}
                         >
                             {{ 'Tickets to assign' | trans }}
+
+                            {% if countToAssign > 0 %}
+                                <span class="tickets__list-count">
+                                    {{ countToAssign }}
+                                </span>
+                            {% endif %}
                         </a>
                     </li>
 
@@ -58,6 +64,12 @@
                             {{ currentPage == 'owned' ? 'aria-current="page"' }}
                         >
                             {{ 'My tickets' | trans }}
+
+                            {% if countOwned > 0 %}
+                                <span class="tickets__list-count">
+                                    {{ countOwned }}
+                                </span>
+                            {% endif %}
                         </a>
                     </li>
                 </ul>

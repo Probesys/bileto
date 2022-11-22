@@ -54,4 +54,20 @@ class TicketSearcher
         $sort = ['createdAt' => 'DESC'];
         return $this->ticketRepository->findBy($this->criteria, $sort);
     }
+
+    public function countToAssign(): int
+    {
+        $criteria = array_merge($this->criteria, [
+            'assignee' => null,
+        ]);
+        return $this->ticketRepository->count($criteria);
+    }
+
+    public function countAssignedTo(User $assignee): int
+    {
+        $criteria = array_merge($this->criteria, [
+            'assignee' => $assignee->getId(),
+        ]);
+        return $this->ticketRepository->count($criteria);
+    }
 }
