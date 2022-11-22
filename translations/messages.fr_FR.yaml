@@ -66,3 +66,7 @@ Actions: Actions
 'Turn into a request': 'Changer en demande'
 'opened this <strong>request</strong>': 'a ouvert cette <strong>demande</strong>'
 'opened this <strong>incident</strong>': 'a ouvert cet <strong>incident</strong>'
+'All tickets': 'Tous les tickets'
+'Tickets to assign': 'Tickets à assigner'
+'My tickets': 'Mes tickets'
+'No ticket': 'Aucun ticket'
