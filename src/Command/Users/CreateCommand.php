@@ -7,6 +7,7 @@
 namespace App\Command\Users;
 
 use App\Entity;
+use App\Repository\UserRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -24,8 +25,8 @@ use Doctrine\Persistence\ManagerRegistry;
 )]
 class CreateCommand extends Command
 {
-    /** @var \Doctrine\ORM\EntityManager */
-    private $entityManager;
+    /** @var UserRepository */
+    private $userRepository;
 
     /** @var UserPasswordHasherInterface */
     private $passwordHasher;
@@ -34,14 +35,11 @@ class CreateCommand extends Command
     private $validator;
 
     public function __construct(
-        ManagerRegistry $doctrine,
+        UserRepository $userRepository,
         UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
     ) {
-        /** @var \Doctrine\ORM\EntityManager */
-        $entityManager = $doctrine->getManager();
-
-        $this->entityManager = $entityManager;
+        $this->userRepository = $userRepository;
         $this->passwordHasher = $passwordHasher;
         $this->validator = $validator;
 
@@ -90,6 +88,9 @@ class CreateCommand extends Command
         $user->setPassword($hashedPassword);
         $user->setRoles(['ROLE_USER']);
 
+        $uid = $this->userRepository->generateUid();
+        $user->setUid($uid);
+
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
             $output = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
@@ -100,8 +101,7 @@ class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->userRepository->save($user, true);
 
         $output->writeln("The user \"{$user->getEmail()}\" has been created.");
 

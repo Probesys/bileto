@@ -8,6 +8,7 @@ namespace App\Factory;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Utils\Random;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\RepositoryProxy;
 use Zenstruck\Foundry\ModelFactory;
@@ -65,6 +66,7 @@ final class UserFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
+            'uid' => Random::hex(20),
             'email' => self::faker()->unique()->safeEmail(),
             'roles' => ['ROLE_USER'],
             'password' => self::faker()->text(),
