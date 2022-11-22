@@ -7,7 +7,6 @@
 namespace App\Repository;
 
 use App\Entity\Organization;
-use App\Utils\Random;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,6 +20,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class OrganizationRepository extends ServiceEntityRepository
 {
+    use UidGeneratorTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Organization::class);
@@ -41,22 +42,6 @@ class OrganizationRepository extends ServiceEntityRepository
 
         if ($flush) {
             $this->getEntityManager()->flush();
-        }
-    }
-
-    public function generateUid(): string
-    {
-        while (true) {
-            $uid = Random::hex(20);
-
-            // The `if` condition doesn't protect from parallel requests being
-            // made at the same time. Thus, there's a very little possibility
-            // that we call `save()` with a uid that is already in the
-            // database. Fortunately, the database has a `UNIQUE` constraint
-            // and the request will fail.
-            if ($this->findOneBy(['uid' => $uid]) === null) {
-                return $uid;
-            }
         }
     }
 }
