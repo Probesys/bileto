@@ -172,8 +172,9 @@
                         </table>
                     </div>
                 {% else %}
-                    <p class="text--center" data-test="tickets-placeholder">
-                        {{ 'You have not yet created any ticket.' | trans }}
+                    <p class="placeholder">
+                        {{ icon('ticket') }}
+                        {{ 'No ticket' | trans }}
                     </p>
                 {% endif %}
             </div>

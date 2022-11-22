@@ -19,6 +19,7 @@
 @import "./components/layout.css";
 @import "./components/messages.css";
 @import "./components/modal.css";
+@import "./components/placeholders.css";
 @import "./components/popups.css";
 @import "./components/rows.css";
 @import "./components/spinners.css";
