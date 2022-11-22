@@ -13,6 +13,7 @@ use App\Entity\Ticket;
 use App\Repository\MessageRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
+use App\Service\TicketSearcher;
 use App\Utils\Time;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,11 +25,38 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class TicketsController extends BaseController
 {
     #[Route('/organizations/{uid}/tickets', name: 'organization tickets', methods: ['GET', 'HEAD'])]
-    public function index(Organization $organization): Response
-    {
+    public function index(
+        Organization $organization,
+        Request $request,
+        TicketSearcher $ticketSearcher,
+        UserRepository $userRepository,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        /** @var string $assigneeUid */
+        $assigneeUid = $request->query->get('assignee', '');
+
+        $ticketSearcher->setOrganization($organization);
+        $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
+
+        if ($assigneeUid === 'none') {
+            $ticketSearcher->setAssignee(null);
+            $currentPage = 'to assign';
+        } elseif ($assigneeUid !== '') {
+            $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
+            $ticketSearcher->setAssignee($assignee);
+            $currentPage = 'owned';
+        } else {
+            $currentPage = 'all';
+        }
+
         return $this->render('organizations/tickets/index.html.twig', [
             'organization' => $organization,
-            'tickets' => $organization->getOpenTickets()->toArray(),
+            'tickets' => $ticketSearcher->getTickets(),
+            'countToAssign' => $ticketSearcher->countToAssign(),
+            'countOwned' => $ticketSearcher->countAssignedTo($user),
+            'currentPage' => $currentPage,
         ]);
     }
 

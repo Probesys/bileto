@@ -20,6 +20,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'email',
     message: new TranslatableMessage('The email {{ value }} is already used.', [], 'validators'),
 )]
+#[UniqueEntity(
+    fields: 'uid',
+    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -67,6 +71,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: new TranslatableMessage('The language {{ value }} is not a valid choice.', [], 'validators'),
     )]
     private ?string $locale = 'en_GB';
+
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $uid = null;
 
     public function getId(): ?int
     {
@@ -157,6 +164,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLocale(string $locale): self
     {
         $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(string $uid): self
+    {
+        $this->uid = $uid;
 
         return $this;
     }

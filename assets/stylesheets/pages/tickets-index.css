@@ -1,0 +1,80 @@
+/* This file is part of Bileto. */
+/* Copyright 2022 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+@media (min-width: 800px) {
+    .tickets-index .tickets__layout {
+        grid-gap: 2rem;
+        grid-template-columns: 225px 1fr;
+    }
+}
+
+@media (min-width: 1200px) {
+    .tickets-index .tickets__layout {
+        grid-template-columns: 300px 1fr;
+    }
+}
+
+.tickets-index .tickets__nav {
+    margin-top: -2rem;
+    margin-right: -1rem;
+    margin-left: -1rem;
+    padding: 3rem 0.5rem;
+
+    background-color: var(--color-grey2);
+}
+
+@media (min-width: 800px) {
+    .tickets-index .tickets__nav {
+        margin-right: 0;
+        margin-bottom: -4rem;
+        margin-left: -2rem;
+        padding-right: 1rem;
+        padding-left: 1rem;
+
+        border-right: 1px solid var(--color-grey6);
+    }
+}
+
+.tickets-index .tickets__nav ul {
+    padding-left: 0;
+
+    list-style: none;
+}
+
+.tickets-index .tickets__nav ul a {
+    display: block;
+    padding: 1rem 0.5rem;
+
+    text-decoration: none;
+}
+
+@media (min-width: 800px) {
+    .tickets-index .tickets__nav ul a {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+}
+
+.tickets-index .tickets__nav ul a[aria-current="page"] {
+    color: var(--color-grey12);
+    font-weight: bold;
+}
+
+.tickets-index .tickets__list-count {
+    float: right;
+
+    min-width: 2.5rem;
+    padding: 0.25rem 0.5rem;
+
+    font-size: 0.8em;
+    font-weight: normal;
+    text-align: center;
+
+    border: 1px solid currentcolor;
+    border-radius: 0.5rem;
+}
+
+.tickets-index a:not([aria-current="page"]) .tickets__list-count {
+    background-color: var(--color-primary3);
+}

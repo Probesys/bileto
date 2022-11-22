@@ -43,6 +43,7 @@ class CreateCommandTest extends KernelTestCase
         $this->assertSame($email, $user->getEmail());
         $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $password));
         $this->assertSame(['ROLE_USER'], $user->getRoles());
+        $this->assertSame(20, strlen($user->getUid()));
     }
 
     public function testExecuteWorksWhenPassingOptions(): void
@@ -69,6 +70,7 @@ class CreateCommandTest extends KernelTestCase
         $this->assertSame($email, $user->getEmail());
         $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $password));
         $this->assertSame(['ROLE_USER'], $user->getRoles());
+        $this->assertSame(20, strlen($user->getUid()));
     }
 
     public function testExecuteFailsIfEmailIsInvalid(): void

@@ -89,17 +89,4 @@ class Organization
     {
         return $this->tickets;
     }
-
-    /**
-     * @return Collection<int, Ticket>
-     */
-    public function getOpenTickets(): Collection
-    {
-        /** @var \Doctrine\ORM\PersistentCollection<int, Ticket> $tickets */
-        $tickets = $this->tickets;
-
-        $expression = Criteria::expr()->in('status', Ticket::OPEN_STATUSES);
-        $criteria = Criteria::create()->andWhere($expression);
-        return $tickets->matching($criteria);
-    }
 }
