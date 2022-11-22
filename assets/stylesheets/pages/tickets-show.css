@@ -14,10 +14,10 @@
     }
 }
 
-@media (min-width: 1350px) {
+@media (min-width: 1450px) {
     .tickets-show .ticket__layout {
         grid-gap: 5rem;
-        grid-template-columns: minmax(auto, 400px) minmax(800px, auto) 400px;
+        grid-template-columns: minmax(auto, 300px) 900px 400px;
     }
 
     .tickets-show .ticket__timeline {
