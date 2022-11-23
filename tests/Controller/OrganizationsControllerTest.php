@@ -49,7 +49,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains(
             '[data-test="organizations-placeholder"]',
-            'You have not yet created an organization.'
+            'No organization'
         );
     }
 

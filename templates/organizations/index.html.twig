@@ -30,8 +30,9 @@
                 </div>
             {% else %}
                 <div class="text--center flow-large">
-                    <p data-test="organizations-placeholder">
-                        {{ 'You have not yet created an organization.' | trans }}
+                    <p class="placeholder" data-test="organizations-placeholder">
+                        {{ icon('organization') }}
+                        {{ 'No organization' | trans }}
                     </p>
 
                     <p class="text--big">
