@@ -36,6 +36,9 @@ class MessagesController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
+        /** @var boolean $isSolution */
+        $isSolution = $request->request->get('isSolution', false);
+
         /** @var string $status */
         $status = $request->request->get('status', '');
 
@@ -50,6 +53,7 @@ class MessagesController extends BaseController
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
+                'isSolution' => $isSolution,
                 'error' => $this->csrfError(),
             ]);
         }
@@ -60,7 +64,6 @@ class MessagesController extends BaseController
         $message->setCreatedBy($user);
         $message->setTicket($ticket);
         $message->setIsPrivate(false);
-        $message->setIsSolution(false);
         $message->setVia('webapp');
 
         $errors = $validator->validate($message);
@@ -72,8 +75,14 @@ class MessagesController extends BaseController
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
+                'isSolution' => $isSolution,
                 'errors' => $this->formatErrors($errors),
             ]);
+        }
+
+        if ($isSolution) {
+            $ticket->setSolution($message);
+            $status = 'resolved';
         }
 
         $ticket->setStatus($status);
@@ -86,6 +95,7 @@ class MessagesController extends BaseController
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
+                'isSolution' => $isSolution,
                 'errors' => $this->formatErrors($errors),
             ]);
         }

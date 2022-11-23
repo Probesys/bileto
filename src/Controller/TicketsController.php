@@ -24,6 +24,7 @@ class TicketsController extends BaseController
             'message' => '',
             'status' => 'pending',
             'statuses' => Ticket::getStatusesWithLabels(),
+            'isSolution' => false,
         ]);
     }
 }
