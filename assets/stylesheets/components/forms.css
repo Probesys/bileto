@@ -1,4 +1,5 @@
 /* This file is part of Bileto. */
+/* Copyright 2020 - 2022 Marien Fressinaud (flusio) */
 /* Copyright 2022 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
@@ -40,6 +41,100 @@ input[aria-invalid],
 textarea[aria-invalid] {
     background-color: var(--color-error2);
     border-color: var(--color-error11);
+}
+
+/**
+ * Accessible custom checkboxes and radio buttons.
+ * @see https://www.a11ywithlindsey.com/blog/create-custom-keyboard-accesible-checkboxes
+ */
+input[type="checkbox"],
+input[type="radio"] {
+    position: absolute;
+
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+
+    width: 1px;
+    height: 1px;
+}
+
+input[type="checkbox"] + label,
+input[type="radio"] + label {
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+}
+
+input[type="checkbox"] + label::before,
+input[type="radio"] + label::before {
+    content: "";
+
+    position: relative;
+
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 0.75rem;
+
+    flex-shrink: 0;
+
+    background-color: var(--color-grey1);
+    box-shadow: 2px 2px 3px var(--color-box-shadow) inset;
+    border: 0.25rem solid var(--color-grey7);
+    border-radius: 0.5rem;
+
+    transition:
+        border-color 0.2s ease-in-out,
+        background-color 0.2s ease-in-out;
+}
+
+input[type="radio"] + label::before {
+    border-radius: 50%;
+}
+
+input[type="checkbox"]:hover + label::before,
+input[type="checkbox"]:focus + label::before,
+input[type="radio"]:hover + label::before,
+input[type="radio"]:focus + label::before {
+    background-color: var(--color-primary2);
+    border-color: var(--color-primary8);
+}
+
+input[type="checkbox"]:focus + label::before {
+    outline: 0.3rem solid var(--color-primary9);
+}
+
+input[type="checkbox"]:checked + label::before,
+input[type="radio"]:checked + label::before {
+    border-color: var(--color-grey11);
+}
+
+input[type="checkbox"]:checked + label::after,
+input[type="radio"]:checked + label::after {
+    content: "";
+
+    position: absolute;
+    left: 1.25rem;
+
+    width: 1.5rem;
+    height: 0.75rem;
+    margin-top: -0.3rem;
+
+    border-bottom: 0.25rem solid var(--color-grey12);
+    border-left: 0.25rem solid var(--color-grey12);
+
+    transform: rotate(-45deg);
+}
+
+input[type="radio"]:checked + label::after {
+    height: 1.5rem;
+    margin-top: 0;
+
+    background-color: var(--color-grey12);
+    border-top: 0.25rem solid var(--color-grey12);
+    border-right: 0.25rem solid var(--color-grey12);
+    border-radius: 50%;
 }
 
 select {
