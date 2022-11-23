@@ -38,7 +38,9 @@
                         {{ 'opened this <strong>incident</strong>' | trans | raw }}
                     {% endif %}
 
-                    {{ 'on %date%' | trans({ '%date%': ticket.createdAt.format('Y-m-d') }) }}
+                    <time datetime="{{ ticket.createdAt | dateIso }}">
+                        {{ 'on %date%' | trans({ '%date%': ticket.createdAt | dateTrans }) }}
+                    </time>
                 </span>
             </div>
         </div>
@@ -75,9 +77,9 @@
 
                                     <div class="message__top-separator"></div>
 
-                                    <div class="message__date">
-                                        {{ message.createdAt.format('Y-m-d') }}
-                                    </div>
+                                    <time datetime="{{ message.createdAt | dateIso }}" class="message__date">
+                                        {{ message.createdAt | dateTrans }}
+                                    </time>
                                 </div>
 
                                 <div class="message__content">

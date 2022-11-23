@@ -90,6 +90,10 @@
     border-radius: 0.5rem 0.5rem 0 0;
 }
 
+.message__top * + * {
+    margin-left: 0.25rem;
+}
+
 .message__top-separator {
     flex: 1;
 }
@@ -100,6 +104,7 @@
 
 .message__date {
     color: var(--color-grey11);
+    font-size: 0.9em;
 }
 
 .message__content {

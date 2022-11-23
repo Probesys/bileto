@@ -87,7 +87,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th class="col--size2">
+                                    <th class="col--size4">
                                         {{ 'Opened on' | trans }}
                                     </th>
 
@@ -128,7 +128,9 @@
                                 {% for ticket in tickets|sort((a, b) => b.createdAt <=> a.createdAt) %}
                                     <tr data-test="ticket-item">
                                         <td>
-                                            {{ ticket.createdAt.format('Y-m-d') }}
+                                            <time datetime="{{ ticket.createdAt | dateIso }}" class="text--small">
+                                                {{ ticket.createdAt | dateTrans }}
+                                            </time>
                                         </td>
 
                                         <td class="text--right td--anchor">
