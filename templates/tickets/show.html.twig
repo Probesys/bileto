@@ -49,7 +49,7 @@
             <div class="ticket__timeline flow-large">
                 <div class="flow-large timeline">
                     {% for message in messages %}
-                        <article class="message">
+                        <article class="message {{ ticket.solution == message ? 'message--solution' }}">
                             <div class="message__avatar">
                                 {{ icon('circle-user') }}
                                 {% if message.createdBy == ticket.requester %}
@@ -71,6 +71,12 @@
 
                             <div class="message__box">
                                 <div class="message__top">
+                                    {% if ticket.solution == message %}
+                                        <div class="message__check" title="{{ 'This message resolved the ticket' | trans }}">
+                                            {{ icon('check') }}
+                                        </div>
+                                    {% endif %}
+
                                     <div class="message__author">
                                         {{ message.createdBy.email }}
                                     </div>
@@ -93,7 +99,8 @@
                 <form
                     action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
                     method="post"
-                    class="ticket__editor flow"
+                    class="ticket__editor flow-small"
+                    data-controller="ticket-editor"
                     data-turbo-preserve-scroll
                 >
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
@@ -128,6 +135,21 @@
                         >{{ message }}</textarea>
                     </div>
 
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="is-solution"
+                            name="isSolution"
+                            {{ isSolution ? 'checked' }}
+                            data-action="ticket-editor#updateStatus"
+                            data-ticket-editor-target="solutionCheckbox"
+                        />
+
+                        <label for="is-solution">
+                            {{ 'Mark as solution' | trans }}
+                        </label>
+                    </div>
+
                     <div class="grid grid--cols2">
                         <div class="form-group--inline">
                             <label for="status">
@@ -143,6 +165,7 @@
                                     aria-invalid="true"
                                     aria-errormessage="status-error"
                                 {% endif %}
+                                data-ticket-editor-target="statusSelect"
                             >
                                 {% for value, label in statuses %}
                                     <option value="{{ value }}" {{ value == status ? 'selected' }}>

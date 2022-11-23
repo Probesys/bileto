@@ -100,6 +100,37 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('pending', $ticket->getStatus());
     }
 
+    public function testPostCreateForcesStatusToResolvedIfIsSolutionIsTrue(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'in_progress',
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $crawler = $client->submitForm('form-create-message-submit', [
+            'message' => $messageContent,
+            'isSolution' => true,
+        ]);
+
+        Time::unfreeze();
+        $this->assertSame(1, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $message = MessageFactory::first();
+        $ticket->refresh();
+        $this->assertSame($message->getId(), $ticket->getSolution()->getId());
+        $this->assertSame('resolved', $ticket->getStatus());
+    }
+
     public function testPostCreateFailsIfMessageIsEmpty(): void
     {
         $client = static::createClient();
