@@ -192,9 +192,11 @@ class Ticket
             $this->status === 'assigned' ||
             $this->status === 'in_progress'
         ) {
-            return 'green';
+            return 'orange';
         } elseif ($this->status === 'pending') {
             return 'blue';
+        } elseif ($this->status === 'resolved') {
+            return 'green';
         } else {
             return 'grey';
         }
