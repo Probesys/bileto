@@ -20,9 +20,9 @@ Dark: Sombre
 'Save the changes': 'Enregistrer les modifications'
 Language: Langue
 'The requester must exist.': 'Le demandeur doit exister.'
-'The assignee must exist.': 'L’assigné doit exister.'
+'The assignee must exist.': 'L’attribution doit exister.'
 New: Nouveau
-Assigned: Assigné
+Assigned: Attribué
 'In progress': 'En cours'
 Pending: 'En attente'
 Resolved: Résolu
@@ -32,9 +32,9 @@ Closed: Fermé
 'New ticket – %name%': 'Nouveau ticket – %name%'
 'Back (Tickets of %name%)': 'Retour (Tickets de %name%)'
 Requester: Demandeur
-Assignee: Assigné
+Assignee: Attribué à
 (optional): (optionnel)
-Unassigned: 'Non assigné'
+Unassigned: 'Non attribué'
 Status: Statut
 'Create the ticket': 'Créer le ticket'
 Actors: Acteurs
@@ -67,7 +67,7 @@ Actions: Actions
 'opened this <strong>request</strong>': 'a ouvert cette <strong>demande</strong>'
 'opened this <strong>incident</strong>': 'a ouvert cet <strong>incident</strong>'
 'All tickets': 'Tous les tickets'
-'Tickets to assign': 'Tickets à assigner'
+'Tickets to assign': 'Tickets à attribuer'
 'My tickets': 'Mes tickets'
 'No ticket': 'Aucun ticket'
 'No organization': 'Aucune organisation'
