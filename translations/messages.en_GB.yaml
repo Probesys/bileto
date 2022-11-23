@@ -73,3 +73,7 @@ Actions: Actions
 'No organization': 'No organization'
 'This message resolved the ticket': 'This message resolved the ticket'
 'Mark as solution': 'Mark as solution'
+'This message is confidential': 'This message is confidential'
+'Mark as…': 'Mark as…'
+confidential: confidential
+solution: solution

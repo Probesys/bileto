@@ -25,6 +25,7 @@ class TicketsController extends BaseController
             'status' => 'pending',
             'statuses' => Ticket::getStatusesWithLabels(),
             'isSolution' => false,
+            'isConfidential' => false,
         ]);
     }
 }

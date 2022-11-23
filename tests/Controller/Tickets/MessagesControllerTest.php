@@ -131,6 +131,37 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('resolved', $ticket->getStatus());
     }
 
+    public function testPostCreateForcesIsSolutionToFalseIfIsConfidentialIsTrue(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $crawler = $client->submitForm('form-create-message-submit', [
+            'message' => $messageContent,
+            'isSolution' => true,
+            'isConfidential' => true,
+        ]);
+
+        Time::unfreeze();
+        $this->assertSame(1, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $message = MessageFactory::first();
+        $this->assertTrue($message->isConfidential());
+        $ticket->refresh();
+        $this->assertNull($ticket->getSolution());
+    }
+
     public function testPostCreateFailsIfMessageIsEmpty(): void
     {
         $client = static::createClient();

@@ -32,7 +32,7 @@ Closed: Fermé
 'New ticket – %name%': 'Nouveau ticket – %name%'
 'Back (Tickets of %name%)': 'Retour (Tickets de %name%)'
 Requester: Demandeur
-Assignee: Attribué à
+Assignee: 'Attribué à'
 (optional): (optionnel)
 Unassigned: 'Non attribué'
 Status: Statut
@@ -73,3 +73,7 @@ Actions: Actions
 'No organization': 'Aucune organisation'
 'This message resolved the ticket': 'Ce message a résolu le ticket'
 'Mark as solution': 'Marquer comme solution'
+'This message is confidential': 'Ce message est confidentiel'
+'Mark as…': 'Marquer comme…'
+confidential: confidentiel
+solution: solution
