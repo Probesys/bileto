@@ -107,6 +107,9 @@ class Ticket
     #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: Message::class, orphanRemoval: true)]
     private Collection $messages;
 
+    #[ORM\OneToOne(cascade: ['persist'])]
+    private ?Message $solution = null;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
@@ -363,5 +366,17 @@ class Ticket
     public function getMessages(): Collection
     {
         return $this->messages;
+    }
+
+    public function getSolution(): ?Message
+    {
+        return $this->solution;
+    }
+
+    public function setSolution(?Message $solution): self
+    {
+        $this->solution = $solution;
+
+        return $this;
     }
 }

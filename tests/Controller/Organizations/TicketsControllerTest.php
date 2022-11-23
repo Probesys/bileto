@@ -192,6 +192,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame('medium', $ticket->getUrgency());
         $this->assertSame('medium', $ticket->getImpact());
         $this->assertSame('medium', $ticket->getPriority());
+        $this->assertNull($ticket->getSolution());
         $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
         $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
@@ -201,7 +202,6 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isPrivate());
-        $this->assertFalse($message->isSolution());
         $this->assertSame('webapp', $message->getVia());
     }
 

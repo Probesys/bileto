@@ -60,7 +60,6 @@ class MessagesController extends BaseController
         $message->setCreatedBy($user);
         $message->setTicket($ticket);
         $message->setIsPrivate(false);
-        $message->setIsSolution(false);
         $message->setVia('webapp');
 
         $errors = $validator->validate($message);

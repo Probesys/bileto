@@ -33,9 +33,6 @@ class Message
     #[ORM\Column]
     private bool $isPrivate = false;
 
-    #[ORM\Column]
-    private bool $isSolution = false;
-
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_VIA])]
     #[Assert\Choice(
         choices: self::VIAS,
@@ -90,18 +87,6 @@ class Message
     public function setIsPrivate(bool $isPrivate): self
     {
         $this->isPrivate = $isPrivate;
-
-        return $this;
-    }
-
-    public function isSolution(): ?bool
-    {
-        return $this->isSolution;
-    }
-
-    public function setIsSolution(bool $isSolution): self
-    {
-        $this->isSolution = $isSolution;
 
         return $this;
     }

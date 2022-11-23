@@ -48,7 +48,6 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isPrivate());
-        $this->assertFalse($message->isSolution());
         $this->assertSame('webapp', $message->getVia());
     }
 
