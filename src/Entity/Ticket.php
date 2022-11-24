@@ -187,8 +187,9 @@ class Ticket
 
     public function getStatusBadgeColor(): ?string
     {
-        if (
-            $this->status === 'new' ||
+        if ($this->status === 'new') {
+            return 'red';
+        } elseif (
             $this->status === 'in_progress' ||
             $this->status === 'planned'
         ) {
