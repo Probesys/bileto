@@ -156,6 +156,8 @@
     background-repeat: no-repeat;
     background-position: calc(100% - 2rem) calc(100% + 4rem);
     background-size: 10rem;
+
+    pointer-events: none;
 }
 
 .message__content * + p,
