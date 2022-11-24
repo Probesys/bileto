@@ -25,6 +25,7 @@
 @import "./components/spinners.css";
 @import "./components/tables.css";
 @import "./components/text.css";
+@import "./components/tickets.css";
 @import "./components/timelines.css";
 @import "./pages/tickets-index.css";
 @import "./pages/tickets-show.css";

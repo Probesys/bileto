@@ -91,13 +91,6 @@
                                         {{ 'Opened on' | trans }}
                                     </th>
 
-                                    <th class="col--size1 text--right">
-                                        #
-                                        <span class="sr-only">
-                                            {{ 'Ticket number' | trans }}
-                                        </span>
-                                    </th>
-
                                     <th>
                                         {{ 'Title' | trans }}
                                     </th>
@@ -133,15 +126,10 @@
                                             </time>
                                         </td>
 
-                                        <td class="text--right td--anchor">
-                                            <a tabindex="-1" href="{{ path('ticket', {'uid': ticket.uid}) }}">
-                                                {{ ticket.id }}
-                                            </a>
-                                        </td>
-
                                         <td class="td--anchor">
                                             <a href="{{ path('ticket', {'uid': ticket.uid}) }}">
-                                                {{ ticket.title }}
+                                                <span class="ticket__title">{{ ticket.title }}</span>
+                                                <span class="ticket__id">#{{ ticket.id }}</span>
                                             </a>
                                         </td>
 
