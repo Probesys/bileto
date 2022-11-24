@@ -36,3 +36,13 @@ services:
     App\Twig\IconExtension:
         arguments:
             - "%kernel.project_dir%/public/icons.svg"
+
+when@dev:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Twig\ViteTagsExtension:
+            arguments:
+                - "%kernel.project_dir%/public/manifest.dev.json"

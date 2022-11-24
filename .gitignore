@@ -3,9 +3,9 @@
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-/public/assets/*
-!/public/assets/.keep
-/public/manifest.json
+/public/dev_assets/*
+!/public/dev_assets/.keep
+/public/manifest.dev.json
 /var/
 /vendor/
 /node_modules/

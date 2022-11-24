@@ -3,25 +3,10 @@ import emptyAssetsDirPlugin from './empty-assets-dir-plugin.js';
 
 const path = require('path');
 
-export default defineConfig({
-    publicDir: false,
-    appType: 'custom',
-
-    plugins: [
-        emptyAssetsDirPlugin(),
-    ],
-
-    resolve:{
-        alias:{
-            '@' : path.resolve(__dirname, '../assets/javascripts')
-        },
-    },
-
-    build: {
+export default defineConfig(({ mode }) => {
+    const buildConfig = {
         outDir: 'public',
-        assetsDir: 'assets',
         sourcemap: true,
-        manifest: true,
         emptyOutDir: false,
         rollupOptions: {
             input: {
@@ -29,5 +14,32 @@ export default defineConfig({
                 'application.css': './assets/stylesheets/application.css',
             },
         },
-    },
+    };
+
+    if (mode === 'production') {
+        buildConfig.assetsDir = 'assets';
+        buildConfig.manifest = 'manifest.json';
+        buildConfig.minify = true;
+    } else {
+        buildConfig.assetsDir = 'dev_assets';
+        buildConfig.manifest = 'manifest.dev.json';
+        buildConfig.minify = false;
+    }
+
+    return {
+        publicDir: false,
+        appType: 'custom',
+
+        plugins: [
+            emptyAssetsDirPlugin(),
+        ],
+
+        resolve:{
+            alias:{
+                '@' : path.resolve(__dirname, '../assets/javascripts')
+            },
+        },
+
+        build: buildConfig,
+    };
 });
