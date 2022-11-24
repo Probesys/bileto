@@ -95,6 +95,10 @@
                                         {{ 'Title' | trans }}
                                     </th>
 
+                                    <th class="col--size2">
+                                        {{ 'Type' | trans }}
+                                    </th>
+
                                     <th class="col--size5">
                                         {{ icon('user') }}
                                         {{ 'Requester' | trans }}
@@ -131,6 +135,14 @@
                                                 <span class="ticket__title">{{ ticket.title }}</span>
                                                 <span class="ticket__id">#{{ ticket.id }}</span>
                                             </a>
+                                        </td>
+
+                                        <td>
+                                            {% if ticket.type == 'incident' %}
+                                                {{ 'Incident' | trans }}
+                                            {% else %}
+                                                {{ 'Request' | trans }}
+                                            {% endif %}
                                         </td>
 
                                         <td>
