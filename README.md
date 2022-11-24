@@ -37,3 +37,7 @@ Thanks to their authors!
 - [Executing tests and linters](/docs/developers/tests.md)
 - [Working with the icons](/docs/developers/icons.md)
 - [Working with the modals](/docs/developers/modals.md)
+
+## Maintainers guide
+
+- [How to release a version](/docs/maintainers/release.md)

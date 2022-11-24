@@ -106,6 +106,18 @@ lint-fix: ## Fix the errors detected by the linters (PHP_CodeSniffer)
 	$(NPM) run lint-js-fix
 	$(NPM) run lint-css-fix
 
+.PHONY: release
+release: ## Release a new version (take a VERSION argument)
+ifndef VERSION
+	$(error You need to provide a "VERSION" argument)
+endif
+	echo $(VERSION) > VERSION.txt
+	$(NPM) run build
+	$(EDITOR) CHANGELOG.md
+	git add .
+	git commit -m "release: Publish version $(VERSION)"
+	git tag -a $(VERSION) -m "Release version $(VERSION)"
+
 .PHONY: tree
 tree:  ## Display the structure of the application
 	tree -I 'vendor|var|coverage' --dirsfirst -CA
