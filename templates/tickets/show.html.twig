@@ -241,6 +241,19 @@
                                     </button>
                                 {% endif %}
                             </form>
+
+                            <button
+                                class="popup__item"
+                                type="submit"
+                                role="menuitem"
+                                data-controller="modal-opener"
+                                data-action="modal-opener#fetch"
+                                data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
+                                aria-haspopup="dialog"
+                                aria-controls="modal"
+                            >
+                                {{ 'Rename the ticket' | trans }}
+                            </button>
                         </nav>
                     </details>
                 </div>

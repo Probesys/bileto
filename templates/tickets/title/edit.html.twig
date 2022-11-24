@@ -1,0 +1,64 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'Rename the ticket' | trans }}{% endblock %}
+
+{% block body %}
+    <form
+        action="{{ path('update ticket title', {'uid': ticket.uid}) }}"
+        method="post"
+        class="wrapper wrapper--center flow"
+    >
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket title') }}">
+
+        {% if error %}
+            <div class="alert alert--error" role="alert" data-turbo-cache="false" data-test="alert-error">
+                <div class="alert__title">{{ 'Error' | trans }}</div>
+
+                <p class="alert__message">
+                    {{ error }}
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="flow-small">
+            <label for="title">
+                {{ 'Title' | trans }}
+                <small class="text--secondary">
+                    {{ '(max. 255 characters)' | trans }}
+                </small>
+            </label>
+
+            {% if errors.title is defined %}
+                <p class="form__error" role="alert" id="title-error">
+                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                    {{ errors.title }}
+                </p>
+            {% endif %}
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="{{ title }}"
+                required
+                maxlength="255"
+                {% if errors.title is defined %}
+                    aria-invalid="true"
+                    aria-errormessage="title-error"
+                {% endif %}
+            />
+        </div>
+
+        <div class="form__actions">
+            <button id="form-update-title-submit" class="button--primary" type="submit">
+                {{ 'Save the changes' | trans }}
+            </button>
+        </div>
+    </form>
+{% endblock %}
