@@ -31,7 +31,7 @@ class Message
     private ?User $createdBy = null;
 
     #[ORM\Column]
-    private bool $isPrivate = false;
+    private bool $isConfidential = false;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_VIA])]
     #[Assert\Choice(
@@ -79,14 +79,14 @@ class Message
         return $this;
     }
 
-    public function isPrivate(): ?bool
+    public function isConfidential(): ?bool
     {
-        return $this->isPrivate;
+        return $this->isConfidential;
     }
 
-    public function setIsPrivate(bool $isPrivate): self
+    public function setIsConfidential(bool $isConfidential): self
     {
-        $this->isPrivate = $isPrivate;
+        $this->isConfidential = $isConfidential;
 
         return $this;
     }

@@ -200,7 +200,7 @@ class TicketsController extends BaseController
         $message->setCreatedAt(Time::now());
         $message->setCreatedBy($user);
         $message->setTicket($ticket);
-        $message->setIsPrivate(false);
+        $message->setIsConfidential(false);
         $message->setVia('webapp');
 
         $errors = $validator->validate($message);

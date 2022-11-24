@@ -49,7 +49,7 @@
             <div class="ticket__timeline flow-large">
                 <div class="flow-large timeline">
                     {% for message in messages %}
-                        <article class="message {{ ticket.solution == message ? 'message--solution' }}">
+                        <article class="message {{ ticket.solution == message ? 'message--solution' }} {{ message.isConfidential ? 'message--confidential' }}">
                             <div class="message__avatar">
                                 {{ icon('circle-user') }}
                                 {% if message.createdBy == ticket.requester %}
@@ -72,8 +72,14 @@
                             <div class="message__box">
                                 <div class="message__top">
                                     {% if ticket.solution == message %}
-                                        <div class="message__check" title="{{ 'This message resolved the ticket' | trans }}">
+                                        <div title="{{ 'This message resolved the ticket' | trans }}">
                                             {{ icon('check') }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if message.isConfidential %}
+                                        <div title="{{ 'This message is confidential' | trans }}">
+                                            {{ icon('user-secret') }}
                                         </div>
                                     {% endif %}
 
@@ -99,7 +105,7 @@
                 <form
                     action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
                     method="post"
-                    class="ticket__editor flow-small"
+                    class="ticket__editor flow"
                     data-controller="ticket-editor"
                     data-turbo-preserve-scroll
                 >
@@ -135,19 +141,40 @@
                         >{{ message }}</textarea>
                     </div>
 
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="is-solution"
-                            name="isSolution"
-                            {{ isSolution ? 'checked' }}
-                            data-action="ticket-editor#updateStatus"
-                            data-ticket-editor-target="solutionCheckbox"
-                        />
-
-                        <label for="is-solution">
-                            {{ 'Mark as solution' | trans }}
+                    <div class="row">
+                        <label>
+                            {{ 'Mark as…' | trans }}
                         </label>
+
+                        <div>
+                            <input
+                                type="checkbox"
+                                id="is-confidential"
+                                name="isConfidential"
+                                {{ isConfidential ? 'checked' }}
+                                data-action="ticket-editor#setConfidential"
+                                data-ticket-editor-target="confidentialCheckbox"
+                            />
+
+                            <label for="is-confidential">
+                                {{ 'confidential' | trans }}
+                            </label>
+                        </div>
+
+                        <div>
+                            <input
+                                type="checkbox"
+                                id="is-solution"
+                                name="isSolution"
+                                {{ isSolution ? 'checked' }}
+                                data-action="ticket-editor#updateStatus"
+                                data-ticket-editor-target="solutionCheckbox"
+                            />
+
+                            <label for="is-solution">
+                                {{ 'solution' | trans }}
+                            </label>
+                        </div>
                     </div>
 
                     <div class="grid grid--cols2">

@@ -39,6 +39,9 @@ class MessagesController extends BaseController
         /** @var boolean $isSolution */
         $isSolution = $request->request->get('isSolution', false);
 
+        /** @var boolean $isConfidential */
+        $isConfidential = $request->request->get('isConfidential', false);
+
         /** @var string $status */
         $status = $request->request->get('status', '');
 
@@ -54,6 +57,7 @@ class MessagesController extends BaseController
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
                 'isSolution' => $isSolution,
+                'isConfidential' => $isConfidential,
                 'error' => $this->csrfError(),
             ]);
         }
@@ -63,7 +67,7 @@ class MessagesController extends BaseController
         $message->setCreatedAt(Time::now());
         $message->setCreatedBy($user);
         $message->setTicket($ticket);
-        $message->setIsPrivate(false);
+        $message->setIsConfidential($isConfidential);
         $message->setVia('webapp');
 
         $errors = $validator->validate($message);
@@ -76,8 +80,13 @@ class MessagesController extends BaseController
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
                 'isSolution' => $isSolution,
+                'isConfidential' => $isConfidential,
                 'errors' => $this->formatErrors($errors),
             ]);
+        }
+
+        if ($message->isConfidential()) {
+            $isSolution = false;
         }
 
         if ($isSolution) {
@@ -96,6 +105,7 @@ class MessagesController extends BaseController
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
                 'isSolution' => $isSolution,
+                'isConfidential' => $isConfidential,
                 'errors' => $this->formatErrors($errors),
             ]);
         }
