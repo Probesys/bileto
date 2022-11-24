@@ -48,6 +48,11 @@ class MessagesController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
+        $statuses = Ticket::getStatusesWithLabels();
+        if ($ticket->getStatus() !== 'new') {
+            unset($statuses['new']);
+        }
+
         if (!$this->isCsrfTokenValid('create ticket message', $csrfToken)) {
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
@@ -55,7 +60,7 @@ class MessagesController extends BaseController
                 'organization' => $ticket->getOrganization(),
                 'message' => $messageContent,
                 'status' => $status,
-                'statuses' => Ticket::getStatusesWithLabels(),
+                'statuses' => $statuses,
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'error' => $this->csrfError(),
@@ -78,7 +83,7 @@ class MessagesController extends BaseController
                 'organization' => $ticket->getOrganization(),
                 'message' => $messageContent,
                 'status' => $status,
-                'statuses' => Ticket::getStatusesWithLabels(),
+                'statuses' => $statuses,
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => $this->formatErrors($errors),
@@ -103,7 +108,7 @@ class MessagesController extends BaseController
                 'messages' => $ticket->getMessages(),
                 'message' => $messageContent,
                 'status' => $status,
-                'statuses' => Ticket::getStatusesWithLabels(),
+                'statuses' => $statuses,
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => $this->formatErrors($errors),

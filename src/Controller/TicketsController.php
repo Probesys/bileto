@@ -17,13 +17,18 @@ class TicketsController extends BaseController
     #[Route('/tickets/{uid}', name: 'ticket', methods: ['GET', 'HEAD'])]
     public function show(Ticket $ticket): Response
     {
+        $statuses = Ticket::getStatusesWithLabels();
+        if ($ticket->getStatus() !== 'new') {
+            unset($statuses['new']);
+        }
+
         return $this->render('tickets/show.html.twig', [
             'ticket' => $ticket,
             'messages' => $ticket->getMessages(),
             'organization' => $ticket->getOrganization(),
             'message' => '',
             'status' => 'pending',
-            'statuses' => Ticket::getStatusesWithLabels(),
+            'statuses' => $statuses,
             'isSolution' => false,
             'isConfidential' => false,
         ]);
