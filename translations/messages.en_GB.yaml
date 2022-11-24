@@ -22,8 +22,8 @@ Language: Language
 'The requester must exist.': 'The requester must exist.'
 'The assignee must exist.': 'The assignee must exist.'
 New: New
-Assigned: Assigned
 'In progress': 'In progress'
+Planned: Planned
 Pending: Pending
 Resolved: Resolved
 Closed: Closed

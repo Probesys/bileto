@@ -18,13 +18,11 @@ export default class extends Controller {
         if (isAssigned) {
             newOption.disabled = true;
             if (status === 'new') {
-                this.statusSelectTarget.value = 'assigned';
+                this.statusSelectTarget.value = 'in_progress';
             }
         } else {
             newOption.disabled = false;
-            if (status === 'assigned') {
-                this.statusSelectTarget.value = 'new';
-            }
+            this.statusSelectTarget.value = 'new';
         }
     }
 }

@@ -25,8 +25,8 @@ class Ticket
     public const TYPES = ['request', 'incident'];
     public const DEFAULT_TYPE = 'request';
 
-    public const STATUSES = ['new', 'assigned', 'in_progress', 'pending', 'resolved', 'closed'];
-    public const OPEN_STATUSES = ['new', 'assigned', 'in_progress', 'pending'];
+    public const STATUSES = ['new', 'in_progress', 'planned', 'pending', 'resolved', 'closed'];
+    public const OPEN_STATUSES = ['new', 'in_progress', 'planned', 'pending'];
     public const FINISHED_STATUSES = ['resolved', 'closed'];
     public const DEFAULT_STATUS = 'new';
 
@@ -189,8 +189,8 @@ class Ticket
     {
         if (
             $this->status === 'new' ||
-            $this->status === 'assigned' ||
-            $this->status === 'in_progress'
+            $this->status === 'in_progress' ||
+            $this->status === 'planned'
         ) {
             return 'orange';
         } elseif ($this->status === 'pending') {
@@ -331,8 +331,8 @@ class Ticket
     {
         return [
             'new' => new TranslatableMessage('New'),
-            'assigned' => new TranslatableMessage('Assigned'),
             'in_progress' => new TranslatableMessage('In progress'),
+            'planned' => new TranslatableMessage('Planned'),
             'pending' => new TranslatableMessage('Pending'),
             'resolved' => new TranslatableMessage('Resolved'),
             'closed' => new TranslatableMessage('Closed'),

@@ -22,8 +22,8 @@ Language: Langue
 'The requester must exist.': 'Le demandeur doit exister.'
 'The assignee must exist.': 'L’attribution doit exister.'
 New: Nouveau
-Assigned: Attribué
 'In progress': 'En cours'
+Planned: Planifié
 Pending: 'En attente'
 Resolved: Résolu
 Closed: Fermé

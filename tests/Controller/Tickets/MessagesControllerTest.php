@@ -83,7 +83,7 @@ class MessagesControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => 'assigned',
+            'status' => 'in_progress',
         ]);
         $messageContent = 'My message';
 
