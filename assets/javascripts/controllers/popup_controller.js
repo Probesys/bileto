@@ -6,17 +6,29 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     connect () {
-        const summaryElement = this.element.querySelector('summary');
-        if (summaryElement) {
-            summaryElement.setAttribute('aria-haspopup', 'menu');
-            summaryElement.setAttribute('aria-expanded', this.element.open);
+        const openerElement = this.element.querySelector('.popup__opener');
+        if (openerElement) {
+            openerElement.setAttribute('aria-haspopup', 'menu');
+            openerElement.setAttribute('aria-expanded', this.element.open);
         }
+
+        const containerElement = this.element.querySelector('.popup__container');
+        if (containerElement) {
+            containerElement.setAttribute('role', 'menu');
+        }
+
+        const itemsElements = this.element.querySelectorAll('.popup__item');
+        itemsElements.forEach((element) => {
+            element.setAttribute('role', 'menuitem');
+        });
+
+        this.element.addEventListener('keydown', this.closeOnEscape.bind(this));
     }
 
     update (event) {
-        const summaryElement = this.element.querySelector('summary');
-        if (summaryElement) {
-            summaryElement.setAttribute('aria-expanded', this.element.open);
+        const openerElement = this.element.querySelector('.popup_opener');
+        if (openerElement) {
+            openerElement.setAttribute('aria-expanded', this.element.open);
         }
     }
 
@@ -44,9 +56,9 @@ export default class extends Controller {
 
         this.element.open = false;
 
-        const summaryElement = this.element.querySelector('summary');
-        if (summaryElement) {
-            summaryElement.focus();
+        const openerElement = this.element.querySelector('.popup_opener');
+        if (openerElement) {
+            openerElement.focus();
         }
     }
 };

@@ -214,7 +214,7 @@
                     <details
                         class="popup"
                         data-controller="popup"
-                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside keydown->popup#closeOnEscape"
+                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
                     >
                         <summary class="popup__opener">
                             <span class="button">
@@ -223,20 +223,17 @@
                             </span>
                         </summary>
 
-                        <nav
-                            class="popup__container popup__container--left flow-small"
-                            role="menu"
-                        >
+                        <nav class="popup__container popup__container--left flow-small">
                             <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
                                 {% if ticket.type == 'request' %}
                                     <input type="hidden" name="type" value="incident">
-                                    <button id="form-update-type-submit" class="popup__item" type="submit" role="menuitem">
+                                    <button id="form-update-type-submit" class="popup__item" type="submit">
                                         {{ 'Turn into an incident' | trans }}
                                     </button>
                                 {% else %}
                                     <input type="hidden" name="type" value="request">
-                                    <button id="form-update-type-submit" class="popup__item" type="submit" role="menuitem">
+                                    <button id="form-update-type-submit" class="popup__item" type="submit">
                                         {{ 'Turn into a request' | trans }}
                                     </button>
                                 {% endif %}
@@ -244,8 +241,7 @@
 
                             <button
                                 class="popup__item"
-                                type="submit"
-                                role="menuitem"
+                                type="button"
                                 data-controller="modal-opener"
                                 data-action="modal-opener#fetch"
                                 data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"

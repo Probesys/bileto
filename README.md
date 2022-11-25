@@ -26,6 +26,7 @@ Developers guide:
 - [Executing tests and linters](/docs/developers/tests.md)
 - [Working with the icons](/docs/developers/icons.md)
 - [Working with the modals](/docs/developers/modals.md)
+- [Working with the popups](/docs/developers/popups.md)
 
 Maintainers guide:
 

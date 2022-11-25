@@ -41,7 +41,7 @@
                         <details
                             class="popup"
                             data-controller="popup"
-                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside keydown->popup#closeOnEscape"
+                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
                         >
                             <summary class="popup__opener" title="{{ 'Menu of %email%' | trans({'%email%': app.user.email}) }}">
                                 <span class="layout__header-avatar">{{ icon('circle-user') }}</span>
@@ -50,20 +50,17 @@
                                 </span>
                             </summary>
 
-                            <nav
-                                class="popup__container popup__container--large popup__container--left flow-small"
-                                role="menu"
-                            >
+                            <nav class="popup__container popup__container--large popup__container--left flow-small">
                                 <div class="popup__title">{{ app.user.email }}</div>
 
-                                <a class="popup__item" href="{{ path('preferences') }}" role="menuitem">
+                                <a class="popup__item" href="{{ path('preferences') }}">
                                     {{ icon('palette') }}
                                     {{ 'Preferences' | trans }}
                                 </a>
 
                                 <div class="popup__separator"></div>
 
-                                <form action="{{ path('logout') }}" method="post" role="menuitem">
+                                <form action="{{ path('logout') }}" method="post">
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
                                     <button class="popup__item" id="form-logout-submit" type="submit">
                                         {{ icon('logout') }}
