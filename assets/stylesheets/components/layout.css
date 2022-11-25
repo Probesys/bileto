@@ -93,3 +93,22 @@
     font-size: 1.5em;
     text-align: center;
 }
+
+.banner__container {
+    display: block;
+    padding: 1rem;
+
+    font-weight: bold;
+    text-align: center;
+
+    background-color: var(--color-primary3);
+    box-shadow: 0 1px 3px var(--color-box-shadow);
+    border-bottom: 0.25rem solid var(--color-primary6);
+}
+
+.layout__banner--alert .banner__container {
+    color: var(--color-error12);
+
+    background-color: var(--color-error2);
+    border-bottom-color: var(--color-error9);
+}

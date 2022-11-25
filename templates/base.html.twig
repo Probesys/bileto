@@ -29,6 +29,14 @@
 
     <body>
         <div class="layout" id="layout">
+            <noscript>
+                <div class="layout__banner layout__banner--alert">
+                    <p class="banner__container">
+                        {{ 'You need to activate the JavaScript in order to use Bileto.' | trans }}
+                    </p>
+                </div>
+            </noscript>
+
             <nav class="layout__header">
                 <div class="layout__header-container">
                     <a class="layout__header-home" href="{{ path('home') }}">
