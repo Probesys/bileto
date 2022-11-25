@@ -12,6 +12,11 @@ export default class extends Controller {
         };
     }
 
+    connect () {
+        this.element.setAttribute('aria-haspopup', 'dialog');
+        this.element.setAttribute('aria-controls', 'modal');
+    }
+
     fetch (event) {
         event.preventDefault();
 

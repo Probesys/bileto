@@ -9,12 +9,12 @@ You need a button with the `data-controller="modal-opener"` and all the related 
     data-controller="modal-opener"
     data-action="modal-opener#fetch"
     data-modal-opener-href-value="{{ path('a route') }}"
-    aria-haspopup="dialog"
-    aria-controls="modal"
 >
     Edit
 </button>
 ```
+
+## Write the modal content template
 
 The `data-modal-opener-href-value` destination view must extend the `modal.html.twig` template, e.g.:
 
