@@ -11,7 +11,7 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20221123163702 extends AbstractMigration
+final class Version20221123163702RenameMessageIsPrivateToIsConfidential extends AbstractMigration
 {
     public function getDescription(): string
     {
