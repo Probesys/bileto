@@ -176,7 +176,7 @@ select:not([multiple]) {
     background-image: url("../../icons/angle-down.svg");
     background-repeat: no-repeat;
     background-position: right 0.75rem top 58%;
-    background-size: 2.5rem;
+    background-size: 2rem;
 
     -moz-appearance: none;
     -webkit-appearance: none;
@@ -191,6 +191,21 @@ select:not([disabled]):hover,
 select:not([disabled]):focus {
     background-color: var(--color-primary4);
     border-color: var(--color-primary8);
+}
+
+select[disabled] {
+    color: var(--color-grey11);
+
+    background-color: var(--color-grey2);
+    border-color: var(--color-grey7);
+}
+
+select[disabled]:not([multiple]) {
+    background-image: url("../../icons/angle-down-secondary.svg");
+}
+
+[data-color-scheme="dark"] select[disabled]:not([multiple]) {
+    background-image: url("../../icons/angle-down-secondary-light.svg");
 }
 
 select[aria-invalid] {
