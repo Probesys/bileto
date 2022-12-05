@@ -9,44 +9,64 @@ export default class extends Controller {
         return ['confidentialCheckbox', 'solutionCheckbox', 'statusSelect'];
     }
 
+    static get values () {
+        return {
+            ticketStatus: String,
+        };
+    }
+
     connect () {
-        this.setConfidential();
+        this.refresh();
+    }
+
+    refresh () {
+        this.updateConfidential();
+        this.updateSolution();
         this.updateStatus();
     }
 
-    setConfidential () {
-        const isConfidential = this.confidentialCheckboxTarget.checked;
+    updateConfidential () {
+        const isSolution = this.solutionCheckboxTarget.checked;
+        if (isSolution) {
+            this.confidentialCheckboxTarget.checked = false;
+            this.confidentialCheckboxTarget.disabled = true;
+        } else {
+            this.confidentialCheckboxTarget.disabled = false;
+        }
+    }
 
-        if (isConfidential) {
+    updateSolution () {
+        const isConfidential = this.confidentialCheckboxTarget.checked;
+        if (isConfidential || this.isFinished) {
             this.solutionCheckboxTarget.checked = false;
             this.solutionCheckboxTarget.disabled = true;
         } else {
             this.solutionCheckboxTarget.disabled = false;
         }
-
-        this.updateStatus();
     }
 
     updateStatus () {
+        if (!this.hasStatusSelectTarget) {
+            return;
+        }
+
         const isSolution = this.solutionCheckboxTarget.checked;
-
         if (isSolution) {
-            this.confidentialCheckboxTarget.checked = false;
-            this.confidentialCheckboxTarget.disabled = true;
-
             this.statusSelectTarget.value = 'resolved';
 
             for (const option of this.statusSelectTarget.options) {
                 option.disabled = option.value !== 'resolved';
             }
         } else {
-            this.confidentialCheckboxTarget.disabled = false;
-
             this.statusSelectTarget.value = 'in_progress';
 
             for (const option of this.statusSelectTarget.options) {
                 option.disabled = false;
             }
         }
+    }
+
+    get isFinished () {
+        return this.ticketStatusValue === 'resolved' || this.ticketStatusValue === 'closed';
     }
 }

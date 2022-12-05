@@ -108,6 +108,7 @@
                     class="ticket__editor flow"
                     data-controller="ticket-editor"
                     data-turbo-preserve-scroll
+                    data-ticket-editor-ticket-status-value="{{ ticket.status }}"
                 >
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
 
@@ -152,7 +153,7 @@
                                 id="is-confidential"
                                 name="isConfidential"
                                 {{ isConfidential ? 'checked' }}
-                                data-action="ticket-editor#setConfidential"
+                                data-action="ticket-editor#refresh"
                                 data-ticket-editor-target="confidentialCheckbox"
                             />
 
@@ -167,7 +168,8 @@
                                 id="is-solution"
                                 name="isSolution"
                                 {{ isSolution ? 'checked' }}
-                                data-action="ticket-editor#updateStatus"
+                                {{ ticket.isFinished ? 'disabled' }}
+                                data-action="ticket-editor#refresh"
                                 data-ticket-editor-target="solutionCheckbox"
                             />
 
@@ -178,29 +180,46 @@
                     </div>
 
                     <div class="grid grid--cols2">
-                        <div class="form-group--inline">
-                            <label for="status">
-                                {{ 'Status to' | trans }}
-                            </label>
+                        {% if not ticket.isFinished %}
+                            <div class="form-group--inline">
+                                <label for="status">
+                                    {{ 'Status to' | trans }}
+                                </label>
 
-                            <select
-                                id="status"
-                                name="status"
-                                required
-                                {% if errors.status is defined %}
-                                    autofocus
-                                    aria-invalid="true"
-                                    aria-errormessage="status-error"
-                                {% endif %}
-                                data-ticket-editor-target="statusSelect"
-                            >
-                                {% for value, label in statuses %}
-                                    <option value="{{ value }}" {{ value == status ? 'selected' }}>
-                                        {{ label | trans }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                                <select
+                                    id="status"
+                                    name="status"
+                                    required
+                                    {{ ticket.isFinished ? 'disabled' }}
+                                    {% if errors.status is defined %}
+                                        autofocus
+                                        aria-invalid="true"
+                                        aria-errormessage="status-error"
+                                    {% endif %}
+                                    data-ticket-editor-target="statusSelect"
+                                >
+                                    {% for value, label in statuses %}
+                                        <option value="{{ value }}" {{ value == status ? 'selected' }}>
+                                            {{ label | trans }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% elseif ticket.status == 'resolved' %}
+                            <div class="vertical-center">
+                                <p class="text--success">
+                                    {{ icon('check') }}
+                                    {{ 'This ticket is resolved.' | trans }}
+                                </p>
+                            </div>
+                        {% elseif ticket.status == 'closed' %}
+                            <div class="vertical-center">
+                                <p class="text--secondary">
+                                    {{ icon('close') }}
+                                    {{ 'This ticket is closed.' | trans }}
+                                </p>
+                            </div>
+                        {% endif %}
 
                         <button id="form-create-message-submit" class="button--primary" type="submit">
                             {{ 'Answer' | trans }}

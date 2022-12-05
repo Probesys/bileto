@@ -203,6 +203,16 @@ class Ticket
         }
     }
 
+    public function isOpen(): bool
+    {
+        return in_array($this->status, self::OPEN_STATUSES);
+    }
+
+    public function isFinished(): bool
+    {
+        return in_array($this->status, self::FINISHED_STATUSES);
+    }
+
     public function setStatus(string $status): self
     {
         $this->status = $status;

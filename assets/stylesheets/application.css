@@ -6,6 +6,7 @@
 @import "./_colors.dark.css";
 @import "./_colors.light.css";
 @import "./utils/flow.css";
+@import "./utils/vertical-center.css";
 @import "./utils/wrapper.css";
 @import "./components/alerts.css";
 @import "./components/anchors.css";

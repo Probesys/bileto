@@ -6,11 +6,13 @@
 
 namespace App\Tests\Controller\Tickets;
 
+use App\Entity\Ticket;
 use App\Factory\MessageFactory;
 use App\Factory\TicketFactory;
 use App\Factory\UserFactory;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -159,6 +161,34 @@ class MessagesControllerTest extends WebTestCase
         $message = MessageFactory::first();
         $this->assertTrue($message->isConfidential());
         $ticket->refresh();
+        $this->assertNull($ticket->getSolution());
+    }
+
+    public function testPostCreateDoNotChangeTheTicketStatusAndForcesIsSolutionToFalseIfStatusIsFinished(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::FINISHED_STATUSES);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => $initialStatus,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $crawler = $client->submitForm('form-create-message-submit', [
+            'message' => $messageContent,
+            'isSolution' => true,
+        ]);
+
+        Time::unfreeze();
+        $ticket->refresh();
+        $this->assertSame($initialStatus, $ticket->getStatus());
         $this->assertNull($ticket->getSolution());
     }
 

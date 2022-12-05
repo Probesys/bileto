@@ -80,3 +80,5 @@ solution: solution
 Type: Type
 'Rename the ticket': 'Rename the ticket'
 'You need to activate the JavaScript in order to use Bileto.': 'You need to activate the JavaScript in order to use Bileto.'
+'This ticket is resolved.': 'This ticket is resolved.'
+'This ticket is closed.': 'This ticket is closed.'

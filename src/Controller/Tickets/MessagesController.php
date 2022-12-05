@@ -94,6 +94,11 @@ class MessagesController extends BaseController
             $isSolution = false;
         }
 
+        if ($ticket->isFinished()) {
+            $status = $ticket->getStatus();
+            $isSolution = false;
+        }
+
         if ($isSolution) {
             $ticket->setSolution($message);
             $status = 'resolved';

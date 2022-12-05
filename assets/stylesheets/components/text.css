@@ -6,6 +6,22 @@
     color: var(--color-grey11);
 }
 
+.text--success {
+    color: var(--color-success11);
+}
+
+.text--error {
+    color: var(--color-error11);
+}
+
+.text--info {
+    color: var(--color-info11);
+}
+
+.text--warning {
+    color: var(--color-warning11);
+}
+
 .text--center {
     text-align: center;
 }
