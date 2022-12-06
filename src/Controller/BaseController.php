@@ -27,7 +27,7 @@ class BaseController extends AbstractController
         return $this->render($view, $parameters, $response);
     }
 
-    protected function csrfError(): string
+    protected function csrfError(): TranslatableMessage
     {
         return new TranslatableMessage('Invalid CSRF token.', [], 'security');
     }

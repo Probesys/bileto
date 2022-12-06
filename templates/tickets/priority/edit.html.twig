@@ -19,13 +19,7 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket priority') }}">
 
         {% if error %}
-            <div class="alert alert--error" role="alert" data-turbo-cache="false" data-test="alert-error">
-                <div class="alert__title">{{ 'Error' | trans }}</div>
-
-                <p class="alert__message">
-                    {{ error }}
-                </p>
-            </div>
+            {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
         {% endif %}
 
         <div class="grid grid--cols2">
