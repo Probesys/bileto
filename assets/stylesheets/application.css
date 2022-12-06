@@ -6,6 +6,9 @@
 @import "./_colors.dark.css";
 @import "./_colors.light.css";
 @import "./utils/flow.css";
+@import "./utils/grids.css";
+@import "./utils/rows.css";
+@import "./utils/text.css";
 @import "./utils/vertical-center.css";
 @import "./utils/wrapper.css";
 @import "./components/alerts.css";
@@ -14,7 +17,6 @@
 @import "./components/buttons.css";
 @import "./components/cards.css";
 @import "./components/forms.css";
-@import "./components/grid.css";
 @import "./components/icons.css";
 @import "./components/images.css";
 @import "./components/layout.css";
@@ -22,10 +24,8 @@
 @import "./components/modal.css";
 @import "./components/placeholders.css";
 @import "./components/popups.css";
-@import "./components/rows.css";
 @import "./components/spinners.css";
 @import "./components/tables.css";
-@import "./components/text.css";
 @import "./components/tickets.css";
 @import "./components/timelines.css";
 @import "./pages/tickets-index.css";
