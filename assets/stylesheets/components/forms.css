@@ -166,7 +166,7 @@ select {
         border-color 0.2s ease-in-out;
 }
 
-.form-group--inline select {
+.row > select {
     width: auto;
 }
 
@@ -222,12 +222,6 @@ select[aria-invalid] {
 .tox-tinymce:hover,
 .tox-tinymce:focus-within {
     border-color: var(--color-primary8) !important;
-}
-
-.form-group--inline {
-    display: flex;
-
-    align-items: center;
 }
 
 .form__error {

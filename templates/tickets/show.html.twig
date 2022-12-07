@@ -45,8 +45,8 @@
             </div>
         </div>
 
-        <div class="ticket__layout grid">
-            <div class="ticket__timeline flow-large">
+        <div class="wrapper-larger wrapper--center row">
+            <div class="ticket__timeline row__item--extend flow-large">
                 <div class="flow-large timeline">
                     {% for message in messages %}
                         <article class="message {{ ticket.solution == message ? 'message--solution' }} {{ message.isConfidential ? 'message--confidential' }}">
@@ -141,41 +141,43 @@
                             {{ 'Mark as…' | trans }}
                         </label>
 
-                        <div>
-                            <input
-                                type="checkbox"
-                                id="is-confidential"
-                                name="isConfidential"
-                                {{ isConfidential ? 'checked' }}
-                                data-action="ticket-editor#refresh"
-                                data-ticket-editor-target="confidentialCheckbox"
-                            />
+                        <div class="row row--always">
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="is-confidential"
+                                    name="isConfidential"
+                                    {{ isConfidential ? 'checked' }}
+                                    data-action="ticket-editor#refresh"
+                                    data-ticket-editor-target="confidentialCheckbox"
+                                />
 
-                            <label for="is-confidential">
-                                {{ 'confidential' | trans }}
-                            </label>
-                        </div>
+                                <label for="is-confidential">
+                                    {{ 'confidential' | trans }}
+                                </label>
+                            </div>
 
-                        <div>
-                            <input
-                                type="checkbox"
-                                id="is-solution"
-                                name="isSolution"
-                                {{ isSolution ? 'checked' }}
-                                {{ ticket.isFinished ? 'disabled' }}
-                                data-action="ticket-editor#refresh"
-                                data-ticket-editor-target="solutionCheckbox"
-                            />
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="is-solution"
+                                    name="isSolution"
+                                    {{ isSolution ? 'checked' }}
+                                    {{ ticket.isFinished ? 'disabled' }}
+                                    data-action="ticket-editor#refresh"
+                                    data-ticket-editor-target="solutionCheckbox"
+                                />
 
-                            <label for="is-solution">
-                                {{ 'solution' | trans }}
-                            </label>
+                                <label for="is-solution">
+                                    {{ 'solution' | trans }}
+                                </label>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid--cols2">
+                    <div class="row">
                         {% if not ticket.isFinished %}
-                            <div class="form-group--inline">
+                            <div class="row__item--extend row row--center row--always">
                                 <label for="status">
                                     {{ 'Status to' | trans }}
                                 </label>
@@ -200,29 +202,25 @@
                                 </select>
                             </div>
                         {% elseif ticket.status == 'resolved' %}
-                            <div class="vertical-center">
-                                <p class="text--success">
-                                    {{ icon('check') }}
-                                    {{ 'This ticket is resolved.' | trans }}
-                                </p>
-                            </div>
+                            <p class="row__item--extend text--success">
+                                {{ icon('check') }}
+                                {{ 'This ticket is resolved.' | trans }}
+                            </p>
                         {% elseif ticket.status == 'closed' %}
-                            <div class="vertical-center">
-                                <p class="text--secondary">
-                                    {{ icon('close') }}
-                                    {{ 'This ticket is closed.' | trans }}
-                                </p>
-                            </div>
+                            <p class="row__item--extend text--secondary">
+                                {{ icon('close') }}
+                                {{ 'This ticket is closed.' | trans }}
+                            </p>
                         {% endif %}
 
-                        <button id="form-create-message-submit" class="button--primary" type="submit">
+                        <button id="form-create-message-submit" class="button--primary row__item--extend" type="submit">
                             {{ 'Answer' | trans }}
                         </button>
                     </div>
                 </form>
             </div>
 
-            <div class="ticket__info flow-larger">
+            <div class="ticket__info row__item--noshrink flow-larger">
                 <div class="text--right">
                     <details
                         class="popup"
@@ -266,13 +264,11 @@
                 </div>
 
                 <div class="flow">
-                    <div class="row">
-                        <span class="text--secondary">
+                    <div class="row row--center row--always">
+                        <span class="row__item--extend text--secondary">
                             {{ icon('user-group') }}
                             <strong>{{ 'Actors' | trans }}</strong>
                         </span>
-
-                        <div class="row__extend"></div>
 
                         <button
                             class="button--icon"
@@ -318,13 +314,11 @@
                 </div>
 
                 <div class="flow">
-                    <div class="row">
-                        <span class="text--secondary">
+                    <div class="row row--center row--always">
+                        <span class="row__item--extend text--secondary">
                             {{ icon('priority') }}
                             <strong>{{ 'Priority' | trans }}</strong>
                         </span>
-
-                        <div class="row__extend"></div>
 
                         <button
                             class="button--icon"
@@ -338,6 +332,7 @@
                             </span>
                         </button>
                     </div>
+
                     <div class="ticket__priority badge badge--bold badge--{{ ticket.priorityBadgeColor }}">
                         {{ ticket.priorityLabel | trans }}
                     </div>

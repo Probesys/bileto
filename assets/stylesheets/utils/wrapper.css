@@ -18,6 +18,10 @@
     max-width: 1200px;
 }
 
+.wrapper-larger {
+    max-width: 1400px;
+}
+
 .wrapper--center {
     margin-right: auto;
     margin-left: auto;

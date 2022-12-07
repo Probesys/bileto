@@ -5,9 +5,9 @@
 .card {
     overflow: hidden;
 
-    padding: 1rem;
+    padding: 2rem 1rem;
 
-    background-color: var(--color-grey4);
+    background-color: var(--color-grey3);
     box-shadow: 0 1px 2px var(--color-box-shadow);
     border-radius: 0.5rem;
 }
@@ -18,11 +18,11 @@ a.card {
 
 a.card:hover,
 a.card:focus {
-    background-color: var(--color-grey5);
+    background-color: var(--color-grey4);
 }
 
 a.card:active {
-    background-color: var(--color-grey6);
+    background-color: var(--color-grey5);
 }
 
 .card__title {

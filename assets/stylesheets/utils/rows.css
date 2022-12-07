@@ -5,13 +5,34 @@
 .row {
     display: flex;
 
+    align-items: stretch;
+}
+
+@media (max-width: 799px) {
+    .row:not(.row--always) {
+        flex-direction: column;
+    }
+}
+
+.row--center {
     align-items: center;
 }
 
-.row > *:not(.row__extend) + *:not(.row__extend) {
+.row > * + * {
     margin-left: 2rem;
 }
 
-.row__extend {
+@media (max-width: 799px) {
+    .row:not(.row--always) > * + * {
+        margin-top: 2rem;
+        margin-left: 0;
+    }
+}
+
+.row__item--extend {
     flex-grow: 1;
+}
+
+.row__item--noshrink {
+    flex-shrink: 0;
 }
