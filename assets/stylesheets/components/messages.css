@@ -160,6 +160,10 @@
     pointer-events: none;
 }
 
+[data-color-scheme="dark"] .message--confidential .message__content::after {
+    background-image: url("../../icons/user-secret-light.svg");
+}
+
 .message__content * + p,
 .message__content * + ul,
 .message__content * + ol {
