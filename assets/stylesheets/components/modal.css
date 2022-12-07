@@ -64,14 +64,13 @@
 
     min-height: 15rem;
     padding-right: 1rem;
-    padding-bottom: 2rem;
+    padding-bottom: 6rem;
     padding-left: 1rem;
 }
 
 @media (min-width: 800px) {
     .modal__body {
         padding-right: 2rem;
-        padding-bottom: 2rem;
         padding-left: 2rem;
     }
 }
