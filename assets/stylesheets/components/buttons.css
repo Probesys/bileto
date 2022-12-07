@@ -61,8 +61,10 @@ button:active,
     border-radius: 5rem;
 }
 
-.button--ghost {
+.button--anchor {
     padding: 0;
+
+    color: var(--color-primary11);
 
     background-color: transparent;
     background-image: none;
@@ -71,8 +73,8 @@ button:active,
     border-radius: 0;
 }
 
-.button--ghost:hover,
-.button--ghost:focus,
-.button--ghost:active {
+.button--anchor:hover,
+.button--anchor:focus,
+.button--anchor:active {
     background-color: transparent;
 }

@@ -284,32 +284,42 @@
                     </div>
 
                     <div>
-                        <p class="text--secondary">
+                        <div class="text--secondary">
                             {{ 'Requester' | trans }}
-                        </p>
-                        <p>
+                        </div>
+
+                        <div>
                             {{ ticket.requester.email }}
-                        </p>
+                        </div>
                     </div>
 
                     <div>
-                        <p class="text--secondary">
+                        <div class="text--secondary">
                             {{ 'Assignee' | trans }}
-                        </p>
-                        <p>
+                        </div>
+
+                        <div>
                             {% if ticket.assignee %}
                                 {{ ticket.assignee.email }}
                             {% else %}
-                                <button
-                                    class="button--ghost"
-                                    data-controller="modal-opener"
-                                    data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                                <strong>{{ 'Unassigned' | trans }}</strong>
+
+                                <form
+                                    action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
+                                    method="post"
+                                    class="form--inline"
+                                    data-turbo-preserve-scroll
                                 >
-                                    <strong>{{ 'Unassigned' | trans }}</strong>
-                                </button>
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
+                                    <input type="hidden" name="assigneeId" value="{{ app.user.id }}">
+
+                                    →
+                                    <button id="form-self-assign-submit" class="button--anchor" type="submit">
+                                        {{ 'assign yourself' | trans }}
+                                    </button>
+                                </form>
                             {% endif %}
-                        </p>
+                        </div>
                     </div>
                 </div>
 

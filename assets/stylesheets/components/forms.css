@@ -3,6 +3,10 @@
 /* Copyright 2022 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
+.form--inline {
+    display: inline-block;
+}
+
 label {
     display: block;
     padding-right: 0.75rem;
