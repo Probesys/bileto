@@ -95,8 +95,11 @@ button[disabled],
     border-radius: 0;
 }
 
-.button--anchor:hover,
-.button--anchor:focus,
-.button--anchor:active {
+.button--anchor:not([disabled]):hover,
+.button--anchor:not([aria-disabled]):hover,
+.button--anchor:not([disabled]):focus,
+.button--anchor:not([aria-disabled]):focus,
+.button--anchor:not([disabled]):active,
+.button--anchor:not([aria-disabled]):active {
     background-color: transparent;
 }
