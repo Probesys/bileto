@@ -27,6 +27,7 @@ Developers guide:
 - [Working with the icons](/docs/developers/icons.md)
 - [Working with the modals](/docs/developers/modals.md)
 - [Working with the popups](/docs/developers/popups.md)
+- [Working with rows and grids](/docs/developers/rows-and-grids.md)
 
 Maintainers guide:
 
