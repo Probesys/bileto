@@ -13,6 +13,7 @@ use App\Entity\Ticket;
 use App\Repository\MessageRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
+use App\Service\ActorsLister;
 use App\Service\TicketSearcher;
 use App\Utils\Time;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -63,9 +64,9 @@ class TicketsController extends BaseController
     #[Route('/organizations/{uid}/tickets/new', name: 'new organization ticket', methods: ['GET', 'HEAD'])]
     public function new(
         Organization $organization,
-        UserRepository $userRepository
+        ActorsLister $actorsLister,
     ): Response {
-        $users = $userRepository->findBy([], ['email' => 'ASC']);
+        $users = $actorsLister->listUsers();
         return $this->render('organizations/tickets/new.html.twig', [
             'organization' => $organization,
             'title' => '',
@@ -85,6 +86,7 @@ class TicketsController extends BaseController
         MessageRepository $messageRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
+        ActorsLister $actorsLister,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
@@ -110,7 +112,7 @@ class TicketsController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        $users = $userRepository->findBy([], ['email' => 'ASC']);
+        $users = $actorsLister->listUsers();
 
         if (!$this->isCsrfTokenValid('create organization ticket', $csrfToken)) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [

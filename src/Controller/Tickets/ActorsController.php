@@ -10,6 +10,7 @@ use App\Controller\BaseController;
 use App\Entity\Ticket;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
+use App\Service\ActorsLister;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,9 +21,9 @@ class ActorsController extends BaseController
     #[Route('/tickets/{uid}/actors/edit', name: 'edit ticket actors', methods: ['GET', 'HEAD'])]
     public function edit(
         Ticket $ticket,
-        UserRepository $userRepository
+        ActorsLister $actorsLister,
     ): Response {
-        $users = $userRepository->findBy([], ['email' => 'ASC']);
+        $users = $actorsLister->listUsers();
         $requester = $ticket->getRequester();
         $assignee = $ticket->getAssignee();
         return $this->render('tickets/actors/edit.html.twig', [
@@ -38,7 +39,8 @@ class ActorsController extends BaseController
         Ticket $ticket,
         Request $request,
         TicketRepository $ticketRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        ActorsLister $actorsLister,
     ): Response {
         $initialRequester = $ticket->getRequester();
         $initialAssignee = $ticket->getAssignee();
@@ -52,7 +54,7 @@ class ActorsController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        $users = $userRepository->findBy([], ['email' => 'ASC']);
+        $users = $actorsLister->listUsers();
 
         if (!$this->isCsrfTokenValid('update ticket actors', $csrfToken)) {
             return $this->renderBadRequest('tickets/actors/edit.html.twig', [

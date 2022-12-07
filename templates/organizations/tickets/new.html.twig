@@ -111,6 +111,10 @@
                         {% for user in users %}
                             <option value="{{ user.id }}" {{ user.id == requesterId ? 'selected' }}>
                                 {{ user.email }}
+
+                                {% if user.id == app.user.id %}
+                                    {{ '(yourself)' | trans }}
+                                {% endif %}
                             </option>
                         {% endfor %}
                     </select>
@@ -150,6 +154,10 @@
                         {% for user in users %}
                             <option value="{{ user.id }}" {{ user.id == assigneeId ? 'selected' }}>
                                 {{ user.email }}
+
+                                {% if user.id == app.user.id %}
+                                    {{ '(yourself)' | trans }}
+                                {% endif %}
                             </option>
                         {% endfor %}
                     </select>
