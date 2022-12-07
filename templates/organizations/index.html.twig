@@ -19,7 +19,7 @@
                     {{ 'New organization' | trans }}
                 </a>
 
-                <div class="grid grid--cols4">
+                <div class="grid">
                     {% for organization in organizations %}
                         <a class="card" href="{{ path('organization', { uid: organization.uid }) }}" data-test="organization-item">
                             <div class="card__title">

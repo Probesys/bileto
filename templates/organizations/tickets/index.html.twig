@@ -24,8 +24,8 @@
 
 {% block body %}
     <main class="layout__body tickets-index">
-        <div class="tickets__layout grid">
-            <nav class="tickets__nav flow-large">
+        <div class="row">
+            <nav class="tickets__nav row__item--noshrink card flow">
                 <div class="text--center">
                     <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
                         {{ icon('plus') }}
@@ -75,7 +75,7 @@
                 </ul>
             </nav>
 
-            <div class="flow">
+            <div class="flow row__item--extend">
                 <h1>{{ title }}</h1>
 
                 <div class="text--center">
