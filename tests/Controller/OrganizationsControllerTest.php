@@ -7,8 +7,8 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Organization;
-use App\Factory\OrganizationFactory;
-use App\Factory\UserFactory;
+use App\Tests\Factory\OrganizationFactory;
+use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;

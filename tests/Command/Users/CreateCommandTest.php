@@ -6,8 +6,8 @@
 
 namespace App\Tests\Command\Users;
 
-use App\Factory\UserFactory;
 use App\Tests\CommandTestsHelper;
+use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Zenstruck\Foundry\Test\Factories;

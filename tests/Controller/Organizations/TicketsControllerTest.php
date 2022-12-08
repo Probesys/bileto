@@ -8,10 +8,10 @@ namespace App\Tests\Controller\Organizations;
 
 use App\Entity\Organization;
 use App\Entity\Ticket;
-use App\Factory\MessageFactory;
-use App\Factory\OrganizationFactory;
-use App\Factory\TicketFactory;
-use App\Factory\UserFactory;
+use App\Tests\Factory\MessageFactory;
+use App\Tests\Factory\OrganizationFactory;
+use App\Tests\Factory\TicketFactory;
+use App\Tests\Factory\UserFactory;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Factory;

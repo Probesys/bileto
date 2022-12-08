@@ -7,9 +7,9 @@
 namespace App\Tests\Controller\Tickets;
 
 use App\Entity\Ticket;
-use App\Factory\MessageFactory;
-use App\Factory\TicketFactory;
-use App\Factory\UserFactory;
+use App\Tests\Factory\MessageFactory;
+use App\Tests\Factory\TicketFactory;
+use App\Tests\Factory\UserFactory;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Factory;

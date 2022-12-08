@@ -46,3 +46,12 @@ when@dev:
         App\Twig\ViteTagsExtension:
             arguments:
                 - "%kernel.project_dir%/public/manifest.dev.json"
+
+when@test:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Tests\Factory\:
+            resource: '../tests/Factory'

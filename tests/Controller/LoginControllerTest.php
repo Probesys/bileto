@@ -7,7 +7,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\User;
-use App\Factory\UserFactory;
+use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
