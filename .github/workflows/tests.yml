@@ -31,7 +31,7 @@ jobs:
         name: Tests over PostgreSQL 14
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
 
             - name: Setup the CI
               uses: ./.github/actions/setup
@@ -62,7 +62,7 @@ jobs:
         name: Tests over MariaDB 10.6
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
 
             - name: Setup the CI
               uses: ./.github/actions/setup
