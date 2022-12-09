@@ -7,6 +7,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Utils\Locales;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -62,15 +63,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $colorScheme = 'auto';
 
-    #[ORM\Column(length: 5, options: ['default' => 'en_GB'])]
+    #[ORM\Column(length: 5, options: ['default' => Locales::DEFAULT_LOCALE])]
     #[Assert\NotBlank(
         message: new TranslatableMessage('The language is required.', [], 'validators'),
     )]
     #[Assert\Choice(
-        choices: ['en_GB', 'fr_FR'],
+        choices: Locales::SUPPORTED_LOCALES,
         message: new TranslatableMessage('The language {{ value }} is not a valid choice.', [], 'validators'),
     )]
-    private ?string $locale = 'en_GB';
+    private ?string $locale = Locales::DEFAULT_LOCALE;
 
     #[ORM\Column(length: 20, unique: true)]
     private ?string $uid = null;
