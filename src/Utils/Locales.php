@@ -27,4 +27,50 @@ class Locales
     {
         return in_array($locale, self::SUPPORTED_LOCALES);
     }
+
+    /**
+     * @param string[] $requestedLocales
+     */
+    public static function getBest(array $requestedLocales): string
+    {
+        // First, look for an exact match in the supported locales:
+        foreach ($requestedLocales as $locale) {
+            if (self::isAvailable($locale)) {
+                return $locale;
+            }
+        }
+
+        // Then, create an array to match "super" locales (e.g. en) to
+        // supported country locales (e.g. en_GB):
+        $supersToLocales = [];
+        foreach (self::SUPPORTED_LOCALES as $locale) {
+            $splitLocale = explode('_', $locale, 2);
+            if (count($splitLocale) < 2) {
+                continue;
+            }
+
+            $superLocale = $splitLocale[0];
+            if (!isset($supersToLocales[$superLocale])) {
+                $supersToLocales[$superLocale] = $locale;
+            }
+        }
+
+        // And search requested locales in the lookup array:
+        foreach ($requestedLocales as $locale) {
+            $splitLocale = explode('_', $locale, 2);
+            if (count($splitLocale) === 1) {
+                $superLocale = $locale;
+            } else {
+                $superLocale = $splitLocale[0];
+            }
+
+            if (isset($supersToLocales[$superLocale])) {
+                return $supersToLocales[$superLocale];
+            }
+        }
+
+        // Bileto doesn't support the requested locales, let's return the
+        // default one.
+        return self::DEFAULT_LOCALE;
+    }
 }
