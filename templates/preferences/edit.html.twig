@@ -46,12 +46,11 @@
                         aria-errormessage="locale-error"
                     {% endif %}
                 >
-                    <option value="en_GB" {{ locale == 'en_GB' ? 'selected' }}>
-                        English
-                    </option>
-                    <option value="fr_FR" {{ locale == 'fr_FR' ? 'selected' }}>
-                        Français
-                    </option>
+                    {% for locale_, language in availableLanguages %}
+                        <option value="{{ locale_ }}" {{ locale == locale_ ? 'selected' }}>
+                            {{ language }}
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
 
