@@ -11,12 +11,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
-class HomeControllerTest extends WebTestCase
+class PagesControllerTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
 
-    public function testShowRedirectsToOrganizationsIfConnected(): void
+    public function testGetHomeRedirectsToOrganizationsIfConnected(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -27,7 +27,7 @@ class HomeControllerTest extends WebTestCase
         $this->assertResponseRedirects('/organizations', 302);
     }
 
-    public function testShowRedirectsToLoginIfNotConnected(): void
+    public function testGetHomeRedirectsToLoginIfNotConnected(): void
     {
         $client = static::createClient();
 
