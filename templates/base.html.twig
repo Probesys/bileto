@@ -67,7 +67,7 @@
                                 </span>
                             </summary>
 
-                            <nav class="popup__container popup__container--large popup__container--left flow-small">
+                            <nav class="popup__container popup__container--large popup__container--left">
                                 <div class="popup__title">{{ app.user.email }}</div>
 
                                 <a class="popup__item" href="{{ path('preferences') }}">
@@ -98,6 +98,7 @@
                                 <span class="button">
                                     {{ icon('language') }}
                                     {{ 'Language' | trans }}
+                                    {{ icon('caret-down') }}
                                 </span>
                             </summary>
 

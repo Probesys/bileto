@@ -231,10 +231,11 @@
                             <span class="button">
                                 {{ icon('ellipsis') }}
                                 {{ 'Actions' | trans }}
+                                {{ icon('caret-down') }}
                             </span>
                         </summary>
 
-                        <nav class="popup__container popup__container--left flow-small">
+                        <nav class="popup__container popup__container--left">
                             <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
                                 {% if ticket.type == 'request' %}

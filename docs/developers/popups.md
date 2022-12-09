@@ -11,10 +11,11 @@ The HTML of popups is based on the [`<details>`](https://developer.mozilla.org/f
     <summary class="popup__opener">
         <span class="button">
             {{ 'Actions' | trans }}
+            {{ icon('caret-down') }}
         </span>
     </summary>
 
-    <nav class="popup__container popup__container--left flow-small">
+    <nav class="popup__container popup__container--left">
     </nav>
 </details>
 ```

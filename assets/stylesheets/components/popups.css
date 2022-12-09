@@ -31,8 +31,8 @@
     bottom: 0;
     left: 0;
 
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 
     font-size: 0.9em;
 
@@ -102,6 +102,7 @@
 }
 
 .popup__title {
+    margin-bottom: 1rem;
     padding-right: 1.5rem;
     padding-left: 1.5rem;
 
@@ -111,8 +112,7 @@
 
 .popup__separator {
     height: 0.2rem;
-    margin-right: 1.5rem;
-    margin-left: 1.5rem;
+    margin: 1rem 1.5rem;
 
     background-color: var(--color-primary7);
     border-radius: 0.75rem;
