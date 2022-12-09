@@ -35,6 +35,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/about, role: PUBLIC_ACCESS }
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/session/locale, role: PUBLIC_ACCESS }
         - { path: ^/, role: ROLE_USER }

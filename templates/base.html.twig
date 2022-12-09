@@ -77,6 +77,13 @@
 
                                 <div class="popup__separator"></div>
 
+                                <a class="popup__item" href="{{ path('about') }}">
+                                    {{ icon('circle-question') }}
+                                    {{ 'About Bileto' | trans }}
+                                </a>
+
+                                <div class="popup__separator"></div>
+
                                 <form action="{{ path('logout') }}" method="post">
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
                                     <button class="popup__item" id="form-logout-submit" type="submit">

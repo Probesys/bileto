@@ -35,4 +35,13 @@ class PagesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
+
+    public function testGetAboutRendersCorrectly(): void
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/about');
+
+        $this->assertSelectorTextContains('h1', 'About Bileto');
+    }
 }
