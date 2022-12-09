@@ -28,6 +28,15 @@
     </head>
 
     <body>
+        <a
+            class="no-mobile accessibility-nav anchor--action"
+            href="#main-content"
+            tabindex="0"
+            data-turbo="false"
+        >
+            {{ 'Skip to main content' | trans }}
+        </a>
+
         <div class="layout" id="layout">
             <noscript>
                 <div class="layout__banner layout__banner--alert">
@@ -121,7 +130,9 @@
                 </div>
             {% endif %}
 
-            {% block body %}{% endblock %}
+            <div id="main-content">
+                {% block body %}{% endblock %}
+            </div>
         </div>
 
         {{ include('_modal_dialog.html.twig') }}
