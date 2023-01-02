@@ -37,10 +37,10 @@ class MessagesController extends BaseController
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
         /** @var boolean $isSolution */
-        $isSolution = $request->request->get('isSolution', false);
+        $isSolution = $request->request->getBoolean('isSolution', false);
 
         /** @var boolean $isConfidential */
-        $isConfidential = $request->request->get('isConfidential', false);
+        $isConfidential = $request->request->getBoolean('isConfidential', false);
 
         /** @var string $status */
         $status = $request->request->get('status', '');
@@ -104,13 +104,16 @@ class MessagesController extends BaseController
             $status = 'resolved';
         }
 
+        $initialStatus = $ticket->getStatus();
         $ticket->setStatus($status);
 
         $errors = $validator->validate($ticket);
         if (count($errors) > 0) {
-            return $this->renderBadRequest('tickets/messages/_messages.html.twig', [
+            $ticket->setStatus($initialStatus);
+            return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
                 'messages' => $ticket->getMessages(),
+                'organization' => $ticket->getOrganization(),
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => $statuses,

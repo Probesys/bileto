@@ -9,6 +9,7 @@ namespace App\Tests\Controller;
 use App\Entity\Organization;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -17,6 +18,7 @@ class OrganizationsControllerTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
+    use SessionHelper;
 
     public function testGetIndexListsOrganizationsSortedByName(): void
     {
@@ -108,8 +110,8 @@ class OrganizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $name = '';
 
-        $client->request('GET', '/organizations/new');
-        $crawler = $client->submitForm('form-create-organization-submit', [
+        $client->request('POST', '/organizations/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
             'name' => $name,
         ]);
 
@@ -127,8 +129,8 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $client->request('GET', '/organizations/new');
-        $crawler = $client->submitForm('form-create-organization-submit', [
+        $client->request('POST', '/organizations/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
             'name' => $name,
         ]);
 
@@ -143,8 +145,8 @@ class OrganizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $name = str_repeat('a', 256);
 
-        $client->request('GET', '/organizations/new');
-        $crawler = $client->submitForm('form-create-organization-submit', [
+        $client->request('POST', '/organizations/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
             'name' => $name,
         ]);
 
@@ -159,9 +161,8 @@ class OrganizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $name = 'My organization';
 
-        $client->request('GET', '/organizations/new');
-        $crawler = $client->submitForm('form-create-organization-submit', [
-            '_csrf_token' => 'not the token',
+        $client->request('POST', '/organizations/new', [
+            '_csrf_token' => 'not a token',
             'name' => $name,
         ]);
 

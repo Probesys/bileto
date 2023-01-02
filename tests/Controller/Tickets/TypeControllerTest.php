@@ -8,6 +8,7 @@ namespace App\Tests\Controller\Tickets;
 
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -16,6 +17,7 @@ class TypeControllerTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
+    use SessionHelper;
 
     public function testPostUpdateSavesTicketAndRedirects(): void
     {
@@ -49,8 +51,8 @@ class TypeControllerTest extends WebTestCase
             'type' => $oldType,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-update-type-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/type/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket type'),
             'type' => $newType,
         ]);
 
@@ -65,14 +67,15 @@ class TypeControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $oldType = 'request';
+        $newType = 'incident';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'type' => $oldType,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-update-type-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/type/edit", [
             '_csrf_token' => 'not the token',
+            'type' => $newType,
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);

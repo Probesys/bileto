@@ -16,10 +16,13 @@ class SessionControllerTest extends WebTestCase
     public function testPostUpdateLocaleSavesTheLocaleInTheSessionAndRedirects(): void
     {
         $client = static::createClient();
-        $session = $this->createSession($client);
+        $session = $this->getSession($client);
 
-        $client->request('GET', '/login');
-        $crawler = $client->submitForm('form-update-session-locale-fr_FR-submit');
+        $client->request('POST', '/session/locale', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update session locale'),
+            'locale' => 'fr_FR',
+            'from' => 'login',
+        ]);
 
         $this->assertResponseRedirects('/login', 302);
         $this->assertSame('fr_FR', $session->get('_locale'));
@@ -28,11 +31,12 @@ class SessionControllerTest extends WebTestCase
     public function testPostUpdateLocaleFailsIfLocaleIsInvalid(): void
     {
         $client = static::createClient();
-        $session = $this->createSession($client);
+        $session = $this->getSession($client);
 
-        $client->request('GET', '/login');
-        $crawler = $client->submitForm('form-update-session-locale-fr_FR-submit', [
+        $client->request('POST', '/session/locale', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update session locale'),
             'locale' => 'unsupported',
+            'from' => 'login',
         ]);
 
         $this->assertResponseRedirects('/login', 302);
@@ -42,11 +46,12 @@ class SessionControllerTest extends WebTestCase
     public function testPostUpdateLocaleFailsIfCsrfIsInvalid(): void
     {
         $client = static::createClient();
-        $session = $this->createSession($client);
+        $session = $this->getSession($client);
 
-        $client->request('GET', '/login');
-        $crawler = $client->submitForm('form-update-session-locale-fr_FR-submit', [
+        $client->request('POST', '/session/locale', [
             '_csrf_token' => 'not the token',
+            'locale' => 'fr_FR',
+            'from' => 'login',
         ]);
 
         $this->assertResponseRedirects('/login', 302);

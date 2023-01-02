@@ -10,6 +10,7 @@ use App\Entity\Ticket;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Factory;
@@ -20,6 +21,7 @@ class MessagesControllerTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
+    use SessionHelper;
 
     public function testPostCreateCreatesAMessageAndRedirects(): void
     {
@@ -28,8 +30,10 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
@@ -58,16 +62,19 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'status' => $initialStatus,
         ]);
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-create-message-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
+            'status' => 'in_progress',
         ]);
 
         $this->assertSame(1, MessageFactory::count());
@@ -83,16 +90,17 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $initialStatus = 'in_progress';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => 'in_progress',
+            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-create-message-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'status' => 'pending',
         ]);
@@ -109,17 +117,19 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => 'in_progress',
+            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-create-message-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
+            'status' => 'in_progress',
             'isSolution' => true,
         ]);
 
@@ -140,16 +150,19 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-create-message-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
+            'status' => 'in_progress',
             'isSolution' => true,
             'isConfidential' => true,
         ]);
@@ -164,7 +177,7 @@ class MessagesControllerTest extends WebTestCase
         $this->assertNull($ticket->getSolution());
     }
 
-    public function testPostCreateDoNotChangeTheTicketStatusAndForcesIsSolutionToFalseIfStatusIsFinished(): void
+    public function testPostCreateDoesNotChangeTheTicketStatusAndForcesIsSolutionToFalseIfStatusIsFinished(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
         Time::freeze($now);
@@ -180,9 +193,10 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-create-message-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
+            'status' => 'in_progress',
             'isSolution' => true,
         ]);
 
@@ -197,20 +211,47 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'status' => $initialStatus,
         ]);
         $messageContent = '';
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-create-message-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
+            'status' => 'in_progress',
         ]);
 
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#message-error', 'The message is required.');
+    }
+
+    public function testPostCreateFailsIfStatusIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => $initialStatus,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'status' => 'invalid',
+        ]);
+
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSelectorTextContains('#status-error', 'The status "invalid" is not a valid status.');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
@@ -218,15 +259,17 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-create-message-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => 'not the token',
             'message' => $messageContent,
+            'status' => 'in_progress',
         ]);
 
         $this->assertSame(0, MessageFactory::count());

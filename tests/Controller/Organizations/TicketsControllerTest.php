@@ -12,6 +12,7 @@ use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Factory;
@@ -22,6 +23,7 @@ class TicketsControllerTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
+    use SessionHelper;
 
     public function testGetIndexRendersCorrectly(): void
     {
@@ -219,9 +221,11 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
-        $crawler = $client->submitForm('form-create-ticket-submit', [
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
+            'requesterId' => $user->getId(),
+            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -248,9 +252,11 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
-        $crawler = $client->submitForm('form-create-ticket-submit', [
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
+            'requesterId' => $user->getId(),
+            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -273,9 +279,11 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
-        $crawler = $client->submitForm('form-create-ticket-submit', [
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
+            'requesterId' => $user->getId(),
+            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -298,9 +306,11 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
-        $crawler = $client->submitForm('form-create-ticket-submit', [
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
+            'requesterId' => $user->getId(),
+            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -308,6 +318,88 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#message-error', 'The message is required.');
+    }
+
+    public function testPostCreateFailsIfStatusIsInvalid(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $this->assertSame(0, TicketFactory::count());
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterId' => $user->getId(),
+            'status' => 'not a status',
+            'message' => $messageContent,
+        ]);
+
+        Time::unfreeze();
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSelectorTextContains('#status-error', 'The status "not a status" is not a valid status.');
+    }
+
+    public function testPostCreateFailsIfRequesterIsInvalid(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $this->assertSame(0, TicketFactory::count());
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterId' => -1,
+            'status' => 'planned',
+            'message' => $messageContent,
+        ]);
+
+        Time::unfreeze();
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSelectorTextContains('#requester-error', 'The requester must exist.');
+    }
+
+    public function testPostCreateFailsIfAssigneeIsInvalid(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $this->assertSame(0, TicketFactory::count());
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterId' => $user->getId(),
+            'assigneeId' => -1,
+            'status' => 'planned',
+            'message' => $messageContent,
+        ]);
+
+        Time::unfreeze();
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSelectorTextContains('#assignee-error', 'The assignee must exist.');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
@@ -323,10 +415,11 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
-        $crawler = $client->submitForm('form-create-ticket-submit', [
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => 'not the token',
             'title' => $title,
+            'requesterId' => $user->getId(),
+            'status' => 'planned',
             'message' => $messageContent,
         ]);
 

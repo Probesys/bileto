@@ -45,11 +45,11 @@ class ActorsController extends BaseController
         $initialRequester = $ticket->getRequester();
         $initialAssignee = $ticket->getAssignee();
 
-        /** @var string $requesterId */
-        $requesterId = $request->request->get('requesterId', $initialRequester ? $initialRequester->getId() : '');
+        /** @var int $requesterId */
+        $requesterId = $request->request->getInt('requesterId', $initialRequester ? $initialRequester->getId() : 0);
 
-        /** @var string $assigneeId */
-        $assigneeId = $request->request->get('assigneeId', $initialAssignee ? $initialAssignee->getId() : '');
+        /** @var int $assigneeId */
+        $assigneeId = $request->request->getInt('assigneeId', $initialAssignee ? $initialAssignee->getId() : 0);
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');

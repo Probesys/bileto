@@ -177,29 +177,38 @@
 
                     <div class="row">
                         {% if not ticket.isFinished %}
-                            <div class="row__item--extend row row--center row--always">
-                                <label for="status">
-                                    {{ 'Status to' | trans }}
-                                </label>
+                            <div class="row__item--extend flow-small">
+                                <div class="row row--center row--always">
+                                    <label for="status">
+                                        {{ 'Status to' | trans }}
+                                    </label>
 
-                                <select
-                                    id="status"
-                                    name="status"
-                                    required
-                                    {{ ticket.isFinished ? 'disabled' }}
-                                    {% if errors.status is defined %}
-                                        autofocus
-                                        aria-invalid="true"
-                                        aria-errormessage="status-error"
-                                    {% endif %}
-                                    data-ticket-editor-target="statusSelect"
-                                >
-                                    {% for value, label in statuses %}
-                                        <option value="{{ value }}" {{ value == status ? 'selected' }}>
-                                            {{ label | trans }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
+                                    <select
+                                        id="status"
+                                        name="status"
+                                        required
+                                        {{ ticket.isFinished ? 'disabled' }}
+                                        {% if errors.status is defined %}
+                                            autofocus
+                                            aria-invalid="true"
+                                            aria-errormessage="status-error"
+                                        {% endif %}
+                                        data-ticket-editor-target="statusSelect"
+                                    >
+                                        {% for value, label in statuses %}
+                                            <option value="{{ value }}" {{ value == status ? 'selected' }}>
+                                                {{ label | trans }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                {% if errors.status is defined %}
+                                    <p class="form__error" role="alert" id="status-error">
+                                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                                        {{ errors.status }}
+                                    </p>
+                                {% endif %}
                             </div>
                         {% elseif ticket.status == 'resolved' %}
                             <p class="row__item--extend text--success">

@@ -100,11 +100,11 @@ class TicketsController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
-        /** @var string $requesterId */
-        $requesterId = $request->request->get('requesterId', '');
+        /** @var int $requesterId */
+        $requesterId = $request->request->getInt('requesterId', 0);
 
-        /** @var string $assigneeId */
-        $assigneeId = $request->request->get('assigneeId', '');
+        /** @var int $assigneeId */
+        $assigneeId = $request->request->getInt('assigneeId', 0);
 
         /** @var string $status */
         $status = $request->request->get('status', 'new');

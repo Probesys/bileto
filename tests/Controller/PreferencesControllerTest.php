@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\User;
 use App\Tests\Factory\UserFactory;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -16,6 +17,7 @@ class PreferencesControllerTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
+    use SessionHelper;
 
     public function testGetEditRendersCorrectly(): void
     {
@@ -63,6 +65,56 @@ class PreferencesControllerTest extends WebTestCase
         $this->assertSame($newLocale, $user->getLocale());
     }
 
+    public function testPostUpdateFailsIfLocaleIsInvalid(): void
+    {
+        $client = static::createClient();
+        $initialColorScheme = 'light';
+        $newColorScheme = 'dark';
+        $initialLocale = 'en_GB';
+        $newLocale = 'invalid';
+        $user = UserFactory::createOne([
+            'colorScheme' => $initialColorScheme,
+            'locale' => $initialLocale,
+        ]);
+        $client->loginUser($user->object());
+
+        $client->request('POST', '/preferences', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update preferences'),
+            'colorScheme' => $newColorScheme,
+            'locale' => $newLocale,
+        ]);
+
+        $this->assertSelectorTextContains('#locale-error', 'The language "invalid" is not a valid choice.');
+        $user->refresh();
+        $this->assertSame($initialColorScheme, $user->getColorScheme());
+        $this->assertSame($initialLocale, $user->getLocale());
+    }
+
+    public function testPostUpdateFailsIfColorSchemeIsInvalid(): void
+    {
+        $client = static::createClient();
+        $initialColorScheme = 'light';
+        $newColorScheme = 'invalid';
+        $initialLocale = 'en_GB';
+        $newLocale = 'fr_FR';
+        $user = UserFactory::createOne([
+            'colorScheme' => $initialColorScheme,
+            'locale' => $initialLocale,
+        ]);
+        $client->loginUser($user->object());
+
+        $client->request('POST', '/preferences', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update preferences'),
+            'colorScheme' => $newColorScheme,
+            'locale' => $newLocale,
+        ]);
+
+        $this->assertSelectorTextContains('#color-scheme-error', 'The color scheme "invalid" is not a valid choice.');
+        $user->refresh();
+        $this->assertSame($initialColorScheme, $user->getColorScheme());
+        $this->assertSame($initialLocale, $user->getLocale());
+    }
+
     public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
@@ -76,8 +128,7 @@ class PreferencesControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('GET', '/preferences');
-        $crawler = $client->submitForm('form-update-preferences-submit', [
+        $client->request('POST', '/preferences', [
             '_csrf_token' => 'not the token',
             'colorScheme' => $newColorScheme,
             'locale' => $newLocale,

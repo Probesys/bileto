@@ -8,6 +8,7 @@ namespace App\Tests\Controller\Tickets;
 
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -16,6 +17,7 @@ class TitleControllerTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
+    use SessionHelper;
 
     public function testGetEditRendersCorrectly(): void
     {
@@ -79,8 +81,8 @@ class TitleControllerTest extends WebTestCase
             'title' => $oldTitle,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}/title/edit");
-        $crawler = $client->submitForm('form-update-title-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/title/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket title'),
             'title' => $newTitle,
         ]);
 
@@ -101,12 +103,12 @@ class TitleControllerTest extends WebTestCase
             'title' => $oldTitle,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}/title/edit");
-        $crawler = $client->submitForm('form-update-title-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/title/edit", [
             '_csrf_token' => 'not the token',
             'title' => $newTitle,
         ]);
 
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
         $ticket->refresh();
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
