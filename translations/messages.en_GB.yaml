@@ -97,3 +97,7 @@ Profile: Profile
 'Note: the information of your profile can be visible to the other users.': 'Note: the information of your profile can be visible to the other users.'
 Name: Name
 '(optional, max. 100 characters)': '(optional, max. 100 characters)'
+'The password is invalid.': 'The password is invalid.'
+'Leave these fields blank to keep your current password.': 'Leave these fields blank to keep your current password.'
+'Current password': 'Current password'
+'New password': 'New password'

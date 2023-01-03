@@ -94,6 +94,10 @@ Authors: Auteurs
 'Bileto is developped by <a href="https://probesys.com">Probesys</a>.': 'Bileto est développé par <a href="https://probesys.com">Probesys</a>.'
 'Close the notification': 'Fermer la notification'
 Profile: Profil
-'Note: the information of your profile can be visible to the other users.': 'Note : les informations de votre profil peuvent être visible par les autres utilisateurs.'
+'Note: the information of your profile can be visible to the other users.': "Note\_: les informations de votre profil peuvent être visible par les autres utilisateurs."
 Name: Nom
 '(optional, max. 100 characters)': '(optionnel, max. 100 caractères)'
+'The password is invalid.': 'Le mot de passe est invalide.'
+'Leave these fields blank to keep your current password.': 'Laissez ces champs vides pour conserver votre mot de passe actuel.'
+'Current password': 'Mot de passe actuel'
+'New password': 'Nouveau mot de passe'

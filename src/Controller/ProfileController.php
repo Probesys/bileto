@@ -10,7 +10,9 @@ use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProfileController extends BaseController
@@ -30,8 +32,9 @@ class ProfileController extends BaseController
     public function update(
         Request $request,
         UserRepository $userRepository,
+        UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
-        RequestStack $requestStack
+        RequestStack $requestStack,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -45,6 +48,12 @@ class ProfileController extends BaseController
         /** @var string $email */
         $email = $request->request->get('email', $initialEmail);
 
+        /** @var string $currentPassword */
+        $currentPassword = $request->request->get('currentPassword', '');
+
+        /** @var string $newPassword */
+        $newPassword = $request->request->get('newPassword', '');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -54,6 +63,21 @@ class ProfileController extends BaseController
                 'email' => $email,
                 'error' => $this->csrfError(),
             ]);
+        }
+
+        if ($newPassword) {
+            if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+                return $this->renderBadRequest('profile/edit.html.twig', [
+                    'name' => $name,
+                    'email' => $email,
+                    'errors' => [
+                        'password' => new TranslatableMessage('The password is invalid.'),
+                    ],
+                ]);
+            }
+
+            $newHashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+            $user->setPassword($newHashedPassword);
         }
 
         $user->setName($name);

@@ -217,6 +217,22 @@ select[aria-invalid] {
     border-color: var(--color-error11);
 }
 
+fieldset {
+    min-width: auto;
+    padding: 1rem;
+
+    background-color: var(--color-grey2);
+    border: 0.25rem solid var(--color-grey6);
+    border-radius: 0.5rem;
+}
+
+legend {
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
 .tox-tinymce {
     border-color: var(--color-grey8) !important;
 
@@ -226,6 +242,13 @@ select[aria-invalid] {
 .tox-tinymce:hover,
 .tox-tinymce:focus-within {
     border-color: var(--color-primary8) !important;
+}
+
+.form__caption {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+
+    color: var(--color-grey11);
 }
 
 .form__error {

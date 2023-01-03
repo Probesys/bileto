@@ -23,9 +23,9 @@
                 {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
             {% endif %}
 
-            <div class="text--info text--center">
+            <p class="text--info text--center">
                 {{ 'Note: the information of your profile can be visible to the other users.' | trans }}
-            </div>
+            </p>
 
             <div class="flow-small">
                 <label for="name">
@@ -82,6 +82,51 @@
                     {% endif %}
                 />
             </div>
+
+            <fieldset class="flow">
+                <legend>{{ 'Password' | trans }}</legend>
+
+                <p class="form__caption">
+                    {{ 'Leave these fields blank to keep your current password.' | trans }}
+                </p>
+
+                <div class="flow-small">
+                    <label for="current-password">
+                        {{ 'Current password' | trans }}
+                    </label>
+
+                    {% if errors.password is defined %}
+                        <p class="form__error" role="alert" id="current-password-error">
+                            <span class="sr-only">{{ 'Error' | trans }}</span>
+                            {{ errors.password }}
+                        </p>
+                    {% endif %}
+
+                    <input
+                        type="password"
+                        id="current-password"
+                        name="currentPassword"
+                        autocomplete="current-password"
+                        {% if errors.password is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="current-password-error"
+                        {% endif %}
+                    />
+                </div>
+
+                <div class="flow-small">
+                    <label for="new-password">
+                        {{ 'New password' | trans }}
+                    </label>
+
+                    <input
+                        type="password"
+                        id="new-password"
+                        name="newPassword"
+                        autocomplete="new-password"
+                    />
+                </div>
+            </fieldset>
 
             <div class="form__actions">
                 <button id="form-update-profile-submit" class="button--primary" type="submit">

@@ -66,6 +66,30 @@ class ProfileControllerTest extends WebTestCase
         $this->assertSame($newEmail, $user->getEmail());
     }
 
+    public function testPostUpdateChangesThePassword(): void
+    {
+        $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $initialPassword = Factory::faker()->unique()->password();
+        $newPassword = Factory::faker()->unique()->password();
+        $user = UserFactory::createOne([
+            'password' => $initialPassword,
+        ]);
+        $client->loginUser($user->object());
+
+        $client->request('POST', '/profile', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
+            'currentPassword' => $initialPassword,
+            'newPassword' => $newPassword,
+        ]);
+
+        $this->assertResponseRedirects('/profile', 302);
+        $user->refresh();
+        $this->assertFalse($passwordHasher->isPasswordValid($user->object(), $initialPassword));
+        $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $newPassword));
+    }
+
     public function testPostUpdateFailsIfNameIsInvalid(): void
     {
         $client = static::createClient();
@@ -114,6 +138,30 @@ class ProfileControllerTest extends WebTestCase
         $user->refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
+    }
+
+    public function testPostUpdateFailsIfCurrentPasswordIsInvalid(): void
+    {
+        $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $initialPassword = Factory::faker()->unique()->password();
+        $newPassword = Factory::faker()->unique()->password();
+        $user = UserFactory::createOne([
+            'password' => $initialPassword,
+        ]);
+        $client->loginUser($user->object());
+
+        $client->request('POST', '/profile', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
+            'currentPassword' => 'not the password',
+            'newPassword' => $newPassword,
+        ]);
+
+        $this->assertSelectorTextContains('#current-password-error', 'The password is invalid.');
+        $user->refresh();
+        $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $initialPassword));
+        $this->assertFalse($passwordHasher->isPasswordValid($user->object(), $newPassword));
     }
 
     public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
