@@ -11,7 +11,7 @@ Organizations: Organisations
 'Organization name': 'Nom de l’organisation'
 '(max. 255 characters)': '(max. 255 caractères)'
 'Create the organization': 'Créer l’organisation'
-'Menu of %email%': 'Menu de %email%'
+'Menu of %name%': 'Menu de %name%'
 Preferences: Préférences
 'Color scheme': 'Schéma de couleurs'
 Auto: Auto
@@ -93,3 +93,7 @@ License: Licence
 Authors: Auteurs
 'Bileto is developped by <a href="https://probesys.com">Probesys</a>.': 'Bileto est développé par <a href="https://probesys.com">Probesys</a>.'
 'Close the notification': 'Fermer la notification'
+Profile: Profil
+'Note: the information of your profile can be visible to the other users.': 'Note : les informations de votre profil peuvent être visible par les autres utilisateurs.'
+Name: Nom
+'(optional, max. 100 characters)': '(optionnel, max. 100 caractères)'

@@ -146,12 +146,12 @@
                                         </td>
 
                                         <td>
-                                            {{ ticket.requester.email }}
+                                            {{ ticket.requester.displayName }}
                                         </td>
 
                                         <td>
                                             {% if ticket.assignee %}
-                                                {{ ticket.assignee.email }}
+                                                {{ ticket.assignee.displayName }}
                                             {% else %}
                                                 {{ 'Unassigned' | trans }}
                                             {% endif %}

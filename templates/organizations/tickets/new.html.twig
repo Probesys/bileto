@@ -110,7 +110,7 @@
                     >
                         {% for user in users %}
                             <option value="{{ user.id }}" {{ user.id == requesterId ? 'selected' }}>
-                                {{ user.email }}
+                                {{ user.displayName }}
 
                                 {% if user.id == app.user.id %}
                                     {{ '(yourself)' | trans }}
@@ -153,7 +153,7 @@
 
                         {% for user in users %}
                             <option value="{{ user.id }}" {{ user.id == assigneeId ? 'selected' }}>
-                                {{ user.email }}
+                                {{ user.displayName }}
 
                                 {% if user.id == app.user.id %}
                                     {{ '(yourself)' | trans }}

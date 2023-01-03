@@ -1,0 +1,93 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Profile' | trans }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <h1>{{ 'Profile' | trans }}</h1>
+
+        <form
+            action="{{ path('update profile') }}"
+            method="post"
+            class="wrapper-small wrapper--center flow"
+        >
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('update profile') }}">
+
+            {% if error %}
+                {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
+            {% endif %}
+
+            <div class="text--info text--center">
+                {{ 'Note: the information of your profile can be visible to the other users.' | trans }}
+            </div>
+
+            <div class="flow-small">
+                <label for="name">
+                    {{ 'Name' | trans }}
+                    <span class="text--secondary">
+                        {{ '(optional, max. 100 characters)' | trans }}
+                    </span>
+                </label>
+
+                {% if errors.name is defined %}
+                    <p class="form__error" role="alert" id="name-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.name }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ name }}"
+                    required
+                    maxlength="100"
+                    autocomplete="name"
+                    {% if errors.name is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="name-error"
+                    {% endif %}
+                />
+            </div>
+
+            <div class="flow-small">
+                <label for="email">
+                    {{ 'Email address' | trans }}
+                </label>
+
+                {% if errors.email is defined %}
+                    <p class="form__error" role="alert" id="email-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.email }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ email }}"
+                    required
+                    autocomplete="email"
+                    {% if errors.email is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="email-error"
+                    {% endif %}
+                />
+            </div>
+
+            <div class="form__actions">
+                <button id="form-update-profile-submit" class="button--primary" type="submit">
+                    {{ 'Save the changes' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}

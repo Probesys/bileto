@@ -76,6 +76,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20, unique: true)]
     private ?string $uid = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'validators'),
+    )]
+    private ?string $name = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -179,5 +186,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->uid = $uid;
 
         return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getDisplayName(): ?string
+    {
+        if ($this->name) {
+            return $this->name;
+        } else {
+            return $this->email;
+        }
     }
 }

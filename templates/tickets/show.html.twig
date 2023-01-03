@@ -30,7 +30,7 @@
                 <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'Status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
                 <span class="text--small">
-                    <strong>{{ ticket.createdBy.email }}</strong>
+                    <strong>{{ ticket.createdBy.displayName }}</strong>
 
                     {% if ticket.type == 'request' %}
                         {{ 'opened this <strong>request</strong>' | trans | raw }}
@@ -84,7 +84,7 @@
                                     {% endif %}
 
                                     <div class="message__author">
-                                        {{ message.createdBy.email }}
+                                        {{ message.createdBy.displayName }}
                                     </div>
 
                                     <div class="message__top-separator"></div>
@@ -299,7 +299,7 @@
                         </div>
 
                         <div>
-                            {{ ticket.requester.email }}
+                            {{ ticket.requester.displayName }}
                         </div>
                     </div>
 
@@ -310,7 +310,7 @@
 
                         <div>
                             {% if ticket.assignee %}
-                                {{ ticket.assignee.email }}
+                                {{ ticket.assignee.displayName }}
                             {% else %}
                                 <strong>{{ 'Unassigned' | trans }}</strong>
 

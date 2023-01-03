@@ -105,15 +105,20 @@
                             data-controller="popup"
                             data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
                         >
-                            <summary class="popup__opener" title="{{ 'Menu of %email%' | trans({'%email%': app.user.email}) }}">
+                            <summary class="popup__opener" title="{{ 'Menu of %name%' | trans({'%name%': app.user.displayName}) }}">
                                 <span class="layout__header-avatar">{{ icon('circle-user') }}</span>
                                 <span class="sr-only">
-                                    {{ 'Menu of %email%' | trans({'%email%': app.user.email}) }}
+                                    {{ 'Menu of %name%' | trans({'%name%': app.user.displayName}) }}
                                 </span>
                             </summary>
 
                             <nav class="popup__container popup__container--large popup__container--left">
-                                <div class="popup__title">{{ app.user.email }}</div>
+                                <div class="popup__title">{{ app.user.displayName }}</div>
+
+                                <a class="popup__item" href="{{ path('profile') }}">
+                                    {{ icon('user') }}
+                                    {{ 'Profile' | trans }}
+                                </a>
 
                                 <a class="popup__item" href="{{ path('preferences') }}">
                                     {{ icon('palette') }}
