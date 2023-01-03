@@ -1,6 +1,6 @@
 // This file is part of Bileto.
 // Copyright 2020 - 2022 Marien Fressinaud (flusio)
-// Copyright 2022 Probesys
+// Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Controller } from '@hotwired/stimulus';
