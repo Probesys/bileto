@@ -37,6 +37,51 @@
             {{ 'Skip to main content' | trans }}
         </a>
 
+        <div
+            id="notifications"
+            class="notifications wrapper-small wrapper--center flow"
+            role="alert"
+            aria-live="polite"
+            aria-atomic="true"
+            data-controller="notifications"
+        >
+            {% for label, messages in app.flashes(['success', 'error']) %}
+                {% for key, message in messages %}
+                    <div
+                        class="notifications__item notifications__item--{{ label }} row row--center"
+                        {% if label == "error" %}
+                            role="alert"
+                            aria-live="assertive"
+                        {% else %}
+                            role="status"
+                            aria-live="polite"
+                        {% endif %}
+                        data-notifications-target="item"
+                    >
+                        <span class="row__item--extend">
+                            <span class="sr-only">
+                                {{ 'Error' | trans }}
+                            </span>
+
+                            {{ message | trans }}
+                        </span>
+
+                        <button
+                            type="button"
+                            class="button--icon"
+                            data-action="notifications#closeItem"
+                            data-notifications-item-param="{{ key }}"
+                        >
+                            {{ icon('close') }}
+                            <span class="sr-only">
+                                {{ 'Close the notification' | trans }}
+                            </span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
         <div class="layout" id="layout">
             <noscript>
                 <div class="layout__banner layout__banner--alert">

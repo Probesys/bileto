@@ -21,6 +21,7 @@
 @import "./components/layout.css";
 @import "./components/messages.css";
 @import "./components/modal.css";
+@import "./components/notifications.css";
 @import "./components/placeholders.css";
 @import "./components/popups.css";
 @import "./components/spinners.css";

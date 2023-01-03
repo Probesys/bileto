@@ -9,8 +9,9 @@ import ColorSchemeController from '@/controllers/color_scheme_controller.js';
 import FormPriorityController from '@/controllers/form_priority_controller.js';
 import ModalController from '@/controllers/modal_controller.js';
 import ModalOpenerController from '@/controllers/modal_opener_controller.js';
-import PopupController from '@/controllers/popup_controller.js';
 import NewTicketController from '@/controllers/new_ticket_controller.js';
+import NotificationsController from '@/controllers/notifications_controller.js';
+import PopupController from '@/controllers/popup_controller.js';
 import TicketEditorController from '@/controllers/ticket_editor_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
 
@@ -20,8 +21,9 @@ application.register('form-priority', FormPriorityController);
 application.register('modal', ModalController);
 application.register('modal-opener', ModalOpenerController);
 application.register('new-ticket', NewTicketController);
-application.register('ticket-editor', TicketEditorController);
+application.register('notifications', NotificationsController);
 application.register('popup', PopupController);
+application.register('ticket-editor', TicketEditorController);
 application.register('tinymce', TinymceController);
 
 // Allow to disable the automatic scroll-to-top on form submission.
