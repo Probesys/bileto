@@ -32,6 +32,7 @@ class TypeController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('update ticket type', $csrfToken)) {
+            $this->addFlash('error', $this->csrfError());
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),
             ]);
@@ -41,7 +42,8 @@ class TypeController extends BaseController
 
         $errors = $validator->validate($ticket);
         if (count($errors) > 0) {
-            $ticket->setType($oldType);
+            $error = implode(' ', $this->formatErrors($errors));
+            $this->addFlash('error', $error);
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),
             ]);
