@@ -102,16 +102,32 @@
                         </p>
                     {% endif %}
 
-                    <input
-                        type="password"
-                        id="current-password"
-                        name="currentPassword"
-                        autocomplete="current-password"
-                        {% if errors.password is defined %}
-                            aria-invalid="true"
-                            aria-errormessage="current-password-error"
-                        {% endif %}
-                    />
+                    <div class="password-container" data-controller="password">
+                        <input
+                            type="password"
+                            id="current-password"
+                            name="currentPassword"
+                            autocomplete="current-password"
+                            data-password-target="input"
+                            {% if errors.password is defined %}
+                                aria-invalid="true"
+                                aria-errormessage="current-password-error"
+                            {% endif %}
+                        />
+
+                        <button
+                            type="button"
+                            role="switch"
+                            data-action="password#toggle"
+                            data-password-target="button"
+                        >
+                            {{ icon('eye') }}
+                            {{ icon('eye-slash') }}
+                            <span class="sr-only">
+                                {{ 'Show password as plain text. Note: this will visually expose your password.' | trans }}
+                            </span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flow-small">
@@ -119,12 +135,28 @@
                         {{ 'New password' | trans }}
                     </label>
 
-                    <input
-                        type="password"
-                        id="new-password"
-                        name="newPassword"
-                        autocomplete="new-password"
-                    />
+                    <div class="password-container" data-controller="password">
+                        <input
+                            type="password"
+                            id="new-password"
+                            name="newPassword"
+                            autocomplete="new-password"
+                            data-password-target="input"
+                        />
+
+                        <button
+                            type="button"
+                            role="switch"
+                            data-action="password#toggle"
+                            data-password-target="button"
+                        >
+                            {{ icon('eye') }}
+                            {{ icon('eye-slash') }}
+                            <span class="sr-only">
+                                {{ 'Show password as plain text. Note: this will visually expose your password.' | trans }}
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </fieldset>
 

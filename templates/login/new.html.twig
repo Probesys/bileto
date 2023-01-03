@@ -28,7 +28,14 @@
                     {{ 'Email address' | trans }}
                 </label>
 
-                <input type="text" id="username" name="_username" value="{{ last_username }}" required/>
+                <input
+                    type="email"
+                    id="username"
+                    name="_username"
+                    value="{{ last_username }}"
+                    required
+                    autocomplete="email"
+                />
             </div>
 
             <div class="flow-small">
@@ -36,7 +43,29 @@
                     {{ 'Password' | trans }}
                 </label>
 
-                <input type="password" id="password" name="_password" required />
+                <div class="password-container" data-controller="password">
+                    <input
+                        type="password"
+                        id="password"
+                        name="_password"
+                        required
+                        autocomplete="current-password"
+                        data-password-target="input"
+                    />
+
+                    <button
+                        type="button"
+                        role="switch"
+                        data-action="password#toggle"
+                        data-password-target="button"
+                    >
+                        {{ icon('eye') }}
+                        {{ icon('eye-slash') }}
+                        <span class="sr-only">
+                            {{ 'Show password as plain text. Note: this will visually expose your password.' | trans }}
+                        </span>
+                    </button>
+                </div>
             </div>
 
             <div class="form__actions">

@@ -101,3 +101,4 @@ Name: Name
 'Leave these fields blank to keep your current password.': 'Leave these fields blank to keep your current password.'
 'Current password': 'Current password'
 'New password': 'New password'
+'Show password as plain text. Note: this will visually expose your password.': 'Show password as plain text. Note: this will visually expose your password.'

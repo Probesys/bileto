@@ -285,3 +285,33 @@ legend {
         margin-top: 0;
     }
 }
+
+.password-container {
+    position: relative;
+}
+
+.password-container button {
+    position: absolute;
+    right: 0;
+
+    color: var(--color-grey11);
+
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+    border-color: transparent;
+
+    outline-offset: -0.3rem;
+}
+
+.password-container button:hover,
+.password-container button:focus {
+    color: var(--color-grey12);
+
+    background-color: transparent;
+}
+
+.password-container button[aria-pressed="false"] .icon--eye-slash,
+.password-container button[aria-pressed="true"] .icon--eye {
+    display: none;
+}
