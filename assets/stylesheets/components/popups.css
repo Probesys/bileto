@@ -121,7 +121,7 @@
 .popup__item {
     display: block;
     width: 100%;
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 1.5rem;
 
     color: var(--color-grey12);
     line-height: 1.5;
