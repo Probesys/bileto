@@ -15,7 +15,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{% block title %}Bileto{% endblock %}</title>
 
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🤝</text></svg>">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icons/icon-32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('icons/icon-16.png') }}">
 
         {% block javascripts %}
             <script src="{{ asset('tinymce/tinymce.min.js') }}" defer data-turbo-track="reload"></script>
@@ -93,92 +94,59 @@
 
             <nav class="layout__header">
                 <div class="layout__header-container">
-                    <a class="layout__header-home" href="{{ path('home') }}">
-                        🤝 Bileto
-                    </a>
+                    {% block layout_header %}
+                        <a class="layout__header-home" href="{{ path('home') }}">
+                            <img src="{{ asset('icons/icon.svg') }}" alt="Bileto" />
+                        </a>
 
-                    {% if app.user %}
-                        <div class="layout__header-extend"></div>
+                        {% if app.user %}
+                            <div class="layout__header-extend"></div>
 
-                        <details
-                            class="popup"
-                            data-controller="popup"
-                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                        >
-                            <summary class="popup__opener" title="{{ 'Menu of %name%' | trans({'%name%': app.user.displayName}) }}">
-                                <span class="layout__header-avatar">{{ icon('circle-user') }}</span>
-                                <span class="sr-only">
-                                    {{ 'Menu of %name%' | trans({'%name%': app.user.displayName}) }}
-                                </span>
-                            </summary>
+                            <details
+                                class="popup"
+                                data-controller="popup"
+                                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                            >
+                                <summary class="popup__opener" title="{{ 'Menu of %name%' | trans({'%name%': app.user.displayName}) }}">
+                                    <span class="layout__header-avatar">{{ icon('circle-user') }}</span>
+                                    <span class="sr-only">
+                                        {{ 'Menu of %name%' | trans({'%name%': app.user.displayName}) }}
+                                    </span>
+                                </summary>
 
-                            <nav class="popup__container popup__container--large popup__container--left">
-                                <div class="popup__title">{{ app.user.displayName }}</div>
+                                <nav class="popup__container popup__container--large popup__container--left">
+                                    <div class="popup__title">{{ app.user.displayName }}</div>
 
-                                <a class="popup__item" href="{{ path('profile') }}">
-                                    {{ icon('user') }}
-                                    {{ 'Profile' | trans }}
-                                </a>
+                                    <a class="popup__item" href="{{ path('profile') }}">
+                                        {{ icon('user') }}
+                                        {{ 'Profile' | trans }}
+                                    </a>
 
-                                <a class="popup__item" href="{{ path('preferences') }}">
-                                    {{ icon('palette') }}
-                                    {{ 'Preferences' | trans }}
-                                </a>
+                                    <a class="popup__item" href="{{ path('preferences') }}">
+                                        {{ icon('palette') }}
+                                        {{ 'Preferences' | trans }}
+                                    </a>
 
-                                <div class="popup__separator"></div>
+                                    <div class="popup__separator"></div>
 
-                                <a class="popup__item" href="{{ path('about') }}">
-                                    {{ icon('circle-question') }}
-                                    {{ 'About Bileto' | trans }}
-                                </a>
+                                    <a class="popup__item" href="{{ path('about') }}">
+                                        {{ icon('circle-question') }}
+                                        {{ 'About Bileto' | trans }}
+                                    </a>
 
-                                <div class="popup__separator"></div>
+                                    <div class="popup__separator"></div>
 
-                                <form action="{{ path('logout') }}" method="post">
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
-                                    <button class="popup__item" id="form-logout-submit" type="submit">
-                                        {{ icon('logout') }}
-                                        {{ 'Logout' | trans }}
-                                    </button>
-                                </form>
-                            </nav>
-                        </details>
-                    {% else %}
-                        <div class="layout__header-extend"></div>
-
-                        <details
-                            class="popup"
-                            data-controller="popup"
-                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                        >
-                            <summary class="popup__opener">
-                                <span class="button">
-                                    {{ icon('language') }}
-                                    {{ 'Language' | trans }}
-                                    {{ icon('caret-down') }}
-                                </span>
-                            </summary>
-
-                            <nav class="popup__container popup__container--left">
-                                <form action="{{ path('update session locale') }}" method="post">
-                                    {% for locale, language in availableLanguages %}
-                                        <button
-                                            id="form-update-session-locale-{{ locale }}-submit"
-                                            class="popup__item"
-                                            type="submit"
-                                            name="locale"
-                                            value="{{ locale }}"
-                                        >
-                                            {{ language }}
+                                    <form action="{{ path('logout') }}" method="post">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                                        <button class="popup__item" id="form-logout-submit" type="submit">
+                                            {{ icon('logout') }}
+                                            {{ 'Logout' | trans }}
                                         </button>
-                                    {% endfor %}
-
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update session locale') }}">
-                                    <input type="hidden" name="from" value="{{ app.request.get('_route') }}">
-                                </form>
-                            </nav>
-                        </details>
-                    {% endif %}
+                                    </form>
+                                </nav>
+                            </details>
+                        {% endif %}
+                    {% endblock %}
                 </div>
             </nav>
 

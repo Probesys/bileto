@@ -8,6 +8,8 @@ The supported databases are PostgreSQL 14 and MariaDB 10.6.
 
 Bileto is licensed under [GNU Affero General Public License v3.0 or later](LICENSE.txt).
 
+![Bileto logo](public/logo.svg)
+
 ## Contributing
 
 Ideas, bug reports and contributions are welcome. Please follow [the contributing guide](CONTRIBUTING.md).

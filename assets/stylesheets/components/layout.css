@@ -5,6 +5,7 @@
 .layout__header-container {
     display: flex;
     max-width: 1200px;
+    height: 7rem;
     margin-right: auto;
     margin-left: auto;
 
@@ -28,6 +29,12 @@
     text-decoration: none;
 
     outline-offset: -0.3rem;
+}
+
+.layout__header-home img {
+    display: block;
+    width: 6rem;
+    max-width: 100%;
 }
 
 .layout__header-extend {

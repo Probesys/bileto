@@ -8,8 +8,45 @@
 
 {% block title %}{{ 'Log in' | trans }}{% endblock %}
 
+{% block layout_header %}
+    <details
+        class="popup"
+        data-controller="popup"
+        data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+    >
+        <summary class="popup__opener">
+            <span class="button">
+                {{ icon('language') }}
+                {{ 'Language' | trans }}
+                {{ icon('caret-down') }}
+            </span>
+        </summary>
+
+        <nav class="popup__container popup__container--left">
+            <form action="{{ path('update session locale') }}" method="post">
+                {% for locale, language in availableLanguages %}
+                    <button
+                        id="form-update-session-locale-{{ locale }}-submit"
+                        class="popup__item"
+                        type="submit"
+                        name="locale"
+                        value="{{ locale }}"
+                    >
+                        {{ language }}
+                    </button>
+                {% endfor %}
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update session locale') }}">
+                <input type="hidden" name="from" value="login">
+            </form>
+        </nav>
+    </details>
+{% endblock %}
+
 {% block body %}
-    <main class="layout__body layout__body--small flow">
+    <main class="layout__body layout__body--small flow login-new">
+        <img class="logo" src="{{ asset('logo.svg') }}" alt="Bileto" />
+
         <h1>{{ 'Log in' | trans }}</h1>
 
         <form action="{{ path('login') }}" method="post" class="flow">
