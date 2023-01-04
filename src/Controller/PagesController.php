@@ -34,4 +34,12 @@ class PagesController extends BaseController
             'availableLanguages' => Locales::getSupportedLanguages(),
         ]);
     }
+
+    #[Route('/app.manifest', name: 'webmanifest', methods: ['GET', 'HEAD'])]
+    public function webmanifest(): Response
+    {
+        $response = $this->render('pages/webmanifest.json.twig');
+        $response->headers->set('Content-Type', 'application/manifest+json');
+        return $response;
+    }
 }
