@@ -11,6 +11,7 @@ use App\Repository\OrganizationRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OrganizationsController extends BaseController
@@ -25,10 +26,25 @@ class OrganizationsController extends BaseController
     }
 
     #[Route('/organizations/new', name: 'new organization', methods: ['GET', 'HEAD'])]
-    public function new(): Response
-    {
+    public function new(
+        Request $request,
+        OrganizationRepository $orgaRepository,
+    ): Response {
+        /** @var string|null $parentUid */
+        $parentUid = $request->query->get('parent');
+        if ($parentUid !== null) {
+            $parentOrganization = $orgaRepository->findOneByAsTree(
+                ['uid' => $parentUid],
+                Organization::MAX_DEPTH - 1,
+            );
+        } else {
+            $parentOrganization = null;
+        }
+
         return $this->render('organizations/new.html.twig', [
+            'parentOrganization' => $parentOrganization,
             'name' => '',
+            'selectedParentUid' => '',
         ]);
     }
 
@@ -38,14 +54,32 @@ class OrganizationsController extends BaseController
         OrganizationRepository $orgaRepository,
         ValidatorInterface $validator
     ): Response {
+        /** @var string|null $parentUid */
+        $parentUid = $request->query->get('parent');
+
         /** @var string $name */
         $name = $request->request->get('name', '');
+
+        /** @var string $selectedParentUid */
+        $selectedParentUid = $request->request->get('selectedParent', '');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
+        if ($parentUid !== null) {
+            $parentOrganization = $orgaRepository->findOneByAsTree(
+                ['uid' => $parentUid],
+                Organization::MAX_DEPTH - 1,
+            );
+        } else {
+            $parentOrganization = null;
+        }
+
         if (!$this->isCsrfTokenValid('create organization', $csrfToken)) {
             return $this->renderBadRequest('organizations/new.html.twig', [
+                'parentOrganization' => $parentOrganization,
                 'name' => $name,
+                'selectedParentUid' => $selectedParentUid,
                 'error' => $this->csrfError(),
             ]);
         }
@@ -53,13 +87,38 @@ class OrganizationsController extends BaseController
         $organization = new Organization();
         $organization->setName($name);
 
+        if ($selectedParentUid) {
+            $selectedParentOrganization = $orgaRepository->findOneBy([
+                'uid' => $selectedParentUid,
+            ]);
+
+            if (!$selectedParentOrganization) {
+                return $this->renderBadRequest('organizations/new.html.twig', [
+                    'parentOrganization' => $parentOrganization,
+                    'name' => $name,
+                    'selectedParentUid' => $selectedParentUid,
+                    'errors' => [
+                        'parentsPath' => new TranslatableMessage(
+                            'Select an organization from this list.',
+                            [],
+                            'validators',
+                        ),
+                    ],
+                ]);
+            }
+
+            $organization->setParent($selectedParentOrganization);
+        }
+
         $uid = $orgaRepository->generateUid();
         $organization->setUid($uid);
 
         $errors = $validator->validate($organization);
         if (count($errors) > 0) {
             return $this->renderBadRequest('organizations/new.html.twig', [
+                'parentOrganization' => $parentOrganization,
                 'name' => $name,
+                'selectedParentUid' => $selectedParentUid,
                 'errors' => $this->formatErrors($errors),
             ]);
         }

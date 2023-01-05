@@ -76,6 +76,22 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'New organization');
     }
 
+    public function testGetNewRendersParentNodeIfOrganizationUidIsGiven(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $parentOrganization = OrganizationFactory::createOne();
+
+        $client->request('GET', "/organizations/new?parent={$parentOrganization->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains(
+            '[data-test="form-group-parent-organization"]',
+            'Parent organization'
+        );
+    }
+
     public function testGetNewRedirectsToLoginIfNotConnected(): void
     {
         $client = static::createClient();
@@ -101,6 +117,25 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertResponseRedirects("/organizations/{$organization->getUid()}", 302);
         $this->assertSame($name, $organization->getName());
         $this->assertSame(20, strlen($organization->getUid()));
+    }
+
+    public function testPostCreateCanCreateASubOrganization(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $parentOrganization = OrganizationFactory::createOne();
+        $name = 'My sub-organization';
+
+        $client->request('POST', "/organizations/new?parent={$parentOrganization->getUid()}", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
+            'name' => $name,
+            'selectedParent' => $parentOrganization->getUid(),
+        ]);
+
+        $organization = OrganizationFactory::last();
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}", 302);
+        $this->assertSame("/{$parentOrganization->getId()}/", $organization->getParentsPath());
     }
 
     public function testPostCreateFailsIfNameIsEmpty(): void
@@ -152,6 +187,51 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#name-error', 'The name must be 255 characters maximum.');
         $this->assertSame(0, OrganizationFactory::count());
+    }
+
+    public function testPostCreateFailsIfSelectedParentOrganizationDoesNotExist(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $parentOrganization = OrganizationFactory::createOne();
+        $name = 'My sub-organization';
+
+        $client->request('POST', "/organizations/new?parent={$parentOrganization->getUid()}", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
+            'name' => $name,
+            'selectedParent' => 'not an uid',
+        ]);
+
+        $this->assertSelectorTextContains('#parent-error', 'Select an organization from this list.');
+        $this->assertSame(1, OrganizationFactory::count());
+    }
+
+    public function testPostCreateFailsIfSelectedParentOrganizationIsTooDeep(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $parentOrganization = OrganizationFactory::createOne([
+            // normally, these ids should exist, but hopefully there are no
+            // foreign key check so it should be good. If the test fails for
+            // strange reasons, it might be because you need to create real
+            // organizations ;)
+            'parentsPath' => '/1/2/',
+        ]);
+        $name = 'My sub-organization';
+
+        $client->request('POST', "/organizations/new?parent={$parentOrganization->getUid()}", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
+            'name' => $name,
+            'selectedParent' => $parentOrganization->getUid(),
+        ]);
+
+        $this->assertSelectorTextContains(
+            '#parent-error',
+            'The sub-organization cannot be attached to this organization.'
+        );
+        $this->assertSame(1, OrganizationFactory::count());
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
