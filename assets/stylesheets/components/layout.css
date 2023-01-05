@@ -20,8 +20,8 @@
 
 .layout__header-home {
     display: inline-block;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
 
     color: inherit;
     font-size: 1.1em;
@@ -33,8 +33,8 @@
 
 .layout__header-home img {
     display: block;
-    width: 6rem;
     max-width: 100%;
+    height: 4rem;
 }
 
 .layout__header-extend {
