@@ -7,6 +7,7 @@
 namespace App\Entity;
 
 use App\Repository\OrganizationRepository;
+use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -26,6 +27,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Organization
 {
+    public const MAX_DEPTH = 3;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -48,9 +51,24 @@ class Organization
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Ticket::class)]
     private Collection $tickets;
 
+    #[ORM\Column(length: 255, options: ['default' => '/'])]
+    #[AppAssert\TreeDepth(
+        message: new TranslatableMessage(
+            'The sub-organization cannot be attached to this organization.',
+            [],
+            'validators'
+        ),
+        max: self::MAX_DEPTH,
+    )]
+    private ?string $parentsPath = null;
+
+    /** @var Organization[] $subOrganizations */
+    private array $subOrganizations = [];
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
+        $this->parentsPath = '/';
     }
 
     public function getId(): ?int
@@ -88,5 +106,60 @@ class Organization
     public function getTickets(): Collection
     {
         return $this->tickets;
+    }
+
+    public function getParentsPath(): ?string
+    {
+        return $this->parentsPath;
+    }
+
+    public function setParentsPath(string $parentsPath): self
+    {
+        $this->parentsPath = $parentsPath;
+
+        return $this;
+    }
+
+    public function setParent(Organization $parentOrganization): self
+    {
+        $parentsPath = $parentOrganization->getParentsPath() . $parentOrganization->getId() . '/';
+        $this->setParentsPath($parentsPath);
+
+        return $this;
+    }
+
+    public function isRootOrganization(): bool
+    {
+        return $this->parentsPath === '/';
+    }
+
+    public function getParentOrganizationId(): int|null
+    {
+        if ($this->isRootOrganization()) {
+            return null;
+        }
+
+        $ids = explode('/', trim($this->parentsPath, '/'));
+        return (int) array_pop($ids);
+    }
+
+    public function getDepth(): int
+    {
+        return substr_count($this->parentsPath, '/');
+    }
+
+    public function addSubOrganization(Organization $subOrganization): self
+    {
+        $this->subOrganizations[] = $subOrganization;
+
+        return $this;
+    }
+
+    /**
+     * @return Organization[]
+     */
+    public function getSubOrganizations(): array
+    {
+        return $this->subOrganizations;
     }
 }
