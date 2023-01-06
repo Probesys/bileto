@@ -118,3 +118,5 @@ Error: Erreur
 'The priority {{ value }} is not a valid priority.': 'La priorité {{ value }} n’est pas une priorité valide.'
 'The via {{ value }} is not a valid via.': 'Le via {{ value }} n’est pas un via valide.'
 'The message is required.': 'Le message est obligatoire.'
+'The sub-organization cannot be attached to this organization.': 'La sous-organisation ne peut être attachée à cette organisation.'
+'Select an organization from this list.': 'Sélectionnez une organisation depuis cette liste.'

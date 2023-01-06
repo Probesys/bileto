@@ -102,3 +102,5 @@ Name: Nom
 'Current password': 'Mot de passe actuel'
 'New password': 'Nouveau mot de passe'
 'Show password as plain text. Note: this will visually expose your password.': 'Afficher le mot de passe sous forme de texte. Attention, cela exposera votre mot de passe visuellement.'
+'Parent organization': 'Organisation parente'
+'<span class="sr-only">New</span> sub-organization': '<span class="sr-only">Nouvelle</span> sous-organisation'
