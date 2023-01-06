@@ -18,10 +18,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 #[UniqueEntity(
-    fields: 'name',
-    message: new TranslatableMessage('The name {{ value }} is already used.', [], 'validators'),
-)]
-#[UniqueEntity(
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
@@ -34,7 +30,7 @@ class Organization
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('The name is required.', [], 'validators'),
     )]

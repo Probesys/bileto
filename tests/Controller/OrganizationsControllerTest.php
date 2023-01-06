@@ -196,25 +196,6 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSame(0, OrganizationFactory::count());
     }
 
-    public function testPostCreateFailsIfNameAlreadyExists(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $name = 'My organization';
-        OrganizationFactory::createOne([
-            'name' => $name,
-        ]);
-
-        $client->request('POST', '/organizations/new', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
-            'name' => $name,
-        ]);
-
-        $this->assertSelectorTextContains('#name-error', 'The name "My organization" is already used.');
-        $this->assertSame(1, OrganizationFactory::count());
-    }
-
     public function testPostCreateFailsIfNameIsTooLong(): void
     {
         $client = static::createClient();
