@@ -10,6 +10,7 @@ use App\Controller\BaseController;
 use App\Entity\Message;
 use App\Entity\Ticket;
 use App\Repository\MessageRepository;
+use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Utils\Time;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -25,6 +26,7 @@ class MessagesController extends BaseController
         Ticket $ticket,
         Request $request,
         MessageRepository $messageRepository,
+        OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
@@ -48,6 +50,10 @@ class MessagesController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
+        $organization = $ticket->getOrganization();
+        $parentOrganizations = $organizationRepository->findParents($organization);
+        $organization->setParentOrganizations($parentOrganizations);
+
         $statuses = Ticket::getStatusesWithLabels();
         if ($ticket->getStatus() !== 'new') {
             unset($statuses['new']);
@@ -57,7 +63,7 @@ class MessagesController extends BaseController
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
                 'messages' => $ticket->getMessages(),
-                'organization' => $ticket->getOrganization(),
+                'organization' => $organization,
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => $statuses,
@@ -80,7 +86,7 @@ class MessagesController extends BaseController
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
                 'messages' => $ticket->getMessages(),
-                'organization' => $ticket->getOrganization(),
+                'organization' => $organization,
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => $statuses,
@@ -113,7 +119,7 @@ class MessagesController extends BaseController
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
                 'messages' => $ticket->getMessages(),
-                'organization' => $ticket->getOrganization(),
+                'organization' => $organization,
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => $statuses,

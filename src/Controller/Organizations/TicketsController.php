@@ -11,6 +11,7 @@ use App\Entity\Message;
 use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Repository\MessageRepository;
+use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Service\ActorsLister;
@@ -29,6 +30,7 @@ class TicketsController extends BaseController
     public function index(
         Organization $organization,
         Request $request,
+        OrganizationRepository $organizationRepository,
         TicketSearcher $ticketSearcher,
         UserRepository $userRepository,
     ): Response {
@@ -37,6 +39,9 @@ class TicketsController extends BaseController
 
         /** @var string $assigneeUid */
         $assigneeUid = $request->query->get('assignee', '');
+
+        $parentOrganizations = $organizationRepository->findParents($organization);
+        $organization->setParentOrganizations($parentOrganizations);
 
         $ticketSearcher->setOrganization($organization);
         $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
@@ -65,8 +70,12 @@ class TicketsController extends BaseController
     public function new(
         Organization $organization,
         ActorsLister $actorsLister,
+        OrganizationRepository $organizationRepository,
     ): Response {
         $users = $actorsLister->listUsers();
+        $parentOrganizations = $organizationRepository->findParents($organization);
+        $organization->setParentOrganizations($parentOrganizations);
+
         return $this->render('organizations/tickets/new.html.twig', [
             'organization' => $organization,
             'title' => '',
@@ -84,6 +93,7 @@ class TicketsController extends BaseController
         Organization $organization,
         Request $request,
         MessageRepository $messageRepository,
+        OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
         ActorsLister $actorsLister,
@@ -113,6 +123,8 @@ class TicketsController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         $users = $actorsLister->listUsers();
+        $parentOrganizations = $organizationRepository->findParents($organization);
+        $organization->setParentOrganizations($parentOrganizations);
 
         if (!$this->isCsrfTokenValid('create organization ticket', $csrfToken)) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [

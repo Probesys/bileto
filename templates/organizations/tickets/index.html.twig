@@ -78,9 +78,11 @@
             <div class="flow row__item--extend">
                 <h1>{{ title }}</h1>
 
-                <div class="text--center">
-                    {{ organization.name }}
-                </div>
+                {{ include(
+                    'organizations/_organization_breadcrumb.html.twig',
+                    { organization: organization },
+                    with_context = false,
+                ) }}
 
                 {% if tickets %}
                     <div class="table-container">

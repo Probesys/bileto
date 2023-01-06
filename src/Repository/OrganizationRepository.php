@@ -117,4 +117,13 @@ class OrganizationRepository extends ServiceEntityRepository
 
         return $rootOrganization;
     }
+
+    /**
+     * @return Organization[]
+     */
+    public function findParents(Organization $organization): array
+    {
+        $parentIds = $organization->getParentOrganizationIds();
+        return $this->findBy(['id' => $parentIds]);
+    }
 }

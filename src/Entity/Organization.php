@@ -61,6 +61,9 @@ class Organization
     /** @var Organization[] $subOrganizations */
     private array $subOrganizations = [];
 
+    /** @var Organization[] $parentOrganizations */
+    private array $parentOrganizations = [];
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -131,12 +134,25 @@ class Organization
 
     public function getParentOrganizationId(): int|null
     {
-        if ($this->isRootOrganization()) {
+        $parentIds = $this->getParentOrganizationIds();
+        if (empty($parentIds)) {
             return null;
         }
 
+        return array_pop($parentIds);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getParentOrganizationIds(): array
+    {
+        if ($this->isRootOrganization()) {
+            return [];
+        }
+
         $ids = explode('/', trim($this->parentsPath, '/'));
-        return (int) array_pop($ids);
+        return array_map('intval', $ids);
     }
 
     public function getDepth(): int
@@ -157,5 +173,23 @@ class Organization
     public function getSubOrganizations(): array
     {
         return $this->subOrganizations;
+    }
+
+    /**
+     * @param Organization[] $parentOrganizations
+     */
+    public function setParentOrganizations(array $parentOrganizations): self
+    {
+        $this->parentOrganizations = $parentOrganizations;
+
+        return $this;
+    }
+
+    /**
+     * @return Organization[]
+     */
+    public function getParentOrganizations(): array
+    {
+        return $this->parentOrganizations;
     }
 }
