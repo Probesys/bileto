@@ -22,9 +22,12 @@ class TicketSearcher
         $this->ticketRepository = $ticketRepository;
     }
 
-    public function setOrganization(Organization $organization): self
+    /**
+     * @param int|int[] $organizationId
+     */
+    public function setOrganization(int|array $organizationId): self
     {
-        $this->criteria['organization'] = $organization->getId();
+        $this->criteria['organization'] = $organizationId;
 
         return $this;
     }

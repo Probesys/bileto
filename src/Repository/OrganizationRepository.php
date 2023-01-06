@@ -126,4 +126,21 @@ class OrganizationRepository extends ServiceEntityRepository
         $parentIds = $organization->getParentOrganizationIds();
         return $this->findBy(['id' => $parentIds]);
     }
+
+    /**
+     * @return int[]
+     */
+    public function findSubOrganizationIds(int $organizationId): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT o.id
+            FROM App\Entity\Organization o
+            WHERE o.parentsPath LIKE CONCAT('%/', :id, '/%')
+            SQL);
+        $query->setParameter('id', $organizationId);
+
+        return $query->getSingleColumnResult();
+    }
 }

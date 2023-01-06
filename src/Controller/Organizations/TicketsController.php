@@ -40,11 +40,22 @@ class TicketsController extends BaseController
         /** @var string $assigneeUid */
         $assigneeUid = $request->query->get('assignee', '');
 
+        /** @var boolean $includeSubOrganizations */
+        $includeSubOrganizations = $request->query->getBoolean('subOrga', false);
+
         $parentOrganizations = $organizationRepository->findParents($organization);
         $organization->setParentOrganizations($parentOrganizations);
 
-        $ticketSearcher->setOrganization($organization);
         $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
+
+        if ($includeSubOrganizations) {
+            $ticketSearcher->setOrganization(array_merge(
+                [$organization->getId()],
+                $organizationRepository->findSubOrganizationIds($organization->getId()),
+            ));
+        } else {
+            $ticketSearcher->setOrganization($organization->getId());
+        }
 
         if ($assigneeUid === 'none') {
             $ticketSearcher->setAssignee(null);

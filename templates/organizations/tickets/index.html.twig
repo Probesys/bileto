@@ -84,6 +84,24 @@
                     with_context = false,
                 ) }}
 
+                <form action="{{ app.request.requestUri }}">
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="sub-orga"
+                            name="subOrga"
+                        />
+
+                        <label for="sub-orga">
+                            {{ 'Include tickets of sub-organizations?' | trans }}
+                        </label>
+                    </div>
+
+                    <button type="submit">
+                        OK
+                    </button>
+                </form>
+
                 {% if tickets %}
                     <div class="table-container">
                         <table>
