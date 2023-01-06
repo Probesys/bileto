@@ -9,7 +9,7 @@
 {% block title %}{{ 'Organizations' | trans }}{% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
+    <main class="layout__body flow organizations-index">
         <h1>{{ 'Organizations' | trans }}</h1>
 
         <div class="wrapper-large wrapper--center flow">
@@ -27,6 +27,11 @@
                             </a>
 
                             <div class="card__body">
+                                {{ include(
+                                    'organizations/_organizations_as_list.html.twig',
+                                    { organizations: organization.subOrganizations },
+                                    with_context = false
+                                ) }}
                             </div>
 
                             <div class="text--center text--small">

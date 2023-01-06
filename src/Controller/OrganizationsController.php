@@ -19,7 +19,7 @@ class OrganizationsController extends BaseController
     #[Route('/organizations', name: 'organizations', methods: ['GET', 'HEAD'])]
     public function index(OrganizationRepository $orgaRepository): Response
     {
-        $organizations = $orgaRepository->findBy([], ['name' => 'ASC']);
+        $organizations = $orgaRepository->findAllAsTree();
         return $this->render('organizations/index.html.twig', [
             'organizations' => $organizations,
         ]);

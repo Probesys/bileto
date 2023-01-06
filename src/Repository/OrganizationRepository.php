@@ -46,6 +46,35 @@ class OrganizationRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return Organization[]
+     */
+    public function findAllAsTree(): array
+    {
+        $entityManager = $this->getEntityManager();
+        $rootOrganizations = [];
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT o
+            FROM App\Entity\Organization o
+            INDEX BY o.id
+            ORDER BY o.parentsPath ASC, o.name ASC
+            SQL);
+
+        $organizationsIndexByIds = $query->getResult();
+        foreach ($organizationsIndexByIds as $organization) {
+            $parentId = $organization->getParentOrganizationId();
+            $parent = $organizationsIndexByIds[$parentId] ?? null;
+            if ($parentId === null) {
+                $rootOrganizations[] = $organization;
+            } elseif ($parent) {
+                $parent->addSubOrganization($organization);
+            }
+        }
+
+        return $rootOrganizations;
+    }
+
+    /**
      * @param array<string, mixed> $criteria
      */
     public function findOneByAsTree(array $criteria, int $maxDepth = 0): Organization

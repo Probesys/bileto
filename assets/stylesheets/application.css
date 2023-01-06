@@ -29,6 +29,7 @@
 @import "./components/tickets.css";
 @import "./components/timelines.css";
 @import "./pages/login-new.css";
+@import "./pages/organizations-index.css";
 @import "./pages/tickets-index.css";
 @import "./pages/tickets-show.css";
 

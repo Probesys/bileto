@@ -40,6 +40,40 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(2)', 'My organization 2');
     }
 
+    public function testGetIndexListsSubOrganizations(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne([
+            'name' => 'My organization',
+        ]);
+        $subOrganization = OrganizationFactory::createOne([
+            'name' => 'My sub-organization',
+            'parentsPath' => "/{$organization->getId()}/",
+        ]);
+        $subSubOrganization = OrganizationFactory::createOne([
+            'name' => 'My sub-sub-organization',
+            'parentsPath' => "/{$organization->getId()}/{$subOrganization->getId()}/",
+        ]);
+
+        $client->request('GET', '/organizations');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains(
+            '[data-test="organization-item"]',
+            'My organization',
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="organization-item"] [data-test="organization-item"]',
+            'My sub-organization',
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="organization-item"] [data-test="organization-item"] [data-test="organization-item"]',
+            'My sub-sub-organization',
+        );
+    }
+
     public function testGetIndexDisplaysAPlaceholderIfNoOrganization(): void
     {
         $client = static::createClient();
