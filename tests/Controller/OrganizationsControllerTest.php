@@ -26,18 +26,26 @@ class OrganizationsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         OrganizationFactory::createOne([
-            'name' => 'My organization 2',
+            'name' => 'foo',
         ]);
         OrganizationFactory::createOne([
-            'name' => 'My organization 1',
+            'name' => 'Foo',
+        ]);
+        OrganizationFactory::createOne([
+            'name' => 'bar',
+        ]);
+        OrganizationFactory::createOne([
+            'name' => 'Bar',
         ]);
 
         $client->request('GET', '/organizations');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Organizations');
-        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(1)', 'My organization 1');
-        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(2)', 'My organization 2');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(1)', 'bar');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(2)', 'Bar');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(3)', 'foo');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(4)', 'Foo');
     }
 
     public function testGetIndexListsSubOrganizations(): void
