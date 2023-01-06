@@ -57,6 +57,7 @@ final class OrganizationFactory extends ModelFactory
         return [
             'name' => self::faker()->text(),
             'uid' => Random::hex(20),
+            'parentsPath' => '/',
         ];
     }
 

@@ -14,6 +14,7 @@
 @import "./components/anchors.css";
 @import "./components/badges.css";
 @import "./components/buttons.css";
+@import "./components/breadcrumbs.css";
 @import "./components/cards.css";
 @import "./components/forms.css";
 @import "./components/icons.css";
@@ -29,6 +30,7 @@
 @import "./components/tickets.css";
 @import "./components/timelines.css";
 @import "./pages/login-new.css";
+@import "./pages/organizations-index.css";
 @import "./pages/tickets-index.css";
 @import "./pages/tickets-show.css";
 

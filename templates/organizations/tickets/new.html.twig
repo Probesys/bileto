@@ -18,9 +18,11 @@
     <main class="layout__body flow">
         <h1>{{ 'New ticket' | trans }}</h1>
 
-        <div class="text--center">
-            {{ organization.name }}
-        </div>
+        {{ include(
+            'organizations/_organization_breadcrumb.html.twig',
+            { organization: organization },
+            with_context = false,
+        ) }}
 
         <form
             action="{{ path('create organization ticket', {'uid': organization.uid}) }}"

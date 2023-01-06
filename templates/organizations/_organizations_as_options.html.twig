@@ -1,0 +1,20 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% for organization in organizations %}
+    <option value="{{ organization.uid }}" {{ organization.uid == selectedParentUid ? 'selected' }}>
+        {{ organization.name }}
+    </option>
+
+    {{ include(
+        'organizations/_organizations_as_options.html.twig',
+        {
+            organizations: organization.subOrganizations,
+            selectedParentUid: selectedParentUid,
+        },
+        with_context = false
+    ) }}
+{% endfor %}

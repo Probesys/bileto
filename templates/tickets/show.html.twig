@@ -22,9 +22,11 @@
                 <span class="ticket__id">#{{ ticket.id }}</span>
             </h1>
 
-            <div class="text--center">
-                {{ organization.name }}
-            </div>
+            {{ include(
+                'organizations/_organization_breadcrumb.html.twig',
+                { organization: organization },
+                with_context = false,
+            ) }}
 
             <div class="text--center">
                 <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'Status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>

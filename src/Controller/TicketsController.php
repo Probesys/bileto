@@ -8,6 +8,7 @@ namespace App\Controller;
 
 use App\Controller\BaseController;
 use App\Entity\Ticket;
+use App\Repository\OrganizationRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,8 +16,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class TicketsController extends BaseController
 {
     #[Route('/tickets/{uid}', name: 'ticket', methods: ['GET', 'HEAD'])]
-    public function show(Ticket $ticket): Response
+    public function show(Ticket $ticket, OrganizationRepository $organizationRepository): Response
     {
+        $organization = $ticket->getOrganization();
+        $parentOrganizations = $organizationRepository->findParents($organization);
+        $organization->setParentOrganizations($parentOrganizations);
+
         $statuses = Ticket::getStatusesWithLabels();
         if ($ticket->getStatus() !== 'new') {
             unset($statuses['new']);
@@ -25,7 +30,7 @@ class TicketsController extends BaseController
         return $this->render('tickets/show.html.twig', [
             'ticket' => $ticket,
             'messages' => $ticket->getMessages(),
-            'organization' => $ticket->getOrganization(),
+            'organization' => $organization,
             'message' => '',
             'status' => 'pending',
             'statuses' => $statuses,

@@ -102,3 +102,5 @@ Name: Name
 'Current password': 'Current password'
 'New password': 'New password'
 'Show password as plain text. Note: this will visually expose your password.': 'Show password as plain text. Note: this will visually expose your password.'
+'Parent organization': 'Parent organization'
+'<span class="sr-only">New</span> sub-organization': '<span class="sr-only">New</span> sub-organization'
