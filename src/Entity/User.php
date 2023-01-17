@@ -42,12 +42,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     /**
-     * @var string[]
-     */
-    #[ORM\Column]
-    private array $roles = [];
-
-    /**
      * @var string The hashed password
      */
     #[ORM\Column]
@@ -111,21 +105,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * This methods has nothing to do with "Bileto roles". It is in fact a
+     * requirement of the Symfony authentication system.
+     *
      * @see UserInterface
      */
     public function getRoles(): array
     {
-        return $this->roles;
-    }
-
-    /**
-     * @param string[] $roles
-     */
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
+        return ['ROLE_USER'];
     }
 
     /**

@@ -87,7 +87,6 @@ class CreateCommand extends Command
         $user->setEmail($email);
         $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
-        $user->setRoles(['ROLE_USER']);
 
         $uid = $this->userRepository->generateUid();
         $user->setUid($uid);

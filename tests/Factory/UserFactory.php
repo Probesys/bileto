@@ -68,7 +68,6 @@ final class UserFactory extends ModelFactory
         return [
             'uid' => Random::hex(20),
             'email' => self::faker()->unique()->safeEmail(),
-            'roles' => ['ROLE_USER'],
             'password' => self::faker()->text(),
         ];
     }
