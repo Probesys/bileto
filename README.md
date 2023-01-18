@@ -26,6 +26,7 @@ Developers guide:
 - [Setup the development environment](/docs/developers/setup.md)
 - [Update the development environment](/docs/developers/update.md)
 - [Executing tests and linters](/docs/developers/tests.md)
+- [Managing the dependencies](/docs/developers/dependencies.md)
 - [Working with the icons](/docs/developers/icons.md)
 - [Working with the modals](/docs/developers/modals.md)
 - [Working with the popups](/docs/developers/popups.md)
