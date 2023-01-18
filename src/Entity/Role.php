@@ -182,6 +182,27 @@ class Role
         return $this;
     }
 
+    /**
+     * @param string[] $permissions
+     * @return string[]
+     */
+    public static function sanitizePermissions(string $type, array $permissions): array
+    {
+        $sanitizedPermissions = [];
+
+        foreach ($permissions as $permission) {
+            if (
+                str_starts_with($permission, $type . ':') &&
+                in_array($permission, self::PERMISSIONS) &&
+                $permission !== 'admin:*' // it is reserved to the super admin role
+            ) {
+                $sanitizedPermissions[] = $permission;
+            }
+        }
+
+        return $sanitizedPermissions;
+    }
+
     public function hasPermission(string $permission): bool
     {
         return (

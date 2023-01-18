@@ -7,8 +7,10 @@
 namespace App\Repository;
 
 use App\Entity\Role;
+use App\Utils\Time;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * @extends ServiceEntityRepository<Role>
@@ -43,5 +45,27 @@ class RoleRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findOrCreateSuperRole(): Role
+    {
+        $superRole = $this->findOneBy(['type' => 'super']);
+        if ($superRole) {
+            return $superRole;
+        }
+
+        $superRole = new Role();
+        $superRole->setUid($this->generateUid());
+        $superRole->setCreatedAt(Time::now());
+        $superRole->setName(new TranslatableMessage('Super-admin'));
+        $superRole->setDescription(
+            new TranslatableMessage('A special admin role with an access to everything (cannot be deleted).')
+        );
+        $superRole->setType('super');
+        $superRole->setPermissions(['admin:*']);
+
+        $this->save($superRole, true);
+
+        return $superRole;
     }
 }

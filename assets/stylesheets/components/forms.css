@@ -219,11 +219,24 @@ select[aria-invalid] {
 
 fieldset {
     min-width: auto;
+    margin-right: -1rem;
+    margin-left: -1rem;
     padding: 1rem;
 
     background-color: var(--color-grey2);
-    border: 0.25rem solid var(--color-grey6);
-    border-radius: 0.5rem;
+    border: none;
+    border-top: 0.25rem solid var(--color-grey6);
+    border-bottom: 0.25rem solid var(--color-grey6);
+}
+
+@media (min-width: 800px) {
+    fieldset {
+        margin-right: -1.25rem;
+        margin-left: -1.25rem;
+
+        border: 0.25rem solid var(--color-grey6);
+        border-radius: 0.5rem;
+    }
 }
 
 legend {
