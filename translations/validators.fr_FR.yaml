@@ -120,3 +120,6 @@ Error: Erreur
 'The message is required.': 'Le message est obligatoire.'
 'The sub-organization cannot be attached to this organization.': 'La sous-organisation ne peut être attachée à cette organisation.'
 'Select an organization from this list.': 'Sélectionnez une organisation depuis cette liste.'
+'The role {{ value }} is already used.': 'Le rôle {{ value }} est déjà utilisé.'
+'The description is required.': 'La description est obligatoire.'
+'The description must be {{ limit }} characters maximum.': 'La description doit faire {{ limit }} caractères maximum.'
