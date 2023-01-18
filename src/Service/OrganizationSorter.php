@@ -7,18 +7,9 @@
 namespace App\Service;
 
 use App\Entity\Organization;
-use App\Utils\Locales;
-use Symfony\Component\HttpFoundation\RequestStack;
 
-class OrganizationSorter
+class OrganizationSorter extends LocaleSorter
 {
-    private RequestStack $requestStack;
-
-    public function __construct(RequestStack $requestStack)
-    {
-        $this->requestStack = $requestStack;
-    }
-
     /**
      * @param Organization[] $organizations
      */
@@ -37,15 +28,5 @@ class OrganizationSorter
                 return $nameComparison;
             }
         });
-    }
-
-    private function getLocale(): string
-    {
-        $currentRequest = $this->requestStack->getCurrentRequest();
-        if ($currentRequest) {
-            return $currentRequest->getLocale();
-        } else {
-            return Locales::DEFAULT_LOCALE;
-        }
     }
 }
