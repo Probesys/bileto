@@ -56,6 +56,7 @@ class CreateCommand extends Command
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
+        /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         $email = $input->getOption('email');
