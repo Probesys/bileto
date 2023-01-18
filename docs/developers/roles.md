@@ -80,7 +80,7 @@ Only the method `getRoles()` of the `User` entity returns a "Symfony role" becau
 
 Documentation: [symfony.com](https://symfony.com/doc/current/security/voters.html)
 
-Bileto has a unique Voter to check the permission of a user: [`AppVoter`](/src/Security/Voter.php) (not implemented yet).
+Bileto has a unique Voter to check the permission of a user: [`AppVoter`](/src/Security/AppVoter.php).
 It loads the applicable user authorization and related role, then it checks that the role includes the current checked permission.
 
 ### How to check the permissions

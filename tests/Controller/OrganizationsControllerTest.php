@@ -7,15 +7,18 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Organization;
+use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class OrganizationsControllerTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
     use SessionHelper;
@@ -25,6 +28,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         OrganizationFactory::createOne([
             'name' => 'foo',
         ]);
@@ -53,6 +57,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
@@ -87,6 +92,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
 
         $client->request('GET', '/organizations');
 
@@ -97,13 +103,16 @@ class OrganizationsControllerTest extends WebTestCase
         );
     }
 
-    public function testGetIndexRedirectsToLoginIfNotConnected(): void
+    public function testGetIndexFailsIfAccessIsForbidden(): void
     {
+        $this->expectException(AccessDeniedException::class);
+
         $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
 
+        $client->catchExceptions(false);
         $client->request('GET', '/organizations');
-
-        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -111,6 +120,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
 
         $client->request('GET', '/organizations/new');
 
@@ -123,6 +133,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $parentOrganization = OrganizationFactory::createOne();
 
         $client->request('GET', "/organizations/new?parent={$parentOrganization->getUid()}");
@@ -134,13 +145,16 @@ class OrganizationsControllerTest extends WebTestCase
         );
     }
 
-    public function testGetNewRedirectsToLoginIfNotConnected(): void
+    public function testGetNewFailsIfAccessIsForbidden(): void
     {
+        $this->expectException(AccessDeniedException::class);
+
         $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
 
+        $client->catchExceptions(false);
         $client->request('GET', '/organizations/new');
-
-        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testPostCreateCreatesAnOrganizationAndRedirects(): void
@@ -148,6 +162,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $name = 'My organization';
 
         $client->request('GET', '/organizations/new');
@@ -166,6 +181,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $parentOrganization = OrganizationFactory::createOne();
         $name = 'My sub-organization';
 
@@ -185,6 +201,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $name = '';
 
         $client->request('POST', '/organizations/new', [
@@ -201,6 +218,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $name = str_repeat('a', 256);
 
         $client->request('POST', '/organizations/new', [
@@ -217,6 +235,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $parentOrganization = OrganizationFactory::createOne();
         $name = 'My sub-organization';
 
@@ -235,6 +254,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $parentOrganization = OrganizationFactory::createOne([
             // normally, these ids should exist, but hopefully there are no
             // foreign key check so it should be good. If the test fails for
@@ -262,6 +282,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $name = 'My organization';
 
         $client->request('POST', '/organizations/new', [
@@ -271,6 +292,22 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
         $this->assertSame(0, OrganizationFactory::count());
+    }
+
+    public function testPostCreateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $name = 'My organization';
+
+        $client->catchExceptions(false);
+        $client->request('POST', '/organizations/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
+            'name' => $name,
+        ]);
     }
 
     public function testGetShowRedirectsToTickets(): void

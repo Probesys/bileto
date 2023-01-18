@@ -25,7 +25,7 @@
                     </a>
 
                     {% for role in adminRoles %}
-                        <div class="card" data-test="role-admin-item">
+                        <div class="card" data-test="role-{{ role.type }}-item">
                             <div class="card__title">
                                 {% if role.type == 'super' %}
                                     {{ role.name | trans }}

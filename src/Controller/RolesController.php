@@ -20,6 +20,8 @@ class RolesController extends BaseController
     #[Route('/roles', name: 'roles', methods: ['GET', 'HEAD'])]
     public function index(RoleRepository $roleRepository, RoleSorter $roleSorter): Response
     {
+        $this->denyAccessUnlessGranted('admin:manage:roles');
+
         $adminRoles = $roleRepository->findBy(['type' => 'admin']);
         $orgaRoles = $roleRepository->findBy(['type' => 'orga']);
 
@@ -40,6 +42,8 @@ class RolesController extends BaseController
         Request $request,
         RoleRepository $roleRepository,
     ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:roles');
+
         /** @var string $type */
         $type = $request->query->get('type', 'orga');
 
@@ -57,6 +61,8 @@ class RolesController extends BaseController
         RoleRepository $roleRepository,
         ValidatorInterface $validator
     ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:roles');
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 

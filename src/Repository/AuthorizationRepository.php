@@ -60,4 +60,25 @@ class AuthorizationRepository extends ServiceEntityRepository
         $authorization->setOrganization($organization);
         $this->save($authorization, true);
     }
+
+    public function getAdminAuthorizationFor(User $user): ?Authorization
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT a, r
+            FROM App\Entity\Authorization a
+            JOIN a.role r
+            WHERE a.holder = :user
+            AND (r.type = 'admin' OR r.type = 'super')
+        SQL);
+        $query->setParameter('user', $user);
+
+        return $query->getOneOrNullResult();
+    }
+
+    public function getOrgaAuthorizationFor(User $user, Organization $organization): ?Authorization
+    {
+        return null;
+    }
 }
