@@ -64,10 +64,15 @@ class Organization
     /** @var Organization[] $parentOrganizations */
     private array $parentOrganizations = [];
 
+    /** @var Collection<int, Authorization> $authorizations */
+    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Authorization::class)]
+    private Collection $authorizations;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->parentsPath = '/';
+        $this->authorizations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -191,5 +196,13 @@ class Organization
     public function getParentOrganizations(): array
     {
         return $this->parentOrganizations;
+    }
+
+    /**
+     * @return Collection<int, Authorization>
+     */
+    public function getAuthorizations(): Collection
+    {
+        return $this->authorizations;
     }
 }

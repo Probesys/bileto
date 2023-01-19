@@ -8,6 +8,8 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use App\Utils\Locales;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -76,6 +78,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'validators'),
     )]
     private ?string $name = null;
+
+    /** @var Collection<int, Authorization> $authorizations */
+    #[ORM\OneToMany(mappedBy: 'holder', targetEntity: Authorization::class, orphanRemoval: true)]
+    private Collection $authorizations;
+
+    public function __construct()
+    {
+        $this->authorizations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -194,5 +205,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         } else {
             return $this->email;
         }
+    }
+
+    /**
+     * @return Collection<int, Authorization>
+     */
+    public function getAuthorizations(): Collection
+    {
+        return $this->authorizations;
     }
 }

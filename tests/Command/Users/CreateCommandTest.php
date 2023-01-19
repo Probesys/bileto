@@ -7,6 +7,7 @@
 namespace App\Tests\Command\Users;
 
 use App\Tests\CommandTestsHelper;
+use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
@@ -44,6 +45,10 @@ class CreateCommandTest extends KernelTestCase
         $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $password));
         $this->assertSame(['ROLE_USER'], $user->getRoles());
         $this->assertSame(20, strlen($user->getUid()));
+        // It should also give the "super-admin" permissions to the user.
+        $authorization = AuthorizationFactory::first();
+        $this->assertSame($user->getId(), $authorization->getHolder()->getId());
+        $this->assertSame('super', $authorization->getRole()->getType());
     }
 
     public function testExecuteWorksWhenPassingOptions(): void

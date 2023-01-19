@@ -8,6 +8,9 @@ namespace App\Command\Users;
 
 use App\Entity;
 use App\Repository\UserRepository;
+use App\Repository\RoleRepository;
+use App\Repository\AuthorizationRepository;
+use App\Utils\Time;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -28,6 +31,12 @@ class CreateCommand extends Command
     /** @var UserRepository */
     private $userRepository;
 
+    /** @var RoleRepository */
+    private $roleRepository;
+
+    /** @var AuthorizationRepository */
+    private $authorizationRepository;
+
     /** @var UserPasswordHasherInterface */
     private $passwordHasher;
 
@@ -36,10 +45,14 @@ class CreateCommand extends Command
 
     public function __construct(
         UserRepository $userRepository,
+        RoleRepository $roleRepository,
+        AuthorizationRepository $authorizationRepository,
         UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
     ) {
         $this->userRepository = $userRepository;
+        $this->roleRepository = $roleRepository;
+        $this->authorizationRepository = $authorizationRepository;
         $this->passwordHasher = $passwordHasher;
         $this->validator = $validator;
 
@@ -88,8 +101,8 @@ class CreateCommand extends Command
         $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
 
-        $uid = $this->userRepository->generateUid();
-        $user->setUid($uid);
+        $userUid = $this->userRepository->generateUid();
+        $user->setUid($userUid);
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
@@ -101,7 +114,16 @@ class CreateCommand extends Command
             return Command::INVALID;
         }
 
+        $superRole = $this->roleRepository->findOrCreateSuperRole();
+        $authorizationUid = $this->authorizationRepository->generateUid();
+        $authorization = new Entity\Authorization();
+        $authorization->setUid($authorizationUid);
+        $authorization->setCreatedAt(Time::now());
+        $authorization->setHolder($user);
+        $authorization->setRole($superRole);
+
         $this->userRepository->save($user, true);
+        $this->authorizationRepository->save($authorization, true);
 
         $output->writeln("The user \"{$user->getEmail()}\" has been created.");
 

@@ -7,6 +7,8 @@
 namespace App\Entity;
 
 use App\Repository\RoleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -86,6 +88,15 @@ class Role
 
     #[ORM\Column]
     private bool $isDefault = false;
+
+    /** @var Collection<int, Authorization> $authorizations */
+    #[ORM\OneToMany(mappedBy: 'role', targetEntity: Authorization::class, orphanRemoval: true)]
+    private Collection $authorizations;
+
+    public function __construct()
+    {
+        $this->authorizations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -221,5 +232,13 @@ class Role
         $this->isDefault = $isDefault;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Authorization>
+     */
+    public function getAuthorizations(): Collection
+    {
+        return $this->authorizations;
     }
 }
