@@ -201,5 +201,7 @@ Users cannot be created in the interface yet, you must use the command line for 
 $ sudo -u www-data php bin/console app:users:create --email=username@example.com --password=secret
 ```
 
+**Important note:** users created with the command line have "super-admin" permissions and can do anything in Bileto.
+
 Then, try to login via the interface, it should work.
 You can start using Bileto now.

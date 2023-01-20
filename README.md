@@ -27,11 +27,13 @@ Developers guide:
 - [Update the development environment](/docs/developers/update.md)
 - [Executing tests and linters](/docs/developers/tests.md)
 - [Managing the dependencies](/docs/developers/dependencies.md)
-- [Working with the icons](/docs/developers/icons.md)
-- [Working with the modals](/docs/developers/modals.md)
-- [Working with the popups](/docs/developers/popups.md)
-- [Working with the notifications](/docs/developers/notifications.md)
-- [Working with rows and grids](/docs/developers/rows-and-grids.md)
+- [Working with the roles & permissions](/docs/developers/roles.md)
+- Frontend:
+    - [Working with the icons](/docs/developers/icons.md)
+    - [Working with the modals](/docs/developers/modals.md)
+    - [Working with the popups](/docs/developers/popups.md)
+    - [Working with the notifications](/docs/developers/notifications.md)
+    - [Working with rows and grids](/docs/developers/rows-and-grids.md)
 
 Maintainers guide:
 

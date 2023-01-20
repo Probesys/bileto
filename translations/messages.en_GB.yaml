@@ -104,3 +104,19 @@ Name: Name
 'Show password as plain text. Note: this will visually expose your password.': 'Show password as plain text. Note: this will visually expose your password.'
 'Parent organization': 'Parent organization'
 '<span class="sr-only">New</span> sub-organization': '<span class="sr-only">New</span> sub-organization'
+Super-admin: Super-admin
+'A special admin role with an access to everything (cannot be deleted).': 'A special admin role with an access to everything (cannot be deleted).'
+Roles: Roles
+'Admin roles': 'Admin roles'
+'New admin role': 'New admin role'
+'Organization roles': 'Organization roles'
+'New orga role': 'New orga role'
+'New role': 'New role'
+'Back (roles)': 'Back (roles)'
+'Name of the admin role': 'Name of the admin role'
+'Name of the organization role': 'Name of the organization role'
+'(max. 50 characters)': '(max. 50 characters)'
+Description: Description
+Permissions: Permissions
+'No permissions are available for now.': 'No permissions are available for now.'
+'Create the role': 'Create the role'

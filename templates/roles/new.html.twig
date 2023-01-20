@@ -1,0 +1,107 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'New role' | trans }}{% endblock %}
+
+{% block back %}
+    <a href="{{ path('roles') }}">
+        {{ 'Back (roles)' | trans }}
+    </a>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <h1>{{ 'New role' | trans }}</h1>
+
+        <form action="{{ path('create role', { type: type }) }}" method="post" class="wrapper-small wrapper--center flow">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create role') }}">
+
+            {% if error %}
+                {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
+            {% endif %}
+
+            <div class="flow-small">
+                <label for="name">
+                    {% if type == 'admin' %}
+                        {{ 'Name of the admin role' | trans }}
+                    {% else %}
+                        {{ 'Name of the organization role' | trans }}
+                    {% endif %}
+
+                    <small class="text--secondary">
+                        {{ '(max. 50 characters)' | trans }}
+                    </small>
+                </label>
+
+                {% if errors.name is defined %}
+                    <p class="form__error" role="alert" id="name-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.name }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ name }}"
+                    required
+                    autofocus
+                    maxlength="50"
+                    {% if errors.name is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="name-error"
+                    {% endif %}
+                />
+            </div>
+
+            <div class="flow-small">
+                <label for="description">
+                    {{ 'Description' | trans }}
+                    <small class="text--secondary">
+                        {{ '(max. 255 characters)' | trans }}
+                    </small>
+                </label>
+
+                {% if errors.description is defined %}
+                    <p class="form__error" role="alert" id="description-error">
+                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        {{ errors.description }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="text"
+                    id="description"
+                    name="description"
+                    value="{{ description }}"
+                    required
+                    maxlength="255"
+                    {% if errors.description is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="description-error"
+                    {% endif %}
+                />
+            </div>
+
+            <fieldset>
+                <legend>{{ 'Permissions' | trans }}</legend>
+
+                <p class="text--center text--secondary">
+                    {{ 'No permissions are available for now.' | trans }}
+                </p>
+            </fieldset>
+
+            <div class="form__actions">
+                <button id="form-create-role-submit" class="button--primary" type="submit">
+                    {{ 'Create the role' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}

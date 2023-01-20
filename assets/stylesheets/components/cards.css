@@ -16,6 +16,23 @@
     border-radius: 0.5rem;
 }
 
+.card--action {
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+    text-decoration: none;
+
+    background-color: var(--color-primary3);
+
+    transition: background-color 0.2s ease-in-out;
+}
+
+.card--action:hover,
+.card--action:focus {
+    background-color: var(--color-primary4);
+}
+
 .card__title {
     display: block;
     margin-top: -0.5rem;

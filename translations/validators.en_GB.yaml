@@ -120,3 +120,6 @@ Error: Error
 'The message is required.': 'The message is required.'
 'The sub-organization cannot be attached to this organization.': 'The sub-organization cannot be attached to this organization.'
 'Select an organization from this list.': 'Select an organization from this list.'
+'The role {{ value }} is already used.': 'The role {{ value }} is already used.'
+'The description is required.': 'The description is required.'
+'The description must be {{ limit }} characters maximum.': 'The description must be {{ limit }} characters maximum.'

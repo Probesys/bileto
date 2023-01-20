@@ -74,6 +74,14 @@ body {
     outline: 0.3rem solid var(--color-primary9);
 }
 
+h1 {
+    font-size: 1.5em;
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
 .sr-only {
     position: absolute;
 

@@ -8,6 +8,8 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use App\Utils\Locales;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -40,12 +42,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: new TranslatableMessage('The email {{ value }} is not a valid address.', [], 'validators'),
     )]
     private ?string $email = null;
-
-    /**
-     * @var string[]
-     */
-    #[ORM\Column]
-    private array $roles = [];
 
     /**
      * @var string The hashed password
@@ -83,6 +79,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $name = null;
 
+    /** @var Collection<int, Authorization> $authorizations */
+    #[ORM\OneToMany(mappedBy: 'holder', targetEntity: Authorization::class, orphanRemoval: true)]
+    private Collection $authorizations;
+
+    public function __construct()
+    {
+        $this->authorizations = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -111,21 +116,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * This methods has nothing to do with "Bileto roles". It is in fact a
+     * requirement of the Symfony authentication system.
+     *
      * @see UserInterface
      */
     public function getRoles(): array
     {
-        return $this->roles;
-    }
-
-    /**
-     * @param string[] $roles
-     */
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
+        return ['ROLE_USER'];
     }
 
     /**
@@ -207,5 +205,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         } else {
             return $this->email;
         }
+    }
+
+    /**
+     * @return Collection<int, Authorization>
+     */
+    public function getAuthorizations(): Collection
+    {
+        return $this->authorizations;
     }
 }

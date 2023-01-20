@@ -1,0 +1,75 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Roles' | trans }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow roles-index">
+        <h1>{{ 'Roles' | trans }}</h1>
+
+        <div class="wrapper-large wrapper--center flow-larger">
+            <div class="flow">
+                <h2>{{ 'Admin roles' | trans }}</h2>
+
+                <div class="grid">
+                    <a class="card card--action" href="{{ path('new role', { type: 'admin' }) }}">
+                        <span>
+                            {{ icon('plus') }}
+                            {{ 'New admin role' | trans }}
+                        </span>
+                    </a>
+
+                    {% for role in adminRoles %}
+                        <div class="card" data-test="role-admin-item">
+                            <div class="card__title">
+                                {% if role.type == 'super' %}
+                                    {{ role.name | trans }}
+                                {% else %}
+                                    {{ role.name }}
+                                {% endif %}
+                            </div>
+
+                            <p class="card__body text--secondary text--small text--center">
+                                {% if role.type == 'super' %}
+                                    {{ role.description | trans }}
+                                {% else %}
+                                    {{ role.description }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="flow">
+                <h2>{{ 'Organization roles' | trans }}</h2>
+
+                <div class="grid">
+                    <a class="card card--action" href="{{ path('new role', { type: 'orga' }) }}">
+                        <span>
+                            {{ icon('plus') }}
+                            {{ 'New orga role' | trans }}
+                        </span>
+                    </a>
+
+                    {% for role in orgaRoles %}
+                        <div class="card" data-test="role-orga-item">
+                            <div class="card__title">
+                                {{ role.name }}
+                            </div>
+
+                            <p class="card__body text--secondary text--small text--center">
+                                {{ role.description }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
