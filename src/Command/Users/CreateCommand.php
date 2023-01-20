@@ -114,16 +114,10 @@ class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $superRole = $this->roleRepository->findOrCreateSuperRole();
-        $authorizationUid = $this->authorizationRepository->generateUid();
-        $authorization = new Entity\Authorization();
-        $authorization->setUid($authorizationUid);
-        $authorization->setCreatedAt(Time::now());
-        $authorization->setHolder($user);
-        $authorization->setRole($superRole);
-
         $this->userRepository->save($user, true);
-        $this->authorizationRepository->save($authorization, true);
+
+        $superRole = $this->roleRepository->findOrCreateSuperRole();
+        $this->authorizationRepository->grant($user, $superRole);
 
         $output->writeln("The user \"{$user->getEmail()}\" has been created.");
 

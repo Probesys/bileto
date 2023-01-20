@@ -7,6 +7,10 @@
 namespace App\Repository;
 
 use App\Entity\Authorization;
+use App\Entity\Organization;
+use App\Entity\Role;
+use App\Entity\User;
+use App\Utils\Time;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -43,5 +47,17 @@ class AuthorizationRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function grant(User $user, Role $role, Organization $organization = null): void
+    {
+        $authorization = new Authorization();
+        $authorizationUid = $this->generateUid();
+        $authorization->setUid($authorizationUid);
+        $authorization->setCreatedAt(Time::now());
+        $authorization->setHolder($user);
+        $authorization->setRole($role);
+        $authorization->setOrganization($organization);
+        $this->save($authorization, true);
     }
 }

@@ -56,6 +56,21 @@ Permissions examples:
 - see the ticket contract: `orga:see:tickets:contract`
     - update the ticket contract: `orga:update:tickets:contract`
 
+## Granting roles to users
+
+You can grant a role to a user with the [`AuthorizationRepository`](/src/Repository/AuthorizationRepository.php):
+
+```php
+$user = /* get some user */;
+$role = /* get some role */;
+
+$authorizationRepository->grant($user, $role);
+
+// or, to grant a role limited to a certain organization
+$organization = /* get some organization */;
+$authorizationRepository->grant($user, $role, $organization);
+```
+
 ## Checking permissions with Symfony
 
 **Note of caution:** the Symfony roles are not related to the Bileto roles and **we don't use them.**
