@@ -316,9 +316,23 @@ class OrganizationsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
 
         $client->request('GET', "/organizations/{$organization->getUid()}");
 
         $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
+    }
+
+    public function testGetShowFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/organizations/{$organization->getUid()}");
     }
 }

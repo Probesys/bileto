@@ -18,7 +18,15 @@ class TicketsController extends BaseController
     #[Route('/tickets/{uid}', name: 'ticket', methods: ['GET', 'HEAD'])]
     public function show(Ticket $ticket, OrganizationRepository $organizationRepository): Response
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $organization = $ticket->getOrganization();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
+
         $parentOrganizations = $organizationRepository->findParents($organization);
         $organization->setParentOrganizations($parentOrganizations);
 

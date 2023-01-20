@@ -19,6 +19,9 @@ class PriorityController extends BaseController
     #[Route('/tickets/{uid}/priority/edit', name: 'edit ticket priority', methods: ['GET', 'HEAD'])]
     public function edit(Ticket $ticket): Response
     {
+        $organization = $ticket->getOrganization();
+        $this->denyAccessUnlessGranted('orga:update:tickets:priority', $organization);
+
         return $this->render('tickets/priority/edit.html.twig', [
             'ticket' => $ticket,
             'urgency' => $ticket->getUrgency(),
@@ -35,6 +38,9 @@ class PriorityController extends BaseController
         TicketRepository $ticketRepository,
         ValidatorInterface $validator
     ): Response {
+        $organization = $ticket->getOrganization();
+        $this->denyAccessUnlessGranted('orga:update:tickets:priority', $organization);
+
         /** @var string $urgency */
         $urgency = $request->request->get('urgency', $ticket->getUrgency());
 

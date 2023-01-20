@@ -8,6 +8,7 @@ namespace App\Tests\Controller\Organizations;
 
 use App\Entity\Organization;
 use App\Entity\Ticket;
+use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
@@ -15,12 +16,14 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class TicketsControllerTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
     use SessionHelper;
@@ -33,6 +36,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
+        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'organization' => $organization,
@@ -53,6 +57,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
+        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'organization' => $organization,
@@ -73,6 +78,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
+        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
         $ticketAssigned = TicketFactory::createOne([
             'title' => 'Ticket assigned',
             'organization' => $organization,
@@ -99,6 +105,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
+        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
         $ticketOwned = TicketFactory::createOne([
             'title' => 'Ticket owned',
             'organization' => $organization,
@@ -117,16 +124,19 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Ticket assigned to other');
     }
 
-    public function testGetIndexRedirectsToLoginIfNotConnected(): void
+    public function testGetIndexFailsIfAccessIsForbidden(): void
     {
+        $this->expectException(AccessDeniedException::class);
+
         $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
 
+        $client->catchExceptions(false);
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets");
-
-        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -135,6 +145,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
 
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
 
@@ -142,14 +153,17 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'New ticket');
     }
 
-    public function testGetNewRedirectsToLoginIfNotConnected(): void
+    public function testGetNewFailsIfAccessIsForbidden(): void
     {
+        $this->expectException(AccessDeniedException::class);
+
         $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
 
+        $client->catchExceptions(false);
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
-
-        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testPostCreateCreatesATicketAndRedirects(): void
@@ -164,6 +178,7 @@ class TicketsControllerTest extends WebTestCase
         ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -215,6 +230,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
 
@@ -247,6 +263,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = '';
         $messageContent = 'My message';
 
@@ -274,6 +291,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = str_repeat('a', 256);
         $messageContent = 'My message';
 
@@ -301,6 +319,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = 'My ticket';
         $messageContent = '';
 
@@ -328,6 +347,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -355,6 +375,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -382,6 +403,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -410,6 +432,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -427,5 +450,26 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+    }
+
+    public function testPostCreateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterId' => $user->getId(),
+            'status' => 'planned',
+            'message' => $messageContent,
+        ]);
     }
 }

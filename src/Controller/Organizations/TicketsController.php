@@ -34,6 +34,8 @@ class TicketsController extends BaseController
         TicketSearcher $ticketSearcher,
         UserRepository $userRepository,
     ): Response {
+        $this->denyAccessUnlessGranted('orga:see', $organization);
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -72,6 +74,8 @@ class TicketsController extends BaseController
         ActorsLister $actorsLister,
         OrganizationRepository $organizationRepository,
     ): Response {
+        $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
+
         $users = $actorsLister->listUsers();
         $parentOrganizations = $organizationRepository->findParents($organization);
         $organization->setParentOrganizations($parentOrganizations);
@@ -100,6 +104,8 @@ class TicketsController extends BaseController
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
+        $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 

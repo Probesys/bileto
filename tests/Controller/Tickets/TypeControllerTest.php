@@ -6,15 +6,18 @@
 
 namespace App\Tests\Controller\Tickets;
 
+use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class TypeControllerTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
     use SessionHelper;
@@ -24,6 +27,7 @@ class TypeControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:type']);
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
@@ -44,6 +48,7 @@ class TypeControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:type']);
         $oldType = 'request';
         $newType = 'not a type';
         $ticket = TicketFactory::createOne([
@@ -68,6 +73,7 @@ class TypeControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:type']);
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
@@ -85,5 +91,26 @@ class TypeControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#notifications', 'Invalid CSRF token.');
         $ticket->refresh();
         $this->assertSame($oldType, $ticket->getType());
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $oldType = 'request';
+        $newType = 'incident';
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'type' => $oldType,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/type/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket type'),
+            'type' => $newType,
+        ]);
     }
 }

@@ -139,6 +139,8 @@ class OrganizationsController extends BaseController
     #[Route('/organizations/{uid}', name: 'organization', methods: ['GET', 'HEAD'])]
     public function show(Organization $organization): Response
     {
+        $this->denyAccessUnlessGranted('orga:see', $organization);
+
         return $this->redirectToRoute('organization tickets', [
             'uid' => $organization->getUid(),
         ]);

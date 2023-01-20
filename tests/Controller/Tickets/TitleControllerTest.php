@@ -6,15 +6,18 @@
 
 namespace App\Tests\Controller\Tickets;
 
+use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class TitleControllerTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
     use SessionHelper;
@@ -24,6 +27,7 @@ class TitleControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -34,17 +38,19 @@ class TitleControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Rename the ticket');
     }
 
-    public function testGetEditRedirectsToLoginIfNotConnected(): void
+    public function testGetEditFailsIfAccessIsForbidden(): void
     {
+        $this->expectException(AccessDeniedException::class);
+
         $client = static::createClient();
         $user = UserFactory::createOne();
+        $client->loginUser($user->object());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
 
+        $client->catchExceptions(false);
         $client->request('GET', "/tickets/{$ticket->getUid()}/title/edit");
-
-        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testPostUpdateSavesTicketAndRedirects(): void
@@ -52,6 +58,7 @@ class TitleControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = TicketFactory::createOne([
@@ -74,6 +81,7 @@ class TitleControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = str_repeat('a', 256);
         $ticket = TicketFactory::createOne([
@@ -96,6 +104,7 @@ class TitleControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = TicketFactory::createOne([
@@ -111,5 +120,26 @@ class TitleControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
         $ticket->refresh();
         $this->assertSame($oldTitle, $ticket->getTitle());
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $oldTitle = 'My ticket';
+        $newTitle = 'My urgent ticket!';
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'title' => $oldTitle,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/title/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket title'),
+            'title' => $newTitle,
+        ]);
     }
 }

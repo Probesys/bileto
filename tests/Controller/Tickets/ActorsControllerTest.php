@@ -6,15 +6,18 @@
 
 namespace App\Tests\Controller\Tickets;
 
+use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class ActorsControllerTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
     use SessionHelper;
@@ -28,6 +31,7 @@ class ActorsControllerTest extends WebTestCase
             $assignee,
         ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $requester,
@@ -40,23 +44,25 @@ class ActorsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Edit the actors');
     }
 
-    public function testGetEditRedirectsToLoginIfNotConnected(): void
+    public function testGetEditFailsIfAccessIsForbidden(): void
     {
+        $this->expectException(AccessDeniedException::class);
+
         $client = static::createClient();
         list(
             $user,
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
+        $client->loginUser($user->object());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $requester,
             'assignee' => $assignee,
         ]);
 
+        $client->catchExceptions(false);
         $client->request('GET', "/tickets/{$ticket->getUid()}/actors/edit");
-
-        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testPostUpdateSavesTicketAndRedirects(): void
@@ -68,6 +74,7 @@ class ActorsControllerTest extends WebTestCase
             $assignee,
         ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -95,6 +102,7 @@ class ActorsControllerTest extends WebTestCase
             $assignee,
         ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -118,6 +126,7 @@ class ActorsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -141,6 +150,7 @@ class ActorsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -168,6 +178,7 @@ class ActorsControllerTest extends WebTestCase
             $assignee,
         ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -184,5 +195,30 @@ class ActorsControllerTest extends WebTestCase
         $ticket->refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->object());
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => null,
+            'assignee' => null,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
+            'requesterId' => $requester->getId(),
+            'assigneeId' => $assignee->getId(),
+        ]);
     }
 }
