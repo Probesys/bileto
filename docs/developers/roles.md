@@ -115,7 +115,15 @@ if (/* some condition */) {
 }
 ```
 
-## Permission syntax
+## Adding new permissions
+
+To add new permissions to Bileto, you must begin to add it to the `PERMISSIONS` constant of [the `Role` entity](/src/Entity/Role.php).
+Please see below to learn the syntax of the permissions.
+
+Then, you must allow administrators to create roles using this new permission.
+This can be done by adding a checkbox to [the `roles/new.html.twig` template](/templates/roles/new.html.twig).
+
+### Permission syntax
 
 The permissions are represented as strings compounds of several terms separated by colons (`:`).
 

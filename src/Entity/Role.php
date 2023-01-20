@@ -30,7 +30,18 @@ class Role
 
     public const PERMISSIONS = [
         'admin:*',
+        'admin:manage:organizations',
+        'admin:manage:roles',
         'admin:see',
+
+        'orga:create:tickets',
+        'orga:create:tickets:messages',
+        'orga:see',
+        'orga:see:tickets:all',
+        'orga:update:tickets:actors',
+        'orga:update:tickets:priority',
+        'orga:update:tickets:title',
+        'orga:update:tickets:type',
     ];
 
     #[ORM\Id]

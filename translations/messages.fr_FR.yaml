@@ -118,7 +118,15 @@ Roles: Rôles
 '(max. 50 characters)': '(max. 50 caractères)'
 Description: Description
 Permissions: Permissions
-'No permissions are available for now.': 'Aucune permission disponible pour l’instant.'
 'Create the role': 'Créer le rôle'
 'Welcome to Bileto': 'Bienvenue sur Bileto'
 'Your tickets': 'Vos tickets'
+'Manage the organizations': 'Gérer les organisations'
+'Manage the roles': 'Gérer les roles'
+'Create tickets': 'Créer des tickets'
+'Answer to tickets': 'Répondre aux tickets'
+'See all the tickets': 'Voir tous les tickets'
+'Update the actors of a ticket': 'Mettre à jour les acteurs d’un ticket'
+'Update the priority of a ticket': 'Mettre à jour la priorité d’un ticket'
+'Update the title of a ticket': 'Mettre à jour le titre d’un ticket'
+'Update the type of a ticket': 'Mettre à jour le type d’un ticket'

@@ -111,7 +111,8 @@ class RolesControllerTest extends WebTestCase
         $role = RoleFactory::last();
         $this->assertSame($name, $role->getName());
         $this->assertSame($description, $role->getDescription());
-        $this->assertSame([], $role->getPermissions());
+        // This permission is always set for admin roles
+        $this->assertSame(['orga:see'], $role->getPermissions());
         $this->assertSame('orga', $role->getType());
         $this->assertSame(20, strlen($role->getUid()));
         $this->assertEquals($now, $role->getCreatedAt());
@@ -187,6 +188,7 @@ class RolesControllerTest extends WebTestCase
         $permissions = [
             'admin:*',
             'admin:see',
+            'orga:see',
             'orga:foo',
             'foo:bar',
         ];
@@ -200,7 +202,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
-        $this->assertSame([], $role->getPermissions());
+        $this->assertSame(['orga:see'], $role->getPermissions());
     }
 
     public function testPostCreateSanitizesPermissionsForAdminRole(): void
@@ -213,6 +215,7 @@ class RolesControllerTest extends WebTestCase
         $permissions = [
             'admin:*',
             'admin:see',
+            'orga:see',
             'orga:foo',
             'foo:bar',
         ];

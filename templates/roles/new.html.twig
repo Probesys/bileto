@@ -89,12 +89,55 @@
                 />
             </div>
 
-            <fieldset>
+            <fieldset class="flow">
                 <legend>{{ 'Permissions' | trans }}</legend>
 
-                <p class="text--center text--secondary">
-                    {{ 'No permissions are available for now.' | trans }}
-                </p>
+                {% if type == 'admin' %}
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'admin:manage:organizations',
+                        label: 'Manage the organizations' | trans,
+                    }) }}
+
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'admin:manage:roles',
+                        label: 'Manage the roles' | trans,
+                    }) }}
+                {% else %}
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'orga:create:tickets:messages',
+                        label: 'Answer to tickets' | trans,
+                    }) }}
+
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'orga:create:tickets',
+                        label: 'Create tickets' | trans,
+                    }) }}
+
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'orga:see:tickets:all',
+                        label: 'See all the tickets' | trans,
+                    }) }}
+
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'orga:update:tickets:actors',
+                        label: 'Update the actors of a ticket' | trans,
+                    }) }}
+
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'orga:update:tickets:priority',
+                        label: 'Update the priority of a ticket' | trans,
+                    }) }}
+
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'orga:update:tickets:title',
+                        label: 'Update the title of a ticket' | trans,
+                    }) }}
+
+                    {{ include('roles/_permission_checkbox.html.twig', {
+                        permission: 'orga:update:tickets:type',
+                        label: 'Update the type of a ticket' | trans,
+                    }) }}
+                {% endif %}
             </fieldset>
 
             <div class="form__actions">

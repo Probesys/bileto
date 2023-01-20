@@ -1,0 +1,19 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div>
+    <input
+        type="checkbox"
+        id="{{ permission }}"
+        name="permissions[]"
+        value="{{ permission }}"
+        {{ permission in permissions ? 'checked' }}
+    />
+
+    <label for="{{ permission }}">
+        {{ label | trans }}
+    </label>
+</div>
