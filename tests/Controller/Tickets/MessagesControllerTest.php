@@ -7,18 +7,21 @@
 namespace App\Tests\Controller\Tickets;
 
 use App\Entity\Ticket;
+use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class MessagesControllerTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
     use SessionHelper;
@@ -30,6 +33,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -62,6 +66,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -90,6 +95,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = 'in_progress';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -117,6 +123,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -150,6 +157,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -184,6 +192,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = Factory::faker()->randomElement(Ticket::FINISHED_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -211,6 +220,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -235,6 +245,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -259,6 +270,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -274,5 +286,27 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+    }
+
+    public function testPostCreateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => $initialStatus,
+        ]);
+        $messageContent = 'My message';
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => 'not the token',
+            'message' => $messageContent,
+            'status' => 'in_progress',
+        ]);
     }
 }

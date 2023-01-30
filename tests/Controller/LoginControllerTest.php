@@ -119,7 +119,7 @@ class LoginControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $client->request('GET', '/organizations');
+        $client->request('GET', '/profile');
         $client->submitForm('form-logout-submit');
 
         $this->assertResponseRedirects('http://localhost/', 302);

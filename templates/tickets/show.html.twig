@@ -104,176 +104,188 @@
                     {% endfor %}
                 </div>
 
-                <form
-                    action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
-                    method="post"
-                    class="ticket__editor flow"
-                    data-controller="ticket-editor"
-                    data-turbo-preserve-scroll
-                    data-ticket-editor-ticket-status-value="{{ ticket.status }}"
-                >
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
+                {% if is_granted('orga:create:tickets:messages', organization) %}
+                    <form
+                        action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
+                        method="post"
+                        class="ticket__editor flow"
+                        data-controller="ticket-editor"
+                        data-turbo-preserve-scroll
+                        data-ticket-editor-ticket-status-value="{{ ticket.status }}"
+                    >
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
 
-                    {% if error %}
-                        {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
-                    {% endif %}
-
-                    <div class="flow-small">
-                        {% if errors.content is defined %}
-                            <p class="form__error" role="alert" id="message-error">
-                                <span class="sr-only">{{ 'Error' | trans }}</span>
-                                {{ errors.content }}
-                            </p>
+                        {% if error %}
+                            {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
                         {% endif %}
 
-                        <textarea
-                            id="message"
-                            name="message"
-                            data-controller="tinymce"
+                        <div class="flow-small">
                             {% if errors.content is defined %}
-                                autofocus
-                                aria-invalid="true"
-                                aria-errormessage="message-error"
+                                <p class="form__error" role="alert" id="message-error">
+                                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                                    {{ errors.content }}
+                                </p>
                             {% endif %}
-                        >{{ message }}</textarea>
-                    </div>
 
-                    <div class="row">
-                        <label>
-                            {{ 'Mark as…' | trans }}
-                        </label>
-
-                        <div class="row row--always">
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    id="is-confidential"
-                                    name="isConfidential"
-                                    {{ isConfidential ? 'checked' }}
-                                    data-action="ticket-editor#refresh"
-                                    data-ticket-editor-target="confidentialCheckbox"
-                                />
-
-                                <label for="is-confidential">
-                                    {{ 'confidential' | trans }}
-                                </label>
-                            </div>
-
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    id="is-solution"
-                                    name="isSolution"
-                                    {{ isSolution ? 'checked' }}
-                                    {{ ticket.isFinished ? 'disabled' }}
-                                    data-action="ticket-editor#refresh"
-                                    data-ticket-editor-target="solutionCheckbox"
-                                />
-
-                                <label for="is-solution">
-                                    {{ 'solution' | trans }}
-                                </label>
-                            </div>
+                            <textarea
+                                id="message"
+                                name="message"
+                                data-controller="tinymce"
+                                {% if errors.content is defined %}
+                                    autofocus
+                                    aria-invalid="true"
+                                    aria-errormessage="message-error"
+                                {% endif %}
+                            >{{ message }}</textarea>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        {% if not ticket.isFinished %}
-                            <div class="row__item--extend flow-small">
-                                <div class="row row--center row--always">
-                                    <label for="status">
-                                        {{ 'Status to' | trans }}
+                        <div class="row">
+                            <label>
+                                {{ 'Mark as…' | trans }}
+                            </label>
+
+                            <div class="row row--always">
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="is-confidential"
+                                        name="isConfidential"
+                                        {{ isConfidential ? 'checked' }}
+                                        data-action="ticket-editor#refresh"
+                                        data-ticket-editor-target="confidentialCheckbox"
+                                    />
+
+                                    <label for="is-confidential">
+                                        {{ 'confidential' | trans }}
                                     </label>
-
-                                    <select
-                                        id="status"
-                                        name="status"
-                                        required
-                                        {{ ticket.isFinished ? 'disabled' }}
-                                        {% if errors.status is defined %}
-                                            autofocus
-                                            aria-invalid="true"
-                                            aria-errormessage="status-error"
-                                        {% endif %}
-                                        data-ticket-editor-target="statusSelect"
-                                    >
-                                        {% for value, label in statuses %}
-                                            <option value="{{ value }}" {{ value == status ? 'selected' }}>
-                                                {{ label | trans }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
                                 </div>
 
-                                {% if errors.status is defined %}
-                                    <p class="form__error" role="alert" id="status-error">
-                                        <span class="sr-only">{{ 'Error' | trans }}</span>
-                                        {{ errors.status }}
-                                    </p>
-                                {% endif %}
-                            </div>
-                        {% elseif ticket.status == 'resolved' %}
-                            <p class="row__item--extend text--success">
-                                {{ icon('check') }}
-                                {{ 'This ticket is resolved.' | trans }}
-                            </p>
-                        {% elseif ticket.status == 'closed' %}
-                            <p class="row__item--extend text--secondary">
-                                {{ icon('close') }}
-                                {{ 'This ticket is closed.' | trans }}
-                            </p>
-                        {% endif %}
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="is-solution"
+                                        name="isSolution"
+                                        {{ isSolution ? 'checked' }}
+                                        {{ ticket.isFinished ? 'disabled' }}
+                                        data-action="ticket-editor#refresh"
+                                        data-ticket-editor-target="solutionCheckbox"
+                                    />
 
-                        <button id="form-create-message-submit" class="button--primary row__item--extend" type="submit">
-                            {{ 'Answer' | trans }}
-                        </button>
-                    </div>
-                </form>
+                                    <label for="is-solution">
+                                        {{ 'solution' | trans }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {% if not ticket.isFinished %}
+                                <div class="row__item--extend flow-small">
+                                    <div class="row row--center row--always">
+                                        <label for="status">
+                                            {{ 'Status to' | trans }}
+                                        </label>
+
+                                        <select
+                                            id="status"
+                                            name="status"
+                                            required
+                                            {{ ticket.isFinished ? 'disabled' }}
+                                            {% if errors.status is defined %}
+                                                autofocus
+                                                aria-invalid="true"
+                                                aria-errormessage="status-error"
+                                            {% endif %}
+                                            data-ticket-editor-target="statusSelect"
+                                        >
+                                            {% for value, label in statuses %}
+                                                <option value="{{ value }}" {{ value == status ? 'selected' }}>
+                                                    {{ label | trans }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    {% if errors.status is defined %}
+                                        <p class="form__error" role="alert" id="status-error">
+                                            <span class="sr-only">{{ 'Error' | trans }}</span>
+                                            {{ errors.status }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            {% elseif ticket.status == 'resolved' %}
+                                <p class="row__item--extend text--success">
+                                    {{ icon('check') }}
+                                    {{ 'This ticket is resolved.' | trans }}
+                                </p>
+                            {% elseif ticket.status == 'closed' %}
+                                <p class="row__item--extend text--secondary">
+                                    {{ icon('close') }}
+                                    {{ 'This ticket is closed.' | trans }}
+                                </p>
+                            {% endif %}
+
+                            <button id="form-create-message-submit" class="button--primary row__item--extend" type="submit">
+                                {{ 'Answer' | trans }}
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
             </div>
 
             <div class="ticket__info row__item--noshrink flow-larger">
-                <div class="text--right">
-                    <details
-                        class="popup"
-                        data-controller="popup"
-                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                    >
-                        <summary class="popup__opener">
-                            <span class="button">
-                                {{ icon('ellipsis') }}
-                                {{ 'Actions' | trans }}
-                                {{ icon('caret-down') }}
-                            </span>
-                        </summary>
+                {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
+                {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
+                {% set menuHasItem = canUpdateType or canUpdateTitle %}
 
-                        <nav class="popup__container popup__container--left">
-                            <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
-                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
-                                {% if ticket.type == 'request' %}
-                                    <input type="hidden" name="type" value="incident">
-                                    <button id="form-update-type-submit" class="popup__item" type="submit">
-                                        {{ 'Turn into an incident' | trans }}
-                                    </button>
-                                {% else %}
-                                    <input type="hidden" name="type" value="request">
-                                    <button id="form-update-type-submit" class="popup__item" type="submit">
-                                        {{ 'Turn into a request' | trans }}
+                {% if menuHasItem %}
+                    <div class="text--right">
+                        <details
+                            class="popup"
+                            data-controller="popup"
+                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                        >
+                            <summary class="popup__opener">
+                                <span class="button">
+                                    {{ icon('ellipsis') }}
+                                    {{ 'Actions' | trans }}
+                                    {{ icon('caret-down') }}
+                                </span>
+                            </summary>
+
+                            <nav class="popup__container popup__container--left">
+                                {% if canUpdateType %}
+                                    <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
+                                        {% if ticket.type == 'request' %}
+                                            <input type="hidden" name="type" value="incident">
+                                            <button id="form-update-type-submit" class="popup__item" type="submit">
+                                                {{ 'Turn into an incident' | trans }}
+                                            </button>
+                                        {% else %}
+                                            <input type="hidden" name="type" value="request">
+                                            <button id="form-update-type-submit" class="popup__item" type="submit">
+                                                {{ 'Turn into a request' | trans }}
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+
+                                {% if canUpdateTitle %}
+                                    <button
+                                        class="popup__item"
+                                        type="button"
+                                        data-controller="modal-opener"
+                                        data-action="modal-opener#fetch"
+                                        data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
+                                    >
+                                        {{ 'Rename the ticket' | trans }}
                                     </button>
                                 {% endif %}
-                            </form>
-
-                            <button
-                                class="popup__item"
-                                type="button"
-                                data-controller="modal-opener"
-                                data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
-                            >
-                                {{ 'Rename the ticket' | trans }}
-                            </button>
-                        </nav>
-                    </details>
-                </div>
+                            </nav>
+                        </details>
+                    </div>
+                {% endif %}
 
                 <div class="flow">
                     <div class="row row--center row--always">
@@ -282,17 +294,19 @@
                             <strong>{{ 'Actors' | trans }}</strong>
                         </span>
 
-                        <button
-                            class="button--icon"
-                            data-controller="modal-opener"
-                            data-action="modal-opener#fetch"
-                            data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
-                        >
-                            {{ icon('gear') }}
-                            <span class="sr-only">
-                                {{ 'Edit the actors' | trans }}
-                            </span>
-                        </button>
+                        {% if is_granted('orga:update:tickets:actors', organization) %}
+                            <button
+                                class="button--icon"
+                                data-controller="modal-opener"
+                                data-action="modal-opener#fetch"
+                                data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                            >
+                                {{ icon('gear') }}
+                                <span class="sr-only">
+                                    {{ 'Edit the actors' | trans }}
+                                </span>
+                            </button>
+                        {% endif %}
                     </div>
 
                     <div>
@@ -316,20 +330,22 @@
                             {% else %}
                                 <strong>{{ 'Unassigned' | trans }}</strong>
 
-                                <form
-                                    action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
-                                    method="post"
-                                    class="form--inline"
-                                    data-turbo-preserve-scroll
-                                >
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
-                                    <input type="hidden" name="assigneeId" value="{{ app.user.id }}">
+                                {% if is_granted('orga:update:tickets:actors', organization) %}
+                                    <form
+                                        action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
+                                        method="post"
+                                        class="form--inline"
+                                        data-turbo-preserve-scroll
+                                    >
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
+                                        <input type="hidden" name="assigneeId" value="{{ app.user.id }}">
 
-                                    →
-                                    <button id="form-self-assign-submit" class="button--anchor" type="submit">
-                                        {{ 'assign yourself' | trans }}
-                                    </button>
-                                </form>
+                                        →
+                                        <button id="form-self-assign-submit" class="button--anchor" type="submit">
+                                            {{ 'assign yourself' | trans }}
+                                        </button>
+                                    </form>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -342,17 +358,19 @@
                             <strong>{{ 'Priority' | trans }}</strong>
                         </span>
 
-                        <button
-                            class="button--icon"
-                            data-controller="modal-opener"
-                            data-action="modal-opener#fetch"
-                            data-modal-opener-href-value="{{ path('edit ticket priority', { uid: ticket.uid }) }}"
-                        >
-                            {{ icon('gear') }}
-                            <span class="sr-only">
-                                {{ 'Edit the priority' | trans }}
-                            </span>
-                        </button>
+                        {% if is_granted('orga:update:tickets:priority', organization) %}
+                            <button
+                                class="button--icon"
+                                data-controller="modal-opener"
+                                data-action="modal-opener#fetch"
+                                data-modal-opener-href-value="{{ path('edit ticket priority', { uid: ticket.uid }) }}"
+                            >
+                                {{ icon('gear') }}
+                                <span class="sr-only">
+                                    {{ 'Edit the priority' | trans }}
+                                </span>
+                            </button>
+                        {% endif %}
                     </div>
 
                     <div class="ticket__priority badge badge--bold badge--{{ ticket.priorityBadgeColor }}">

@@ -23,6 +23,9 @@ class TypeController extends BaseController
         TicketRepository $ticketRepository,
         ValidatorInterface $validator
     ): Response {
+        $organization = $ticket->getOrganization();
+        $this->denyAccessUnlessGranted('orga:update:tickets:type', $organization);
+
         $oldType = $ticket->getType();
 
         /** @var string $type */

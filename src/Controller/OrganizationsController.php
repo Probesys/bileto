@@ -19,6 +19,8 @@ class OrganizationsController extends BaseController
     #[Route('/organizations', name: 'organizations', methods: ['GET', 'HEAD'])]
     public function index(OrganizationRepository $orgaRepository): Response
     {
+        $this->denyAccessUnlessGranted('admin:manage:organizations');
+
         $organizations = $orgaRepository->findAllAsTree();
         return $this->render('organizations/index.html.twig', [
             'organizations' => $organizations,
@@ -30,6 +32,8 @@ class OrganizationsController extends BaseController
         Request $request,
         OrganizationRepository $orgaRepository,
     ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:organizations');
+
         /** @var string|null $parentUid */
         $parentUid = $request->query->get('parent');
         if ($parentUid !== null) {
@@ -54,6 +58,8 @@ class OrganizationsController extends BaseController
         OrganizationRepository $orgaRepository,
         ValidatorInterface $validator
     ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:organizations');
+
         /** @var string|null $parentUid */
         $parentUid = $request->query->get('parent');
 
@@ -133,6 +139,8 @@ class OrganizationsController extends BaseController
     #[Route('/organizations/{uid}', name: 'organization', methods: ['GET', 'HEAD'])]
     public function show(Organization $organization): Response
     {
+        $this->denyAccessUnlessGranted('orga:see', $organization);
+
         return $this->redirectToRoute('organization tickets', [
             'uid' => $organization->getUid(),
         ]);

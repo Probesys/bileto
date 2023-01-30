@@ -46,13 +46,20 @@ class TicketSearcher
         return $this;
     }
 
+    public function setActor(User $actor): self
+    {
+        $this->criteria['actor'] = $actor->getId();
+
+        return $this;
+    }
+
     /**
      * @return \App\Entity\Ticket[]
      */
     public function getTickets(): array
     {
-        $sort = ['createdAt' => 'DESC'];
-        return $this->ticketRepository->findBy($this->criteria, $sort);
+        $sort = ['createdAt', 'DESC'];
+        return $this->ticketRepository->findBySearch($this->criteria, $sort);
     }
 
     public function countToAssign(): int
@@ -60,7 +67,7 @@ class TicketSearcher
         $criteria = array_merge($this->criteria, [
             'assignee' => null,
         ]);
-        return $this->ticketRepository->count($criteria);
+        return $this->ticketRepository->countBySearch($criteria);
     }
 
     public function countAssignedTo(User $assignee): int
@@ -68,6 +75,6 @@ class TicketSearcher
         $criteria = array_merge($this->criteria, [
             'assignee' => $assignee->getId(),
         ]);
-        return $this->ticketRepository->count($criteria);
+        return $this->ticketRepository->countBySearch($criteria);
     }
 }

@@ -19,6 +19,9 @@ class TitleController extends BaseController
     #[Route('/tickets/{uid}/title/edit', name: 'edit ticket title', methods: ['GET', 'HEAD'])]
     public function edit(Ticket $ticket): Response
     {
+        $organization = $ticket->getOrganization();
+        $this->denyAccessUnlessGranted('orga:update:tickets:title', $organization);
+
         return $this->render('tickets/title/edit.html.twig', [
             'ticket' => $ticket,
             'title' => $ticket->getTitle(),
@@ -32,6 +35,9 @@ class TitleController extends BaseController
         TicketRepository $ticketRepository,
         ValidatorInterface $validator,
     ): Response {
+        $organization = $ticket->getOrganization();
+        $this->denyAccessUnlessGranted('orga:update:tickets:title', $organization);
+
         $oldTitle = $ticket->getTitle();
 
         /** @var string $title */

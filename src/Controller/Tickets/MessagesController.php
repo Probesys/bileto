@@ -31,6 +31,9 @@ class MessagesController extends BaseController
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
+        $organization = $ticket->getOrganization();
+        $this->denyAccessUnlessGranted('orga:create:tickets:messages', $organization);
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -50,7 +53,6 @@ class MessagesController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        $organization = $ticket->getOrganization();
         $parentOrganizations = $organizationRepository->findParents($organization);
         $organization->setParentOrganizations($parentOrganizations);
 

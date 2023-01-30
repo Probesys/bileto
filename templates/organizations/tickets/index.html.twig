@@ -17,63 +17,72 @@
 {% block title %}{{ title ~ ' – ' ~ organization.name }}{% endblock %}
 
 {% block back %}
-    <a href="{{ path('organizations') }}">
-        {{ 'Back (organizations)' | trans }}
+    <a href="{{ path('home') }}">
+        {{ 'Back (home)' | trans }}
     </a>
 {% endblock %}
 
 {% block body %}
     <main class="layout__body tickets-index">
         <div class="row">
-            <nav class="tickets__nav row__item--noshrink card flow">
-                <div class="text--center">
-                    <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
-                        {{ icon('plus') }}
-                        {{ 'New ticket' | trans }}
-                    </a>
-                </div>
+            {% set canCreateTickets = is_granted('orga:create:tickets', organization) %}
+            {% set canSeeAllTickets = is_granted('orga:see:tickets:all', organization) %}
 
-                <ul>
-                    <li>
-                        <a
-                            href="{{ path('organization tickets', { uid: organization.uid }) }}"
-                            {{ currentPage == 'all' ? 'aria-current="page"' }}
-                        >
-                            {{ 'All tickets' | trans }}
-                        </a>
-                    </li>
+            {% if canCreateTickets or canSeeAllTickets %}
+                <nav class="tickets__nav row__item--noshrink card flow">
+                    {% if canCreateTickets %}
+                        <div class="text--center">
+                            <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                                {{ icon('plus') }}
+                                {{ 'New ticket' | trans }}
+                            </a>
+                        </div>
+                    {% endif %}
 
-                    <li>
-                        <a
-                            href="{{ path('organization tickets', { uid: organization.uid, assignee: 'none' }) }}"
-                            {{ currentPage == 'to assign' ? 'aria-current="page"' }}
-                        >
-                            {{ 'Tickets to assign' | trans }}
+                    {% if canSeeAllTickets %}
+                        <ul>
+                            <li>
+                                <a
+                                    href="{{ path('organization tickets', { uid: organization.uid }) }}"
+                                    {{ currentPage == 'all' ? 'aria-current="page"' }}
+                                >
+                                    {{ 'All tickets' | trans }}
+                                </a>
+                            </li>
 
-                            {% if countToAssign > 0 %}
-                                <span class="tickets__list-count">
-                                    {{ countToAssign }}
-                                </span>
-                            {% endif %}
-                        </a>
-                    </li>
+                            <li>
+                                <a
+                                    href="{{ path('organization tickets', { uid: organization.uid, assignee: 'none' }) }}"
+                                    {{ currentPage == 'to assign' ? 'aria-current="page"' }}
+                                >
+                                    {{ 'Tickets to assign' | trans }}
 
-                    <li>
-                        <a
-                            href="{{ path('organization tickets', { uid: organization.uid, assignee: app.user.uid }) }}"
-                            {{ currentPage == 'owned' ? 'aria-current="page"' }}
-                        >
-                            {{ 'My tickets' | trans }}
+                                    {% if countToAssign > 0 %}
+                                        <span class="tickets__list-count">
+                                            {{ countToAssign }}
+                                        </span>
+                                    {% endif %}
+                                </a>
+                            </li>
 
-                            {% if countOwned > 0 %}
-                                <span class="tickets__list-count">
-                                    {{ countOwned }}
-                                </span>
-                            {% endif %}
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+                            <li>
+                                <a
+                                    href="{{ path('organization tickets', { uid: organization.uid, assignee: app.user.uid }) }}"
+                                    {{ currentPage == 'owned' ? 'aria-current="page"' }}
+                                >
+                                    {{ 'My tickets' | trans }}
+
+                                    {% if countOwned > 0 %}
+                                        <span class="tickets__list-count">
+                                            {{ countOwned }}
+                                        </span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </nav>
+            {% endif %}
 
             <div class="flow row__item--extend">
                 <h1>{{ title }}</h1>

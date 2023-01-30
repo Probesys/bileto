@@ -7,16 +7,19 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Role;
+use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class RolesControllerTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
     use SessionHelper;
@@ -26,6 +29,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         RoleFactory::createOne([
             'name' => 'foo',
             'type' => 'orga',
@@ -48,24 +52,28 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
 
-        $this->assertSame(0, count(RoleFactory::all()));
+        $this->assertSame(0, count(RoleFactory::findBy(['type' => 'super'])));
 
         $client->request('GET', '/roles');
 
         $this->assertSame(1, count(RoleFactory::findBy(['type' => 'super'])));
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('[data-test="role-admin-item"]:nth-child(2)', 'Super-admin');
+        $this->assertSelectorTextContains('[data-test="role-super-item"]', 'Super-admin');
     }
 
-    public function testGetIndexRedirectsToLoginIfNotConnected(): void
+    public function testGetIndexFailsIfAccessIsForbidden(): void
     {
+        $this->expectException(AccessDeniedException::class);
+
         $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
 
+        $client->catchExceptions(false);
         $client->request('GET', '/roles');
-
-        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -73,6 +81,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
 
         $client->request('GET', '/roles/new?type=orga');
 
@@ -80,13 +89,16 @@ class RolesControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'New role');
     }
 
-    public function testGetNewRedirectsToLoginIfNotConnected(): void
+    public function testGetNewFailsIfAccessIsForbidden(): void
     {
+        $this->expectException(AccessDeniedException::class);
+
         $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
 
+        $client->catchExceptions(false);
         $client->request('GET', '/roles/new?type=orga');
-
-        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testPostCreateCreatesARoleAndRedirects(): void
@@ -96,8 +108,11 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
+
+        $this->assertSame(1, RoleFactory::count());
 
         $client->request('GET', '/roles/new?type=orga');
         $crawler = $client->submitForm('form-create-role-submit', [
@@ -106,6 +121,8 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         Time::unfreeze();
+
+        $this->assertSame(2, RoleFactory::count());
 
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
@@ -124,6 +141,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -145,6 +163,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -164,6 +183,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -183,6 +203,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         $permissions = [
@@ -210,6 +231,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         $permissions = [
@@ -237,6 +259,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = '';
         $description = 'What it does';
 
@@ -247,7 +270,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#name-error', 'The name is required.');
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(1, RoleFactory::count());
     }
 
     public function testPostCreateFailsIfNameIsTooLong(): void
@@ -255,6 +278,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = str_repeat('a', 51);
         $description = 'What it does';
 
@@ -265,7 +289,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#name-error', 'The name must be 50 characters maximum.');
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(1, RoleFactory::count());
     }
 
     public function testPostCreateFailsIfDescriptionIsEmpty(): void
@@ -273,6 +297,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = '';
 
@@ -283,7 +308,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#description-error', 'The description is required.');
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(1, RoleFactory::count());
     }
 
     public function testPostCreateFailsIfDescriptionIsTooLong(): void
@@ -291,6 +316,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = str_repeat('a', 256);
 
@@ -301,7 +327,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#description-error', 'The description must be 255 characters maximum.');
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(1, RoleFactory::count());
     }
 
     public function testPostCreateFailsIfNameAlreadyExists(): void
@@ -309,11 +335,14 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         RoleFactory::createOne([
             'name' => $name,
         ]);
+
+        $this->assertSame(2, RoleFactory::count());
 
         $client->request('POST', '/roles/new?type=orga', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
@@ -322,7 +351,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#name-error', 'The role "My role" is already used.');
-        $this->assertSame(1, RoleFactory::count());
+        $this->assertSame(2, RoleFactory::count());
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
@@ -330,6 +359,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -340,6 +370,24 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(1, RoleFactory::count());
+    }
+
+    public function testPostCreateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $name = 'My role';
+        $description = 'What it does';
+
+        $client->catchExceptions(false);
+        $client->request('POST', '/roles/new?type=orga', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
+            'name' => $name,
+            'description' => $description,
+        ]);
     }
 }

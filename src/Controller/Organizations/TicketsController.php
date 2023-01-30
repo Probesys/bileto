@@ -17,6 +17,7 @@ use App\Repository\UserRepository;
 use App\Service\ActorsLister;
 use App\Service\TicketSearcher;
 use App\Utils\Time;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +34,10 @@ class TicketsController extends BaseController
         OrganizationRepository $organizationRepository,
         TicketSearcher $ticketSearcher,
         UserRepository $userRepository,
+        Security $security,
     ): Response {
+        $this->denyAccessUnlessGranted('orga:see', $organization);
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -42,6 +46,10 @@ class TicketsController extends BaseController
 
         $parentOrganizations = $organizationRepository->findParents($organization);
         $organization->setParentOrganizations($parentOrganizations);
+
+        if (!$security->isGranted('orga:see:tickets:all', $organization)) {
+            $ticketSearcher->setActor($user);
+        }
 
         $ticketSearcher->setOrganization($organization);
         $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
@@ -72,6 +80,8 @@ class TicketsController extends BaseController
         ActorsLister $actorsLister,
         OrganizationRepository $organizationRepository,
     ): Response {
+        $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
+
         $users = $actorsLister->listUsers();
         $parentOrganizations = $organizationRepository->findParents($organization);
         $organization->setParentOrganizations($parentOrganizations);
@@ -100,6 +110,8 @@ class TicketsController extends BaseController
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
+        $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 

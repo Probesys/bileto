@@ -323,6 +323,16 @@ class Ticket
         return $this;
     }
 
+    public function hasActor(User $user): bool
+    {
+        $userId = $user->getId();
+        return (
+            $this->createdBy->getId() === $userId ||
+            ($this->requester && $this->requester->getId() === $userId) ||
+            ($this->assignee && $this->assignee->getId() === $userId)
+        );
+    }
+
     public function getOrganization(): ?Organization
     {
         return $this->organization;
