@@ -124,7 +124,7 @@
                             </thead>
 
                             <tbody>
-                                {% for ticket in tickets|sort((a, b) => b.createdAt <=> a.createdAt) %}
+                                {% for ticket in tickets %}
                                     <tr data-test="ticket-item">
                                         <td>
                                             <time datetime="{{ ticket.createdAt | dateIso }}" class="text--small">
