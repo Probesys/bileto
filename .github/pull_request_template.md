@@ -15,10 +15,11 @@ How to test the feature manually:
 Pull request checklist:
 
 - [ ] code is manually tested
+- [ ] authorizations are checked
 - [ ] interface works on both mobiles and big screens
 - [ ] accessibility has been tested
 - [ ] tests are updated
-- [ ] French locale is synchronized
+- [ ] locales are synchronized
 - [ ] copyright notice is updated
 - [ ] documentation is updated (including comments, commit messages, migration notes…)
 
