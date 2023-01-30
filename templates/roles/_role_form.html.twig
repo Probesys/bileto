@@ -1,0 +1,144 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% if mode == 'new' %}
+    {% set formAction = path('create role', { type: type }) %}
+    {% set csrfToken = csrf_token('create role') %}
+    {% set label = 'Create the role' | trans %}
+{% elseif mode == 'edit' %}
+    {% set formAction = path('update role', { uid: role.uid }) %}
+    {% set csrfToken = csrf_token('update role') %}
+    {% set label = 'Save the changes' | trans %}
+{% endif %}
+
+<form action="{{ formAction }}" method="post" class="wrapper-small wrapper--center flow">
+    <input type="hidden" name="_csrf_token" value="{{ csrfToken }}">
+
+    {% if error %}
+        {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
+    {% endif %}
+
+    <div class="flow-small">
+        <label for="name">
+            {% if type == 'admin' %}
+                {{ 'Name of the admin role' | trans }}
+            {% else %}
+                {{ 'Name of the organization role' | trans }}
+            {% endif %}
+
+            <small class="text--secondary">
+                {{ '(max. 50 characters)' | trans }}
+            </small>
+        </label>
+
+        {% if errors.name is defined %}
+            <p class="form__error" role="alert" id="name-error">
+                <span class="sr-only">{{ 'Error' | trans }}</span>
+                {{ errors.name }}
+            </p>
+        {% endif %}
+
+        <input
+            type="text"
+            id="name"
+            name="name"
+            value="{{ name }}"
+            required
+            autofocus
+            maxlength="50"
+            {% if errors.name is defined %}
+                aria-invalid="true"
+                aria-errormessage="name-error"
+            {% endif %}
+        />
+    </div>
+
+    <div class="flow-small">
+        <label for="description">
+            {{ 'Description' | trans }}
+            <small class="text--secondary">
+                {{ '(max. 255 characters)' | trans }}
+            </small>
+        </label>
+
+        {% if errors.description is defined %}
+            <p class="form__error" role="alert" id="description-error">
+                <span class="sr-only">{{ 'Error' | trans }}</span>
+                {{ errors.description }}
+            </p>
+        {% endif %}
+
+        <input
+            type="text"
+            id="description"
+            name="description"
+            value="{{ description }}"
+            required
+            maxlength="255"
+            {% if errors.description is defined %}
+                aria-invalid="true"
+                aria-errormessage="description-error"
+            {% endif %}
+        />
+    </div>
+
+    <fieldset class="flow">
+        <legend>{{ 'Permissions' | trans }}</legend>
+
+        {% if type == 'admin' %}
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'admin:manage:organizations',
+                label: 'Manage the organizations' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'admin:manage:roles',
+                label: 'Manage the roles' | trans,
+            }) }}
+        {% else %}
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:create:tickets:messages',
+                label: 'Answer to tickets' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:create:tickets',
+                label: 'Create tickets' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:see:tickets:all',
+                label: 'See all the tickets' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:update:tickets:actors',
+                label: 'Update the actors of a ticket' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:update:tickets:priority',
+                label: 'Update the priority of a ticket' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:update:tickets:title',
+                label: 'Update the title of a ticket' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:update:tickets:type',
+                label: 'Update the type of a ticket' | trans,
+            }) }}
+        {% endif %}
+    </fieldset>
+
+    <div class="form__actions">
+        <button id="form-save-role-submit" class="button--primary" type="submit">
+            {{ label }}
+        </button>
+    </div>
+</form>

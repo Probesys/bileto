@@ -6,7 +6,7 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'New role' | trans }}{% endblock %}
+{% block title %}{{ 'Edit role' | trans }}{% endblock %}
 
 {% block back %}
     <a href="{{ path('roles') }}">
@@ -16,8 +16,8 @@
 
 {% block body %}
     <main class="layout__body flow">
-        <h1>{{ 'New role' | trans }}</h1>
+        <h1>{{ 'Edit role' | trans }}</h1>
 
-        {{ include('roles/_role_form.html.twig', { mode: 'new' }) }}
+        {{ include('roles/_role_form.html.twig', { mode: 'edit' }) }}
     </main>
 {% endblock %}

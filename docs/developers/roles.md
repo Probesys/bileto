@@ -121,7 +121,7 @@ To add new permissions to Bileto, you must begin to add it to the `PERMISSIONS` 
 Please see below to learn the syntax of the permissions.
 
 Then, you must allow administrators to create roles using this new permission.
-This can be done by adding a checkbox to [the `roles/new.html.twig` template](/templates/roles/new.html.twig).
+This can be done by adding a checkbox to [the `roles/_role_form.html.twig` template](/templates/roles/_role_form.html.twig).
 
 ### Permission syntax
 

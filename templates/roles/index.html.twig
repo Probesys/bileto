@@ -26,13 +26,15 @@
 
                     {% for role in adminRoles %}
                         <div class="card" data-test="role-{{ role.type }}-item">
-                            <div class="card__title">
-                                {% if role.type == 'super' %}
+                            {% if role.type == 'super' %}
+                                <div class="card__title">
                                     {{ role.name | trans }}
-                                {% else %}
+                                </div>
+                            {% else %}
+                                <a class="card__title" href="{{ path('edit role', { uid: role.uid }) }}">
                                     {{ role.name }}
-                                {% endif %}
-                            </div>
+                                </a>
+                            {% endif %}
 
                             <p class="card__body text--secondary text--small text--center">
                                 {% if role.type == 'super' %}
@@ -59,9 +61,9 @@
 
                     {% for role in orgaRoles %}
                         <div class="card" data-test="role-orga-item">
-                            <div class="card__title">
+                            <a class="card__title" href="{{ path('edit role', { uid: role.uid }) }}">
                                 {{ role.name }}
-                            </div>
+                            </a>
 
                             <p class="card__body text--secondary text--small text--center">
                                 {{ role.description }}

@@ -13,6 +13,7 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -115,7 +116,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(1, RoleFactory::count());
 
         $client->request('GET', '/roles/new?type=orga');
-        $crawler = $client->submitForm('form-create-role-submit', [
+        $crawler = $client->submitForm('form-save-role-submit', [
             'name' => $name,
             'description' => $description,
         ]);
@@ -388,6 +389,275 @@ class RolesControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
+        ]);
+    }
+
+    public function testGetEditRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $role = RoleFactory::createOne([
+            'type' => RoleFactory::faker()->randomElement(['admin', 'orga']),
+        ]);
+
+        $client->request('GET', "/roles/{$role->getUid()}/edit");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Edit role');
+    }
+
+    public function testGetEditFailsIfTypeIsSuper(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $role = RoleFactory::createOne([
+            'type' => 'super',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/roles/{$role->getUid()}/edit");
+    }
+
+    public function testGetEditFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $role = RoleFactory::createOne([
+            'type' => RoleFactory::faker()->randomElement(['admin', 'orga']),
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/roles/{$role->getUid()}/edit");
+    }
+
+    public function testPostUpdateChangesTheRoleAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $oldName = 'Old role';
+        $newName = 'New role';
+        $oldDescription = 'Description of the old role';
+        $newDescription = 'Description of the new role';
+        if ($type === 'admin') {
+            $oldPermissions = ['admin:manage:organizations'];
+            $newPermissions = ['admin:manage:roles'];
+        } else {
+            $oldPermissions = ['orga:create:tickets'];
+            $newPermissions = ['orga:create:tickets:messages'];
+        }
+        $role = RoleFactory::createOne([
+            'type' => $type,
+            'name' => $oldName,
+            'description' => $oldDescription,
+            'permissions' => $oldPermissions,
+        ]);
+
+        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
+            'name' => $newName,
+            'description' => $newDescription,
+            'permissions' => $newPermissions,
+        ]);
+
+        $this->assertResponseRedirects('/roles', 302);
+        $role->refresh();
+        $this->assertSame($newName, $role->getName());
+        $this->assertSame($newDescription, $role->getDescription());
+        if ($type === 'admin') {
+            $newPermissions[] = 'admin:see';
+        } else {
+            $newPermissions[] = 'orga:see';
+        }
+        $this->assertEquals($newPermissions, $role->getPermissions());
+    }
+
+    public function testPostUpdateSanitizesThePermissions(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $type = 'admin';
+        $oldName = 'Old role';
+        $newName = 'New role';
+        $oldDescription = 'Description of the old role';
+        $newDescription = 'Description of the new role';
+        $oldPermissions = ['admin:manage:organizations'];
+        $newPermissions = ['admin:*'];
+        $role = RoleFactory::createOne([
+            'type' => $type,
+            'name' => $oldName,
+            'description' => $oldDescription,
+            'permissions' => $oldPermissions,
+        ]);
+
+        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
+            'name' => $newName,
+            'description' => $newDescription,
+            'permissions' => $newPermissions,
+        ]);
+
+        $this->assertResponseRedirects('/roles', 302);
+        $role->refresh();
+        $this->assertSame($newName, $role->getName());
+        $this->assertSame($newDescription, $role->getDescription());
+        $this->assertEquals(['admin:see'], $role->getPermissions());
+    }
+
+    public function testPostUpdateFailsIfParamsAreInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $oldName = 'Old role';
+        $newName = '';
+        $oldDescription = 'Description of the old role';
+        $newDescription = 'Description of the new role';
+        if ($type === 'admin') {
+            $oldPermissions = ['admin:manage:organizations'];
+            $newPermissions = ['admin:manage:roles'];
+        } else {
+            $oldPermissions = ['orga:create:tickets'];
+            $newPermissions = ['orga:create:tickets:messages'];
+        }
+        $role = RoleFactory::createOne([
+            'type' => $type,
+            'name' => $oldName,
+            'description' => $oldDescription,
+            'permissions' => $oldPermissions,
+        ]);
+
+        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
+            'name' => $newName,
+            'description' => $newDescription,
+            'permissions' => $newPermissions,
+        ]);
+
+        $this->assertSelectorTextContains('#name-error', 'The name is required.');
+        $role->refresh();
+        $this->assertSame($oldName, $role->getName());
+        $this->assertSame($oldDescription, $role->getDescription());
+        $this->assertEquals($oldPermissions, $role->getPermissions());
+    }
+
+    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $oldName = 'Old role';
+        $newName = 'New role';
+        $oldDescription = 'Description of the old role';
+        $newDescription = 'Description of the new role';
+        if ($type === 'admin') {
+            $oldPermissions = ['admin:manage:organizations'];
+            $newPermissions = ['admin:manage:roles'];
+        } else {
+            $oldPermissions = ['orga:create:tickets'];
+            $newPermissions = ['orga:create:tickets:messages'];
+        }
+        $role = RoleFactory::createOne([
+            'type' => $type,
+            'name' => $oldName,
+            'description' => $oldDescription,
+            'permissions' => $oldPermissions,
+        ]);
+
+        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+            '_csrf_token' => 'not a token',
+            'name' => $newName,
+            'description' => $newDescription,
+            'permissions' => $newPermissions,
+        ]);
+
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $role->refresh();
+        $this->assertSame($oldName, $role->getName());
+        $this->assertSame($oldDescription, $role->getDescription());
+        $this->assertEquals($oldPermissions, $role->getPermissions());
+    }
+
+    public function testPostUpdateFailsIfTypeIsSuper(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $type = 'super';
+        $oldName = 'Old role';
+        $newName = 'New role';
+        $oldDescription = 'Description of the old role';
+        $newDescription = 'Description of the new role';
+        $oldPermissions = ['admin:*'];
+        $newPermissions = ['admin:manage:roles'];
+        $role = RoleFactory::createOne([
+            'type' => $type,
+            'name' => $oldName,
+            'description' => $oldDescription,
+            'permissions' => $oldPermissions,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
+            'name' => $newName,
+            'description' => $newDescription,
+            'permissions' => $newPermissions,
+        ]);
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $oldName = 'Old role';
+        $newName = 'New role';
+        $oldDescription = 'Description of the old role';
+        $newDescription = 'Description of the new role';
+        if ($type === 'admin') {
+            $oldPermissions = ['admin:manage:organizations'];
+            $newPermissions = ['admin:manage:roles'];
+        } else {
+            $oldPermissions = ['orga:create:tickets'];
+            $newPermissions = ['orga:create:tickets:messages'];
+        }
+        $role = RoleFactory::createOne([
+            'type' => $type,
+            'name' => $oldName,
+            'description' => $oldDescription,
+            'permissions' => $oldPermissions,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
+            'name' => $newName,
+            'description' => $newDescription,
+            'permissions' => $newPermissions,
         ]);
     }
 }
