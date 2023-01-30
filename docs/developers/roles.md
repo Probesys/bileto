@@ -14,7 +14,7 @@ Authorizations associated to an admin role are never associated to an organizati
 
 Permissions examples:
 
-- access to the global "setting" (always applied): `admin:see:settings`
+- access to the global settings (always applied): `admin:see`
     - manage the roles: `admin:manage:roles`
     - manage the users: `admin:manage:users`
     - manage the organizations: `admin:manage:organizations`

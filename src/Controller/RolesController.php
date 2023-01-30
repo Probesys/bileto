@@ -79,8 +79,8 @@ class RolesController extends BaseController
             $type = 'orga';
         }
 
-        if ($type === 'admin' && !in_array('admin:see:settings', $permissions)) {
-            $permissions[] = 'admin:see:settings';
+        if ($type === 'admin' && !in_array('admin:see', $permissions)) {
+            $permissions[] = 'admin:see';
         }
 
         $permissions = Role::sanitizePermissions($type, $permissions);

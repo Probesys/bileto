@@ -136,7 +136,7 @@ class RolesControllerTest extends WebTestCase
         $role = RoleFactory::last();
         $this->assertSame('admin', $role->getType());
         // This permission is always set for admin roles
-        $this->assertSame(['admin:see:settings'], $role->getPermissions());
+        $this->assertSame(['admin:see'], $role->getPermissions());
     }
 
     public function testPostCreateCannotCreateSuperRole(): void
@@ -186,7 +186,7 @@ class RolesControllerTest extends WebTestCase
         $description = 'What it does';
         $permissions = [
             'admin:*',
-            'admin:see:settings',
+            'admin:see',
             'orga:foo',
             'foo:bar',
         ];
@@ -212,7 +212,7 @@ class RolesControllerTest extends WebTestCase
         $description = 'What it does';
         $permissions = [
             'admin:*',
-            'admin:see:settings',
+            'admin:see',
             'orga:foo',
             'foo:bar',
         ];
@@ -226,7 +226,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
-        $this->assertSame(['admin:see:settings'], $role->getPermissions());
+        $this->assertSame(['admin:see'], $role->getPermissions());
     }
 
     public function testPostCreateFailsIfNameIsEmpty(): void

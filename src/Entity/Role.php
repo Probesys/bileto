@@ -30,7 +30,7 @@ class Role
 
     public const PERMISSIONS = [
         'admin:*',
-        'admin:see:settings',
+        'admin:see',
     ];
 
     #[ORM\Id]
