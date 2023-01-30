@@ -6,6 +6,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Ticket;
 use App\Service\TicketSearcher;
 use App\Utils\Locales;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,7 @@ class PagesController extends BaseController
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $ticketSearcher->setAssignee($user);
+        $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
         $tickets = $ticketSearcher->getTickets();
 
         return $this->render('pages/home.html.twig', [
