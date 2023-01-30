@@ -38,6 +38,7 @@ class TicketsControllerTest extends WebTestCase
         ]);
         $this->grantOrga($user->object(), ['orga:see'], $organization->object());
         $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
             'title' => 'My ticket',
             'organization' => $organization,
             'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
@@ -78,7 +79,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
-        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
+        $this->grantOrga($user->object(), ['orga:see', 'orga:see:tickets:all'], $organization->object());
         $ticketAssigned = TicketFactory::createOne([
             'title' => 'Ticket assigned',
             'organization' => $organization,
