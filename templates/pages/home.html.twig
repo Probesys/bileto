@@ -1,0 +1,101 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Welcome to Bileto' | trans }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow organizations-index">
+        <h1>{{ 'Welcome to Bileto' | trans }}</h1>
+
+        <div class="wrapper-large wrapper--center flow-larger">
+            {% if tickets %}
+                <div class="flow">
+                    <h2>{{ 'Your tickets' | trans }}</h2>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="col--size4">
+                                        {{ 'Opened on' | trans }}
+                                    </th>
+
+                                    <th>
+                                        {{ 'Title' | trans }}
+                                    </th>
+
+                                    <th class="col--size2">
+                                        {{ 'Type' | trans }}
+                                    </th>
+
+                                    <th class="col--size5">
+                                        {{ icon('user') }}
+                                        {{ 'Requester' | trans }}
+                                    </th>
+
+                                    <th class="col--size3 text--center">
+                                        {{ icon('status') }}
+                                        {{ 'Status' | trans }}
+                                    </th>
+
+                                    <th class="col--size3 text--center">
+                                        {{ icon('priority') }}
+                                        {{ 'Priority' | trans }}
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for ticket in tickets %}
+                                    <tr data-test="ticket-item">
+                                        <td>
+                                            <time datetime="{{ ticket.createdAt | dateIso }}" class="text--small">
+                                                {{ ticket.createdAt | dateTrans }}
+                                            </time>
+                                        </td>
+
+                                        <td class="td--anchor">
+                                            <a href="{{ path('ticket', {'uid': ticket.uid}) }}">
+                                                <span class="ticket__title">{{ ticket.title }}</span>
+                                                <span class="ticket__id">#{{ ticket.id }}</span>
+                                            </a>
+                                        </td>
+
+                                        <td>
+                                            {% if ticket.type == 'incident' %}
+                                                {{ 'Incident' | trans }}
+                                            {% else %}
+                                                {{ 'Request' | trans }}
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {{ ticket.requester.displayName }}
+                                        </td>
+
+                                        <td class="text--center">
+                                            <span class="badge badge--{{ ticket.statusBadgeColor }}">
+                                                {{ ticket.statusLabel | trans }}
+                                            </span>
+                                        </td>
+
+                                        <td class="text--center">
+                                            <span class="badge badge--{{ ticket.priorityBadgeColor }}">
+                                                {{ ticket.priorityLabel | trans }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

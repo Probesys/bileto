@@ -16,7 +16,7 @@ class PagesControllerTest extends WebTestCase
     use Factories;
     use ResetDatabase;
 
-    public function testGetHomeRedirectsToOrganizationsIfConnected(): void
+    public function testGetHomeRendersCorrectly(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -24,7 +24,7 @@ class PagesControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
 
-        $this->assertResponseRedirects('/organizations', 302);
+        $this->assertSelectorTextContains('h1', 'Welcome to Bileto');
     }
 
     public function testGetHomeRedirectsToLoginIfNotConnected(): void

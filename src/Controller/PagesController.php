@@ -6,6 +6,7 @@
 
 namespace App\Controller;
 
+use App\Service\TicketSearcher;
 use App\Utils\Locales;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,9 +14,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class PagesController extends BaseController
 {
     #[Route('/', name: 'home', methods: ['GET', 'HEAD'])]
-    public function home(): Response
+    public function home(TicketSearcher $ticketSearcher): Response
     {
-        return $this->redirectToRoute('organizations');
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $ticketSearcher->setAssignee($user);
+        $tickets = $ticketSearcher->getTickets();
+
+        return $this->render('pages/home.html.twig', [
+            'tickets' => $tickets,
+        ]);
     }
 
     #[Route('/about', name: 'about', methods: ['GET', 'HEAD'])]
