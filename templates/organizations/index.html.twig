@@ -8,18 +8,26 @@
 
 {% block title %}{{ 'Organizations' | trans }}{% endblock %}
 
+{% block sidebar %}
+    {{ include('_sidebar_settings.html.twig', { current: 'organizations' }, with_context = false) }}
+{% endblock %}
+
 {% block body %}
     <main class="layout__body flow organizations-index">
-        <h1>{{ 'Organizations' | trans }}</h1>
+        <div class="layout__body-header">
+            <h1>{{ 'Organizations' | trans }}</h1>
+        </div>
 
-        <div class="wrapper-large wrapper--center flow">
+        <div class="wrapper-large flow">
             {% if organizations %}
-                <a class="anchor--action" href="{{ path('new organization') }}">
-                    {{ icon('plus') }}
-                    {{ 'New organization' | trans }}
-                </a>
-
                 <div class="grid">
+                    <a class="card card--action" href="{{ path('new organization') }}">
+                        <span>
+                            {{ icon('plus') }}
+                            {{ 'New organization' | trans }}
+                        </span>
+                    </a>
+
                     {% for organization in organizations %}
                         <div class="card flow" data-test="organization-item">
                             <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">

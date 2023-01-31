@@ -1,0 +1,39 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<nav class="layout__sidebar flow-smaller" aria-labelledby="sidebar-settings-title">
+    <div id="sidebar-settings-title" class="sidebar__title">
+        {{ 'Settings' | trans }}
+    </div>
+
+    <ul class="sidebar flow-smaller">
+        {% if is_granted('admin:manage:organizations') %}
+            <li class="sidebar__item">
+                <a
+                    class="sidebar__anchor"
+                    href="{{ path('organizations') }}"
+                    {{ current == 'organizations' ? 'aria-current="page"' }}
+                >
+                    {{ icon('organization') }}
+                    {{ 'Organizations' | trans }}
+                </a>
+            </li>
+        {% endif %}
+
+        {% if is_granted('admin:manage:roles') %}
+            <li class="sidebar__item">
+                <a
+                    class="sidebar__anchor"
+                    href="{{ path('roles') }}"
+                    {{ current == 'roles' ? 'aria-current="page"' }}
+                >
+                    {{ icon('role') }}
+                    {{ 'Roles' | trans }}
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

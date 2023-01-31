@@ -6,17 +6,24 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Edit role' | trans }}{% endblock %}
+{% if type == 'admin' %}
+    {% set pageTitle = 'Edit admin role' | trans %}
+{% else %}
+    {% set pageTitle = 'Edit orga role' | trans %}
+{% endif %}
 
-{% block back %}
-    <a href="{{ path('roles') }}">
-        {{ 'Back (roles)' | trans }}
-    </a>
+{% block title %}{{ pageTitle }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('_sidebar_settings.html.twig', { current: 'roles' }, with_context = false) }}
 {% endblock %}
 
 {% block body %}
     <main class="layout__body flow">
-        <h1>{{ 'Edit role' | trans }}</h1>
+        <div class="layout__body-header">
+            <a href="{{ path('roles') }}">{{ 'Roles' | trans }}</a>
+            <h1>{{ pageTitle }}</h1>
+        </div>
 
         {{ include('roles/_role_form.html.twig', { mode: 'edit' }) }}
     </main>

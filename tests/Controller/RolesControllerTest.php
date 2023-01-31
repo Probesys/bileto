@@ -87,7 +87,7 @@ class RolesControllerTest extends WebTestCase
         $client->request('GET', '/roles/new?type=orga');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'New role');
+        $this->assertSelectorTextContains('h1', 'New orga role');
     }
 
     public function testGetNewFailsIfAccessIsForbidden(): void
@@ -398,14 +398,19 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['admin', 'orga']),
+            'type' => $type,
         ]);
 
         $client->request('GET', "/roles/{$role->getUid()}/edit");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Edit role');
+        if ($type === 'admin') {
+            $this->assertSelectorTextContains('h1', 'Edit admin role');
+        } else {
+            $this->assertSelectorTextContains('h1', 'Edit orga role');
+        }
     }
 
     public function testGetEditFailsIfTypeIsSuper(): void

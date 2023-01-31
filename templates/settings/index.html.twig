@@ -1,0 +1,31 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Settings' | trans }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <h1>{{ 'Settings' | trans }}</h1>
+
+        <div class="wrapper-small wrapper--center grid">
+            {% if is_granted('admin:manage:organizations') %}
+                <a class="card card--action" href="{{ path('organizations') }}">
+                    {{ icon('organization') }}
+                    {{ 'Organizations' | trans }}
+                </a>
+            {% endif %}
+
+            {% if is_granted('admin:manage:roles') %}
+                <a class="card card--action" href="{{ path('roles') }}">
+                    {{ icon('role') }}
+                    {{ 'Roles' | trans }}
+                </a>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

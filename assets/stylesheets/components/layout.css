@@ -54,6 +54,13 @@
     margin-top: 0;
 }
 
+.layout__header-anchor {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+
+    text-decoration: none;
+}
+
 .layout__back {
     max-width: 1200px;
     margin-top: -1rem;
@@ -96,8 +103,33 @@
     }
 }
 
-.layout__body h1 {
-    text-align: center;
+.layout__body-header {
+    padding-bottom: 2rem;
+
+    border-bottom: 0.25rem solid var(--color-grey4);
+}
+
+.layout__body-header > * {
+    display: inline-block;
+}
+
+.layout__body-header > a {
+    text-decoration: none;
+}
+
+.layout__body-header > *:not(:last-child)::after {
+    content: "";
+
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 1rem;
+    margin-left: 0.75rem;
+
+    border-top: 0.25rem solid var(--color-grey6);
+    border-right: 0.25rem solid var(--color-grey6);
+
+    transform: rotate(45deg);
 }
 
 .banner__container {

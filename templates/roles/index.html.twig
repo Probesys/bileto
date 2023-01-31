@@ -8,11 +8,17 @@
 
 {% block title %}{{ 'Roles' | trans }}{% endblock %}
 
+{% block sidebar %}
+    {{ include('_sidebar_settings.html.twig', { current: 'roles' }, with_context = false) }}
+{% endblock %}
+
 {% block body %}
     <main class="layout__body flow roles-index">
-        <h1>{{ 'Roles' | trans }}</h1>
+        <div class="layout__body-header">
+            <h1>{{ 'Roles' | trans }}</h1>
+        </div>
 
-        <div class="wrapper-large wrapper--center flow-larger">
+        <div class="wrapper-large flow-larger">
             <div class="flow">
                 <h2>{{ 'Admin roles' | trans }}</h2>
 

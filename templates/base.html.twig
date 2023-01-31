@@ -110,6 +110,12 @@
                         {% if app.user %}
                             <div class="layout__header-extend"></div>
 
+                            {% if is_granted('admin:see') %}
+                                <a class="layout__header-anchor" href="{{ path('settings') }}">
+                                    {{ 'Settings' | trans }}
+                                </a>
+                            {% endif %}
+
                             <details
                                 class="popup"
                                 data-controller="popup"
@@ -164,8 +170,12 @@
                 </div>
             {% endif %}
 
-            <div id="main-content">
-                {% block body %}{% endblock %}
+            <div class="row">
+                {% block sidebar %}{% endblock %}
+
+                <div id="main-content" class="row__item--extend">
+                    {% block body %}{% endblock %}
+                </div>
             </div>
         </div>
 

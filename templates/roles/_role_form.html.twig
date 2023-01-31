@@ -14,7 +14,7 @@
     {% set label = 'Save the changes' | trans %}
 {% endif %}
 
-<form action="{{ formAction }}" method="post" class="wrapper-small wrapper--center flow">
+<form action="{{ formAction }}" method="post" class="wrapper-small flow">
     <input type="hidden" name="_csrf_token" value="{{ csrfToken }}">
 
     {% if error %}
@@ -23,12 +23,7 @@
 
     <div class="flow-small">
         <label for="name">
-            {% if type == 'admin' %}
-                {{ 'Name of the admin role' | trans }}
-            {% else %}
-                {{ 'Name of the organization role' | trans }}
-            {% endif %}
-
+            {{ 'Name of the role' | trans }}
             <small class="text--secondary">
                 {{ '(max. 50 characters)' | trans }}
             </small>

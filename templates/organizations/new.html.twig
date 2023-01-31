@@ -8,17 +8,18 @@
 
 {% block title %}{{ 'New organization' | trans }}{% endblock %}
 
-{% block back %}
-    <a href="{{ path('organizations') }}">
-        {{ 'Back (organizations)' | trans }}
-    </a>
+{% block sidebar %}
+    {{ include('_sidebar_settings.html.twig', { current: 'organizations' }, with_context = false) }}
 {% endblock %}
 
 {% block body %}
     <main class="layout__body flow">
-        <h1>{{ 'New organization' | trans }}</h1>
+        <div class="layout__body-header">
+            <a href="{{ path('organizations') }}">{{ 'Organizations' | trans }}</a>
+            <h1>{{ 'New organization' | trans }}</h1>
+        </div>
 
-        <form action="{{ path('create organization', { parent: parentOrganization.uid ?? null }) }}" method="post" class="wrapper-small wrapper--center flow">
+        <form action="{{ path('create organization', { parent: parentOrganization.uid ?? null }) }}" method="post" class="wrapper-small flow">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization') }}">
 
             {% if error %}

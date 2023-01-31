@@ -111,10 +111,7 @@ Roles: Roles
 'New admin role': 'New admin role'
 'Organization roles': 'Organization roles'
 'New orga role': 'New orga role'
-'New role': 'New role'
 'Back (roles)': 'Back (roles)'
-'Name of the admin role': 'Name of the admin role'
-'Name of the organization role': 'Name of the organization role'
 '(max. 50 characters)': '(max. 50 characters)'
 Description: Description
 Permissions: Permissions
@@ -131,4 +128,7 @@ Permissions: Permissions
 'Update the title of a ticket': 'Update the title of a ticket'
 'Update the type of a ticket': 'Update the type of a ticket'
 'Back (home)': 'Back (home)'
-'Edit role': 'Edit role'
+'Name of the role': 'Name of the role'
+'Edit admin role': 'Edit admin role'
+'Edit orga role': 'Edit orga role'
+Settings: Settings
