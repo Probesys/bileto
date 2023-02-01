@@ -6,7 +6,7 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'New organization' | trans }}{% endblock %}
+{% block title %}{{ 'organizations.new.title' | trans }}{% endblock %}
 
 {% block sidebar %}
     {{ include('_sidebar_settings.html.twig', { current: 'organizations' }, with_context = false) }}
@@ -15,8 +15,8 @@
 {% block body %}
     <main class="layout__body flow">
         <div class="layout__body-header">
-            <a href="{{ path('organizations') }}">{{ 'Organizations' | trans }}</a>
-            <h1>{{ 'New organization' | trans }}</h1>
+            <a href="{{ path('organizations') }}">{{ 'organizations.index.title' | trans }}</a>
+            <h1>{{ 'organizations.new.title' | trans }}</h1>
         </div>
 
         <form action="{{ path('create organization', { parent: parentOrganization.uid ?? null }) }}" method="post" class="wrapper-small flow">
@@ -28,15 +28,15 @@
 
             <div class="flow-small">
                 <label for="name">
-                    {{ 'Organization name' | trans }}
+                    {{ 'organizations.name' | trans }}
                     <small class="text--secondary">
-                        {{ '(max. 255 characters)' | trans }}
+                        {{ 'forms.max_chars' | trans({ number: 255 }) }}
                     </small>
                 </label>
 
                 {% if errors.name is defined %}
                     <p class="form__error" role="alert" id="name-error">
-                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
                         {{ errors.name }}
                     </p>
                 {% endif %}
@@ -59,12 +59,12 @@
             {% if parentOrganization %}
                 <div class="flow-small" data-test="form-group-parent-organization">
                     <label for="parent">
-                        {{ 'Parent organization' | trans }}
+                        {{ 'organizations.parent_orga' | trans }}
                     </label>
 
                     {% if errors.parentsPath is defined %}
                         <p class="form__error" role="alert" id="parent-error">
-                            <span class="sr-only">{{ 'Error' | trans }}</span>
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
                             {{ errors.parentsPath }}
                         </p>
                     {% endif %}
@@ -93,7 +93,7 @@
 
             <div class="form__actions">
                 <button id="form-create-organization-submit" class="button--primary" type="submit">
-                    {{ 'Create the organization' | trans }}
+                    {{ 'organizations.new.submit' | trans }}
                 </button>
             </div>
         </form>

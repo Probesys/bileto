@@ -43,7 +43,7 @@
             tabindex="0"
             data-turbo="false"
         >
-            {{ 'Skip to main content' | trans }}
+            {{ 'layout.skip_to_main_content' | trans }}
         </a>
 
         <div
@@ -69,7 +69,7 @@
                     >
                         <span class="row__item--extend">
                             <span class="sr-only">
-                                {{ 'Error' | trans }}
+                                {{ 'layout.notifications.error' | trans }}
                             </span>
 
                             {{ message | trans }}
@@ -83,7 +83,7 @@
                         >
                             {{ icon('close') }}
                             <span class="sr-only">
-                                {{ 'Close the notification' | trans }}
+                                {{ 'layout.notifications.close' | trans }}
                             </span>
                         </button>
                     </div>
@@ -95,7 +95,7 @@
             <noscript>
                 <div class="layout__banner layout__banner--alert">
                     <p class="banner__container">
-                        {{ 'You need to activate the JavaScript in order to use Bileto.' | trans }}
+                        {{ 'layout.activate_javascript' | trans }}
                     </p>
                 </div>
             </noscript>
@@ -112,7 +112,7 @@
 
                             {% if is_granted('admin:see') %}
                                 <a class="layout__header-anchor" href="{{ path('settings') }}">
-                                    {{ 'Settings' | trans }}
+                                    {{ 'settings.index.title' | trans }}
                                 </a>
                             {% endif %}
 
@@ -121,10 +121,10 @@
                                 data-controller="popup"
                                 data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
                             >
-                                <summary class="popup__opener" title="{{ 'Menu of %name%' | trans({'%name%': app.user.displayName}) }}">
+                                <summary class="popup__opener" title="{{ 'layout.user_menu_title' | trans({'name': app.user.displayName}) }}">
                                     <span class="layout__header-avatar">{{ icon('circle-user') }}</span>
                                     <span class="sr-only">
-                                        {{ 'Menu of %name%' | trans({'%name%': app.user.displayName}) }}
+                                        {{ 'layout.user_menu_title' | trans({'name': app.user.displayName}) }}
                                     </span>
                                 </summary>
 
@@ -133,19 +133,19 @@
 
                                     <a class="popup__item" href="{{ path('profile') }}">
                                         {{ icon('id-card') }}
-                                        {{ 'Profile' | trans }}
+                                        {{ 'profile.title' | trans }}
                                     </a>
 
                                     <a class="popup__item" href="{{ path('preferences') }}">
                                         {{ icon('palette') }}
-                                        {{ 'Preferences' | trans }}
+                                        {{ 'preferences.title' | trans }}
                                     </a>
 
                                     <div class="popup__separator"></div>
 
                                     <a class="popup__item" href="{{ path('about') }}">
                                         {{ icon('circle-question') }}
-                                        {{ 'About Bileto' | trans }}
+                                        {{ 'about.title' | trans }}
                                     </a>
 
                                     <div class="popup__separator"></div>
@@ -154,7 +154,7 @@
                                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
                                         <button class="popup__item" id="form-logout-submit" type="submit">
                                             {{ icon('logout') }}
-                                            {{ 'Logout' | trans }}
+                                            {{ 'layout.logout' | trans }}
                                         </button>
                                     </form>
                                 </nav>

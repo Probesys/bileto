@@ -164,7 +164,7 @@ class TicketsController extends BaseController
                 'statuses' => Ticket::getStatusesWithLabels(),
                 'users' => $users,
                 'errors' => [
-                    'requester' => new TranslatableMessage('The requester must exist.'),
+                    'requester' => new TranslatableMessage('The requester must exist.', [], 'validators'),
                 ],
             ]);
         }
@@ -182,7 +182,7 @@ class TicketsController extends BaseController
                     'statuses' => Ticket::getStatusesWithLabels(),
                     'users' => $users,
                     'errors' => [
-                        'assignee' => new TranslatableMessage('The assignee must exist.'),
+                        'assignee' => new TranslatableMessage('The assignee must exist.', [], 'validators'),
                     ],
                 ]);
             }

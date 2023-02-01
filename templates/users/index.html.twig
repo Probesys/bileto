@@ -6,7 +6,7 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Users' | trans }}{% endblock %}
+{% block title %}{{ 'users.index.title' | trans }}{% endblock %}
 
 {% block sidebar %}
     {{ include('_sidebar_settings.html.twig', { current: 'users' }, with_context = false) }}
@@ -15,7 +15,7 @@
 {% block body %}
     <main class="layout__body flow roles-index">
         <div class="layout__body-header">
-            <h1>{{ 'Users' | trans }}</h1>
+            <h1>{{ 'users.index.title' | trans }}</h1>
         </div>
 
         <div class="wrapper-large flow-larger">

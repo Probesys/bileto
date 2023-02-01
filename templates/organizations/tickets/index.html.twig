@@ -7,20 +7,14 @@
 {% extends 'base.html.twig' %}
 
 {% if currentPage == 'all' %}
-    {% set title = 'All tickets' | trans %}
+    {% set title = 'tickets.index.title.all' | trans %}
 {% elseif currentPage == 'to assign' %}
-    {% set title = 'Tickets to assign' | trans %}
+    {% set title = 'tickets.index.title.to_assign' | trans %}
 {% elseif currentPage == 'owned' %}
-    {% set title = 'My tickets' | trans %}
+    {% set title = 'tickets.index.title.my' | trans %}
 {% endif %}
 
 {% block title %}{{ title ~ ' – ' ~ organization.name }}{% endblock %}
-
-{% block back %}
-    <a href="{{ path('home') }}">
-        {{ 'Back (home)' | trans }}
-    </a>
-{% endblock %}
 
 {% block body %}
     <main class="layout__body tickets-index">
@@ -33,7 +27,7 @@
                                 href="{{ path('organization tickets', { uid: organization.uid }) }}"
                                 {{ currentPage == 'all' ? 'aria-current="page"' }}
                             >
-                                {{ 'All tickets' | trans }}
+                                {{ 'tickets.index.title.all' | trans }}
                             </a>
                         </li>
 
@@ -42,7 +36,7 @@
                                 href="{{ path('organization tickets', { uid: organization.uid, assignee: 'none' }) }}"
                                 {{ currentPage == 'to assign' ? 'aria-current="page"' }}
                             >
-                                {{ 'Tickets to assign' | trans }}
+                                {{ 'tickets.index.title.to_assign' | trans }}
 
                                 {% if countToAssign > 0 %}
                                     <span class="tickets__list-count">
@@ -57,7 +51,7 @@
                                 href="{{ path('organization tickets', { uid: organization.uid, assignee: app.user.uid }) }}"
                                 {{ currentPage == 'owned' ? 'aria-current="page"' }}
                             >
-                                {{ 'My tickets' | trans }}
+                                {{ 'tickets.index.title.my' | trans }}
 
                                 {% if countOwned > 0 %}
                                     <span class="tickets__list-count">
@@ -83,7 +77,7 @@
                     {% if is_granted('orga:create:tickets', organization) %}
                         <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
                             {{ icon('plus') }}
-                            {{ 'New ticket' | trans }}
+                            {{ 'tickets.index.new_ticket' | trans }}
                         </a>
                     {% endif %}
 
@@ -92,35 +86,35 @@
                             <thead>
                                 <tr>
                                     <th class="col--size4">
-                                        {{ 'Opened on' | trans }}
+                                        {{ 'tickets.opened_on' | trans }}
                                     </th>
 
                                     <th>
-                                        {{ 'Title' | trans }}
+                                        {{ 'tickets.title' | trans }}
                                     </th>
 
                                     <th class="col--size2">
-                                        {{ 'Type' | trans }}
+                                        {{ 'tickets.type' | trans }}
                                     </th>
 
                                     <th class="col--size5">
                                         {{ icon('user') }}
-                                        {{ 'Requester' | trans }}
+                                        {{ 'tickets.requester' | trans }}
                                     </th>
 
                                     <th class="col--size5">
                                         {{ icon('headset') }}
-                                        {{ 'Assignee' | trans }}
+                                        {{ 'tickets.assignee' | trans }}
                                     </th>
 
                                     <th class="col--size3 text--center">
                                         {{ icon('status') }}
-                                        {{ 'Status' | trans }}
+                                        {{ 'tickets.status' | trans }}
                                     </th>
 
                                     <th class="col--size3 text--center">
                                         {{ icon('priority') }}
-                                        {{ 'Priority' | trans }}
+                                        {{ 'tickets.priority' | trans }}
                                     </th>
                                 </tr>
                             </thead>
@@ -143,9 +137,9 @@
 
                                         <td>
                                             {% if ticket.type == 'incident' %}
-                                                {{ 'Incident' | trans }}
+                                                {{ 'tickets.incident' | trans }}
                                             {% else %}
-                                                {{ 'Request' | trans }}
+                                                {{ 'tickets.request' | trans }}
                                             {% endif %}
                                         </td>
 
@@ -157,7 +151,7 @@
                                             {% if ticket.assignee %}
                                                 {{ ticket.assignee.displayName }}
                                             {% else %}
-                                                {{ 'Unassigned' | trans }}
+                                                {{ 'tickets.unassigned' | trans }}
                                             {% endif %}
                                         </td>
 
@@ -181,14 +175,14 @@
                     <div class="text--center flow-large">
                         <p class="placeholder">
                             {{ icon('ticket') }}
-                            {{ 'No ticket' | trans }}
+                            {{ 'tickets.index.no_tickets' | trans }}
                         </p>
 
                         {% if is_granted('orga:create:tickets', organization) %}
                             <p class="text--big">
                                 <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
                                     {{ icon('plus') }}
-                                    {{ 'New ticket' | trans }}
+                                    {{ 'tickets.index.new_ticket' | trans }}
                                 </a>
                             </p>
                         {% endif %}

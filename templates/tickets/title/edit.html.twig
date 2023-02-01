@@ -6,7 +6,7 @@
 
 {% extends 'modal.html.twig' %}
 
-{% block title %}{{ 'Rename the ticket' | trans }}{% endblock %}
+{% block title %}{{ 'tickets.title.edit.title' | trans }}{% endblock %}
 
 {% block body %}
     <form
@@ -22,15 +22,15 @@
 
         <div class="flow-small">
             <label for="title">
-                {{ 'Title' | trans }}
+                {{ 'tickets.title' | trans }}
                 <small class="text--secondary">
-                    {{ '(max. 255 characters)' | trans }}
+                    {{ 'forms.max_chars' | trans({ number: 255 }) }}
                 </small>
             </label>
 
             {% if errors.title is defined %}
                 <p class="form__error" role="alert" id="title-error">
-                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
                     {{ errors.title }}
                 </p>
             {% endif %}
@@ -51,7 +51,7 @@
 
         <div class="form__actions">
             <button id="form-update-title-submit" class="button--primary" type="submit">
-                {{ 'Save the changes' | trans }}
+                {{ 'forms.save_changes' | trans }}
             </button>
         </div>
     </form>

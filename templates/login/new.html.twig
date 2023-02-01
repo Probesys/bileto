@@ -6,7 +6,7 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Log in' | trans }}{% endblock %}
+{% block title %}{{ 'login.title' | trans }}{% endblock %}
 
 {% block layout_header %}
     <details
@@ -17,7 +17,7 @@
         <summary class="popup__opener">
             <span class="button">
                 {{ icon('language') }}
-                {{ 'Language' | trans }}
+                {{ 'users.language' | trans }}
                 {{ icon('caret-down') }}
             </span>
         </summary>
@@ -47,7 +47,7 @@
     <main class="layout__body layout__body--small flow login-new">
         <img class="logo" src="{{ asset('logo.svg') }}" alt="Bileto" />
 
-        <h1>{{ 'Log in' | trans }}</h1>
+        <h1>{{ 'login.title' | trans }}</h1>
 
         <form action="{{ path('login') }}" method="post" class="flow">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -62,7 +62,7 @@
 
             <div class="flow-small">
                 <label for="username">
-                    {{ 'Email address' | trans }}
+                    {{ 'users.email' | trans }}
                 </label>
 
                 <input
@@ -77,7 +77,7 @@
 
             <div class="flow-small">
                 <label for="password">
-                    {{ 'Password' | trans }}
+                    {{ 'users.password' | trans }}
                 </label>
 
                 <div class="password-container" data-controller="password">
@@ -99,7 +99,7 @@
                         {{ icon('eye') }}
                         {{ icon('eye-slash') }}
                         <span class="sr-only">
-                            {{ 'Show password as plain text. Note: this will visually expose your password.' | trans }}
+                            {{ 'forms.show_password' | trans }}
                         </span>
                     </button>
                 </div>
@@ -107,14 +107,14 @@
 
             <div class="form__actions">
                 <button id="form-login-submit" class="button--primary" type="submit">
-                    {{ 'Login' | trans }}
+                    {{ 'login.submit' | trans }}
                 </button>
             </div>
         </form>
 
         <p class="text--small text--center">
             <a href="{{ path('about') }}">
-                {{ 'About Bileto' | trans }}
+                {{ 'about.title' | trans }}
             </a>
         </p>
     </main>

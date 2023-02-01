@@ -123,3 +123,6 @@ Error: Error
 'The role {{ value }} is already used.': 'The role { value } is already used.'
 'The description is required.': 'The description is required.'
 'The description must be {{ limit }} characters maximum.': 'The description must be { limit } characters maximum.'
+'The assignee must exist.': 'The assignee must exist.'
+'The requester must exist.': 'The requester must exist.'
+'The password is invalid.': 'The password is invalid.'

@@ -6,11 +6,11 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Profile' | trans }}{% endblock %}
+{% block title %}{{ 'profile.title' | trans }}{% endblock %}
 
 {% block body %}
     <main class="layout__body flow">
-        <h1>{{ 'Profile' | trans }}</h1>
+        <h1>{{ 'profile.title' | trans }}</h1>
 
         <form
             action="{{ path('update profile') }}"
@@ -24,20 +24,20 @@
             {% endif %}
 
             <p class="text--info text--center">
-                {{ 'Note: the information of your profile can be visible to the other users.' | trans }}
+                {{ 'profile.note' | trans }}
             </p>
 
             <div class="flow-small">
                 <label for="name">
-                    {{ 'Name' | trans }}
+                    {{ 'users.name' | trans }}
                     <span class="text--secondary">
-                        {{ '(optional, max. 100 characters)' | trans }}
+                        {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
                     </span>
                 </label>
 
                 {% if errors.name is defined %}
                     <p class="form__error" role="alert" id="name-error">
-                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
                         {{ errors.name }}
                     </p>
                 {% endif %}
@@ -59,12 +59,12 @@
 
             <div class="flow-small">
                 <label for="email">
-                    {{ 'Email address' | trans }}
+                    {{ 'users.email' | trans }}
                 </label>
 
                 {% if errors.email is defined %}
                     <p class="form__error" role="alert" id="email-error">
-                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
                         {{ errors.email }}
                     </p>
                 {% endif %}
@@ -84,20 +84,20 @@
             </div>
 
             <fieldset class="flow">
-                <legend>{{ 'Password' | trans }}</legend>
+                <legend>{{ 'users.password' | trans }}</legend>
 
                 <p class="form__caption">
-                    {{ 'Leave these fields blank to keep your current password.' | trans }}
+                    {{ 'profile.leave_password' | trans }}
                 </p>
 
                 <div class="flow-small">
                     <label for="current-password">
-                        {{ 'Current password' | trans }}
+                        {{ 'profile.current_password' | trans }}
                     </label>
 
                     {% if errors.password is defined %}
                         <p class="form__error" role="alert" id="current-password-error">
-                            <span class="sr-only">{{ 'Error' | trans }}</span>
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
                             {{ errors.password }}
                         </p>
                     {% endif %}
@@ -124,7 +124,7 @@
                             {{ icon('eye') }}
                             {{ icon('eye-slash') }}
                             <span class="sr-only">
-                                {{ 'Show password as plain text. Note: this will visually expose your password.' | trans }}
+                                {{ 'forms.show_password' | trans }}
                             </span>
                         </button>
                     </div>
@@ -132,7 +132,7 @@
 
                 <div class="flow-small">
                     <label for="new-password">
-                        {{ 'New password' | trans }}
+                        {{ 'profile.new_password' | trans }}
                     </label>
 
                     <div class="password-container" data-controller="password">
@@ -153,7 +153,7 @@
                             {{ icon('eye') }}
                             {{ icon('eye-slash') }}
                             <span class="sr-only">
-                                {{ 'Show password as plain text. Note: this will visually expose your password.' | trans }}
+                                {{ 'forms.show_password' | trans }}
                             </span>
                         </button>
                     </div>
@@ -162,7 +162,7 @@
 
             <div class="form__actions">
                 <button id="form-update-profile-submit" class="button--primary" type="submit">
-                    {{ 'Save the changes' | trans }}
+                    {{ 'forms.save_changes' | trans }}
                 </button>
             </div>
         </form>

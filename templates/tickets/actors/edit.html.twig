@@ -6,7 +6,7 @@
 
 {% extends 'modal.html.twig' %}
 
-{% block title %}{{ 'Edit the actors' | trans }}{% endblock %}
+{% block title %}{{ 'tickets.actors.edit.title' | trans }}{% endblock %}
 
 {% block body %}
     <form
@@ -24,12 +24,12 @@
         <div class="flow-small">
             <label for="requester">
                 {{ icon('user') }}
-                {{ 'Requester' | trans }}
+                {{ 'tickets.requester' | trans }}
             </label>
 
             {% if errors.requester is defined %}
                 <p class="form__error" role="alert" id="requester-error">
-                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
                     {{ errors.requester }}
                 </p>
             {% endif %}
@@ -49,7 +49,7 @@
                         {{ user.displayName }}
 
                         {% if user.id == app.user.id %}
-                            {{ '(yourself)' | trans }}
+                            ({{ 'users.yourself' | trans }})
                         {% endif %}
                     </option>
                 {% endfor %}
@@ -59,15 +59,15 @@
         <div class="flow-small">
             <label for="assignee">
                 {{ icon('headset') }}
-                {{ 'Assignee' | trans }}
+                {{ 'tickets.assignee' | trans }}
                 <small class="text--secondary">
-                    {{ '(optional)' | trans }}
+                    {{ 'forms.optional' | trans }}
                 </small>
             </label>
 
             {% if errors.assignee is defined %}
                 <p class="form__error" role="alert" id="assignee-error">
-                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
                     {{ errors.assignee }}
                 </p>
             {% endif %}
@@ -82,7 +82,7 @@
                 {% endif %}
             >
                 <option value="">
-                    {{ 'Unassigned' | trans }}
+                    {{ 'tickets.unassigned' | trans }}
                 </option>
 
                 {% for user in users %}
@@ -90,7 +90,7 @@
                         {{ user.displayName }}
 
                         {% if user.id == app.user.id %}
-                            {{ '(yourself)' | trans }}
+                            ({{ 'users.yourself' | trans }})
                         {% endif %}
                     </option>
                 {% endfor %}
@@ -99,7 +99,7 @@
 
         <div class="form__actions">
             <button id="form-update-actors-submit" class="button--primary" type="submit">
-                {{ 'Save the changes' | trans }}
+                {{ 'forms.save_changes' | trans }}
             </button>
         </div>
     </form>

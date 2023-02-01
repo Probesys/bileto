@@ -6,7 +6,7 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Organizations' | trans }}{% endblock %}
+{% block title %}{{ 'organizations.index.title' | trans }}{% endblock %}
 
 {% block sidebar %}
     {{ include('_sidebar_settings.html.twig', { current: 'organizations' }, with_context = false) }}
@@ -15,7 +15,7 @@
 {% block body %}
     <main class="layout__body flow organizations-index">
         <div class="layout__body-header">
-            <h1>{{ 'Organizations' | trans }}</h1>
+            <h1>{{ 'organizations.index.title' | trans }}</h1>
         </div>
 
         <div class="wrapper-large flow">
@@ -24,7 +24,7 @@
                     <a class="card card--action" href="{{ path('new organization') }}">
                         <span>
                             {{ icon('plus') }}
-                            {{ 'New organization' | trans }}
+                            {{ 'organizations.index.new_organization' | trans }}
                         </span>
                     </a>
 
@@ -45,7 +45,7 @@
                             <div class="text--center text--small">
                                 <a href="{{ path('new organization', { parent: organization.uid }) }}">
                                     {{ icon('plus') }}
-                                    {{ '<span class="sr-only">New</span> sub-organization' | trans | raw }}
+                                    {{ 'organizations.index.new_sub_organization' | trans | raw }}
                                 </a>
                             </div>
                         </div>
@@ -55,13 +55,13 @@
                 <div class="text--center flow-large">
                     <p class="placeholder" data-test="organizations-placeholder">
                         {{ icon('organization') }}
-                        {{ 'No organization' | trans }}
+                        {{ 'organizations.index.no_organizations' | trans }}
                     </p>
 
                     <p class="text--big">
                         <a class="anchor--action" href="{{ path('new organization') }}">
                             {{ icon('plus') }}
-                            {{ 'New organization' | trans }}
+                            {{ 'organizations.index.new_organization' | trans }}
                         </a>
                     </p>
                 </div>

@@ -1,136 +1,127 @@
-Logout: 'Se déconnecter'
-'Log in': Connexion
-Error: Erreur
-'Email address': 'Adresse email'
-Password: 'Mot de passe'
-Login: 'Se connecter'
-Organizations: Organisations
-'New organization': 'Nouvelle organisation'
-'You have not yet created an organization.': 'Vous n’avez pas encore créé d’organisation.'
-'Back (organizations)': 'Retour (organisations)'
-'Organization name': 'Nom de l’organisation'
-'(max. 255 characters)': '(max. 255 caractères)'
-'Create the organization': 'Créer l’organisation'
-'Menu of %name%': 'Menu de {name}'
-Preferences: Préférences
-'Color scheme': 'Schéma de couleurs'
-Auto: Auto
-Light: Clair
-Dark: Sombre
-'Save the changes': 'Enregistrer les modifications'
-Language: Langue
-'The requester must exist.': 'Le demandeur doit exister.'
-'The assignee must exist.': 'L’attribution doit exister.'
-New: Nouveau
-'In progress': 'En cours'
-Planned: Planifié
-Pending: 'En attente'
-Resolved: Résolu
-Closed: Fermé
-'Tickets of %name%': 'Tickets de {name}'
-'New ticket': 'Nouveau ticket'
-'New ticket – %name%': 'Nouveau ticket – {name}'
-'Back (Tickets of %name%)': 'Retour (Tickets de {name})'
-Requester: Demandeur
-Assignee: 'Attribué à'
-(optional): (optionnel)
-Unassigned: 'Non attribué'
-Status: Statut
-'Create the ticket': 'Créer le ticket'
-Actors: Acteurs
-Request: Demande
-Incident: Incident
-Low: Basse
-Medium: Moyenne
-High: Haute
-'on %date%': 'le {date}'
-Priority: Priorité
-'Urgency:': "Urgence\_:"
-'Impact:': "Impact\_:"
-'Tickets – %name%': 'Tickets – {name}'
-'Back (tickets)': 'Retour (tickets)'
-Title: Titre
-Answer: Répondre
-'Opened on': 'Ouvert le'
-'Ticket number': 'Numéro de ticket'
-'You have not yet created any ticket.': 'Vous n’avez pas encore créé de ticket.'
-'Status to': 'Statut vers'
-'Close this window': 'Fermer cette fenêtre'
-Close: Fermer
-'Edit the priority': 'Modifier la priorité'
-Urgency: Urgence
-Impact: Impact
-'Edit the actors': 'Modifier les acteurs'
-Actions: Actions
-'Turn into an incident': 'Changer en incident'
-'Turn into a request': 'Changer en demande'
-'opened this <strong>request</strong>': 'a ouvert cette <strong>demande</strong>'
-'opened this <strong>incident</strong>': 'a ouvert cet <strong>incident</strong>'
-'All tickets': 'Tous les tickets'
-'Tickets to assign': 'Tickets à attribuer'
-'My tickets': 'Mes tickets'
-'No ticket': 'Aucun ticket'
-'No organization': 'Aucune organisation'
-'This message resolved the ticket': 'Ce message a résolu le ticket'
-'Mark as solution': 'Marquer comme solution'
-'This message is confidential': 'Ce message est confidentiel'
-'Mark as…': 'Marquer comme…'
-confidential: confidentiel
-solution: solution
-Type: Type
-'Rename the ticket': 'Renommer le ticket'
-'You need to activate the JavaScript in order to use Bileto.': 'Vous devez activer le JavaScript pour utiliser Bileto.'
-'This ticket is resolved.': 'Ce ticket est résolu.'
-'This ticket is closed.': 'Ce ticket est clos.'
-'assign yourself': attribuez-vous
-(yourself): (vous)
-'Skip to main content': 'Accéder au contenu principal'
-'About Bileto': 'À propos de Bileto'
-'Yet another service desk and IT asset management software.': 'Un autre logiciel de gestion de tickets et d’actifs informatiques.'
-Version: Version
-License: Licence
-'source code': 'code source'
-Authors: Auteurs
-'Bileto is developped by <a href="https://probesys.com">Probesys</a>.': 'Bileto est développé par <a href="https://probesys.com">Probesys</a>.'
-'Close the notification': 'Fermer la notification'
-Profile: Profil
-'Note: the information of your profile can be visible to the other users.': "Note\_: les informations de votre profil peuvent être visibles par les autres utilisateurs."
-Name: Nom
-'(optional, max. 100 characters)': '(optionnel, max. 100 caractères)'
-'The password is invalid.': 'Le mot de passe est invalide.'
-'Leave these fields blank to keep your current password.': 'Laissez ces champs vides pour conserver votre mot de passe actuel.'
-'Current password': 'Mot de passe actuel'
-'New password': 'Nouveau mot de passe'
-'Show password as plain text. Note: this will visually expose your password.': 'Afficher le mot de passe sous forme de texte. Attention, cela exposera votre mot de passe visuellement.'
-'Parent organization': 'Organisation parente'
-'<span class="sr-only">New</span> sub-organization': '<span class="sr-only">Nouvelle</span> sous-organisation'
-Super-admin: Super-admin
-'A special admin role with an access to everything (cannot be deleted).': 'Un rôle spécial avec un accès à tout (ne peut pas être supprimé).'
-Roles: Rôles
-'Admin roles': 'Rôles admin'
-'New admin role': 'Nouveau rôle admin'
-'Organization roles': 'Rôles organisation'
-'New orga role': 'Nouveau rôle orga'
-'Back (roles)': 'Retour (rôles)'
-'(max. 50 characters)': '(max. 50 caractères)'
-Description: Description
-Permissions: Permissions
-'Create the role': 'Créer le rôle'
-'Welcome to Bileto': 'Bienvenue sur Bileto'
-'Your tickets': 'Vos tickets'
-'Manage the organizations': 'Gérer les organisations'
-'Manage the roles': 'Gérer les roles'
-'Create tickets': 'Créer des tickets'
-'Answer to tickets': 'Répondre aux tickets'
-'See all the tickets': 'Voir tous les tickets'
-'Update the actors of a ticket': 'Mettre à jour les acteurs d’un ticket'
-'Update the priority of a ticket': 'Mettre à jour la priorité d’un ticket'
-'Update the title of a ticket': 'Mettre à jour le titre d’un ticket'
-'Update the type of a ticket': 'Mettre à jour le type d’un ticket'
-'Back (home)': 'Retour (accueil)'
-'Name of the role': 'Nom du rôle'
-'Edit admin role': 'Modifier le rôle admin'
-'Edit orga role': 'Modifier le rôle orga'
-Settings: Gestion
-'Manage the users': 'Gérer les utilisateurs'
-Users: Utilisateurs
+about.authors: Auteurs
+about.authors_description: 'Bileto est développé par <a href="https://probesys.com">Probesys</a>.'
+about.license: Licence
+about.short: 'Un autre logiciel de gestion de tickets et d’actifs informatiques.'
+about.source_code: 'code source'
+about.title: 'À propos de Bileto'
+about.version: Version
+forms.error: Erreur
+forms.max_chars: '(max. {number} caractères)'
+forms.optional: (optionnel)
+forms.optional_max_chars: '(optionnel, max. {number} caractères)'
+forms.save_changes: 'Enregistrer les modifications'
+forms.show_password: 'Afficher le mot de passe sous forme de texte. Attention, cela exposera votre mot de passe visuellement.'
+home.title: 'Bienvenue sur Bileto'
+home.your_tickets: 'Vos tickets'
+layout.activate_javascript: 'Vous devez activer le JavaScript pour utiliser Bileto.'
+layout.logout: 'Se déconnecter'
+layout.modal.close: 'Fermer cette fenêtre'
+layout.notifications.close: 'Fermer la notification'
+layout.notifications.error: Erreur
+layout.user_menu_title: 'Menu de {name}'
+layout.skip_to_main_content: 'Accéder au contenu principal'
+login.submit: 'Se connecter'
+login.title: Connexion
+organizations.index.new_organization: 'Nouvelle organisation'
+organizations.index.new_sub_organization: '<span class="sr-only">Nouvelle</span> sous-organisation'
+organizations.index.no_organizations: 'Aucune organisation'
+organizations.index.title: Organisations
+organizations.name: Nom
+organizations.new.submit: 'Créer l’organisation'
+organizations.new.title: 'Nouvelle organisation'
+organizations.parent_orga: 'Organisation parente'
+preferences.title: Préférences
+profile.current_password: 'Mot de passe actuel'
+profile.leave_password: 'Laissez ces champs vides pour conserver votre mot de passe actuel.'
+profile.new_password: 'Nouveau mot de passe'
+profile.note: "Note\_: les informations de votre profil peuvent être visibles par les autres utilisateurs."
+profile.title: Profil
+roles.description: Description
+roles.edit.title.admin: 'Modifier le rôle admin'
+roles.edit.title.orga: 'Modifier le rôle orga'
+roles.index.title: Rôles
+roles.index.admin_roles.title: 'Rôles admin'
+roles.index.admin_roles.new: 'Nouveau rôle admin'
+roles.index.orga_roles.title: 'Rôles organisation'
+roles.index.orga_roles.new: 'Nouveau rôle orga'
+roles.name: Nom
+roles.new.submit: 'Créer le rôle'
+roles.new.title.admin: 'Nouveau rôle admin'
+roles.new.title.orga: 'Nouveau rôle orga'
+roles.permissions: Permissions
+roles.permissions.admin.manage.organizations: 'Gérer les organisations'
+roles.permissions.admin.manage.roles: 'Gérer les roles'
+roles.permissions.admin.manage.users: 'Gérer les utilisateurs'
+roles.permissions.orga.create.tickets: 'Créer des tickets'
+roles.permissions.orga.create.tickets.messages: 'Répondre aux tickets'
+roles.permissions.orga.see.tickets.all: 'Voir tous les tickets'
+roles.permissions.orga.update.tickets.actors: 'Mettre à jour les acteurs d’un ticket'
+roles.permissions.orga.update.tickets.priority: 'Mettre à jour la priorité d’un ticket'
+roles.permissions.orga.update.tickets.title: 'Mettre à jour le titre d’un ticket'
+roles.permissions.orga.update.tickets.type: 'Mettre à jour le type d’un ticket'
+roles.super_admin: Super-admin
+roles.super_admin.description: 'Un rôle spécial avec un accès à tout (ne peut pas être supprimé).'
+settings.index.title: Gestion
+tickets.actors: Acteurs
+tickets.actors.edit.title: 'Modifier les acteurs'
+tickets.assignee: 'Attribué à'
+tickets.impact: Impact
+tickets.incident: Incident
+tickets.index.new_ticket: 'Nouveau ticket'
+tickets.index.no_tickets: 'Aucun ticket'
+tickets.index.title.all: 'Tous les tickets'
+tickets.index.title.my: 'Mes tickets'
+tickets.index.title.to_assign: 'Tickets à attribuer'
+tickets.new.back: 'Retour (tickets)'
+tickets.new.title: 'Nouveau ticket'
+tickets.new.submit: 'Créer le ticket'
+tickets.opened_on: 'Ouvert le'
+tickets.priority: Priorité
+tickets.priority.edit.title: 'Modifier la priorité'
+tickets.request: Demande
+tickets.requester: Demandeur
+tickets.show.actions: Actions
+tickets.show.actions.rename: 'Renommer le ticket'
+tickets.show.actions.turn_into_incident: 'Changer en incident'
+tickets.show.actions.turn_into_request: 'Changer en demande'
+tickets.show.answer: Répondre
+tickets.show.assign_yourself: attribuez-vous
+tickets.show.back: 'Retour (tickets)'
+tickets.show.closed: 'Ce ticket est clos.'
+tickets.show.impact: "Impact\_:"
+tickets.show.mark_as: 'Marquer comme…'
+tickets.show.mark_as.confidential: confidentiel
+tickets.show.mark_as.solution: solution
+tickets.show.message.confidential: 'Ce message est confidentiel'
+tickets.show.message.resolved: 'Ce message a résolu le ticket'
+tickets.show.opened_incident: 'a ouvert cet <strong>incident</strong>'
+tickets.show.opened_on: 'le {date}'
+tickets.show.opened_request: 'a ouvert cette <strong>demande</strong>'
+tickets.show.resolved: 'Ce ticket est résolu.'
+tickets.show.status_to: 'Statut vers'
+tickets.show.urgency: "Urgence\_:"
+tickets.status: Statut
+tickets.status.closed: Fermé
+tickets.status.in_progress: 'En cours'
+tickets.status.new: Nouveau
+tickets.status.pending: 'En attente'
+tickets.status.planned: Planifié
+tickets.status.resolved: Résolu
+tickets.title: Titre
+tickets.title.edit.title: 'Renommer le ticket'
+tickets.type: Type
+tickets.unassigned: 'Non attribué'
+tickets.urgency: Urgence
+tickets.weight.high: Haute
+tickets.weight.low: Basse
+tickets.weight.medium: Moyenne
+users.color_scheme: 'Schéma de couleurs'
+users.color_scheme.auto: Auto
+users.color_scheme.light: Clair
+users.color_scheme.dark: Sombre
+users.email: 'Adresse email'
+users.index.title: Utilisateurs
+users.language: Langue
+users.name: Nom
+users.password: 'Mot de passe'
+users.yourself: vous

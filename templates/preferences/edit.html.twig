@@ -6,11 +6,11 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Preferences' | trans }}{% endblock %}
+{% block title %}{{ 'preferences.title' | trans }}{% endblock %}
 
 {% block body %}
     <main class="layout__body flow">
-        <h1>{{ 'Preferences' | trans }}</h1>
+        <h1>{{ 'preferences.title' | trans }}</h1>
 
         <form
             action="{{ path('update preferences') }}"
@@ -27,12 +27,12 @@
             <div class="flow-small">
                 <label for="locale">
                     {{ icon('language') }}
-                    {{ 'Language' | trans }}
+                    {{ 'users.language' | trans }}
                 </label>
 
                 {% if errors.locale is defined %}
                     <p class="form__error" role="alert" id="locale-error">
-                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
                         {{ errors.locale }}
                     </p>
                 {% endif %}
@@ -56,12 +56,12 @@
 
             <div class="flow-small">
                 <label for="color-scheme">
-                    {{ 'Color scheme' | trans }}
+                    {{ 'users.color_scheme' | trans }}
                 </label>
 
                 {% if errors.colorScheme is defined %}
                     <p class="form__error" role="alert" id="color-scheme-error">
-                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
                         {{ errors.colorScheme }}
                     </p>
                 {% endif %}
@@ -76,20 +76,20 @@
                     {% endif %}
                 >
                     <option value="auto" {{ colorScheme == 'auto' ? 'selected' }}>
-                        {{ 'Auto' | trans }}
+                        {{ 'users.color_scheme.auto' | trans }}
                     </option>
                     <option value="light" {{ colorScheme == 'light' ? 'selected' }}>
-                        {{ 'Light' | trans }}
+                        {{ 'users.color_scheme.light' | trans }}
                     </option>
                     <option value="dark" {{ colorScheme == 'dark' ? 'selected' }}>
-                        {{ 'Dark' | trans }}
+                        {{ 'users.color_scheme.dark' | trans }}
                     </option>
                 </select>
             </div>
 
             <div class="form__actions">
                 <button id="form-update-preferences-submit" class="button--primary" type="submit">
-                    {{ 'Save the changes' | trans }}
+                    {{ 'forms.save_changes' | trans }}
                 </button>
             </div>
         </form>

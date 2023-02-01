@@ -351,12 +351,12 @@ class Ticket
     public static function getStatusesWithLabels(): array
     {
         return [
-            'new' => new TranslatableMessage('New'),
-            'in_progress' => new TranslatableMessage('In progress'),
-            'planned' => new TranslatableMessage('Planned'),
-            'pending' => new TranslatableMessage('Pending'),
-            'resolved' => new TranslatableMessage('Resolved'),
-            'closed' => new TranslatableMessage('Closed'),
+            'new' => new TranslatableMessage('tickets.status.new'),
+            'in_progress' => new TranslatableMessage('tickets.status.in_progress'),
+            'planned' => new TranslatableMessage('tickets.status.planned'),
+            'pending' => new TranslatableMessage('tickets.status.pending'),
+            'resolved' => new TranslatableMessage('tickets.status.resolved'),
+            'closed' => new TranslatableMessage('tickets.status.closed'),
         ];
     }
 
@@ -366,8 +366,8 @@ class Ticket
     public static function getTypesWithLabels(): array
     {
         return [
-            'request' => new TranslatableMessage('Request'),
-            'incident' => new TranslatableMessage('Incident'),
+            'request' => new TranslatableMessage('tickets.request'),
+            'incident' => new TranslatableMessage('tickets.incident'),
         ];
     }
 
@@ -377,9 +377,9 @@ class Ticket
     public static function getWeightsWithLabels(): array
     {
         return [
-            'low' => new TranslatableMessage('Low'),
-            'medium' => new TranslatableMessage('Medium'),
-            'high' => new TranslatableMessage('High'),
+            'low' => new TranslatableMessage('tickets.weight.low'),
+            'medium' => new TranslatableMessage('tickets.weight.medium'),
+            'high' => new TranslatableMessage('tickets.weight.high'),
         ];
     }
 

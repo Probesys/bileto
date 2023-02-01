@@ -7,9 +7,9 @@
 {% extends 'base.html.twig' %}
 
 {% if type == 'admin' %}
-    {% set pageTitle = 'New admin role' | trans %}
+    {% set pageTitle = 'roles.new.title.admin' | trans %}
 {% else %}
-    {% set pageTitle = 'New orga role' | trans %}
+    {% set pageTitle = 'roles.new.title.orga' | trans %}
 {% endif %}
 
 {% block title %}{{ pageTitle }}{% endblock %}
@@ -21,7 +21,7 @@
 {% block body %}
     <main class="layout__body flow">
         <div class="layout__body-header">
-            <a href="{{ path('roles') }}">{{ 'Roles' | trans }}</a>
+            <a href="{{ path('roles') }}">{{ 'roles.index.title' | trans }}</a>
             <h1>{{ pageTitle }}</h1>
         </div>
 

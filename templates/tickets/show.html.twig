@@ -10,7 +10,7 @@
 
 {% block back %}
     <a href="{{ path('organization tickets', {'uid': organization.uid}) }}">
-        {{ 'Back (tickets)' | trans }}
+        {{ 'tickets.show.back' | trans }}
     </a>
 {% endblock %}
 
@@ -29,19 +29,19 @@
             ) }}
 
             <div class="text--center">
-                <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'Status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
+                <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
                 <span class="text--small">
                     <strong>{{ ticket.createdBy.displayName }}</strong>
 
                     {% if ticket.type == 'request' %}
-                        {{ 'opened this <strong>request</strong>' | trans | raw }}
+                        {{ 'tickets.show.opened_request' | trans | raw }}
                     {% else %}
-                        {{ 'opened this <strong>incident</strong>' | trans | raw }}
+                        {{ 'tickets.show.opened_incident' | trans | raw }}
                     {% endif %}
 
                     <time datetime="{{ ticket.createdAt | dateIso }}">
-                        {{ 'on %date%' | trans({ '%date%': ticket.createdAt | dateTrans }) }}
+                        {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
                     </time>
                 </span>
             </div>
@@ -55,17 +55,17 @@
                             <div class="message__avatar">
                                 {{ icon('circle-user') }}
                                 {% if message.createdBy == ticket.requester %}
-                                    <span class="message__role" title="{{ 'Requester' | trans }}">
+                                    <span class="message__role" title="{{ 'tickets.requester' | trans }}">
                                         {{ icon('user') }}
                                         <span class="sr-only">
-                                            {{ 'Requester' | trans }}
+                                            {{ 'tickets.requester' | trans }}
                                         </span>
                                     </span>
                                 {% elseif message.createdBy == ticket.assignee %}
-                                    <span class="message__role" title="{{ 'Assignee' | trans }}">
+                                    <span class="message__role" title="{{ 'tickets.assignee' | trans }}">
                                         {{ icon('headset') }}
                                         <span class="sr-only">
-                                            {{ 'Assignee' | trans }}
+                                            {{ 'tickets.assignee' | trans }}
                                         </span>
                                     </span>
                                 {% endif %}
@@ -74,13 +74,13 @@
                             <div class="message__box">
                                 <div class="message__top">
                                     {% if ticket.solution == message %}
-                                        <div title="{{ 'This message resolved the ticket' | trans }}">
+                                        <div title="{{ 'tickets.show.message.resolved' | trans }}">
                                             {{ icon('check') }}
                                         </div>
                                     {% endif %}
 
                                     {% if message.isConfidential %}
-                                        <div title="{{ 'This message is confidential' | trans }}">
+                                        <div title="{{ 'tickets.show.message.confidential' | trans }}">
                                             {{ icon('user-secret') }}
                                         </div>
                                     {% endif %}
@@ -122,7 +122,7 @@
                         <div class="flow-small">
                             {% if errors.content is defined %}
                                 <p class="form__error" role="alert" id="message-error">
-                                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
                                     {{ errors.content }}
                                 </p>
                             {% endif %}
@@ -141,7 +141,7 @@
 
                         <div class="row">
                             <label>
-                                {{ 'Mark as…' | trans }}
+                                {{ 'tickets.show.mark_as' | trans }}
                             </label>
 
                             <div class="row row--always">
@@ -156,7 +156,7 @@
                                     />
 
                                     <label for="is-confidential">
-                                        {{ 'confidential' | trans }}
+                                        {{ 'tickets.show.mark_as.confidential' | trans }}
                                     </label>
                                 </div>
 
@@ -172,7 +172,7 @@
                                     />
 
                                     <label for="is-solution">
-                                        {{ 'solution' | trans }}
+                                        {{ 'tickets.show.mark_as.solution' | trans }}
                                     </label>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                                 <div class="row__item--extend flow-small">
                                     <div class="row row--center row--always">
                                         <label for="status">
-                                            {{ 'Status to' | trans }}
+                                            {{ 'tickets.show.status_to' | trans }}
                                         </label>
 
                                         <select
@@ -208,7 +208,7 @@
 
                                     {% if errors.status is defined %}
                                         <p class="form__error" role="alert" id="status-error">
-                                            <span class="sr-only">{{ 'Error' | trans }}</span>
+                                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
                                             {{ errors.status }}
                                         </p>
                                     {% endif %}
@@ -216,17 +216,17 @@
                             {% elseif ticket.status == 'resolved' %}
                                 <p class="row__item--extend text--success">
                                     {{ icon('check') }}
-                                    {{ 'This ticket is resolved.' | trans }}
+                                    {{ 'tickets.show.resolved' | trans }}
                                 </p>
                             {% elseif ticket.status == 'closed' %}
                                 <p class="row__item--extend text--secondary">
                                     {{ icon('close') }}
-                                    {{ 'This ticket is closed.' | trans }}
+                                    {{ 'tickets.show.closed' | trans }}
                                 </p>
                             {% endif %}
 
                             <button id="form-create-message-submit" class="button--primary row__item--extend" type="submit">
-                                {{ 'Answer' | trans }}
+                                {{ 'tickets.show.answer' | trans }}
                             </button>
                         </div>
                     </form>
@@ -248,7 +248,7 @@
                             <summary class="popup__opener">
                                 <span class="button">
                                     {{ icon('ellipsis') }}
-                                    {{ 'Actions' | trans }}
+                                    {{ 'tickets.show.actions' | trans }}
                                     {{ icon('caret-down') }}
                                 </span>
                             </summary>
@@ -260,12 +260,12 @@
                                         {% if ticket.type == 'request' %}
                                             <input type="hidden" name="type" value="incident">
                                             <button id="form-update-type-submit" class="popup__item" type="submit">
-                                                {{ 'Turn into an incident' | trans }}
+                                                {{ 'tickets.show.actions.turn_into_incident' | trans }}
                                             </button>
                                         {% else %}
                                             <input type="hidden" name="type" value="request">
                                             <button id="form-update-type-submit" class="popup__item" type="submit">
-                                                {{ 'Turn into a request' | trans }}
+                                                {{ 'tickets.show.actions.turn_into_request' | trans }}
                                             </button>
                                         {% endif %}
                                     </form>
@@ -279,7 +279,7 @@
                                         data-action="modal-opener#fetch"
                                         data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
                                     >
-                                        {{ 'Rename the ticket' | trans }}
+                                        {{ 'tickets.show.actions.rename' | trans }}
                                     </button>
                                 {% endif %}
                             </nav>
@@ -291,7 +291,7 @@
                     <div class="row row--center row--always">
                         <span class="row__item--extend text--secondary">
                             {{ icon('user-group') }}
-                            <strong>{{ 'Actors' | trans }}</strong>
+                            <strong>{{ 'tickets.actors' | trans }}</strong>
                         </span>
 
                         {% if is_granted('orga:update:tickets:actors', organization) %}
@@ -303,7 +303,7 @@
                             >
                                 {{ icon('gear') }}
                                 <span class="sr-only">
-                                    {{ 'Edit the actors' | trans }}
+                                    {{ 'tickets.actors.edit.title' | trans }}
                                 </span>
                             </button>
                         {% endif %}
@@ -311,7 +311,7 @@
 
                     <div>
                         <div class="text--secondary">
-                            {{ 'Requester' | trans }}
+                            {{ 'tickets.requester' | trans }}
                         </div>
 
                         <div>
@@ -321,14 +321,14 @@
 
                     <div>
                         <div class="text--secondary">
-                            {{ 'Assignee' | trans }}
+                            {{ 'tickets.assignee' | trans }}
                         </div>
 
                         <div>
                             {% if ticket.assignee %}
                                 {{ ticket.assignee.displayName }}
                             {% else %}
-                                <strong>{{ 'Unassigned' | trans }}</strong>
+                                <strong>{{ 'tickets.unassigned' | trans }}</strong>
 
                                 {% if is_granted('orga:update:tickets:actors', organization) %}
                                     <form
@@ -342,7 +342,7 @@
 
                                         →
                                         <button id="form-self-assign-submit" class="button--anchor" type="submit">
-                                            {{ 'assign yourself' | trans }}
+                                            {{ 'tickets.show.assign_yourself' | trans }}
                                         </button>
                                     </form>
                                 {% endif %}
@@ -355,7 +355,7 @@
                     <div class="row row--center row--always">
                         <span class="row__item--extend text--secondary">
                             {{ icon('priority') }}
-                            <strong>{{ 'Priority' | trans }}</strong>
+                            <strong>{{ 'tickets.priority' | trans }}</strong>
                         </span>
 
                         {% if is_granted('orga:update:tickets:priority', organization) %}
@@ -367,7 +367,7 @@
                             >
                                 {{ icon('gear') }}
                                 <span class="sr-only">
-                                    {{ 'Edit the priority' | trans }}
+                                    {{ 'tickets.priority.edit.title' | trans }}
                                 </span>
                             </button>
                         {% endif %}
@@ -379,14 +379,14 @@
 
                     <p>
                         <span class="text--secondary">
-                            {{ 'Urgency:' | trans }}
+                            {{ 'tickets.show.urgency' | trans }}
                         </span>
                         {{ ticket.urgencyLabel | trans }}
                     </p>
 
                     <p>
                         <span class="text--secondary">
-                            {{ 'Impact:' | trans }}
+                            {{ 'tickets.show.impact' | trans }}
                         </span>
                         {{ ticket.impactLabel | trans }}
                     </p>

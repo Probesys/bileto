@@ -6,7 +6,7 @@
 
 {% extends 'modal.html.twig' %}
 
-{% block title %}{{ 'Edit the priority' | trans }}{% endblock %}
+{% block title %}{{ 'tickets.priority.edit.title' | trans }}{% endblock %}
 
 {% block body %}
     <form
@@ -25,12 +25,12 @@
         <div class="row">
             <div class="row__item--extend flow-small">
                 <label for="urgency">
-                    {{ 'Urgency' | trans }}
+                    {{ 'tickets.urgency' | trans }}
                 </label>
 
                 {% if errors.urgency is defined %}
                     <p class="form__error" role="alert" id="urgency-error">
-                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
                         {{ errors.urgency }}
                     </p>
                 {% endif %}
@@ -57,12 +57,12 @@
 
             <div class="row__item--extend flow-small">
                 <label for="impact">
-                    {{ 'Impact' | trans }}
+                    {{ 'tickets.impact' | trans }}
                 </label>
 
                 {% if errors.impact is defined %}
                     <p class="form__error" role="alert" id="impact-error">
-                        <span class="sr-only">{{ 'Error' | trans }}</span>
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
                         {{ errors.impact }}
                     </p>
                 {% endif %}
@@ -90,12 +90,12 @@
 
         <div class="flow-small">
             <label for="priority">
-                {{ 'Priority' | trans }}
+                {{ 'tickets.priority' | trans }}
             </label>
 
             {% if errors.priority is defined %}
                 <p class="form__error" role="alert" id="priority-error">
-                    <span class="sr-only">{{ 'Error' | trans }}</span>
+                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
                     {{ errors.priority }}
                 </p>
             {% endif %}
@@ -121,7 +121,7 @@
 
         <div class="form__actions">
             <button id="form-update-priority-submit" class="button--primary" type="submit">
-                {{ 'Save the changes' | trans }}
+                {{ 'forms.save_changes' | trans }}
             </button>
         </div>
     </form>

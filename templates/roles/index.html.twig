@@ -6,7 +6,7 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Roles' | trans }}{% endblock %}
+{% block title %}{{ 'roles.index.title' | trans }}{% endblock %}
 
 {% block sidebar %}
     {{ include('_sidebar_settings.html.twig', { current: 'roles' }, with_context = false) }}
@@ -15,18 +15,18 @@
 {% block body %}
     <main class="layout__body flow roles-index">
         <div class="layout__body-header">
-            <h1>{{ 'Roles' | trans }}</h1>
+            <h1>{{ 'roles.index.title' | trans }}</h1>
         </div>
 
         <div class="wrapper-large flow-larger">
             <div class="flow">
-                <h2>{{ 'Admin roles' | trans }}</h2>
+                <h2>{{ 'roles.index.admin_roles.title' | trans }}</h2>
 
                 <div class="grid">
                     <a class="card card--action" href="{{ path('new role', { type: 'admin' }) }}">
                         <span>
                             {{ icon('plus') }}
-                            {{ 'New admin role' | trans }}
+                            {{ 'roles.index.admin_roles.new' | trans }}
                         </span>
                     </a>
 
@@ -55,13 +55,13 @@
             </div>
 
             <div class="flow">
-                <h2>{{ 'Organization roles' | trans }}</h2>
+                <h2>{{ 'roles.index.orga_roles.title' | trans }}</h2>
 
                 <div class="grid">
                     <a class="card card--action" href="{{ path('new role', { type: 'orga' }) }}">
                         <span>
                             {{ icon('plus') }}
-                            {{ 'New orga role' | trans }}
+                            {{ 'roles.index.orga_roles.new' | trans }}
                         </span>
                     </a>
 

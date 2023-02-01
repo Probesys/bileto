@@ -6,37 +6,37 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'About Bileto' | trans }}{% endblock %}
+{% block title %}{{ 'about.title' | trans }}{% endblock %}
 
 {% block body %}
     <main class="layout__body wrapper-small wrapper--center flow-large">
-        <h1>{{ 'About Bileto' | trans }}</h1>
+        <h1>{{ 'about.title' | trans }}</h1>
 
         <p class="text--center">
-            {{ 'Yet another service desk and IT asset management software.' | trans }}
+            {{ 'about.short' | trans }}
         </p>
 
         <img src="{{ asset('logo.svg') }}" alt="Bileto" />
 
-        <h2>{{ 'Version' | trans }}</h2>
+        <h2>{{ 'about.version' | trans }}</h2>
 
         <p>
             {{ version }}
         </p>
 
-        <h2>{{ 'License' | trans }}</h2>
+        <h2>{{ 'about.license' | trans }}</h2>
 
         <p>
             <a href="https://github.com/Probesys/bileto/blob/main/LICENSE.txt">
                 GNU Affero General Public License v3.0 or later
             </a>
-            (<a href="https://github.com/Probesys/bileto">{{ 'source code' | trans }}</a>)
+            (<a href="https://github.com/Probesys/bileto">{{ 'about.source_code' | trans }}</a>)
         </p>
 
-        <h2>{{ 'Authors' | trans }}</h2>
+        <h2>{{ 'about.authors' | trans }}</h2>
 
         <p>
-            {{ 'Bileto is developped by <a href="https://probesys.com">Probesys</a>.' | trans | raw }}
+            {{ 'about.authors_description' | trans | raw }}
         </p>
     </main>
 {% endblock %}

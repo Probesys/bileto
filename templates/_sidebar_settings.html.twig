@@ -6,7 +6,7 @@
 
 <nav class="layout__sidebar flow-smaller" aria-labelledby="sidebar-settings-title">
     <div id="sidebar-settings-title" class="sidebar__title">
-        {{ 'Settings' | trans }}
+        {{ 'settings.index.title' | trans }}
     </div>
 
     <ul class="sidebar flow-smaller">
@@ -18,7 +18,7 @@
                     {{ current == 'organizations' ? 'aria-current="page"' }}
                 >
                     {{ icon('organization') }}
-                    {{ 'Organizations' | trans }}
+                    {{ 'organizations.index.title' | trans }}
                 </a>
             </li>
         {% endif %}
@@ -31,7 +31,7 @@
                     {{ current == 'roles' ? 'aria-current="page"' }}
                 >
                     {{ icon('role') }}
-                    {{ 'Roles' | trans }}
+                    {{ 'roles.index.title' | trans }}
                 </a>
             </li>
         {% endif %}
@@ -44,7 +44,7 @@
                     {{ current == 'users' ? 'aria-current="page"' }}
                 >
                     {{ icon('user') }}
-                    {{ 'Users' | trans }}
+                    {{ 'users.index.title' | trans }}
                 </a>
             </li>
         {% endif %}

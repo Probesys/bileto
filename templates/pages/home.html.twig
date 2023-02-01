@@ -6,46 +6,46 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Welcome to Bileto' | trans }}{% endblock %}
+{% block title %}{{ 'home.title' | trans }}{% endblock %}
 
 {% block body %}
     <main class="layout__body flow organizations-index">
-        <h1>{{ 'Welcome to Bileto' | trans }}</h1>
+        <h1>{{ 'home.title' | trans }}</h1>
 
         <div class="wrapper-large wrapper--center flow-larger">
             {% if tickets %}
                 <div class="flow">
-                    <h2>{{ 'Your tickets' | trans }}</h2>
+                    <h2>{{ 'home.your_tickets' | trans }}</h2>
 
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th class="col--size4">
-                                        {{ 'Opened on' | trans }}
+                                        {{ 'tickets.opened_on' | trans }}
                                     </th>
 
                                     <th>
-                                        {{ 'Title' | trans }}
+                                        {{ 'tickets.title' | trans }}
                                     </th>
 
                                     <th class="col--size2">
-                                        {{ 'Type' | trans }}
+                                        {{ 'tickets.type' | trans }}
                                     </th>
 
                                     <th class="col--size5">
                                         {{ icon('user') }}
-                                        {{ 'Requester' | trans }}
+                                        {{ 'tickets.requester' | trans }}
                                     </th>
 
                                     <th class="col--size3 text--center">
                                         {{ icon('status') }}
-                                        {{ 'Status' | trans }}
+                                        {{ 'tickets.status' | trans }}
                                     </th>
 
                                     <th class="col--size3 text--center">
                                         {{ icon('priority') }}
-                                        {{ 'Priority' | trans }}
+                                        {{ 'tickets.priority' | trans }}
                                     </th>
                                 </tr>
                             </thead>
@@ -68,9 +68,9 @@
 
                                         <td>
                                             {% if ticket.type == 'incident' %}
-                                                {{ 'Incident' | trans }}
+                                                {{ 'tickets.incident' | trans }}
                                             {% else %}
-                                                {{ 'Request' | trans }}
+                                                {{ 'tickets.request' | trans }}
                                             {% endif %}
                                         </td>
 
