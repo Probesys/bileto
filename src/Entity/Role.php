@@ -32,6 +32,7 @@ class Role
         'admin:*',
         'admin:manage:organizations',
         'admin:manage:roles',
+        'admin:manage:users',
         'admin:see',
 
         'orga:create:tickets',

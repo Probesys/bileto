@@ -26,6 +26,13 @@
                     {{ 'Roles' | trans }}
                 </a>
             {% endif %}
+
+            {% if is_granted('admin:manage:users') %}
+                <a class="card card--action" href="{{ path('users') }}">
+                    {{ icon('user') }}
+                    {{ 'Users' | trans }}
+                </a>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

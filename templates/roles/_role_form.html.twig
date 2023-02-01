@@ -93,6 +93,11 @@
                 permission: 'admin:manage:roles',
                 label: 'Manage the roles' | trans,
             }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'admin:manage:users',
+                label: 'Manage the users' | trans,
+            }) }}
         {% else %}
             {{ include('roles/_permission_checkbox.html.twig', {
                 permission: 'orga:create:tickets:messages',

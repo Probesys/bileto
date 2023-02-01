@@ -1,0 +1,37 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Users' | trans }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('_sidebar_settings.html.twig', { current: 'users' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow roles-index">
+        <div class="layout__body-header">
+            <h1>{{ 'Users' | trans }}</h1>
+        </div>
+
+        <div class="wrapper-large flow-larger">
+            <ul class="list--border list--no-style">
+                {% for user in users %}
+                    <li data-test="user-item">
+                        {{ user.displayName }}
+
+                        {% if user.name %}
+                            <span class="text--secondary text--small">
+                                {{ user.email }}
+                            </span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+{% endblock %}

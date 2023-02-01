@@ -35,5 +35,18 @@
                 </a>
             </li>
         {% endif %}
+
+        {% if is_granted('admin:manage:users') %}
+            <li class="sidebar__item">
+                <a
+                    class="sidebar__anchor"
+                    href="{{ path('users') }}"
+                    {{ current == 'users' ? 'aria-current="page"' }}
+                >
+                    {{ icon('user') }}
+                    {{ 'Users' | trans }}
+                </a>
+            </li>
+        {% endif %}
     </ul>
 </nav>
