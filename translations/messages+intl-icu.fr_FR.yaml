@@ -18,6 +18,7 @@ layout.logout: 'Se déconnecter'
 layout.modal.close: 'Fermer cette fenêtre'
 layout.notifications.close: 'Fermer la notification'
 layout.notifications.error: Erreur
+layout.notifications.success: Succès
 layout.user_menu_title: 'Menu de {name}'
 layout.skip_to_main_content: 'Accéder au contenu principal'
 login.submit: 'Se connecter'

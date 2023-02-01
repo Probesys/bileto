@@ -69,7 +69,11 @@
                     >
                         <span class="row__item--extend">
                             <span class="sr-only">
-                                {{ 'layout.notifications.error' | trans }}
+                                {% if label == "error" %}
+                                    {{ 'layout.notifications.error' | trans }}
+                                {% else %}
+                                    {{ 'layout.notifications.success' | trans }}
+                                {% endif %}
                             </span>
 
                             {{ message | trans }}

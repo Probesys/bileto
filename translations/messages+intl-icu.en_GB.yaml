@@ -18,6 +18,7 @@ layout.logout: Logout
 layout.modal.close: 'Close this window'
 layout.notifications.close: 'Close the notification'
 layout.notifications.error: Error
+layout.notifications.success: Success
 layout.user_menu_title: 'Menu of {name}'
 layout.skip_to_main_content: 'Skip to main content'
 login.submit: Login
