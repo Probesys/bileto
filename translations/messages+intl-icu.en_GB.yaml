@@ -121,6 +121,7 @@ users.color_scheme.auto: Auto
 users.color_scheme.light: Light
 users.color_scheme.dark: Dark
 users.email: 'Email address'
+users.index.number: '{count, plural, =0 {No users} one {1 user} other {# users}}'
 users.index.title: Users
 users.name: Name
 users.language: Language

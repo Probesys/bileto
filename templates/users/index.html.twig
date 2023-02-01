@@ -18,7 +18,11 @@
             <h1>{{ 'users.index.title' | trans }}</h1>
         </div>
 
-        <div class="wrapper-large flow-larger">
+        <div class="wrapper-large flow">
+            <p class="text--secondary">
+                {{ 'users.index.number' | trans({ count: users|length }) }}
+            </p>
+
             <ul class="list--border list--no-style">
                 {% for user in users %}
                     <li data-test="user-item">
