@@ -74,7 +74,9 @@ endif
 .PHONY: i18n-extract
 i18n-extract: ## Extract translations
 	$(CONSOLE) translation:extract --format=yaml --force en_GB
+	$(CONSOLE) translation:extract --format=yaml --force --clean --domain=messages en_GB
 	$(CONSOLE) translation:extract --format=yaml --force fr_FR
+	$(CONSOLE) translation:extract --format=yaml --force --clean --domain=messages fr_FR
 
 .PHONY: migration
 migration: ## Generate a database migration from entities changes
