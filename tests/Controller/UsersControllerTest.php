@@ -9,6 +9,7 @@ namespace App\Tests\Controller;
 use App\Entity\User;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\UserFactory;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
@@ -19,6 +20,7 @@ class UsersControllerTest extends WebTestCase
     use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
+    use SessionHelper;
 
     public function testGetIndexListsUsersSortedByNameAndEmail(): void
     {
@@ -55,5 +57,152 @@ class UsersControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request('GET', '/users');
+    }
+
+    public function testGetNewRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+
+        $client->request('GET', '/users/new');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'New user');
+    }
+
+    public function testGetNewFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+
+        $client->catchExceptions(false);
+        $client->request('GET', '/users/new');
+    }
+
+    public function testPostCreateCreatesTheUserAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $email = 'alix@example.com';
+        $name = 'Alix Pataquès';
+
+        $this->assertSame(1, UserFactory::count());
+
+        $client->request('GET', '/users/new');
+        $crawler = $client->submitForm('form-create-user-submit', [
+            'email' => $email,
+            'name' => $name,
+        ]);
+
+        $this->assertSame(2, UserFactory::count());
+        $this->assertResponseRedirects('/users', 302);
+        $newUser = UserFactory::last();
+        $this->assertSame($email, $newUser->getEmail());
+        $this->assertSame($name, $newUser->getName());
+        $this->assertSame($user->getLocale(), $newUser->getLocale());
+        $this->assertSame(20, strlen($newUser->getUid()));
+    }
+
+    public function testPostCreateFailsIfEmailIsAlreadyUsed(): void
+    {
+        $client = static::createClient();
+        $email = 'alix@example.com';
+        $user = UserFactory::createOne([
+            'email' => $email,
+        ]);
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $name = 'Alix Pataquès';
+
+        $client->request('POST', '/users/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
+            'email' => $email,
+            'name' => $name,
+        ]);
+
+        $this->assertSelectorTextContains('#email-error', 'The email "alix@example.com" is already used.');
+        $this->assertSame(1, UserFactory::count());
+    }
+
+    public function testPostCreateFailsIfEmailIsEmpty(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $email = '';
+        $name = 'Alix Pataquès';
+
+        $client->request('POST', '/users/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
+            'email' => $email,
+            'name' => $name,
+        ]);
+
+        $this->assertSelectorTextContains('#email-error', 'The email is required.');
+        $this->assertSame(1, UserFactory::count());
+    }
+
+    public function testPostCreateFailsIfEmailIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $email = 'not an email';
+        $name = 'Alix Pataquès';
+
+        $client->request('POST', '/users/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
+            'email' => $email,
+            'name' => $name,
+        ]);
+
+        $this->assertSelectorTextContains('#email-error', 'The email "not an email" is not a valid address.');
+        $this->assertSame(1, UserFactory::count());
+    }
+
+    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $email = 'alix@example.com';
+        $name = 'Alix Pataquès';
+
+        $client->request('POST', '/users/new', [
+            '_csrf_token' => 'not a token',
+            'email' => $email,
+            'name' => $name,
+        ]);
+
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSame(1, UserFactory::count());
+    }
+
+    public function testPostCreateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $email = 'alix@example.com';
+        $name = 'Alix Pataquès';
+
+        $client->catchExceptions(false);
+        $client->request('POST', '/users/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
+            'email' => $email,
+            'name' => $name,
+        ]);
     }
 }

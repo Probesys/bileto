@@ -121,9 +121,12 @@ users.color_scheme.auto: Auto
 users.color_scheme.light: Clair
 users.color_scheme.dark: Sombre
 users.email: 'Adresse email'
+users.index.new_user: 'Nouvel utilisateur'
 users.index.number: '{count, plural, =0 {Aucun utilisateur} one {1 utilisateur} other {# utilisateurs}}'
 users.index.title: Utilisateurs
 users.language: Langue
 users.name: Nom
+users.new.submit: 'Créer l’utilisateur'
+users.new.title: 'Nouvel utilisateur'
 users.password: 'Mot de passe'
 users.yourself: vous

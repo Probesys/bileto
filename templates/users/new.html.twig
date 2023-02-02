@@ -1,0 +1,92 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'users.new.title' | trans }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('_sidebar_settings.html.twig', { current: 'users' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <div class="layout__body-header">
+            <a href="{{ path('users') }}">{{ 'users.index.title' | trans }}</a>
+            <h1>{{ 'users.new.title' | trans }}</h1>
+        </div>
+
+        <form action="{{ path('create user') }}" method="post" class="wrapper-small flow">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create user') }}">
+
+            {% if error %}
+                {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
+            {% endif %}
+
+            <div class="flow-small">
+                <label for="email">
+                    {{ 'users.email' | trans }}
+                </label>
+
+                {% if errors.email is defined %}
+                    <p class="form__error" role="alert" id="email-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.email }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ email }}"
+                    required
+                    autofocus
+                    {% if errors.email is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="email-error"
+                    {% endif %}
+                />
+            </div>
+
+            <div class="flow-small">
+                <label for="name">
+                    {{ 'users.name' | trans }}
+                    <span class="text--secondary">
+                        {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
+                    </span>
+                </label>
+
+                {% if errors.name is defined %}
+                    <p class="form__error" role="alert" id="name-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.name }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ name }}"
+                    required
+                    maxlength="100"
+                    autocomplete="name"
+                    {% if errors.name is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="name-error"
+                    {% endif %}
+                />
+            </div>
+
+            <div class="form__actions">
+                <button id="form-create-user-submit" class="button--primary" type="submit">
+                    {{ 'users.new.submit' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}

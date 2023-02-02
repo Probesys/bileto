@@ -19,9 +19,16 @@
         </div>
 
         <div class="wrapper-large flow">
-            <p class="text--secondary">
-                {{ 'users.index.number' | trans({ count: users|length }) }}
-            </p>
+            <div class="row row--center">
+                <a href="{{ path('new user') }}" class="anchor--action">
+                    {{ icon('plus') }}
+                    {{ 'users.index.new_user' | trans }}
+                </a>
+
+                <p class="text--secondary">
+                    {{ 'users.index.number' | trans({ count: users|length }) }}
+                </p>
+            </div>
 
             <ul class="list--border list--no-style">
                 {% for user in users %}
