@@ -170,8 +170,8 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
+        $this->assertResponseRedirects('/organizations', 302);
         $organization = OrganizationFactory::first();
-        $this->assertResponseRedirects("/organizations/{$organization->getUid()}", 302);
         $this->assertSame($name, $organization->getName());
         $this->assertSame(20, strlen($organization->getUid()));
     }
@@ -191,8 +191,8 @@ class OrganizationsControllerTest extends WebTestCase
             'selectedParent' => $parentOrganization->getUid(),
         ]);
 
+        $this->assertResponseRedirects('/organizations', 302);
         $organization = OrganizationFactory::last();
-        $this->assertResponseRedirects("/organizations/{$organization->getUid()}", 302);
         $this->assertSame("/{$parentOrganization->getId()}/", $organization->getParentsPath());
     }
 
