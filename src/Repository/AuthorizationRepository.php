@@ -77,44 +77,59 @@ class AuthorizationRepository extends ServiceEntityRepository
         return $query->getOneOrNullResult();
     }
 
-    public function getOrgaAuthorizationFor(User $user, Organization $organization): ?Authorization
+    public function getOrgaAuthorizationFor(User $user, ?Organization $organization = null): ?Authorization
     {
         $entityManager = $this->getEntityManager();
 
-        // Build an array of organizations ids sorted by the most to the less
-        // specific organizations (i.e. sub-orga first, root orga last)
-        $orgaIds = $organization->getParentOrganizationIds();
-        $orgaIds[] = $organization->getId();
-        $orgaIds = array_reverse($orgaIds);
+        if ($organization) {
+            // Build an array of organizations ids sorted by the most to the less
+            // specific organizations (i.e. sub-orga first, root orga last)
+            $orgaIds = $organization->getParentOrganizationIds();
+            $orgaIds[] = $organization->getId();
+            $orgaIds = array_reverse($orgaIds);
 
-        $query = $entityManager->createQuery(<<<SQL
-            SELECT a, r
-            FROM App\Entity\Authorization a
-            INDEX BY a.organization
-            JOIN a.role r
-            WHERE a.holder = :user
-            AND (a.organization IN (:orgaIds) OR a.organization IS NULL)
-            AND r.type = 'orga'
-        SQL);
-        $query->setParameter('user', $user);
-        $query->setParameter('orgaIds', $orgaIds);
+            $query = $entityManager->createQuery(<<<SQL
+                SELECT a, r
+                FROM App\Entity\Authorization a
+                INDEX BY a.organization
+                JOIN a.role r
+                WHERE a.holder = :user
+                AND (a.organization IN (:orgaIds) OR a.organization IS NULL)
+                AND r.type = 'orga'
+            SQL);
+            $query->setParameter('user', $user);
+            $query->setParameter('orgaIds', $orgaIds);
 
-        $authorizationsIndexByOrgaIds = $query->getResult();
-        if (empty($authorizationsIndexByOrgaIds)) {
-            // no authorization? too bad
-            return null;
-        }
-
-        // Make sure to return the most specific authorization (remember that
-        // orgaIds is already sorted from the most to the less specific).
-        foreach ($orgaIds as $orgaId) {
-            if (isset($authorizationsIndexByOrgaIds[$orgaId])) {
-                return $authorizationsIndexByOrgaIds[$orgaId];
+            $authorizationsIndexByOrgaIds = $query->getResult();
+            if (empty($authorizationsIndexByOrgaIds)) {
+                // no authorization? too bad
+                return null;
             }
-        }
 
-        // The only possible remaining authorization is the global one (i.e.
-        // not associated to a specific organization).
-        return array_pop($authorizationsIndexByOrgaIds);
+            // Make sure to return the most specific authorization (remember that
+            // orgaIds is already sorted from the most to the less specific).
+            foreach ($orgaIds as $orgaId) {
+                if (isset($authorizationsIndexByOrgaIds[$orgaId])) {
+                    return $authorizationsIndexByOrgaIds[$orgaId];
+                }
+            }
+
+            // The only possible remaining authorization is the global one (i.e.
+            // not associated to a specific organization).
+            return array_pop($authorizationsIndexByOrgaIds);
+        } else {
+            $query = $entityManager->createQuery(<<<SQL
+                SELECT a, r
+                FROM App\Entity\Authorization a
+                INDEX BY a.organization
+                JOIN a.role r
+                WHERE a.holder = :user
+                AND a.organization IS NULL
+                AND r.type = 'orga'
+            SQL);
+            $query->setParameter('user', $user);
+
+            return $query->getOneOrNullResult();
+        }
     }
 }
