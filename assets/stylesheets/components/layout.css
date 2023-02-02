@@ -111,10 +111,16 @@
 
 .layout__body-header > * {
     display: inline-block;
+
+    vertical-align: middle;
 }
 
 .layout__body-header > a {
     text-decoration: none;
+}
+
+.layout__body-header > h1 {
+    text-align: left;
 }
 
 .layout__body-header > *:not(:last-child)::after {
@@ -123,8 +129,11 @@
     display: inline-block;
     width: 1.5rem;
     height: 1.5rem;
+    margin-top: -0.1rem;
     margin-right: 1rem;
     margin-left: 0.75rem;
+
+    vertical-align: middle;
 
     border-top: 0.25rem solid var(--color-grey6);
     border-right: 0.25rem solid var(--color-grey6);
