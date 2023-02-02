@@ -34,7 +34,8 @@
                         <div class="card" data-test="role-{{ role.type }}-item">
                             {% if role.type == 'super' %}
                                 <div class="card__title">
-                                    {{ role.name | trans }}
+                                    {{ icon('crown') }}
+                                    {{ 'roles.super_admin' | trans }}
                                 </div>
                             {% else %}
                                 <a class="card__title" href="{{ path('edit role', { uid: role.uid }) }}">
@@ -44,7 +45,7 @@
 
                             <p class="card__body text--secondary text--small text--center">
                                 {% if role.type == 'super' %}
-                                    {{ role.description | trans }}
+                                    {{ 'roles.super_admin.description' | trans }}
                                 {% else %}
                                     {{ role.description }}
                                 {% endif %}

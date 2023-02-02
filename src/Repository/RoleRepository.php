@@ -57,8 +57,8 @@ class RoleRepository extends ServiceEntityRepository
         $superRole = new Role();
         $superRole->setUid($this->generateUid());
         $superRole->setCreatedAt(Time::now());
-        $superRole->setName(new TranslatableMessage('roles.super_admin'));
-        $superRole->setDescription(new TranslatableMessage('roles.super_admin.description'));
+        $superRole->setName('Super-admin');
+        $superRole->setDescription('Super-admin');
         $superRole->setType('super');
         $superRole->setPermissions(['admin:*']);
 
