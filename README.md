@@ -44,6 +44,7 @@ Maintainers guide:
 
 Bileto relies on a bunch of other projects:
 
+- [Atkinson Hyperlegible Font](https://brailleinstitute.org/freefont)
 - [ESLint](https://eslint.org/)
 - [Font Awesome icons](https://fontawesome.com)
 - [PHP\_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)

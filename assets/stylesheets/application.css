@@ -5,6 +5,7 @@
 @import "./_reset.css";
 @import "./_colors.dark.css";
 @import "./_colors.light.css";
+@import "./_fonts.css";
 @import "./utils/flow.css";
 @import "./utils/grids.css";
 @import "./utils/rows.css";
@@ -52,7 +53,8 @@ body {
 
     color: var(--color-grey12);
     font-family:
-        -apple-system,
+        "Atkinson Hyperlegible",
+        system-ui,
         BlinkMacSystemFont,
         "Segoe UI",
         Roboto,
@@ -61,14 +63,14 @@ body {
         Cantarell,
         "Helvetica Neue",
         sans-serif;
-    font-size: 20px;
+    font-size: 200%;
 
     background: var(--color-grey2);
 }
 
 @media (min-width: 800px) {
     body {
-        font-size: 22px;
+        font-size: 225%;
     }
 }
 
