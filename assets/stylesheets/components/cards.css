@@ -21,6 +21,7 @@
     justify-content: center;
 
     font-weight: bold;
+    text-align: center;
     text-decoration: none;
 
     background-color: var(--color-primary3);
