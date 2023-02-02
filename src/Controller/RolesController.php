@@ -26,7 +26,7 @@ class RolesController extends BaseController
         $orgaRoles = $roleRepository->findBy(['type' => 'orga']);
 
         $superRole = $roleRepository->findOrCreateSuperRole();
-        array_unshift($adminRoles, $superRole);
+        $adminRoles[] = $superRole;
 
         $roleSorter->sort($adminRoles);
         $roleSorter->sort($orgaRoles);
