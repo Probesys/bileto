@@ -22,6 +22,13 @@
         <div class="wrapper-large flow">
             {% if authorizations %}
                 <div class="grid">
+                    <a class="card card--action" href="{{ path('new user authorization', { uid: user.uid }) }}">
+                        <span>
+                            {{ icon('plus') }}
+                            {{ 'users.authorizations.index.new_authorization' | trans }}
+                        </span>
+                    </a>
+
                     {% for authorization in authorizations %}
                         <div class="card" data-test="authorization-item">
                             <div class="card__title">
@@ -62,6 +69,13 @@
                     <p class="placeholder">
                         {{ icon('role') }}
                         {{ 'users.authorizations.index.no_authorizations' | trans }}
+                    </p>
+
+                    <p class="text--big">
+                        <a class="anchor--action" href="{{ path('new user authorization', { uid: user.uid }) }}">
+                            {{ icon('plus') }}
+                            {{ 'users.authorizations.index.new_authorization' | trans }}
+                        </a>
                     </p>
                 </div>
             {% endif %}

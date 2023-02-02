@@ -9,10 +9,15 @@ namespace App\Controller\Users;
 use App\Controller\BaseController;
 use App\Entity\User;
 use App\Repository\AuthorizationRepository;
+use App\Repository\OrganizationRepository;
+use App\Repository\RoleRepository;
 use App\Service\AuthorizationSorter;
+use App\Service\RoleSorter;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AuthorizationsController extends BaseController
@@ -33,6 +38,154 @@ class AuthorizationsController extends BaseController
         return $this->render('users/authorizations/index.html.twig', [
             'user' => $user,
             'authorizations' => $authorizations,
+        ]);
+    }
+
+    #[Route('/users/{uid}/authorizations/new', name: 'new user authorization', methods: ['GET', 'HEAD'])]
+    public function new(
+        User $user,
+        OrganizationRepository $organizationRepository,
+        RoleRepository $roleRepository,
+        RoleSorter $roleSorter,
+        Security $security,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:users');
+
+        $organizations = $organizationRepository->findAllAsTree();
+        $roles = $roleRepository->findBy([
+            'type' => ['orga', 'admin'],
+        ]);
+        if ($security->isGranted('admin:*')) {
+            $superRole = $roleRepository->findOrCreateSuperRole();
+            $roles[] = $superRole;
+        }
+        $roleSorter->sort($roles);
+
+        return $this->render('users/authorizations/new.html.twig', [
+            'organizations' => $organizations,
+            'roles' => $roles,
+            'user' => $user,
+            'type' => 'orga',
+            'roleUid' => '',
+            'organizationUid' => '',
+        ]);
+    }
+
+    #[Route('/users/{uid}/authorizations/new', name: 'create user authorization', methods: ['POST'])]
+    public function create(
+        User $user,
+        Request $request,
+        AuthorizationRepository $authorizationRepository,
+        OrganizationRepository $organizationRepository,
+        RoleRepository $roleRepository,
+        RoleSorter $roleSorter,
+        ValidatorInterface $validator,
+        Security $security,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:users');
+
+        $organizations = $organizationRepository->findAllAsTree();
+        $roles = $roleRepository->findAll();
+        $roles = $roleRepository->findBy([
+            'type' => ['orga', 'admin'],
+        ]);
+        if ($security->isGranted('admin:*')) {
+            $superRole = $roleRepository->findOrCreateSuperRole();
+            $roles[] = $superRole;
+        }
+        $roleSorter->sort($roles);
+
+        /** @var string $type */
+        $type = $request->request->get('type', 'orga');
+
+        /** @var string $roleUid */
+        $roleUid = $request->request->get('role', '');
+
+        /** @var string $organizationUid */
+        $organizationUid = $request->request->get('organization', '');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('create user authorization', $csrfToken)) {
+            return $this->renderBadRequest('users/authorizations/new.html.twig', [
+                'organizations' => $organizations,
+                'roles' => $roles,
+                'user' => $user,
+                'type' => $type,
+                'roleUid' => $roleUid,
+                'organizationUid' => $organizationUid,
+                'error' => $this->csrfError(),
+            ]);
+        }
+
+        $role = $roleRepository->findOneBy(['uid' => $roleUid]);
+        $organization = $organizationRepository->findOneBy(['uid' => $organizationUid]);
+
+        if (!$role) {
+            return $this->renderBadRequest('users/authorizations/new.html.twig', [
+                'organizations' => $organizations,
+                'roles' => $roles,
+                'user' => $user,
+                'type' => $type,
+                'roleUid' => $roleUid,
+                'organizationUid' => $organizationUid,
+                'errors' => [
+                    'role' => new TranslatableMessage('Choose a role from the list.', [], 'validators'),
+                ],
+            ]);
+        }
+
+        if ($role->getType() === 'super' && !$security->isGranted('admin:*')) {
+            return $this->renderBadRequest('users/authorizations/new.html.twig', [
+                'organizations' => $organizations,
+                'roles' => $roles,
+                'user' => $user,
+                'type' => $type,
+                'roleUid' => $roleUid,
+                'organizationUid' => $organizationUid,
+                'errors' => [
+                    'role' => new TranslatableMessage('You can’t grant super-admin authorization.', [], 'validators'),
+                ],
+            ]);
+        }
+
+        if ($role->getType() === 'admin' || $role->getType() === 'super') {
+            $existingRole = $authorizationRepository->getAdminAuthorizationFor($user);
+            if ($existingRole) {
+                return $this->renderBadRequest('users/authorizations/new.html.twig', [
+                    'organizations' => $organizations,
+                    'roles' => $roles,
+                    'user' => $user,
+                    'type' => $type,
+                    'roleUid' => $roleUid,
+                    'organizationUid' => $organizationUid,
+                    'error' => new TranslatableMessage('This user already has an admin role.', [], 'validators'),
+                ]);
+            }
+        } else {
+            $existingRole = $authorizationRepository->getOrgaAuthorizationFor($user, $organization);
+            if ($existingRole && $existingRole->getOrganization() === $organization) {
+                return $this->renderBadRequest('users/authorizations/new.html.twig', [
+                    'organizations' => $organizations,
+                    'roles' => $roles,
+                    'user' => $user,
+                    'type' => $type,
+                    'roleUid' => $roleUid,
+                    'organizationUid' => $organizationUid,
+                    'error' => new TranslatableMessage(
+                        'This user already has an orga role for this organization.',
+                        [],
+                        'validators',
+                    ),
+                ]);
+            }
+        }
+
+        $authorizationRepository->grant($user, $role, $organization);
+
+        return $this->redirectToRoute('user authorizations', [
+            'uid' => $user->getUid(),
         ]);
     }
 }

@@ -124,8 +124,15 @@ users.color_scheme.auto: Auto
 users.color_scheme.light: Clair
 users.color_scheme.dark: Sombre
 users.email: 'Adresse email'
+users.authorizations.index.new_authorization: 'Donner une autorisation'
 users.authorizations.index.no_authorizations: 'Aucune autorisation'
 users.authorizations.index.title: 'Autorisations ({name})'
+users.authorizations.new.global: Global
+users.authorizations.new.organization: 'Choisir une organisation'
+users.authorizations.new.organization_caption: 'L’autorisation peut être limitée à une organisation spécifique, ou appliquée globalement.'
+users.authorizations.new.role: 'Choisir un rôle'
+users.authorizations.new.submit: 'Créer l’autorisation'
+users.authorizations.new.title: 'Nouvelle autorisation'
 users.index.authorizations: Autorisations
 users.index.new_user: 'Nouvel utilisateur'
 users.index.number: '{count, plural, =0 {Aucun utilisateur} one {1 utilisateur} other {# utilisateurs}}'

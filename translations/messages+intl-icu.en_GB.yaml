@@ -124,8 +124,15 @@ users.color_scheme.auto: Auto
 users.color_scheme.light: Light
 users.color_scheme.dark: Dark
 users.email: 'Email address'
+users.authorizations.index.new_authorization: 'Give an authorization'
 users.authorizations.index.no_authorizations: 'No authorizations'
 users.authorizations.index.title: 'Authorizations ({name})'
+users.authorizations.new.global: Global
+users.authorizations.new.organization: 'Choose an organization'
+users.authorizations.new.organization_caption: 'The authorization can be limited to a specific organization, or be applied globally.'
+users.authorizations.new.role: 'Choose a role'
+users.authorizations.new.submit: 'Create the authorization'
+users.authorizations.new.title: 'New authorization'
 users.index.authorizations: Authorizations
 users.index.new_user: 'New user'
 users.index.number: '{count, plural, =0 {No users} one {1 user} other {# users}}'

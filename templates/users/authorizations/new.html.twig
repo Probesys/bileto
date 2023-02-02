@@ -1,0 +1,166 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'users.authorizations.new.title' | trans }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('_sidebar_settings.html.twig', { current: 'users' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <div class="layout__body-header">
+            <a href="{{ path('users') }}">{{ 'users.index.title' | trans }}</a>
+            <a href="{{ path('user authorizations', { uid: user.uid }) }}">
+                {{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}
+            </a>
+            <h1>{{ 'users.authorizations.new.title' | trans }}</h1>
+        </div>
+
+        <form action="" method="post" class="wrapper-small flow" data-controller="new-authorization-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create user authorization') }}">
+
+            {% if error %}
+                {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
+            {% endif %}
+
+            <div class="row row--always">
+                <div>
+                    <input
+                        type="radio"
+                        id="type-orga"
+                        name="type"
+                        value="orga"
+                        {{ type == 'orga' ? 'checked' }}
+                        data-action="new-authorization-form#refresh"
+                        data-new-authorization-form-target="radioOrga"
+                    />
+
+                    <label for="type-orga">
+                        {{ 'roles.type.orga' | trans }}
+                    </label>
+                </div>
+
+                <div>
+                    <input
+                        type="radio"
+                        id="type-admin"
+                        name="type"
+                        value="admin"
+                        {{ type == 'admin' ? 'checked' }}
+                        data-action="new-authorization-form#refresh"
+                        data-new-authorization-form-target="radioAdmin"
+                    />
+
+                    <label for="type-admin">
+                        {{ 'roles.type.admin' | trans }}
+                    </label>
+                </div>
+            </div>
+
+            <div class="flow-small">
+                <label for="role">
+                    {{ 'users.authorizations.new.role' | trans }}
+                </label>
+
+                {% if errors.role is defined %}
+                    <p class="form__error" role="alert" id="role-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.role }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="role"
+                    name="role"
+                    required
+                    aria-describedby="role-caption"
+                    {% if errors.role is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="role-error"
+                    {% endif %}
+                    data-action="new-authorization-form#refreshRoleCaption"
+                    data-new-authorization-form-target="roleSelect"
+                >
+                    {% for role in roles %}
+                        <option
+                            value="{{ role.uid }}"
+                            data-new-authorization-form-target="roleOption"
+                            data-type="{{ role.type }}"
+                            {% if role.type == 'super' %}
+                                data-desc="{{ 'roles.super_admin.description' | trans }}"
+                            {% else %}
+                                data-desc="{{ role.description }}"
+                            {% endif %}
+                        >
+                            {% if role.type == 'super' %}
+                                {{ 'roles.super_admin' | trans }}
+                            {% else %}
+                                {{ role.name }}
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <p
+                    id="role-caption"
+                    class="form__caption"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    data-new-authorization-form-target="roleCaption"
+                ></p>
+            </div>
+
+            <div class="flow-small" data-new-authorization-form-target="organizationsGroup">
+                <label for="organization">
+                    {{ 'users.authorizations.new.organization' | trans }}
+                </label>
+
+                <p class="form__caption" id="organization-caption">
+                    {{ 'users.authorizations.new.organization_caption' | trans }}
+                </p>
+
+                {% if errors.organization is defined %}
+                    <p class="form__error" role="alert" id="organization-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.organization }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="organization"
+                    name="organization"
+                    aria-describedby="organization-caption"
+                    {% if errors.organization is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="organization-error"
+                    {% endif %}
+                >
+                    <option value="">
+                        {{ 'users.authorizations.new.global' | trans }}
+                    </option>
+
+                    {{ include(
+                        'organizations/_organizations_as_options.html.twig',
+                        {
+                            organizations: organizations,
+                            selected: organizationUid,
+                        },
+                        with_context = false
+                    ) }}
+                </select>
+            </div>
+
+            <div class="form__actions">
+                <button id="form-create-authorization-submit" class="button--primary" type="submit">
+                    {{ 'users.authorizations.new.submit' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}

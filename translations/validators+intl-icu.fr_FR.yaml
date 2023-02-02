@@ -126,3 +126,7 @@ Error: Erreur
 'The assignee must exist.': 'L’attribution doit exister.'
 'The requester must exist.': 'Le demandeur doit exister.'
 'The password is invalid.': 'Le mot de passe est invalide.'
+'Choose a role from the list.': 'Sélectionnez un rôle depuis la liste.'
+'This user already has an admin role.': 'Cet utilisateur possède déjà un rôle admin.'
+'This user already has an orga role for this organization.': 'Cet utilisateur possède déjà un rôle orga pour cette organisation.'
+'You can’t grant super-admin authorization.': 'Vous ne pouvez pas accorder de droit super-admin.'
