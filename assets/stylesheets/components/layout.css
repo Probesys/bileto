@@ -135,8 +135,8 @@
 
     vertical-align: middle;
 
-    border-top: 0.25rem solid var(--color-grey6);
-    border-right: 0.25rem solid var(--color-grey6);
+    border-top: 0.25rem solid var(--color-primary6);
+    border-right: 0.25rem solid var(--color-primary6);
 
     transform: rotate(45deg);
 }
