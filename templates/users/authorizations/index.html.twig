@@ -23,7 +23,7 @@
             {% if authorizations %}
                 <div class="grid">
                     {% for authorization in authorizations %}
-                        <div class="card flow" data-test="authorization-item">
+                        <div class="card" data-test="authorization-item">
                             <div class="card__title">
                                 {% if authorization.role.type == 'super' %}
                                     {{ icon('crown') }}
