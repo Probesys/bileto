@@ -262,6 +262,7 @@ legend {
     padding-left: 0.75rem;
 
     color: var(--color-grey11);
+    font-size: 0.85em;
 }
 
 .form__error {
