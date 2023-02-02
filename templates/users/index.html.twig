@@ -35,6 +35,10 @@
                     <li data-test="user-item">
                         {{ user.displayName }}
 
+                        {% if user == app.user %}
+                            ({{ 'users.yourself' | trans }})
+                        {% endif %}
+
                         {% if user.name %}
                             <span class="text--secondary text--small">
                                 {{ user.email }}
