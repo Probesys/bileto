@@ -1,0 +1,70 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('_sidebar_settings.html.twig', { current: 'users' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow roles-index">
+        <div class="layout__body-header">
+            <a href="{{ path('users') }}">{{ 'users.index.title' | trans }}</a>
+            <h1>{{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}</h1>
+        </div>
+
+        <div class="wrapper-large flow">
+            {% if authorizations %}
+                <div class="grid">
+                    {% for authorization in authorizations %}
+                        <div class="card flow" data-test="authorization-item">
+                            <div class="card__title">
+                                {% if authorization.role.type == 'super' %}
+                                    {{ icon('crown') }}
+                                    {{ 'roles.super_admin' | trans }}
+                                {% else %}
+                                    {{ authorization.role.name }}
+                                {% endif %}
+                            </div>
+
+                            <div class="card__body flow-small text--center">
+                                {% if authorization.role.type == 'orga' %}
+                                    <div>
+                                        <strong>
+                                            {% if authorization.organization %}
+                                                {{ authorization.organization.name }}
+                                            {% else %}
+                                                {{ 'roles.scope_global' | trans }}
+                                            {% endif %}
+                                        </strong>
+                                    </div>
+
+                                    <div class="text--secondary text--small text--italic">
+                                        {{ 'roles.type.orga' | trans }}
+                                    </div>
+                                {% else %}
+                                    <div class="text--secondary text--small text--italic">
+                                        {{ 'roles.type.admin' | trans }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text--center flow-large">
+                    <p class="placeholder">
+                        {{ icon('role') }}
+                        {{ 'users.authorizations.index.no_authorizations' | trans }}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

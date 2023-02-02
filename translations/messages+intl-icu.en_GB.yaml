@@ -60,8 +60,11 @@ roles.permissions.orga.update.tickets.actors: 'Update the actors of a ticket'
 roles.permissions.orga.update.tickets.priority: 'Update the priority of a ticket'
 roles.permissions.orga.update.tickets.title: 'Update the title of a ticket'
 roles.permissions.orga.update.tickets.type: 'Update the type of a ticket'
+roles.scope_global: '* global *'
 roles.super_admin: Super-admin
 roles.super_admin.description: 'A special role with an access to all the administration (cannot be modified).'
+roles.type.admin: 'Admin role'
+roles.type.orga: 'Orga role'
 settings.index.title: Settings
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
@@ -121,6 +124,9 @@ users.color_scheme.auto: Auto
 users.color_scheme.light: Light
 users.color_scheme.dark: Dark
 users.email: 'Email address'
+users.authorizations.index.no_authorizations: 'No authorizations'
+users.authorizations.index.title: 'Authorizations ({name})'
+users.index.authorizations: Authorizations
 users.index.new_user: 'New user'
 users.index.number: '{count, plural, =0 {No users} one {1 user} other {# users}}'
 users.index.title: Users

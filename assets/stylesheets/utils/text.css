@@ -22,6 +22,10 @@
     color: var(--color-warning11);
 }
 
+.text--italic {
+    font-style: italic;
+}
+
 .text--center {
     text-align: center;
 }

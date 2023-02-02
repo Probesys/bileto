@@ -32,18 +32,26 @@
 
             <ul class="list--border list--no-style">
                 {% for user in users %}
-                    <li data-test="user-item">
-                        {{ user.displayName }}
+                    <li class="row" data-test="user-item">
+                        <span class="row__item--extend">
+                            {{ user.displayName }}
 
-                        {% if user == app.user %}
-                            ({{ 'users.yourself' | trans }})
-                        {% endif %}
+                            {% if user == app.user %}
+                                ({{ 'users.yourself' | trans }})
+                            {% endif %}
 
-                        {% if user.name %}
-                            <span class="text--secondary text--small">
-                                {{ user.email }}
-                            </span>
-                        {% endif %}
+                            {% if user.name %}
+                                <span class="text--secondary text--small">
+                                    {{ user.email }}
+                                </span>
+                            {% endif %}
+                        </span>
+
+                        <span class="row__item--noshrink">
+                            <a href="{{ path('user authorizations', { uid: user.uid }) }}">
+                                {{ 'users.index.authorizations' | trans }}
+                            </a>
+                        </span>
                     </li>
                 {% endfor %}
             </ul>
