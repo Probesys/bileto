@@ -4,16 +4,21 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
+{% if depth is not defined %}
+    {% set depth = 0 %}
+{% endif %}
+
 {% for organization in organizations %}
-    <option value="{{ organization.uid }}" {{ organization.uid == selectedParentUid ? 'selected' }}>
-        {{ organization.name }}
+    <option value="{{ organization.uid }}" {{ organization.uid == selected ? 'selected' }}>
+        {{ ' ' | repeat(depth * 4) }}{{ organization.name }}
     </option>
 
     {{ include(
         'organizations/_organizations_as_options.html.twig',
         {
             organizations: organization.subOrganizations,
-            selectedParentUid: selectedParentUid,
+            selected: selected,
+            depth: depth + 1,
         },
         with_context = false
     ) }}
