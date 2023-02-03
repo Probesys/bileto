@@ -330,4 +330,140 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => $role->getUid(),
         ]);
     }
+
+    public function testPostDeleteDeletesAuthorizationAndRedirects(): void
+    {
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $client->loginUser($currentUser->object());
+        $this->grantAdmin($currentUser->object(), ['admin:manage:users']);
+        $user = UserFactory::createOne();
+        $role = RoleFactory::createOne([
+            'type' => 'admin',
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'holder' => $user,
+            'role' => $role,
+        ]);
+
+        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/users/{$user->getUid()}/authorizations", 302);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteCanDeleteSuperRole(): void
+    {
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $client->loginUser($currentUser->object());
+        $this->grantAdmin($currentUser->object(), ['admin:*']);
+        $user = UserFactory::createOne();
+        $role = RoleFactory::createOne([
+            'type' => 'super',
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'holder' => $user,
+            'role' => $role,
+        ]);
+
+        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/users/{$user->getUid()}/authorizations", 302);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfSuperRoleAndNotCorrectAuthorization(): void
+    {
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $client->loginUser($currentUser->object());
+        $this->grantAdmin($currentUser->object(), ['admin:manage:users']);
+        $user = UserFactory::createOne();
+        $role = RoleFactory::createOne([
+            'type' => 'super',
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'holder' => $user,
+            'role' => $role,
+        ]);
+
+        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/users/{$user->getUid()}/authorizations", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'You can’t revoke this authorization.');
+        AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfSuperRoleAndCurrentUser(): void
+    {
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $client->loginUser($currentUser->object());
+        $this->grantAdmin($currentUser->object(), ['admin:*']);
+        $authorization = AuthorizationFactory::last();
+
+        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/users/{$currentUser->getUid()}/authorizations", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'You can’t revoke this authorization.');
+        AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $client->loginUser($currentUser->object());
+        $this->grantAdmin($currentUser->object(), ['admin:manage:users']);
+        $user = UserFactory::createOne();
+        $role = RoleFactory::createOne([
+            'type' => 'admin',
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'holder' => $user,
+            'role' => $role,
+        ]);
+
+        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+            '_csrf_token' => 'not a token',
+        ]);
+
+        $this->assertResponseRedirects("/users/{$user->getUid()}/authorizations", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'Invalid CSRF token.');
+        AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $client->loginUser($currentUser->object());
+        $user = UserFactory::createOne();
+        $role = RoleFactory::createOne([
+            'type' => 'admin',
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'holder' => $user,
+            'role' => $role,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
+        ]);
+    }
 }

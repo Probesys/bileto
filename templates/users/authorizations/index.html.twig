@@ -30,7 +30,7 @@
                     </a>
 
                     {% for authorization in authorizations %}
-                        <div class="card" data-test="authorization-item">
+                        <div class="card flow" data-test="authorization-item">
                             <div class="card__title">
                                 {% if authorization.role.type == 'super' %}
                                     {{ icon('crown') }}
@@ -61,6 +61,28 @@
                                     </div>
                                 {% endif %}
                             </div>
+
+                            {% if (
+                                authorization.role.type == 'super' and (
+                                    not is_granted('admin:*') or
+                                    app.user.id == authorization.holder.id
+                                )
+                            ) %}
+                                <p class="text--secondary text--center text--small">
+                                    {{ 'users.authorizations.index.revoke.disabled' | trans }}
+                                </p>
+                            {% else %}
+                                <form
+                                    class="text--center"
+                                    method="post"
+                                    action="{{ path('delete user authorization', { uid: authorization.uid }) }}"
+                                >
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete user authorization') }}">
+                                    <button type="submit" data-turbo-confirm="{{ 'users.authorizations.index.revoke.confirm' | trans }}">
+                                        {{ 'users.authorizations.index.revoke' | trans }}
+                                    </button>
+                                </form>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>

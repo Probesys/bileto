@@ -7,6 +7,7 @@
 namespace App\Controller\Users;
 
 use App\Controller\BaseController;
+use App\Entity\Authorization;
 use App\Entity\User;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
@@ -183,6 +184,54 @@ class AuthorizationsController extends BaseController
         }
 
         $authorizationRepository->grant($user, $role, $organization);
+
+        return $this->redirectToRoute('user authorizations', [
+            'uid' => $user->getUid(),
+        ]);
+    }
+
+    #[Route('/authorizations/{uid}/deletion', name: 'delete user authorization', methods: ['POST'])]
+    public function delete(
+        Authorization $authorization,
+        Request $request,
+        AuthorizationRepository $authorizationRepository,
+        Security $security,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:users');
+
+        /** @var \App\Entity\User $currentUser */
+        $currentUser = $this->getUser();
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        $user = $authorization->getHolder();
+        $role = $authorization->getRole();
+
+        if (!$this->isCsrfTokenValid('delete user authorization', $csrfToken)) {
+            $this->addFlash('error', $this->csrfError());
+            return $this->redirectToRoute('user authorizations', [
+                'uid' => $user->getUid(),
+            ]);
+        }
+
+        if (
+            $role->getType() === 'super' && (
+                !$security->isGranted('admin:*') ||
+                $currentUser->getId() === $user->getId()
+            )
+        ) {
+            $this->addFlash('error', new TranslatableMessage(
+                'You can’t revoke this authorization.',
+                [],
+                'validators'
+            ));
+            return $this->redirectToRoute('user authorizations', [
+                'uid' => $user->getUid(),
+            ]);
+        }
+
+        $authorizationRepository->remove($authorization, true);
 
         return $this->redirectToRoute('user authorizations', [
             'uid' => $user->getUid(),

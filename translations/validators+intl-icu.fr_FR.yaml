@@ -130,3 +130,4 @@ Error: Erreur
 'This user already has an admin role.': 'Cet utilisateur possède déjà un rôle admin.'
 'This user already has an orga role for this organization.': 'Cet utilisateur possède déjà un rôle orga pour cette organisation.'
 'You can’t grant super-admin authorization.': 'Vous ne pouvez pas accorder de droit super-admin.'
+'You can’t revoke this authorization.': 'Vous ne pouvez pas révoquer cette autorisation.'

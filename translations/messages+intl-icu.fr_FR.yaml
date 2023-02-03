@@ -126,6 +126,9 @@ users.color_scheme.dark: Sombre
 users.email: 'Adresse email'
 users.authorizations.index.new_authorization: 'Donner une autorisation'
 users.authorizations.index.no_authorizations: 'Aucune autorisation'
+users.authorizations.index.revoke: Révoquer
+users.authorizations.index.revoke.confirm: "Êtes-vous sûr de vouloir révoquer cette autorisation\_?"
+users.authorizations.index.revoke.disabled: 'Vous ne pouvez pas révoquer cette autorisation.'
 users.authorizations.index.title: 'Autorisations ({name})'
 users.authorizations.new.global: Global
 users.authorizations.new.organization: 'Choisir une organisation'
