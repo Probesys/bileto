@@ -4,10 +4,8 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<div class="alert alert--error" role="alert" data-turbo-cache="false" data-test="alert-error">
-    <div class="alert__title">{{ 'forms.error' | trans }}</div>
-
-    <p class="alert__message">
-        {{ message }}
-    </p>
-</div>
+{{ include('alerts/_alert.html.twig', {
+    type: 'error',
+    title: 'forms.error' | trans,
+    message: message,
+}, with_context = false) }}

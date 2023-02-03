@@ -1,0 +1,18 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div
+    class="alert alert--{{ type }}"
+    role="alert"
+    data-turbo-cache="false"
+    data-test="alert-{{ type }}"
+>
+    <div class="alert__title">{{ title }}</div>
+
+    <p class="alert__message">
+        {{ message }}
+    </p>
+</div>

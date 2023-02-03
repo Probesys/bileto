@@ -30,6 +30,14 @@
     border-color: var(--color-error9);
 }
 
+.alert--warning {
+    color: var(--color-warning12);
+
+    background-color: var(--color-warning2);
+    background-image: url("../../icons/triangle-exclamation-warning.svg");
+    border-color: var(--color-warning9);
+}
+
 .alert__title {
     font-weight: bold;
 }
@@ -40,6 +48,10 @@
 
 .alert--error .alert__title {
     color: var(--color-error9);
+}
+
+.alert--warning .alert__title {
+    color: var(--color-warning11);
 }
 
 .alert__message {
