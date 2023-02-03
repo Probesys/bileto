@@ -9,30 +9,15 @@
 {% block title %}{{ 'settings.index.title' | trans }}{% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
+    <main class="layout__body flow-larger">
         <h1>{{ 'settings.index.title' | trans }}</h1>
 
-        <div class="wrapper-small wrapper--center grid">
-            {% if is_granted('admin:manage:organizations') %}
-                <a class="card card--action" href="{{ path('organizations') }}">
-                    {{ icon('organization') }}
-                    {{ 'organizations.index.title' | trans }}
-                </a>
-            {% endif %}
-
-            {% if is_granted('admin:manage:roles') %}
-                <a class="card card--action" href="{{ path('roles') }}">
-                    {{ icon('role') }}
-                    {{ 'roles.index.title' | trans }}
-                </a>
-            {% endif %}
-
-            {% if is_granted('admin:manage:users') %}
-                <a class="card card--action" href="{{ path('users') }}">
-                    {{ icon('user') }}
-                    {{ 'users.index.title' | trans }}
-                </a>
-            {% endif %}
+        <div class="wrapper-text wrapper--center">
+            {{ include('alerts/_alert.html.twig', {
+                type: 'warning',
+                title: 'settings.index.no_access' | trans,
+                message: 'settings.index.no_access_advice' | trans,
+            }, with_context = false) }}
         </div>
     </main>
 {% endblock %}

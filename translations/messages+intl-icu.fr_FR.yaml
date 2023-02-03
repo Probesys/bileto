@@ -65,6 +65,8 @@ roles.super_admin: Super-admin
 roles.super_admin.description: 'Un rôle spécial avec un accès à toute l’administration (ne peut pas être modifié).'
 roles.type.admin: 'Rôle admin'
 roles.type.orga: 'Rôle orga'
+settings.index.no_access: 'Vous n’avez pas accès à l’administration.'
+settings.index.no_access_advice: 'Votre rôle admin n’a probablement aucune permission. Vous devriez contacter un autre administrateur pour corriger cela.'
 settings.index.title: Gestion
 tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'
