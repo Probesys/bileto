@@ -239,7 +239,11 @@ class Ticket
 
     public function getUrgencyLabel(): ?string
     {
-        $weightsWithLabels = self::getWeightsWithLabels();
+        $weightsWithLabels = [
+            'low' => new TranslatableMessage('tickets.urgency.low'),
+            'medium' => new TranslatableMessage('tickets.urgency.medium'),
+            'high' => new TranslatableMessage('tickets.urgency.high'),
+        ];
         return $weightsWithLabels[$this->urgency];
     }
 
@@ -257,7 +261,11 @@ class Ticket
 
     public function getImpactLabel(): ?string
     {
-        $weightsWithLabels = self::getWeightsWithLabels();
+        $weightsWithLabels = [
+            'low' => new TranslatableMessage('tickets.impact.low'),
+            'medium' => new TranslatableMessage('tickets.impact.medium'),
+            'high' => new TranslatableMessage('tickets.impact.high'),
+        ];
         return $weightsWithLabels[$this->impact];
     }
 
@@ -275,7 +283,11 @@ class Ticket
 
     public function getPriorityLabel(): ?string
     {
-        $weightsWithLabels = self::getWeightsWithLabels();
+        $weightsWithLabels = [
+            'low' => new TranslatableMessage('tickets.priority.low'),
+            'medium' => new TranslatableMessage('tickets.priority.medium'),
+            'high' => new TranslatableMessage('tickets.priority.high'),
+        ];
         return $weightsWithLabels[$this->priority];
     }
 
@@ -368,18 +380,6 @@ class Ticket
         return [
             'request' => new TranslatableMessage('tickets.request'),
             'incident' => new TranslatableMessage('tickets.incident'),
-        ];
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public static function getWeightsWithLabels(): array
-    {
-        return [
-            'low' => new TranslatableMessage('tickets.weight.low'),
-            'medium' => new TranslatableMessage('tickets.weight.medium'),
-            'high' => new TranslatableMessage('tickets.weight.high'),
         ];
     }
 

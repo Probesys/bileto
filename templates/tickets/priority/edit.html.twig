@@ -47,11 +47,15 @@
                     data-form-priority-target="urgency"
                     data-action="form-priority#updatePriority"
                 >
-                    {% for value, label in weights %}
-                        <option value="{{ value }}" {{ value == urgency ? 'selected' }}>
-                            {{ label | trans }}
-                        </option>
-                    {% endfor %}
+                    <option value="low" {{ "low" == urgency ? 'selected' }}>
+                        {{ 'tickets.urgency.low' | trans }}
+                    </option>
+                    <option value="medium" {{ "medium" == urgency ? 'selected' }}>
+                        {{ 'tickets.urgency.medium' | trans }}
+                    </option>
+                    <option value="high" {{ "high" == urgency ? 'selected' }}>
+                        {{ 'tickets.urgency.high' | trans }}
+                    </option>
                 </select>
             </div>
 
@@ -79,11 +83,15 @@
                     data-form-priority-target="impact"
                     data-action="form-priority#updatePriority"
                 >
-                    {% for value, label in weights %}
-                        <option value="{{ value }}" {{ value == impact ? 'selected' }}>
-                            {{ label | trans }}
-                        </option>
-                    {% endfor %}
+                    <option value="low" {{ "low" == impact ? 'selected' }}>
+                        {{ 'tickets.impact.low' | trans }}
+                    </option>
+                    <option value="medium" {{ "medium" == impact ? 'selected' }}>
+                        {{ 'tickets.impact.medium' | trans }}
+                    </option>
+                    <option value="high" {{ "high" == impact ? 'selected' }}>
+                        {{ 'tickets.impact.high' | trans }}
+                    </option>
                 </select>
             </div>
         </div>
@@ -111,11 +119,15 @@
                 {% endif %}
                 data-form-priority-target="priority"
             >
-                {% for value, label in weights %}
-                    <option value="{{ value }}" {{ value == priority ? 'selected' }}>
-                        {{ label | trans }}
-                    </option>
-                {% endfor %}
+                <option value="low" {{ "low" == priority ? 'selected' }}>
+                    {{ 'tickets.priority.low' | trans }}
+                </option>
+                <option value="medium" {{ "medium" == priority ? 'selected' }}>
+                    {{ 'tickets.priority.medium' | trans }}
+                </option>
+                <option value="high" {{ "high" == priority ? 'selected' }}>
+                    {{ 'tickets.priority.high' | trans }}
+                </option>
             </select>
         </div>
 

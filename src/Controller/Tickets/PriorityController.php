@@ -27,7 +27,6 @@ class PriorityController extends BaseController
             'urgency' => $ticket->getUrgency(),
             'impact' => $ticket->getImpact(),
             'priority' => $ticket->getPriority(),
-            'weights' => Ticket::getWeightsWithLabels(),
         ]);
     }
 
@@ -59,7 +58,6 @@ class PriorityController extends BaseController
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
-                'weights' => Ticket::getWeightsWithLabels(),
                 'error' => $this->csrfError(),
             ]);
         }
@@ -75,7 +73,6 @@ class PriorityController extends BaseController
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
-                'weights' => Ticket::getWeightsWithLabels(),
                 'errors' => $this->formatErrors($errors),
             ]);
         }

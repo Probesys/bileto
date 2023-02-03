@@ -72,6 +72,9 @@ tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'
 tickets.assignee: 'Attribué à'
 tickets.impact: Impact
+tickets.impact.high: Haut
+tickets.impact.low: Bas
+tickets.impact.medium: Moyen
 tickets.incident: Incident
 tickets.index.new_ticket: 'Nouveau ticket'
 tickets.index.no_tickets: 'Aucun ticket'
@@ -83,6 +86,9 @@ tickets.new.submit: 'Créer le ticket'
 tickets.opened_on: 'Ouvert le'
 tickets.priority: Priorité
 tickets.priority.edit.title: 'Modifier la priorité'
+tickets.priority.high: Haute
+tickets.priority.low: Basse
+tickets.priority.medium: Moyenne
 tickets.request: Demande
 tickets.requester: Demandeur
 tickets.show.actions: Actions
@@ -116,9 +122,9 @@ tickets.title.edit.title: 'Renommer le ticket'
 tickets.type: Type
 tickets.unassigned: 'Non attribué'
 tickets.urgency: Urgence
-tickets.weight.high: Haute
-tickets.weight.low: Basse
-tickets.weight.medium: Moyenne
+tickets.urgency.high: Haute
+tickets.urgency.low: Basse
+tickets.urgency.medium: Moyenne
 users.color_scheme: 'Schéma de couleurs'
 users.color_scheme.auto: Auto
 users.color_scheme.light: Clair
