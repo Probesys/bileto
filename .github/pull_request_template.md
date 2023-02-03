@@ -1,27 +1,28 @@
-Related to #
+## Related issue(s)
 
-Changes proposed in this pull request:
+<!-- Copy-paste the URL to the related issue(s) if any ("N/A" if not applicable). -->
 
--
--
--
+## Changes
 
-How to test the feature manually:
+<!-- List the changes you’ve made in this pull request in order to help the
+  -- reviewers to understand how to review it. -->
 
-1.
-2.
-3.
+## How to test manually
 
-Pull request checklist:
+<!-- List actions (step by step) of what have to be done in order to test your
+  -- changes manually ("N/A" if not applicable). -->
+
+## Checklist
+
+<!-- Make sure all the todos are checked before asking for review. If you think
+  -- one of the item isn’t applicable to this PR, please check it anyway and
+  -- precise "N/A" next to it. -->
 
 - [ ] code is manually tested
-- [ ] authorizations are checked
+- [ ] permissions / authorizations are verified
 - [ ] interface works on both mobiles and big screens
 - [ ] accessibility has been tested
-- [ ] tests are updated
+- [ ] tests are up-to-date
 - [ ] locales are synchronized
-- [ ] copyright notice is updated
-- [ ] documentation is updated (including comments, commit messages, migration notes…)
-
-_If you think one of the item isn’t applicable to the PR, please check it
-anyway and precise `N/A` next to it._
+- [ ] copyright notices are up-to-date
+- [ ] documentation is up-to-date (including migration notes)
