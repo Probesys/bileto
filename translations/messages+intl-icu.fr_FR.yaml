@@ -76,7 +76,6 @@ tickets.index.no_tickets: 'Aucun ticket'
 tickets.index.title.all: 'Tous les tickets'
 tickets.index.title.my: 'Mes tickets'
 tickets.index.title.to_assign: 'Tickets à attribuer'
-tickets.new.back: 'Retour (tickets)'
 tickets.new.title: 'Nouveau ticket'
 tickets.new.submit: 'Créer le ticket'
 tickets.opened_on: 'Ouvert le'
@@ -90,7 +89,6 @@ tickets.show.actions.turn_into_incident: 'Changer en incident'
 tickets.show.actions.turn_into_request: 'Changer en demande'
 tickets.show.answer: Répondre
 tickets.show.assign_yourself: attribuez-vous
-tickets.show.back: 'Retour (tickets)'
 tickets.show.closed: 'Ce ticket est clos.'
 tickets.show.impact: "Impact\_:"
 tickets.show.mark_as: 'Marquer comme…'

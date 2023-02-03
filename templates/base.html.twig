@@ -168,12 +168,6 @@
                 </div>
             </nav>
 
-            {% if block("back") is defined %}
-                <div class="layout__back">
-                    {{ block("back") }}
-                </div>
-            {% endif %}
-
             <div class="row">
                 {% block sidebar %}{% endblock %}
 

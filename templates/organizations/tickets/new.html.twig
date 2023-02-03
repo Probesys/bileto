@@ -8,21 +8,12 @@
 
 {% block title %}{{ 'tickets.new.title' | trans }} – {{ organization.name }}{% endblock %}
 
-{% block back %}
-    <a href="{{ path('organization tickets', {'uid': organization.uid}) }}">
-        {{ 'tickets.new.back' | trans }}
-    </a>
-{% endblock %}
-
 {% block body %}
     <main class="layout__body flow">
-        <h1>{{ 'tickets.new.title' | trans }}</h1>
-
-        {{ include(
-            'organizations/_organization_breadcrumb.html.twig',
-            { organization: organization },
-            with_context = false,
-        ) }}
+        <div class="layout__breadcrumb wrapper-large wrapper--center">
+            <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
+            <h1>{{ 'tickets.new.title' | trans }}</h1>
+        </div>
 
         <form
             action="{{ path('create organization ticket', {'uid': organization.uid}) }}"

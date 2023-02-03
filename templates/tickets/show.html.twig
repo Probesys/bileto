@@ -8,43 +8,32 @@
 
 {% block title %}{{ "#{ticket.title} (##{ticket.id}) – #{organization.name}" }}{% endblock %}
 
-{% block back %}
-    <a href="{{ path('organization tickets', {'uid': organization.uid}) }}">
-        {{ 'tickets.show.back' | trans }}
-    </a>
-{% endblock %}
-
 {% block body %}
     <main class="layout__body flow-larger tickets-show">
-        <div class="wrapper-large wrapper--center flow">
+        <div class="layout__breadcrumb wrapper-large wrapper--center">
+            <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
             <h1>
                 {{ ticket.title }}
                 <span class="ticket__id">#{{ ticket.id }}</span>
             </h1>
+        </div>
 
-            {{ include(
-                'organizations/_organization_breadcrumb.html.twig',
-                { organization: organization },
-                with_context = false,
-            ) }}
+        <div class="wrapper-large wrapper--center text--center">
+            <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
-            <div class="text--center">
-                <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
+            <span class="text--small">
+                <strong>{{ ticket.createdBy.displayName }}</strong>
 
-                <span class="text--small">
-                    <strong>{{ ticket.createdBy.displayName }}</strong>
+                {% if ticket.type == 'request' %}
+                    {{ 'tickets.show.opened_request' | trans | raw }}
+                {% else %}
+                    {{ 'tickets.show.opened_incident' | trans | raw }}
+                {% endif %}
 
-                    {% if ticket.type == 'request' %}
-                        {{ 'tickets.show.opened_request' | trans | raw }}
-                    {% else %}
-                        {{ 'tickets.show.opened_incident' | trans | raw }}
-                    {% endif %}
-
-                    <time datetime="{{ ticket.createdAt | dateIso }}">
-                        {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
-                    </time>
-                </span>
-            </div>
+                <time datetime="{{ ticket.createdAt | dateIso }}">
+                    {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
+                </time>
+            </span>
         </div>
 
         <div class="wrapper-larger wrapper--center row">

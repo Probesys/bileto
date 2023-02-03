@@ -14,7 +14,7 @@
 
 {% block body %}
     <main class="layout__body flow">
-        <div class="layout__body-header">
+        <div class="layout__breadcrumb">
             <a href="{{ path('users') }}">{{ 'users.index.title' | trans }}</a>
             <a href="{{ path('user authorizations', { uid: user.uid }) }}">
                 {{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}

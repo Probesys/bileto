@@ -14,7 +14,7 @@
 
 {% block body %}
     <main class="layout__body flow roles-index">
-        <div class="layout__body-header">
+        <div class="layout__breadcrumb">
             <a href="{{ path('users') }}">{{ 'users.index.title' | trans }}</a>
             <h1>{{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}</h1>
         </div>
