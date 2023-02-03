@@ -25,26 +25,26 @@ class AuthorizationsController extends BaseController
 {
     #[Route('/users/{uid}/authorizations', name: 'user authorizations', methods: ['GET', 'HEAD'])]
     public function index(
-        User $user,
+        User $holder,
         AuthorizationRepository $authorizationRepository,
         AuthorizationSorter $authorizationSorter,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         $authorizations = $authorizationRepository->findBy([
-            'holder' => $user,
+            'holder' => $holder,
         ]);
         $authorizationSorter->sort($authorizations);
 
         return $this->render('users/authorizations/index.html.twig', [
-            'user' => $user,
+            'user' => $holder,
             'authorizations' => $authorizations,
         ]);
     }
 
     #[Route('/users/{uid}/authorizations/new', name: 'new user authorization', methods: ['GET', 'HEAD'])]
     public function new(
-        User $user,
+        User $holder,
         OrganizationRepository $organizationRepository,
         RoleRepository $roleRepository,
         RoleSorter $roleSorter,
@@ -65,7 +65,7 @@ class AuthorizationsController extends BaseController
         return $this->render('users/authorizations/new.html.twig', [
             'organizations' => $organizations,
             'roles' => $roles,
-            'user' => $user,
+            'user' => $holder,
             'type' => 'orga',
             'roleUid' => '',
             'organizationUid' => '',
@@ -74,7 +74,7 @@ class AuthorizationsController extends BaseController
 
     #[Route('/users/{uid}/authorizations/new', name: 'create user authorization', methods: ['POST'])]
     public function create(
-        User $user,
+        User $holder,
         Request $request,
         AuthorizationRepository $authorizationRepository,
         OrganizationRepository $organizationRepository,
@@ -112,7 +112,7 @@ class AuthorizationsController extends BaseController
             return $this->renderBadRequest('users/authorizations/new.html.twig', [
                 'organizations' => $organizations,
                 'roles' => $roles,
-                'user' => $user,
+                'user' => $holder,
                 'type' => $type,
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
@@ -127,7 +127,7 @@ class AuthorizationsController extends BaseController
             return $this->renderBadRequest('users/authorizations/new.html.twig', [
                 'organizations' => $organizations,
                 'roles' => $roles,
-                'user' => $user,
+                'user' => $holder,
                 'type' => $type,
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
@@ -141,7 +141,7 @@ class AuthorizationsController extends BaseController
             return $this->renderBadRequest('users/authorizations/new.html.twig', [
                 'organizations' => $organizations,
                 'roles' => $roles,
-                'user' => $user,
+                'user' => $holder,
                 'type' => $type,
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
@@ -152,12 +152,12 @@ class AuthorizationsController extends BaseController
         }
 
         if ($role->getType() === 'admin' || $role->getType() === 'super') {
-            $existingRole = $authorizationRepository->getAdminAuthorizationFor($user);
+            $existingRole = $authorizationRepository->getAdminAuthorizationFor($holder);
             if ($existingRole) {
                 return $this->renderBadRequest('users/authorizations/new.html.twig', [
                     'organizations' => $organizations,
                     'roles' => $roles,
-                    'user' => $user,
+                    'user' => $holder,
                     'type' => $type,
                     'roleUid' => $roleUid,
                     'organizationUid' => $organizationUid,
@@ -165,12 +165,12 @@ class AuthorizationsController extends BaseController
                 ]);
             }
         } else {
-            $existingRole = $authorizationRepository->getOrgaAuthorizationFor($user, $organization);
+            $existingRole = $authorizationRepository->getOrgaAuthorizationFor($holder, $organization);
             if ($existingRole && $existingRole->getOrganization() === $organization) {
                 return $this->renderBadRequest('users/authorizations/new.html.twig', [
                     'organizations' => $organizations,
                     'roles' => $roles,
-                    'user' => $user,
+                    'user' => $holder,
                     'type' => $type,
                     'roleUid' => $roleUid,
                     'organizationUid' => $organizationUid,
@@ -183,10 +183,10 @@ class AuthorizationsController extends BaseController
             }
         }
 
-        $authorizationRepository->grant($user, $role, $organization);
+        $authorizationRepository->grant($holder, $role, $organization);
 
         return $this->redirectToRoute('user authorizations', [
-            'uid' => $user->getUid(),
+            'uid' => $holder->getUid(),
         ]);
     }
 
@@ -199,26 +199,26 @@ class AuthorizationsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        /** @var \App\Entity\User $currentUser */
-        $currentUser = $this->getUser();
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        $user = $authorization->getHolder();
+        $holder = $authorization->getHolder();
         $role = $authorization->getRole();
 
         if (!$this->isCsrfTokenValid('delete user authorization', $csrfToken)) {
             $this->addFlash('error', $this->csrfError());
             return $this->redirectToRoute('user authorizations', [
-                'uid' => $user->getUid(),
+                'uid' => $holder->getUid(),
             ]);
         }
 
         if (
             $role->getType() === 'super' && (
                 !$security->isGranted('admin:*') ||
-                $currentUser->getId() === $user->getId()
+                $user->getId() === $holder->getId()
             )
         ) {
             $this->addFlash('error', new TranslatableMessage(
@@ -227,14 +227,14 @@ class AuthorizationsController extends BaseController
                 'validators'
             ));
             return $this->redirectToRoute('user authorizations', [
-                'uid' => $user->getUid(),
+                'uid' => $holder->getUid(),
             ]);
         }
 
         $authorizationRepository->remove($authorization, true);
 
         return $this->redirectToRoute('user authorizations', [
-            'uid' => $user->getUid(),
+            'uid' => $holder->getUid(),
         ]);
     }
 }
