@@ -7,7 +7,6 @@
 namespace App\Repository;
 
 use App\Entity\Organization;
-use App\Service\OrganizationSorter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -23,13 +22,9 @@ class OrganizationRepository extends ServiceEntityRepository
 {
     use UidGeneratorTrait;
 
-    private OrganizationSorter $organizationSorter;
-
-    public function __construct(ManagerRegistry $registry, OrganizationSorter $organizationSorter)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Organization::class);
-
-        $this->organizationSorter = $organizationSorter;
     }
 
     public function save(Organization $entity, bool $flush = false): void
@@ -51,70 +46,30 @@ class OrganizationRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param int[] $organizationIds
+     *
      * @return Organization[]
      */
-    public function findAllAsTree(): array
+    public function findWithSubOrganizations(array $organizationIds): array
     {
         $entityManager = $this->getEntityManager();
-        $rootOrganizations = [];
+        $queryBuilder = $entityManager->createQueryBuilder();
 
-        $query = $entityManager->createQuery(<<<SQL
-            SELECT o
-            FROM App\Entity\Organization o
-            INDEX BY o.id
-            SQL);
+        $queryBuilder->select('o');
+        $queryBuilder->from('\App\Entity\Organization', 'o');
+        $queryBuilder->where('o.id IN (:ids)');
+        $queryBuilder->setParameter('ids', $organizationIds);
 
-        $organizationsIndexByIds = $query->getResult();
-        $this->organizationSorter->sort($organizationsIndexByIds);
-
-        foreach ($organizationsIndexByIds as $organization) {
-            $parentId = $organization->getParentOrganizationId();
-            $parent = $organizationsIndexByIds[$parentId] ?? null;
-            if ($parentId === null) {
-                $rootOrganizations[] = $organization;
-            } elseif ($parent) {
-                $parent->addSubOrganization($organization);
-            }
+        foreach ($organizationIds as $key => $organizationId) {
+            $expr = $queryBuilder->expr()->like(
+                'o.parentsPath',
+                "CONCAT('%/', :id{$key}, '/%')"
+            );
+            $queryBuilder->orWhere($expr);
+            $queryBuilder->setParameter("id{$key}", $organizationId);
         }
 
-        return $rootOrganizations;
-    }
-
-    /**
-     * @param array<string, mixed> $criteria
-     */
-    public function findOneByAsTree(array $criteria, int $maxDepth = 0): Organization
-    {
-        $entityManager = $this->getEntityManager();
-
-        $rootOrganization = $this->findOneBy($criteria);
-
-        $query = $entityManager->createQuery(<<<SQL
-            SELECT o
-            FROM App\Entity\Organization o
-            INDEX BY o.id
-            WHERE o.parentsPath LIKE CONCAT('%/', :id, '/%')
-            SQL);
-        $query->setParameter('id', $rootOrganization->getId());
-
-        $subOrganizationsIndexByIds = $query->getResult();
-        $this->organizationSorter->sort($subOrganizationsIndexByIds);
-
-        foreach ($subOrganizationsIndexByIds as $organization) {
-            $orgaDepth = $organization->getDepth();
-            if ($maxDepth > 0 && $orgaDepth > $maxDepth) {
-                continue;
-            }
-
-            $parentId = $organization->getParentOrganizationId();
-            $parent = $subOrganizationsIndexByIds[$parentId] ?? null;
-            if ($parentId == $rootOrganization->getId()) {
-                $rootOrganization->addSubOrganization($organization);
-            } elseif ($parent) {
-                $parent->addSubOrganization($organization);
-            }
-        }
-
-        return $rootOrganization;
+        $query = $queryBuilder->getQuery();
+        return $query->getResult();
     }
 }

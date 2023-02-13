@@ -29,4 +29,36 @@ class OrganizationSorter extends LocaleSorter
             }
         });
     }
+
+    /**
+     * @param Organization[] $organizations
+     * @return Organization[]
+     */
+    public function asTree(array $organizations, int $maxDepth = 0): array
+    {
+        $organizationsIndexByIds = [];
+        foreach ($organizations as $organization) {
+            $organizationsIndexByIds[$organization->getId()] = $organization;
+        }
+
+        $this->sort($organizationsIndexByIds);
+
+        $rootOrganizations = [];
+        foreach ($organizationsIndexByIds as $organization) {
+            $orgaDepth = $organization->getDepth();
+            if ($maxDepth > 0 && $orgaDepth > $maxDepth) {
+                continue;
+            }
+
+            $parentId = $organization->getParentOrganizationId();
+            $parent = $organizationsIndexByIds[$parentId] ?? null;
+            if ($parent) {
+                $parent->addSubOrganization($organization);
+            } else {
+                $rootOrganizations[] = $organization;
+            }
+        }
+
+        return $rootOrganizations;
+    }
 }

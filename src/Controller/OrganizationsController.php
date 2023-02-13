@@ -8,6 +8,7 @@ namespace App\Controller;
 
 use App\Entity\Organization;
 use App\Repository\OrganizationRepository;
+use App\Service\OrganizationSorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,11 +18,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class OrganizationsController extends BaseController
 {
     #[Route('/organizations', name: 'organizations', methods: ['GET', 'HEAD'])]
-    public function index(OrganizationRepository $orgaRepository): Response
-    {
+    public function index(
+        OrganizationRepository $orgaRepository,
+        OrganizationSorter $orgaSorter,
+    ): Response {
         $this->denyAccessUnlessGranted('admin:manage:organizations');
 
-        $organizations = $orgaRepository->findAllAsTree();
+        $organizations = $orgaRepository->findAll();
+        $organizations = $orgaSorter->asTree($organizations);
+
         return $this->render('organizations/index.html.twig', [
             'organizations' => $organizations,
         ]);
@@ -31,22 +36,26 @@ class OrganizationsController extends BaseController
     public function new(
         Request $request,
         OrganizationRepository $orgaRepository,
+        OrganizationSorter $orgaSorter,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:organizations');
 
         /** @var string|null $parentUid */
         $parentUid = $request->query->get('parent');
         if ($parentUid !== null) {
-            $parentOrganization = $orgaRepository->findOneByAsTree(
-                ['uid' => $parentUid],
-                Organization::MAX_DEPTH - 1,
+            $parentOrganization = $orgaRepository->findOneBy(['uid' => $parentUid]);
+            $organizations = $orgaRepository->findWithSubOrganizations(
+                [$parentOrganization->getId()]
             );
+            $organizations = $orgaSorter->asTree($organizations, Organization::MAX_DEPTH - 1);
         } else {
             $parentOrganization = null;
+            $organizations = [];
         }
 
         return $this->render('organizations/new.html.twig', [
             'parentOrganization' => $parentOrganization,
+            'organizations' => $organizations,
             'name' => '',
             'selectedParentUid' => '',
         ]);
@@ -56,6 +65,7 @@ class OrganizationsController extends BaseController
     public function create(
         Request $request,
         OrganizationRepository $orgaRepository,
+        OrganizationSorter $orgaSorter,
         ValidatorInterface $validator
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:organizations');
@@ -73,17 +83,20 @@ class OrganizationsController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if ($parentUid !== null) {
-            $parentOrganization = $orgaRepository->findOneByAsTree(
-                ['uid' => $parentUid],
-                Organization::MAX_DEPTH - 1,
+            $parentOrganization = $orgaRepository->findOneBy(['uid' => $parentUid]);
+            $organizations = $orgaRepository->findWithSubOrganizations(
+                [$parentOrganization->getId()]
             );
+            $organizations = $orgaSorter->asTree($organizations, Organization::MAX_DEPTH - 1);
         } else {
             $parentOrganization = null;
+            $organizations = [];
         }
 
         if (!$this->isCsrfTokenValid('create organization', $csrfToken)) {
             return $this->renderBadRequest('organizations/new.html.twig', [
                 'parentOrganization' => $parentOrganization,
+                'organizations' => $organizations,
                 'name' => $name,
                 'selectedParentUid' => $selectedParentUid,
                 'error' => $this->csrfError(),
@@ -101,6 +114,7 @@ class OrganizationsController extends BaseController
             if (!$selectedParentOrganization) {
                 return $this->renderBadRequest('organizations/new.html.twig', [
                     'parentOrganization' => $parentOrganization,
+                    'organizations' => $organizations,
                     'name' => $name,
                     'selectedParentUid' => $selectedParentUid,
                     'errors' => [
@@ -123,6 +137,7 @@ class OrganizationsController extends BaseController
         if (count($errors) > 0) {
             return $this->renderBadRequest('organizations/new.html.twig', [
                 'parentOrganization' => $parentOrganization,
+                'organizations' => $organizations,
                 'name' => $name,
                 'selectedParentUid' => $selectedParentUid,
                 'errors' => $this->formatErrors($errors),

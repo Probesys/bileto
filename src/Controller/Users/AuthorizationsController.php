@@ -13,6 +13,7 @@ use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\RoleRepository;
 use App\Service\AuthorizationSorter;
+use App\Service\OrganizationSorter;
 use App\Service\RoleSorter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,12 +48,14 @@ class AuthorizationsController extends BaseController
         User $holder,
         OrganizationRepository $organizationRepository,
         RoleRepository $roleRepository,
+        OrganizationSorter $organizationSorter,
         RoleSorter $roleSorter,
         Security $security,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        $organizations = $organizationRepository->findAllAsTree();
+        $organizations = $organizationRepository->findAll();
+        $organizations = $organizationSorter->asTree($organizations);
         $roles = $roleRepository->findBy([
             'type' => ['orga', 'admin'],
         ]);
@@ -79,13 +82,15 @@ class AuthorizationsController extends BaseController
         AuthorizationRepository $authorizationRepository,
         OrganizationRepository $organizationRepository,
         RoleRepository $roleRepository,
+        OrganizationSorter $organizationSorter,
         RoleSorter $roleSorter,
         ValidatorInterface $validator,
         Security $security,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        $organizations = $organizationRepository->findAllAsTree();
+        $organizations = $organizationRepository->findAll();
+        $organizations = $organizationSorter->asTree($organizations);
         $roles = $roleRepository->findAll();
         $roles = $roleRepository->findBy([
             'type' => ['orga', 'admin'],
