@@ -131,3 +131,4 @@ Error: Error
 'This user already has an orga role for this organization.': 'This user already has an orga role for this organization.'
 'You can’t grant super-admin authorization.': 'You can’t grant super-admin authorization.'
 'You can’t revoke this authorization.': 'You can’t revoke this authorization.'
+'You are not authorized to answer confidentially.': 'You are not authorized to answer confidentially.'

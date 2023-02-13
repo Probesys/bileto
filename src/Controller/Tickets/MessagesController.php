@@ -13,10 +13,12 @@ use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Utils\Time;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MessagesController extends BaseController
@@ -28,6 +30,7 @@ class MessagesController extends BaseController
         MessageRepository $messageRepository,
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
+        Security $security,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
@@ -72,6 +75,26 @@ class MessagesController extends BaseController
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'error' => $this->csrfError(),
+            ]);
+        }
+
+        if ($isConfidential && !$security->isGranted('orga:create:tickets:messages:confidential', $organization)) {
+            return $this->renderBadRequest('tickets/show.html.twig', [
+                'ticket' => $ticket,
+                'messages' => $ticket->getMessages(),
+                'organization' => $organization,
+                'message' => $messageContent,
+                'status' => $status,
+                'statuses' => $statuses,
+                'isSolution' => $isSolution,
+                'isConfidential' => $isConfidential,
+                'errors' => [
+                    'isConfidential' => new TranslatableMessage(
+                        'You are not authorized to answer confidentially.',
+                        [],
+                        'validators',
+                    )
+                ],
             ]);
         }
 

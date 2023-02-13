@@ -137,20 +137,26 @@
                             </label>
 
                             <div class="row row--always">
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="is-confidential"
-                                        name="isConfidential"
-                                        {{ isConfidential ? 'checked' }}
-                                        data-action="ticket-editor#refresh"
-                                        data-ticket-editor-target="confidentialCheckbox"
-                                    />
+                                {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
+                                    <div>
+                                        <input
+                                            type="checkbox"
+                                            id="is-confidential"
+                                            name="isConfidential"
+                                            {{ isConfidential ? 'checked' }}
+                                            data-action="ticket-editor#refresh"
+                                            data-ticket-editor-target="confidentialCheckbox"
+                                            {% if errors.isConfidential is defined %}
+                                                aria-invalid="true"
+                                                aria-errormessage="is-confidential-error"
+                                            {% endif %}
+                                        />
 
-                                    <label for="is-confidential">
-                                        {{ 'tickets.show.mark_as.confidential' | trans }}
-                                    </label>
-                                </div>
+                                        <label for="is-confidential">
+                                            {{ 'tickets.show.mark_as.confidential' | trans }}
+                                        </label>
+                                    </div>
+                                {% endif %}
 
                                 <div>
                                     <input
@@ -169,6 +175,13 @@
                                 </div>
                             </div>
                         </div>
+
+                        {% if errors.isConfidential is defined %}
+                            <p class="form__error" role="alert" id="is-confidential-error">
+                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                {{ errors.isConfidential }}
+                            </p>
+                        {% endif %}
 
                         <div class="row">
                             {% if not ticket.isFinished %}

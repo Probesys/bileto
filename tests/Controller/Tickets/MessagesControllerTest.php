@@ -157,7 +157,10 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:create:tickets:messages:confidential',
+        ]);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -263,6 +266,31 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#status-error', 'The status "invalid" is not a valid status.');
+    }
+
+    public function testPostCreateFailsIfIsConfidentialIsTrueButAccessIsNotGranted(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => $initialStatus,
+        ]);
+        $messageContent = 'My message';
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'status' => 'in_progress',
+            'isSolution' => true,
+            'isConfidential' => true,
+        ]);
+
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSelectorTextContains('#is-confidential-error', 'You are not authorized to answer confidentially.');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void

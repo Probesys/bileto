@@ -37,6 +37,7 @@ class Role
 
         'orga:create:tickets',
         'orga:create:tickets:messages',
+        'orga:create:tickets:messages:confidential',
         'orga:see',
         'orga:see:tickets:all',
         'orga:see:tickets:messages:confidential',

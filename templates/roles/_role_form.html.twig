@@ -115,6 +115,11 @@
             }) }}
 
             {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:create:tickets:messages:confidential',
+                label: 'roles.permissions.orga.create.tickets.messages.confidential' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
                 permission: 'orga:see:tickets:messages:confidential',
                 label: 'roles.permissions.orga.see.tickets.messages.confidential' | trans,
             }) }}
