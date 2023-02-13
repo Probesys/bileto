@@ -39,6 +39,7 @@ class Role
         'orga:create:tickets:messages',
         'orga:see',
         'orga:see:tickets:all',
+        'orga:see:tickets:messages:confidential',
         'orga:update:tickets:actors',
         'orga:update:tickets:priority',
         'orga:update:tickets:title',

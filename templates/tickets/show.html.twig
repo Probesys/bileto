@@ -40,7 +40,10 @@
             <div class="ticket__timeline row__item--extend flow-large">
                 <div class="flow-large timeline">
                     {% for message in messages %}
-                        <article class="message {{ ticket.solution == message ? 'message--solution' }} {{ message.isConfidential ? 'message--confidential' }}">
+                        <article
+                            class="message {{ ticket.solution == message ? 'message--solution' }} {{ message.isConfidential ? 'message--confidential' }}"
+                            data-test="message-item"
+                        >
                             <div class="message__avatar">
                                 {{ icon('circle-user') }}
                                 {% if message.createdBy == ticket.requester %}

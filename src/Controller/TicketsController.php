@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\Controller\BaseController;
 use App\Entity\Ticket;
 use App\Repository\OrganizationRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,8 +17,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class TicketsController extends BaseController
 {
     #[Route('/tickets/{uid}', name: 'ticket', methods: ['GET', 'HEAD'])]
-    public function show(Ticket $ticket, OrganizationRepository $organizationRepository): Response
-    {
+    public function show(
+        Ticket $ticket,
+        OrganizationRepository $organizationRepository,
+        Security $security,
+    ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -35,9 +39,15 @@ class TicketsController extends BaseController
             unset($statuses['new']);
         }
 
+        if ($security->isGranted('orga:see:tickets:messages:confidential', $organization)) {
+            $messages = $ticket->getMessages();
+        } else {
+            $messages = $ticket->getMessagesWithoutConfidential();
+        }
+
         return $this->render('tickets/show.html.twig', [
             'ticket' => $ticket,
-            'messages' => $ticket->getMessages(),
+            'messages' => $messages,
             'organization' => $organization,
             'message' => '',
             'status' => 'pending',

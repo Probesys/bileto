@@ -9,6 +9,8 @@ namespace App\Entity;
 use App\Repository\TicketRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -389,6 +391,20 @@ class Ticket
     public function getMessages(): Collection
     {
         return $this->messages;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesWithoutConfidential(): Collection
+    {
+        $criteria = new Criteria();
+        $expr = new Comparison('isConfidential', '=', false);
+        $criteria->where($expr);
+
+        /** @var ArrayCollection<int, Message> $messages */
+        $messages = $this->messages;
+        return $messages->matching($criteria);
     }
 
     public function getSolution(): ?Message

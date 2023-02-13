@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Organization;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
@@ -84,6 +85,49 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', "My ticket #{$ticket->getId()}");
+    }
+
+    public function testGetShowRendersConfidentialMessagesIfAccessIsGranted(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:see:tickets:all',
+            'orga:see:tickets:messages:confidential',
+        ]);
+        $content = 'The content of the answer';
+        $ticket = TicketFactory::createOne();
+        $message = MessageFactory::createOne([
+            'isConfidential' => true,
+            'ticket' => $ticket,
+            'content' => $content
+        ]);
+
+        $client->request('GET', "/tickets/{$ticket->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="message-item"]', $content);
+    }
+
+    public function testGetShowHidesConfidentialMessagesIfAccessIsNotGranted(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:see:tickets:all']);
+        $content = 'The content of the answer';
+        $ticket = TicketFactory::createOne();
+        $message = MessageFactory::createOne([
+            'isConfidential' => true,
+            'ticket' => $ticket,
+            'content' => $content
+        ]);
+
+        $client->request('GET', "/tickets/{$ticket->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorNotExists('[data-test="message-item"]');
     }
 
     public function testGetShowFailsIfAccessIsForbidden(): void

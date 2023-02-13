@@ -100,11 +100,6 @@
             }) }}
         {% else %}
             {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:create:tickets:messages',
-                label: 'roles.permissions.orga.create.tickets.messages' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
                 permission: 'orga:create:tickets',
                 label: 'roles.permissions.orga.create.tickets' | trans,
             }) }}
@@ -112,6 +107,16 @@
             {{ include('roles/_permission_checkbox.html.twig', {
                 permission: 'orga:see:tickets:all',
                 label: 'roles.permissions.orga.see.tickets.all' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:create:tickets:messages',
+                label: 'roles.permissions.orga.create.tickets.messages' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:see:tickets:messages:confidential',
+                label: 'roles.permissions.orga.see.tickets.messages.confidential' | trans,
             }) }}
 
             {{ include('roles/_permission_checkbox.html.twig', {
