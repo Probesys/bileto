@@ -61,9 +61,6 @@ class Organization
     /** @var Organization[] $subOrganizations */
     private array $subOrganizations = [];
 
-    /** @var Organization[] $parentOrganizations */
-    private array $parentOrganizations = [];
-
     /** @var Collection<int, Authorization> $authorizations */
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Authorization::class)]
     private Collection $authorizations;
@@ -178,24 +175,6 @@ class Organization
     public function getSubOrganizations(): array
     {
         return $this->subOrganizations;
-    }
-
-    /**
-     * @param Organization[] $parentOrganizations
-     */
-    public function setParentOrganizations(array $parentOrganizations): self
-    {
-        $this->parentOrganizations = $parentOrganizations;
-
-        return $this;
-    }
-
-    /**
-     * @return Organization[]
-     */
-    public function getParentOrganizations(): array
-    {
-        return $this->parentOrganizations;
     }
 
     /**

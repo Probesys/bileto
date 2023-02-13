@@ -31,9 +31,6 @@ class TicketsController extends BaseController
             $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
         }
 
-        $parentOrganizations = $organizationRepository->findParents($organization);
-        $organization->setParentOrganizations($parentOrganizations);
-
         $statuses = Ticket::getStatusesWithLabels();
         if ($ticket->getStatus() !== 'new') {
             unset($statuses['new']);

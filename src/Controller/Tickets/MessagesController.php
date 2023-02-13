@@ -56,9 +56,6 @@ class MessagesController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        $parentOrganizations = $organizationRepository->findParents($organization);
-        $organization->setParentOrganizations($parentOrganizations);
-
         $statuses = Ticket::getStatusesWithLabels();
         if ($ticket->getStatus() !== 'new') {
             unset($statuses['new']);

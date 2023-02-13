@@ -44,9 +44,6 @@ class TicketsController extends BaseController
         /** @var string $assigneeUid */
         $assigneeUid = $request->query->get('assignee', '');
 
-        $parentOrganizations = $organizationRepository->findParents($organization);
-        $organization->setParentOrganizations($parentOrganizations);
-
         if (!$security->isGranted('orga:see:tickets:all', $organization)) {
             $ticketSearcher->setActor($user);
         }
@@ -83,8 +80,6 @@ class TicketsController extends BaseController
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
 
         $users = $actorsLister->listUsers();
-        $parentOrganizations = $organizationRepository->findParents($organization);
-        $organization->setParentOrganizations($parentOrganizations);
 
         return $this->render('organizations/tickets/new.html.twig', [
             'organization' => $organization,
@@ -135,8 +130,6 @@ class TicketsController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         $users = $actorsLister->listUsers();
-        $parentOrganizations = $organizationRepository->findParents($organization);
-        $organization->setParentOrganizations($parentOrganizations);
 
         if (!$this->isCsrfTokenValid('create organization ticket', $csrfToken)) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
