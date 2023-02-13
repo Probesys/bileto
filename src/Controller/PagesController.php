@@ -7,6 +7,9 @@
 namespace App\Controller;
 
 use App\Entity\Ticket;
+use App\Repository\AuthorizationRepository;
+use App\Repository\OrganizationRepository;
+use App\Service\OrganizationSorter;
 use App\Service\TicketSearcher;
 use App\Utils\Locales;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,16 +18,29 @@ use Symfony\Component\Routing\Annotation\Route;
 class PagesController extends BaseController
 {
     #[Route('/', name: 'home', methods: ['GET', 'HEAD'])]
-    public function home(TicketSearcher $ticketSearcher): Response
-    {
+    public function home(
+        AuthorizationRepository $authorizationRepository,
+        OrganizationRepository $orgaRepository,
+        OrganizationSorter $orgaSorter,
+        TicketSearcher $ticketSearcher,
+    ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $ticketSearcher->setAssignee($user);
         $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
         $tickets = $ticketSearcher->getTickets();
 
+        $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
+        if (in_array(null, $orgaIds)) {
+            $organizations = $orgaRepository->findAll();
+        } else {
+            $organizations = $orgaRepository->findWithSubOrganizations($orgaIds);
+        }
+        $organizations = $orgaSorter->asTree($organizations);
+
         return $this->render('pages/home.html.twig', [
             'tickets' => $tickets,
+            'organizations' => $organizations,
         ]);
     }
 

@@ -96,6 +96,32 @@
                     </div>
                 </div>
             {% endif %}
+
+            {% if organizations %}
+                <div class="flow">
+                    <h2>{{ 'home.your_organizations' | trans }}</h2>
+
+                    <div class="grid">
+                        {% for organization in organizations %}
+                            <div class="card flow" data-test="organization-item">
+                                <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">
+                                    {{ organization.name }}
+                                </a>
+
+                                {% if organization.subOrganizations %}
+                                    <div class="card__body">
+                                        {{ include(
+                                            'organizations/_organizations_as_list.html.twig',
+                                            { organizations: organization.subOrganizations },
+                                            with_context = false
+                                        ) }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

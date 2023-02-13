@@ -6,6 +6,8 @@
 
 namespace App\Tests\Controller;
 
+use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
@@ -13,6 +15,7 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 
 class PagesControllerTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
 
@@ -21,10 +24,65 @@ class PagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $organization1 = OrganizationFactory::createOne([
+            'name' => 'Orga 1',
+        ]);
+        $organization2 = OrganizationFactory::createOne([
+            'name' => 'Orga 2',
+        ]);
+        $subOrganization = OrganizationFactory::createOne([
+            'name' => 'Sub-orga',
+            'parentsPath' => "/{$organization1->getId()}/",
+        ]);
+        $this->grantOrga($user->object(), ['orga:see'], $organization1->object());
 
         $crawler = $client->request('GET', '/');
 
         $this->assertSelectorTextContains('h1', 'Welcome to Bileto');
+        $this->assertSelectorTextContains(
+            '[data-test="organization-item"]:nth-child(1)',
+            'Orga 1',
+        );
+        $this->assertSelectorNotExists(
+            '[data-test="organization-item"]:nth-child(2)',
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="organization-item"] [data-test="organization-item"]',
+            'Sub-orga',
+        );
+    }
+
+    public function testGetHomeListsAllOrganizationsIfGlobalAccess(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization1 = OrganizationFactory::createOne([
+            'name' => 'Orga 1',
+        ]);
+        $organization2 = OrganizationFactory::createOne([
+            'name' => 'Orga 2',
+        ]);
+        $subOrganization = OrganizationFactory::createOne([
+            'name' => 'Sub-orga',
+            'parentsPath' => "/{$organization1->getId()}/",
+        ]);
+        $this->grantOrga($user->object(), ['orga:see'], null);
+
+        $crawler = $client->request('GET', '/');
+
+        $this->assertSelectorTextContains(
+            '[data-test="organization-item"]:nth-child(1)',
+            'Orga 1',
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="organization-item"]:nth-child(2)',
+            'Orga 2',
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="organization-item"] [data-test="organization-item"]',
+            'Sub-orga',
+        );
     }
 
     public function testGetHomeRedirectsToLoginIfNotConnected(): void
