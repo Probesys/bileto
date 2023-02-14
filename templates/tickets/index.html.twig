@@ -6,23 +6,70 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'home.title' | trans }}{% endblock %}
+{% if currentPage == 'all' %}
+    {% set title = 'tickets.index.title.all' | trans %}
+{% elseif currentPage == 'to assign' %}
+    {% set title = 'tickets.index.title.to_assign' | trans %}
+{% elseif currentPage == 'owned' %}
+    {% set title = 'tickets.index.title.my' | trans %}
+{% endif %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    <main class="layout__body flow-larger organizations-index">
-        <h1>{{ 'home.title' | trans }}</h1>
+    <main class="layout__body tickets-index flow">
+        <div class="layout__breadcrumb wrapper-large wrapper--center">
+            <h1>{{ title }}</h1>
+        </div>
 
-        <div class="wrapper-large wrapper--center flow-larger">
-            {% if tickets %}
-                <div class="flow">
-                    <div class="row row--center row--always">
-                        <h2 class="row__item--extend">{{ 'home.your_tickets' | trans }}</h2>
+        <div class="row">
+            {% if is_granted('orga:see:tickets:all', 'any') %}
+                <nav class="tickets__nav row__item--noshrink card flow">
+                    <ul>
+                        <li>
+                            <a
+                                href="{{ path('tickets') }}"
+                                {{ currentPage == 'all' ? 'aria-current="page"' }}
+                            >
+                                {{ 'tickets.index.title.all' | trans }}
+                            </a>
+                        </li>
 
-                        <a class="text--small" href="{{ path('tickets', { assignee: app.user.uid }) }}">
-                            {{ 'home.your_tickets_all' | trans }}
-                        </a>
-                    </div>
+                        <li>
+                            <a
+                                href="{{ path('tickets', { assignee: 'none' }) }}"
+                                {{ currentPage == 'to assign' ? 'aria-current="page"' }}
+                            >
+                                {{ 'tickets.index.title.to_assign' | trans }}
 
+                                {% if countToAssign > 0 %}
+                                    <span class="tickets__list-count">
+                                        {{ countToAssign }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="{{ path('tickets', { assignee: app.user.uid }) }}"
+                                {{ currentPage == 'owned' ? 'aria-current="page"' }}
+                            >
+                                {{ 'tickets.index.title.my' | trans }}
+
+                                {% if countOwned > 0 %}
+                                    <span class="tickets__list-count">
+                                        {{ countOwned }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            {% endif %}
+
+            <div class="flow row__item--extend">
+                {% if tickets %}
                     <div class="table-container">
                         <table>
                             <thead>
@@ -42,6 +89,11 @@
                                     <th class="col--size5">
                                         {{ icon('user') }}
                                         {{ 'tickets.requester' | trans }}
+                                    </th>
+
+                                    <th class="col--size5">
+                                        {{ icon('headset') }}
+                                        {{ 'tickets.assignee' | trans }}
                                     </th>
 
                                     <th class="col--size3 text--center">
@@ -84,6 +136,14 @@
                                             {{ ticket.requester.displayName }}
                                         </td>
 
+                                        <td>
+                                            {% if ticket.assignee %}
+                                                {{ ticket.assignee.displayName }}
+                                            {% else %}
+                                                {{ 'tickets.unassigned' | trans }}
+                                            {% endif %}
+                                        </td>
+
                                         <td class="text--center">
                                             <span class="badge badge--{{ ticket.statusBadgeColor }}">
                                                 {{ ticket.statusLabel | trans }}
@@ -100,34 +160,15 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            {% endif %}
-
-            {% if organizations %}
-                <div class="flow">
-                    <h2>{{ 'home.your_organizations' | trans }}</h2>
-
-                    <div class="grid">
-                        {% for organization in organizations %}
-                            <div class="card flow" data-test="organization-item">
-                                <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">
-                                    {{ organization.name }}
-                                </a>
-
-                                {% if organization.subOrganizations %}
-                                    <div class="card__body">
-                                        {{ include(
-                                            'organizations/_organizations_as_list.html.twig',
-                                            { organizations: organization.subOrganizations },
-                                            with_context = false
-                                        ) }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
+                {% else %}
+                    <div class="text--center flow-large">
+                        <p class="placeholder">
+                            {{ icon('ticket') }}
+                            {{ 'tickets.index.no_tickets' | trans }}
+                        </p>
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
     </main>
 {% endblock %}

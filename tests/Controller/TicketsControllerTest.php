@@ -23,6 +23,22 @@ class TicketsControllerTest extends WebTestCase
     use Factories;
     use ResetDatabase;
 
+    public function testIndexRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $ticket = TicketFactory::createOne([
+            'title' => 'My ticket',
+            'createdBy' => $user,
+        ]);
+
+        $client->request('GET', '/tickets');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="ticket-item"]', "My ticket #{$ticket->getId()}");
+    }
+
     public function testGetShowRendersCorrectlyIfTicketIsCreatedByUser(): void
     {
         $client = static::createClient();

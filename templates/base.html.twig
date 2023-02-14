@@ -112,6 +112,11 @@
                         </a>
 
                         {% if app.user %}
+                            <a class="layout__header-anchor" href="{{ path('tickets') }}">
+                                {{ icon('ticket') }}
+                                {{ 'layout.tickets' | trans }}
+                            </a>
+
                             <div class="layout__header-extend"></div>
 
                             {% if is_granted('admin:see') %}
