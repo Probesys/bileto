@@ -43,8 +43,6 @@ trait AuthorizationHelper
             $permissions = Role::sanitizePermissions('admin', $permissions);
 
             $role = new Role();
-            $role->setUid($roleRepo->generateUid());
-            $role->setCreatedAt(Time::now());
             $role->setName(Random::hex(10));
             $role->setDescription('The role description');
             $role->setType('admin');
@@ -77,8 +75,6 @@ trait AuthorizationHelper
         $permissions = Role::sanitizePermissions('orga', $permissions);
 
         $role = new Role();
-        $role->setUid($roleRepo->generateUid());
-        $role->setCreatedAt(Time::now());
         $role->setName(Random::hex(10));
         $role->setDescription('The role description');
         $role->setType('orga');

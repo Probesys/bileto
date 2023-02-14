@@ -6,6 +6,7 @@
 
 namespace App\Entity;
 
+use App\EntityListener\EntitySetMetaListener;
 use App\Repository\RoleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
+#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
@@ -24,7 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'name',
     message: new TranslatableMessage('The role {{ value }} is already used.', [], 'validators'),
 )]
-class Role
+class Role implements MetaEntityInterface
 {
     public const TYPES = ['super', 'admin', 'orga'];
 

@@ -20,7 +20,7 @@ use Doctrine\ORM\QueryBuilder;
  * @method Ticket[]    findAll()
  * @method Ticket[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TicketRepository extends ServiceEntityRepository
+class TicketRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
 

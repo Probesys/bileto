@@ -6,6 +6,7 @@
 
 namespace App\Entity;
 
+use App\EntityListener\EntitySetMetaListener;
 use App\Repository\UserRepository;
 use App\Utils\Locales;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[ORM\Table(name: '`users`')]
 #[UniqueEntity(
     fields: 'email',
@@ -28,7 +30,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, MetaEntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

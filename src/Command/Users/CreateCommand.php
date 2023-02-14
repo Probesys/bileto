@@ -101,10 +101,6 @@ class CreateCommand extends Command
         $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
 
-        $userUid = $this->userRepository->generateUid();
-        $user->setUid($userUid);
-        $user->setCreatedAt(Time::now());
-
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
             $output = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;

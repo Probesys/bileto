@@ -22,7 +22,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Authorization[]    findAll()
  * @method Authorization[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AuthorizationRepository extends ServiceEntityRepository
+class AuthorizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
 
@@ -52,9 +52,6 @@ class AuthorizationRepository extends ServiceEntityRepository
     public function grant(User $user, Role $role, Organization $organization = null): void
     {
         $authorization = new Authorization();
-        $authorizationUid = $this->generateUid();
-        $authorization->setUid($authorizationUid);
-        $authorization->setCreatedAt(Time::now());
         $authorization->setHolder($user);
         $authorization->setRole($role);
         $authorization->setOrganization($organization);

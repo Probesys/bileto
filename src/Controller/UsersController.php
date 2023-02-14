@@ -73,9 +73,6 @@ class UsersController extends BaseController
         $newUser = new User();
         $newUser->setEmail($email);
         $newUser->setName($name);
-        $uid = $userRepository->generateUid();
-        $newUser->setUid($uid);
-        $newUser->setCreatedAt(Time::now());
         $newUser->setLocale($user->getLocale());
         $newUser->setPassword(Random::hex(50));
 

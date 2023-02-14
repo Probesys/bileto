@@ -131,10 +131,6 @@ class OrganizationsController extends BaseController
             $organization->setParent($selectedParentOrganization);
         }
 
-        $uid = $orgaRepository->generateUid();
-        $organization->setUid($uid);
-        $organization->setCreatedAt(Time::now());
-
         $errors = $validator->validate($organization);
         if (count($errors) > 0) {
             return $this->renderBadRequest('organizations/new.html.twig', [

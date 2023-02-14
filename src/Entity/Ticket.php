@@ -6,6 +6,7 @@
 
 namespace App\Entity;
 
+use App\EntityListener\EntitySetMetaListener;
 use App\Repository\TicketRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,11 +19,12 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
+#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class Ticket
+class Ticket implements MetaEntityInterface
 {
     public const TYPES = ['request', 'incident'];
     public const DEFAULT_TYPE = 'request';

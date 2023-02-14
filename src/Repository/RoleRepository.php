@@ -20,7 +20,7 @@ use Symfony\Component\Translation\TranslatableMessage;
  * @method Role[]    findAll()
  * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RoleRepository extends ServiceEntityRepository
+class RoleRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
 
@@ -55,8 +55,6 @@ class RoleRepository extends ServiceEntityRepository
         }
 
         $superRole = new Role();
-        $superRole->setUid($this->generateUid());
-        $superRole->setCreatedAt(Time::now());
         $superRole->setName('Super-admin');
         $superRole->setDescription('Super-admin');
         $superRole->setType('super');

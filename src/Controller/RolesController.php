@@ -104,11 +104,6 @@ class RolesController extends BaseController
         }
 
         $role = new Role();
-        $uid = $roleRepository->generateUid();
-        $role->setUid($uid);
-        $role->setCreatedAt(Time::now());
-        $role->setCreatedBy($user);
-
         $role->setName($name);
         $role->setDescription($description);
         $role->setType($type);

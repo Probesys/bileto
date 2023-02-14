@@ -6,6 +6,7 @@
 
 namespace App\Entity;
 
+use App\EntityListener\EntitySetMetaListener;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,11 +15,12 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
+#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class Message
+class Message implements MetaEntityInterface
 {
     public const VIAS = ['webapp'];
     public const DEFAULT_VIA = 'webapp';

@@ -29,6 +29,7 @@ Developers guide:
 - [Managing the dependencies](/docs/developers/dependencies.md)
 - [Using the translations](/docs/developers/translations.md)
 - [Working with the roles & permissions](/docs/developers/roles.md)
+- [Declaring a new Entity](/docs/developers/entity.md)
 - Frontend:
     - [Working with the icons](/docs/developers/icons.md)
     - [Working with the modals](/docs/developers/modals.md)

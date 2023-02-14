@@ -180,12 +180,6 @@ class TicketsController extends BaseController
         $ticket = new Ticket();
         $ticket->setTitle($title);
         $ticket->setStatus($status);
-
-        $uid = $ticketRepository->generateUid();
-        $ticket->setUid($uid);
-
-        $ticket->setCreatedAt(Time::now());
-        $ticket->setCreatedBy($user);
         $ticket->setOrganization($organization);
 
         $ticket->setRequester($requester);
@@ -210,10 +204,6 @@ class TicketsController extends BaseController
 
         $message = new Message();
         $message->setContent($messageContent);
-        $uid = $messageRepository->generateUid();
-        $message->setUid($uid);
-        $message->setCreatedAt(Time::now());
-        $message->setCreatedBy($user);
         $message->setTicket($ticket);
         $message->setIsConfidential(false);
         $message->setVia('webapp');

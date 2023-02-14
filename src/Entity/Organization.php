@@ -6,6 +6,7 @@
 
 namespace App\Entity;
 
+use App\EntityListener\EntitySetMetaListener;
 use App\Repository\OrganizationRepository;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,11 +19,12 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
+#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class Organization
+class Organization implements MetaEntityInterface
 {
     public const MAX_DEPTH = 3;
 
