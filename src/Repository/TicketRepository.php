@@ -7,6 +7,7 @@
 namespace App\Repository;
 
 use App\Entity\Ticket;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
@@ -47,13 +48,14 @@ class TicketRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<string, int[]> $orgaFilters
      * @param array<string, mixed> $criteria
      * @param string[] $sort
      * @return Ticket[]
      */
-    public function findBySearch(array $criteria, array $sort): array
+    public function findBySearch(User $actor, array $orgaFilters, array $criteria, array $sort): array
     {
-        $qb = $this->createSearchQueryBuilder($criteria);
+        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $criteria);
         $qb->orderBy("t.{$sort[0]}", $sort[1]);
 
         $query = $qb->getQuery();
@@ -61,11 +63,12 @@ class TicketRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<string, int[]> $orgaFilters
      * @param array<string, mixed> $criteria
      */
-    public function countBySearch(array $criteria): int
+    public function countBySearch(User $actor, array $orgaFilters, array $criteria): int
     {
-        $qb = $this->createSearchQueryBuilder($criteria);
+        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $criteria);
         $qb->select($qb->expr()->count('t.id'));
 
         $query = $qb->getQuery();
@@ -73,20 +76,46 @@ class TicketRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<string, int[]> $orgaFilters
      * @param array<string, mixed> $criteria
      */
-    private function createSearchQueryBuilder(array $criteria): QueryBuilder
+    private function createSearchQueryBuilder(User $actor, array $orgaFilters, array $criteria): QueryBuilder
     {
         $qb = $this->createQueryBuilder('t');
 
-        if (isset($criteria['actor'])) {
-            $qb->andWhere($qb->expr()->orX(
-                $qb->expr()->eq('t.createdBy', ':actor'),
-                $qb->expr()->eq('t.requester', ':actor'),
-                $qb->expr()->eq('t.assignee', ':actor'),
-            ));
-            $qb->setParameter('actor', $criteria['actor']);
-            unset($criteria['actor']);
+        if (!empty($orgaFilters['all'])) {
+            $qb->where(
+                $qb->expr()->in('t.organization', ':orgaAll'),
+            );
+            $qb->setParameter('orgaAll', $orgaFilters['all']);
+        }
+
+        $actorExpr = $qb->expr()->orX(
+            $qb->expr()->eq('t.createdBy', ':actor'),
+            $qb->expr()->eq('t.requester', ':actor'),
+            $qb->expr()->eq('t.assignee', ':actor'),
+        );
+
+        if (!empty($orgaFilters['actor'])) {
+            foreach ($orgaFilters['actor'] as $key => $orgaId) {
+                $qb->orWhere($qb->expr()->andX(
+                    $qb->expr()->eq('t.organization', ":orga{$key}"),
+                    $actorExpr,
+                ));
+                $qb->setParameter("orga{$key}", $orgaId);
+            }
+
+            $qb->setParameter('actor', $actor->getId());
+        }
+
+        if (empty($orgaFilters['all']) && empty($orgaFilters['actor'])) {
+            // Make sure to restrain the tickets list to those available to the
+            // given user.
+            // In normal cases, there should always be an orgaFilter applied,
+            // or at least a constraint on another actor field, so this
+            // condition should never match. But we're never too sure.
+            $qb->where($actorExpr);
+            $qb->setParameter('actor', $actor->getId());
         }
 
         foreach ($criteria as $field => $condition) {

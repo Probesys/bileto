@@ -17,7 +17,6 @@ use App\Repository\UserRepository;
 use App\Service\ActorsLister;
 use App\Service\TicketSearcher;
 use App\Utils\Time;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +33,6 @@ class TicketsController extends BaseController
         OrganizationRepository $organizationRepository,
         TicketSearcher $ticketSearcher,
         UserRepository $userRepository,
-        Security $security,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see', $organization);
 
@@ -44,19 +42,15 @@ class TicketsController extends BaseController
         /** @var string $assigneeUid */
         $assigneeUid = $request->query->get('assignee', '');
 
-        if (!$security->isGranted('orga:see:tickets:all', $organization)) {
-            $ticketSearcher->setActor($user);
-        }
-
         $ticketSearcher->setOrganization($organization);
-        $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
+        $ticketSearcher->setCriteria('status', Ticket::OPEN_STATUSES);
 
         if ($assigneeUid === 'none') {
-            $ticketSearcher->setAssignee(null);
+            $ticketSearcher->setCriteria('assignee', null);
             $currentPage = 'to assign';
         } elseif ($assigneeUid !== '') {
             $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
-            $ticketSearcher->setAssignee($assignee);
+            $ticketSearcher->setCriteria('assignee', $assignee);
             $currentPage = 'owned';
         } else {
             $currentPage = 'all';

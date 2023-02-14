@@ -26,8 +26,8 @@ class PagesController extends BaseController
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        $ticketSearcher->setAssignee($user);
-        $ticketSearcher->setStatus(Ticket::OPEN_STATUSES);
+        $ticketSearcher->setCriteria('assignee', $user);
+        $ticketSearcher->setCriteria('status', Ticket::OPEN_STATUSES);
         $tickets = $ticketSearcher->getTickets();
 
         $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
