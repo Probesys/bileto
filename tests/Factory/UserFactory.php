@@ -67,6 +67,7 @@ final class UserFactory extends ModelFactory
     {
         return [
             'uid' => Random::hex(20),
+            'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'email' => self::faker()->unique()->safeEmail(),
             'password' => self::faker()->text(),
         ];

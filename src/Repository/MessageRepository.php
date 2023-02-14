@@ -20,6 +20,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MessageRepository extends ServiceEntityRepository
 {
+    use UidGeneratorTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Message::class);

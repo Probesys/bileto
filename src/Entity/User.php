@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use App\Utils\Locales;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,6 +34,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $uid = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\ManyToOne]
+    private ?User $createdBy = null;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(
@@ -69,9 +79,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $locale = Locales::DEFAULT_LOCALE;
 
-    #[ORM\Column(length: 20, unique: true)]
-    private ?string $uid = null;
-
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\Length(
         max: 100,
@@ -91,6 +98,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(string $uid): self
+    {
+        $this->uid = $uid;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -170,18 +213,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLocale(string $locale): self
     {
         $this->locale = $locale;
-
-        return $this;
-    }
-
-    public function getUid(): ?string
-    {
-        return $this->uid;
-    }
-
-    public function setUid(string $uid): self
-    {
-        $this->uid = $uid;
 
         return $this;
     }

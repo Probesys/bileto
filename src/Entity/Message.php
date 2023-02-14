@@ -9,10 +9,15 @@ namespace App\Entity;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
+#[UniqueEntity(
+    fields: 'uid',
+    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+)]
 class Message
 {
     public const VIAS = ['webapp'];
@@ -22,6 +27,9 @@ class Message
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $uid = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
@@ -53,6 +61,18 @@ class Message
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(string $uid): self
+    {
+        $this->uid = $uid;
+
+        return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable

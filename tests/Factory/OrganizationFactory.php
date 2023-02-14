@@ -55,8 +55,9 @@ final class OrganizationFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'name' => self::faker()->text(),
             'uid' => Random::hex(20),
+            'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'name' => self::faker()->text(),
             'parentsPath' => '/',
         ];
     }

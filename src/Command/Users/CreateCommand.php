@@ -103,6 +103,7 @@ class CreateCommand extends Command
 
         $userUid = $this->userRepository->generateUid();
         $user->setUid($userUid);
+        $user->setCreatedAt(Time::now());
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {

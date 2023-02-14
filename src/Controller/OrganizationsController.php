@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\Entity\Organization;
 use App\Repository\OrganizationRepository;
 use App\Service\OrganizationSorter;
+use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -132,6 +133,7 @@ class OrganizationsController extends BaseController
 
         $uid = $orgaRepository->generateUid();
         $organization->setUid($uid);
+        $organization->setCreatedAt(Time::now());
 
         $errors = $validator->validate($organization);
         if (count($errors) > 0) {

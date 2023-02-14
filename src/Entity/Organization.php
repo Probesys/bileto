@@ -11,6 +11,7 @@ use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -30,6 +31,15 @@ class Organization
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $uid = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\ManyToOne]
+    private ?User $createdBy = null;
+
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('The name is required.', [], 'validators'),
@@ -39,9 +49,6 @@ class Organization
         maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'validators'),
     )]
     private ?string $name = null;
-
-    #[ORM\Column(length: 20, unique: true)]
-    private ?string $uid = null;
 
     /** @var Collection<int, Ticket> $tickets */
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Ticket::class)]
@@ -77,18 +84,6 @@ class Organization
         return $this->id;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
     public function getUid(): ?string
     {
         return $this->uid;
@@ -97,6 +92,42 @@ class Organization
     public function setUid(string $uid): self
     {
         $this->uid = $uid;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

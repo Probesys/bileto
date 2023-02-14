@@ -55,6 +55,7 @@ final class MessageFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
+            'uid' => Random::hex(20),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'createdBy' => UserFactory::new(),
             'content' => self::faker()->text(),

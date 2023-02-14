@@ -97,6 +97,8 @@ class MessagesController extends BaseController
 
         $message = new Message();
         $message->setContent($messageContent);
+        $uid = $messageRepository->generateUid();
+        $message->setUid($uid);
         $message->setCreatedAt(Time::now());
         $message->setCreatedBy($user);
         $message->setTicket($ticket);

@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\UserSorter;
 use App\Utils\Random;
+use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -74,6 +75,7 @@ class UsersController extends BaseController
         $newUser->setName($name);
         $uid = $userRepository->generateUid();
         $newUser->setUid($uid);
+        $newUser->setCreatedAt(Time::now());
         $newUser->setLocale($user->getLocale());
         $newUser->setPassword(Random::hex(50));
 
