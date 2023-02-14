@@ -24,8 +24,12 @@ class AppVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         return (
-            ($subject === null || $subject instanceof Organization) &&
-            (str_starts_with($attribute, 'orga:') || str_starts_with($attribute, 'admin:'))
+            (str_starts_with($attribute, 'admin:') && $subject === null) ||
+            (str_starts_with($attribute, 'orga:') && (
+                $subject instanceof Organization ||
+                $subject === 'global' ||
+                $subject === 'any'
+            ))
         );
     }
 
@@ -38,12 +42,30 @@ class AppVoter extends Voter
             return false;
         }
 
-        if ($subject === null) {
-            $authorization = $this->authorizationRepo->getAdminAuthorizationFor($user);
-        } else {
+        if (str_starts_with($attribute, 'orga:') && $subject === 'any') {
+            $authorizations = $this->authorizationRepo->findBy([
+                'holder' => $user,
+            ]);
+
+            foreach ($authorizations as $authorization) {
+                if ($authorization->getRole()->hasPermission($attribute)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (str_starts_with($attribute, 'orga:') && $subject === 'global') {
+            $authorization = $this->authorizationRepo->getOrgaAuthorizationFor($user, null);
+        } elseif (str_starts_with($attribute, 'orga:') && $subject instanceof Organization) {
             /** @var Organization $organization */
             $organization = $subject;
             $authorization = $this->authorizationRepo->getOrgaAuthorizationFor($user, $organization);
+        } elseif (str_starts_with($attribute, 'admin:')) {
+            $authorization = $this->authorizationRepo->getAdminAuthorizationFor($user);
+        } else {
+            $authorization = null;
         }
 
         if (!$authorization) {

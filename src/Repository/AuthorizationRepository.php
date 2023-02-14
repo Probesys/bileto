@@ -77,7 +77,7 @@ class AuthorizationRepository extends ServiceEntityRepository
         return $query->getOneOrNullResult();
     }
 
-    public function getOrgaAuthorizationFor(User $user, ?Organization $organization = null): ?Authorization
+    public function getOrgaAuthorizationFor(User $user, ?Organization $organization): ?Authorization
     {
         $entityManager = $this->getEntityManager();
 

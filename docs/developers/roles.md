@@ -107,6 +107,18 @@ In templates:
 {% endif %}
 ```
 
+You can check that a permission is given by a global authorization:
+
+```php
+$this->denyAccessUnlessGranted('orga:see', 'global');
+```
+
+Or that a permission is given at least by one authorization:
+
+```php
+$this->denyAccessUnlessGranted('orga:see', 'any');
+```
+
 You should not need this, but it is possible to create an error of access manually with:
 
 ```php
