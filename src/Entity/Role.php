@@ -26,7 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'name',
     message: new TranslatableMessage('The role {{ value }} is already used.', [], 'validators'),
 )]
-class Role implements MetaEntityInterface
+class Role implements MetaEntityInterface, ActivityRecordableInterface
 {
     public const TYPES = ['super', 'admin', 'orga'];
 

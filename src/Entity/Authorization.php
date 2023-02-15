@@ -20,7 +20,7 @@ use Symfony\Component\Translation\TranslatableMessage;
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class Authorization implements MetaEntityInterface
+class Authorization implements MetaEntityInterface, ActivityRecordableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

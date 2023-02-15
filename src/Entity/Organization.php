@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class Organization implements MetaEntityInterface
+class Organization implements MetaEntityInterface, ActivityRecordableInterface
 {
     public const MAX_DEPTH = 3;
 

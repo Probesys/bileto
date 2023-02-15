@@ -60,6 +60,36 @@ class FooRepository extends ServiceEntityRepository implements UidGeneratorInter
 }
 ```
 
+## Record activity
+
+All the event activity of the entities must be recorded in database.
+An event is either: `insert`, `update` or `delete`.
+
+You have to implement the [`ActivityRecordableInterface`](/src/Entity/ActivityRecordableInterface.php).
+It only require that you implement the `getId()` method, which should already be the case.
+
+```php
+namespace App\Entity;
+
+class Foo implements ActivityRecordableInterface
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    // ...
+}
+```
+
+Behind the scene, a Doctrine Lifecycle Subscriber ([`EntityActivitySubscriber`](/src/EventSubscriber/EntityActivitySubscriber.php)) listens for `postPersist`, `postUpdate` and `preRemove`/`postRemove` events to record the events.
+All the events are stored with the [`EntityEvent`](/src/Entity/EntityEvent.php) entity.
+
 ## Migrations
 
 Migrations can be generated with:

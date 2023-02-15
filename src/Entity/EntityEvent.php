@@ -136,4 +136,37 @@ class EntityEvent implements MetaEntityInterface
 
         return $this;
     }
+
+    public static function initInsert(ActivityRecordableInterface $entity): self
+    {
+        $entityEvent = new self();
+        $entityEvent->type = 'insert';
+        $entityEvent->entityType = $entity::class;
+        $entityEvent->entityId = $entity->getId();
+        $entityEvent->changes = [];
+        return $entityEvent;
+    }
+
+    /**
+     * @param array<string, mixed[]> $changes
+     */
+    public static function initUpdate(ActivityRecordableInterface $entity, array $changes): self
+    {
+        $entityEvent = new self();
+        $entityEvent->type = 'update';
+        $entityEvent->entityType = $entity::class;
+        $entityEvent->entityId = $entity->getId();
+        $entityEvent->changes = $changes;
+        return $entityEvent;
+    }
+
+    public static function initDelete(ActivityRecordableInterface $entity): self
+    {
+        $entityEvent = new self();
+        $entityEvent->type = 'delete';
+        $entityEvent->entityType = $entity::class;
+        $entityEvent->entityId = $entity->getId();
+        $entityEvent->changes = [];
+        return $entityEvent;
+    }
 }
