@@ -9,9 +9,11 @@ namespace App\EntityListener;
 use App\Entity\MetaEntityInterface;
 use App\Repository\UidGeneratorInterface;
 use App\Utils\Time;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
+#[AsEntityListener]
 class EntitySetMetaListener
 {
     private EntityManagerInterface $entityManager;
