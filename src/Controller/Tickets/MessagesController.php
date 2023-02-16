@@ -12,6 +12,7 @@ use App\Entity\Ticket;
 use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
+use App\Service\TicketTimeline;
 use App\Utils\Time;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -30,6 +31,7 @@ class MessagesController extends BaseController
         MessageRepository $messageRepository,
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
+        TicketTimeline $ticketTimeline,
         Security $security,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
@@ -64,7 +66,7 @@ class MessagesController extends BaseController
         if (!$this->isCsrfTokenValid('create ticket message', $csrfToken)) {
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
-                'messages' => $ticket->getMessages(),
+                'timeline' => $ticketTimeline->build($ticket),
                 'organization' => $organization,
                 'message' => $messageContent,
                 'status' => $status,
@@ -78,7 +80,7 @@ class MessagesController extends BaseController
         if ($isConfidential && !$security->isGranted('orga:create:tickets:messages:confidential', $organization)) {
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
-                'messages' => $ticket->getMessages(),
+                'timeline' => $ticketTimeline->build($ticket),
                 'organization' => $organization,
                 'message' => $messageContent,
                 'status' => $status,
@@ -105,7 +107,7 @@ class MessagesController extends BaseController
         if (count($errors) > 0) {
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
-                'messages' => $ticket->getMessages(),
+                'timeline' => $ticketTimeline->build($ticket),
                 'organization' => $organization,
                 'message' => $messageContent,
                 'status' => $status,
@@ -138,7 +140,7 @@ class MessagesController extends BaseController
             $ticket->setStatus($initialStatus);
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
-                'messages' => $ticket->getMessages(),
+                'timeline' => $ticketTimeline->build($ticket),
                 'organization' => $organization,
                 'message' => $messageContent,
                 'status' => $status,

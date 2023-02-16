@@ -1,0 +1,59 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<article
+    class="message {{ ticket.solution == message ? 'message--solution' }} {{ message.isConfidential ? 'message--confidential' }}"
+    data-test="message-item"
+>
+    <div class="message__avatar">
+        {{ icon('circle-user') }}
+        {% if message.createdBy == ticket.requester %}
+            <span class="message__role" title="{{ 'tickets.requester' | trans }}">
+                {{ icon('user') }}
+                <span class="sr-only">
+                    {{ 'tickets.requester' | trans }}
+                </span>
+            </span>
+        {% elseif message.createdBy == ticket.assignee %}
+            <span class="message__role" title="{{ 'tickets.assignee' | trans }}">
+                {{ icon('headset') }}
+                <span class="sr-only">
+                    {{ 'tickets.assignee' | trans }}
+                </span>
+            </span>
+        {% endif %}
+    </div>
+
+    <div class="message__box">
+        <div class="message__top">
+            {% if ticket.solution == message %}
+                <div title="{{ 'tickets.show.message.resolved' | trans }}">
+                    {{ icon('check') }}
+                </div>
+            {% endif %}
+
+            {% if message.isConfidential %}
+                <div title="{{ 'tickets.show.message.confidential' | trans }}">
+                    {{ icon('user-secret') }}
+                </div>
+            {% endif %}
+
+            <div class="message__author">
+                {{ message.createdBy.displayName }}
+            </div>
+
+            <div class="message__top-separator"></div>
+
+            <time datetime="{{ message.createdAt | dateIso }}" class="message__date">
+                {{ message.createdAt | dateTrans }}
+            </time>
+        </div>
+
+        <div class="message__content">
+            {{ message.content | raw }}
+        </div>
+    </div>
+</article>

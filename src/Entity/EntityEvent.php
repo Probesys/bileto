@@ -169,4 +169,9 @@ class EntityEvent implements MetaEntityInterface
         $entityEvent->changes = [];
         return $entityEvent;
     }
+
+    public function getTimelineType(): string
+    {
+        return 'event';
+    }
 }

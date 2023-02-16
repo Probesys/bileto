@@ -148,4 +148,9 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
 
         return $this;
     }
+
+    public function getTimelineType(): string
+    {
+        return 'message';
+    }
 }
