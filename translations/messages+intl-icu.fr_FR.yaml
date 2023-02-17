@@ -76,6 +76,7 @@ settings.index.title: Gestion
 tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'
 tickets.assignee: 'Attribué à'
+tickets.events.default: '<strong>{username}</strong> a changé <strong>{field}</strong> de <i>{oldValue}</i> à <i>{newValue}</i>'
 tickets.impact: Impact
 tickets.impact.high: Haut
 tickets.impact.low: Bas

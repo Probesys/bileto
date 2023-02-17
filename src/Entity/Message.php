@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class Message implements MetaEntityInterface
+class Message implements MetaEntityInterface, ActivityRecordableInterface
 {
     public const VIAS = ['webapp'];
     public const DEFAULT_VIA = 'webapp';
@@ -147,5 +147,10 @@ class Message implements MetaEntityInterface
         $this->ticket = $ticket;
 
         return $this;
+    }
+
+    public function getTimelineType(): string
+    {
+        return 'message';
     }
 }

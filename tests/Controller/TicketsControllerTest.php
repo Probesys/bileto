@@ -7,6 +7,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Organization;
+use App\Entity\Ticket;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
@@ -103,6 +104,28 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', "My ticket #{$ticket->getId()}");
     }
 
+    public function testGetShowRendersMessages(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $ticket = TicketFactory::createOne([
+            'title' => 'My ticket',
+            'createdBy' => $user,
+        ]);
+        $content = 'The content of the answer';
+        $message = MessageFactory::createOne([
+            'isConfidential' => false,
+            'ticket' => $ticket,
+            'content' => $content
+        ]);
+
+        $client->request('GET', "/tickets/{$ticket->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="message-item"]', $content);
+    }
+
     public function testGetShowRendersConfidentialMessagesIfAccessIsGranted(): void
     {
         $client = static::createClient();
@@ -144,6 +167,32 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('[data-test="message-item"]');
+    }
+
+    public function testGetShowRendersEvents(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $ticket = TicketFactory::createOne([
+            'title' => 'The old title',
+            'createdBy' => $user,
+        ]);
+        // Change the title and save the ticket to create a new EntityEvent in
+        // database.
+        $ticket->setTitle('The new title');
+        $container = static::getContainer();
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $registry */
+        $registry = $container->get('doctrine');
+        $entityManager = $registry->getManager();
+        /** @var \App\Repository\TicketRepository $ticketRepository */
+        $ticketRepository = $entityManager->getRepository(Ticket::class);
+        $ticketRepository->save($ticket->object(), true);
+
+        $client->request('GET', "/tickets/{$ticket->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="event-item"]', 'The old title');
     }
 
     public function testGetShowFailsIfAccessIsForbidden(): void

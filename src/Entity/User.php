@@ -30,7 +30,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, MetaEntityInterface
+class User implements
+    UserInterface,
+    PasswordAuthenticatedUserInterface,
+    MetaEntityInterface,
+    ActivityRecordableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

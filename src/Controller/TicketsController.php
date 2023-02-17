@@ -12,7 +12,7 @@ use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\Service\TicketSearcher;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\TicketTimeline;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -66,7 +66,7 @@ class TicketsController extends BaseController
     public function show(
         Ticket $ticket,
         OrganizationRepository $organizationRepository,
-        Security $security,
+        TicketTimeline $ticketTimeline,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -82,15 +82,11 @@ class TicketsController extends BaseController
             unset($statuses['new']);
         }
 
-        if ($security->isGranted('orga:see:tickets:messages:confidential', $organization)) {
-            $messages = $ticket->getMessages();
-        } else {
-            $messages = $ticket->getMessagesWithoutConfidential();
-        }
+        $timeline = $ticketTimeline->build($ticket);
 
         return $this->render('tickets/show.html.twig', [
             'ticket' => $ticket,
-            'messages' => $messages,
+            'timeline' => $timeline,
             'organization' => $organization,
             'message' => '',
             'status' => 'pending',

@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: 'uid',
     message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
 )]
-class Ticket implements MetaEntityInterface
+class Ticket implements MetaEntityInterface, ActivityRecordableInterface
 {
     public const TYPES = ['request', 'incident'];
     public const DEFAULT_TYPE = 'request';

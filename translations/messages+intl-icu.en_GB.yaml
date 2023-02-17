@@ -76,6 +76,7 @@ settings.index.title: Settings
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee
+tickets.events.default: '<strong>{username}</strong> changed <strong>{field}</strong> from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.impact: Impact
 tickets.impact.high: High
 tickets.impact.low: Low
