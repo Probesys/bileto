@@ -76,7 +76,23 @@ settings.index.title: Gestion
 tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'
 tickets.assignee: 'Attribué à'
-tickets.events.default: '<strong>{username}</strong> a changé <strong>{field}</strong> de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.assignee.assigned: '<strong>{username}</strong> a attribué le ticket à <i>{newValue}</i>'
+tickets.events.assignee.changed: '<strong>{username}</strong> a changé l’attribution de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.assignee.unassigned: '<strong>{username}</strong> a supprimé l’attribution de <i>{oldValue}</i>'
+tickets.events.default.changed: '<strong>{username}</strong> a changé {field} de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.default.new: '<strong>{username}</strong> a changé {field} à <i>{newValue}</i>'
+tickets.events.default.removed: '<strong>{username}</strong> a supprimé {field} de <i>{oldValue}</i>'
+tickets.events.impact: '<strong>{username}</strong> a changé l’impact de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.priority: '<strong>{username}</strong> a changé la priorité de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.requester: '<strong>{username}</strong> a changé le demandeur de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.solution.changed: '<strong>{username}</strong> a changé la solution'
+tickets.events.solution.new: '<strong>{username}</strong> a ajouté une solution'
+tickets.events.solution.removed: '<strong>{username}</strong> a supprimé la solution'
+tickets.events.status: '<strong>{username}</strong> a changé le statut de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.title: '<strong>{username}</strong> a renommé le ticket de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.type.to_incident: '<strong>{username}</strong> a changé le ticket en incident'
+tickets.events.type.to_request: '<strong>{username}</strong> a changé le ticket en requête'
+tickets.events.urgency: '<strong>{username}</strong> a changé l’urgence de <i>{oldValue}</i> à <i>{newValue}</i>'
 tickets.impact: Impact
 tickets.impact.high: Haut
 tickets.impact.low: Bas

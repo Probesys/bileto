@@ -76,7 +76,23 @@ settings.index.title: Settings
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee
-tickets.events.default: '<strong>{username}</strong> changed <strong>{field}</strong> from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.assignee.assigned: '<strong>{username}</strong> assigned the ticket to <i>{newValue}</i>'
+tickets.events.assignee.changed: '<strong>{username}</strong> changed the assignee from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.assignee.unassigned: '<strong>{username}</strong> removed the assignee <i>{oldValue}</i>'
+tickets.events.default.changed: '<strong>{username}</strong> changed the {field} from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.default.new: '<strong>{username}</strong> changed the {field} to <i>{newValue}</i>'
+tickets.events.default.removed: '<strong>{username}</strong> removed the {field} from <i>{oldValue}</i>'
+tickets.events.impact: '<strong>{username}</strong> changed the impact from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.priority: '<strong>{username}</strong> changed the priority from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.requester: '<strong>{username}</strong> changed the requester from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.solution.changed: '<strong>{username}</strong> changed the solution'
+tickets.events.solution.new: '<strong>{username}</strong> added a solution'
+tickets.events.solution.removed: '<strong>{username}</strong> removed the solution'
+tickets.events.status: '<strong>{username}</strong> changed the status from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.title: '<strong>{username}</strong> renamed the ticket from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.type.to_incident: '<strong>{username}</strong> changed the ticket to incident'
+tickets.events.type.to_request: '<strong>{username}</strong> changed the ticket to request'
+tickets.events.urgency: '<strong>{username}</strong> changed the urgency from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.impact: Impact
 tickets.impact.high: High
 tickets.impact.low: Low

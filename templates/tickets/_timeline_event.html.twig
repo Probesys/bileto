@@ -4,15 +4,10 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% for field, changes in event.changes %}
+{% for field in event.changes | keys %}
     <div class="event" data-test="event-item">
         <div class="event__message">
-            {{ 'tickets.events.default' | trans({
-                username: event.createdBy.displayName | escape,
-                field: ('tickets.' ~ field) | trans,
-                oldValue: changes[0] | escape,
-                newValue: changes[1] | escape,
-            }) | raw }}
+            {{ event | formatTicketChanges(field) | raw }}
         </div>
 
         <time class="event__date" datetime="{{ event.createdAt | dateIso }}">
