@@ -11,7 +11,7 @@
     align-items: stretch;
 
     color: var(--color-grey11);
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 @media (min-width: 800px) {
