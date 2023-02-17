@@ -13,6 +13,7 @@ use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\Service\TicketSearcher;
 use App\Service\TicketTimeline;
+use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -88,6 +89,7 @@ class TicketsController extends BaseController
             'ticket' => $ticket,
             'timeline' => $timeline,
             'organization' => $organization,
+            'today' => Time::relative('today'),
             'message' => '',
             'status' => 'pending',
             'statuses' => $statuses,

@@ -11,7 +11,7 @@
         </div>
 
         <time class="event__date" datetime="{{ event.createdAt | dateIso }}">
-            {{ event.createdAt | dateTrans }}
+            {{ event.createdAt | dateTrans('HH:mm') }}
         </time>
     </div>
 {% endfor %}

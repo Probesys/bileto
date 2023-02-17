@@ -139,6 +139,8 @@ tickets.status.new: Nouveau
 tickets.status.pending: 'En attente'
 tickets.status.planned: Planifié
 tickets.status.resolved: Résolu
+tickets.timeline.diff_days: '{days} jours plus tard'
+tickets.timeline.today: (aujourd’hui)
 tickets.title: Titre
 tickets.title.edit.title: 'Renommer le ticket'
 tickets.type: Type

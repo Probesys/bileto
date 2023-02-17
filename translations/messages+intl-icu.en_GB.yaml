@@ -139,6 +139,8 @@ tickets.status.new: New
 tickets.status.pending: Pending
 tickets.status.planned: Planned
 tickets.status.resolved: Resolved
+tickets.timeline.diff_days: '{days} days later'
+tickets.timeline.today: (today)
 tickets.title: Title
 tickets.title.edit.title: 'Rename the ticket'
 tickets.type: Type
