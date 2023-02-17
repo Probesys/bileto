@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EntityEventRepository::class)]
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
+#[ORM\Index(columns: ['entity_type', 'entity_id'])]
 class EntityEvent implements MetaEntityInterface
 {
     #[ORM\Id]
