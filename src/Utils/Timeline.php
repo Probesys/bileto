@@ -63,4 +63,10 @@ class Timeline
 
         return $items;
     }
+
+    public function countItems(?string $type = null): int
+    {
+        $items = $this->getItems($type);
+        return count($items);
+    }
 }

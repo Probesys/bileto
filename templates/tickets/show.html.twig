@@ -33,6 +33,8 @@
                 <time datetime="{{ ticket.createdAt | dateIso }}">
                     {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
                 </time>
+
+                · {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
             </span>
         </div>
 
