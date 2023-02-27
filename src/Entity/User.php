@@ -96,6 +96,9 @@ class User implements
     #[ORM\OneToMany(mappedBy: 'holder', targetEntity: Authorization::class, orphanRemoval: true)]
     private Collection $authorizations;
 
+    #[ORM\Column]
+    private ?bool $hideEvents = false;
+
     public function __construct()
     {
         $this->authorizations = new ArrayCollection();
@@ -250,5 +253,17 @@ class User implements
     public function getAuthorizations(): Collection
     {
         return $this->authorizations;
+    }
+
+    public function areEventsHidden(): ?bool
+    {
+        return $this->hideEvents;
+    }
+
+    public function setHideEvents(bool $hideEvents): self
+    {
+        $this->hideEvents = $hideEvents;
+
+        return $this;
     }
 }

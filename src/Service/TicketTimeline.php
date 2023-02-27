@@ -40,14 +40,19 @@ class TicketTimeline
             $messages = $ticket->getMessagesWithoutConfidential()->toArray();
         }
 
-        $events = $this->entityEventRepository->findBy([
-            'entityType' => Ticket::class,
-            'entityId' => $ticket->getId(),
-            'type' => 'update',
-        ]);
-
         $timeline->addItems($messages);
-        $timeline->addItems($events);
+
+        /** @var \App\Entity\User $user */
+        $user = $this->security->getUser();
+        if (!$user->areEventsHidden()) {
+            $events = $this->entityEventRepository->findBy([
+                'entityType' => Ticket::class,
+                'entityId' => $ticket->getId(),
+                'type' => 'update',
+            ]);
+
+            $timeline->addItems($events);
+        }
 
         return $timeline;
     }

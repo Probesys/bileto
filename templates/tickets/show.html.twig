@@ -72,6 +72,28 @@
                             {{ include('tickets/_timeline_event.html.twig', { event: timelineItem }) }}
                         {% endif %}
                     {% endfor %}
+
+                    <form
+                        class="timeline__events-visibility"
+                        method="post"
+                        action="{{ path('update hide events') }}"
+                        data-turbo-preserve-scroll
+                    >
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update hide events') }}">
+                        <input type="hidden" name="from" value="{{ path('ticket', { uid: ticket.uid }) }}">
+
+                        {% if app.user.areEventsHidden %}
+                            <button name="hideEvents" value="false">
+                                {{ icon('eye') }}
+                                {{ 'tickets.show.show_history' | trans }}
+                            </button>
+                        {% else %}
+                            <button name="hideEvents" value="true">
+                                {{ icon('eye-slash') }}
+                                {{ 'tickets.show.hide_history' | trans }}
+                            </button>
+                        {% endif %}
+                    </form>
                 </div>
 
                 {% if is_granted('orga:create:tickets:messages', organization) %}

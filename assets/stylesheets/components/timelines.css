@@ -50,3 +50,17 @@
     font-style: italic;
     text-align: center;
 }
+
+.timeline__events-visibility {
+    position: relative;
+
+    margin-left: 5.25rem;
+
+    font-size: 0.8em;
+}
+
+@media (min-width: 800px) {
+    .timeline__events-visibility {
+        margin-left: 7.25rem;
+    }
+}

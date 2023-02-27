@@ -139,4 +139,25 @@ class PreferencesControllerTest extends WebTestCase
         $this->assertSame($initialColorScheme, $user->getColorScheme());
         $this->assertSame($initialLocale, $user->getLocale());
     }
+
+    public function testPostUpdateHideEventsSavesTheUserAndRedirects(): void
+    {
+        $client = static::createClient();
+        $initialHideEvents = false;
+        $newHideEvents = true;
+        $user = UserFactory::createOne([
+            'hideEvents' => $initialHideEvents,
+        ]);
+        $client->loginUser($user->object());
+
+        $client->request('POST', '/preferences/hide-events', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update hide events'),
+            'hideEvents' => $newHideEvents,
+            'from' => '/preferences',
+        ]);
+
+        $this->assertResponseRedirects('/preferences', 302);
+        $user->refresh();
+        $this->assertSame($newHideEvents, $user->areEventsHidden());
+    }
 }

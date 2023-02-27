@@ -120,6 +120,7 @@ tickets.show.actions.turn_into_request: 'Changer en demande'
 tickets.show.answer: Répondre
 tickets.show.assign_yourself: attribuez-vous
 tickets.show.closed: 'Ce ticket est clos.'
+tickets.show.hide_history: 'Masquer l’historique'
 tickets.show.impact: "Impact\_:"
 tickets.show.mark_as: 'Marquer comme…'
 tickets.show.mark_as.confidential: confidentiel
@@ -131,6 +132,7 @@ tickets.show.opened_incident: 'a ouvert cet <strong>incident</strong>'
 tickets.show.opened_on: 'le {date}'
 tickets.show.opened_request: 'a ouvert cette <strong>demande</strong>'
 tickets.show.resolved: 'Ce ticket est résolu.'
+tickets.show.show_history: 'Afficher l’historique'
 tickets.show.status_to: 'Statut vers'
 tickets.show.urgency: "Urgence\_:"
 tickets.status: Statut

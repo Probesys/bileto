@@ -120,6 +120,7 @@ tickets.show.actions.turn_into_request: 'Turn into a request'
 tickets.show.answer: Answer
 tickets.show.assign_yourself: 'assign yourself'
 tickets.show.closed: 'This ticket is closed.'
+tickets.show.hide_history: 'Hide history'
 tickets.show.impact: 'Impact:'
 tickets.show.mark_as: 'Mark as…'
 tickets.show.mark_as.confidential: confidential
@@ -131,6 +132,7 @@ tickets.show.opened_incident: 'opened this <strong>incident</strong>'
 tickets.show.opened_on: 'on {date}'
 tickets.show.opened_request: 'opened this <strong>request</strong>'
 tickets.show.resolved: 'This ticket is resolved.'
+tickets.show.show_history: 'Show history'
 tickets.show.status_to: 'Status to'
 tickets.show.urgency: 'Urgency:'
 tickets.status: Status

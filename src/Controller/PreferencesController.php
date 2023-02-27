@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Router;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PreferencesController extends BaseController
@@ -77,5 +78,38 @@ class PreferencesController extends BaseController
         $session->set('_locale', $user->getLocale());
 
         return $this->redirectToRoute('preferences');
+    }
+
+    #[Route('/preferences/hide-events', name: 'update hide events', methods: ['POST'])]
+    public function updateHideEvents(
+        Request $request,
+        UserRepository $userRepository,
+        ValidatorInterface $validator,
+        RequestStack $requestStack,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $hideEvents = $request->request->getBoolean('hideEvents', false);
+
+        /** @var string $from */
+        $from = $request->request->get('from', '/preferences');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isPathRedirectable($from)) {
+            throw $this->createNotFoundException('From parameter does not match any valid route.');
+        }
+
+        if (!$this->isCsrfTokenValid('update hide events', $csrfToken)) {
+            $this->addFlash('error', $this->csrfError());
+            return $this->redirect($from);
+        }
+
+        $user->setHideEvents($hideEvents);
+        $userRepository->save($user, true);
+
+        return $this->redirect($from);
     }
 }
