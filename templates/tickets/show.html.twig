@@ -40,7 +40,7 @@
             <div class="ticket__timeline row__item--extend flow-large">
                 <div class="flow-large timeline">
                     {% set timelineDate = null %}
-                    {% for timelineItem in timeline %}
+                    {% for timelineItem in timeline.sortedItems %}
                         {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.createdAt.format('Y-m-d') %}
                             {% set diff = timelineDate ? timelineDate.diff(timelineItem.createdAt).d : 0 %}
                             {% if diff >= 7 %}
