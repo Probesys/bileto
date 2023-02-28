@@ -16,7 +16,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 8rem;
+    left: 3rem;
 
     border-left: 0.3rem solid var(--color-grey6);
 }
@@ -54,13 +54,13 @@
 .timeline__events-visibility {
     position: relative;
 
-    margin-left: 5.25rem;
+    margin-left: 0.3rem;
 
     font-size: 0.8em;
 }
 
 @media (min-width: 800px) {
     .timeline__events-visibility {
-        margin-left: 7.25rem;
+        margin-left: 7.3rem;
     }
 }
