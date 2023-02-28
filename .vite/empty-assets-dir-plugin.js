@@ -17,18 +17,18 @@ export default function emptyAssetsDirPlugin () {
         },
 
         buildStart (options) {
-            fs.readdir(assetsFullDir, (err, filenames) => {
-                if (err) throw err;
+            fs.access(assetsFullDir, fs.constants.F_OK, (err) => {
+                if (err) return;
 
-                for (const filename of filenames) {
-                    if (filename === '.keep') {
-                        continue;
+                fs.readdir(assetsFullDir, (err, filenames) => {
+                    if (err) throw err;
+
+                    for (const filename of filenames) {
+                        fs.unlink(path.join(assetsFullDir, filename), (err) => {
+                            if (err) throw err;
+                        });
                     }
-
-                    fs.unlink(path.join(assetsFullDir, filename), (err) => {
-                        if (err) throw err;
-                    });
-                }
+                });
             });
         },
     };

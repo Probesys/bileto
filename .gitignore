@@ -4,7 +4,6 @@
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /public/dev_assets/*
-!/public/dev_assets/.keep
 /public/manifest.dev.json
 /var/
 /vendor/
