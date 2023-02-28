@@ -108,7 +108,7 @@
                 <div class="layout__header-container">
                     {% block layout_header %}
                         <a class="layout__header-home" href="{{ path('home') }}">
-                            <img src="{{ asset('icons/icon.svg') }}" alt="Bileto" />
+                            <img src="{{ asset('icons/icon.svg') }}" alt="{{ 'layout.home' | trans }}" />
                         </a>
 
                         {% if app.user %}
