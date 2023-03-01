@@ -90,7 +90,7 @@ tickets.events.solution.changed: '<strong>{username}</strong> changed the soluti
 tickets.events.solution.new: '<strong>{username}</strong> added a solution'
 tickets.events.solution.removed: '<strong>{username}</strong> removed the solution'
 tickets.events.status: '<strong>{username}</strong> changed the status from <i>{oldValue}</i> to <i>{newValue}</i>'
-tickets.events.title: '<strong>{username}</strong> renamed the ticket from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.title: '<strong>{username}</strong> renamed the ticket from “<i>{oldValue}</i>” to “<i>{newValue}</i>”'
 tickets.events.type.to_incident: '<strong>{username}</strong> changed the ticket to incident'
 tickets.events.type.to_request: '<strong>{username}</strong> changed the ticket to request'
 tickets.events.urgency: '<strong>{username}</strong> changed the urgency from <i>{oldValue}</i> to <i>{newValue}</i>'
