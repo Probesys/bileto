@@ -193,6 +193,9 @@ class TicketsControllerTest extends WebTestCase
             'assigneeId' => $assignee->getId(),
             'type' => 'incident',
             'status' => 'planned',
+            'urgency' => 'high',
+            'impact' => 'high',
+            'priority' => 'high',
             'message' => $messageContent,
         ]);
 
@@ -208,9 +211,9 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
         $this->assertSame('incident', $ticket->getType());
         $this->assertSame('planned', $ticket->getStatus());
-        $this->assertSame('medium', $ticket->getUrgency());
-        $this->assertSame('medium', $ticket->getImpact());
-        $this->assertSame('medium', $ticket->getPriority());
+        $this->assertSame('high', $ticket->getUrgency());
+        $this->assertSame('high', $ticket->getImpact());
+        $this->assertSame('high', $ticket->getPriority());
         $this->assertNull($ticket->getSolution());
         $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
         $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());

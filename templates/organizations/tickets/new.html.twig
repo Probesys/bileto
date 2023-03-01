@@ -19,7 +19,7 @@
             action="{{ path('create organization ticket', {'uid': organization.uid}) }}"
             method="post"
             class="wrapper wrapper--center flow"
-            data-controller="new-ticket"
+            data-controller="new-ticket form-priority"
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization ticket') }}">
 
@@ -224,6 +224,125 @@
                     {% endfor %}
                 </select>
             </div>
+
+            <details
+                class="flow-small"
+                {{ not (urgency == impact == priority == 'medium') ? 'open' }}
+            >
+                <summary>
+                    {{ icon('priority') }}
+                    {{ 'tickets.priority' | trans }}
+                </summary>
+
+                <div class="row">
+                    <div class="row__item--extend flow-small">
+                        <label for="urgency">
+                            {{ 'tickets.urgency' | trans }}
+                        </label>
+
+                        {% if errors.urgency is defined %}
+                            <p class="form__error" role="alert" id="urgency-error">
+                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                {{ errors.urgency }}
+                            </p>
+                        {% endif %}
+
+                        <select
+                            id="urgency"
+                            name="urgency"
+                            required
+                            {% if errors.urgency is defined %}
+                                autofocus
+                                aria-invalid="true"
+                                aria-errormessage="urgency-error"
+                            {% endif %}
+                            data-form-priority-target="urgency"
+                            data-action="form-priority#updatePriority"
+                        >
+                            <option value="low" {{ "low" == urgency ? 'selected' }}>
+                                {{ 'tickets.urgency.low' | trans }}
+                            </option>
+                            <option value="medium" {{ "medium" == urgency ? 'selected' }}>
+                                {{ 'tickets.urgency.medium' | trans }}
+                            </option>
+                            <option value="high" {{ "high" == urgency ? 'selected' }}>
+                                {{ 'tickets.urgency.high' | trans }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="row__item--extend flow-small">
+                        <label for="impact">
+                            {{ 'tickets.impact' | trans }}
+                        </label>
+
+                        {% if errors.impact is defined %}
+                            <p class="form__error" role="alert" id="impact-error">
+                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                {{ errors.impact }}
+                            </p>
+                        {% endif %}
+
+                        <select
+                            id="impact"
+                            name="impact"
+                            required
+                            {% if errors.impact is defined %}
+                                autofocus
+                                aria-invalid="true"
+                                aria-errormessage="impact-error"
+                            {% endif %}
+                            data-form-priority-target="impact"
+                            data-action="form-priority#updatePriority"
+                        >
+                            <option value="low" {{ "low" == impact ? 'selected' }}>
+                                {{ 'tickets.impact.low' | trans }}
+                            </option>
+                            <option value="medium" {{ "medium" == impact ? 'selected' }}>
+                                {{ 'tickets.impact.medium' | trans }}
+                            </option>
+                            <option value="high" {{ "high" == impact ? 'selected' }}>
+                                {{ 'tickets.impact.high' | trans }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flow-small">
+                    <label for="priority">
+                        {{ 'tickets.priority' | trans }}
+                    </label>
+
+                    {% if errors.priority is defined %}
+                        <p class="form__error" role="alert" id="priority-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.priority }}
+                        </p>
+                    {% endif %}
+
+                    <select
+                        id="priority"
+                        name="priority"
+                        required
+                        {% if errors.priority is defined %}
+                            autofocus
+                            aria-invalid="true"
+                            aria-errormessage="priority-error"
+                        {% endif %}
+                        data-form-priority-target="priority"
+                    >
+                        <option value="low" {{ "low" == priority ? 'selected' }}>
+                            {{ 'tickets.priority.low' | trans }}
+                        </option>
+                        <option value="medium" {{ "medium" == priority ? 'selected' }}>
+                            {{ 'tickets.priority.medium' | trans }}
+                        </option>
+                        <option value="high" {{ "high" == priority ? 'selected' }}>
+                            {{ 'tickets.priority.high' | trans }}
+                        </option>
+                    </select>
+                </div>
+            </details>
 
             <div class="form__actions">
                 <button id="form-create-ticket-submit" class="button--primary" type="submit">

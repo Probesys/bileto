@@ -84,6 +84,9 @@ class TicketsController extends BaseController
             'assigneeId' => '',
             'status' => 'new',
             'statuses' => Ticket::getStatusesWithLabels(),
+            'urgency' => Ticket::DEFAULT_WEIGHT,
+            'impact' => Ticket::DEFAULT_WEIGHT,
+            'priority' => Ticket::DEFAULT_WEIGHT,
             'users' => $users,
         ]);
     }
@@ -124,6 +127,15 @@ class TicketsController extends BaseController
         /** @var string $status */
         $status = $request->request->get('status', Ticket::DEFAULT_STATUS);
 
+        /** @var string $urgency */
+        $urgency = $request->request->get('urgency', Ticket::DEFAULT_WEIGHT);
+
+        /** @var string $impact */
+        $impact = $request->request->get('impact', Ticket::DEFAULT_WEIGHT);
+
+        /** @var string $priority */
+        $priority = $request->request->get('priority', Ticket::DEFAULT_WEIGHT);
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -139,6 +151,9 @@ class TicketsController extends BaseController
                 'assigneeId' => $assigneeId,
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
+                'urgency' => $urgency,
+                'impact' => $impact,
+                'priority' => $priority,
                 'users' => $users,
                 'error' => $this->csrfError(),
             ]);
@@ -155,6 +170,9 @@ class TicketsController extends BaseController
                 'assigneeId' => $assigneeId,
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
+                'urgency' => $urgency,
+                'impact' => $impact,
+                'priority' => $priority,
                 'users' => $users,
                 'errors' => [
                     'requester' => new TranslatableMessage('The requester must exist.', [], 'validators'),
@@ -174,6 +192,9 @@ class TicketsController extends BaseController
                     'assigneeId' => $assigneeId,
                     'status' => $status,
                     'statuses' => Ticket::getStatusesWithLabels(),
+                    'urgency' => $urgency,
+                    'impact' => $impact,
+                    'priority' => $priority,
                     'users' => $users,
                     'errors' => [
                         'assignee' => new TranslatableMessage('The assignee must exist.', [], 'validators'),
@@ -188,6 +209,9 @@ class TicketsController extends BaseController
         $ticket->setTitle($title);
         $ticket->setType($type);
         $ticket->setStatus($status);
+        $ticket->setUrgency($urgency);
+        $ticket->setImpact($impact);
+        $ticket->setPriority($priority);
         $ticket->setOrganization($organization);
 
         $ticket->setRequester($requester);
@@ -206,6 +230,9 @@ class TicketsController extends BaseController
                 'assigneeId' => $assigneeId,
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
+                'urgency' => $urgency,
+                'impact' => $impact,
+                'priority' => $priority,
                 'users' => $users,
                 'errors' => $this->formatErrors($errors),
             ]);
@@ -228,6 +255,9 @@ class TicketsController extends BaseController
                 'assigneeId' => $assigneeId,
                 'status' => $status,
                 'statuses' => Ticket::getStatusesWithLabels(),
+                'urgency' => $urgency,
+                'impact' => $impact,
+                'priority' => $priority,
                 'users' => $users,
                 'errors' => $this->formatErrors($errors),
             ]);
