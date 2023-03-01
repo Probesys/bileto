@@ -146,7 +146,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
 
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
 
@@ -179,7 +184,12 @@ class TicketsControllerTest extends WebTestCase
         ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -235,7 +245,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
 
@@ -260,6 +275,48 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame('My message', $message->getContent());
     }
 
+    public function testPostCreateCanCreateATicketWithMinimalPermissions(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
+        $crawler = $client->submitForm('form-create-ticket-submit', [
+            'title' => $title,
+            'message' => $messageContent,
+        ]);
+
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $this->assertSame($title, $ticket->getTitle());
+        $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
+        $this->assertSame('request', $ticket->getType());
+        $this->assertSame('new', $ticket->getStatus());
+        $this->assertSame('medium', $ticket->getUrgency());
+        $this->assertSame('medium', $ticket->getImpact());
+        $this->assertSame('medium', $ticket->getPriority());
+        $this->assertSame($user->getId(), $ticket->getRequester()->getId());
+        $this->assertNull($ticket->getAssignee());
+        $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
+        $message = MessageFactory::first();
+        $this->assertSame($messageContent, $message->getContent());
+        $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
+        $this->assertSame($ticket->getId(), $message->getTicket()->getId());
+        $this->assertFalse($message->isConfidential());
+        $this->assertSame('webapp', $message->getVia());
+    }
+
     public function testPostCreateFailsIfTitleIsEmpty(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
@@ -268,7 +325,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = '';
         $messageContent = 'My message';
 
@@ -296,7 +358,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = str_repeat('a', 256);
         $messageContent = 'My message';
 
@@ -324,7 +391,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = 'My ticket';
         $messageContent = '';
 
@@ -352,7 +424,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -380,7 +457,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -408,7 +490,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -437,7 +524,12 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
 

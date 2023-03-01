@@ -17,6 +17,7 @@ use App\Repository\UserRepository;
 use App\Service\ActorsLister;
 use App\Service\TicketSearcher;
 use App\Utils\Time;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -100,6 +101,7 @@ class TicketsController extends BaseController
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
         ActorsLister $actorsLister,
+        Security $security,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer
     ): Response {
@@ -115,26 +117,41 @@ class TicketsController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
-        /** @var string $type */
-        $type = $request->request->get('type', Ticket::DEFAULT_TYPE);
+        if ($security->isGranted('orga:update:tickets:type', $organization)) {
+            /** @var string $type */
+            $type = $request->request->get('type', Ticket::DEFAULT_TYPE);
+        } else {
+            $type = Ticket::DEFAULT_TYPE;
+        }
 
-        /** @var int $requesterId */
-        $requesterId = $request->request->getInt('requesterId', 0);
+        if ($security->isGranted('orga:update:tickets:actors', $organization)) {
+            /** @var int $requesterId */
+            $requesterId = $request->request->getInt('requesterId', 0);
 
-        /** @var int $assigneeId */
-        $assigneeId = $request->request->getInt('assigneeId', 0);
+            /** @var int $assigneeId */
+            $assigneeId = $request->request->getInt('assigneeId', 0);
+        } else {
+            $requesterId = $user->getId();
+            $assigneeId = 0;
+        }
 
         /** @var string $status */
         $status = $request->request->get('status', Ticket::DEFAULT_STATUS);
 
-        /** @var string $urgency */
-        $urgency = $request->request->get('urgency', Ticket::DEFAULT_WEIGHT);
+        if ($security->isGranted('orga:update:tickets:priority', $organization)) {
+            /** @var string $urgency */
+            $urgency = $request->request->get('urgency', Ticket::DEFAULT_WEIGHT);
 
-        /** @var string $impact */
-        $impact = $request->request->get('impact', Ticket::DEFAULT_WEIGHT);
+            /** @var string $impact */
+            $impact = $request->request->get('impact', Ticket::DEFAULT_WEIGHT);
 
-        /** @var string $priority */
-        $priority = $request->request->get('priority', Ticket::DEFAULT_WEIGHT);
+            /** @var string $priority */
+            $priority = $request->request->get('priority', Ticket::DEFAULT_WEIGHT);
+        } else {
+            $urgency = Ticket::DEFAULT_WEIGHT;
+            $impact = Ticket::DEFAULT_WEIGHT;
+            $priority = Ticket::DEFAULT_WEIGHT;
+        }
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
