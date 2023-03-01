@@ -15,7 +15,7 @@
         <div class="wrapper-large wrapper--center flow-larger">
             {% if tickets %}
                 <div class="flow">
-                    <div class="row row--center row--always">
+                    <div class="row row--center row--always flow">
                         <h2 class="row__item--extend">{{ 'home.your_tickets' | trans }}</h2>
 
                         <a class="text--small" href="{{ path('tickets', { assignee: app.user.uid }) }}">

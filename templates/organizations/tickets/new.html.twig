@@ -33,7 +33,7 @@
                         {{ 'tickets.type' | trans }}
                     </label>
 
-                    <div class="row row--always">
+                    <div class="row row--always flow">
                         <div>
                             <input
                                 type="radio"
@@ -129,7 +129,7 @@
             </div>
 
             {% if is_granted('orga:update:tickets:actors', organization) %}
-                <div class="row">
+                <div class="row flow">
                     <div class="row__item--extend flow-small">
                         <label for="requester">
                             {{ icon('user') }}
@@ -210,7 +210,7 @@
 
             {% if is_granted('orga:update:tickets:priority', organization) %}
                 <details
-                    class="flow-small"
+                    class="flow"
                     {{ not (urgency == impact == priority == 'medium') ? 'open' }}
                 >
                     <summary>
@@ -218,7 +218,7 @@
                         {{ 'tickets.priority' | trans }}
                     </summary>
 
-                    <div class="row">
+                    <div class="row flow">
                         <div class="row__item--extend flow-small">
                             <label for="urgency">
                                 {{ 'tickets.urgency' | trans }}

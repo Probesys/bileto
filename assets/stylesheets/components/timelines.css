@@ -5,7 +5,7 @@
 .timeline {
     position: relative;
 
-    padding-bottom: 3rem;
+    padding-bottom: 4rem;
 
     border-bottom: 0.3rem solid var(--color-grey6);
 }

@@ -57,7 +57,7 @@
             {% for label, messages in app.flashes(['success', 'error']) %}
                 {% for key, message in messages %}
                     <div
-                        class="notifications__item notifications__item--{{ label }} row row--center"
+                        class="notifications__item notifications__item--{{ label }} row row--center flow"
                         {% if label == "error" %}
                             role="alert"
                             aria-live="assertive"
@@ -173,7 +173,7 @@
                 </div>
             </nav>
 
-            <div class="row">
+            <div class="row flow">
                 {% block sidebar %}{% endblock %}
 
                 <div id="main-content" class="row__item--extend">

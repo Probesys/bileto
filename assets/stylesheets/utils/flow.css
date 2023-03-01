@@ -2,22 +2,50 @@
 /* Copyright 2022-2023 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
-.flow-smaller > * + * {
-    margin-top: 0.5rem;
+.flow-smaller > * {
+    --flow-size: 0.5rem;
 }
 
-.flow-small > * + * {
-    margin-top: 1rem;
+.flow-small > * {
+    --flow-size: 1rem;
 }
 
-.flow > * + * {
-    margin-top: 2rem;
+.flow > * {
+    --flow-size: 2rem;
 }
 
-.flow-large > * + * {
-    margin-top: 3rem;
+.flow-large > * {
+    --flow-size: 3rem;
 }
 
+.flow-larger > * {
+    --flow-size: 4rem;
+}
+
+.flow-smaller > * + *,
+.flow-small > * + *,
+.flow > * + *,
+.flow-large > * + *,
 .flow-larger > * + * {
-    margin-top: 4rem;
+    margin-top: var(--flow-size);
+}
+
+.flow-smaller.row--always > * + *,
+.flow-small.row--always > * + *,
+.flow.row--always > * + *,
+.flow-large.row--always > * + *,
+.flow-larger.row--always > * + * {
+    margin-top: 0;
+    margin-left: var(--flow-size);
+}
+
+@media (min-width: 800px) {
+    .flow-smaller.row > * + *,
+    .flow-small.row > * + *,
+    .flow.row > * + *,
+    .flow-large.row > * + *,
+    .flow-larger.row > * + * {
+        margin-top: 0;
+        margin-left: var(--flow-size);
+    }
 }

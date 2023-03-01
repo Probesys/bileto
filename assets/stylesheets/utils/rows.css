@@ -18,17 +18,6 @@
     align-items: center;
 }
 
-.row > * + * {
-    margin-left: 2rem;
-}
-
-@media (max-width: 799px) {
-    .row:not(.row--always) > * + * {
-        margin-top: 2rem;
-        margin-left: 0;
-    }
-}
-
 .row__item--extend {
     flex: 1;
 }

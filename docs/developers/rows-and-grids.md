@@ -40,6 +40,15 @@ If you need to center the items, use `.row--center`:
 </div>
 ```
 
+To add space between row items, just use one of the `.flow*` classes:
+
+```html
+<div class="row flow">
+    <div>Item 1</div>
+    <div>Item 2</div>
+</div>
+```
+
 You can tell a row item to take all the remaining space with `.row__item--extend`:
 
 ```html

@@ -38,9 +38,9 @@
             </span>
         </div>
 
-        <div class="wrapper-larger wrapper--center row">
-            <div class="ticket__timeline row__item--extend flow-large">
-                <div class="flow-large timeline">
+        <div class="wrapper-larger wrapper--center row flow-larger">
+            <div class="ticket__timeline row__item--extend flow-larger">
+                <div class="flow-larger timeline">
                     {% set timelineDate = null %}
                     {% for timelineItem in timeline.sortedItems %}
                         {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.createdAt.format('Y-m-d') %}
@@ -131,12 +131,12 @@
                             >{{ message }}</textarea>
                         </div>
 
-                        <div class="row">
+                        <div class="row flow">
                             <label>
                                 {{ 'tickets.show.mark_as' | trans }}
                             </label>
 
-                            <div class="row row--always">
+                            <div class="row row--always flow">
                                 {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
                                     <div>
                                         <input
@@ -183,10 +183,10 @@
                             </p>
                         {% endif %}
 
-                        <div class="row">
+                        <div class="row flow">
                             {% if not ticket.isFinished %}
                                 <div class="row__item--extend flow-small">
-                                    <div class="row row--center row--always">
+                                    <div class="row row--center row--always flow">
                                         <label for="status">
                                             {{ 'tickets.show.status_to' | trans }}
                                         </label>
@@ -293,7 +293,7 @@
                 {% endif %}
 
                 <div class="flow">
-                    <div class="row row--center row--always">
+                    <div class="row row--center row--always flow">
                         <span class="row__item--extend text--secondary">
                             {{ icon('user-group') }}
                             <strong>{{ 'tickets.actors' | trans }}</strong>
@@ -357,7 +357,7 @@
                 </div>
 
                 <div class="flow">
-                    <div class="row row--center row--always">
+                    <div class="row row--center row--always flow">
                         <span class="row__item--extend text--secondary">
                             {{ icon('priority') }}
                             <strong>{{ 'tickets.priority' | trans }}</strong>
