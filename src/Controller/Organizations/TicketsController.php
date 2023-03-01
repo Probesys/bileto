@@ -83,8 +83,7 @@ class TicketsController extends BaseController
             'type' => Ticket::DEFAULT_TYPE,
             'requesterId' => '',
             'assigneeId' => '',
-            'status' => 'new',
-            'statuses' => Ticket::getStatusesWithLabels(),
+            'isResolved' => false,
             'urgency' => Ticket::DEFAULT_WEIGHT,
             'impact' => Ticket::DEFAULT_WEIGHT,
             'priority' => Ticket::DEFAULT_WEIGHT,
@@ -135,9 +134,6 @@ class TicketsController extends BaseController
             $assigneeId = 0;
         }
 
-        /** @var string $status */
-        $status = $request->request->get('status', Ticket::DEFAULT_STATUS);
-
         if ($security->isGranted('orga:update:tickets:priority', $organization)) {
             /** @var string $urgency */
             $urgency = $request->request->get('urgency', Ticket::DEFAULT_WEIGHT);
@@ -153,6 +149,8 @@ class TicketsController extends BaseController
             $priority = Ticket::DEFAULT_WEIGHT;
         }
 
+        $isResolved = $request->request->getBoolean('isResolved', false);
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -166,8 +164,7 @@ class TicketsController extends BaseController
                 'type' => $type,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
-                'status' => $status,
-                'statuses' => Ticket::getStatusesWithLabels(),
+                'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
@@ -185,8 +182,7 @@ class TicketsController extends BaseController
                 'type' => $type,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
-                'status' => $status,
-                'statuses' => Ticket::getStatusesWithLabels(),
+                'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
@@ -207,8 +203,7 @@ class TicketsController extends BaseController
                     'type' => $type,
                     'requesterId' => $requesterId,
                     'assigneeId' => $assigneeId,
-                    'status' => $status,
-                    'statuses' => Ticket::getStatusesWithLabels(),
+                    'isResolved' => $isResolved,
                     'urgency' => $urgency,
                     'impact' => $impact,
                     'priority' => $priority,
@@ -220,6 +215,12 @@ class TicketsController extends BaseController
             }
         } else {
             $assignee = null;
+        }
+
+        if ($isResolved) {
+            $status = 'resolved';
+        } else {
+            $status = Ticket::DEFAULT_STATUS;
         }
 
         $ticket = new Ticket();
@@ -245,8 +246,7 @@ class TicketsController extends BaseController
                 'type' => $type,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
-                'status' => $status,
-                'statuses' => Ticket::getStatusesWithLabels(),
+                'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
@@ -270,8 +270,7 @@ class TicketsController extends BaseController
                 'type' => $type,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
-                'status' => $status,
-                'statuses' => Ticket::getStatusesWithLabels(),
+                'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,

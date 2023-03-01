@@ -115,6 +115,19 @@
                 >{{ message }}</textarea>
             </div>
 
+            <div>
+                <input
+                    type="checkbox"
+                    id="is-resolved"
+                    name="isResolved"
+                    {{ isResolved ? 'checked' }}
+                />
+
+                <label for="is-resolved">
+                    {{ 'tickets.new.mark_as_resolved' | trans }}
+                </label>
+            </div>
+
             {% if is_granted('orga:update:tickets:actors', organization) %}
                 <div class="row">
                     <div class="row__item--extend flow-small">
@@ -196,38 +209,6 @@
                     </div>
                 </div>
             {% endif %}
-
-            <div class="flow-small">
-                <label for="status">
-                    {{ icon('status') }}
-                    {{ 'tickets.status' | trans }}
-                </label>
-
-                {% if errors.status is defined %}
-                    <p class="form__error" role="alert" id="status-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.status }}
-                    </p>
-                {% endif %}
-
-                <select
-                    id="status"
-                    name="status"
-                    required
-                    {% if errors.status is defined %}
-                        autofocus
-                        aria-invalid="true"
-                        aria-errormessage="status-error"
-                    {% endif %}
-                    data-new-ticket-target="statusSelect"
-                >
-                    {% for value, label in statuses %}
-                        <option value="{{ value }}" {{ value == status ? 'selected' }}>
-                            {{ label | trans }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
 
             {% if is_granted('orga:update:tickets:priority', organization) %}
                 <details

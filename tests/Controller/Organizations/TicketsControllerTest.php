@@ -202,7 +202,6 @@ class TicketsControllerTest extends WebTestCase
             'requesterId' => $requester->getId(),
             'assigneeId' => $assignee->getId(),
             'type' => 'incident',
-            'status' => 'planned',
             'urgency' => 'high',
             'impact' => 'high',
             'priority' => 'high',
@@ -220,7 +219,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertEquals($now, $ticket->getCreatedAt());
         $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
         $this->assertSame('incident', $ticket->getType());
-        $this->assertSame('planned', $ticket->getStatus());
+        $this->assertSame('new', $ticket->getStatus());
         $this->assertSame('high', $ticket->getUrgency());
         $this->assertSame('high', $ticket->getImpact());
         $this->assertSame('high', $ticket->getPriority());
@@ -261,7 +260,6 @@ class TicketsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterId' => $user->getId(),
-            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -273,6 +271,39 @@ class TicketsControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $message = MessageFactory::first();
         $this->assertSame('My message', $message->getContent());
+    }
+
+    public function testPostCreateCanMarkATicketAsResolved(): void
+    {
+        $client = static::createClient();
+        list(
+            $user,
+            $requester
+        ) = UserFactory::createMany(2);
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterId' => $requester->getId(),
+            'message' => $messageContent,
+            'isResolved' => true,
+        ]);
+
+        $this->assertSame(1, TicketFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $this->assertSame('resolved', $ticket->getStatus());
     }
 
     public function testPostCreateCanCreateATicketWithMinimalPermissions(): void
@@ -340,7 +371,6 @@ class TicketsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterId' => $user->getId(),
-            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -373,7 +403,6 @@ class TicketsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterId' => $user->getId(),
-            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -406,7 +435,6 @@ class TicketsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterId' => $user->getId(),
-            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -414,39 +442,6 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#message-error', 'The message is required.');
-    }
-
-    public function testPostCreateFailsIfStatusIsInvalid(): void
-    {
-        $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
-            'orga:create:tickets',
-            'orga:update:tickets:type',
-            'orga:update:tickets:actors',
-            'orga:update:tickets:priority',
-        ], $organization->object());
-        $title = 'My ticket';
-        $messageContent = 'My message';
-
-        $this->assertSame(0, TicketFactory::count());
-
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
-            'title' => $title,
-            'requesterId' => $user->getId(),
-            'status' => 'not a status',
-            'message' => $messageContent,
-        ]);
-
-        Time::unfreeze();
-        $this->assertSame(0, TicketFactory::count());
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#status-error', 'The status "not a status" is not a valid status.');
     }
 
     public function testPostCreateFailsIfRequesterIsInvalid(): void
@@ -472,7 +467,6 @@ class TicketsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterId' => -1,
-            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -506,7 +500,6 @@ class TicketsControllerTest extends WebTestCase
             'title' => $title,
             'requesterId' => $user->getId(),
             'assigneeId' => -1,
-            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -539,7 +532,6 @@ class TicketsControllerTest extends WebTestCase
             '_csrf_token' => 'not the token',
             'title' => $title,
             'requesterId' => $user->getId(),
-            'status' => 'planned',
             'message' => $messageContent,
         ]);
 
@@ -565,7 +557,6 @@ class TicketsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterId' => $user->getId(),
-            'status' => 'planned',
             'message' => $messageContent,
         ]);
     }
