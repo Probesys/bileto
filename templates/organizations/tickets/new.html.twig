@@ -19,7 +19,7 @@
             action="{{ path('create organization ticket', {'uid': organization.uid}) }}"
             method="post"
             class="wrapper wrapper--center flow"
-            data-controller="new-ticket form-priority"
+            data-controller="form-priority"
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization ticket') }}">
 
@@ -189,8 +189,6 @@
                                 aria-invalid="true"
                                 aria-errormessage="assignee-error"
                             {% endif %}
-                            data-action="new-ticket#updateStatus"
-                            data-new-ticket-target="assigneeSelect"
                         >
                             <option value="">
                                 {{ 'tickets.unassigned' | trans }}
