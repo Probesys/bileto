@@ -79,6 +79,7 @@ class TicketsController extends BaseController
             'organization' => $organization,
             'title' => '',
             'message' => '',
+            'type' => Ticket::DEFAULT_TYPE,
             'requesterId' => '',
             'assigneeId' => '',
             'status' => 'new',
@@ -111,6 +112,9 @@ class TicketsController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
+        /** @var string $type */
+        $type = $request->request->get('type', Ticket::DEFAULT_TYPE);
+
         /** @var int $requesterId */
         $requesterId = $request->request->getInt('requesterId', 0);
 
@@ -118,7 +122,7 @@ class TicketsController extends BaseController
         $assigneeId = $request->request->getInt('assigneeId', 0);
 
         /** @var string $status */
-        $status = $request->request->get('status', 'new');
+        $status = $request->request->get('status', Ticket::DEFAULT_STATUS);
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
@@ -130,6 +134,7 @@ class TicketsController extends BaseController
                 'organization' => $organization,
                 'title' => $title,
                 'message' => $messageContent,
+                'type' => $type,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
                 'status' => $status,
@@ -145,6 +150,7 @@ class TicketsController extends BaseController
                 'organization' => $organization,
                 'title' => $title,
                 'message' => $messageContent,
+                'type' => $type,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
                 'status' => $status,
@@ -163,6 +169,7 @@ class TicketsController extends BaseController
                     'organization' => $organization,
                     'title' => $title,
                     'message' => $messageContent,
+                    'type' => $type,
                     'requesterId' => $requesterId,
                     'assigneeId' => $assigneeId,
                     'status' => $status,
@@ -179,6 +186,7 @@ class TicketsController extends BaseController
 
         $ticket = new Ticket();
         $ticket->setTitle($title);
+        $ticket->setType($type);
         $ticket->setStatus($status);
         $ticket->setOrganization($organization);
 
@@ -193,6 +201,7 @@ class TicketsController extends BaseController
                 'organization' => $organization,
                 'title' => $title,
                 'message' => $messageContent,
+                'type' => $type,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
                 'status' => $status,
@@ -214,6 +223,7 @@ class TicketsController extends BaseController
                 'organization' => $organization,
                 'title' => $title,
                 'message' => $messageContent,
+                'type' => $type,
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
                 'status' => $status,

@@ -27,6 +27,42 @@
                 {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
             {% endif %}
 
+            <div>
+                <label class="sr-only">
+                    {{ 'tickets.type' | trans }}
+                </label>
+
+                <div class="row row--always">
+                    <div>
+                        <input
+                            type="radio"
+                            id="type-request"
+                            name="type"
+                            value="request"
+                            {{ type == 'request' ? 'checked' }}
+                        />
+
+                        <label for="type-request">
+                            {{ 'tickets.request' | trans }}
+                        </label>
+                    </div>
+
+                    <div>
+                        <input
+                            type="radio"
+                            id="type-incident"
+                            name="type"
+                            value="incident"
+                            {{ type == 'incident' ? 'checked' }}
+                        />
+
+                        <label for="type-incident">
+                            {{ 'tickets.incident' | trans }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <div class="flow-small">
                 <label for="title">
                     {{ 'tickets.title' | trans }}
