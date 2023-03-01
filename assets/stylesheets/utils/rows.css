@@ -30,7 +30,7 @@
 }
 
 .row__item--extend {
-    flex-grow: 1;
+    flex: 1;
 }
 
 .row__item--noshrink {

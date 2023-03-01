@@ -28,7 +28,7 @@
     padding-right: 2rem;
     padding-left: 2rem;
 
-    flex-grow: 1;
+    flex: 1;
 }
 
 .event__date {
