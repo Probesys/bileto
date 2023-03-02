@@ -18,6 +18,10 @@
     align-items: center;
 }
 
+.row--baseline {
+    align-items: baseline;
+}
+
 .row--middle {
     justify-content: center;
 }

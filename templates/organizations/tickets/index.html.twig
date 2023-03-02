@@ -78,96 +78,11 @@
                         </a>
                     {% endif %}
 
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="col--size4">
-                                        {{ 'tickets.opened_on' | trans }}
-                                    </th>
-
-                                    <th>
-                                        {{ 'tickets.title' | trans }}
-                                    </th>
-
-                                    <th class="col--size2">
-                                        {{ 'tickets.type' | trans }}
-                                    </th>
-
-                                    <th class="col--size5">
-                                        {{ icon('user') }}
-                                        {{ 'tickets.requester' | trans }}
-                                    </th>
-
-                                    <th class="col--size5">
-                                        {{ icon('headset') }}
-                                        {{ 'tickets.assignee' | trans }}
-                                    </th>
-
-                                    <th class="col--size3 text--center">
-                                        {{ icon('status') }}
-                                        {{ 'tickets.status' | trans }}
-                                    </th>
-
-                                    <th class="col--size3 text--center">
-                                        {{ icon('priority') }}
-                                        {{ 'tickets.priority' | trans }}
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {% for ticket in tickets %}
-                                    <tr data-test="ticket-item">
-                                        <td>
-                                            <time datetime="{{ ticket.createdAt | dateIso }}" class="text--small">
-                                                {{ ticket.createdAt | dateTrans }}
-                                            </time>
-                                        </td>
-
-                                        <td class="td--anchor">
-                                            <a href="{{ path('ticket', {'uid': ticket.uid}) }}">
-                                                <span class="ticket__title">{{ ticket.title }}</span>
-                                                <span class="ticket__id">#{{ ticket.id }}</span>
-                                            </a>
-                                        </td>
-
-                                        <td>
-                                            {% if ticket.type == 'incident' %}
-                                                {{ 'tickets.incident' | trans }}
-                                            {% else %}
-                                                {{ 'tickets.request' | trans }}
-                                            {% endif %}
-                                        </td>
-
-                                        <td>
-                                            {{ ticket.requester.displayName }}
-                                        </td>
-
-                                        <td>
-                                            {% if ticket.assignee %}
-                                                {{ ticket.assignee.displayName }}
-                                            {% else %}
-                                                {{ 'tickets.unassigned' | trans }}
-                                            {% endif %}
-                                        </td>
-
-                                        <td class="text--center">
-                                            <span class="badge badge--{{ ticket.statusBadgeColor }}">
-                                                {{ ticket.statusLabel | trans }}
-                                            </span>
-                                        </td>
-
-                                        <td class="text--center">
-                                            <span class="badge badge--{{ ticket.priorityBadgeColor }}">
-                                                {{ ticket.priorityLabel | trans }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                    {{ include(
+                        'tickets/_list.html.twig',
+                        { tickets: tickets, displayOrganization: false },
+                        with_context = false
+                    ) }}
                 {% else %}
                     <div class="text--center flow-large">
                         <p class="placeholder">

@@ -22,6 +22,7 @@
 @import "./components/images.css";
 @import "./components/layout.css";
 @import "./components/lists.css";
+@import "./components/list-tickets.css";
 @import "./components/messages.css";
 @import "./components/modal.css";
 @import "./components/notifications.css";
@@ -29,7 +30,6 @@
 @import "./components/popups.css";
 @import "./components/sidebar.css";
 @import "./components/spinners.css";
-@import "./components/tables.css";
 @import "./components/timelines.css";
 @import "./pages/login-new.css";
 @import "./pages/organizations-index.css";

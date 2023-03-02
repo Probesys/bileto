@@ -1,0 +1,49 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2023 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.list-tickets {
+    padding-left: 0;
+
+    border: 0.25rem solid var(--color-grey6);
+    border-radius: 0.5rem;
+
+    list-style: none;
+}
+
+.list-tickets__item {
+    padding: 1rem 2rem;
+}
+
+.list-tickets__item + .list-tickets__item {
+    border-top: 0.25rem solid var(--color-grey6);
+}
+
+.list-tickets__anchor {
+    display: inline-block;
+
+    text-decoration: none;
+}
+
+.list-tickets__title {
+    display: inline;
+
+    font-size: 1em;
+}
+
+.list-tickets__id {
+    margin-left: 0.5rem;
+
+    color: var(--color-grey11);
+}
+
+.list-tickets__organization {
+    color: var(--color-grey12);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.list-tickets__requester,
+.list-tickets__assignee {
+    white-space: nowrap;
+}

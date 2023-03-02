@@ -1,0 +1,98 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% if displayOrganization is not defined %}
+    {% set displayOrganization = true %}
+{% endif %}
+
+<ul class="list-tickets">
+    {% for ticket in tickets %}
+        <li class="list-tickets__item flow-smaller" data-test="ticket-item">
+            <div class="row flow-smaller">
+                <div class="row__item--extend">
+                    <a class="list-tickets__anchor text--small" href="{{ path('ticket', {'uid': ticket.uid}) }}">
+                        <h2 class="list-tickets__title">{{ ticket.title }}</h2>
+                        <span class="list-tickets__id">#{{ ticket.id }}</span>
+                    </a>
+                </div>
+
+                <div>
+                    <span class="badge badge--smaller badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">
+                        {{ icon('status') }}
+
+                        <span class="sr-only">
+                            {{ 'tickets.status' | trans }}
+                        </span>
+
+                        {{ ticket.statusLabel | trans }}
+                    </span>
+
+                    <span class="badge badge--smaller badge--{{ ticket.priorityBadgeColor }}" title="{{ 'tickets.priority' | trans }}">
+                        {{ icon('priority') }}
+
+                        <span class="sr-only">
+                            {{ 'tickets.priority' | trans }}
+                        </span>
+
+                        {{ ticket.priorityLabel | trans }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="row row--baseline flow-smaller text--smaller">
+                <div class="row__item--extend">
+                    {% if ticket.type == 'request' %}
+                        {{ 'tickets.list.request_opened_on' | trans({
+                            'date': ticket.createdAt | dateFull,
+                            'dateIso': ticket.createdAt | dateIso,
+                        }) | raw }}
+                    {% else %}
+                        {{ 'tickets.list.incident_opened_on' | trans({
+                            'date': ticket.createdAt | dateFull,
+                            'dateIso': ticket.createdAt | dateIso,
+                        }) | raw }}
+                    {% endif %}
+
+                    {% if displayOrganization %}
+                        ⋅
+
+                        <a class="list-tickets__organization" href="{{ path('organization', { uid: ticket.organization.uid }) }}">
+                            {{ ticket.organization.name }}
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="row row--always flow-small">
+                    <span class="list-tickets__requester" title="{{ 'tickets.requester' | trans }}">
+                        {{ icon('user') }}
+
+                        <span class="sr-only">
+                            {{ 'tickets.requester' | trans }}
+                        </span>
+
+                        {{ ticket.requester.displayName }}
+                    </span>
+
+                    <span class="list-tickets__assignee" title="{{ 'tickets.assignee' | trans }}">
+                        {{ icon('headset') }}
+
+                        {% if ticket.assignee %}
+                            <span class="sr-only">
+                                {{ 'tickets.assignee' | trans }}
+                            </span>
+
+                            {{ ticket.assignee.displayName }}
+                        {% else %}
+                            <strong>
+                                {{ 'tickets.unassigned' | trans }}
+                            </strong>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>

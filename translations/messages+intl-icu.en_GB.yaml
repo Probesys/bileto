@@ -104,10 +104,11 @@ tickets.index.no_tickets: 'No tickets'
 tickets.index.title.all: 'All tickets'
 tickets.index.title.my: 'My tickets'
 tickets.index.title.to_assign: 'Tickets to assign'
+tickets.list.incident_opened_on: 'Incident opened on <time datetime="{dateIso}">{date}</time>'
+tickets.list.request_opened_on: 'Request opened on <time datetime="{dateIso}">{date}</time>'
 tickets.new.mark_as_resolved: 'Ticket already resolved'
 tickets.new.title: 'New ticket'
 tickets.new.submit: 'Create the ticket'
-tickets.opened_on: 'Opened on'
 tickets.priority: Priority
 tickets.priority.edit.title: 'Edit the priority'
 tickets.priority.high: High

@@ -40,6 +40,19 @@ If you need to center the items, use `.row--center`:
 </div>
 ```
 
+Or if you need to align on their baseline, use `.row--baseline`:
+
+```html
+<div class="row row--baseline">
+    <div>
+        A<br>
+        Higher<br>
+        Item
+    </div>
+    <div>Item 2</div>
+</div>
+```
+
 You can center all the items in their container with `.row--middle`:
 
 ```html
