@@ -1,14 +1,37 @@
-# Bileto
+<h1 align="center">Bileto</h1>
 
-Welcome on the Bileto repository. Bileto is our future software of service desk and IT asset management.
+<p align="center">
+    <strong>The ergonomic ticketing tool for managing your Help Desk.</strong>
+</p>
 
-It is written with [Symfony](https://symfony.com/) 6.1 and works with [PHP](https://www.php.net/) 8.1.
+---
 
+Bileto is a ticketing tool.
+It is designed to help you to manage your support as efficiently as possible.
+It allows you:
+
+- to manage your tickets (create, answer, manage their lifecycle) in a modern way (clear timeline, efficient lists);
+- to isolate your users and tickets in organizations;
+- to finely manage roles and permissions;
+- and a lot more to come!
+
+**Please note that Bileto is in active development phase.**
+Things may break between releases and it is not advised to use Bileto in production yet.
+
+**Website: [bileto.fr](https://bileto.fr)** (in French)
+
+![Screenshot of the home page of Bileto showing 3 opened tickets and 2 organizations](public/screenshot.png)
+
+It is written with [Symfony](https://symfony.com/) 6.2 and works with [PHP](https://www.php.net/) 8.1.
 The supported databases are PostgreSQL 14 and MariaDB 10.6.
+
+It is developed by [Probesys](https://probesys.com) as a community project.
 
 Bileto is licensed under [GNU Affero General Public License v3.0 or later](LICENSE.txt).
 
-![Bileto logo](public/logo.svg)
+<center>
+    <img alt="Bileto logo" src="public/logo.svg" />
+</center>
 
 ## Contributing
 
