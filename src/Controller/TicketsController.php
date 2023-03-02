@@ -46,20 +46,20 @@ class TicketsController extends BaseController
 
         if ($assigneeUid === 'none') {
             $ticketSearcher->setCriteria('assignee', null);
-            $currentPage = 'to assign';
+            $currentView = 'to assign';
         } elseif ($assigneeUid !== '') {
             $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
             $ticketSearcher->setCriteria('assignee', $assignee);
-            $currentPage = 'owned';
+            $currentView = 'owned';
         } else {
-            $currentPage = 'all';
+            $currentView = 'all';
         }
 
         return $this->render('tickets/index.html.twig', [
             'tickets' => $ticketSearcher->getTickets(),
             'countToAssign' => $ticketSearcher->countToAssign(),
             'countOwned' => $ticketSearcher->countAssignedTo($user),
-            'currentPage' => $currentPage,
+            'currentView' => $currentView,
         ]);
     }
 

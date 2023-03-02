@@ -6,11 +6,13 @@
 
 {% extends 'base.html.twig' %}
 
-{% if currentPage == 'all' %}
+{% set currentPage = 'tickets' %}
+
+{% if currentView == 'all' %}
     {% set title = 'tickets.index.title.all' | trans %}
-{% elseif currentPage == 'to assign' %}
+{% elseif currentView == 'to assign' %}
     {% set title = 'tickets.index.title.to_assign' | trans %}
-{% elseif currentPage == 'owned' %}
+{% elseif currentView == 'owned' %}
     {% set title = 'tickets.index.title.my' | trans %}
 {% endif %}
 
@@ -19,7 +21,7 @@
 {% block sidebar %}
     {% if is_granted('orga:see:tickets:all', 'any') %}
         {{ include('tickets/_sidebar.html.twig', {
-            current: currentPage,
+            current: currentView,
             countOwned: countOwned,
             countToAssign: countToAssign,
         }, with_context = false) }}
