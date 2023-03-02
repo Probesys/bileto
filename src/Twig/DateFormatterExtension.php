@@ -7,6 +7,7 @@
 namespace App\Twig;
 
 use App\Service\DateTranslator;
+use App\Utils\Time;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -24,6 +25,8 @@ class DateFormatterExtension extends AbstractExtension
         return [
             new TwigFilter('dateTrans', [$this, 'dateTrans']),
             new TwigFilter('dateIso', [$this, 'dateIso']),
+            new TwigFilter('dateFull', [$this, 'dateFull']),
+            new TwigFilter('dateShort', [$this, 'dateShort']),
         ];
     }
 
@@ -35,5 +38,49 @@ class DateFormatterExtension extends AbstractExtension
     public function dateIso(\DateTimeInterface $date): string
     {
         return $date->format(\DateTimeInterface::ATOM);
+    }
+
+    public function dateFull(\DateTimeInterface $date, bool $fullMonth = false, bool $cleverYear = true): string
+    {
+        $today = Time::relative('today');
+        $currentYear = $today->format('Y');
+        $dateYear = $date->format('Y');
+
+        $format = 'dd';
+
+        if ($fullMonth) {
+            $format .= ' MMMM';
+        } else {
+            $format .= ' MMM';
+        }
+
+        if (!$cleverYear || $currentYear !== $dateYear) {
+            $format .= ' Y';
+        }
+
+        $format .= ', HH:mm';
+
+        return $this->dateTrans($date, $format);
+    }
+
+    public function dateShort(\DateTimeInterface $date, bool $fullMonth = false, bool $cleverYear = true): string
+    {
+        $today = Time::relative('today');
+        $currentYear = $today->format('Y');
+        $dateYear = $date->format('Y');
+
+        $format = 'dd';
+
+        if ($fullMonth) {
+            $format .= ' MMMM';
+        } else {
+            $format .= ' MMM';
+        }
+
+        if (!$cleverYear || $currentYear !== $dateYear) {
+            $format .= ' Y';
+        }
+
+        return $this->dateTrans($date, $format);
     }
 }

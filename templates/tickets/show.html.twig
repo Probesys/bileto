@@ -57,7 +57,7 @@
 
                             <h2 class="timeline__date">
                                 <time datetime="{{ timelineDate | date('Y-m-d') }}">
-                                    {{ timelineDate | dateTrans('dd MMMM Y') }}
+                                    {{ timelineDate | dateShort(true) }}
                                 </time>
 
                                 {% if today.format('Y-m-d') == timelineItem.createdAt.format('Y-m-d') %}
