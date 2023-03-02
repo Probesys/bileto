@@ -18,7 +18,7 @@
             </h1>
         </div>
 
-        <div class="wrapper-large wrapper--center text--center">
+        <div class="wrapper-large wrapper--center row row--center row--middle flow text--center">
             <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
             <span class="text--small">
@@ -378,7 +378,7 @@
                         {% endif %}
                     </div>
 
-                    <div class="ticket__priority badge badge--bold badge--{{ ticket.priorityBadgeColor }}">
+                    <div class="ticket__priority badge badge--block badge--bold badge--{{ ticket.priorityBadgeColor }}">
                         {{ ticket.priorityLabel | trans }}
                     </div>
 

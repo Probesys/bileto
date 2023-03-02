@@ -3,6 +3,7 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 .badge {
+    display: inline-block;
     padding: 0.75rem 1.5rem;
 
     text-align: center;
@@ -11,8 +12,24 @@
     border-radius: 2.5rem;
 }
 
+.badge--block {
+    display: block;
+}
+
 .badge--bold {
     font-weight: bold;
+}
+
+.badge--smaller {
+    padding: 0.25rem 0.5rem;
+
+    font-size: 0.8em;
+}
+
+.badge--small {
+    padding: 0.25rem 0.75rem;
+
+    font-size: 0.9em;
 }
 
 .badge--blue {

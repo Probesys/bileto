@@ -129,7 +129,7 @@ tickets.show.mark_as.confidential: confidentiel
 tickets.show.mark_as.solution: solution
 tickets.show.message.confidential: 'Ce message est confidentiel'
 tickets.show.message.resolved: 'Ce message a résolu le ticket'
-tickets.show.number_messages: '{count, plural, =0 {Aucun message} one {1 message} other {# messages}}'
+tickets.show.number_messages: "{count, plural, =0 {Aucun\_message} one {1\_message} other {#\_messages}}"
 tickets.show.opened_incident: 'a ouvert cet <strong>incident</strong>'
 tickets.show.opened_on: 'le {date}'
 tickets.show.opened_request: 'a ouvert cette <strong>demande</strong>'

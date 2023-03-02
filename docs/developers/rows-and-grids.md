@@ -40,6 +40,15 @@ If you need to center the items, use `.row--center`:
 </div>
 ```
 
+You can center all the items in their container with `.row--middle`:
+
+```html
+<div class="row row--middle">
+    <div>Item 1</div>
+    <div>Item 2</div>
+</div>
+```
+
 To add space between row items, just use one of the `.flow*` classes:
 
 ```html

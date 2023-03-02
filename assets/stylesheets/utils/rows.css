@@ -18,6 +18,10 @@
     align-items: center;
 }
 
+.row--middle {
+    justify-content: center;
+}
+
 .row__item--extend {
     flex: 1;
 }
