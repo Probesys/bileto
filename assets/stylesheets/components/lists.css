@@ -10,10 +10,11 @@
 
 .list--border {
     border: 0.25rem solid var(--color-grey6);
+    border-radius: 0.5rem;
 }
 
 .list--border > li {
-    padding: 1rem;
+    padding: 1rem 1.75rem;
 }
 
 .list--border > li + li {
