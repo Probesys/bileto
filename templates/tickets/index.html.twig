@@ -36,6 +36,10 @@
 
         <div class="flow row__item--extend">
             {% if tickets %}
+                <p class="text--secondary">
+                    {{ 'tickets.index.number' | trans({ count: tickets|length }) }}
+                </p>
+
                 {{ include(
                     'tickets/_list.html.twig',
                     { tickets: tickets },

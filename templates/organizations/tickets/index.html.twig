@@ -37,12 +37,18 @@
 
         <div class="flow row__item--extend">
             {% if tickets %}
-                {% if is_granted('orga:create:tickets', organization) %}
-                    <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
-                        {{ icon('plus') }}
-                        {{ 'tickets.index.new_ticket' | trans }}
-                    </a>
-                {% endif %}
+                <div class="row row--center row--always flow">
+                    {% if is_granted('orga:create:tickets', organization) %}
+                        <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                            {{ icon('plus') }}
+                            {{ 'tickets.index.new_ticket' | trans }}
+                        </a>
+                    {% endif %}
+
+                    <p class="text--secondary">
+                        {{ 'tickets.index.number' | trans({ count: tickets|length }) }}
+                    </p>
+                </div>
 
                 {{ include(
                     'tickets/_list.html.twig',
