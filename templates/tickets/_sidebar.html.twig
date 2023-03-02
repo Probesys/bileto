@@ -1,0 +1,59 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<nav class="layout__sidebar flow-smaller" aria-labelledby="sidebar-tickets-title">
+    <div id="sidebar-tickets-title" class="sidebar__title">
+        {{ 'tickets.sidebar.title' | trans }}
+    </div>
+
+    <ul class="sidebar flow-smaller">
+        <li class="sidebar__item">
+            <a
+                class="sidebar__anchor"
+                href="?"
+                {{ current == 'all' ? 'aria-current="page"' }}
+            >
+                {{ 'tickets.index.title.all' | trans }}
+            </a>
+        </li>
+
+        <li class="sidebar__item">
+            <a
+                class="sidebar__anchor row row--always row--center flow-small"
+                href="?assignee=none"
+                {{ current == 'to assign' ? 'aria-current="page"' }}
+            >
+                <span class="row__item--extend">
+                    {{ 'tickets.index.title.to_assign' | trans }}
+                </span>
+
+                {% if countToAssign > 0 %}
+                    <span class="badge badge--smaller badge--grey">
+                        {{ countToAssign }}
+                    </span>
+                {% endif %}
+            </a>
+        </li>
+
+        <li class="sidebar__item">
+            <a
+                class="sidebar__anchor row row--always row--center flow-small"
+                href="?assignee={{ app.user.uid }}"
+                {{ current == 'owned' ? 'aria-current="page"' }}
+            >
+                <span class="row__item--extend">
+                    {{ 'tickets.index.title.my' | trans }}
+                </span>
+
+                {% if countOwned > 0 %}
+                    <span class="badge badge--smaller badge--grey">
+                        {{ countOwned }}
+                    </span>
+                {% endif %}
+            </a>
+        </li>
+    </ul>
+</nav>

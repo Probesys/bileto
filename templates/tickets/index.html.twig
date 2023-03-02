@@ -16,74 +16,37 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block sidebar %}
+    {% if is_granted('orga:see:tickets:all', 'any') %}
+        {{ include('tickets/_sidebar.html.twig', {
+            current: currentPage,
+            countOwned: countOwned,
+            countToAssign: countToAssign,
+        }, with_context = false) }}
+    {% endif %}
+{% endblock %}
+
 {% block body %}
-    <main class="layout__body tickets-index flow">
-        <div class="layout__breadcrumb wrapper-large wrapper--center">
+    <main class="layout__body flow">
+        <div class="layout__breadcrumb">
             <h1>{{ title }}</h1>
         </div>
 
-        <div class="row flow">
-            {% if is_granted('orga:see:tickets:all', 'any') %}
-                <nav class="tickets__nav row__item--noshrink card flow">
-                    <ul>
-                        <li>
-                            <a
-                                href="{{ path('tickets') }}"
-                                {{ currentPage == 'all' ? 'aria-current="page"' }}
-                            >
-                                {{ 'tickets.index.title.all' | trans }}
-                            </a>
-                        </li>
-
-                        <li>
-                            <a
-                                href="{{ path('tickets', { assignee: 'none' }) }}"
-                                {{ currentPage == 'to assign' ? 'aria-current="page"' }}
-                            >
-                                {{ 'tickets.index.title.to_assign' | trans }}
-
-                                {% if countToAssign > 0 %}
-                                    <span class="tickets__list-count">
-                                        {{ countToAssign }}
-                                    </span>
-                                {% endif %}
-                            </a>
-                        </li>
-
-                        <li>
-                            <a
-                                href="{{ path('tickets', { assignee: app.user.uid }) }}"
-                                {{ currentPage == 'owned' ? 'aria-current="page"' }}
-                            >
-                                {{ 'tickets.index.title.my' | trans }}
-
-                                {% if countOwned > 0 %}
-                                    <span class="tickets__list-count">
-                                        {{ countOwned }}
-                                    </span>
-                                {% endif %}
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+        <div class="flow row__item--extend">
+            {% if tickets %}
+                {{ include(
+                    'tickets/_list.html.twig',
+                    { tickets: tickets },
+                    with_context = false
+                ) }}
+            {% else %}
+                <div class="text--center flow-large">
+                    <p class="placeholder">
+                        {{ icon('ticket') }}
+                        {{ 'tickets.index.no_tickets' | trans }}
+                    </p>
+                </div>
             {% endif %}
-
-            <div class="flow row__item--extend">
-                {% if tickets %}
-                    {{ include(
-                        'tickets/_list.html.twig',
-                        { tickets: tickets },
-                        with_context = false
-                    ) }}
-                {% else %}
-                    <div class="text--center flow-large">
-                        <p class="placeholder">
-                            {{ icon('ticket') }}
-                            {{ 'tickets.index.no_tickets' | trans }}
-                        </p>
-                    </div>
-                {% endif %}
-            </div>
         </div>
     </main>
 {% endblock %}

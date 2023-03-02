@@ -138,6 +138,7 @@ tickets.show.resolved: 'Ce ticket est résolu.'
 tickets.show.show_history: 'Afficher l’historique'
 tickets.show.status_to: 'Statut vers'
 tickets.show.urgency: "Urgence\_:"
+tickets.sidebar.title: 'Vos vues'
 tickets.status: Statut
 tickets.status.closed: Fermé
 tickets.status.in_progress: 'En cours'

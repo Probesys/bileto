@@ -50,6 +50,10 @@ ul.sidebar {
         border-color 0.2s ease-in-out;
 }
 
+.sidebar__anchor.row {
+    display: flex;
+}
+
 .sidebar__anchor[aria-current="page"] {
     color: var(--color-primary11);
     font-weight: bold;
