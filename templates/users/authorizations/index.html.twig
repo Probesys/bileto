@@ -6,6 +6,8 @@
 
 {% extends 'base.html.twig' %}
 
+{% set currentPage = 'settings' %}
+
 {% block title %}{{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}{% endblock %}
 
 {% block sidebar %}

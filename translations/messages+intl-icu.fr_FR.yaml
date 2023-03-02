@@ -18,6 +18,7 @@ home.your_tickets_all: 'Tous vos tickets'
 layout.activate_javascript: 'Vous devez activer le JavaScript pour utiliser Bileto.'
 layout.home: Accueil
 layout.logout: 'Se déconnecter'
+layout.main_navigation: 'Navigation principale'
 layout.modal.close: 'Fermer cette fenêtre'
 layout.notifications.close: 'Fermer la notification'
 layout.notifications.error: Erreur

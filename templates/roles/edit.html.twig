@@ -6,6 +6,8 @@
 
 {% extends 'base.html.twig' %}
 
+{% set currentPage = 'settings' %}
+
 {% if type == 'admin' %}
     {% set pageTitle = 'roles.edit.title.admin' | trans %}
 {% else %}
