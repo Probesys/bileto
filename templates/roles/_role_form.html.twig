@@ -135,6 +135,11 @@
             }) }}
 
             {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:update:tickets:status',
+                label: 'roles.permissions.orga.update.tickets.status' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
                 permission: 'orga:update:tickets:title',
                 label: 'roles.permissions.orga.update.tickets.title' | trans,
             }) }}

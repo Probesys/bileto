@@ -117,18 +117,20 @@
                 >{{ message }}</textarea>
             </div>
 
-            <div>
-                <input
-                    type="checkbox"
-                    id="is-resolved"
-                    name="isResolved"
-                    {{ isResolved ? 'checked' }}
-                />
+            {% if is_granted('orga:update:tickets:status', organization) %}
+                <div>
+                    <input
+                        type="checkbox"
+                        id="is-resolved"
+                        name="isResolved"
+                        {{ isResolved ? 'checked' }}
+                    />
 
-                <label for="is-resolved">
-                    {{ 'tickets.new.mark_as_resolved' | trans }}
-                </label>
-            </div>
+                    <label for="is-resolved">
+                        {{ 'tickets.new.mark_as_resolved' | trans }}
+                    </label>
+                </div>
+            {% endif %}
 
             {% if is_granted('orga:update:tickets:actors', organization) %}
                 <div class="row flow">

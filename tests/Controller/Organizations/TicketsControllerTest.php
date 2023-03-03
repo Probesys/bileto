@@ -148,6 +148,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -186,6 +187,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -246,6 +248,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -284,6 +287,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -358,6 +362,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -390,6 +395,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -422,6 +428,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -454,6 +461,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -486,6 +494,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
@@ -519,6 +528,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
             'orga:create:tickets',
+            'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',

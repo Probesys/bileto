@@ -45,6 +45,7 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
         'orga:see:tickets:messages:confidential',
         'orga:update:tickets:actors',
         'orga:update:tickets:priority',
+        'orga:update:tickets:status',
         'orga:update:tickets:title',
         'orga:update:tickets:type',
     ];

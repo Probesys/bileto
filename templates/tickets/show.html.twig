@@ -188,36 +188,38 @@
                         <div class="row flow">
                             {% if not ticket.isFinished %}
                                 <div class="row__item--extend flow-small">
-                                    <div class="row row--center row--always flow">
-                                        <label for="status">
-                                            {{ 'tickets.show.status_to' | trans }}
-                                        </label>
+                                    {% if is_granted('orga:update:tickets:status', organization) %}
+                                        <div class="row row--center row--always flow">
+                                            <label for="status">
+                                                {{ 'tickets.show.status_to' | trans }}
+                                            </label>
 
-                                        <select
-                                            id="status"
-                                            name="status"
-                                            required
-                                            {{ ticket.isFinished ? 'disabled' }}
-                                            {% if errors.status is defined %}
-                                                autofocus
-                                                aria-invalid="true"
-                                                aria-errormessage="status-error"
-                                            {% endif %}
-                                            data-ticket-editor-target="statusSelect"
-                                        >
-                                            {% for value, label in statuses %}
-                                                <option value="{{ value }}" {{ value == status ? 'selected' }}>
-                                                    {{ label | trans }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                                            <select
+                                                id="status"
+                                                name="status"
+                                                required
+                                                {{ ticket.isFinished ? 'disabled' }}
+                                                {% if errors.status is defined %}
+                                                    autofocus
+                                                    aria-invalid="true"
+                                                    aria-errormessage="status-error"
+                                                {% endif %}
+                                                data-ticket-editor-target="statusSelect"
+                                            >
+                                                {% for value, label in statuses %}
+                                                    <option value="{{ value }}" {{ value == status ? 'selected' }}>
+                                                        {{ label | trans }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
 
-                                    {% if errors.status is defined %}
-                                        <p class="form__error" role="alert" id="status-error">
-                                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                            {{ errors.status }}
-                                        </p>
+                                        {% if errors.status is defined %}
+                                            <p class="form__error" role="alert" id="status-error">
+                                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                                {{ errors.status }}
+                                            </p>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             {% elseif ticket.status == 'resolved' %}

@@ -34,10 +34,9 @@ class MessagesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
-        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
+            'status' => 'pending',
         ]);
         $messageContent = 'My message';
 
@@ -53,12 +52,14 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $message = MessageFactory::first();
+        $ticket->refresh();
         $this->assertSame($messageContent, $message->getContent());
         $this->assertEquals($now, $message->getCreatedAt());
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('webapp', $message->getVia());
+        $this->assertSame('pending', $ticket->getStatus());
     }
 
     public function testPostCreateSanitizesTheMessageContent(): void
@@ -67,10 +68,8 @@ class MessagesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
-        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
         ]);
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
 
@@ -79,7 +78,6 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'in_progress',
         ]);
 
         $this->assertSame(1, MessageFactory::count());
@@ -88,14 +86,17 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('My message', $message->getContent());
     }
 
-    public function testPostCreateChangesTheTicketStatus(): void
+    public function testPostCreateCanChangeTheTicketStatusIfPermissionsAreGranted(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
         Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:update:tickets:status',
+        ]);
         $initialStatus = 'in_progress';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -123,7 +124,10 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:update:tickets:status',
+        ]);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -161,10 +165,8 @@ class MessagesControllerTest extends WebTestCase
             'orga:create:tickets:messages',
             'orga:create:tickets:messages:confidential',
         ]);
-        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
@@ -173,7 +175,6 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'in_progress',
             'isSolution' => true,
             'isConfidential' => true,
         ]);
@@ -195,7 +196,10 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:update:tickets:status',
+        ]);
         $initialStatus = Factory::faker()->randomElement(Ticket::FINISHED_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -218,16 +222,42 @@ class MessagesControllerTest extends WebTestCase
         $this->assertNull($ticket->getSolution());
     }
 
+    public function testPostCreateDoesNotChangeTheTicketStatusIfPermissionsAreNotGranted(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $initialStatus = 'in_progress';
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => $initialStatus,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'status' => 'pending',
+        ]);
+
+        Time::unfreeze();
+        $ticket->refresh();
+        $this->assertSame($initialStatus, $ticket->getStatus());
+    }
+
     public function testPostCreateFailsIfMessageIsEmpty(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
-        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
         ]);
         $messageContent = '';
 
@@ -236,7 +266,6 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'in_progress',
         ]);
 
         $this->assertSame(0, MessageFactory::count());
@@ -248,7 +277,10 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:update:tickets:status',
+        ]);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
@@ -274,17 +306,14 @@ class MessagesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
-        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'in_progress',
             'isSolution' => true,
             'isConfidential' => true,
         ]);
@@ -299,17 +328,14 @@ class MessagesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
-        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => 'not the token',
             'message' => $messageContent,
-            'status' => 'in_progress',
         ]);
 
         $this->assertSame(0, MessageFactory::count());
@@ -323,10 +349,8 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
@@ -334,7 +358,6 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => 'not the token',
             'message' => $messageContent,
-            'status' => 'in_progress',
         ]);
     }
 }

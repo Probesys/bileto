@@ -149,7 +149,11 @@ class TicketsController extends BaseController
             $priority = Ticket::DEFAULT_WEIGHT;
         }
 
-        $isResolved = $request->request->getBoolean('isResolved', false);
+        if ($security->isGranted('orga:update:tickets:status', $organization)) {
+            $isResolved = $request->request->getBoolean('isResolved', false);
+        } else {
+            $isResolved = false;
+        }
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
