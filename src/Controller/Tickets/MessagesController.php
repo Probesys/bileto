@@ -42,6 +42,10 @@ class MessagesController extends BaseController
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
+
         /** @var string $messageContent */
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);

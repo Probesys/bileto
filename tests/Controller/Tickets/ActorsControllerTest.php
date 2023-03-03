@@ -65,6 +65,27 @@ class ActorsControllerTest extends WebTestCase
         $client->request('GET', "/tickets/{$ticket->getUid()}/actors/edit");
     }
 
+    public function testGetEditFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
+        $ticket = TicketFactory::createOne([
+            'requester' => $requester,
+            'assignee' => $assignee,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/tickets/{$ticket->getUid()}/actors/edit");
+    }
+
     public function testPostUpdateSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
@@ -210,6 +231,31 @@ class ActorsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'requester' => null,
+            'assignee' => null,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
+            'requesterId' => $requester->getId(),
+            'assigneeId' => $assignee->getId(),
+        ]);
+    }
+
+    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
+        $ticket = TicketFactory::createOne([
             'requester' => null,
             'assignee' => null,
         ]);

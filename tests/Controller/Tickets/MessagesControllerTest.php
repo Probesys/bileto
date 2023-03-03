@@ -356,7 +356,25 @@ class MessagesControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => 'not the token',
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+        ]);
+    }
+
+    public function testPostCreateFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $ticket = TicketFactory::createOne();
+        $messageContent = 'My message';
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
         ]);
     }

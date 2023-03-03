@@ -53,6 +53,20 @@ class TitleControllerTest extends WebTestCase
         $client->request('GET', "/tickets/{$ticket->getUid()}/title/edit");
     }
 
+    public function testGetEditFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
+        $ticket = TicketFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/tickets/{$ticket->getUid()}/title/edit");
+    }
+
     public function testPostUpdateSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
@@ -133,6 +147,27 @@ class TitleControllerTest extends WebTestCase
         $newTitle = 'My urgent ticket!';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'title' => $oldTitle,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/title/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket title'),
+            'title' => $newTitle,
+        ]);
+    }
+
+    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
+        $oldTitle = 'My ticket';
+        $newTitle = 'My urgent ticket!';
+        $ticket = TicketFactory::createOne([
             'title' => $oldTitle,
         ]);
 

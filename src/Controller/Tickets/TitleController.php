@@ -22,6 +22,13 @@ class TitleController extends BaseController
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:title', $organization);
 
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
+
         return $this->render('tickets/title/edit.html.twig', [
             'ticket' => $ticket,
             'title' => $ticket->getTitle(),
@@ -37,6 +44,13 @@ class TitleController extends BaseController
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:title', $organization);
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
 
         $oldTitle = $ticket->getTitle();
 

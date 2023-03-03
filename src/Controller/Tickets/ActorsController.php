@@ -26,6 +26,13 @@ class ActorsController extends BaseController
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
 
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
+
         $users = $actorsLister->listUsers();
         $requester = $ticket->getRequester();
         $assignee = $ticket->getAssignee();
@@ -47,6 +54,13 @@ class ActorsController extends BaseController
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
 
         $initialRequester = $ticket->getRequester();
         $initialAssignee = $ticket->getAssignee();

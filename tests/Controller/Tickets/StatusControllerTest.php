@@ -53,6 +53,20 @@ class StatusControllerTest extends WebTestCase
         $client->request('GET', "/tickets/{$ticket->getUid()}/status/edit");
     }
 
+    public function testGetEditFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/tickets/{$ticket->getUid()}/status/edit");
+    }
+
     public function testPostUpdateSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
@@ -133,6 +147,27 @@ class StatusControllerTest extends WebTestCase
         $newStatus = 'in_progress';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'status' => $oldStatus,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/status/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket status'),
+            'status' => $newStatus,
+        ]);
+    }
+
+    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:status']);
+        $oldStatus = 'new';
+        $newStatus = 'in_progress';
+        $ticket = TicketFactory::createOne([
             'status' => $oldStatus,
         ]);
 

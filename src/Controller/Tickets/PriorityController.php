@@ -22,6 +22,13 @@ class PriorityController extends BaseController
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:priority', $organization);
 
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
+
         return $this->render('tickets/priority/edit.html.twig', [
             'ticket' => $ticket,
             'urgency' => $ticket->getUrgency(),
@@ -39,6 +46,13 @@ class PriorityController extends BaseController
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:priority', $organization);
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
 
         /** @var string $urgency */
         $urgency = $request->request->get('urgency', $ticket->getUrgency());

@@ -26,6 +26,13 @@ class TypeController extends BaseController
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:type', $organization);
 
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
+
         $oldType = $ticket->getType();
 
         /** @var string $type */

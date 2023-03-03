@@ -113,4 +113,25 @@ class TypeControllerTest extends WebTestCase
             'type' => $newType,
         ]);
     }
+
+    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:type']);
+        $oldType = 'request';
+        $newType = 'incident';
+        $ticket = TicketFactory::createOne([
+            'type' => $oldType,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/type/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket type'),
+            'type' => $newType,
+        ]);
+    }
 }

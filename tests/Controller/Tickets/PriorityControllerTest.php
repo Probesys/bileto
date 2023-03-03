@@ -53,6 +53,20 @@ class PriorityControllerTest extends WebTestCase
         $client->request('GET', "/tickets/{$ticket->getUid()}/priority/edit");
     }
 
+    public function testGetEditFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:priority']);
+        $ticket = TicketFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/tickets/{$ticket->getUid()}/priority/edit");
+    }
+
     public function testPostUpdateSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
@@ -167,6 +181,35 @@ class PriorityControllerTest extends WebTestCase
         $newPriority = 'high';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'urgency' => $oldUrgency,
+            'impact' => $oldImpact,
+            'priority' => $oldPriority,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/tickets/{$ticket->getUid()}/priority/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket priority'),
+            'urgency' => $newUrgency,
+            'impact' => $newImpact,
+            'priority' => $newPriority,
+        ]);
+    }
+
+    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:priority']);
+        $oldUrgency = 'low';
+        $oldImpact = 'low';
+        $oldPriority = 'low';
+        $newUrgency = 'high';
+        $newImpact = 'high';
+        $newPriority = 'high';
+        $ticket = TicketFactory::createOne([
             'urgency' => $oldUrgency,
             'impact' => $oldImpact,
             'priority' => $oldPriority,

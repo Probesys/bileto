@@ -22,6 +22,13 @@ class StatusController extends BaseController
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $organization);
 
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
+
         $statuses = Ticket::getStatusesWithLabels();
 
         return $this->render('tickets/status/edit.html.twig', [
@@ -40,6 +47,13 @@ class StatusController extends BaseController
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $organization);
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$ticket->hasActor($user)) {
+            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+        }
 
         /** @var string $status */
         $status = $request->request->get('status', $ticket->getStatus());
