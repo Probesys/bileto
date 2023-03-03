@@ -192,7 +192,7 @@ class TicketsController extends BaseController
                 'priority' => $priority,
                 'users' => $users,
                 'errors' => [
-                    'requester' => new TranslatableMessage('The requester must exist.', [], 'errors'),
+                    'requester' => new TranslatableMessage('ticket.requester.invalid', [], 'errors'),
                 ],
             ]);
         }
@@ -213,7 +213,7 @@ class TicketsController extends BaseController
                     'priority' => $priority,
                     'users' => $users,
                     'errors' => [
-                        'assignee' => new TranslatableMessage('The assignee must exist.', [], 'errors'),
+                        'assignee' => new TranslatableMessage('ticket.assignee.invalid', [], 'errors'),
                     ],
                 ]);
             }

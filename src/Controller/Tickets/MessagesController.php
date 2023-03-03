@@ -98,11 +98,7 @@ class MessagesController extends BaseController
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => [
-                    'isConfidential' => new TranslatableMessage(
-                        'You are not authorized to answer confidentially.',
-                        [],
-                        'errors',
-                    )
+                    'isConfidential' => new TranslatableMessage('message.cannot_confidential', [], 'errors'),
                 ],
             ]);
         }

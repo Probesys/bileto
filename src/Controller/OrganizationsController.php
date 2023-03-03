@@ -119,11 +119,7 @@ class OrganizationsController extends BaseController
                     'name' => $name,
                     'selectedParentUid' => $selectedParentUid,
                     'errors' => [
-                        'parentsPath' => new TranslatableMessage(
-                            'Select an organization from this list.',
-                            [],
-                            'errors',
-                        ),
+                        'parentsPath' => new TranslatableMessage('organization.sub.invalid', [], 'errors'),
                     ],
                 ]);
             }

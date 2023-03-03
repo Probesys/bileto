@@ -137,7 +137,7 @@ class AuthorizationsController extends BaseController
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
                 'errors' => [
-                    'role' => new TranslatableMessage('Choose a role from the list.', [], 'errors'),
+                    'role' => new TranslatableMessage('authorization.role.invalid', [], 'errors'),
                 ],
             ]);
         }
@@ -151,7 +151,7 @@ class AuthorizationsController extends BaseController
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
                 'errors' => [
-                    'role' => new TranslatableMessage('You can’t grant super-admin authorization.', [], 'errors'),
+                    'role' => new TranslatableMessage('authorization.super.unauthorized', [], 'errors'),
                 ],
             ]);
         }
@@ -166,7 +166,7 @@ class AuthorizationsController extends BaseController
                     'type' => $type,
                     'roleUid' => $roleUid,
                     'organizationUid' => $organizationUid,
-                    'error' => new TranslatableMessage('This user already has an admin role.', [], 'errors'),
+                    'error' => new TranslatableMessage('authorization.user.already_admin', [], 'errors'),
                 ]);
             }
         } else {
@@ -179,11 +179,7 @@ class AuthorizationsController extends BaseController
                     'type' => $type,
                     'roleUid' => $roleUid,
                     'organizationUid' => $organizationUid,
-                    'error' => new TranslatableMessage(
-                        'This user already has an orga role for this organization.',
-                        [],
-                        'errors',
-                    ),
+                    'error' => new TranslatableMessage('authorization.user.already_orga', [], 'errors'),
                 ]);
             }
         }
@@ -226,11 +222,7 @@ class AuthorizationsController extends BaseController
                 $user->getId() === $holder->getId()
             )
         ) {
-            $this->addFlash('error', new TranslatableMessage(
-                'You can’t revoke this authorization.',
-                [],
-                'errors'
-            ));
+            $this->addFlash('error', new TranslatableMessage('authorization.cannot_revoke', [], 'errors'));
             return $this->redirectToRoute('user authorizations', [
                 'uid' => $holder->getUid(),
             ]);

@@ -30,7 +30,7 @@ class BaseController extends AbstractController
 
     protected function csrfError(): TranslatableMessage
     {
-        return new TranslatableMessage('Invalid CSRF token.', [], 'errors');
+        return new TranslatableMessage('csrf.invalid', [], 'errors');
     }
 
     /**

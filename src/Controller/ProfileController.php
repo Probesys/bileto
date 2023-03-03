@@ -71,7 +71,7 @@ class ProfileController extends BaseController
                     'name' => $name,
                     'email' => $email,
                     'errors' => [
-                        'password' => new TranslatableMessage('The password is invalid.', [], 'errors'),
+                        'password' => new TranslatableMessage('user.password.dont_match', [], 'errors'),
                     ],
                 ]);
             }

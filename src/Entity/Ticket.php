@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
-    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'errors'),
+    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
 )]
 class Ticket implements MetaEntityInterface, ActivityRecordableInterface
 {
@@ -55,45 +55,45 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_TYPE])]
     #[Assert\Choice(
         choices: self::TYPES,
-        message: new TranslatableMessage('The type {{ value }} is not a valid type.', [], 'errors'),
+        message: new TranslatableMessage('ticket.type.invalid', [], 'errors'),
     )]
     private ?string $type = self::DEFAULT_TYPE;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_STATUS])]
     #[Assert\Choice(
         choices: self::STATUSES,
-        message: new TranslatableMessage('The status {{ value }} is not a valid status.', [], 'errors'),
+        message: new TranslatableMessage('ticket.status.invalid', [], 'errors'),
     )]
     private ?string $status = self::DEFAULT_STATUS;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The title is required.', [], 'errors'),
+        message: new TranslatableMessage('ticket.title.required', [], 'errors'),
     )]
     #[Assert\Length(
         max: 255,
-        maxMessage: new TranslatableMessage('The title must be {{ limit }} characters maximum.', [], 'errors'),
+        maxMessage: new TranslatableMessage('ticket.title.max_chars', [], 'errors'),
     )]
     private ?string $title = null;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_WEIGHT])]
     #[Assert\Choice(
         choices: self::WEIGHTS,
-        message: new TranslatableMessage('The urgency {{ value }} is not a valid urgency.', [], 'errors'),
+        message: new TranslatableMessage('ticket.urgency.invalid', [], 'errors'),
     )]
     private ?string $urgency = self::DEFAULT_WEIGHT;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_WEIGHT])]
     #[Assert\Choice(
         choices: self::WEIGHTS,
-        message: new TranslatableMessage('The impact {{ value }} is not a valid impact.', [], 'errors'),
+        message: new TranslatableMessage('ticket.impact.invalid', [], 'errors'),
     )]
     private ?string $impact = self::DEFAULT_WEIGHT;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_WEIGHT])]
     #[Assert\Choice(
         choices: self::WEIGHTS,
-        message: new TranslatableMessage('The priority {{ value }} is not a valid priority.', [], 'errors'),
+        message: new TranslatableMessage('ticket.priority.invalid', [], 'errors'),
     )]
     private ?string $priority = self::DEFAULT_WEIGHT;
 
