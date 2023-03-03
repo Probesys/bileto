@@ -1,7 +1,8 @@
 <h1 align="center">Bileto</h1>
 
 <p align="center">
-    <strong>The ergonomic ticketing tool for managing your Help Desk.</strong>
+    <strong>The ergonomic ticketing tool for managing your Help Desk.</strong><br>
+    <a href="https://bileto.fr">bileto.fr</a>
 </p>
 
 ---
@@ -13,12 +14,10 @@ It allows you:
 - to manage your tickets (create, answer, manage their lifecycle) in a modern way (clear timeline, efficient lists);
 - to isolate your users and tickets in organizations;
 - to finely manage roles and permissions;
-- and a lot more to come!
+- and a lot more to come: [see our roadmap to learn more.](/ROADMAP.md)
 
-**Please note that Bileto is in active development phase.**
+**Please note that Bileto is in an active development phase.**
 Things may break between releases and it is not advised to use Bileto in production yet.
-
-**Website: [bileto.fr](https://bileto.fr)** (in French)
 
 ![Screenshot of the home page of Bileto showing 3 opened tickets and 2 organizations](public/screenshot.png)
 
@@ -29,9 +28,9 @@ It is developed by [Probesys](https://probesys.com) as a community project.
 
 Bileto is licensed under [GNU Affero General Public License v3.0 or later](LICENSE.txt).
 
-<center>
+<p align="center">
     <img alt="Bileto logo" src="public/logo.svg" />
-</center>
+</p>
 
 ## Contributing
 
