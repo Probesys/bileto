@@ -94,7 +94,7 @@ class ActorsController extends BaseController
                 'assigneeId' => $assigneeId,
                 'users' => $users,
                 'errors' => [
-                    'requester' => new TranslatableMessage('The requester must exist.', [], 'validators'),
+                    'requester' => new TranslatableMessage('The requester must exist.', [], 'errors'),
                 ],
             ]);
         }
@@ -108,7 +108,7 @@ class ActorsController extends BaseController
                     'assigneeId' => $assigneeId,
                     'users' => $users,
                     'errors' => [
-                        'assignee' => new TranslatableMessage('The assignee must exist.', [], 'validators'),
+                        'assignee' => new TranslatableMessage('The assignee must exist.', [], 'errors'),
                     ],
                 ]);
             }

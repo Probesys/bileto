@@ -137,7 +137,7 @@ class AuthorizationsController extends BaseController
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
                 'errors' => [
-                    'role' => new TranslatableMessage('Choose a role from the list.', [], 'validators'),
+                    'role' => new TranslatableMessage('Choose a role from the list.', [], 'errors'),
                 ],
             ]);
         }
@@ -151,7 +151,7 @@ class AuthorizationsController extends BaseController
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
                 'errors' => [
-                    'role' => new TranslatableMessage('You can’t grant super-admin authorization.', [], 'validators'),
+                    'role' => new TranslatableMessage('You can’t grant super-admin authorization.', [], 'errors'),
                 ],
             ]);
         }
@@ -166,7 +166,7 @@ class AuthorizationsController extends BaseController
                     'type' => $type,
                     'roleUid' => $roleUid,
                     'organizationUid' => $organizationUid,
-                    'error' => new TranslatableMessage('This user already has an admin role.', [], 'validators'),
+                    'error' => new TranslatableMessage('This user already has an admin role.', [], 'errors'),
                 ]);
             }
         } else {
@@ -182,7 +182,7 @@ class AuthorizationsController extends BaseController
                     'error' => new TranslatableMessage(
                         'This user already has an orga role for this organization.',
                         [],
-                        'validators',
+                        'errors',
                     ),
                 ]);
             }
@@ -229,7 +229,7 @@ class AuthorizationsController extends BaseController
             $this->addFlash('error', new TranslatableMessage(
                 'You can’t revoke this authorization.',
                 [],
-                'validators'
+                'errors'
             ));
             return $this->redirectToRoute('user authorizations', [
                 'uid' => $holder->getUid(),

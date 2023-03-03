@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
-    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'errors'),
 )]
 class Organization implements MetaEntityInterface, ActivityRecordableInterface
 {
@@ -44,11 +44,11 @@ class Organization implements MetaEntityInterface, ActivityRecordableInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The name is required.', [], 'validators'),
+        message: new TranslatableMessage('The name is required.', [], 'errors'),
     )]
     #[Assert\Length(
         max: 255,
-        maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'validators'),
+        maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'errors'),
     )]
     private ?string $name = null;
 
@@ -61,7 +61,7 @@ class Organization implements MetaEntityInterface, ActivityRecordableInterface
         message: new TranslatableMessage(
             'The sub-organization cannot be attached to this organization.',
             [],
-            'validators'
+            'errors'
         ),
         max: self::MAX_DEPTH,
     )]

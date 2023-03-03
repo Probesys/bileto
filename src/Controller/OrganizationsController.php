@@ -122,7 +122,7 @@ class OrganizationsController extends BaseController
                         'parentsPath' => new TranslatableMessage(
                             'Select an organization from this list.',
                             [],
-                            'validators',
+                            'errors',
                         ),
                     ],
                 ]);

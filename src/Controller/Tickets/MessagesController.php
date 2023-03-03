@@ -101,7 +101,7 @@ class MessagesController extends BaseController
                     'isConfidential' => new TranslatableMessage(
                         'You are not authorized to answer confidentially.',
                         [],
-                        'validators',
+                        'errors',
                     )
                 ],
             ]);

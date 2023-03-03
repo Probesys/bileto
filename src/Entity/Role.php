@@ -20,11 +20,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
-    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'errors'),
 )]
 #[UniqueEntity(
     fields: 'name',
-    message: new TranslatableMessage('The role {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('The role {{ value }} is already used.', [], 'errors'),
 )]
 class Role implements MetaEntityInterface, ActivityRecordableInterface
 {
@@ -66,24 +66,24 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
 
     #[ORM\Column(length: 50, unique: true)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The name is required.', [], 'validators'),
+        message: new TranslatableMessage('The name is required.', [], 'errors'),
     )]
     #[Assert\Length(
         max: 50,
-        maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'validators'),
+        maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'errors'),
     )]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The description is required.', [], 'validators'),
+        message: new TranslatableMessage('The description is required.', [], 'errors'),
     )]
     #[Assert\Length(
         max: 255,
         maxMessage: new TranslatableMessage(
             'The description must be {{ limit }} characters maximum.',
             [],
-            'validators'
+            'errors'
         ),
     )]
     private ?string $description = null;
@@ -91,7 +91,7 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\Column(length: 32)]
     #[Assert\Choice(
         choices: self::TYPES,
-        message: new TranslatableMessage('The type {{ value }} is not a valid type.', [], 'validators'),
+        message: new TranslatableMessage('The type {{ value }} is not a valid type.', [], 'errors'),
     )]
     private ?string $type = null;
 
