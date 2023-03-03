@@ -9,7 +9,6 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class BaseController extends AbstractController
@@ -26,11 +25,6 @@ class BaseController extends AbstractController
         }
 
         return $this->render($view, $parameters, $response);
-    }
-
-    protected function csrfError(): TranslatableMessage
-    {
-        return new TranslatableMessage('csrf.invalid', [], 'errors');
     }
 
     /**

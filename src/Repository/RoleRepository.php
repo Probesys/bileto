@@ -10,7 +10,6 @@ use App\Entity\Role;
 use App\Utils\Time;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * @extends ServiceEntityRepository<Role>

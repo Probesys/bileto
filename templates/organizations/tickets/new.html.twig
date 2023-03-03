@@ -26,7 +26,7 @@
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization ticket') }}">
 
             {% if error %}
-                {{ include('alerts/_error.html.twig', { message: error | trans }, with_context = false) }}
+                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
             {% endif %}
 
             {% if is_granted('orga:update:tickets:type', organization) %}

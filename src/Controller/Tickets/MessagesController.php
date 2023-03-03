@@ -19,8 +19,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessagesController extends BaseController
 {
@@ -34,7 +34,8 @@ class MessagesController extends BaseController
         TicketTimeline $ticketTimeline,
         Security $security,
         ValidatorInterface $validator,
-        HtmlSanitizerInterface $appMessageSanitizer
+        HtmlSanitizerInterface $appMessageSanitizer,
+        TranslatorInterface $translator,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:create:tickets:messages', $organization);
@@ -82,7 +83,7 @@ class MessagesController extends BaseController
                 'statuses' => $statuses,
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
@@ -98,7 +99,7 @@ class MessagesController extends BaseController
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => [
-                    'isConfidential' => new TranslatableMessage('message.cannot_confidential', [], 'errors'),
+                    'isConfidential' => $translator->trans('message.cannot_confidential', [], 'errors'),
                 ],
             ]);
         }

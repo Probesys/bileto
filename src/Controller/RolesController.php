@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RolesController extends BaseController
 {
@@ -59,7 +60,8 @@ class RolesController extends BaseController
     public function create(
         Request $request,
         RoleRepository $roleRepository,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
@@ -99,7 +101,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
@@ -148,7 +150,8 @@ class RolesController extends BaseController
         Role $role,
         Request $request,
         RoleRepository $roleRepository,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
@@ -187,7 +190,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 

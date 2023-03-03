@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TicketsController extends BaseController
 {
@@ -27,12 +28,13 @@ class TicketsController extends BaseController
         Request $request,
         TicketRepository $ticketRepository,
         ValidatorInterface $validator,
+        TranslatorInterface $translator,
     ): Response {
         $type = $request->request->get('type', '');
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('update ticket', $csrfToken)) {
-            $this->addFlash('error', $this->csrfError());
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),
             ]);

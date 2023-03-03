@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PreferencesController extends BaseController
 {
@@ -34,7 +35,8 @@ class PreferencesController extends BaseController
         Request $request,
         UserRepository $userRepository,
         ValidatorInterface $validator,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        TranslatorInterface $translator,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -53,7 +55,7 @@ class PreferencesController extends BaseController
                 'colorScheme' => $colorScheme,
                 'locale' => $locale,
                 'availableLanguages' => Locales::getSupportedLanguages(),
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
@@ -86,6 +88,7 @@ class PreferencesController extends BaseController
         UserRepository $userRepository,
         ValidatorInterface $validator,
         RequestStack $requestStack,
+        TranslatorInterface $translator,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -103,7 +106,7 @@ class PreferencesController extends BaseController
         }
 
         if (!$this->isCsrfTokenValid('update hide events', $csrfToken)) {
-            $this->addFlash('error', $this->csrfError());
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirect($from);
         }
 
