@@ -63,7 +63,7 @@ class TypeControllerTest extends WebTestCase
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $client->followRedirect();
-        $this->assertSelectorTextContains('#notifications', 'The type "not a type" is not a valid type.');
+        $this->assertSelectorTextContains('#notifications', 'Select a type from the list');
         $ticket->refresh();
         $this->assertSame($oldType, $ticket->getType());
     }
@@ -88,7 +88,7 @@ class TypeControllerTest extends WebTestCase
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $client->followRedirect();
-        $this->assertSelectorTextContains('#notifications', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
         $ticket->refresh();
         $this->assertSame($oldType, $ticket->getType());
     }

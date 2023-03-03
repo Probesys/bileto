@@ -270,7 +270,7 @@ class RolesControllerTest extends WebTestCase
             'description' => $description,
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'The name is required.');
+        $this->assertSelectorTextContains('#name-error', 'Enter a name');
         $this->assertSame(1, RoleFactory::count());
     }
 
@@ -289,7 +289,7 @@ class RolesControllerTest extends WebTestCase
             'description' => $description,
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'The name must be 50 characters maximum.');
+        $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 50 characters');
         $this->assertSame(1, RoleFactory::count());
     }
 
@@ -308,7 +308,7 @@ class RolesControllerTest extends WebTestCase
             'description' => $description,
         ]);
 
-        $this->assertSelectorTextContains('#description-error', 'The description is required.');
+        $this->assertSelectorTextContains('#description-error', 'Enter a description');
         $this->assertSame(1, RoleFactory::count());
     }
 
@@ -327,7 +327,7 @@ class RolesControllerTest extends WebTestCase
             'description' => $description,
         ]);
 
-        $this->assertSelectorTextContains('#description-error', 'The description must be 255 characters maximum.');
+        $this->assertSelectorTextContains('#description-error', 'Enter a description of less than 255 characters');
         $this->assertSame(1, RoleFactory::count());
     }
 
@@ -351,7 +351,7 @@ class RolesControllerTest extends WebTestCase
             'description' => $description,
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'The role "My role" is already used.');
+        $this->assertSelectorTextContains('#name-error', 'Enter a different name, a role already has this name');
         $this->assertSame(2, RoleFactory::count());
     }
 
@@ -370,7 +370,7 @@ class RolesControllerTest extends WebTestCase
             'description' => $description,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $this->assertSame(1, RoleFactory::count());
     }
 
@@ -554,7 +554,7 @@ class RolesControllerTest extends WebTestCase
             'permissions' => $newPermissions,
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'The name is required.');
+        $this->assertSelectorTextContains('#name-error', 'Enter a name');
         $role->refresh();
         $this->assertSame($oldName, $role->getName());
         $this->assertSame($oldDescription, $role->getDescription());
@@ -593,7 +593,7 @@ class RolesControllerTest extends WebTestCase
             'permissions' => $newPermissions,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $role->refresh();
         $this->assertSame($oldName, $role->getName());
         $this->assertSame($oldDescription, $role->getDescription());

@@ -269,7 +269,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
 
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#message-error', 'The message is required.');
+        $this->assertSelectorTextContains('#message-error', 'Enter a message');
     }
 
     public function testPostCreateFailsIfStatusIsInvalid(): void
@@ -297,7 +297,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
 
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#status-error', 'The status "invalid" is not a valid status.');
+        $this->assertSelectorTextContains('#status-error', 'Select a status from the list');
     }
 
     public function testPostCreateFailsIfIsConfidentialIsTrueButAccessIsNotGranted(): void
@@ -339,7 +339,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
 
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
     }
 
     public function testPostCreateFailsIfAccessIsForbidden(): void

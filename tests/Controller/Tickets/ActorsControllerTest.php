@@ -160,7 +160,7 @@ class ActorsControllerTest extends WebTestCase
             'assigneeId' => $user->getId(),
         ]);
 
-        $this->assertSelectorTextContains('#requester-error', 'The requester must exist.');
+        $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
         $ticket->refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());
@@ -184,7 +184,7 @@ class ActorsControllerTest extends WebTestCase
             'assigneeId' => -1,
         ]);
 
-        $this->assertSelectorTextContains('#assignee-error', 'The assignee must exist.');
+        $this->assertSelectorTextContains('#assignee-error', 'Select a user from the list');
         $ticket->refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());
@@ -212,7 +212,7 @@ class ActorsControllerTest extends WebTestCase
             'assigneeId' => $assignee->getId(),
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $ticket->refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());

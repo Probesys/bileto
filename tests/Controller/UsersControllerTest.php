@@ -127,7 +127,10 @@ class UsersControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $this->assertSelectorTextContains('#email-error', 'The email "alix@example.com" is already used.');
+        $this->assertSelectorTextContains(
+            '#email-error',
+            'Enter a different email address, this one is already in use',
+        );
         $this->assertSame(1, UserFactory::count());
     }
 
@@ -146,7 +149,7 @@ class UsersControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $this->assertSelectorTextContains('#email-error', 'The email is required.');
+        $this->assertSelectorTextContains('#email-error', 'Enter an email address');
         $this->assertSame(1, UserFactory::count());
     }
 
@@ -165,7 +168,7 @@ class UsersControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $this->assertSelectorTextContains('#email-error', 'The email "not an email" is not a valid address.');
+        $this->assertSelectorTextContains('#email-error', 'Enter a valid email address');
         $this->assertSame(1, UserFactory::count());
     }
 
@@ -184,7 +187,7 @@ class UsersControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $this->assertSame(1, UserFactory::count());
     }
 

@@ -85,10 +85,7 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
     private ?string $description = null;
 
     #[ORM\Column(length: 32)]
-    #[Assert\Choice(
-        choices: self::TYPES,
-        message: new TranslatableMessage('role.type.invalid', [], 'errors'),
-    )]
+    #[Assert\Choice(choices: self::TYPES)]
     private ?string $type = null;
 
     /** @var string[] $permissions */

@@ -84,7 +84,7 @@ class PreferencesControllerTest extends WebTestCase
             'locale' => $newLocale,
         ]);
 
-        $this->assertSelectorTextContains('#locale-error', 'The language "invalid" is not a valid choice.');
+        $this->assertSelectorTextContains('#locale-error', 'Select a language from the list');
         $user->refresh();
         $this->assertSame($initialColorScheme, $user->getColorScheme());
         $this->assertSame($initialLocale, $user->getLocale());
@@ -109,7 +109,7 @@ class PreferencesControllerTest extends WebTestCase
             'locale' => $newLocale,
         ]);
 
-        $this->assertSelectorTextContains('#color-scheme-error', 'The color scheme "invalid" is not a valid choice.');
+        $this->assertSelectorTextContains('#color-scheme-error', 'Select a color scheme from the list');
         $user->refresh();
         $this->assertSame($initialColorScheme, $user->getColorScheme());
         $this->assertSame($initialLocale, $user->getLocale());
@@ -134,7 +134,7 @@ class PreferencesControllerTest extends WebTestCase
             'locale' => $newLocale,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $user->refresh();
         $this->assertSame($initialColorScheme, $user->getColorScheme());
         $this->assertSame($initialLocale, $user->getLocale());

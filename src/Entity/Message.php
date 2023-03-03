@@ -44,10 +44,7 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     private bool $isConfidential = false;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_VIA])]
-    #[Assert\Choice(
-        choices: self::VIAS,
-        message: new TranslatableMessage('message.via.invalid', [], 'errors'),
-    )]
+    #[Assert\Choice(choices: self::VIAS)]
     private string $via = self::DEFAULT_VIA;
 
     #[ORM\Column(type: Types::TEXT)]

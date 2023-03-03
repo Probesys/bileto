@@ -109,7 +109,7 @@ class TitleControllerTest extends WebTestCase
         ]);
 
         $ticket->refresh();
-        $this->assertSelectorTextContains('#title-error', 'The title must be 255 characters maximum.');
+        $this->assertSelectorTextContains('#title-error', 'Enter a title of less than 255 characters');
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
 
@@ -131,7 +131,7 @@ class TitleControllerTest extends WebTestCase
             'title' => $newTitle,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $ticket->refresh();
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
