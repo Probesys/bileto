@@ -190,12 +190,12 @@
                                 <div class="row__item--extend flow-small">
                                     {% if is_granted('orga:update:tickets:status', organization) %}
                                         <div class="row row--center row--always flow">
-                                            <label for="status">
+                                            <label for="status-to">
                                                 {{ 'tickets.show.status_to' | trans }}
                                             </label>
 
                                             <select
-                                                id="status"
+                                                id="status-to"
                                                 name="status"
                                                 required
                                                 {{ ticket.isFinished ? 'disabled' }}
@@ -245,7 +245,8 @@
             <div class="ticket__info row__item--noshrink flow-larger">
                 {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
                 {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
-                {% set menuHasItem = canUpdateType or canUpdateTitle %}
+                {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
+                {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
 
                 {% if menuHasItem %}
                     <div class="text--right">
@@ -289,6 +290,18 @@
                                         data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
                                     >
                                         {{ 'tickets.show.actions.rename' | trans }}
+                                    </button>
+                                {% endif %}
+
+                                {% if canUpdateStatus %}
+                                    <button
+                                        class="popup__item"
+                                        type="button"
+                                        data-controller="modal-opener"
+                                        data-action="modal-opener#fetch"
+                                        data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
+                                    >
+                                        {{ 'tickets.show.actions.update_status' | trans }}
                                     </button>
                                 {% endif %}
                             </nav>

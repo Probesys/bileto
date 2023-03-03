@@ -123,6 +123,7 @@ tickets.show.actions: Actions
 tickets.show.actions.rename: 'Rename the ticket'
 tickets.show.actions.turn_into_incident: 'Turn into an incident'
 tickets.show.actions.turn_into_request: 'Turn into a request'
+tickets.show.actions.update_status: 'Edit the status'
 tickets.show.answer: Answer
 tickets.show.assign_yourself: 'assign yourself'
 tickets.show.closed: 'This ticket is closed.'
@@ -144,6 +145,7 @@ tickets.show.urgency: 'Urgency:'
 tickets.sidebar.title: 'Your views'
 tickets.status: Status
 tickets.status.closed: Closed
+tickets.status.edit.title: 'Edit the status'
 tickets.status.in_progress: 'In progress'
 tickets.status.new: New
 tickets.status.pending: Pending
