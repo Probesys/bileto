@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TypeController extends BaseController
 {
@@ -21,7 +22,8 @@ class TypeController extends BaseController
         Ticket $ticket,
         Request $request,
         TicketRepository $ticketRepository,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:type', $organization);
@@ -42,7 +44,7 @@ class TypeController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('update ticket type', $csrfToken)) {
-            $this->addFlash('error', $this->csrfError());
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),
             ]);

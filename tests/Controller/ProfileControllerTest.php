@@ -109,7 +109,7 @@ class ProfileControllerTest extends WebTestCase
             'email' => $newEmail,
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'The name must be 100 characters maximum.');
+        $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 100 characters');
         $user->refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
@@ -134,7 +134,7 @@ class ProfileControllerTest extends WebTestCase
             'email' => $newEmail,
         ]);
 
-        $this->assertSelectorTextContains('#email-error', 'The email "not an email" is not a valid address.');
+        $this->assertSelectorTextContains('#email-error', 'Enter a valid email address');
         $user->refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
@@ -158,7 +158,10 @@ class ProfileControllerTest extends WebTestCase
             'newPassword' => $newPassword,
         ]);
 
-        $this->assertSelectorTextContains('#current-password-error', 'The password is invalid.');
+        $this->assertSelectorTextContains(
+            '#current-password-error',
+            'The password does not match, please try with a different one',
+        );
         $user->refresh();
         $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $initialPassword));
         $this->assertFalse($passwordHasher->isPasswordValid($user->object(), $newPassword));
@@ -183,7 +186,7 @@ class ProfileControllerTest extends WebTestCase
             'email' => $newEmail,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $user->refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());

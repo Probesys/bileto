@@ -14,7 +14,7 @@ use App\Service\ActorsLister;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ActorsController extends BaseController
 {
@@ -51,6 +51,7 @@ class ActorsController extends BaseController
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
         ActorsLister $actorsLister,
+        TranslatorInterface $translator,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
@@ -82,7 +83,7 @@ class ActorsController extends BaseController
                 'requesterId' => $requesterId,
                 'assigneeId' => $assigneeId,
                 'users' => $users,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
@@ -94,7 +95,7 @@ class ActorsController extends BaseController
                 'assigneeId' => $assigneeId,
                 'users' => $users,
                 'errors' => [
-                    'requester' => new TranslatableMessage('The requester must exist.', [], 'validators'),
+                    'requester' => $translator->trans('ticket.requester.invalid', [], 'errors'),
                 ],
             ]);
         }
@@ -108,7 +109,7 @@ class ActorsController extends BaseController
                     'assigneeId' => $assigneeId,
                     'users' => $users,
                     'errors' => [
-                        'assignee' => new TranslatableMessage('The assignee must exist.', [], 'validators'),
+                        'assignee' => $translator->trans('ticket.assignee.invalid', [], 'errors'),
                     ],
                 ]);
             }

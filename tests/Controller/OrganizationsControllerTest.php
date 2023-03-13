@@ -209,7 +209,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'The name is required.');
+        $this->assertSelectorTextContains('#name-error', 'Enter a name');
         $this->assertSame(0, OrganizationFactory::count());
     }
 
@@ -226,7 +226,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'The name must be 255 characters maximum.');
+        $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 255 characters');
         $this->assertSame(0, OrganizationFactory::count());
     }
 
@@ -245,7 +245,7 @@ class OrganizationsControllerTest extends WebTestCase
             'selectedParent' => 'not an uid',
         ]);
 
-        $this->assertSelectorTextContains('#parent-error', 'Select an organization from this list.');
+        $this->assertSelectorTextContains('#parent-error', 'Select an organization from the list');
         $this->assertSame(1, OrganizationFactory::count());
     }
 
@@ -272,7 +272,7 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains(
             '#parent-error',
-            'The sub-organization cannot be attached to this organization.'
+            'Select a different organization, you cannot create one under this one'
         );
         $this->assertSame(1, OrganizationFactory::count());
     }
@@ -290,7 +290,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $this->assertSame(0, OrganizationFactory::count());
     }
 

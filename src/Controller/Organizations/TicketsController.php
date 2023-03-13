@@ -22,8 +22,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TicketsController extends BaseController
 {
@@ -102,7 +102,8 @@ class TicketsController extends BaseController
         ActorsLister $actorsLister,
         Security $security,
         ValidatorInterface $validator,
-        HtmlSanitizerInterface $appMessageSanitizer
+        HtmlSanitizerInterface $appMessageSanitizer,
+        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
 
@@ -173,7 +174,7 @@ class TicketsController extends BaseController
                 'impact' => $impact,
                 'priority' => $priority,
                 'users' => $users,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
@@ -192,7 +193,7 @@ class TicketsController extends BaseController
                 'priority' => $priority,
                 'users' => $users,
                 'errors' => [
-                    'requester' => new TranslatableMessage('The requester must exist.', [], 'validators'),
+                    'requester' => $translator->trans('ticket.requester.invalid', [], 'errors'),
                 ],
             ]);
         }
@@ -213,7 +214,7 @@ class TicketsController extends BaseController
                     'priority' => $priority,
                     'users' => $users,
                     'errors' => [
-                        'assignee' => new TranslatableMessage('The assignee must exist.', [], 'validators'),
+                        'assignee' => $translator->trans('ticket.assignee.invalid', [], 'errors'),
                     ],
                 ]);
             }

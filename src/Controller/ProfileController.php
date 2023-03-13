@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProfileController extends BaseController
 {
@@ -35,6 +35,7 @@ class ProfileController extends BaseController
         UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
         RequestStack $requestStack,
+        TranslatorInterface $translator,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -61,7 +62,7 @@ class ProfileController extends BaseController
             return $this->renderBadRequest('profile/edit.html.twig', [
                 'name' => $name,
                 'email' => $email,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
@@ -71,7 +72,7 @@ class ProfileController extends BaseController
                     'name' => $name,
                     'email' => $email,
                     'errors' => [
-                        'password' => new TranslatableMessage('The password is invalid.', [], 'validators'),
+                        'password' => $translator->trans('user.password.dont_match', [], 'errors'),
                     ],
                 ]);
             }

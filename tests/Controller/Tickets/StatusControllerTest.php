@@ -108,7 +108,7 @@ class StatusControllerTest extends WebTestCase
             'status' => $newStatus,
         ]);
 
-        $this->assertSelectorTextContains('#status-error', 'The status "invalid" is not a valid status.');
+        $this->assertSelectorTextContains('#status-error', 'Select a status from the list');
         $ticket->refresh();
         $this->assertSame($oldStatus, $ticket->getStatus());
     }
@@ -131,7 +131,7 @@ class StatusControllerTest extends WebTestCase
             'status' => $newStatus,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $ticket->refresh();
         $this->assertSame($oldStatus, $ticket->getStatus());
     }

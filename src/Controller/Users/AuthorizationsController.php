@@ -19,8 +19,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AuthorizationsController extends BaseController
 {
@@ -86,6 +86,7 @@ class AuthorizationsController extends BaseController
         RoleSorter $roleSorter,
         ValidatorInterface $validator,
         Security $security,
+        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -121,7 +122,7 @@ class AuthorizationsController extends BaseController
                 'type' => $type,
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
@@ -137,7 +138,7 @@ class AuthorizationsController extends BaseController
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
                 'errors' => [
-                    'role' => new TranslatableMessage('Choose a role from the list.', [], 'validators'),
+                    'role' => $translator->trans('authorization.role.invalid', [], 'errors'),
                 ],
             ]);
         }
@@ -151,7 +152,7 @@ class AuthorizationsController extends BaseController
                 'roleUid' => $roleUid,
                 'organizationUid' => $organizationUid,
                 'errors' => [
-                    'role' => new TranslatableMessage('You can’t grant super-admin authorization.', [], 'validators'),
+                    'role' => $translator->trans('authorization.super.unauthorized', [], 'errors'),
                 ],
             ]);
         }
@@ -166,7 +167,7 @@ class AuthorizationsController extends BaseController
                     'type' => $type,
                     'roleUid' => $roleUid,
                     'organizationUid' => $organizationUid,
-                    'error' => new TranslatableMessage('This user already has an admin role.', [], 'validators'),
+                    'error' => $translator->trans('authorization.user.already_admin', [], 'errors'),
                 ]);
             }
         } else {
@@ -179,11 +180,7 @@ class AuthorizationsController extends BaseController
                     'type' => $type,
                     'roleUid' => $roleUid,
                     'organizationUid' => $organizationUid,
-                    'error' => new TranslatableMessage(
-                        'This user already has an orga role for this organization.',
-                        [],
-                        'validators',
-                    ),
+                    'error' => $translator->trans('authorization.user.already_orga', [], 'errors'),
                 ]);
             }
         }
@@ -201,6 +198,7 @@ class AuthorizationsController extends BaseController
         Request $request,
         AuthorizationRepository $authorizationRepository,
         Security $security,
+        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -214,7 +212,7 @@ class AuthorizationsController extends BaseController
         $role = $authorization->getRole();
 
         if (!$this->isCsrfTokenValid('delete user authorization', $csrfToken)) {
-            $this->addFlash('error', $this->csrfError());
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('user authorizations', [
                 'uid' => $holder->getUid(),
             ]);
@@ -226,11 +224,7 @@ class AuthorizationsController extends BaseController
                 $user->getId() === $holder->getId()
             )
         ) {
-            $this->addFlash('error', new TranslatableMessage(
-                'You can’t revoke this authorization.',
-                [],
-                'validators'
-            ));
+            $this->addFlash('error', $translator->trans('authorization.cannot_revoke', [], 'errors'));
             return $this->redirectToRoute('user authorizations', [
                 'uid' => $holder->getUid(),
             ]);

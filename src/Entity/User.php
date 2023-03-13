@@ -24,11 +24,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Table(name: '`users`')]
 #[UniqueEntity(
     fields: 'email',
-    message: new TranslatableMessage('The email {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('user.email.already_used', [], 'errors'),
 )]
 #[UniqueEntity(
     fields: 'uid',
-    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
 )]
 class User implements
     UserInterface,
@@ -52,10 +52,10 @@ class User implements
 
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The email is required.', [], 'validators'),
+        message: new TranslatableMessage('user.email.required', [], 'errors'),
     )]
     #[Assert\Email(
-        message: new TranslatableMessage('The email {{ value }} is not a valid address.', [], 'validators'),
+        message: new TranslatableMessage('user.email.invalid', [], 'errors'),
     )]
     private ?string $email = null;
 
@@ -67,28 +67,28 @@ class User implements
 
     #[ORM\Column(length: 255, options: ['default' => 'auto'])]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The color scheme is required.', [], 'validators'),
+        message: new TranslatableMessage('user.color_scheme.required', [], 'errors'),
     )]
     #[Assert\Choice(
         choices: ['auto', 'light', 'dark'],
-        message: new TranslatableMessage('The color scheme {{ value }} is not a valid choice.', [], 'validators'),
+        message: new TranslatableMessage('user.color_scheme.invalid', [], 'errors'),
     )]
     private ?string $colorScheme = 'auto';
 
     #[ORM\Column(length: 5, options: ['default' => Locales::DEFAULT_LOCALE])]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The language is required.', [], 'validators'),
+        message: new TranslatableMessage('user.language.required', [], 'errors'),
     )]
     #[Assert\Choice(
         choices: Locales::SUPPORTED_LOCALES,
-        message: new TranslatableMessage('The language {{ value }} is not a valid choice.', [], 'validators'),
+        message: new TranslatableMessage('user.language.invalid', [], 'errors'),
     )]
     private ?string $locale = Locales::DEFAULT_LOCALE;
 
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\Length(
         max: 100,
-        maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'validators'),
+        maxMessage: new TranslatableMessage('user.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;
 

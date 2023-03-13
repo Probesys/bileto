@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
-    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
 )]
 class Organization implements MetaEntityInterface, ActivityRecordableInterface
 {
@@ -44,11 +44,11 @@ class Organization implements MetaEntityInterface, ActivityRecordableInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The name is required.', [], 'validators'),
+        message: new TranslatableMessage('organization.name.required', [], 'errors'),
     )]
     #[Assert\Length(
         max: 255,
-        maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'validators'),
+        maxMessage: new TranslatableMessage('organization.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;
 
@@ -58,11 +58,7 @@ class Organization implements MetaEntityInterface, ActivityRecordableInterface
 
     #[ORM\Column(length: 255, options: ['default' => '/'])]
     #[AppAssert\TreeDepth(
-        message: new TranslatableMessage(
-            'The sub-organization cannot be attached to this organization.',
-            [],
-            'validators'
-        ),
+        message: new TranslatableMessage('organization.sub.too_deep', [], 'errors'),
         max: self::MAX_DEPTH,
     )]
     private ?string $parentsPath = null;

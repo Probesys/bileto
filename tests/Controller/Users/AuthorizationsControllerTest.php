@@ -221,7 +221,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => 'not a uid',
         ]);
 
-        $this->assertSelectorTextContains('#role-error', 'Choose a role from the list.');
+        $this->assertSelectorTextContains('#role-error', 'Select a role from the list');
         $this->assertSame(1, AuthorizationFactory::count());
     }
 
@@ -245,7 +245,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => $superRole->getUid(),
         ]);
 
-        $this->assertSelectorTextContains('#role-error', 'You can’t grant super-admin authorization.');
+        $this->assertSelectorTextContains('#role-error', 'You are not allowed to grant super-admin authorization');
         $this->assertSame(1, AuthorizationFactory::count());
     }
 
@@ -264,7 +264,10 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => $role->getUid(),
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'This user already has an admin role.');
+        $this->assertSelectorTextContains(
+            '[data-test="alert-error"]',
+            'You cannot grant another admin role to this user',
+        );
         $this->assertSame(1, AuthorizationFactory::count());
     }
 
@@ -288,7 +291,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains(
             '[data-test="alert-error"]',
-            'This user already has an orga role for this organization.'
+            'You cannot grant another orga role to this user in this organization'
         );
         $this->assertSame(2, AuthorizationFactory::count());
     }
@@ -309,7 +312,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => $role->getUid(),
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $this->assertSame(1, AuthorizationFactory::count());
     }
 
@@ -398,7 +401,10 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
         $client->followRedirect();
-        $this->assertSelectorTextContains('#notifications', 'You can’t revoke this authorization.');
+        $this->assertSelectorTextContains(
+            '#notifications',
+            'You are not allowed to revoke this super-admin authorization',
+        );
         AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
     }
 
@@ -416,7 +422,10 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertResponseRedirects("/users/{$user->getUid()}/authorizations", 302);
         $client->followRedirect();
-        $this->assertSelectorTextContains('#notifications', 'You can’t revoke this authorization.');
+        $this->assertSelectorTextContains(
+            '#notifications',
+            'You are not allowed to revoke this super-admin authorization',
+        );
         AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
     }
 
@@ -441,7 +450,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
         $client->followRedirect();
-        $this->assertSelectorTextContains('#notifications', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
         AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
     }
 

@@ -20,11 +20,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
-    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
 )]
 #[UniqueEntity(
     fields: 'name',
-    message: new TranslatableMessage('The role {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('role.name.already_used', [], 'errors'),
 )]
 class Role implements MetaEntityInterface, ActivityRecordableInterface
 {
@@ -66,33 +66,26 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
 
     #[ORM\Column(length: 50, unique: true)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The name is required.', [], 'validators'),
+        message: new TranslatableMessage('role.name.required', [], 'errors'),
     )]
     #[Assert\Length(
         max: 50,
-        maxMessage: new TranslatableMessage('The name must be {{ limit }} characters maximum.', [], 'validators'),
+        maxMessage: new TranslatableMessage('role.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The description is required.', [], 'validators'),
+        message: new TranslatableMessage('role.description.required', [], 'errors'),
     )]
     #[Assert\Length(
         max: 255,
-        maxMessage: new TranslatableMessage(
-            'The description must be {{ limit }} characters maximum.',
-            [],
-            'validators'
-        ),
+        maxMessage: new TranslatableMessage('role.description.max_chars', [], 'errors'),
     )]
     private ?string $description = null;
 
     #[ORM\Column(length: 32)]
-    #[Assert\Choice(
-        choices: self::TYPES,
-        message: new TranslatableMessage('The type {{ value }} is not a valid type.', [], 'validators'),
-    )]
+    #[Assert\Choice(choices: self::TYPES)]
     private ?string $type = null;
 
     /** @var string[] $permissions */

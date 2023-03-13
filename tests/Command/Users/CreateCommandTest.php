@@ -93,10 +93,7 @@ class CreateCommandTest extends KernelTestCase
         ]);
 
         $this->assertSame(Command::INVALID, $tester->getStatusCode());
-        $this->assertSame(
-            "The email \"{$email}\" is not a valid address.\n",
-            $tester->getErrorOutput()
-        );
+        $this->assertSame("Enter a valid email address.\n", $tester->getErrorOutput());
         $this->assertSame(0, UserFactory::count());
     }
 
@@ -116,7 +113,7 @@ class CreateCommandTest extends KernelTestCase
 
         $this->assertSame(Command::INVALID, $tester->getStatusCode());
         $this->assertSame(
-            "The email is required.\n",
+            "Enter an email address.\n",
             $tester->getErrorOutput()
         );
         $this->assertSame(0, UserFactory::count());
@@ -141,7 +138,7 @@ class CreateCommandTest extends KernelTestCase
 
         $this->assertSame(Command::INVALID, $tester->getStatusCode());
         $this->assertSame(
-            "The email \"{$email}\" is already used.\n",
+            "Enter a different email address, this one is already in use.\n",
             $tester->getErrorOutput()
         );
         $this->assertSame(1, UserFactory::count());

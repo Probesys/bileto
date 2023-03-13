@@ -13,8 +13,8 @@ use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrganizationsController extends BaseController
 {
@@ -67,7 +67,8 @@ class OrganizationsController extends BaseController
         Request $request,
         OrganizationRepository $orgaRepository,
         OrganizationSorter $orgaSorter,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:organizations');
 
@@ -100,7 +101,7 @@ class OrganizationsController extends BaseController
                 'organizations' => $organizations,
                 'name' => $name,
                 'selectedParentUid' => $selectedParentUid,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
@@ -119,11 +120,7 @@ class OrganizationsController extends BaseController
                     'name' => $name,
                     'selectedParentUid' => $selectedParentUid,
                     'errors' => [
-                        'parentsPath' => new TranslatableMessage(
-                            'Select an organization from this list.',
-                            [],
-                            'validators',
-                        ),
+                        'parentsPath' => $translator->trans('organization.sub.invalid', [], 'errors'),
                     ],
                 ]);
             }

@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'uid',
-    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
 )]
 class Message implements MetaEntityInterface, ActivityRecordableInterface
 {
@@ -44,15 +44,12 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     private bool $isConfidential = false;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_VIA])]
-    #[Assert\Choice(
-        choices: self::VIAS,
-        message: new TranslatableMessage('The via {{ value }} is not a valid via.', [], 'validators'),
-    )]
+    #[Assert\Choice(choices: self::VIAS)]
     private string $via = self::DEFAULT_VIA;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(
-        message: new TranslatableMessage('The message is required.', [], 'validators'),
+        message: new TranslatableMessage('message.content.required', [], 'errors'),
     )]
     private string $content = '';
 

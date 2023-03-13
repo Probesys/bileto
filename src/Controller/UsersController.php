@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UsersController extends BaseController
 {
@@ -47,6 +48,7 @@ class UsersController extends BaseController
         Request $request,
         UserRepository $userRepository,
         ValidatorInterface $validator,
+        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -66,7 +68,7 @@ class UsersController extends BaseController
             return $this->renderBadRequest('users/new.html.twig', [
                 'email' => $email,
                 'name' => $name,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 

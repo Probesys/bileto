@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriorityController extends BaseController
 {
@@ -42,7 +43,8 @@ class PriorityController extends BaseController
         Ticket $ticket,
         Request $request,
         TicketRepository $ticketRepository,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:priority', $organization);
@@ -72,7 +74,7 @@ class PriorityController extends BaseController
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 

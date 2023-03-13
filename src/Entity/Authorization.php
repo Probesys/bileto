@@ -18,7 +18,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[ORM\Table(name: '`authorizations`')]
 #[UniqueEntity(
     fields: 'uid',
-    message: new TranslatableMessage('The uid {{ value }} is already used.', [], 'validators'),
+    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
 )]
 class Authorization implements MetaEntityInterface, ActivityRecordableInterface
 {

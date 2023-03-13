@@ -126,7 +126,7 @@ class PriorityControllerTest extends WebTestCase
             'priority' => $newPriority,
         ]);
 
-        $this->assertSelectorTextContains('#priority-error', 'The priority "invalid" is not a valid priority.');
+        $this->assertSelectorTextContains('#priority-error', 'Select a priority from the list');
         $ticket->refresh();
         $this->assertSame($oldUrgency, $ticket->getUrgency());
         $this->assertSame($oldImpact, $ticket->getImpact());
@@ -159,7 +159,7 @@ class PriorityControllerTest extends WebTestCase
             'priority' => $newPriority,
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
         $ticket->refresh();
         $this->assertSame($oldUrgency, $ticket->getUrgency());
         $this->assertSame($oldImpact, $ticket->getImpact());

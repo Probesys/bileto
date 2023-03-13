@@ -382,7 +382,7 @@ class TicketsControllerTest extends WebTestCase
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#title-error', 'The title is required.');
+        $this->assertSelectorTextContains('#title-error', 'Enter a title');
     }
 
     public function testPostCreateFailsIfTitleIsTooLong(): void
@@ -415,7 +415,7 @@ class TicketsControllerTest extends WebTestCase
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#title-error', 'The title must be 255 characters maximum.');
+        $this->assertSelectorTextContains('#title-error', 'Enter a title of less than 255 characters');
     }
 
     public function testPostCreateFailsIfMessageIsEmpty(): void
@@ -448,7 +448,7 @@ class TicketsControllerTest extends WebTestCase
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#message-error', 'The message is required.');
+        $this->assertSelectorTextContains('#message-error', 'Enter a message');
     }
 
     public function testPostCreateFailsIfRequesterIsInvalid(): void
@@ -481,7 +481,7 @@ class TicketsControllerTest extends WebTestCase
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#requester-error', 'The requester must exist.');
+        $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
     }
 
     public function testPostCreateFailsIfAssigneeIsInvalid(): void
@@ -515,7 +515,7 @@ class TicketsControllerTest extends WebTestCase
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#assignee-error', 'The assignee must exist.');
+        $this->assertSelectorTextContains('#assignee-error', 'Select a user from the list');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
@@ -548,7 +548,7 @@ class TicketsControllerTest extends WebTestCase
         Time::unfreeze();
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'Invalid CSRF token.');
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
     }
 
     public function testPostCreateFailsIfAccessIsForbidden(): void

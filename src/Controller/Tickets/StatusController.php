@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StatusController extends BaseController
 {
@@ -43,7 +44,8 @@ class StatusController extends BaseController
         Ticket $ticket,
         Request $request,
         TicketRepository $ticketRepository,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $organization);
@@ -68,7 +70,7 @@ class StatusController extends BaseController
                 'ticket' => $ticket,
                 'status' => $status,
                 'statuses' => $statuses,
-                'error' => $this->csrfError(),
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
