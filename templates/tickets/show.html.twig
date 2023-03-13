@@ -49,9 +49,7 @@
                             {% set diff = timelineDate ? timelineDate.diff(timelineItem.createdAt).d : 0 %}
                             {% if diff >= 7 %}
                                 <div class="timeline__date-diff">
-                                    {{ icon('ellipsis') }}
-                                    {{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}
-                                    {{ icon('ellipsis') }}
+                                    —&nbsp;{{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}&nbsp;—
                                 </div>
                             {% endif %}
 
