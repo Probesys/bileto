@@ -16,24 +16,23 @@
 @import "./components/badges.css";
 @import "./components/buttons.css";
 @import "./components/cards.css";
-@import "./components/events.css";
 @import "./components/forms.css";
 @import "./components/icons.css";
 @import "./components/images.css";
 @import "./components/layout.css";
 @import "./components/lists.css";
-@import "./components/list-tickets.css";
 @import "./components/messages.css";
 @import "./components/modal.css";
 @import "./components/notifications.css";
+@import "./components/organizations.css";
 @import "./components/placeholders.css";
 @import "./components/popups.css";
 @import "./components/sidebar.css";
 @import "./components/spinners.css";
+@import "./components/tickets.css";
 @import "./components/timelines.css";
-@import "./pages/login-new.css";
-@import "./pages/organizations-index.css";
-@import "./pages/tickets-show.css";
+@import "./custom/login-new.css";
+@import "./custom/tickets-show.css";
 
 *,
 *::before,

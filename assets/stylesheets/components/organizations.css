@@ -2,7 +2,7 @@
 /* Copyright 2022-2023 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
-.organizations-index .organizations__list {
+.organizations-list {
     position: relative;
 
     padding-left: 0;
@@ -12,7 +12,7 @@
     list-style: none;
 }
 
-.organizations-index .organizations__list .organizations__list {
+.organizations-list .organizations-list {
     margin-left: 1rem;
 
     font-size: 0.9em;
@@ -20,7 +20,7 @@
     background-color: var(--color-grey3);
 }
 
-.organizations-index .organizations__list-item a {
+.organizations-list__item a {
     display: block;
     margin-left: -0.25rem;
     padding: 1rem;
@@ -36,8 +36,8 @@
         border-color 0.2s ease-in-out;
 }
 
-.organizations-index .organizations__list-item a:hover,
-.organizations-index .organizations__list-item a:focus {
+.organizations-list__item a:hover,
+.organizations-list__item a:focus {
     background-color: var(--color-primary4);
     border-left-color: var(--color-primary8);
 }

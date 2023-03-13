@@ -5,12 +5,12 @@
  #}
 
 {% for field in event.changes | keys %}
-    <div class="event" data-test="event-item">
-        <div class="event__message">
+    <div class="timeline__event" data-test="event-item">
+        <div class="timeline__event-message">
             {{ event | formatTicketChanges(field) | raw }}
         </div>
 
-        <time class="event__date" datetime="{{ event.createdAt | dateIso }}">
+        <time class="timeline__event-date" datetime="{{ event.createdAt | dateIso }}">
             {{ event.createdAt | dateTrans('HH:mm') }}
         </time>
     </div>

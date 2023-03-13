@@ -5,9 +5,9 @@
  #}
 
 {% if organizations %}
-    <ul class="organizations__list">
+    <ul class="organizations-list">
         {% for organization in organizations %}
-            <li class="organizations__list-item" data-test="organization-item">
+            <li class="organizations-list__item" data-test="organization-item">
                 <a href="{{ path('organization', { uid: organization.uid }) }}">
                     {{ organization.name }}
                 </a>

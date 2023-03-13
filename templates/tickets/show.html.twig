@@ -96,153 +96,153 @@
                             </button>
                         {% endif %}
                     </form>
-                </div>
 
-                {% if is_granted('orga:create:tickets:messages', organization) %}
-                    <form
-                        action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
-                        method="post"
-                        class="ticket__editor flow"
-                        data-controller="ticket-editor"
-                        data-turbo-preserve-scroll
-                        data-ticket-editor-ticket-status-value="{{ ticket.status }}"
-                    >
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
+                    {% if is_granted('orga:create:tickets:messages', organization) %}
+                        <form
+                            action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
+                            method="post"
+                            class="timeline__editor flow"
+                            data-controller="ticket-editor"
+                            data-turbo-preserve-scroll
+                            data-ticket-editor-ticket-status-value="{{ ticket.status }}"
+                        >
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
 
-                        {% if error %}
-                            {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-                        {% endif %}
-
-                        <div class="flow-small">
-                            {% if errors.content is defined %}
-                                <p class="form__error" role="alert" id="message-error">
-                                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                    {{ errors.content }}
-                                </p>
+                            {% if error %}
+                                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
                             {% endif %}
 
-                            <textarea
-                                id="message"
-                                name="message"
-                                data-controller="tinymce"
+                            <div class="flow-small">
                                 {% if errors.content is defined %}
-                                    autofocus
-                                    aria-invalid="true"
-                                    aria-errormessage="message-error"
+                                    <p class="form__error" role="alert" id="message-error">
+                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                        {{ errors.content }}
+                                    </p>
                                 {% endif %}
-                            >{{ message }}</textarea>
-                        </div>
 
-                        <div class="row flow">
-                            <label>
-                                {{ 'tickets.show.mark_as' | trans }}
-                            </label>
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    data-controller="tinymce"
+                                    {% if errors.content is defined %}
+                                        autofocus
+                                        aria-invalid="true"
+                                        aria-errormessage="message-error"
+                                    {% endif %}
+                                >{{ message }}</textarea>
+                            </div>
 
-                            <div class="row row--always flow">
-                                {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
+                            <div class="row flow">
+                                <label>
+                                    {{ 'tickets.show.mark_as' | trans }}
+                                </label>
+
+                                <div class="row row--always flow">
+                                    {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
+                                        <div>
+                                            <input
+                                                type="checkbox"
+                                                id="is-confidential"
+                                                name="isConfidential"
+                                                {{ isConfidential ? 'checked' }}
+                                                data-action="ticket-editor#refresh"
+                                                data-ticket-editor-target="confidentialCheckbox"
+                                                {% if errors.isConfidential is defined %}
+                                                    aria-invalid="true"
+                                                    aria-errormessage="is-confidential-error"
+                                                {% endif %}
+                                            />
+
+                                            <label for="is-confidential">
+                                                {{ 'tickets.show.mark_as.confidential' | trans }}
+                                            </label>
+                                        </div>
+                                    {% endif %}
+
                                     <div>
                                         <input
                                             type="checkbox"
-                                            id="is-confidential"
-                                            name="isConfidential"
-                                            {{ isConfidential ? 'checked' }}
+                                            id="is-solution"
+                                            name="isSolution"
+                                            {{ isSolution ? 'checked' }}
+                                            {{ ticket.isFinished ? 'disabled' }}
                                             data-action="ticket-editor#refresh"
-                                            data-ticket-editor-target="confidentialCheckbox"
-                                            {% if errors.isConfidential is defined %}
-                                                aria-invalid="true"
-                                                aria-errormessage="is-confidential-error"
-                                            {% endif %}
+                                            data-ticket-editor-target="solutionCheckbox"
                                         />
 
-                                        <label for="is-confidential">
-                                            {{ 'tickets.show.mark_as.confidential' | trans }}
+                                        <label for="is-solution">
+                                            {{ 'tickets.show.mark_as.solution' | trans }}
                                         </label>
                                     </div>
-                                {% endif %}
-
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="is-solution"
-                                        name="isSolution"
-                                        {{ isSolution ? 'checked' }}
-                                        {{ ticket.isFinished ? 'disabled' }}
-                                        data-action="ticket-editor#refresh"
-                                        data-ticket-editor-target="solutionCheckbox"
-                                    />
-
-                                    <label for="is-solution">
-                                        {{ 'tickets.show.mark_as.solution' | trans }}
-                                    </label>
                                 </div>
                             </div>
-                        </div>
 
-                        {% if errors.isConfidential is defined %}
-                            <p class="form__error" role="alert" id="is-confidential-error">
-                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                {{ errors.isConfidential }}
-                            </p>
-                        {% endif %}
-
-                        <div class="row flow">
-                            {% if not ticket.isFinished %}
-                                <div class="row__item--extend flow-small">
-                                    {% if is_granted('orga:update:tickets:status', organization) %}
-                                        <div class="row row--center row--always flow">
-                                            <label for="status-to">
-                                                {{ 'tickets.show.status_to' | trans }}
-                                            </label>
-
-                                            <select
-                                                id="status-to"
-                                                name="status"
-                                                required
-                                                {{ ticket.isFinished ? 'disabled' }}
-                                                {% if errors.status is defined %}
-                                                    autofocus
-                                                    aria-invalid="true"
-                                                    aria-errormessage="status-error"
-                                                {% endif %}
-                                                data-ticket-editor-target="statusSelect"
-                                            >
-                                                {% for value, label in statuses %}
-                                                    <option value="{{ value }}" {{ value == status ? 'selected' }}>
-                                                        {{ label | trans }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-
-                                        {% if errors.status is defined %}
-                                            <p class="form__error" role="alert" id="status-error">
-                                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                                {{ errors.status }}
-                                            </p>
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            {% elseif ticket.status == 'resolved' %}
-                                <p class="row__item--extend text--success">
-                                    {{ icon('check') }}
-                                    {{ 'tickets.show.resolved' | trans }}
-                                </p>
-                            {% elseif ticket.status == 'closed' %}
-                                <p class="row__item--extend text--secondary">
-                                    {{ icon('close') }}
-                                    {{ 'tickets.show.closed' | trans }}
+                            {% if errors.isConfidential is defined %}
+                                <p class="form__error" role="alert" id="is-confidential-error">
+                                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                    {{ errors.isConfidential }}
                                 </p>
                             {% endif %}
 
-                            <button id="form-create-message-submit" class="button--primary row__item--extend" type="submit">
-                                {{ 'tickets.show.answer' | trans }}
-                            </button>
-                        </div>
-                    </form>
-                {% endif %}
+                            <div class="row flow">
+                                {% if not ticket.isFinished %}
+                                    <div class="row__item--extend flow-small">
+                                        {% if is_granted('orga:update:tickets:status', organization) %}
+                                            <div class="row row--center row--always flow">
+                                                <label for="status-to">
+                                                    {{ 'tickets.show.status_to' | trans }}
+                                                </label>
+
+                                                <select
+                                                    id="status-to"
+                                                    name="status"
+                                                    required
+                                                    {{ ticket.isFinished ? 'disabled' }}
+                                                    {% if errors.status is defined %}
+                                                        autofocus
+                                                        aria-invalid="true"
+                                                        aria-errormessage="status-error"
+                                                    {% endif %}
+                                                    data-ticket-editor-target="statusSelect"
+                                                >
+                                                    {% for value, label in statuses %}
+                                                        <option value="{{ value }}" {{ value == status ? 'selected' }}>
+                                                            {{ label | trans }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            {% if errors.status is defined %}
+                                                <p class="form__error" role="alert" id="status-error">
+                                                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                                    {{ errors.status }}
+                                                </p>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                {% elseif ticket.status == 'resolved' %}
+                                    <p class="row__item--extend text--success">
+                                        {{ icon('check') }}
+                                        {{ 'tickets.show.resolved' | trans }}
+                                    </p>
+                                {% elseif ticket.status == 'closed' %}
+                                    <p class="row__item--extend text--secondary">
+                                        {{ icon('close') }}
+                                        {{ 'tickets.show.closed' | trans }}
+                                    </p>
+                                {% endif %}
+
+                                <button id="form-create-message-submit" class="button--primary row__item--extend" type="submit">
+                                    {{ 'tickets.show.answer' | trans }}
+                                </button>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="ticket__info row__item--noshrink flow-larger">
+            <div class="ticket__info text--small row__item--noshrink flow-larger">
                 {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
                 {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
                 {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}

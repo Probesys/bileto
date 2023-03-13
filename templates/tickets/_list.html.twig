@@ -13,10 +13,13 @@
         <li class="list-tickets__item flow-smaller" data-test="ticket-item">
             <div class="row flow-smaller">
                 <div class="row__item--extend">
-                    <a class="list-tickets__anchor text--small" href="{{ path('ticket', {'uid': ticket.uid}) }}">
-                        <h2 class="list-tickets__title">{{ ticket.title }}</h2>
-                        <span class="list-tickets__id">#{{ ticket.id }}</span>
-                    </a>
+                    <h2 class="text--small">
+                        <a class="list-tickets__anchor" href="{{ path('ticket', {'uid': ticket.uid}) }}">
+                            {{ ticket.title }}
+
+                            <span class="ticket__id">#{{ ticket.id }}</span>
+                        </a>
+                    </h2>
                 </div>
 
                 <div>
