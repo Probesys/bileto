@@ -23,6 +23,7 @@ layout.modal.close: 'Close this window'
 layout.notifications.close: 'Close the notification'
 layout.notifications.error: Error
 layout.notifications.success: Success
+layout.scroll_to_top: 'Scroll to top'
 layout.skip_to_main_content: 'Skip to main content'
 layout.tickets: Tickets
 layout.user_menu_title: 'Menu of {name}'

@@ -27,6 +27,7 @@
 @import "./components/organizations.css";
 @import "./components/placeholders.css";
 @import "./components/popups.css";
+@import "./components/scroll-to-top.css";
 @import "./components/sidebar.css";
 @import "./components/spinners.css";
 @import "./components/tickets.css";

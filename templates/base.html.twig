@@ -258,6 +258,17 @@
             </div>
         </div>
 
+        <div
+            class="scroll-to-top"
+            data-controller="scroll-to"
+            data-scroll-to-target-value="#layout"
+            data-visible="false"
+        >
+            <button class="scroll-to-top__button" data-action="scroll-to#scroll">
+                {{ 'layout.scroll_to_top' | trans }}
+            </button>
+        </div>
+
         {{ include('_modal_dialog.html.twig') }}
     </body>
 </html>
