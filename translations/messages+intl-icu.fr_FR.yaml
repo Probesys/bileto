@@ -140,6 +140,7 @@ tickets.show.opened_incident: 'a ouvert cet <strong>incident</strong>'
 tickets.show.opened_on: 'le {date}'
 tickets.show.opened_request: 'a ouvert cette <strong>demande</strong>'
 tickets.show.resolved: 'Ce ticket est résolu.'
+tickets.show.scroll_to_bottom: 'Défiler en bas'
 tickets.show.show_history: 'Afficher l’historique'
 tickets.show.status_to: 'Statut vers'
 tickets.show.urgency: "Urgence\_:"
