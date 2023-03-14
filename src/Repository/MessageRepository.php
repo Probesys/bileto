@@ -17,10 +17,13 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Message|null findOneBy(array $criteria, array $orderBy = null)
  * @method Message[]    findAll()
  * @method Message[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ *
+ * @method Message findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false)
  */
 class MessageRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

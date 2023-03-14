@@ -32,13 +32,11 @@ Setup the database:
 $ make db-setup
 ```
 
-Create a user:
+Open [localhost:8000](http://localhost:8000) and login with one of the following credentials:
 
-```console
-$ ./docker/bin/console app:users:create --email=alix@example.com --password=secret
-```
-
-Open [localhost:8000](http://localhost:8000) and login with your user credentials.
+- `alix@example.com` / `secret` (super-admin and technician for all the organizations)
+- `benedict@example.com` / `secret` (user in the “Web team” organization)
+- `charlie@example.com` / `secret` (user in the “Friendly Coorp” organization)
 
 A note about the `make` commands: they might feel magic, but they are not!
 They are just shortcuts for common commands.

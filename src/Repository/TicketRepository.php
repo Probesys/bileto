@@ -19,10 +19,13 @@ use Doctrine\ORM\QueryBuilder;
  * @method Ticket|null findOneBy(array $criteria, array $orderBy = null)
  * @method Ticket[]    findAll()
  * @method Ticket[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ *
+ * @method Ticket findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false)
  */
 class TicketRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

@@ -56,6 +56,7 @@ install: ## Install the dependencies
 db-setup: ## Setup the database
 	$(CONSOLE) doctrine:database:create
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+	$(CONSOLE) db:seeds:load
 
 .PHONY: db-migrate
 db-migrate: ## Migrate the database
@@ -70,6 +71,7 @@ endif
 	$(CONSOLE) doctrine:database:create
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
 	$(CONSOLE) cache:clear
+	$(CONSOLE) db:seeds:load
 
 .PHONY: i18n-extract
 i18n-extract: ## Extract translations

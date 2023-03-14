@@ -18,10 +18,13 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Role|null findOneBy(array $criteria, array $orderBy = null)
  * @method Role[]    findAll()
  * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ *
+ * @method Role findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false)
  */
 class RoleRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -48,19 +51,12 @@ class RoleRepository extends ServiceEntityRepository implements UidGeneratorInte
 
     public function findOrCreateSuperRole(): Role
     {
-        $superRole = $this->findOneBy(['type' => 'super']);
-        if ($superRole) {
-            return $superRole;
-        }
-
-        $superRole = new Role();
-        $superRole->setName('Super-admin');
-        $superRole->setDescription('Super-admin');
-        $superRole->setType('super');
-        $superRole->setPermissions(['admin:*']);
-
-        $this->save($superRole, true);
-
-        return $superRole;
+        return $this->findOneOrCreateBy([
+            'type' => 'super',
+        ], [
+            'name' => 'Super-admin',
+            'description' => 'Super-admin',
+            'permissions' => ['admin:*'],
+        ], true);
     }
 }
