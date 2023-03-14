@@ -16,15 +16,17 @@ The files are located under [the `translations` folder](/translations).
 
 ## Domains
 
-Three domains are actually used:
+Two domains are actively used:
 
 - messages: the default domain, most of the translations belong to this domain
-- validators: the domain used by the entities validators (and sometimes in controllers to return error messages)
-- security: the domain used by the security bundle of Symfony (we almost never use it)
+- errors: the domain used for the errors to display to the user (i.e. entity validations and controllers errors)
 
-## Format of messages keys
+The `validators` and `security` domains are those created by the Symfony bundles.
+You should not worry about them.
 
-The translations keys of the message domain are using keywords (e.g. `users.index.title`).
+## Format of translations keys
+
+The translations keys are using keywords (e.g. `users.index.title`).
 
 The first keyword is generally refering to the controller or entity to which the translation belongs (e.g. `users.*`).
 It can also refers to:
