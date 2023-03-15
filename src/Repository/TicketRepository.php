@@ -11,6 +11,7 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * @extends ServiceEntityRepository<Ticket>
@@ -52,7 +53,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
 
     /**
      * @param array<string, int[]> $orgaFilters
-     * @param array<string, mixed> $criteria
+     * @param array<array<string|int,mixed>> $criteria
      * @param string[] $sort
      * @return Ticket[]
      */
@@ -67,7 +68,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
 
     /**
      * @param array<string, int[]> $orgaFilters
-     * @param array<string, mixed> $criteria
+     * @param array<array<string|int,mixed>> $criteria
      */
     public function countBySearch(User $actor, array $orgaFilters, array $criteria): int
     {
@@ -80,7 +81,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
 
     /**
      * @param array<string, int[]> $orgaFilters
-     * @param array<string, mixed> $criteria
+     * @param array<array<string|int,mixed>> $criteria
      */
     private function createSearchQueryBuilder(User $actor, array $orgaFilters, array $criteria): QueryBuilder
     {
@@ -121,20 +122,51 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
             $qb->setParameter('actor', $actor->getId());
         }
 
-        foreach ($criteria as $field => $condition) {
-            if ($condition === null) {
-                $expr = $qb->expr()->isNull("t.{$field}");
-            } elseif (is_array($condition)) {
-                $expr = $qb->expr()->in("t.{$field}", ":{$field}");
-                $qb->setParameter($field, $condition);
+        foreach ($criteria as $criterion) {
+            if (count($criterion) === 1) {
+                /** @var string $field */
+                $field = array_key_first($criterion);
+                $condition = $criterion[$field];
+                $expr = $this->buildCriteriaExpr($qb, $field, $condition);
             } else {
-                $expr = $qb->expr()->eq("t.{$field}", ":{$field}");
-                $qb->setParameter($field, $condition);
+                $expr = $this->buildOrExpr($qb, $criterion);
             }
 
             $qb->andWhere($expr);
         }
 
         return $qb;
+    }
+
+    /**
+     * return Expr\Comparison|Expr\Func|string
+     */
+    private function buildCriteriaExpr(QueryBuilder $qb, string $field, mixed $condition): mixed
+    {
+        if ($condition === null) {
+            return $qb->expr()->isNull("t.{$field}");
+        } elseif (is_array($condition)) {
+            $qb->setParameter($field, $condition);
+            return $qb->expr()->in("t.{$field}", ":{$field}");
+        } else {
+            $qb->setParameter($field, $condition);
+            return $qb->expr()->eq("t.{$field}", ":{$field}");
+        }
+    }
+
+    /**
+     * @param array<array<string|int,mixed>> $criteria
+     */
+    private function buildOrExpr(QueryBuilder $qb, array $criteria): Expr\Orx
+    {
+        $expressions = [];
+        foreach ($criteria as $criterion) {
+            /** @var string $field */
+            $field = array_key_first($criterion);
+            $condition = $criterion[$field];
+            $expressions[] = $this->buildCriteriaExpr($qb, $field, $condition);
+        }
+
+        return $qb->expr()->orX(...$expressions);
     }
 }

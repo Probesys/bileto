@@ -16,7 +16,7 @@ class TicketSearcher
 {
     private TicketRepository $ticketRepository;
 
-    /** @var array<string,mixed> $criteria */
+    /** @var array<array<string|int,mixed>> $criteria */
     private array $criteria = [];
 
     /** @var array<string,int[]> $orgaFilters */
@@ -67,9 +67,9 @@ class TicketSearcher
         }
     }
 
-    public function setCriteria(string $property, mixed $criteria): self
+    public function setCriteria(string $field, mixed $condition): self
     {
-        $this->criteria[$property] = $criteria;
+        $this->criteria[] = [$field => $condition];
 
         return $this;
     }
@@ -99,8 +99,8 @@ class TicketSearcher
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
         $criteria = [
-            'status' => Ticket::OPEN_STATUSES,
-            'assignee' => $currentUser,
+            ['status' => Ticket::OPEN_STATUSES],
+            ['assignee' => $currentUser],
         ];
         $sort = ['createdAt', 'DESC'];
 
@@ -117,8 +117,8 @@ class TicketSearcher
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
         $criteria = [
-            'status' => Ticket::OPEN_STATUSES,
-            'assignee' => $currentUser,
+            ['status' => Ticket::OPEN_STATUSES],
+            ['assignee' => $currentUser],
         ];
 
         return $this->ticketRepository->countBySearch(
@@ -136,8 +136,8 @@ class TicketSearcher
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
         $criteria = [
-            'status' => Ticket::OPEN_STATUSES,
-            'assignee' => null,
+            ['status' => Ticket::OPEN_STATUSES],
+            ['assignee' => null],
         ];
         $sort = ['createdAt', 'DESC'];
 
@@ -154,8 +154,8 @@ class TicketSearcher
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
         $criteria = [
-            'status' => Ticket::OPEN_STATUSES,
-            'assignee' => null,
+            ['status' => Ticket::OPEN_STATUSES],
+            ['assignee' => null],
         ];
 
         return $this->ticketRepository->countBySearch(
