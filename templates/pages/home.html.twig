@@ -43,7 +43,7 @@
 
             {% if organizations %}
                 <div class="flow">
-                    <h2>{{ 'home.your_organizations' | trans }}</h2>
+                    <h2>{{ 'home.your_organizations' | trans({ count: organizations|length }) }}</h2>
 
                     <div class="grid">
                         {% for organization in organizations %}
