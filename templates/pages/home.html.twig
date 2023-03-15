@@ -15,23 +15,33 @@
         <h1>{{ 'home.title' | trans }}</h1>
 
         <div class="wrapper-large wrapper--center flow-larger">
-            {% if tickets %}
-                <div class="flow">
-                    <div class="row row--center row--always flow">
-                        <h2 class="row__item--extend">{{ 'home.your_tickets' | trans }}</h2>
+            <div class="flow">
+                <div class="row row--center row--always flow">
+                    <h2 class="row__item--extend">{{ 'home.your_tickets' | trans }}</h2>
 
-                        <a class="text--small" href="{{ path('tickets', { assignee: app.user.uid }) }}">
-                            {{ 'home.your_tickets_all' | trans }}
+                    {% if is_granted('orga:create:tickets', 'any') %}
+                        <a class="anchor--action" href="{{ path('new ticket') }}">
+                            {{ icon('plus') }}
+                            {{ 'home.new_ticket' | trans }}
                         </a>
-                    </div>
+                    {% endif %}
+                </div>
 
+                {% if tickets %}
                     {{ include(
                         'tickets/_list.html.twig',
                         { tickets: tickets },
                         with_context = false
                     ) }}
-                </div>
-            {% endif %}
+                {% else %}
+                    <div class="text--center">
+                        <p class="placeholder">
+                            {{ icon('ticket') }}
+                            {{ 'home.no_tickets' | trans }}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
 
             {% if organizations %}
                 <div class="flow">

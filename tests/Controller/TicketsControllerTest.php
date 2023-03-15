@@ -14,6 +14,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -24,7 +25,7 @@ class TicketsControllerTest extends WebTestCase
     use Factories;
     use ResetDatabase;
 
-    public function testIndexRendersCorrectly(): void
+    public function testGetIndexRendersCorrectly(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -38,6 +39,77 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="ticket-item"]', "My ticket #{$ticket->getId()}");
+    }
+
+    public function testGetNewRendersCorrectlyIfManyOrganizationsAreAccessible(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        OrganizationFactory::createMany(2);
+        $this->grantOrga($user->object(), ['orga:create:tickets']);
+
+        $client->request('GET', '/tickets/new');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'New ticket');
+    }
+
+    public function testGetNewRedirectsIfOnlyOneOrganizationIsAccessible(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        list($orga1, $orga2) = OrganizationFactory::createMany(2);
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $orga1->object());
+
+        $client->request('GET', '/tickets/new');
+
+        $this->assertResponseRedirects("/organizations/{$orga1->getUid()}/tickets/new", 302);
+    }
+
+    public function testGetNewRedirectsIfOrganizationIsGiven(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        list($orga1, $orga2) = OrganizationFactory::createMany(2);
+        $this->grantOrga($user->object(), ['orga:create:tickets']);
+
+        $client->request('GET', '/tickets/new', [
+            'organization' => $orga2->getUid(),
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$orga2->getUid()}/tickets/new", 302);
+    }
+
+    public function testGetNewFailsIfGivenOrganizationDoesNotExist(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        list($orga1, $orga2) = OrganizationFactory::createMany(2);
+        $this->grantOrga($user->object(), ['orga:create:tickets']);
+
+        $client->catchExceptions(false);
+        $client->request('GET', '/tickets/new', [
+            'organization' => 'not an uid',
+        ]);
+    }
+
+    public function testGetNewFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        list($orga1, $orga2) = OrganizationFactory::createMany(2);
+
+        $client->catchExceptions(false);
+        $client->request('GET', '/tickets/new');
     }
 
     public function testGetShowRendersCorrectlyIfTicketIsCreatedByUser(): void

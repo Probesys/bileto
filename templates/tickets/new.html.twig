@@ -1,0 +1,45 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'tickets' %}
+
+{% block title %}{{ 'tickets.new.title' | trans }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <div class="wrapper-large wrapper--center flow">
+            <div class="layout__breadcrumb">
+                <h1>{{ 'tickets.new.title' | trans }}</h1>
+            </div>
+
+            <form action="" method="get" class="wrapper-small wrapper--center flow">
+                <div class="flow-small">
+                    <label for="organization">
+                        {{ 'tickets.new.choose_orga' | trans }}
+                    </label>
+
+                    <select id="organization" name="organization">
+                        {{ include(
+                            'organizations/_organizations_as_options.html.twig',
+                            {
+                                organizations: organizations,
+                            },
+                            with_context = false
+                        ) }}
+                    </select>
+                </div>
+
+                <div class="form__actions">
+                    <button class="button--primary" type="submit">
+                        {{ 'tickets.new.submit_orga_choice' | trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+{% endblock %}

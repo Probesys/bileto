@@ -11,9 +11,11 @@ use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
+use App\Service\OrganizationSorter;
 use App\Service\TicketSearcher;
 use App\Service\TicketTimeline;
 use App\Utils\Time;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,6 +62,59 @@ class TicketsController extends BaseController
             'countToAssign' => $ticketSearcher->countToAssign(),
             'countOwned' => $ticketSearcher->countAssignedTo($user),
             'currentView' => $currentView,
+        ]);
+    }
+
+    #[Route('/tickets/new', name: 'new ticket', methods: ['GET', 'HEAD'])]
+    public function new(
+        Request $request,
+        AuthorizationRepository $authorizationRepository,
+        OrganizationRepository $organizationRepository,
+        OrganizationSorter $organizationSorter,
+        Security $security,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $selectedOrganizationUid = $request->query->get('organization');
+
+        if ($selectedOrganizationUid) {
+            $organization = $organizationRepository->findOneBy([
+                'uid' => $selectedOrganizationUid,
+            ]);
+
+            if (!$organization) {
+                throw $this->createNotFoundException('The organization does not exist.');
+            }
+
+            $organizations = [$organization];
+        } else {
+            $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
+            if (in_array(null, $orgaIds)) {
+                $organizations = $organizationRepository->findAll();
+            } else {
+                $organizations = $organizationRepository->findWithSubOrganizations($orgaIds);
+            }
+        }
+
+        // Keep only the organizations in which the user can create tickets
+        $organizations = array_filter($organizations, function ($organization) use ($security) {
+            return $security->isGranted('orga:create:tickets', $organization);
+        });
+        $organizations = array_values($organizations); // reset the keys of the array
+
+        if (count($organizations) === 0) {
+            throw $this->createAccessDeniedException();
+        } elseif (count($organizations) === 1) {
+            return $this->redirectToRoute('new organization ticket', [
+                'uid' => $organizations[0]->getUid(),
+            ]);
+        }
+
+        $organizations = $organizationSorter->asTree($organizations);
+
+        return $this->render('tickets/new.html.twig', [
+            'organizations' => $organizations,
         ]);
     }
 
