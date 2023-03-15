@@ -13,6 +13,10 @@
 
     color: var(--color-grey11);
     font-size: 1.5em;
+    text-align: center;
+
+    background-color: var(--color-grey3);
+    border-radius: 0.5rem;
 }
 
 .placeholder .icon {

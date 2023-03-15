@@ -11,10 +11,11 @@ forms.optional: (optional)
 forms.optional_max_chars: '(optional, max. {number} characters)'
 forms.save_changes: 'Save the changes'
 forms.show_password: 'Show password as plain text. Note: this will visually expose your password.'
+home.new_ticket: 'New ticket'
+home.no_tickets: 'No tickets'
 home.title: 'Welcome to Bileto'
-home.your_organizations: 'Your organizations'
+home.your_organizations: '{count, plural, one {Your organization} other {Your organizations}}'
 home.your_tickets: 'Your tickets'
-home.your_tickets_all: 'All your tickets'
 layout.activate_javascript: 'You need to activate the JavaScript in order to use Bileto.'
 layout.home: Home
 layout.logout: Logout
@@ -31,7 +32,6 @@ login.submit: Login
 login.title: 'Log in'
 organizations.index.new_organization: 'New organization'
 organizations.index.new_sub_organization: '<span class="sr-only">New</span> sub-organization'
-organizations.index.no_organizations: 'No organizations'
 organizations.index.title: Organizations
 organizations.name: Name
 organizations.new.submit: 'Create the organization'
@@ -110,9 +110,11 @@ tickets.index.title.my: 'My tickets'
 tickets.index.title.to_assign: 'Tickets to assign'
 tickets.list.incident_opened_on: 'Incident opened on <time datetime="{dateIso}">{date}</time>'
 tickets.list.request_opened_on: 'Request opened on <time datetime="{dateIso}">{date}</time>'
+tickets.new.choose_orga: 'Choose an organization'
 tickets.new.mark_as_resolved: 'Ticket already resolved'
 tickets.new.title: 'New ticket'
 tickets.new.submit: 'Create the ticket'
+tickets.new.submit_orga_choice: 'Create a ticket'
 tickets.priority: Priority
 tickets.priority.edit.title: 'Edit the priority'
 tickets.priority.high: High
@@ -169,7 +171,6 @@ users.color_scheme.light: Light
 users.color_scheme.dark: Dark
 users.email: 'Email address'
 users.authorizations.index.new_authorization: 'Give an authorization'
-users.authorizations.index.no_authorizations: 'No authorizations'
 users.authorizations.index.revoke: Revoke
 users.authorizations.index.revoke.confirm: 'Are you sure that you want to revoke this authorization?'
 users.authorizations.index.revoke.disabled: 'You can’t revoke this authorization.'

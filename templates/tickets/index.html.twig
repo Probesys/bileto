@@ -29,30 +29,41 @@
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <h1>{{ title }}</h1>
-        </div>
+    <main class="layout__body">
+        <div class="flow {{ not is_granted('orga:see:tickets:all', 'any') ? 'wrapper-large wrapper--center' }}">
+            <div class="layout__breadcrumb">
+                <h1>{{ title }}</h1>
+            </div>
 
-        <div class="flow row__item--extend">
-            {% if tickets %}
-                <p class="text--secondary">
-                    {{ 'tickets.index.number' | trans({ count: tickets|length }) }}
-                </p>
+            <div class="flow">
+                <div class="row row--center row--always flow">
+                    {% if is_granted('orga:create:tickets', 'any') %}
+                        <a class="anchor--action" href="{{ path('new ticket') }}">
+                            {{ icon('plus') }}
+                            {{ 'tickets.index.new_ticket' | trans }}
+                        </a>
+                    {% endif %}
 
-                {{ include(
-                    'tickets/_list.html.twig',
-                    { tickets: tickets },
-                    with_context = false
-                ) }}
-            {% else %}
-                <div class="text--center flow-large">
+                    {% if tickets %}
+                        <p class="text--secondary">
+                            {{ 'tickets.index.number' | trans({ count: tickets|length }) }}
+                        </p>
+                    {% endif %}
+                </div>
+
+                {% if tickets %}
+                    {{ include(
+                        'tickets/_list.html.twig',
+                        { tickets: tickets },
+                        with_context = false
+                    ) }}
+                {% else %}
                     <p class="placeholder">
                         {{ icon('ticket') }}
                         {{ 'tickets.index.no_tickets' | trans }}
                     </p>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
     </main>
 {% endblock %}

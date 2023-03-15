@@ -29,14 +29,14 @@
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
-            <h1>{{ title }}</h1>
-        </div>
+    <main class="layout__body">
+        <div class="flow {{ not is_granted('orga:see:tickets:all', 'any') ? 'wrapper-large wrapper--center' }}">
+            <div class="layout__breadcrumb">
+                <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
+                <h1>{{ title }}</h1>
+            </div>
 
-        <div class="flow row__item--extend">
-            {% if tickets %}
+            <div class="flow">
                 <div class="row row--center row--always flow">
                     {% if is_granted('orga:create:tickets', organization) %}
                         <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
@@ -45,33 +45,26 @@
                         </a>
                     {% endif %}
 
-                    <p class="text--secondary">
-                        {{ 'tickets.index.number' | trans({ count: tickets|length }) }}
-                    </p>
+                    {% if tickets %}
+                        <p class="text--secondary">
+                            {{ 'tickets.index.number' | trans({ count: tickets|length }) }}
+                        </p>
+                    {% endif %}
                 </div>
 
-                {{ include(
-                    'tickets/_list.html.twig',
-                    { tickets: tickets, displayOrganization: false },
-                    with_context = false
-                ) }}
-            {% else %}
-                <div class="text--center flow-large">
+                {% if tickets %}
+                    {{ include(
+                        'tickets/_list.html.twig',
+                        { tickets: tickets, displayOrganization: false },
+                        with_context = false
+                    ) }}
+                {% else %}
                     <p class="placeholder">
                         {{ icon('ticket') }}
                         {{ 'tickets.index.no_tickets' | trans }}
                     </p>
-
-                    {% if is_granted('orga:create:tickets', organization) %}
-                        <p class="text--big">
-                            <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
-                                {{ icon('plus') }}
-                                {{ 'tickets.index.new_ticket' | trans }}
-                            </a>
-                        </p>
-                    {% endif %}
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
     </main>
 {% endblock %}

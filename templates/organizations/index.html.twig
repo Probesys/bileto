@@ -21,53 +21,37 @@
         </div>
 
         <div class="wrapper-large flow">
-            {% if organizations %}
-                <div class="grid">
-                    <a class="card card--action" href="{{ path('new organization') }}">
-                        <span>
-                            {{ icon('plus') }}
-                            {{ 'organizations.index.new_organization' | trans }}
-                        </span>
-                    </a>
+            <div class="grid">
+                <a class="card card--action" href="{{ path('new organization') }}">
+                    <span>
+                        {{ icon('plus') }}
+                        {{ 'organizations.index.new_organization' | trans }}
+                    </span>
+                </a>
 
-                    {% for organization in organizations %}
-                        <div class="card flow" data-test="organization-item">
-                            <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">
-                                {{ organization.name }}
-                            </a>
-
-                            <div class="card__body">
-                                {{ include(
-                                    'organizations/_organizations_as_list.html.twig',
-                                    { organizations: organization.subOrganizations },
-                                    with_context = false
-                                ) }}
-                            </div>
-
-                            <div class="text--center text--small">
-                                <a href="{{ path('new organization', { parent: organization.uid }) }}">
-                                    {{ icon('plus') }}
-                                    {{ 'organizations.index.new_sub_organization' | trans | raw }}
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="text--center flow-large">
-                    <p class="placeholder" data-test="organizations-placeholder">
-                        {{ icon('organization') }}
-                        {{ 'organizations.index.no_organizations' | trans }}
-                    </p>
-
-                    <p class="text--big">
-                        <a class="anchor--action" href="{{ path('new organization') }}">
-                            {{ icon('plus') }}
-                            {{ 'organizations.index.new_organization' | trans }}
+                {% for organization in organizations %}
+                    <div class="card flow" data-test="organization-item">
+                        <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">
+                            {{ organization.name }}
                         </a>
-                    </p>
-                </div>
-            {% endif %}
+
+                        <div class="card__body">
+                            {{ include(
+                                'organizations/_organizations_as_list.html.twig',
+                                { organizations: organization.subOrganizations },
+                                with_context = false
+                            ) }}
+                        </div>
+
+                        <div class="text--center text--small">
+                            <a href="{{ path('new organization', { parent: organization.uid }) }}">
+                                {{ icon('plus') }}
+                                {{ 'organizations.index.new_sub_organization' | trans | raw }}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </main>
 {% endblock %}
