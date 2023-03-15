@@ -40,29 +40,26 @@ class TicketsController extends BaseController
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        /** @var string $assigneeUid */
-        $assigneeUid = $request->query->get('assignee', '');
+        /** @var string $view */
+        $view = $request->query->get('view', 'all');
 
         $ticketSearcher->setOrganization($organization);
-        $ticketSearcher->setCriteria('status', Ticket::OPEN_STATUSES);
 
-        if ($assigneeUid === 'none') {
-            $ticketSearcher->setCriteria('assignee', null);
-            $currentView = 'to assign';
-        } elseif ($assigneeUid !== '') {
-            $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
-            $ticketSearcher->setCriteria('assignee', $assignee);
-            $currentView = 'owned';
+        if ($view === 'unassigned') {
+            $tickets = $ticketSearcher->getTicketsToAssign();
+        } elseif ($view === 'owned') {
+            $tickets = $ticketSearcher->getTicketsOfCurrentUser();
         } else {
-            $currentView = 'all';
+            $ticketSearcher->setCriteria('status', Ticket::OPEN_STATUSES);
+            $tickets = $ticketSearcher->getTickets();
         }
 
         return $this->render('organizations/tickets/index.html.twig', [
             'organization' => $organization,
-            'tickets' => $ticketSearcher->getTickets(),
-            'countToAssign' => $ticketSearcher->countToAssign(),
-            'countOwned' => $ticketSearcher->countAssignedTo($user),
-            'currentView' => $currentView,
+            'tickets' => $tickets,
+            'countToAssign' => $ticketSearcher->countTicketsToAssign(),
+            'countOwned' => $ticketSearcher->countTicketsOfCurrentUser(),
+            'view' => $view,
         ]);
     }
 

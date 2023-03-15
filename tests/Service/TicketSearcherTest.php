@@ -233,7 +233,7 @@ class TicketSearcherTest extends WebTestCase
         $this->assertSame($ticket1->getId(), $tickets[0]->getId());
     }
 
-    public function testCountToAssignReturnsNumberOfTicketsWithoutAssignee(): void
+    public function testGetTicketsToAssignReturnsOpenedTicketsWithoutAssignee(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
@@ -242,25 +242,29 @@ class TicketSearcherTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $assignee = UserFactory::createOne();
-        TicketFactory::createOne([
+        $ticket1 = TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => null,
+            'status' => 'new',
         ]);
-        TicketFactory::createOne([
+        $ticket2 = TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => null,
+            'status' => 'closed',
         ]);
-        TicketFactory::createOne([
+        $ticket3 = TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => $assignee,
+            'status' => 'new',
         ]);
 
-        $count = $ticketSearcher->countToAssign();
+        $tickets = $ticketSearcher->getTicketsToAssign();
 
-        $this->assertSame(2, $count);
+        $this->assertSame(1, count($tickets));
+        $this->assertSame($ticket1->getId(), $tickets[0]->getId());
     }
 
-    public function testCountAssignedToReturnsNumberOfTicketsAssignedToGivenAssignee(): void
+    public function testCountTicketsToAssignReturnsNumberOfOpenedTicketsWithoutAssignee(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
@@ -272,17 +276,81 @@ class TicketSearcherTest extends WebTestCase
         TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => null,
+            'status' => 'new',
         ]);
         TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => null,
+            'status' => 'closed',
         ]);
         TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => $assignee,
+            'status' => 'new',
         ]);
 
-        $count = $ticketSearcher->countAssignedTo($assignee->object());
+        $count = $ticketSearcher->countTicketsToAssign();
+
+        $this->assertSame(1, $count);
+    }
+
+    public function testGetTicketsOfCurrentUserReturnsOpenedTicketsAssignedToCurrentUser(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $otherAssignee = UserFactory::createOne();
+        $ticket1 = TicketFactory::createOne([
+            'createdBy' => $user,
+            'assignee' => $user,
+            'status' => 'new',
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'createdBy' => $user,
+            'assignee' => $user,
+            'status' => 'closed',
+        ]);
+        $ticket3 = TicketFactory::createOne([
+            'createdBy' => $user,
+            'assignee' => $otherAssignee,
+            'status' => 'new',
+        ]);
+
+        $tickets = $ticketSearcher->getTicketsOfCurrentUser();
+
+        $this->assertSame(1, count($tickets));
+        $this->assertSame($ticket1->getId(), $tickets[0]->getId());
+    }
+
+    public function testCountTicketsOfCurrentUserReturnsNumberOfOpenedTicketsAssignedToCurrentUser(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $otherAssignee = UserFactory::createOne();
+        TicketFactory::createOne([
+            'createdBy' => $user,
+            'assignee' => $user,
+            'status' => 'new',
+        ]);
+        TicketFactory::createOne([
+            'createdBy' => $user,
+            'assignee' => $user,
+            'status' => 'closed',
+        ]);
+        TicketFactory::createOne([
+            'createdBy' => $user,
+            'assignee' => $otherAssignee,
+            'status' => 'new',
+        ]);
+
+        $count = $ticketSearcher->countTicketsOfCurrentUser();
 
         $this->assertSame(1, $count);
     }
