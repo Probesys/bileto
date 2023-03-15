@@ -32,7 +32,6 @@ login.submit: Login
 login.title: 'Log in'
 organizations.index.new_organization: 'New organization'
 organizations.index.new_sub_organization: '<span class="sr-only">New</span> sub-organization'
-organizations.index.no_organizations: 'No organizations'
 organizations.index.title: Organizations
 organizations.name: Name
 organizations.new.submit: 'Create the organization'
@@ -172,7 +171,6 @@ users.color_scheme.light: Light
 users.color_scheme.dark: Dark
 users.email: 'Email address'
 users.authorizations.index.new_authorization: 'Give an authorization'
-users.authorizations.index.no_authorizations: 'No authorizations'
 users.authorizations.index.revoke: Revoke
 users.authorizations.index.revoke.confirm: 'Are you sure that you want to revoke this authorization?'
 users.authorizations.index.revoke.disabled: 'You can’t revoke this authorization.'

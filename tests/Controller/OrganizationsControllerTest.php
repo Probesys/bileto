@@ -87,22 +87,6 @@ class OrganizationsControllerTest extends WebTestCase
         );
     }
 
-    public function testGetIndexDisplaysAPlaceholderIfNoOrganization(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
-
-        $client->request('GET', '/organizations');
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains(
-            '[data-test="organizations-placeholder"]',
-            'No organization'
-        );
-    }
-
     public function testGetIndexFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);

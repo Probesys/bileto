@@ -34,12 +34,10 @@
                         with_context = false
                     ) }}
                 {% else %}
-                    <div class="text--center">
-                        <p class="placeholder">
-                            {{ icon('ticket') }}
-                            {{ 'home.no_tickets' | trans }}
-                        </p>
-                    </div>
+                    <p class="placeholder">
+                        {{ icon('ticket') }}
+                        {{ 'home.no_tickets' | trans }}
+                    </p>
                 {% endif %}
             </div>
 

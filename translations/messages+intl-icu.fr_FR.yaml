@@ -32,7 +32,6 @@ login.submit: 'Se connecter'
 login.title: Connexion
 organizations.index.new_organization: 'Nouvelle organisation'
 organizations.index.new_sub_organization: '<span class="sr-only">Nouvelle</span> sous-organisation'
-organizations.index.no_organizations: 'Aucune organisation'
 organizations.index.title: Organisations
 organizations.name: Nom
 organizations.new.submit: 'Créer l’organisation'
@@ -172,7 +171,6 @@ users.color_scheme.light: Clair
 users.color_scheme.dark: Sombre
 users.email: 'Adresse email'
 users.authorizations.index.new_authorization: 'Donner une autorisation'
-users.authorizations.index.no_authorizations: 'Aucune autorisation'
 users.authorizations.index.revoke: Révoquer
 users.authorizations.index.revoke.confirm: "Êtes-vous sûr de vouloir révoquer cette autorisation\_?"
 users.authorizations.index.revoke.disabled: 'Vous ne pouvez pas révoquer cette autorisation.'
