@@ -4,10 +4,6 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% if displayOrganization is not defined %}
-    {% set displayOrganization = true %}
-{% endif %}
-
 <ul class="list-tickets list--border list--no-style">
     {% for ticket in tickets %}
         <li class="list-tickets__item flow-smaller" data-test="ticket-item">
@@ -59,13 +55,11 @@
                         }) | raw }}
                     {% endif %}
 
-                    {% if displayOrganization %}
-                        ⋅
+                    ⋅
 
-                        <a class="list-tickets__organization" href="{{ path('organization', { uid: ticket.organization.uid }) }}">
-                            {{ ticket.organization.name }}
-                        </a>
-                    {% endif %}
+                    <a class="list-tickets__organization" href="{{ path('organization', { uid: ticket.organization.uid }) }}">
+                        {{ ticket.organization.name }}
+                    </a>
                 </div>
 
                 <div class="row row--always flow-small">

@@ -55,7 +55,7 @@
                 {% if tickets %}
                     {{ include(
                         'tickets/_list.html.twig',
-                        { tickets: tickets, displayOrganization: false },
+                        { tickets: tickets },
                         with_context = false
                     ) }}
                 {% else %}
