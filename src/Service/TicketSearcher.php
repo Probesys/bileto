@@ -100,7 +100,10 @@ class TicketSearcher
         $currentUser = $this->security->getUser();
         $criteria = [
             ['status' => Ticket::OPEN_STATUSES],
-            ['assignee' => $currentUser],
+            [
+                ['assignee' => $currentUser],
+                ['requester' => $currentUser],
+            ],
         ];
         $sort = ['createdAt', 'DESC'];
 
@@ -118,7 +121,10 @@ class TicketSearcher
         $currentUser = $this->security->getUser();
         $criteria = [
             ['status' => Ticket::OPEN_STATUSES],
-            ['assignee' => $currentUser],
+            [
+                ['assignee' => $currentUser],
+                ['requester' => $currentUser],
+            ],
         ];
 
         return $this->ticketRepository->countBySearch(
