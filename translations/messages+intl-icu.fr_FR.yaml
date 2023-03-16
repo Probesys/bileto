@@ -47,8 +47,10 @@ roles.description: Description
 roles.edit.title.admin: 'Modifier le rôle admin'
 roles.edit.title.orga: 'Modifier le rôle orga'
 roles.index.title: Rôles
+roles.index.admin_roles.desc: 'Les rôles admin donnent accès à la gestion de l’application.'
 roles.index.admin_roles.title: 'Rôles admin'
 roles.index.admin_roles.new: 'Nouveau rôle admin'
+roles.index.orga_roles.desc: 'Les rôles organisation vous permettent de personnaliser les permissions liées aux organisations.'
 roles.index.orga_roles.title: 'Rôles organisation'
 roles.index.orga_roles.new: 'Nouveau rôle orga'
 roles.name: Nom
