@@ -30,7 +30,7 @@
 
 {% block body %}
     <main class="layout__body">
-        <div class="flow {{ not is_granted('orga:see:tickets:all', 'any') ? 'wrapper-large wrapper--center' }}">
+        <div class="flow wrapper-large {{ not is_granted('orga:see:tickets:all', 'any') ? 'wrapper--center' }}">
             <div class="layout__breadcrumb">
                 <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
                 <h1>{{ title }}</h1>
