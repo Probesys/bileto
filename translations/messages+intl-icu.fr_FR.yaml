@@ -128,7 +128,7 @@ tickets.show.actions.turn_into_incident: 'Changer en incident'
 tickets.show.actions.turn_into_request: 'Changer en demande'
 tickets.show.actions.update_status: 'Modifier le statut'
 tickets.show.answer: Répondre
-tickets.show.assign_yourself: attribuez-vous
+tickets.show.assign_yourself: 'vous l’attribuer'
 tickets.show.closed: 'Ce ticket est clos.'
 tickets.show.hide_history: 'Masquer l’historique'
 tickets.show.impact: "Impact\_:"
