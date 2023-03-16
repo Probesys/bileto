@@ -79,19 +79,21 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
-        $this->grantOrga($user->object(), ['orga:see', 'orga:see:tickets:all'], $organization->object());
+        $this->grantOrga($user->object(), ['orga:see', 'orga:see:tickets:all']);
         $ticketAssigned = TicketFactory::createOne([
             'title' => 'Ticket assigned',
             'organization' => $organization,
             'assignee' => $user,
+            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
         $ticketToAssign = TicketFactory::createOne([
             'title' => 'Ticket to assign',
             'organization' => $organization,
             'assignee' => null,
+            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?assignee=none");
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?view=unassigned");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="ticket-item"]', 'Ticket to assign');
@@ -106,23 +108,33 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
-        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
-        $ticketOwned = TicketFactory::createOne([
-            'title' => 'Ticket owned',
+        $this->grantOrga($user->object(), ['orga:see', 'orga:see:tickets:all']);
+        TicketFactory::createOne([
+            'createdAt' => Time::ago(1, 'minute'),
+            'title' => 'Ticket assigned to user',
             'organization' => $organization,
             'assignee' => $user,
+            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
-        $ticketAssigned = TicketFactory::createOne([
-            'title' => 'Ticket assigned to other',
+        TicketFactory::createOne([
+            'createdAt' => Time::ago(2, 'minutes'),
+            'title' => 'Ticket requested by user',
             'organization' => $organization,
-            'assignee' => UserFactory::createOne(),
+            'requester' => $user,
+            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+        ]);
+        TicketFactory::createOne([
+            'title' => 'Other ticket',
+            'organization' => $organization,
+            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?assignee={$user->getUid()}");
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?view=owned");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('[data-test="ticket-item"]', 'Ticket owned');
-        $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Ticket assigned to other');
+        $this->assertSelectorTextContains('[data-test="ticket-item"]:nth-child(1)', 'Ticket assigned to user');
+        $this->assertSelectorTextContains('[data-test="ticket-item"]:nth-child(2)', 'Ticket requested by user');
+        $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Other ticket');
     }
 
     public function testGetIndexFailsIfAccessIsForbidden(): void

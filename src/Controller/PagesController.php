@@ -26,10 +26,6 @@ class PagesController extends BaseController
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        $ticketSearcher->setCriteria('assignee', $user);
-        $ticketSearcher->setCriteria('status', Ticket::OPEN_STATUSES);
-        $tickets = $ticketSearcher->getTickets();
-
         $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
         if (in_array(null, $orgaIds)) {
             $organizations = $orgaRepository->findAll();
@@ -37,6 +33,8 @@ class PagesController extends BaseController
             $organizations = $orgaRepository->findWithSubOrganizations($orgaIds);
         }
         $organizations = $orgaSorter->asTree($organizations);
+
+        $tickets = $ticketSearcher->getTicketsOfCurrentUser();
 
         return $this->render('pages/home.html.twig', [
             'tickets' => $tickets,

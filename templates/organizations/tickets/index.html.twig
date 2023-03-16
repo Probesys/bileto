@@ -8,12 +8,12 @@
 
 {% set currentPage = 'tickets' %}
 
-{% if currentView == 'all' %}
+{% if view == 'all' %}
     {% set title = 'tickets.index.title.all' | trans %}
-{% elseif currentView == 'to assign' %}
+{% elseif view == 'unassigned' %}
     {% set title = 'tickets.index.title.to_assign' | trans %}
-{% elseif currentView == 'owned' %}
-    {% set title = 'tickets.index.title.my' | trans %}
+{% elseif view == 'owned' %}
+    {% set title = 'tickets.index.title.your_tickets' | trans %}
 {% endif %}
 
 {% block title %}{{ title ~ ' – ' ~ organization.name }}{% endblock %}
@@ -21,7 +21,7 @@
 {% block sidebar %}
     {% if is_granted('orga:see:tickets:all', 'any') %}
         {{ include('tickets/_sidebar.html.twig', {
-            current: currentView,
+            current: view,
             countOwned: countOwned,
             countToAssign: countToAssign,
         }, with_context = false) }}

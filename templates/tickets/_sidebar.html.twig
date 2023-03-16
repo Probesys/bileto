@@ -23,8 +23,8 @@
         <li class="sidebar__item">
             <a
                 class="sidebar__anchor row row--always row--center flow-small"
-                href="?assignee=none"
-                {{ current == 'to assign' ? 'aria-current="page"' }}
+                href="?view=unassigned"
+                {{ current == 'unassigned' ? 'aria-current="page"' }}
             >
                 <span class="row__item--extend">
                     {{ 'tickets.index.title.to_assign' | trans }}
@@ -41,11 +41,11 @@
         <li class="sidebar__item">
             <a
                 class="sidebar__anchor row row--always row--center flow-small"
-                href="?assignee={{ app.user.uid }}"
+                href="?view=owned"
                 {{ current == 'owned' ? 'aria-current="page"' }}
             >
                 <span class="row__item--extend">
-                    {{ 'tickets.index.title.my' | trans }}
+                    {{ 'tickets.index.title.your_tickets' | trans }}
                 </span>
 
                 {% if countOwned > 0 %}

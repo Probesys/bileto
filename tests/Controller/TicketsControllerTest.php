@@ -16,6 +16,7 @@ use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -33,6 +34,7 @@ class TicketsControllerTest extends WebTestCase
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'createdBy' => $user,
+            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
         $client->request('GET', '/tickets');
