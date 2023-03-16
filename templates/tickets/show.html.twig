@@ -358,25 +358,32 @@
                         <div>
                             {% if ticket.assignee %}
                                 {{ ticket.assignee.displayName }}
+                            {% elseif is_granted('orga:update:tickets:actors', organization) %}
+                                <button
+                                    class="button--anchor"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                                >
+                                    <strong>{{ 'tickets.unassigned' | trans }}</strong>
+                                </button>
+
+                                <form
+                                    action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
+                                    method="post"
+                                    class="form--inline"
+                                    data-turbo-preserve-scroll
+                                >
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
+                                    <input type="hidden" name="assigneeId" value="{{ app.user.id }}">
+
+                                    →
+                                    <button id="form-self-assign-submit" class="button--anchor" type="submit">
+                                        {{ 'tickets.show.assign_yourself' | trans }}
+                                    </button>
+                                </form>
                             {% else %}
                                 <strong>{{ 'tickets.unassigned' | trans }}</strong>
-
-                                {% if is_granted('orga:update:tickets:actors', organization) %}
-                                    <form
-                                        action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
-                                        method="post"
-                                        class="form--inline"
-                                        data-turbo-preserve-scroll
-                                    >
-                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
-                                        <input type="hidden" name="assigneeId" value="{{ app.user.id }}">
-
-                                        →
-                                        <button id="form-self-assign-submit" class="button--anchor" type="submit">
-                                            {{ 'tickets.show.assign_yourself' | trans }}
-                                        </button>
-                                    </form>
-                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
