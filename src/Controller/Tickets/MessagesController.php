@@ -88,6 +88,11 @@ class MessagesController extends BaseController
         }
 
         if ($isConfidential && !$security->isGranted('orga:create:tickets:messages:confidential', $organization)) {
+            // We don't want to force $isConfidential to false as we do for the
+            // other parameters. If there is a bug in the frontend that shows
+            // the "mark as confidential" checkbox without the correct
+            // permission, the user will expect its message to be confidential.
+            // This can cause a privacy issue.
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
                 'timeline' => $ticketTimeline->build($ticket),
