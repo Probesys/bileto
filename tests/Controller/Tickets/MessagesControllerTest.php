@@ -117,6 +117,35 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('pending', $ticket->getStatus());
     }
 
+    public function testPostCreateForcesSolutionToFalseIfPermissionIsNotGranted(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+        ]);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'isSolution' => true,
+        ]);
+
+        $this->assertSame(1, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $message = MessageFactory::first();
+        $ticket->refresh();
+        $this->assertNull($ticket->getSolution());
+    }
+
     public function testPostCreateForcesStatusToResolvedIfIsSolutionIsTrue(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');

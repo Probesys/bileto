@@ -51,17 +51,18 @@ class MessagesController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
-        /** @var boolean $isSolution */
-        $isSolution = $request->request->getBoolean('isSolution', false);
-
         /** @var boolean $isConfidential */
         $isConfidential = $request->request->getBoolean('isConfidential', false);
 
         if ($security->isGranted('orga:update:tickets:status', $organization)) {
             /** @var string $status */
             $status = $request->request->get('status', '');
+
+            /** @var boolean $isSolution */
+            $isSolution = $request->request->getBoolean('isSolution', false);
         } else {
             $status = $ticket->getStatus();
+            $isSolution = false;
         }
 
         /** @var string $csrfToken */
