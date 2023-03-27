@@ -6,7 +6,19 @@ Pull the changes with Git:
 $ git pull
 ```
 
-Execute the migrations:
+If dependencies have been added or updated, install them:
+
+```console
+$ make install
+```
+
+While Bileto is not ready for the production yet, it is recommended to reset the database when a change happens:
+
+```console
+$ make db-reset FORCE=true
+```
+
+Later, you’ll just have to execute the migrations:
 
 ```console
 $ make db-migrate
