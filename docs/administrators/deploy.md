@@ -4,6 +4,9 @@ In this documentation, it is expected that you're at ease with managing a webser
 Nginx is used as the webserver in this documentation.
 Apache should work as well, but it hasn't been tested.
 
+**Warning:** Bileto is not ready for the production yet.
+You’ll probably lose your data during an upgrade.
+
 ## Check the requirements
 
 Check Git is installed:
@@ -97,7 +100,8 @@ $ cd bileto
 $ git checkout $(git describe --abbrev=0 --tags)
 ```
 
-The last command makes sure you're using the latest version.
+The last command makes sure you're using the latest version of Bileto.
+Go to GitHub for [the full list of releases](https://github.com/Probesys/bileto/releases).
 
 ## Configure the application
 
@@ -143,6 +147,7 @@ Initialize the database:
 
 ```console
 $ sudo -u www-data php bin/console doctrine:migrations:migrate --no-interaction
+$ sudo -u www-data php bin/console db:seeds:load
 ```
 
 ## Configure the webserver
@@ -195,10 +200,10 @@ Open Bileto in your web browser: it should display the login page.
 
 ## Create your users
 
-Users cannot be created in the interface yet, you must use the command line for that:
+You must create your first user with the command line:
 
 ```console
-$ sudo -u www-data php bin/console app:users:create --email=username@example.com --password=secret
+$ sudo -u www-data php bin/console app:users:create --email=user@example.com --password=secret
 ```
 
 **Important note:** users created with the command line have "super-admin" permissions and can do anything in Bileto.
