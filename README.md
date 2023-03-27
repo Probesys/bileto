@@ -41,6 +41,7 @@ Ideas, bug reports and contributions are welcome. Please follow [the contributin
 Administrators guide:
 
 - [Deploy in production](/docs/administrators/deploy.md)
+- [Update the production environment](/docs/administrators/update.md)
 - [Changelog of Bileto](/CHANGELOG.md)
 
 Developers guide:
