@@ -11,7 +11,7 @@
 {% block title %}{{ 'organizations.new.title' | trans }}{% endblock %}
 
 {% block sidebar %}
-    {{ include('_sidebar_settings.html.twig', { current: 'organizations' }, with_context = false) }}
+    {{ include('settings/_sidebar.html.twig', { current: 'organizations' }, with_context = false) }}
 {% endblock %}
 
 {% block body %}

@@ -17,7 +17,7 @@
 {% block title %}{{ pageTitle }}{% endblock %}
 
 {% block sidebar %}
-    {{ include('_sidebar_settings.html.twig', { current: 'roles' }, with_context = false) }}
+    {{ include('settings/_sidebar.html.twig', { current: 'roles' }, with_context = false) }}
 {% endblock %}
 
 {% block body %}
