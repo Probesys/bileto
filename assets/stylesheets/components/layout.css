@@ -115,7 +115,7 @@
     display: block;
     padding: 1rem;
 
-    font-weight: bold;
+    font-size: 0.9em;
     text-align: center;
 
     background-color: var(--color-primary3);
