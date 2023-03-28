@@ -11,7 +11,7 @@ $ sudo -u www-data git fetch
 Checkout to the latest version:
 
 ```console
-$ sudo -u www-data git checkout $(sudo -u www-data git describe --abbrev=0 --tags)
+$ sudo -u www-data git checkout $(sudo -u www-data git describe --tags $(sudo -u www-data git rev-list --tags --max-count=1))
 ```
 
 Install the new/updated dependencies:

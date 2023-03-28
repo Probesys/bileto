@@ -97,7 +97,7 @@ Clone the code:
 ```console
 $ git clone https://github.com/Probesys/bileto.git
 $ cd bileto
-$ git checkout $(git describe --abbrev=0 --tags)
+$ git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 ```
 
 The last command makes sure you're using the latest version of Bileto.
