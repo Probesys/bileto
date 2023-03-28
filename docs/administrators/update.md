@@ -2,22 +2,25 @@
 
 **Please always start by checking the migration notes in [the changelog](/CHANGELOG.md) before updating Bileto.**
 
+Remember that commands prefixed by `www-data$` need to be run as the `www-data` user.
+[Read more about file permissions.](/docs/administrators/deploy.md#about-file-permissions)
+
 Pull the changes with Git:
 
 ```console
-$ sudo -u www-data git fetch
+www-data$ git fetch
 ```
 
 Checkout to the latest version:
 
 ```console
-$ sudo -u www-data git checkout $(sudo -u www-data git describe --tags $(sudo -u www-data git rev-list --tags --max-count=1))
+www-data$ git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 ```
 
 Install the new/updated dependencies:
 
 ```console
-$ sudo -u www-data composer install --no-dev --optimize-autoloader
+www-data$ composer install --no-dev --optimize-autoloader
 ```
 
 **While Bileto is not ready for the production yet, you must reset the database.**
@@ -44,18 +47,18 @@ MariaDB [(none)]> FLUSH PRIVILEGES;
 Then, initialize the database:
 
 ```console
-$ sudo -u www-data php bin/console doctrine:migrations:migrate --no-interaction
-$ sudo -u www-data php bin/console db:seeds:load
+www-data$ php bin/console doctrine:migrations:migrate --no-interaction
+www-data$ php bin/console db:seeds:load
 ```
 
 Then, recreate your super-admin user:
 
 ```console
-$ sudo -u www-data php bin/console app:users:create --email=user@example.com --password=secret
+www-data$ php bin/console app:users:create --email=user@example.com --password=secret
 ```
 
 **In the future,** you’ll just have to execute the migrations:
 
 ```console
-$ sudo -u www-data php bin/console doctrine:migrations:migrate --no-interaction
+www-data$ php bin/console doctrine:migrations:migrate --no-interaction
 ```
