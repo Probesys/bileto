@@ -20,13 +20,41 @@ Install the new/updated dependencies:
 $ sudo -u www-data composer install --no-dev --optimize-autoloader
 ```
 
-While Bileto is not ready for the production yet, you must reset the database:
+**While Bileto is not ready for the production yet, you must reset the database.**
 
-```console
-$ sudo -u www-data make db-reset FORCE=true NO_DOCKER=true
+With PostgreSQL:
+
+```command
+# sudo -u postgres psql
+postgres=# DROP DATABASE bileto_production;
+postgres=# CREATE DATABASE bileto_production;
+postgres=# GRANT ALL PRIVILEGES ON DATABASE bileto_production TO bileto_user;
 ```
 
-Later, you’ll just have to execute the migrations:
+With MariaDB:
+
+```console
+# mariadb -u root -p
+MariaDB [(none)]> DROP DATABASE bileto_production;
+MariaDB [(none)]> CREATE DATABASE bileto_production;
+MariaDB [(none)]> GRANT ALL PRIVILEGES ON bileto_production.* TO 'bileto_user'@'localhost';
+MariaDB [(none)]> FLUSH PRIVILEGES;
+```
+
+Then, initialize the database:
+
+```console
+$ sudo -u www-data php bin/console doctrine:migrations:migrate --no-interaction
+$ sudo -u www-data php bin/console db:seeds:load
+```
+
+Then, recreate your super-admin user:
+
+```console
+$ sudo -u www-data php bin/console app:users:create --email=user@example.com --password=secret
+```
+
+**In the future,** you’ll just have to execute the migrations:
 
 ```console
 $ sudo -u www-data php bin/console doctrine:migrations:migrate --no-interaction
