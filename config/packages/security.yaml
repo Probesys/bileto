@@ -38,6 +38,7 @@ security:
         - { path: ^/about, role: PUBLIC_ACCESS }
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/session/locale, role: PUBLIC_ACCESS }
+        - { path: ^/app.manifest, role: PUBLIC_ACCESS }
         - { path: ^/, role: ROLE_USER }
 
 when@test:
