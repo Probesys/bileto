@@ -125,7 +125,7 @@ endif
 
 .PHONY: tree
 tree:  ## Display the structure of the application
-	tree -I 'vendor|var|coverage' --dirsfirst -CA
+	tree -I 'vendor|node_modules|var|coverage' --dirsfirst -CA
 
 .PHONY: help
 help:
