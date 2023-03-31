@@ -6,6 +6,9 @@
 
 namespace App\Utils\Queries;
 
+/**
+ * @phpstan-import-type Token from Tokenizer
+ */
 class SyntaxError extends \UnexpectedValueException
 {
     private int $position;
@@ -17,6 +20,7 @@ class SyntaxError extends \UnexpectedValueException
     public const QUOTE_NOT_CLOSED = 2;
     public const QUALIFIER_EMPTY = 3;
     public const QUALIFIER_INVALID = 4;
+    public const TOKEN_UNEXPECTED = 5;
 
     public static function bracketUnexpected(int $position): SyntaxError
     {
@@ -46,6 +50,16 @@ class SyntaxError extends \UnexpectedValueException
     {
         $message = "qualifier \"{$value}\" at char {$position} is invalid";
         return new SyntaxError($message, self::QUALIFIER_INVALID, $position);
+    }
+
+    /**
+     * @param Token $token
+     */
+    public static function tokenUnexpected(int $position, array $token): SyntaxError
+    {
+        $value = $token['value'] ?? $token['type']->value;
+        $message = "unexpected value \"{$value}\" at char {$position}";
+        return new SyntaxError($message, self::TOKEN_UNEXPECTED, $position);
     }
 
     private function __construct(string $message, int $code, int $position, string $value = '')
