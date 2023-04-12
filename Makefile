@@ -97,7 +97,7 @@ test: ## Run the test suite
 
 .PHONY: lint
 lint: ## Execute the linter (PHPStan and PHP_CodeSniffer)
-	$(PHP) vendor/bin/phpstan analyse --xdebug --memory-limit 1G -c .phpstan.neon
+	$(PHP) vendor/bin/phpstan analyse --memory-limit 1G -c .phpstan.neon
 	$(PHP) vendor/bin/phpcs
 	$(CONSOLE) lint:container
 	$(CONSOLE) lint:twig
