@@ -21,4 +21,16 @@ class Query
     {
         return $this->conditions;
     }
+
+    public static function fromString(string $queryString): ?Query
+    {
+        if (!$queryString) {
+            return null;
+        }
+
+        $tokenizer = new Tokenizer();
+        $parser = new Parser();
+        $tokens = $tokenizer->tokenize($queryString);
+        return $parser->parse($tokens);
+    }
 }

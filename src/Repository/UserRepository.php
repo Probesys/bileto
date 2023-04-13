@@ -52,6 +52,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * @return User[]
+     */
+    public function findLike(string $value): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $value = mb_strtolower($value);
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT u
+            FROM App\Entity\User u
+            WHERE LOWER(u.name) LIKE :value
+            OR LOWER(u.email) LIKE :value
+        SQL);
+        $query->setParameter('value', "%{$value}%");
+
+        return $query->getResult();
+    }
+
+    /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
