@@ -10,14 +10,16 @@ use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\Repository\TicketRepository;
+use App\Utils\Queries;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class TicketSearcher
 {
-    private TicketRepository $ticketRepository;
+    public const QUERY_DEFAULT = 'status:open';
+    public const QUERY_UNASSIGNED = 'status:open no:assignee';
+    public const QUERY_OWNED = 'status:open involves:@me';
 
-    /** @var array<array<string|int,mixed>> $criteria */
-    private array $criteria = [];
+    private TicketRepository $ticketRepository;
 
     /** @var array<string,int[]> $orgaFilters */
     private array $orgaFilters = [
@@ -67,107 +69,32 @@ class TicketSearcher
         }
     }
 
-    public function setCriteria(string $field, mixed $condition): self
-    {
-        $this->criteria[] = [$field => $condition];
-
-        return $this;
-    }
-
     /**
      * @return \App\Entity\Ticket[]
      */
-    public function getTickets(): array
+    public function getTickets(string $queryString = ''): array
     {
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
         $sort = ['createdAt', 'DESC'];
 
-        return $this->ticketRepository->findBySearch(
+        return $this->ticketRepository->findByQuery(
             $currentUser,
             $this->orgaFilters,
-            $this->criteria,
+            Queries\Query::fromString($queryString),
             $sort,
         );
     }
 
-    /**
-     * @return \App\Entity\Ticket[]
-     */
-    public function getTicketsOfCurrentUser(): array
+    public function countTickets(string $queryString = ''): int
     {
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
-        $criteria = [
-            ['status' => Ticket::OPEN_STATUSES],
-            [
-                ['assignee' => $currentUser],
-                ['requester' => $currentUser],
-            ],
-        ];
-        $sort = ['createdAt', 'DESC'];
 
-        return $this->ticketRepository->findBySearch(
+        return $this->ticketRepository->countByQuery(
             $currentUser,
             $this->orgaFilters,
-            $criteria,
-            $sort,
-        );
-    }
-
-    public function countTicketsOfCurrentUser(): int
-    {
-        /** @var User $currentUser */
-        $currentUser = $this->security->getUser();
-        $criteria = [
-            ['status' => Ticket::OPEN_STATUSES],
-            [
-                ['assignee' => $currentUser],
-                ['requester' => $currentUser],
-            ],
-        ];
-
-        return $this->ticketRepository->countBySearch(
-            $currentUser,
-            $this->orgaFilters,
-            $criteria,
-        );
-    }
-
-    /**
-     * @return \App\Entity\Ticket[]
-     */
-    public function getTicketsToAssign(): array
-    {
-        /** @var User $currentUser */
-        $currentUser = $this->security->getUser();
-        $criteria = [
-            ['status' => Ticket::OPEN_STATUSES],
-            ['assignee' => null],
-        ];
-        $sort = ['createdAt', 'DESC'];
-
-        return $this->ticketRepository->findBySearch(
-            $currentUser,
-            $this->orgaFilters,
-            $criteria,
-            $sort,
-        );
-    }
-
-    public function countTicketsToAssign(): int
-    {
-        /** @var User $currentUser */
-        $currentUser = $this->security->getUser();
-        $criteria = [
-            ['status' => Ticket::OPEN_STATUSES],
-            ['assignee' => null],
-        ];
-
-        return $this->ticketRepository->countBySearch(
-            $currentUser,
-            $this->orgaFilters,
-            $criteria,
+            Queries\Query::fromString($queryString),
         );
     }
 }

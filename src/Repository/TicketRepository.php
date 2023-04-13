@@ -8,6 +8,8 @@ namespace App\Repository;
 
 use App\Entity\Ticket;
 use App\Entity\User;
+use App\Service\TicketsQueryBuilder;
+use App\Utils\Queries;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
@@ -28,9 +30,12 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     use UidGeneratorTrait;
     use FindOrCreateTrait;
 
-    public function __construct(ManagerRegistry $registry)
+    private TicketsQueryBuilder $ticketsQueryBuilder;
+
+    public function __construct(ManagerRegistry $registry, TicketsQueryBuilder $ticketsQueryBuilder)
     {
         parent::__construct($registry, Ticket::class);
+        $this->ticketsQueryBuilder = $ticketsQueryBuilder;
     }
 
     public function save(Ticket $entity, bool $flush = false): void
@@ -53,37 +58,30 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
 
     /**
      * @param array<string, int[]> $orgaFilters
-     * @param array<array<string|int,mixed>> $criteria
      * @param string[] $sort
      * @return Ticket[]
      */
-    public function findBySearch(User $actor, array $orgaFilters, array $criteria, array $sort): array
+    public function findByQuery(User $actor, array $orgaFilters, ?Queries\Query $query, array $sort): array
     {
-        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $criteria);
+        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $query);
         $qb->orderBy("t.{$sort[0]}", $sort[1]);
-
-        $query = $qb->getQuery();
-        return $query->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @param array<string, int[]> $orgaFilters
-     * @param array<array<string|int,mixed>> $criteria
      */
-    public function countBySearch(User $actor, array $orgaFilters, array $criteria): int
+    public function countByQuery(User $actor, array $orgaFilters, ?Queries\Query $query): int
     {
-        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $criteria);
+        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $query);
         $qb->select($qb->expr()->count('t.id'));
-
-        $query = $qb->getQuery();
-        return $query->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
      * @param array<string, int[]> $orgaFilters
-     * @param array<array<string|int,mixed>> $criteria
      */
-    private function createSearchQueryBuilder(User $actor, array $orgaFilters, array $criteria): QueryBuilder
+    private function createSearchQueryBuilder(User $actor, array $orgaFilters, ?Queries\Query $query): QueryBuilder
     {
         $qb = $this->createQueryBuilder('t');
 
@@ -122,51 +120,17 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
             $qb->setParameter('actor', $actor->getId());
         }
 
-        foreach ($criteria as $criterion) {
-            if (count($criterion) === 1) {
-                /** @var string $field */
-                $field = array_key_first($criterion);
-                $condition = $criterion[$field];
-                $expr = $this->buildCriteriaExpr($qb, $field, $condition);
-            } else {
-                $expr = $this->buildOrExpr($qb, $criterion);
-            }
+        if ($query) {
+            $this->ticketsQueryBuilder->setCurrentUser($actor);
+            list($whereQuery, $parameters) = $this->ticketsQueryBuilder->build($query);
 
-            $qb->andWhere($expr);
+            $qb->andWhere($whereQuery);
+
+            foreach ($parameters as $key => $value) {
+                $qb->setParameter($key, $value);
+            }
         }
 
         return $qb;
-    }
-
-    /**
-     * return Expr\Comparison|Expr\Func|string
-     */
-    private function buildCriteriaExpr(QueryBuilder $qb, string $field, mixed $condition): mixed
-    {
-        if ($condition === null) {
-            return $qb->expr()->isNull("t.{$field}");
-        } elseif (is_array($condition)) {
-            $qb->setParameter($field, $condition);
-            return $qb->expr()->in("t.{$field}", ":{$field}");
-        } else {
-            $qb->setParameter($field, $condition);
-            return $qb->expr()->eq("t.{$field}", ":{$field}");
-        }
-    }
-
-    /**
-     * @param array<array<string|int,mixed>> $criteria
-     */
-    private function buildOrExpr(QueryBuilder $qb, array $criteria): Expr\Orx
-    {
-        $expressions = [];
-        foreach ($criteria as $criterion) {
-            /** @var string $field */
-            $field = array_key_first($criterion);
-            $condition = $criterion[$field];
-            $expressions[] = $this->buildCriteriaExpr($qb, $field, $condition);
-        }
-
-        return $qb->expr()->orX(...$expressions);
     }
 }

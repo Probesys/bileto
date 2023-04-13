@@ -52,18 +52,51 @@
                     {% endif %}
                 </div>
 
-                {% if tickets %}
-                    {{ include(
-                        'tickets/_list.html.twig',
-                        { tickets: tickets },
-                        with_context = false
-                    ) }}
-                {% else %}
-                    <p class="placeholder">
-                        {{ icon('ticket') }}
-                        {{ 'tickets.index.no_tickets' | trans }}
-                    </p>
-                {% endif %}
+                <div class="flow-smaller">
+                    <form method="get" action="" class="list__filters flow-small">
+                        {% if errors.search is defined %}
+                            <p class="form__error" role="alert" id="search-error">
+                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                {{ errors.search }}
+                            </p>
+                        {% endif %}
+
+                        <div class="input-container">
+                            <input
+                                type="text"
+                                name="q"
+                                value="{{ query }}"
+                                required
+                                autocomplete="off"
+                                aria-label="{{ 'tickets.index.search.label' | trans }}"
+                                {% if errors.search is defined %}
+                                    aria-invalid="true"
+                                    aria-errormessage="search-error"
+                                {% endif %}
+                            />
+
+                            <button type="submit">
+                                {{ icon('search') }}
+                                <span class="sr-only">
+                                    {{ 'tickets.index.search.submit' | trans }}
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if tickets %}
+                        {{ include(
+                            'tickets/_list.html.twig',
+                            { tickets: tickets },
+                            with_context = false
+                        ) }}
+                    {% else %}
+                        <p class="placeholder">
+                            {{ icon('ticket') }}
+                            {{ 'tickets.index.no_tickets' | trans }}
+                        </p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </main>
