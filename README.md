@@ -52,6 +52,7 @@ Developers guide:
 - [Managing the dependencies](/docs/developers/dependencies.md)
 - [Using the translations](/docs/developers/translations.md)
 - [Working with the roles & permissions](/docs/developers/roles.md)
+- [Working with the search engine](/docs/developers/search-engine.md)
 - [Declaring a new Entity](/docs/developers/entity.md)
 - Frontend:
     - [Working with the icons](/docs/developers/icons.md)
