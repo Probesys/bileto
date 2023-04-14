@@ -12,7 +12,6 @@ enum TokenType: string
     case CloseBracket = 'close bracket';
     case Comma = 'comma';
     case EndOfQuery = 'end of query';
-    case Id = 'id';
     case Not = 'not';
     case OpenBracket = 'open bracket';
     case Or = 'or';

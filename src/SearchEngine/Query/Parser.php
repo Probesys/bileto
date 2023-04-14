@@ -25,7 +25,6 @@ use App\SearchEngine\Query;
  *
  * CRITERIA -> TEXT_OR_LIST
  * CRITERIA -> qualifier TEXT_OR_LIST
- * CRITERIA -> id
  * CRITERIA -> open_bracket QUERY close_bracket
  *
  * TEXT_OR_LIST -> text
@@ -128,13 +127,6 @@ class Parser
 
             $condition = Query\Condition::textCondition($operator, $value, $not);
             $query->addCondition($condition);
-        } elseif ($currentToken['type'] === TokenType::Id) {
-            $this->consumeToken(TokenType::Id);
-
-            assert(isset($currentToken['value']));
-
-            $condition = Query\Condition::idCondition($operator, $currentToken['value'], $not);
-            $query->addCondition($condition);
         } elseif ($currentToken['type'] === TokenType::Qualifier) {
             $this->consumeToken(TokenType::Qualifier);
 
@@ -168,6 +160,7 @@ class Parser
     private function ruleTextOrList(): mixed
     {
         $currentToken = $this->readToken();
+
         $this->consumeToken(TokenType::Text);
 
         assert(isset($currentToken['value']));

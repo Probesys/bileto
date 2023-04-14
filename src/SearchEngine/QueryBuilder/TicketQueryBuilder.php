@@ -70,8 +70,6 @@ class TicketQueryBuilder
                 $expr = $this->buildTextExpr($condition);
             } elseif ($condition->isQualifierCondition()) {
                 $expr = $this->buildQualifierExpr($condition);
-            } elseif ($condition->isIdCondition()) {
-                $expr = $this->buildIdExpr($condition);
             } elseif ($condition->isQueryCondition()) {
                 $expr = $this->buildQueryExpr($condition);
             }
@@ -100,7 +98,12 @@ class TicketQueryBuilder
             $exprs = [];
 
             foreach ($value as $v) {
-                $exprs[] = $this->buildExprLike('title', $v, false);
+                $id = $this->extractId($v);
+                if ($id !== null) {
+                    $exprs[] = $this->buildExpr('id', $id, false);
+                } else {
+                    $exprs[] = $this->buildExprLike('title', $v, false);
+                }
             }
 
             $where = implode(' OR ', $exprs);
@@ -111,7 +114,13 @@ class TicketQueryBuilder
                 return "({$where})";
             }
         } else {
-            return $this->buildExprLike('title', $value, $condition->not());
+            $id = $this->extractId($value);
+
+            if ($id !== null) {
+                return $this->buildExpr('id', $id, $condition->not());
+            } else {
+                return $this->buildExprLike('title', $value, $condition->not());
+            }
         }
     }
 
@@ -157,11 +166,6 @@ class TicketQueryBuilder
             }
             throw new \UnexpectedValueException("Unexpected \"{$qualifier}\" qualifier with value \"{$value}\"");
         }
-    }
-
-    private function buildIdExpr(Query\Condition $condition): string
-    {
-        return $this->buildExpr('id', $condition->getValue(), $condition->not());
     }
 
     private function buildQueryExpr(Query\Condition $condition): string
@@ -257,7 +261,10 @@ class TicketQueryBuilder
         $valuesToReturn = [];
 
         foreach ($value as $v) {
-            if ($v === '@me') {
+            $id = $this->extractId($v);
+            if ($id !== null) {
+                $ids = [$id];
+            } elseif ($v === '@me') {
                 $ids = [$this->currentUser->getId()];
             } else {
                 $users = $this->userRepository->findLike($v);
@@ -295,11 +302,16 @@ class TicketQueryBuilder
         $valuesToReturn = [];
 
         foreach ($value as $v) {
-            $organizations = $this->organizationRepository->findLike($v);
+            $id = $this->extractId($v);
+            if ($id !== null) {
+                $ids = [$id];
+            } else {
+                $organizations = $this->organizationRepository->findLike($v);
 
-            $ids = array_map(function ($orga) {
-                return $orga->getId();
-            }, $organizations);
+                $ids = array_map(function ($orga) {
+                    return $orga->getId();
+                }, $organizations);
+            }
 
             if ($ids) {
                 $valuesToReturn = array_merge($valuesToReturn, $ids);
@@ -312,6 +324,16 @@ class TicketQueryBuilder
             return $valuesToReturn[0];
         } else {
             return $valuesToReturn;
+        }
+    }
+
+    private function extractId(string $value): ?int
+    {
+        if (preg_match('/^#[\d]+$/', $value)) {
+            $value = substr($value, 1);
+            return intval($value);
+        } else {
+            return null;
         }
     }
 

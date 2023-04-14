@@ -179,13 +179,7 @@ class Tokenizer
     {
         $position = $positionEnd - mb_strlen($text);
 
-        if (preg_match('/^#[\d]+$/', $text)) {
-            return [
-                'type' => TokenType::Id,
-                'value' => $text,
-                'position' => $position,
-            ];
-        } elseif ($text === 'NOT') {
+        if ($text === 'NOT') {
             return [
                 'type' => TokenType::Not,
                 'position' => $position,
@@ -228,7 +222,6 @@ class Tokenizer
             // These tokens must be preceded by an AND
             $token['type'] === TokenType::Text ||
             $token['type'] === TokenType::Qualifier ||
-            $token['type'] === TokenType::Id ||
             $token['type'] === TokenType::OpenBracket ||
             $token['type'] === TokenType::Not
         ) {

@@ -54,24 +54,6 @@ class ParserTest extends TestCase
         $this->assertSame(['emails', 'evil', 'corp'], $conditions[0]->getValue());
     }
 
-    public function testParseId(): void
-    {
-        $tokenizer = new Tokenizer();
-        $parser = new Parser();
-        $stringQuery = '#42';
-        $tokens = $tokenizer->tokenize($stringQuery);
-
-        $query = $parser->parse($tokens);
-
-        $conditions = $query->getConditions();
-        $this->assertSame(1, count($conditions));
-
-        $this->assertTrue($conditions[0]->and());
-        $this->assertFalse($conditions[0]->not());
-        $this->assertTrue($conditions[0]->isIdCondition());
-        $this->assertSame('42', $conditions[0]->getValue());
-    }
-
     public function testParseQualifier(): void
     {
         $tokenizer = new Tokenizer();
@@ -249,11 +231,11 @@ class ParserTest extends TestCase
     {
         $tokenizer = new Tokenizer();
         $parser = new Parser();
-        $stringQuery = 'type:#42';
+        $stringQuery = 'type:(foo)';
         $tokens = $tokenizer->tokenize($stringQuery);
 
         $this->expectException(SyntaxError::class);
-        $this->expectExceptionMessage('unexpected value "#42" at char 6');
+        $this->expectExceptionMessage('unexpected value "open bracket" at char 6');
 
         $parser->parse($tokens);
     }

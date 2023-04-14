@@ -178,14 +178,6 @@ class TokenizerTest extends TestCase
             ],
 
             [
-                '#42',
-                [
-                    ['type' => TokenType::And, 'position' => 0],
-                    ['type' => TokenType::Id, 'value' => '#42', 'position' => 0],
-                ],
-            ],
-
-            [
                 '(some text)',
                 [
                     ['type' => TokenType::And, 'position' => 0],

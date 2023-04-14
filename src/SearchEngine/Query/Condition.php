@@ -10,7 +10,7 @@ use App\SearchEngine\Query;
 
 class Condition
 {
-    public const TYPES = ['text', 'id', 'qualifier', 'query'];
+    public const TYPES = ['text', 'qualifier', 'query'];
     public const OPERATORS = ['and', 'or'];
 
     /** @var value-of<self::TYPES> */
@@ -60,21 +60,6 @@ class Condition
 
     /**
      * @param value-of<self::OPERATORS> $operator
-     * @param non-empty-string $value
-     */
-    public static function idCondition(string $operator, string $value, bool $not): self
-    {
-        if (mb_strlen($value) < 2 || !str_starts_with($value, '#')) {
-            throw new \LogicException('Id conditions must contain a value starting by a #');
-        }
-
-        /** @var non-empty-string $value */
-        $value = substr($value, 1);
-        return new self('id', $operator, $value, null, null, $not);
-    }
-
-    /**
-     * @param value-of<self::OPERATORS> $operator
      * @param non-empty-string|non-empty-string[] $value
      */
     public static function qualifierCondition(string $operator, string $qualifier, mixed $value, bool $not): self
@@ -98,11 +83,6 @@ class Condition
     public function isQualifierCondition(): bool
     {
         return $this->type === 'qualifier';
-    }
-
-    public function isIdCondition(): bool
-    {
-        return $this->type === 'id';
     }
 
     public function isQueryCondition(): bool
