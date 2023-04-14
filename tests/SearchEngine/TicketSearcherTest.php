@@ -4,10 +4,10 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\Service;
+namespace App\Tests\SearchEngine;
 
 use App\Entity\Ticket;
-use App\Service\TicketSearcher;
+use App\SearchEngine\TicketSearcher;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;

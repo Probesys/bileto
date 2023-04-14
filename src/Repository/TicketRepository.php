@@ -8,8 +8,7 @@ namespace App\Repository;
 
 use App\Entity\Ticket;
 use App\Entity\User;
-use App\Service\TicketsQueryBuilder;
-use App\Utils\Queries;
+use App\SearchEngine;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
@@ -30,12 +29,14 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     use UidGeneratorTrait;
     use FindOrCreateTrait;
 
-    private TicketsQueryBuilder $ticketsQueryBuilder;
+    private SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder;
 
-    public function __construct(ManagerRegistry $registry, TicketsQueryBuilder $ticketsQueryBuilder)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder
+    ) {
         parent::__construct($registry, Ticket::class);
-        $this->ticketsQueryBuilder = $ticketsQueryBuilder;
+        $this->ticketQueryBuilder = $ticketQueryBuilder;
     }
 
     public function save(Ticket $entity, bool $flush = false): void
@@ -61,7 +62,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
      * @param string[] $sort
      * @return Ticket[]
      */
-    public function findByQuery(User $actor, array $orgaFilters, ?Queries\Query $query, array $sort): array
+    public function findByQuery(User $actor, array $orgaFilters, ?SearchEngine\Query $query, array $sort): array
     {
         $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $query);
         $qb->orderBy("t.{$sort[0]}", $sort[1]);
@@ -71,7 +72,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     /**
      * @param array<string, int[]> $orgaFilters
      */
-    public function countByQuery(User $actor, array $orgaFilters, ?Queries\Query $query): int
+    public function countByQuery(User $actor, array $orgaFilters, ?SearchEngine\Query $query): int
     {
         $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $query);
         $qb->select($qb->expr()->count('t.id'));
@@ -81,7 +82,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     /**
      * @param array<string, int[]> $orgaFilters
      */
-    private function createSearchQueryBuilder(User $actor, array $orgaFilters, ?Queries\Query $query): QueryBuilder
+    private function createSearchQueryBuilder(User $actor, array $orgaFilters, ?SearchEngine\Query $query): QueryBuilder
     {
         $qb = $this->createQueryBuilder('t');
 
@@ -121,8 +122,8 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
         }
 
         if ($query) {
-            $this->ticketsQueryBuilder->setCurrentUser($actor);
-            list($whereQuery, $parameters) = $this->ticketsQueryBuilder->build($query);
+            $this->ticketQueryBuilder->setCurrentUser($actor);
+            list($whereQuery, $parameters) = $this->ticketQueryBuilder->build($query);
 
             $qb->andWhere($whereQuery);
 

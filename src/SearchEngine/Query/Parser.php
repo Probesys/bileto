@@ -4,7 +4,9 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Utils\Queries;
+namespace App\SearchEngine\Query;
+
+use App\SearchEngine\Query;
 
 /**
  * The LL grammar is defined by the following rules:
@@ -100,7 +102,7 @@ class Parser
     }
 
     /**
-     * @param value-of<QueryCondition::OPERATORS> $operator
+     * @param value-of<Query\Condition::OPERATORS> $operator
      */
     private function ruleCondition(Query $query, string $operator): void
     {
@@ -115,7 +117,7 @@ class Parser
     }
 
     /**
-     * @param value-of<QueryCondition::OPERATORS> $operator
+     * @param value-of<Query\Condition::OPERATORS> $operator
      */
     private function ruleCriteria(Query $query, string $operator, bool $not): void
     {
@@ -124,14 +126,14 @@ class Parser
         if ($currentToken['type'] === TokenType::Text) {
             $value = $this->ruleTextOrList();
 
-            $condition = QueryCondition::textCondition($operator, $value, $not);
+            $condition = Query\Condition::textCondition($operator, $value, $not);
             $query->addCondition($condition);
         } elseif ($currentToken['type'] === TokenType::Id) {
             $this->consumeToken(TokenType::Id);
 
             assert(isset($currentToken['value']));
 
-            $condition = QueryCondition::idCondition($operator, $currentToken['value'], $not);
+            $condition = Query\Condition::idCondition($operator, $currentToken['value'], $not);
             $query->addCondition($condition);
         } elseif ($currentToken['type'] === TokenType::Qualifier) {
             $this->consumeToken(TokenType::Qualifier);
@@ -140,7 +142,7 @@ class Parser
 
             $value = $this->ruleTextOrList();
 
-            $condition = QueryCondition::qualifierCondition($operator, $currentToken['value'], $value, $not);
+            $condition = Query\Condition::qualifierCondition($operator, $currentToken['value'], $value, $not);
             $query->addCondition($condition);
         } elseif ($currentToken['type'] === TokenType::OpenBracket) {
             $this->consumeToken(TokenType::OpenBracket);
@@ -148,7 +150,7 @@ class Parser
             $subQuery = new Query();
             $this->ruleQuery($subQuery);
 
-            $condition = QueryCondition::queryCondition($operator, $subQuery, $not);
+            $condition = Query\Condition::queryCondition($operator, $subQuery, $not);
             $query->addCondition($condition);
 
             $this->consumeToken(TokenType::CloseBracket);

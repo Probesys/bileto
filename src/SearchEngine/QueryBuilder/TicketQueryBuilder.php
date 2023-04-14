@@ -4,15 +4,15 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Service;
+namespace App\SearchEngine\QueryBuilder;
 
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
-use App\Utils\Queries;
+use App\SearchEngine\Query;
 
-class TicketsQueryBuilder
+class TicketQueryBuilder
 {
     /** @var array<string, mixed> */
     private array $parameters;
@@ -43,7 +43,7 @@ class TicketsQueryBuilder
     /**
      * @return array{string, array<string, mixed>}
      */
-    public function build(Queries\Query $query, int $querySequence = 0): array
+    public function build(Query $query, int $querySequence = 0): array
     {
         $this->parameters = [];
         $this->querySequence = $querySequence;
@@ -59,7 +59,7 @@ class TicketsQueryBuilder
         return [$where, $parameters];
     }
 
-    private function buildWhere(Queries\Query $query): string
+    private function buildWhere(Query $query): string
     {
         $where = '';
 
@@ -92,7 +92,7 @@ class TicketsQueryBuilder
         return $where;
     }
 
-    private function buildTextExpr(Queries\QueryCondition $condition): string
+    private function buildTextExpr(Query\Condition $condition): string
     {
         $value = $condition->getValue();
 
@@ -115,7 +115,7 @@ class TicketsQueryBuilder
         }
     }
 
-    private function buildQualifierExpr(Queries\QueryCondition $condition): string
+    private function buildQualifierExpr(Query\Condition $condition): string
     {
         $qualifier = $condition->getQualifier();
         $value = $condition->getValue();
@@ -159,12 +159,12 @@ class TicketsQueryBuilder
         }
     }
 
-    private function buildIdExpr(Queries\QueryCondition $condition): string
+    private function buildIdExpr(Query\Condition $condition): string
     {
         return $this->buildExpr('id', $condition->getValue(), $condition->not());
     }
 
-    private function buildQueryExpr(Queries\QueryCondition $condition): string
+    private function buildQueryExpr(Query\Condition $condition): string
     {
         $subQuery = $condition->getQuery();
 

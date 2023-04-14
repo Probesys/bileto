@@ -4,11 +4,11 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\Utils\Queries;
+namespace App\Tests\SearchEngine\Query;
 
-use App\Utils\Queries\Parser;
-use App\Utils\Queries\Tokenizer;
-use App\Utils\Queries\SyntaxError;
+use App\SearchEngine\Query\Parser;
+use App\SearchEngine\Query\Tokenizer;
+use App\SearchEngine\Query\SyntaxError;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase

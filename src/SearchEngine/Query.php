@@ -4,19 +4,19 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Utils\Queries;
+namespace App\SearchEngine;
 
 class Query
 {
-    /** @var QueryCondition[] */
+    /** @var Query\Condition[] */
     private array $conditions = [];
 
-    public function addCondition(QueryCondition $condition): void
+    public function addCondition(Query\Condition $condition): void
     {
         $this->conditions[] = $condition;
     }
 
-    /** @return QueryCondition[] */
+    /** @return Query\Condition[] */
     public function getConditions(): array
     {
         return $this->conditions;
@@ -28,8 +28,8 @@ class Query
             return null;
         }
 
-        $tokenizer = new Tokenizer();
-        $parser = new Parser();
+        $tokenizer = new Query\Tokenizer();
+        $parser = new Query\Parser();
         $tokens = $tokenizer->tokenize($queryString);
         return $parser->parse($tokens);
     }

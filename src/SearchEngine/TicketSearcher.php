@@ -4,13 +4,12 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Service;
+namespace App\SearchEngine;
 
 use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\Repository\TicketRepository;
-use App\Utils\Queries;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class TicketSearcher
@@ -70,7 +69,7 @@ class TicketSearcher
     }
 
     /**
-     * @return \App\Entity\Ticket[]
+     * @return Ticket[]
      */
     public function getTickets(string $queryString = ''): array
     {
@@ -81,7 +80,7 @@ class TicketSearcher
         return $this->ticketRepository->findByQuery(
             $currentUser,
             $this->orgaFilters,
-            Queries\Query::fromString($queryString),
+            Query::fromString($queryString),
             $sort,
         );
     }
@@ -94,7 +93,7 @@ class TicketSearcher
         return $this->ticketRepository->countByQuery(
             $currentUser,
             $this->orgaFilters,
-            Queries\Query::fromString($queryString),
+            Query::fromString($queryString),
         );
     }
 }

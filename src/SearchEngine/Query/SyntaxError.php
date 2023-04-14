@@ -4,7 +4,7 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Utils\Queries;
+namespace App\SearchEngine\Query;
 
 /**
  * @phpstan-import-type Token from Tokenizer

@@ -4,9 +4,11 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Utils\Queries;
+namespace App\SearchEngine\Query;
 
-class QueryCondition
+use App\SearchEngine\Query;
+
+class Condition
 {
     public const TYPES = ['text', 'id', 'qualifier', 'query'];
     public const OPERATORS = ['and', 'or'];
