@@ -5,6 +5,48 @@ about.short: 'The ergonomic ticketing tool for managing your Help Desk.'
 about.source_code: 'source code'
 about.title: 'About Bileto'
 about.version: Version
+advanced_search_syntax.complex.example1: 'Tickets with the word “emails” in their title and a priority of “high”.'
+advanced_search_syntax.complex.example2: 'Tickets with the status “new”, or those assigned to you'
+advanced_search_syntax.complex.example3: 'Tickets with the word “emails” in their title that have a “high” priority or that are assigned to you'
+advanced_search_syntax.complex.title: 'Complex searching'
+advanced_search_syntax.description: Description
+advanced_search_syntax.example: Example
+advanced_search_syntax.identifier.example1: 'The ticket with the identifier “42”'
+advanced_search_syntax.identifier.title: 'Search by identifier'
+advanced_search_syntax.intro1: 'The advanced syntax search allows you to search precisely for the tickets that interest you.'
+advanced_search_syntax.intro2: 'Below are some examples of what the search engine can do.'
+advanced_search_syntax.keywords.example1: 'Tickets containing the word “email” <strong>and</strong> the word “spam” in their title'
+advanced_search_syntax.keywords.example2: 'Tickets containing the word “email” <strong>or</strong> the word “spam” in their title'
+advanced_search_syntax.keywords.example3: 'Tickets containing the sequence of words “emails spam” in their title'
+advanced_search_syntax.keywords.title: 'Search by keywords'
+advanced_search_syntax.not.example1: 'Tickets containing the word “email” but not the word “spam” in their title'
+advanced_search_syntax.not.example2: 'Tickets that do not have a status of “open” (equivalent to “<code>NOT status:open</code>”). This syntax is only valid with qualifiers.'
+advanced_search_syntax.not.title: 'Search by negation'
+advanced_search_syntax.qualifiers.actors.example1: 'Tickets assigned to a user whose name or email contains “alix”'
+advanced_search_syntax.qualifiers.actors.example2: 'Tickets for which you are the requester'
+advanced_search_syntax.qualifiers.actors.example3: 'Tickets assigned to a user “alix”, or for which he is the requester'
+advanced_search_syntax.qualifiers.actors.example4: 'Tickets without an assigned person'
+advanced_search_syntax.qualifiers.actors.example5: 'Tickets with an assigned person'
+advanced_search_syntax.qualifiers.actors.title: Actors
+advanced_search_syntax.qualifiers.description: 'Qualifiers are special keywords (e.g. <code>status:</code>) that take a value or a comma-separated list of values. They are used to target a particular property.'
+advanced_search_syntax.qualifiers.organization.example1: 'Tickets from organizations with “probesys” in their name'
+advanced_search_syntax.qualifiers.organization.title: Organizations
+advanced_search_syntax.qualifiers.priority.example1: 'Tickets with “low” urgency'
+advanced_search_syntax.qualifiers.priority.example2: 'Tickets with “low” or “medium” impact'
+advanced_search_syntax.qualifiers.priority.example3: 'Tickets with “high” priority'
+advanced_search_syntax.qualifiers.priority.title: Priority
+advanced_search_syntax.qualifiers.solution.example1: 'Tickets with no solution'
+advanced_search_syntax.qualifiers.solution.example2: 'Tickets that have a solution'
+advanced_search_syntax.qualifiers.solution.title: Solution
+advanced_search_syntax.qualifiers.status.example1: 'Tickets with the status “new”'
+advanced_search_syntax.qualifiers.status.example2: 'Tickets with the status “new” or “in progress”'
+advanced_search_syntax.qualifiers.status.title: Status
+advanced_search_syntax.qualifiers.status.values: 'The possible values for “status” are: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, as well as the shortcuts <code>open</code> (includes the first 4) et <code>finished</code> (includes the last 2).'
+advanced_search_syntax.qualifiers.title: 'Search by qualifiers'
+advanced_search_syntax.qualifiers.type.example1: 'Tickets of type “incident”'
+advanced_search_syntax.qualifiers.type.title: Type
+advanced_search_syntax.qualifiers.type.values: 'The possible values for “type“ are: <code>incident</code> and <code>request</code>.'
+advanced_search_syntax.title: 'Quick reference for the advanced syntax'
 forms.error: Error
 forms.max_chars: '(max. {number} characters)'
 forms.optional: (optional)
@@ -107,6 +149,7 @@ tickets.incident: Incident
 tickets.index.new_ticket: 'New ticket'
 tickets.index.no_tickets: 'No tickets'
 tickets.index.number: '{count, plural, =0 {No tickets} one {1 ticket} other {# tickets}}'
+tickets.index.search.help: 'Show syntax help'
 tickets.index.search.label: 'Search using keywords or by using the advanced syntax'
 tickets.index.search.submit: Search
 tickets.index.title.all: 'All tickets'

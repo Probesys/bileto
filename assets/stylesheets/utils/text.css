@@ -45,3 +45,12 @@
 .text--big {
     font-size: 1.2em;
 }
+
+code {
+    padding: 0 0.5rem;
+
+    font-size: 0.9em;
+
+    background-color: var(--color-grey3);
+    border-radius: 0.5rem;
+}

@@ -66,4 +66,10 @@ class PagesController extends BaseController
         $response->headers->set('Content-Type', 'application/manifest+json');
         return $response;
     }
+
+    #[Route('/advanced-search-syntax', name: 'advanced search syntax', methods: ['GET', 'HEAD'])]
+    public function advancedSearchSyntax(): Response
+    {
+        return $this->render('pages/advanced_search_syntax.html.twig');
+    }
 }

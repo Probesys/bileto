@@ -81,6 +81,17 @@
                                 </span>
                             </button>
                         </div>
+
+                        <p class="text--right text--small">
+                            <button
+                                class="button--anchor"
+                                data-controller="modal-opener"
+                                data-action="modal-opener#fetch"
+                                data-modal-opener-href-value="{{ path('advanced search syntax') }}"
+                            >
+                                {{ 'tickets.index.search.help' | trans }}
+                            </button>
+                        </p>
                     </form>
 
                     {% if tickets %}
