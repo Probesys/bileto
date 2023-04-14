@@ -9,6 +9,7 @@ namespace App\Tests\SearchEngine\QueryBuilder;
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\SearchEngine;
+use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -17,6 +18,7 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 
 class TicketQueryBuilderTest extends WebTestCase
 {
+    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
 
@@ -32,10 +34,10 @@ class TicketQueryBuilderTest extends WebTestCase
         $client = static::createClient();
         $container = static::getContainer();
         $this->currentUser = UserFactory::createOne()->object();
+        $client->loginUser($this->currentUser);
         /** @var SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder */
         $ticketQueryBuilder = $container->get(SearchEngine\QueryBuilder\TicketQueryBuilder::class);
         $this->ticketQueryBuilder = $ticketQueryBuilder;
-        $this->ticketQueryBuilder->setCurrentUser($this->currentUser);
     }
 
     public function testBuildWithText(): void

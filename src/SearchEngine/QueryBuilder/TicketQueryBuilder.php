@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\SearchEngine\Query;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class TicketQueryBuilder
 {
@@ -23,21 +24,16 @@ class TicketQueryBuilder
 
     private UserRepository $userRepository;
 
-    private User $currentUser;
+    private Security $security;
 
     public function __construct(
         UserRepository $userRepository,
         OrganizationRepository $organizationRepository,
+        Security $security,
     ) {
+        $this->security = $security;
         $this->userRepository = $userRepository;
         $this->organizationRepository = $organizationRepository;
-    }
-
-    public function setCurrentUser(User $currentUser): self
-    {
-        $this->currentUser = $currentUser;
-
-        return $this;
     }
 
     /**
@@ -265,7 +261,9 @@ class TicketQueryBuilder
             if ($id !== null) {
                 $ids = [$id];
             } elseif ($v === '@me') {
-                $ids = [$this->currentUser->getId()];
+                /** @var User $currentUser */
+                $currentUser = $this->security->getUser();
+                $ids = [$currentUser->getId()];
             } else {
                 $users = $this->userRepository->findLike($v);
 

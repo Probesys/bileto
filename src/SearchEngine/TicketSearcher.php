@@ -20,11 +20,7 @@ class TicketSearcher
 
     private TicketRepository $ticketRepository;
 
-    /** @var array<string,int[]> $orgaFilters */
-    private array $orgaFilters = [
-        'all' => [],
-        'actor' => [],
-    ];
+    private Query $orgaQuery;
 
     private Security $security;
 
@@ -32,16 +28,15 @@ class TicketSearcher
     {
         $this->ticketRepository = $ticketRepository;
         $this->security = $security;
+
+        // The default query makes sure that the SearchEngine only returns
+        // tickets related to the current user.
+        $this->orgaQuery = Query::fromString('involves:@me');
     }
 
     public function setOrganization(Organization $organization): self
     {
-        $this->orgaFilters['all'] = [];
-        $this->orgaFilters['actor'] = [];
-
-        $this->addOrgaFilter($organization);
-
-        return $this;
+        return $this->setOrganizations([$organization]);
     }
 
     /**
@@ -49,23 +44,41 @@ class TicketSearcher
      */
     public function setOrganizations(array $organizations): self
     {
-        $this->orgaFilters['all'] = [];
-        $this->orgaFilters['actor'] = [];
+        $queries = [];
+
+        $permissions = [
+            'all' => [],
+            'involves' => [],
+        ];
 
         foreach ($organizations as $organization) {
-            $this->addOrgaFilter($organization);
+            if ($this->security->isGranted('orga:see:tickets:all', $organization)) {
+                $permissions['all'][] = "#{$organization->getId()}";
+            } else {
+                // Note that we don't check for the orga:see permission here.
+                // We consider that a user should be able to access the tickets
+                // in which he's involved whether he has access to the
+                // organization or not.
+                $permissions['involves'][] = "#{$organization->getId()}";
+            }
+        }
+
+        $listOrgaIds = implode(',', $permissions['all']);
+        if ($listOrgaIds) {
+            $queries[] = "(org:{$listOrgaIds})";
+        }
+
+        $listOrgaIds = implode(',', $permissions['involves']);
+        if ($listOrgaIds) {
+            $queries[] = "(org:{$listOrgaIds} AND involves:@me)";
+        }
+
+        if (!empty($queries)) {
+            $queryString = implode(' OR ', $queries);
+            $this->orgaQuery = Query::fromString($queryString);
         }
 
         return $this;
-    }
-
-    private function addOrgaFilter(Organization $organization): void
-    {
-        if ($this->security->isGranted('orga:see:tickets:all', $organization)) {
-            $this->orgaFilters['all'][] = $organization->getId();
-        } else {
-            $this->orgaFilters['actor'][] = $organization->getId();
-        }
     }
 
     /**
@@ -73,27 +86,25 @@ class TicketSearcher
      */
     public function getTickets(string $queryString = ''): array
     {
-        /** @var User $currentUser */
-        $currentUser = $this->security->getUser();
         $sort = ['createdAt', 'DESC'];
 
-        return $this->ticketRepository->findByQuery(
-            $currentUser,
-            $this->orgaFilters,
-            Query::fromString($queryString),
-            $sort,
-        );
+        $queries = [$this->orgaQuery];
+        $query = Query::fromString($queryString);
+        if ($query) {
+            $queries[] = $query;
+        }
+
+        return $this->ticketRepository->findByQueries($queries, $sort);
     }
 
     public function countTickets(string $queryString = ''): int
     {
-        /** @var User $currentUser */
-        $currentUser = $this->security->getUser();
+        $queries = [$this->orgaQuery];
+        $query = Query::fromString($queryString);
+        if ($query) {
+            $queries[] = $query;
+        }
 
-        return $this->ticketRepository->countByQuery(
-            $currentUser,
-            $this->orgaFilters,
-            Query::fromString($queryString),
-        );
+        return $this->ticketRepository->countByQueries($queries);
     }
 }

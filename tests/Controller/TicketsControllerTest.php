@@ -33,7 +33,7 @@ class TicketsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
-            'createdBy' => $user,
+            'assignee' => $user,
             'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 

@@ -58,72 +58,37 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     }
 
     /**
-     * @param array<string, int[]> $orgaFilters
-     * @param string[] $sort
+     * @param SearchEngine\Query[] $queries
+     * @param array{string, 'ASC'|'DESC'} $sort
+     *
      * @return Ticket[]
      */
-    public function findByQuery(User $actor, array $orgaFilters, ?SearchEngine\Query $query, array $sort): array
+    public function findByQueries(array $queries, array $sort): array
     {
-        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $query);
+        $qb = $this->createSearchQueryBuilder($queries);
         $qb->orderBy("t.{$sort[0]}", $sort[1]);
         return $qb->getQuery()->getResult();
     }
 
     /**
-     * @param array<string, int[]> $orgaFilters
+     * @param SearchEngine\Query[] $queries
      */
-    public function countByQuery(User $actor, array $orgaFilters, ?SearchEngine\Query $query): int
+    public function countByQueries(array $queries): int
     {
-        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $query);
+        $qb = $this->createSearchQueryBuilder($queries);
         $qb->select($qb->expr()->count('t.id'));
         return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
-     * @param array<string, int[]> $orgaFilters
+     * @param SearchEngine\Query[] $queries
      */
-    private function createSearchQueryBuilder(User $actor, array $orgaFilters, ?SearchEngine\Query $query): QueryBuilder
+    private function createSearchQueryBuilder(array $queries): QueryBuilder
     {
         $qb = $this->createQueryBuilder('t');
 
-        if (!empty($orgaFilters['all'])) {
-            $qb->where(
-                $qb->expr()->in('t.organization', ':orgaAll'),
-            );
-            $qb->setParameter('orgaAll', $orgaFilters['all']);
-        }
-
-        $actorExpr = $qb->expr()->orX(
-            $qb->expr()->eq('t.createdBy', ':actor'),
-            $qb->expr()->eq('t.requester', ':actor'),
-            $qb->expr()->eq('t.assignee', ':actor'),
-        );
-
-        if (!empty($orgaFilters['actor'])) {
-            foreach ($orgaFilters['actor'] as $key => $orgaId) {
-                $qb->orWhere($qb->expr()->andX(
-                    $qb->expr()->eq('t.organization', ":orga{$key}"),
-                    $actorExpr,
-                ));
-                $qb->setParameter("orga{$key}", $orgaId);
-            }
-
-            $qb->setParameter('actor', $actor->getId());
-        }
-
-        if (empty($orgaFilters['all']) && empty($orgaFilters['actor'])) {
-            // Make sure to restrain the tickets list to those available to the
-            // given user.
-            // In normal cases, there should always be an orgaFilter applied,
-            // or at least a constraint on another actor field, so this
-            // condition should never match. But we're never too sure.
-            $qb->where($actorExpr);
-            $qb->setParameter('actor', $actor->getId());
-        }
-
-        if ($query) {
-            $this->ticketQueryBuilder->setCurrentUser($actor);
-            list($whereQuery, $parameters) = $this->ticketQueryBuilder->build($query);
+        foreach ($queries as $sequence => $query) {
+            list($whereQuery, $parameters) = $this->ticketQueryBuilder->build($query, $sequence);
 
             $qb->andWhere($whereQuery);
 

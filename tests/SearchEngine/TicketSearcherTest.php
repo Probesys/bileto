@@ -22,24 +22,6 @@ class TicketSearcherTest extends WebTestCase
     use Factories;
     use ResetDatabase;
 
-    public function testGetTicketsReturnsTicketCreatedByUser(): void
-    {
-        $client = static::createClient();
-        $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $ticket = TicketFactory::createOne([
-            'createdBy' => $user,
-        ]);
-
-        $tickets = $ticketSearcher->getTickets();
-
-        $this->assertSame(1, count($tickets));
-        $this->assertSame($ticket->getId(), $tickets[0]->getId());
-    }
-
     public function testGetTicketsReturnsTicketAssignedToUser(): void
     {
         $client = static::createClient();
@@ -102,11 +84,11 @@ class TicketSearcherTest extends WebTestCase
         $organization1 = OrganizationFactory::createOne();
         $organization2 = OrganizationFactory::createOne();
         $ticket1 = TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'organization' => $organization1,
         ]);
         $ticket2 = TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'organization' => $organization2,
         ]);
         $ticketSearcher->setOrganization($organization1->object());
@@ -129,15 +111,15 @@ class TicketSearcherTest extends WebTestCase
         $organization2 = OrganizationFactory::createOne();
         $organization3 = OrganizationFactory::createOne();
         $ticket1 = TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'organization' => $organization1,
         ]);
         $ticket2 = TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'organization' => $organization2,
         ]);
         $ticket3 = TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'organization' => $organization3,
         ]);
         $ticketSearcher->setOrganizations([
@@ -209,11 +191,11 @@ class TicketSearcherTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $ticket1 = TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'status' => 'new',
         ]);
         $ticket2 = TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'status' => 'closed',
         ]);
 
@@ -232,7 +214,7 @@ class TicketSearcherTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
         ]);
 
         $count = $ticketSearcher->countTickets();
@@ -249,11 +231,11 @@ class TicketSearcherTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'status' => 'new',
         ]);
         TicketFactory::createOne([
-            'createdBy' => $user,
+            'assignee' => $user,
             'status' => 'closed',
         ]);
 
