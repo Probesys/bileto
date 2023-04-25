@@ -149,7 +149,7 @@
 
                         <select
                             id="requester"
-                            name="requesterId"
+                            name="requesterUid"
                             required
                             {% if errors.requester is defined %}
                                 autofocus
@@ -158,7 +158,7 @@
                             {% endif %}
                         >
                             {% for user in users %}
-                                <option value="{{ user.id }}" {{ user.id == requesterId ? 'selected' }}>
+                                <option value="{{ user.uid }}" {{ user.uid == requesterUid ? 'selected' }}>
                                     {{ user.displayName }}
 
                                     {% if user.id == app.user.id %}
@@ -187,7 +187,7 @@
 
                         <select
                             id="assignee"
-                            name="assigneeId"
+                            name="assigneeUid"
                             {% if errors.assignee is defined %}
                                 autofocus
                                 aria-invalid="true"
@@ -199,7 +199,7 @@
                             </option>
 
                             {% for user in users %}
-                                <option value="{{ user.id }}" {{ user.id == assigneeId ? 'selected' }}>
+                                <option value="{{ user.uid }}" {{ user.uid == assigneeUid ? 'selected' }}>
                                     {{ user.displayName }}
 
                                     {% if user.id == app.user.id %}

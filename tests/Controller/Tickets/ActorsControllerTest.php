@@ -104,14 +104,14 @@ class ActorsControllerTest extends WebTestCase
 
         $client->request('GET', "/tickets/{$ticket->getUid()}/actors/edit");
         $crawler = $client->submitForm('form-update-actors-submit', [
-            'requesterId' => $requester->getId(),
-            'assigneeId' => $assignee->getId(),
+            'requesterUid' => $requester->getUid(),
+            'assigneeUid' => $assignee->getUid(),
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticket->refresh();
-        $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
-        $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());
+        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
+        $this->assertSame($assignee->getUid(), $ticket->getAssignee()->getUid());
     }
 
     public function testPostUpdateAcceptsEmptyAssignee(): void
@@ -132,13 +132,13 @@ class ActorsControllerTest extends WebTestCase
 
         $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterId' => $requester->getId(),
-            'assigneeId' => '',
+            'requesterUid' => $requester->getUid(),
+            'assigneeUid' => '',
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticket->refresh();
-        $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
+        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
         $this->assertNull($ticket->getAssignee());
     }
 
@@ -156,8 +156,8 @@ class ActorsControllerTest extends WebTestCase
 
         $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterId' => -1,
-            'assigneeId' => $user->getId(),
+            'requesterUid' => 'not an uid',
+            'assigneeUid' => $user->getUid(),
         ]);
 
         $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
@@ -180,8 +180,8 @@ class ActorsControllerTest extends WebTestCase
 
         $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterId' => $user->getId(),
-            'assigneeId' => -1,
+            'requesterUid' => $user->getUid(),
+            'assigneeUid' => 'not an uid',
         ]);
 
         $this->assertSelectorTextContains('#assignee-error', 'Select a user from the list');
@@ -208,8 +208,8 @@ class ActorsControllerTest extends WebTestCase
 
         $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => 'not the token',
-            'requesterId' => $requester->getId(),
-            'assigneeId' => $assignee->getId(),
+            'requesterUid' => $requester->getUid(),
+            'assigneeUid' => $assignee->getUid(),
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
@@ -238,8 +238,8 @@ class ActorsControllerTest extends WebTestCase
         $client->catchExceptions(false);
         $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterId' => $requester->getId(),
-            'assigneeId' => $assignee->getId(),
+            'requesterUid' => $requester->getUid(),
+            'assigneeUid' => $assignee->getUid(),
         ]);
     }
 
@@ -263,8 +263,8 @@ class ActorsControllerTest extends WebTestCase
         $client->catchExceptions(false);
         $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterId' => $requester->getId(),
-            'assigneeId' => $assignee->getId(),
+            'requesterUid' => $requester->getUid(),
+            'assigneeUid' => $assignee->getUid(),
         ]);
     }
 }

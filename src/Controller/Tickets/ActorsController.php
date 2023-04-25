@@ -36,10 +36,11 @@ class ActorsController extends BaseController
         $users = $actorsLister->listUsers();
         $requester = $ticket->getRequester();
         $assignee = $ticket->getAssignee();
+
         return $this->render('tickets/actors/edit.html.twig', [
             'ticket' => $ticket,
-            'requesterId' => $requester ? $requester->getId() : null,
-            'assigneeId' => $assignee ? $assignee->getId() : null,
+            'requesterUid' => $requester ? $requester->getUid() : '',
+            'assigneeUid' => $assignee ? $assignee->getUid() : '',
             'users' => $users,
         ]);
     }
@@ -66,11 +67,11 @@ class ActorsController extends BaseController
         $initialRequester = $ticket->getRequester();
         $initialAssignee = $ticket->getAssignee();
 
-        /** @var int $requesterId */
-        $requesterId = $request->request->getInt('requesterId', $initialRequester ? $initialRequester->getId() : 0);
+        /** @var string $requesterUid */
+        $requesterUid = $request->request->get('requesterUid', $initialRequester ? $initialRequester->getUid() : '');
 
-        /** @var int $assigneeId */
-        $assigneeId = $request->request->getInt('assigneeId', $initialAssignee ? $initialAssignee->getId() : 0);
+        /** @var string $assigneeUid */
+        $assigneeUid = $request->request->get('assigneeUid', $initialAssignee ? $initialAssignee->getUid() : '');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
@@ -80,19 +81,19 @@ class ActorsController extends BaseController
         if (!$this->isCsrfTokenValid('update ticket actors', $csrfToken)) {
             return $this->renderBadRequest('tickets/actors/edit.html.twig', [
                 'ticket' => $ticket,
-                'requesterId' => $requesterId,
-                'assigneeId' => $assigneeId,
+                'requesterUid' => $requesterUid,
+                'assigneeUid' => $assigneeUid,
                 'users' => $users,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
-        $requester = $userRepository->find($requesterId);
+        $requester = $userRepository->findOneBy(['uid' => $requesterUid]);
         if (!$requester) {
             return $this->renderBadRequest('tickets/actors/edit.html.twig', [
                 'ticket' => $ticket,
-                'requesterId' => $requesterId,
-                'assigneeId' => $assigneeId,
+                'requesterUid' => $requesterUid,
+                'assigneeUid' => $assigneeUid,
                 'users' => $users,
                 'errors' => [
                     'requester' => $translator->trans('ticket.requester.invalid', [], 'errors'),
@@ -100,13 +101,13 @@ class ActorsController extends BaseController
             ]);
         }
 
-        if ($assigneeId) {
-            $assignee = $userRepository->find($assigneeId);
+        if ($assigneeUid) {
+            $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
             if (!$assignee) {
                 return $this->renderBadRequest('tickets/actors/edit.html.twig', [
                     'ticket' => $ticket,
-                    'requesterId' => $requesterId,
-                    'assigneeId' => $assigneeId,
+                    'requesterUid' => $requesterUid,
+                    'assigneeUid' => $assigneeUid,
                     'users' => $users,
                     'errors' => [
                         'assignee' => $translator->trans('ticket.assignee.invalid', [], 'errors'),

@@ -213,8 +213,8 @@ class TicketsControllerTest extends WebTestCase
         $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
         $crawler = $client->submitForm('form-create-ticket-submit', [
             'title' => $title,
-            'requesterId' => $requester->getId(),
-            'assigneeId' => $assignee->getId(),
+            'requesterUid' => $requester->getUid(),
+            'assigneeUid' => $assignee->getUid(),
             'type' => 'incident',
             'urgency' => 'high',
             'impact' => 'high',
@@ -274,7 +274,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterId' => $user->getId(),
+            'requesterUid' => $user->getUid(),
             'message' => $messageContent,
         ]);
 
@@ -310,7 +310,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterId' => $requester->getId(),
+            'requesterUid' => $requester->getUid(),
             'message' => $messageContent,
             'isResolved' => true,
         ]);
@@ -387,7 +387,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterId' => $user->getId(),
+            'requesterUid' => $user->getUid(),
             'message' => $messageContent,
         ]);
 
@@ -420,7 +420,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterId' => $user->getId(),
+            'requesterUid' => $user->getUid(),
             'message' => $messageContent,
         ]);
 
@@ -453,7 +453,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterId' => $user->getId(),
+            'requesterUid' => $user->getUid(),
             'message' => $messageContent,
         ]);
 
@@ -486,7 +486,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterId' => -1,
+            'requesterUid' => 'not an uid',
             'message' => $messageContent,
         ]);
 
@@ -519,8 +519,8 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterId' => $user->getId(),
-            'assigneeId' => -1,
+            'requesterUid' => $user->getUid(),
+            'assigneeUid' => 'not an uid',
             'message' => $messageContent,
         ]);
 
@@ -553,7 +553,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => 'not the token',
             'title' => $title,
-            'requesterId' => $user->getId(),
+            'requesterUid' => $user->getUid(),
             'message' => $messageContent,
         ]);
 
@@ -578,7 +578,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterId' => $user->getId(),
+            'requesterUid' => $user->getUid(),
             'message' => $messageContent,
         ]);
     }

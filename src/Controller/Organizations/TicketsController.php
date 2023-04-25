@@ -94,8 +94,8 @@ class TicketsController extends BaseController
             'title' => '',
             'message' => '',
             'type' => Ticket::DEFAULT_TYPE,
-            'requesterId' => '',
-            'assigneeId' => '',
+            'requesterUid' => '',
+            'assigneeUid' => '',
             'isResolved' => false,
             'urgency' => Ticket::DEFAULT_WEIGHT,
             'impact' => Ticket::DEFAULT_WEIGHT,
@@ -138,14 +138,14 @@ class TicketsController extends BaseController
         }
 
         if ($security->isGranted('orga:update:tickets:actors', $organization)) {
-            /** @var int $requesterId */
-            $requesterId = $request->request->getInt('requesterId', 0);
+            /** @var string $requesterUid */
+            $requesterUid = $request->request->get('requesterUid', '');
 
-            /** @var int $assigneeId */
-            $assigneeId = $request->request->getInt('assigneeId', 0);
+            /** @var string $assigneeUid */
+            $assigneeUid = $request->request->get('assigneeUid', '');
         } else {
-            $requesterId = $user->getId();
-            $assigneeId = 0;
+            $requesterUid = $user->getUid();
+            $assigneeUid = '';
         }
 
         if ($security->isGranted('orga:update:tickets:priority', $organization)) {
@@ -180,8 +180,8 @@ class TicketsController extends BaseController
                 'title' => $title,
                 'message' => $messageContent,
                 'type' => $type,
-                'requesterId' => $requesterId,
-                'assigneeId' => $assigneeId,
+                'requesterUid' => $requesterUid,
+                'assigneeUid' => $assigneeUid,
                 'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
@@ -191,15 +191,15 @@ class TicketsController extends BaseController
             ]);
         }
 
-        $requester = $userRepository->find($requesterId);
+        $requester = $userRepository->findOneBy(['uid' => $requesterUid]);
         if (!$requester) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                 'organization' => $organization,
                 'title' => $title,
                 'message' => $messageContent,
                 'type' => $type,
-                'requesterId' => $requesterId,
-                'assigneeId' => $assigneeId,
+                'requesterUid' => $requesterUid,
+                'assigneeUid' => $assigneeUid,
                 'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
@@ -211,16 +211,16 @@ class TicketsController extends BaseController
             ]);
         }
 
-        if ($assigneeId) {
-            $assignee = $userRepository->find($assigneeId);
+        if ($assigneeUid) {
+            $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
             if (!$assignee) {
                 return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                     'organization' => $organization,
                     'title' => $title,
                     'message' => $messageContent,
                     'type' => $type,
-                    'requesterId' => $requesterId,
-                    'assigneeId' => $assigneeId,
+                    'requesterUid' => $requesterUid,
+                    'assigneeUid' => $assigneeUid,
                     'isResolved' => $isResolved,
                     'urgency' => $urgency,
                     'impact' => $impact,
@@ -262,8 +262,8 @@ class TicketsController extends BaseController
                 'title' => $title,
                 'message' => $messageContent,
                 'type' => $type,
-                'requesterId' => $requesterId,
-                'assigneeId' => $assigneeId,
+                'requesterUid' => $requesterUid,
+                'assigneeUid' => $assigneeUid,
                 'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
@@ -286,8 +286,8 @@ class TicketsController extends BaseController
                 'title' => $title,
                 'message' => $messageContent,
                 'type' => $type,
-                'requesterId' => $requesterId,
-                'assigneeId' => $assigneeId,
+                'requesterUid' => $requesterUid,
+                'assigneeUid' => $assigneeUid,
                 'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
