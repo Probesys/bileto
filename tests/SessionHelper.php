@@ -8,18 +8,21 @@ namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\SessionFactory;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 
 trait SessionHelper
 {
-    public function getSession(KernelBrowser $client): Session
+    public function getSession(KernelBrowser $client): SessionInterface
     {
         $cookie = $client->getCookieJar()->get('MOCKSESSID');
         if ($cookie) {
-            $session = $this->initSession();
+            /** @var SessionFactory */
+            $sessionFactory = static::getContainer()->get('session.factory');
+            $session = $sessionFactory->createSession();
             $session->setId($cookie->getValue());
             $session->start();
             return $session;
@@ -28,9 +31,11 @@ trait SessionHelper
         }
     }
 
-    public function createSession(KernelBrowser $client): Session
+    public function createSession(KernelBrowser $client): SessionInterface
     {
-        $session = $this->initSession();
+        /** @var SessionFactory */
+        $sessionFactory = static::getContainer()->get('session.factory');
+        $session = $sessionFactory->createSession();
         $session->start();
         $session->save();
 
@@ -44,15 +49,6 @@ trait SessionHelper
         $client->getCookieJar()->set($sessionCookie);
 
         return $session;
-    }
-
-    private function initSession(): Session
-    {
-        $container = static::getContainer();
-        /** @var string $sessionSavePath */
-        $sessionSavePath = $container->getParameter('session.save_path');
-        $sessionStorage = new MockFileSessionStorage($sessionSavePath);
-        return new Session($sessionStorage);
     }
 
     public function generateCsrfToken(KernelBrowser $client, string $tokenId): string
