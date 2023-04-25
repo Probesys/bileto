@@ -2,11 +2,12 @@
     "extends": "stylelint-config-standard",
 
     "plugins": [
-        "stylelint-order"
+        "stylelint-order",
+        "stylelint-stylistic"
     ],
 
     "rules": {
-        "indentation": 4,
+        "stylistic/indentation": 4,
 
         "at-rule-no-vendor-prefix": null,
 
@@ -26,6 +27,15 @@
         ],
 
         "custom-property-empty-line-before": null,
+
+        "media-feature-range-notation": "prefix",
+
+        "declaration-block-no-redundant-longhand-properties": [
+            true,
+            {
+                "ignoreShorthands": ["inset"]
+            }
+        ],
 
         "selector-class-pattern": null,
 
