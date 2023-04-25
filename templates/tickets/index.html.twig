@@ -52,47 +52,11 @@
                 </div>
 
                 <div class="flow-smaller">
-                    <form method="get" action="" class="list__filters flow-small">
-                        {% if errors.search is defined %}
-                            <p class="form__error" role="alert" id="search-error">
-                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                {{ errors.search }}
-                            </p>
-                        {% endif %}
-
-                        <div class="input-container">
-                            <input
-                                type="text"
-                                name="q"
-                                value="{{ query }}"
-                                required
-                                autocomplete="off"
-                                aria-label="{{ 'tickets.index.search.label' | trans }}"
-                                {% if errors.search is defined %}
-                                    aria-invalid="true"
-                                    aria-errormessage="search-error"
-                                {% endif %}
-                            />
-
-                            <button type="submit">
-                                {{ icon('search') }}
-                                <span class="sr-only">
-                                    {{ 'tickets.index.search.submit' | trans }}
-                                </span>
-                            </button>
-                        </div>
-
-                        <p class="text--right text--small">
-                            <button
-                                class="button--anchor"
-                                data-controller="modal-opener"
-                                data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('advanced search syntax') }}"
-                            >
-                                {{ 'tickets.index.search.help' | trans }}
-                            </button>
-                        </p>
-                    </form>
+                    {{ include(
+                        'tickets/_search_form.html.twig',
+                        { query: query, error: errors.search ?? '' },
+                        with_context = false
+                    ) }}
 
                     {% if tickets %}
                         {{ include(
