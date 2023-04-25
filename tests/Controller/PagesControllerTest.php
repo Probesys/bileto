@@ -38,6 +38,7 @@ class PagesControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
 
+        $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Welcome to Bileto');
         $this->assertSelectorTextContains(
             '[data-test="organization-item"]:nth-child(1)',
@@ -71,6 +72,7 @@ class PagesControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
 
+        $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains(
             '[data-test="organization-item"]:nth-child(1)',
             'Orga 1',
@@ -100,6 +102,19 @@ class PagesControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/about');
 
+        $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'About Bileto');
+    }
+
+    public function testGetAdvancedSearchSyntaxRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+
+        $crawler = $client->request('GET', '/advanced-search-syntax');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Quick reference for the advanced syntax');
     }
 }

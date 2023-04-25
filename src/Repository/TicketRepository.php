@@ -8,6 +8,7 @@ namespace App\Repository;
 
 use App\Entity\Ticket;
 use App\Entity\User;
+use App\SearchEngine;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
@@ -28,9 +29,14 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     use UidGeneratorTrait;
     use FindOrCreateTrait;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    private SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder
+    ) {
         parent::__construct($registry, Ticket::class);
+        $this->ticketQueryBuilder = $ticketQueryBuilder;
     }
 
     public function save(Ticket $entity, bool $flush = false): void
@@ -52,121 +58,45 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     }
 
     /**
-     * @param array<string, int[]> $orgaFilters
-     * @param array<array<string|int,mixed>> $criteria
-     * @param string[] $sort
+     * @param SearchEngine\Query[] $queries
+     * @param array{string, 'ASC'|'DESC'} $sort
+     *
      * @return Ticket[]
      */
-    public function findBySearch(User $actor, array $orgaFilters, array $criteria, array $sort): array
+    public function findByQueries(array $queries, array $sort): array
     {
-        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $criteria);
+        $qb = $this->createSearchQueryBuilder($queries);
         $qb->orderBy("t.{$sort[0]}", $sort[1]);
-
-        $query = $qb->getQuery();
-        return $query->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
-     * @param array<string, int[]> $orgaFilters
-     * @param array<array<string|int,mixed>> $criteria
+     * @param SearchEngine\Query[] $queries
      */
-    public function countBySearch(User $actor, array $orgaFilters, array $criteria): int
+    public function countByQueries(array $queries): int
     {
-        $qb = $this->createSearchQueryBuilder($actor, $orgaFilters, $criteria);
+        $qb = $this->createSearchQueryBuilder($queries);
         $qb->select($qb->expr()->count('t.id'));
-
-        $query = $qb->getQuery();
-        return $query->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
-     * @param array<string, int[]> $orgaFilters
-     * @param array<array<string|int,mixed>> $criteria
+     * @param SearchEngine\Query[] $queries
      */
-    private function createSearchQueryBuilder(User $actor, array $orgaFilters, array $criteria): QueryBuilder
+    private function createSearchQueryBuilder(array $queries): QueryBuilder
     {
         $qb = $this->createQueryBuilder('t');
 
-        if (!empty($orgaFilters['all'])) {
-            $qb->where(
-                $qb->expr()->in('t.organization', ':orgaAll'),
-            );
-            $qb->setParameter('orgaAll', $orgaFilters['all']);
-        }
+        foreach ($queries as $sequence => $query) {
+            list($whereQuery, $parameters) = $this->ticketQueryBuilder->build($query, $sequence);
 
-        $actorExpr = $qb->expr()->orX(
-            $qb->expr()->eq('t.createdBy', ':actor'),
-            $qb->expr()->eq('t.requester', ':actor'),
-            $qb->expr()->eq('t.assignee', ':actor'),
-        );
+            $qb->andWhere($whereQuery);
 
-        if (!empty($orgaFilters['actor'])) {
-            foreach ($orgaFilters['actor'] as $key => $orgaId) {
-                $qb->orWhere($qb->expr()->andX(
-                    $qb->expr()->eq('t.organization', ":orga{$key}"),
-                    $actorExpr,
-                ));
-                $qb->setParameter("orga{$key}", $orgaId);
+            foreach ($parameters as $key => $value) {
+                $qb->setParameter($key, $value);
             }
-
-            $qb->setParameter('actor', $actor->getId());
-        }
-
-        if (empty($orgaFilters['all']) && empty($orgaFilters['actor'])) {
-            // Make sure to restrain the tickets list to those available to the
-            // given user.
-            // In normal cases, there should always be an orgaFilter applied,
-            // or at least a constraint on another actor field, so this
-            // condition should never match. But we're never too sure.
-            $qb->where($actorExpr);
-            $qb->setParameter('actor', $actor->getId());
-        }
-
-        foreach ($criteria as $criterion) {
-            if (count($criterion) === 1) {
-                /** @var string $field */
-                $field = array_key_first($criterion);
-                $condition = $criterion[$field];
-                $expr = $this->buildCriteriaExpr($qb, $field, $condition);
-            } else {
-                $expr = $this->buildOrExpr($qb, $criterion);
-            }
-
-            $qb->andWhere($expr);
         }
 
         return $qb;
-    }
-
-    /**
-     * return Expr\Comparison|Expr\Func|string
-     */
-    private function buildCriteriaExpr(QueryBuilder $qb, string $field, mixed $condition): mixed
-    {
-        if ($condition === null) {
-            return $qb->expr()->isNull("t.{$field}");
-        } elseif (is_array($condition)) {
-            $qb->setParameter($field, $condition);
-            return $qb->expr()->in("t.{$field}", ":{$field}");
-        } else {
-            $qb->setParameter($field, $condition);
-            return $qb->expr()->eq("t.{$field}", ":{$field}");
-        }
-    }
-
-    /**
-     * @param array<array<string|int,mixed>> $criteria
-     */
-    private function buildOrExpr(QueryBuilder $qb, array $criteria): Expr\Orx
-    {
-        $expressions = [];
-        foreach ($criteria as $criterion) {
-            /** @var string $field */
-            $field = array_key_first($criterion);
-            $condition = $criterion[$field];
-            $expressions[] = $this->buildCriteriaExpr($qb, $field, $condition);
-        }
-
-        return $qb->expr()->orX(...$expressions);
     }
 }

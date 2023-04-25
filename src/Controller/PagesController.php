@@ -9,8 +9,8 @@ namespace App\Controller;
 use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
+use App\SearchEngine\TicketSearcher;
 use App\Service\OrganizationSorter;
-use App\Service\TicketSearcher;
 use App\Utils\Locales;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +34,7 @@ class PagesController extends BaseController
         }
         $organizations = $orgaSorter->asTree($organizations);
 
-        $tickets = $ticketSearcher->getTicketsOfCurrentUser();
+        $tickets = $ticketSearcher->getTickets(TicketSearcher::QUERY_OWNED);
 
         return $this->render('pages/home.html.twig', [
             'tickets' => $tickets,
@@ -65,5 +65,11 @@ class PagesController extends BaseController
         $response = $this->render('pages/webmanifest.json.twig');
         $response->headers->set('Content-Type', 'application/manifest+json');
         return $response;
+    }
+
+    #[Route('/advanced-search-syntax', name: 'advanced search syntax', methods: ['GET', 'HEAD'])]
+    public function advancedSearchSyntax(): Response
+    {
+        return $this->render('pages/advanced_search_syntax.html.twig');
     }
 }

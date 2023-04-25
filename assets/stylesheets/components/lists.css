@@ -20,3 +20,10 @@
 .list--border > li + li {
     border-top: 0.25rem solid var(--color-grey6);
 }
+
+.list__filters {
+    padding: 1rem 1.75rem;
+
+    background-color: var(--color-grey3);
+    border-radius: 0.5rem;
+}

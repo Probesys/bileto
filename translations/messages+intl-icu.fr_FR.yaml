@@ -5,6 +5,48 @@ about.short: 'L’outil de ticketing ergonomique pour votre gestion helpdesk.'
 about.source_code: 'code source'
 about.title: 'À propos de Bileto'
 about.version: Version
+advanced_search_syntax.complex.example1: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_»"
+advanced_search_syntax.complex.example2: "Les tickets de statut «\_nouveau\_», ou ceux qui vous sont attribués"
+advanced_search_syntax.complex.example3: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_» ou qui vous sont attribués"
+advanced_search_syntax.complex.title: 'Recherches complexes'
+advanced_search_syntax.description: Description
+advanced_search_syntax.example: Exemple
+advanced_search_syntax.identifier.example1: "Le ticket avec l’identifiant «\_42\_»"
+advanced_search_syntax.identifier.title: 'Rechercher par identifiant'
+advanced_search_syntax.intro1: 'La recherche par syntaxe avancée vous permet de rechercher précisément les tickets qui vous intéressent.'
+advanced_search_syntax.intro2: 'Trouvez ci-dessous quelques exemples illustrant les possibilités du moteur de recherche.'
+advanced_search_syntax.keywords.example1: "Les tickets contenant le mot «\_emails\_» <strong>et</strong> le mot «\_spam\_» dans leur titre"
+advanced_search_syntax.keywords.example2: "Les tickets contenant le mot «\_emails\_» <strong>ou</strong> le mot «\_spam\_» dans leur titre"
+advanced_search_syntax.keywords.example3: "Les tickets contenant la suite de mots «\_emails spam\_» dans leur titre"
+advanced_search_syntax.keywords.title: 'Rechercher par mots-clés'
+advanced_search_syntax.not.example1: "Les tickets contenant le mot «\_emails\_» mais pas le mot «\_spam\_» dans leur titre"
+advanced_search_syntax.not.example2: "Les tickets qui n’ont pas un statut «\_ouvert\_» (équivalent à «\_<code>NOT status:open\_»</code>). Cette syntaxe n’est valable qu’avec les qualificateurs."
+advanced_search_syntax.not.title: 'Rechercher par négation'
+advanced_search_syntax.qualifiers.actors.example1: "Les tickets attribués à un utilisateur dont le nom ou l’email contient «\_alix\_»"
+advanced_search_syntax.qualifiers.actors.example2: 'Les tickets pour lesquels vous êtes demandeur'
+advanced_search_syntax.qualifiers.actors.example3: "Les tickets attribués à un utilisateur «\_alix\_», ou pour lesquels il est demandeur"
+advanced_search_syntax.qualifiers.actors.example4: 'Les tickets n’ayant pas de personne attribuée'
+advanced_search_syntax.qualifiers.actors.example5: 'Les tickets ayant une personne attribuée'
+advanced_search_syntax.qualifiers.actors.title: Acteurs
+advanced_search_syntax.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
+advanced_search_syntax.qualifiers.organization.example1: "Les tickets des organisations dont le nom contient «\_probesys\_»"
+advanced_search_syntax.qualifiers.organization.title: Organisations
+advanced_search_syntax.qualifiers.priority.example1: "Les tickets d’urgence «\_basse\_»"
+advanced_search_syntax.qualifiers.priority.example2: "Les tickets d’impact «\_bas\_» ou «\_moyen\_»"
+advanced_search_syntax.qualifiers.priority.example3: "Les tickets de priorité «\_haute\_»"
+advanced_search_syntax.qualifiers.priority.title: Priorité
+advanced_search_syntax.qualifiers.solution.example1: 'Les tickets n’ayant pas de solution'
+advanced_search_syntax.qualifiers.solution.example2: 'Les tickets ayant une solution'
+advanced_search_syntax.qualifiers.solution.title: Solution
+advanced_search_syntax.qualifiers.status.example1: "Les tickets avec le statut «\_nouveau\_»"
+advanced_search_syntax.qualifiers.status.example2: "Les tickets avec les statuts «\_nouveau\_» ou «\_en cours\_»"
+advanced_search_syntax.qualifiers.status.title: Statut
+advanced_search_syntax.qualifiers.status.values: "Les valeurs possibles pour «\_<code>status</code>\_» sont\_: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, ainsi que les raccourcis <code>open</code> (incluant les 4 premiers) et <code>finished</code> (incluant les 2 derniers)."
+advanced_search_syntax.qualifiers.title: 'Rechercher par qualificateurs'
+advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incident\_»"
+advanced_search_syntax.qualifiers.type.title: Type
+advanced_search_syntax.qualifiers.type.values: "Les valeurs possibles pour «\_type\_» sont\_: <code>incident</code> et <code>request</code>."
+advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
 forms.error: Erreur
 forms.max_chars: '(max. {number} caractères)'
 forms.optional: (optionnel)
@@ -107,6 +149,9 @@ tickets.incident: Incident
 tickets.index.new_ticket: 'Nouveau ticket'
 tickets.index.no_tickets: 'Aucun ticket'
 tickets.index.number: '{count, plural, =0 {Aucun ticket} one {1 ticket} other {# tickets}}'
+tickets.index.search.help: 'Afficher l’aide de la syntaxe'
+tickets.index.search.label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
+tickets.index.search.submit: Rechercher
 tickets.index.title.all: 'Tous les tickets'
 tickets.index.title.to_assign: 'Tickets à attribuer'
 tickets.index.title.your_tickets: 'Vos tickets'

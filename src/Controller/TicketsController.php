@@ -11,14 +11,15 @@ use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
+use App\SearchEngine\TicketSearcher;
 use App\Service\OrganizationSorter;
-use App\Service\TicketSearcher;
 use App\Service\TicketTimeline;
 use App\Utils\Time;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TicketsController extends BaseController
 {
@@ -29,12 +30,16 @@ class TicketsController extends BaseController
         OrganizationRepository $orgaRepository,
         UserRepository $userRepository,
         TicketSearcher $ticketSearcher,
+        TranslatorInterface $translator,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
         /** @var string $view */
         $view = $request->query->get('view', 'all');
+
+        /** @var string $queryString */
+        $queryString = $request->query->get('q', '');
 
         $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
         if (in_array(null, $orgaIds)) {
@@ -45,20 +50,32 @@ class TicketsController extends BaseController
 
         $ticketSearcher->setOrganizations($organizations);
 
-        if ($view === 'unassigned') {
-            $tickets = $ticketSearcher->getTicketsToAssign();
+        if ($queryString) {
+            $queryString = trim($queryString);
+        } elseif ($view === 'unassigned') {
+            $queryString = TicketSearcher::QUERY_UNASSIGNED;
         } elseif ($view === 'owned') {
-            $tickets = $ticketSearcher->getTicketsOfCurrentUser();
+            $queryString = TicketSearcher::QUERY_OWNED;
         } else {
-            $ticketSearcher->setCriteria('status', Ticket::OPEN_STATUSES);
-            $tickets = $ticketSearcher->getTickets();
+            $queryString = TicketSearcher::QUERY_DEFAULT;
+        }
+
+        $errors = [];
+
+        try {
+            $tickets = $ticketSearcher->getTickets($queryString);
+        } catch (\Exception $e) {
+            $tickets = [];
+            $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
         }
 
         return $this->render('tickets/index.html.twig', [
             'tickets' => $tickets,
-            'countToAssign' => $ticketSearcher->countTicketsToAssign(),
-            'countOwned' => $ticketSearcher->countTicketsOfCurrentUser(),
+            'countToAssign' => $ticketSearcher->countTickets(TicketSearcher::QUERY_UNASSIGNED),
+            'countOwned' => $ticketSearcher->countTickets(TicketSearcher::QUERY_OWNED),
             'view' => $view,
+            'query' => $queryString,
+            'errors' => $errors,
         ]);
     }
 

@@ -1,0 +1,45 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2023 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+thead {
+    text-align: left;
+
+    background-color: var(--color-primary3);
+    border-bottom: 1px solid var(--color-primary6);
+}
+
+th {
+    font-weight: normal;
+}
+
+th,
+td {
+    padding: 1rem;
+
+    font-size: 0.9em;
+
+    vertical-align: baseline;
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--color-grey4);
+}
+
+tbody tr:nth-child(odd) {
+    background-color: var(--color-grey1);
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--color-grey2);
+}
+
+.col--size30 {
+    width: 30%;
+}

@@ -300,11 +300,11 @@ legend {
     }
 }
 
-.password-container {
+.input-container {
     position: relative;
 }
 
-.password-container button {
+.input-container button {
     position: absolute;
     right: 0;
 
@@ -318,14 +318,14 @@ legend {
     outline-offset: -0.3rem;
 }
 
-.password-container button:hover,
-.password-container button:focus {
+.input-container button:hover,
+.input-container button:focus {
     color: var(--color-grey12);
 
     background-color: transparent;
 }
 
-.password-container button[aria-pressed="false"] .icon--eye-slash,
-.password-container button[aria-pressed="true"] .icon--eye {
+.input-container button[aria-pressed="false"] .icon--eye-slash,
+.input-container button[aria-pressed="true"] .icon--eye {
     display: none;
 }
