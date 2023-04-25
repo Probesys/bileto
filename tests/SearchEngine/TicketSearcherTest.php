@@ -7,6 +7,7 @@
 namespace App\Tests\SearchEngine;
 
 use App\Entity\Ticket;
+use App\SearchEngine\Query;
 use App\SearchEngine\TicketSearcher;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\OrganizationFactory;
@@ -199,7 +200,8 @@ class TicketSearcherTest extends WebTestCase
             'status' => 'closed',
         ]);
 
-        $tickets = $ticketSearcher->getTickets('status:new');
+        $query = Query::fromString('status:new');
+        $tickets = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, count($tickets));
         $this->assertSame($ticket1->getId(), $tickets[0]->getId());
@@ -239,7 +241,8 @@ class TicketSearcherTest extends WebTestCase
             'status' => 'closed',
         ]);
 
-        $count = $ticketSearcher->countTickets('status:new');
+        $query = Query::fromString('status:new');
+        $count = $ticketSearcher->countTickets($query);
 
         $this->assertSame(1, $count);
     }

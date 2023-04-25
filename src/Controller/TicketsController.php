@@ -12,6 +12,7 @@ use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\SearchEngine\TicketSearcher;
+use App\SearchEngine\Query;
 use App\Service\OrganizationSorter;
 use App\Service\TicketTimeline;
 use App\Utils\Time;
@@ -63,7 +64,8 @@ class TicketsController extends BaseController
         $errors = [];
 
         try {
-            $tickets = $ticketSearcher->getTickets($queryString);
+            $query = Query::fromString($queryString);
+            $tickets = $ticketSearcher->getTickets($query);
         } catch (\Exception $e) {
             $tickets = [];
             $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
@@ -71,8 +73,8 @@ class TicketsController extends BaseController
 
         return $this->render('tickets/index.html.twig', [
             'tickets' => $tickets,
-            'countToAssign' => $ticketSearcher->countTickets(TicketSearcher::QUERY_UNASSIGNED),
-            'countOwned' => $ticketSearcher->countTickets(TicketSearcher::QUERY_OWNED),
+            'countToAssign' => $ticketSearcher->countTickets(TicketSearcher::queryUnassigned()),
+            'countOwned' => $ticketSearcher->countTickets(TicketSearcher::queryOwned()),
             'view' => $view,
             'query' => $queryString,
             'errors' => $errors,

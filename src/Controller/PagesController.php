@@ -34,7 +34,7 @@ class PagesController extends BaseController
         }
         $organizations = $orgaSorter->asTree($organizations);
 
-        $tickets = $ticketSearcher->getTickets(TicketSearcher::QUERY_OWNED);
+        $tickets = $ticketSearcher->getTickets(TicketSearcher::queryOwned());
 
         return $this->render('pages/home.html.twig', [
             'tickets' => $tickets,

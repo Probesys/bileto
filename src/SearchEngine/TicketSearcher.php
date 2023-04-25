@@ -84,12 +84,12 @@ class TicketSearcher
     /**
      * @return Ticket[]
      */
-    public function getTickets(string $queryString = ''): array
+    public function getTickets(?Query $query = null): array
     {
         $sort = ['createdAt', 'DESC'];
 
         $queries = [$this->orgaQuery];
-        $query = Query::fromString($queryString);
+
         if ($query) {
             $queries[] = $query;
         }
@@ -97,14 +97,24 @@ class TicketSearcher
         return $this->ticketRepository->findByQueries($queries, $sort);
     }
 
-    public function countTickets(string $queryString = ''): int
+    public function countTickets(?Query $query = null): int
     {
         $queries = [$this->orgaQuery];
-        $query = Query::fromString($queryString);
+
         if ($query) {
             $queries[] = $query;
         }
 
         return $this->ticketRepository->countByQueries($queries);
+    }
+
+    public static function queryUnassigned(): Query
+    {
+        return Query::fromString(self::QUERY_UNASSIGNED);
+    }
+
+    public static function queryOwned(): Query
+    {
+        return Query::fromString(self::QUERY_OWNED);
     }
 }

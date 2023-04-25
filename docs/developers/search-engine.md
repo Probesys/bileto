@@ -93,23 +93,23 @@ In this example, the parameters names will start respectively by `q1` and `q2`.
 ## The Ticket Searcher
 
 The [Ticket Searcher](/src/SearchEngine/TicketSearcher.php) does the plumbing between the different parts of the search engine.
-This should be the only class called from the controllers:
 
 ```php
 $queryString = 'status:new';
 
 try {
-    $tickets = $ticketSearcher->getTickets($queryString);
-    $ticketsCount = $ticketSearcher->countTickets($queryString);
+    $query = SearchEngine\Query::fromString($queryString);
+    $tickets = $ticketSearcher->getTickets($query);
+    $ticketsCount = $ticketSearcher->countTickets($query);
 } catch (\Exception $e) {
     $error = $e->getMessage();
 }
 ```
 
-**It takes a string as an entry, and it returns either a list of tickets, or the number of tickets depending on the called method.**
+**It takes a Query as an entry, and it returns either a list of tickets, or the number of tickets depending on the called method.**
 
 It also makes sure that the current user only accesses the tickets that he has the permissions for.
-For that, it limits the tickets with a query `involves:@me`.
+For that, it limits the tickets with an internal query `involves:@me`.
 You also can limit the result to a set of organizations:
 
 ```php
@@ -117,4 +117,4 @@ $organizations = /* Load some organizations */;
 $ticketSearcher->setOrganizations($organizations);
 ```
 
-In this case, the Searcher will check the permissions of the user for each organization and generates the correct query.
+In this case, the Searcher will check the permissions of the user for each organization and generates the correct (internal) query.
