@@ -1,0 +1,115 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'tickets.filters.status.title' | trans }}{% endblock %}
+
+{% block body %}
+    <form
+        action="{{ path('combine filters') }}"
+        method="post"
+        class="wrapper-small wrapper--center flow-large"
+        data-controller="checkboxes"
+    >
+        <p class="text--secondary">
+            {{ 'tickets.filters.status.info' | trans }}
+        </p>
+
+        <div class="flow-small">
+            <div>
+                <input
+                    type="checkbox"
+                    id="filter-status-open"
+                    name="filters[status][]"
+                    value="open"
+                    {{ 'open' in ticketFilter.filter('status') ? 'checked' }}
+                    data-checkboxes-target="control"
+                    data-checkboxes-control="[data-status-group='open']"
+                    data-action="checkboxes#switchDisabled"
+                />
+
+                <label for="filter-status-open">
+                    {{ 'tickets.status.open' | trans }}
+                </label>
+            </div>
+
+            <div class="indent flow-small">
+                {% for value, label in openStatuses %}
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="filter-status-{{ value }}"
+                            name="filters[status][]"
+                            value="{{ value }}"
+                            {{ value in ticketFilter.filter('status') ? 'checked' }}
+                            data-status-group="open"
+                        />
+
+                        <label for="filter-status-{{ value }}">
+                            {{ label | trans }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="flow-small">
+            <div>
+                <input
+                    type="checkbox"
+                    id="filter-status-finished"
+                    name="filters[status][]"
+                    value="finished"
+                    {{ 'finished' in ticketFilter.filter('status') ? 'checked' }}
+                    data-checkboxes-target="control"
+                    data-checkboxes-control="[data-status-group='finished']"
+                    data-action="checkboxes#switchDisabled"
+                />
+
+                <label for="filter-status-finished">
+                    {{ 'tickets.status.finished' | trans }}
+                </label>
+            </div>
+
+            <div class="indent flow-small">
+                {% for value, label in finishedStatuses %}
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="filter-status-{{ value }}"
+                            name="filters[status][]"
+                            value="{{ value }}"
+                            {{ value in ticketFilter.filter('status') ? 'checked' }}
+                            data-status-group="finished"
+                        />
+
+                        <label for="filter-status-{{ value }}">
+                            {{ label | trans }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button class="text--smaller" type="button" data-action="checkboxes#uncheckAll">
+            {{ 'tickets.filters.uncheck_all' | trans }}
+        </button>
+
+        <div class="form__actions">
+            <button class="button--primary" type="submit">
+                {{ 'tickets.filters.apply_filter' | trans }}
+            </button>
+        </div>
+
+        {# Send an empty value so the parameter is always sent, even if all the
+         # checkboxes are unchecked. #}
+        <input type="hidden" name="filters[status][]" value="">
+
+        <input type="hidden" name="from" value="{{ from }}">
+        <input type="hidden" name="query" value="{{ query }}">
+    </form>
+{% endblock %}

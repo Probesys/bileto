@@ -1,0 +1,63 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div data-controller="multiselect-actors">
+    <select
+        id="{{ id }}"
+        name="{{ name }}"
+        multiple
+        data-multiselect-actors-target="data"
+        data-action="multiselect-actors#refresh"
+        hidden
+    >
+        {% for user in users %}
+            {% set isCurrentUser = user.id == app.user.id %}
+            {% set id = isCurrentUser ? '@me' : user.id %}
+
+            <option value="{{ isCurrentUser ? id : '#' ~ id }}" {{ id in selected ? 'selected' }}>
+                {{ user.displayName }}
+
+                {% if user.id == app.user.id %}
+                    ({{ 'users.yourself' | trans }})
+                {% endif %}
+            </option>
+        {% endfor %}
+    </select>
+
+    <div class="flow">
+        <select
+            data-multiselect-actors-target="select"
+            data-action="multiselect-actors#select"
+        >
+            <option disabled value="">
+                {{ 'tickets.filters.actors.select' | trans }}
+            </option>
+        </select>
+
+        <ul class="list--no-style flow-smaller" data-multiselect-actors-target="list">
+        </ul>
+    </div>
+
+    <template data-multiselect-actors-target="template">
+        <li class="row row--always row--center">
+            <div class="row__item--extend" data-target="name">
+            </div>
+
+            <button
+                type="button"
+                class="button--icon"
+                data-action="multiselect-actors#unselect"
+                data-target="unselect"
+                data-value=""
+            >
+                {{ icon('close') }}
+                <span class="sr-only">
+                    {{ 'tickets.filters.actors.unselect' | trans }}
+                </span>
+            </button>
+        </li>
+    </template>
+</div>

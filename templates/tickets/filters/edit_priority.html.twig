@@ -1,0 +1,191 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'tickets.filters.priority.title' | trans }}{% endblock %}
+
+{% block body %}
+    <form
+        action="{{ path('combine filters') }}"
+        method="post"
+        class="wrapper-small wrapper--center flow-large"
+        data-controller="checkboxes"
+    >
+        <p class="text--secondary">
+            {{ 'tickets.filters.priority.info' | trans }}
+        </p>
+
+        <fieldset>
+            <legend>
+                {{ 'tickets.priority' | trans }}
+            </legend>
+
+            <div class="row row--always flow-small">
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-priority-low"
+                        name="filters[priority][]"
+                        value="low"
+                        {{ 'low' in ticketFilter.filter('priority') ? 'checked' }}
+                    />
+
+                    <label for="filter-priority-low">
+                        {{ 'tickets.priority.low' | trans }}
+                    </label>
+                </div>
+
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-priority-medium"
+                        name="filters[priority][]"
+                        value="medium"
+                        {{ 'medium' in ticketFilter.filter('priority') ? 'checked' }}
+                    />
+
+                    <label for="filter-priority-medium">
+                        {{ 'tickets.priority.medium' | trans }}
+                    </label>
+                </div>
+
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-priority-high"
+                        name="filters[priority][]"
+                        value="high"
+                        {{ 'high' in ticketFilter.filter('priority') ? 'checked' }}
+                    />
+
+                    <label for="filter-priority-high">
+                        {{ 'tickets.priority.high' | trans }}
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>
+                {{ 'tickets.urgency' | trans }}
+            </legend>
+
+            <div class="row row--always flow-small">
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-urgency-low"
+                        name="filters[urgency][]"
+                        value="low"
+                        {{ 'low' in ticketFilter.filter('urgency') ? 'checked' }}
+                    />
+
+                    <label for="filter-urgency-low">
+                        {{ 'tickets.urgency.low' | trans }}
+                    </label>
+                </div>
+
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-urgency-medium"
+                        name="filters[urgency][]"
+                        value="medium"
+                        {{ 'medium' in ticketFilter.filter('urgency') ? 'checked' }}
+                    />
+
+                    <label for="filter-urgency-medium">
+                        {{ 'tickets.urgency.medium' | trans }}
+                    </label>
+                </div>
+
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-urgency-high"
+                        name="filters[urgency][]"
+                        value="high"
+                        {{ 'high' in ticketFilter.filter('urgency') ? 'checked' }}
+                    />
+
+                    <label for="filter-urgency-high">
+                        {{ 'tickets.urgency.high' | trans }}
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>
+                {{ 'tickets.impact' | trans }}
+            </legend>
+
+            <div class="row row--always flow">
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-impact-low"
+                        name="filters[impact][]"
+                        value="low"
+                        {{ 'low' in ticketFilter.filter('impact') ? 'checked' }}
+                    />
+
+                    <label for="filter-impact-low">
+                        {{ 'tickets.impact.low' | trans }}
+                    </label>
+                </div>
+
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-impact-medium"
+                        name="filters[impact][]"
+                        value="medium"
+                        {{ 'medium' in ticketFilter.filter('impact') ? 'checked' }}
+                    />
+
+                    <label for="filter-impact-medium">
+                        {{ 'tickets.impact.medium' | trans }}
+                    </label>
+                </div>
+
+                <div>
+                    <input
+                        type="checkbox"
+                        id="filter-impact-high"
+                        name="filters[impact][]"
+                        value="high"
+                        {{ 'high' in ticketFilter.filter('impact') ? 'checked' }}
+                    />
+
+                    <label for="filter-impact-high">
+                        {{ 'tickets.impact.high' | trans }}
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+
+        <button class="text--smaller" type="button" data-action="checkboxes#uncheckAll">
+            {{ 'tickets.filters.uncheck_all' | trans }}
+        </button>
+
+        <div class="form__actions">
+            <button class="button--primary" type="submit">
+                {{ 'tickets.filters.apply_filter' | trans }}
+            </button>
+        </div>
+
+        {# Send empty values so the parameters are always sent, even if all the
+         # checkboxes are unchecked. #}
+        <input type="hidden" name="filters[priority][]" value="" />
+        <input type="hidden" name="filters[urgency][]" value="" />
+        <input type="hidden" name="filters[impact][]" value="" />
+
+        <input type="hidden" name="from" value="{{ from }}">
+        <input type="hidden" name="query" value="{{ query }}">
+    </form>
+{% endblock %}

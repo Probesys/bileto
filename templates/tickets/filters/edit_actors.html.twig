@@ -1,0 +1,104 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'tickets.filters.actors.title' | trans }}{% endblock %}
+
+{% block body %}
+    <form
+        action="{{ path('combine filters') }}"
+        method="post"
+        class="wrapper-small wrapper--center flow-large"
+    >
+        <p class="text--secondary">
+            {{ 'tickets.filters.actors.info' | trans }}
+        </p>
+
+        <fieldset>
+            <legend>
+                {{ 'tickets.involves' | trans }}
+            </legend>
+
+            {{ include(
+                'tickets/filters/_multiselect_actors.html.twig',
+                {
+                    users: users,
+                    selected: ticketFilter.filter('involves'),
+                    id: "filter-involves",
+                    name: "filters[involves][]",
+                },
+                with_context = false
+            ) }}
+        </fieldset>
+
+        <fieldset data-controller="checkboxes">
+            <legend>
+                {{ 'tickets.assignee' | trans }}
+            </legend>
+
+            <div>
+                <input
+                    type="checkbox"
+                    id="filter-assignee-no"
+                    name="filters[assignee][]"
+                    value="no"
+                    {{ null in ticketFilter.filter('assignee') ? 'checked' }}
+                    data-checkboxes-target="control"
+                    data-checkboxes-control="#filter-assignee"
+                    data-action="checkboxes#switchDisabled"
+                />
+
+                <label for="filter-assignee-no">
+                    {{ 'tickets.filters.assignee.no' | trans }}
+                </label>
+            </div>
+
+            {{ include(
+                'tickets/filters/_multiselect_actors.html.twig',
+                {
+                    users: users,
+                    selected: ticketFilter.filter('assignee'),
+                    id: "filter-assignee",
+                    name: "filters[assignee][]",
+                },
+                with_context = false
+            ) }}
+        </fieldset>
+
+        <fieldset>
+            <legend>
+                {{ 'tickets.requester' | trans }}
+            </legend>
+
+            {{ include(
+                'tickets/filters/_multiselect_actors.html.twig',
+                {
+                    users: users,
+                    selected: ticketFilter.filter('requester'),
+                    id: "filter-requester",
+                    name: "filters[requester][]",
+                },
+                with_context = false
+            ) }}
+        </fieldset>
+
+        <div class="form__actions">
+            <button class="button--primary" type="submit">
+                {{ 'tickets.filters.apply_filter' | trans }}
+            </button>
+        </div>
+
+        {# Send empty values so the parameters are always sent, even if no
+         # option is selected. #}
+        <input type="hidden" name="filters[involves][]" value="" />
+        <input type="hidden" name="filters[assignee][]" value="" />
+        <input type="hidden" name="filters[requester][]" value="" />
+
+        <input type="hidden" name="from" value="{{ from }}">
+        <input type="hidden" name="query" value="{{ query }}">
+    </form>
+{% endblock %}
