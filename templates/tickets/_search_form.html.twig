@@ -4,44 +4,158 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<form method="get" action="" class="list__filters flow-small">
-    {% if error %}
-        <p class="form__error" role="alert" id="search-error">
-            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-            {{ error }}
+{% set mode = ticketFilter ? 'quick' : 'advanced' %}
+
+<div class="list__filters flow-small">
+    {% if mode == 'quick' %}
+        <form method="post" action="{{ path('combine filters') }}" class="flow-small">
+            <div class="input-container">
+                <input
+                    type="text"
+                    name="text"
+                    value="{{ ticketFilter.text }}"
+                    autocomplete="off"
+                    aria-label="{{ 'tickets.search.label' | trans }}"
+                />
+
+                <button type="submit">
+                    {{ icon('search') }}
+                    <span class="sr-only">
+                        {{ 'tickets.search.submit' | trans }}
+                    </span>
+                </button>
+            </div>
+
+            <input type="hidden" name="from" value="{{ from }}">
+            <input type="hidden" name="query" value="{{ query }}">
+        </form>
+
+        <p class="form__caption">
+            {{ 'tickets.search.filters.used' | trans }}
         </p>
-    {% endif %}
 
-    <div class="input-container">
-        <input
-            type="text"
-            name="q"
-            value="{{ query }}"
-            required
-            autocomplete="off"
-            aria-label="{{ 'tickets.search.label' | trans }}"
+        <div class="row row--wrap flow-small">
+            <details
+                class="popup"
+                data-controller="popup"
+                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+            >
+                <summary class="popup__opener">
+                    <span class="button button--caret button--primary">
+                        {{ 'tickets.search.filters.new' | trans }}
+                    </span>
+                </summary>
+
+                <nav class="popup__container popup__container--left">
+                    <button
+                        class="popup__item"
+                        type="button"
+                        data-controller="modal-opener"
+                        data-action="modal-opener#fetch"
+                        data-modal-opener-href-value="{{ path('edit filter', { filter: 'actors', query: query, from: from }) }}"
+                    >
+                        {{ 'tickets.search.filters.actors' | trans }}
+                    </button>
+
+                    <button
+                        class="popup__item"
+                        type="button"
+                        data-controller="modal-opener"
+                        data-action="modal-opener#fetch"
+                        data-modal-opener-href-value="{{ path('edit filter', { filter: 'priority', query: query, from: from }) }}"
+                    >
+                        {{ 'tickets.search.filters.priority' | trans }}
+                    </button>
+
+                    <button
+                        class="popup__item"
+                        type="button"
+                        data-controller="modal-opener"
+                        data-action="modal-opener#fetch"
+                        data-modal-opener-href-value="{{ path('edit filter', { filter: 'status', query: query, from: from }) }}"
+                    >
+                        {{ 'tickets.search.filters.status' | trans }}
+                    </button>
+
+                    <button
+                        class="popup__item"
+                        type="button"
+                        data-controller="modal-opener"
+                        data-action="modal-opener#fetch"
+                        data-modal-opener-href-value="{{ path('edit filter', { filter: 'type', query: query, from: from }) }}"
+                    >
+                        {{ 'tickets.search.filters.type' | trans }}
+                    </button>
+                </nav>
+            </details>
+
+            {% for filter, values in ticketFilter.filters %}
+                <button
+                    class="text--left"
+                    type="button"
+                    data-controller="modal-opener"
+                    data-action="modal-opener#fetch"
+                    data-modal-opener-href-value="{{ path('edit filter', { filter: filter, query: query, from: from }) }}"
+                >
+                    <span class="button__caption">
+                        {% if filter == 'status' %}
+                            {{ icon('status') }}
+                        {% elseif filter == 'priority' %}
+                            {{ icon('priority') }}
+                        {% elseif filter == 'assignee' %}
+                            {{ icon('headset') }}
+                        {% elseif filter == 'requester' %}
+                            {{ icon('user') }}
+                        {% endif %}
+
+                        {{ ('tickets.' ~ filter) | trans }}
+                    </span>
+
+                    {{ values | transFilter(filter) | join(', ', 'tickets.search.filters.or' | trans) }}
+                </button>
+            {% endfor %}
+        </div>
+    {% else %}
+        <form method="get" action="" class="flow-small">
             {% if error %}
-                aria-invalid="true"
-                aria-errormessage="search-error"
+                <p class="form__error" role="alert" id="search-error">
+                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                    {{ error }}
+                </p>
             {% endif %}
-        />
 
-        <button type="submit">
-            {{ icon('search') }}
-            <span class="sr-only">
-                {{ 'tickets.search.submit' | trans }}
-            </span>
-        </button>
-    </div>
+            <div class="input-container">
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ query }}"
+                    required
+                    autocomplete="off"
+                    aria-label="{{ 'tickets.search.label' | trans }}"
+                    {% if error %}
+                        aria-invalid="true"
+                        aria-errormessage="search-error"
+                    {% endif %}
+                />
 
-    <p class="text--right text--small">
-        <button
-            class="button--anchor"
-            data-controller="modal-opener"
-            data-action="modal-opener#fetch"
-            data-modal-opener-href-value="{{ path('advanced search syntax') }}"
-        >
-            {{ 'tickets.search.help' | trans }}
-        </button>
-    </p>
-</form>
+                <button type="submit">
+                    {{ icon('search') }}
+                    <span class="sr-only">
+                        {{ 'tickets.search.submit' | trans }}
+                    </span>
+                </button>
+            </div>
+
+            <p class="text--right text--small">
+                <button
+                    class="button--anchor"
+                    data-controller="modal-opener"
+                    data-action="modal-opener#fetch"
+                    data-modal-opener-href-value="{{ path('advanced search syntax') }}"
+                >
+                    {{ 'tickets.search.help' | trans }}
+                </button>
+            </p>
+        </form>
+    {% endif %}
+</div>

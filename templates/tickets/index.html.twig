@@ -54,7 +54,12 @@
                 <div class="flow-smaller">
                     {{ include(
                         'tickets/_search_form.html.twig',
-                        { query: query, error: errors.search ?? '' },
+                        {
+                            query: query,
+                            ticketFilter: ticketFilter,
+                            from: path('tickets'),
+                            error: errors.search ?? ''
+                        },
                         with_context = false
                     ) }}
 

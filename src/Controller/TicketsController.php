@@ -11,6 +11,7 @@ use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
+use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\SearchEngine\Query;
 use App\Service\OrganizationSorter;
@@ -39,8 +40,8 @@ class TicketsController extends BaseController
         /** @var string $view */
         $view = $request->query->get('view', 'all');
 
-        /** @var string $queryString */
-        $queryString = $request->query->get('q', '');
+        /** @var ?string $queryString */
+        $queryString = $request->query->get('q');
 
         $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
         if (in_array(null, $orgaIds)) {
@@ -51,7 +52,7 @@ class TicketsController extends BaseController
 
         $ticketSearcher->setOrganizations($organizations);
 
-        if ($queryString) {
+        if ($queryString !== null) {
             $queryString = trim($queryString);
         } elseif ($view === 'unassigned') {
             $queryString = TicketSearcher::QUERY_UNASSIGNED;
@@ -66,8 +67,14 @@ class TicketsController extends BaseController
         try {
             $query = Query::fromString($queryString);
             $tickets = $ticketSearcher->getTickets($query);
+            if ($query) {
+                $ticketFilter = TicketFilter::fromQuery($query);
+            } else {
+                $ticketFilter = new TicketFilter();
+            }
         } catch (\Exception $e) {
             $tickets = [];
+            $ticketFilter = null;
             $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
         }
 
@@ -77,6 +84,7 @@ class TicketsController extends BaseController
             'countOwned' => $ticketSearcher->countTickets(TicketSearcher::queryOwned()),
             'view' => $view,
             'query' => $queryString,
+            'ticketFilter' => $ticketFilter,
             'errors' => $errors,
         ]);
     }
