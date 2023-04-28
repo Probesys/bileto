@@ -16,6 +16,7 @@ import PasswordController from '@/controllers/password_controller.js';
 import PopupController from '@/controllers/popup_controller.js';
 import NewAuthorizationFormController from '@/controllers/new_authorization_form_controller.js';
 import ScrollToController from '@/controllers/scroll_to_controller.js';
+import TabsController from '@/controllers/tabs_controller.js';
 import TicketEditorController from '@/controllers/ticket_editor_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
 
@@ -31,6 +32,7 @@ application.register('password', PasswordController);
 application.register('popup', PopupController);
 application.register('new-authorization-form', NewAuthorizationFormController);
 application.register('scroll-to', ScrollToController);
+application.register('tabs', TabsController);
 application.register('ticket-editor', TicketEditorController);
 application.register('tinymce', TinymceController);
 

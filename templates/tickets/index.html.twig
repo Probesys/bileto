@@ -55,6 +55,7 @@
                     {{ include(
                         'tickets/_search_form.html.twig',
                         {
+                            searchMode: searchMode,
                             query: query,
                             ticketFilter: ticketFilter,
                             from: path('tickets'),

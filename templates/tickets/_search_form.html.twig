@@ -4,10 +4,37 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% set mode = ticketFilter ? 'quick' : 'advanced' %}
+<div data-controller="tabs">
+    <div class="tabs" data-tabs-target="tablist" aria-label="{{ 'tickets.search.tablist' | trans }}">
+        <button
+            id="search-quick-tab"
+            class="tabs__button"
+            data-tabs-target="tab"
+            data-action="tabs#go"
+            aria-controls="search-quick-panel"
+            aria-selected="{{ searchMode == 'quick' ? 'true' : 'false' }}"
+        >
+            Recherche rapide
+        </button>
 
-<div class="list__filters flow-small">
-    {% if mode == 'quick' %}
+        <button
+            id="search-advanced-tab"
+            class="tabs__button"
+            data-tabs-target="tab"
+            data-action="tabs#go"
+            aria-controls="search-advanced-panel"
+            aria-selected="{{ searchMode == 'advanced' ? 'true' : 'false' }}"
+        >
+            Recherche avancée
+        </button>
+    </div>
+
+    <div
+        id="search-quick-panel"
+        data-tabs-target="tabpanel"
+        aria-labelledby="search-quick-tab"
+        class="tabs__panel flow-smaller"
+    >
         <form method="post" action="{{ path('combine filters') }}" class="flow-small">
             <div class="input-container">
                 <input
@@ -115,7 +142,14 @@
                 </button>
             {% endfor %}
         </div>
-    {% else %}
+    </div>
+
+    <div
+        id="search-advanced-panel"
+        data-tabs-target="tabpanel"
+        aria-labelledby="search-advanced-tab"
+        class="tabs__panel"
+    >
         <form method="get" action="" class="flow-small">
             {% if error %}
                 <p class="form__error" role="alert" id="search-error">
@@ -157,5 +191,5 @@
                 </button>
             </p>
         </form>
-    {% endif %}
+    </div>
 </div>

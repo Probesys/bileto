@@ -43,6 +43,8 @@ class TicketsController extends BaseController
         /** @var ?string $queryString */
         $queryString = $request->query->get('q');
 
+        $searchMode = 'quick';
+
         $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
         if (in_array(null, $orgaIds)) {
             $organizations = $orgaRepository->findAll();
@@ -62,6 +64,7 @@ class TicketsController extends BaseController
             $queryString = TicketSearcher::QUERY_DEFAULT;
         }
 
+        $ticketFilter = null;
         $errors = [];
 
         try {
@@ -69,13 +72,15 @@ class TicketsController extends BaseController
             $tickets = $ticketSearcher->getTickets($query);
             if ($query) {
                 $ticketFilter = TicketFilter::fromQuery($query);
-            } else {
-                $ticketFilter = new TicketFilter();
             }
         } catch (\Exception $e) {
             $tickets = [];
-            $ticketFilter = null;
             $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
+        }
+
+        if (!$ticketFilter) {
+            $searchMode = 'advanced';
+            $ticketFilter = new TicketFilter();
         }
 
         return $this->render('tickets/index.html.twig', [
@@ -85,6 +90,7 @@ class TicketsController extends BaseController
             'view' => $view,
             'query' => $queryString,
             'ticketFilter' => $ticketFilter,
+            'searchMode' => $searchMode,
             'errors' => $errors,
         ]);
     }
