@@ -71,6 +71,20 @@ To add space between row items, just use one of the `.flow*` classes:
 </div>
 ```
 
+In certain cases, you may want the items of the row to be placed on a new line.
+This can be done with `.row--wrap`:
+
+```html
+<div class="row row--wrap">
+    <div>A</div>
+    <div>Lot</div>
+    <div>Of</div>
+    <div>Items</div>
+</div>
+```
+
+Before using this class, please consider the grid system first.
+
 You can tell a row item to take all the remaining space with `.row__item--extend`:
 
 ```html

@@ -26,6 +26,10 @@
     justify-content: center;
 }
 
+.row--wrap {
+    flex-wrap: wrap;
+}
+
 .row__item--extend {
     flex: 1;
 }
