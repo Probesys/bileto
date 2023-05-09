@@ -4,7 +4,8 @@ The search engine is made of several parts:
 
 - the Query Parser;
 - the Ticket Query Builder;
-- and the Ticket Searcher.
+- the Ticket Searcher;
+- and the Ticket Filter.
 
 **The code of the search engine is placed under [the `src/SearchEngine/` folder](/src/SearchEngine).**
 
@@ -118,3 +119,32 @@ $ticketSearcher->setOrganizations($organizations);
 ```
 
 In this case, the Searcher will check the permissions of the user for each organization and generates the correct (internal) query.
+
+## The Ticket Filter
+
+The [Ticket Filter](/src/SearchEngine/TicketFilter.php) is an additionnal layer to manage the “quick search” mode.
+
+**It extracts a list of simple conditions from a Query.**
+Once the Ticket Filter is initialized, you can manually change the filters.
+Then, you can print the new textual query so it can be passed in an URL for instance.
+This allows the filter system to manipulate a Query easily.
+
+```php
+use App\SearchEngine;
+
+$query = SearchEngine\Query::fromString('status:new');
+$ticketFilter = SearchEngine\TicketFilter::fromQuery($query);
+
+var_dump($ticketFilter->getFilter('status')); // display ['new']
+
+$ticketFilter->setFilter('status', ['new', 'in_progress']);
+var_dump($ticketFilter->getFilter('status')); // display ['new', 'in_progress']
+
+$ticketFilter->setText('email');
+
+var_dump($ticketFilter->toTextualQuery()); // display 'email status:new,in_progress'
+```
+
+If the initial Query is too complex for the Ticket Filter (e.g. it contains a sub-query), the method `fromQuery()` returns null.
+
+You can find more about it in the [`Tickets/FiltersController`](/src/Controller/Tickets/FiltersController.php).

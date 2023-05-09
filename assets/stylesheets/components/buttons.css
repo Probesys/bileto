@@ -128,3 +128,11 @@ button[disabled],
     background-position: center;
     background-size: 0.7em;
 }
+
+.button__caption {
+    display: block;
+    margin-bottom: -0.7rem;
+
+    color: var(--color-grey11);
+    font-size: 0.75em;
+}

@@ -11,6 +11,7 @@ use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
+use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\SearchEngine\Query;
 use App\Service\OrganizationSorter;
@@ -39,8 +40,10 @@ class TicketsController extends BaseController
         /** @var string $view */
         $view = $request->query->get('view', 'all');
 
-        /** @var string $queryString */
-        $queryString = $request->query->get('q', '');
+        /** @var ?string $queryString */
+        $queryString = $request->query->get('q');
+
+        $searchMode = 'quick';
 
         $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
         if (in_array(null, $orgaIds)) {
@@ -51,7 +54,7 @@ class TicketsController extends BaseController
 
         $ticketSearcher->setOrganizations($organizations);
 
-        if ($queryString) {
+        if ($queryString !== null) {
             $queryString = trim($queryString);
         } elseif ($view === 'unassigned') {
             $queryString = TicketSearcher::QUERY_UNASSIGNED;
@@ -61,14 +64,23 @@ class TicketsController extends BaseController
             $queryString = TicketSearcher::QUERY_DEFAULT;
         }
 
+        $ticketFilter = null;
         $errors = [];
 
         try {
             $query = Query::fromString($queryString);
             $tickets = $ticketSearcher->getTickets($query);
+            if ($query) {
+                $ticketFilter = TicketFilter::fromQuery($query);
+            }
         } catch (\Exception $e) {
             $tickets = [];
             $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
+        }
+
+        if (!$ticketFilter) {
+            $searchMode = 'advanced';
+            $ticketFilter = new TicketFilter();
         }
 
         return $this->render('tickets/index.html.twig', [
@@ -77,6 +89,8 @@ class TicketsController extends BaseController
             'countOwned' => $ticketSearcher->countTickets(TicketSearcher::queryOwned()),
             'view' => $view,
             'query' => $queryString,
+            'ticketFilter' => $ticketFilter,
+            'searchMode' => $searchMode,
             'errors' => $errors,
         ]);
     }
