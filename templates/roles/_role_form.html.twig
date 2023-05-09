@@ -80,8 +80,18 @@
         />
     </div>
 
-    <fieldset class="flow">
+    <fieldset class="flow" data-controller="checkboxes">
         <legend>{{ 'roles.permissions' | trans }}</legend>
+
+        <div class="text--center">
+            <button class="text--smaller" type="button" data-action="checkboxes#checkAll">
+                {{ 'roles.permissions.check_all' | trans }}
+            </button>
+
+            <button class="text--smaller" type="button" data-action="checkboxes#uncheckAll">
+                {{ 'roles.permissions.uncheck_all' | trans }}
+            </button>
+        </div>
 
         {% if type == 'admin' %}
             {{ include('roles/_permission_checkbox.html.twig', {

@@ -103,6 +103,7 @@ roles.permissions: Permissions
 roles.permissions.admin.manage.organizations: 'Manage the organizations'
 roles.permissions.admin.manage.roles: 'Manage the roles'
 roles.permissions.admin.manage.users: 'Manage the users'
+roles.permissions.check_all: 'Check all'
 roles.permissions.orga.create.tickets: 'Create tickets'
 roles.permissions.orga.create.tickets.messages: 'Answer to tickets'
 roles.permissions.orga.create.tickets.messages.confidential: 'Answer confidentially to tickets'
@@ -113,6 +114,7 @@ roles.permissions.orga.update.tickets.priority: 'Update the priority of a ticket
 roles.permissions.orga.update.tickets.status: 'Update the status of a ticket'
 roles.permissions.orga.update.tickets.title: 'Update the title of a ticket'
 roles.permissions.orga.update.tickets.type: 'Update the type of a ticket'
+roles.permissions.uncheck_all: 'Uncheck all'
 roles.scope_global: '* global *'
 roles.super_admin: Super-admin
 roles.super_admin.description: 'A special role with an access to all the administration (cannot be modified).'
