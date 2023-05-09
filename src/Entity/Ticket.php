@@ -362,11 +362,13 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
     }
 
     /**
+     * @param 'open'|'finished'|null $group
+     *
      * @return array<string, string>
      */
-    public static function getStatusesWithLabels(): array
+    public static function getStatusesWithLabels(?string $group = null): array
     {
-        return [
+        $statusesWithLabels = [
             'new' => new TranslatableMessage('tickets.status.new'),
             'in_progress' => new TranslatableMessage('tickets.status.in_progress'),
             'planned' => new TranslatableMessage('tickets.status.planned'),
@@ -374,6 +376,20 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
             'resolved' => new TranslatableMessage('tickets.status.resolved'),
             'closed' => new TranslatableMessage('tickets.status.closed'),
         ];
+
+        if ($group === 'open') {
+            $statusesWithLabels = array_intersect_key(
+                $statusesWithLabels,
+                array_flip(self::OPEN_STATUSES),
+            );
+        } elseif ($group === 'finished') {
+            $statusesWithLabels = array_intersect_key(
+                $statusesWithLabels,
+                array_flip(self::FINISHED_STATUSES),
+            );
+        }
+
+        return $statusesWithLabels;
     }
 
     /**
