@@ -169,7 +169,7 @@
                                 </span>
                             </summary>
 
-                            <nav class="popup__container popup__container--large popup__container--left">
+                            <nav class="popup__container popup__container--large popup__container--right">
                                 <div class="popup__title">{{ app.user.displayName }}</div>
 
                                 <a
@@ -225,7 +225,7 @@
                                 </span>
                             </summary>
 
-                            <nav class="popup__container popup__container--left">
+                            <nav class="popup__container popup__container--right">
                                 <form action="{{ path('update session locale') }}" method="post">
                                     {% for locale, language in availableLanguages %}
                                         <button

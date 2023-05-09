@@ -278,7 +278,7 @@
                                 </span>
                             </summary>
 
-                            <nav class="popup__container popup__container--left">
+                            <nav class="popup__container popup__container--right">
                                 {% if canUpdateType %}
                                     <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
                                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">

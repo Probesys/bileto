@@ -1,5 +1,7 @@
 # Working with popups
 
+## Basic usage
+
 The HTML of popups is based on the [`<details>`](https://developer.mozilla.org/fr/docs/Web/HTML/Element/details) element, with a pinch of CSS and a Stimulus controller:
 
 ```twig
@@ -14,7 +16,7 @@ The HTML of popups is based on the [`<details>`](https://developer.mozilla.org/f
         </span>
     </summary>
 
-    <nav class="popup__container popup__container--left">
+    <nav class="popup__container popup__container--middle">
     </nav>
 </details>
 ```
@@ -25,7 +27,9 @@ It would take the focus and catch click events otherwise.
 Don’t forget to use the `.button--carret` class to put a carret on the right of the button.
 This shows to the user that the button will open a popup.
 
-The nav element can have different kind of children.
+## Menu elements
+
+The menu can have different kind of children.
 
 A basic link:
 
@@ -58,4 +62,27 @@ A form to perform an action:
         {{ 'Logout' | trans }}
     </button>
 </form>
+```
+
+## Menu position
+
+You can align the menu with the button either on the right:
+
+```html
+<nav class="popup__container popup__container--right">
+</nav>
+```
+
+On the left:
+
+```html
+<nav class="popup__container popup__container--left">
+</nav>
+```
+
+Or centered:
+
+```html
+<nav class="popup__container popup__container--center">
+</nav>
 ```
