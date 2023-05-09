@@ -9,9 +9,8 @@ The HTML of popups is based on the [`<details>`](https://developer.mozilla.org/f
     data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
 >
     <summary class="popup__opener">
-        <span class="button">
+        <span class="button button--carret">
             {{ 'Actions' | trans }}
-            {{ icon('caret-down') }}
         </span>
     </summary>
 
@@ -22,6 +21,9 @@ The HTML of popups is based on the [`<details>`](https://developer.mozilla.org/f
 
 Note the button in the `<summary>` element should not be a real `<button>` (only a class).
 It would take the focus and catch click events otherwise.
+
+Don’t forget to use the `.button--carret` class to put a carret on the right of the button.
+This shows to the user that the button will open a popup.
 
 The nav element can have different kind of children.
 

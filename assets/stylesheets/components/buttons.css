@@ -103,3 +103,28 @@ button[disabled],
 .button--anchor:not([aria-disabled]):active {
     background-color: transparent;
 }
+
+.button--caret {
+    position: relative;
+
+    padding-right: 3.75rem;
+}
+
+.button--caret::after {
+    content: '';
+
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+
+    display: block;
+    width: 1em;
+    height: 1em;
+
+    opacity: 0.8;
+
+    background-image: url("../../icons/caret-down.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.7em;
+}
