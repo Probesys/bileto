@@ -60,6 +60,8 @@ class MessagesControllerTest extends WebTestCase
         $this->assertFalse($message->isConfidential());
         $this->assertSame('webapp', $message->getVia());
         $this->assertSame('pending', $ticket->getStatus());
+        $this->assertEquals($now, $ticket->getUpdatedAt());
+        $this->assertsame($user->getId(), $ticket->getUpdatedBy()->getId());
     }
 
     public function testPostCreateSanitizesTheMessageContent(): void
