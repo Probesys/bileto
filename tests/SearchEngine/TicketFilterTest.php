@@ -140,6 +140,51 @@ class TicketFilterTest extends WebTestCase
         $this->assertNull($ticketFilter);
     }
 
+    public function testFromQueryWithWrongStatusConditionReturnsNull(): void
+    {
+        $query = Query::fromString('status:notastatus');
+
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $this->assertNull($ticketFilter);
+    }
+
+    public function testFromQueryWithWrongTypeConditionReturnsNull(): void
+    {
+        $query = Query::fromString('type:notatype');
+
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $this->assertNull($ticketFilter);
+    }
+
+    public function testFromQueryWithWrongPriorityConditionReturnsNull(): void
+    {
+        $query = Query::fromString('priority:notapriority');
+
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $this->assertNull($ticketFilter);
+    }
+
+    public function testFromQueryWithWrongUrgencyConditionReturnsNull(): void
+    {
+        $query = Query::fromString('urgency:notanurgency');
+
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $this->assertNull($ticketFilter);
+    }
+
+    public function testFromQueryWithWrongImpactConditionReturnsNull(): void
+    {
+        $query = Query::fromString('impact:notanimpact');
+
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $this->assertNull($ticketFilter);
+    }
+
     public function testFromQueryWithWrongActorConditionReturnsNull(): void
     {
         $query = Query::fromString('assignee:notid');
