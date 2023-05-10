@@ -119,6 +119,14 @@ class EntityActivitySubscriber implements EventSubscriberInterface
                 continue;
             }
 
+            if ($field === 'updatedAt' || $field === 'updatedBy') {
+                // We don't want to track these fields since they are similar
+                // to the EntityEvent createdAt and createdBy fields. Also,
+                // they would appear in the tickets timeline, something that we
+                // don't want.
+                continue;
+            }
+
             $processedChanges[$field] = [
                 $this->processChangesValue($fieldChanges[0]),
                 $this->processChangesValue($fieldChanges[1]),

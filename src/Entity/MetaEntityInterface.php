@@ -19,4 +19,12 @@ interface MetaEntityInterface
     public function getCreatedBy(): ?User;
 
     public function setCreatedBy(?User $createdBy): self;
+
+    public function getUpdatedAt(): ?\DateTimeImmutable;
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self;
+
+    public function getUpdatedBy(): ?User;
+
+    public function setUpdatedBy(?User $updatedBy): self;
 }
