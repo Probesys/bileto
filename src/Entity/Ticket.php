@@ -26,6 +26,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Ticket implements MetaEntityInterface, ActivityRecordableInterface
 {
+    use MetaEntityTrait;
+
     public const TYPES = ['request', 'incident'];
     public const DEFAULT_TYPE = 'request';
 
@@ -51,6 +53,12 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createdBy = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\ManyToOne]
+    private ?User $updatedBy = null;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_TYPE])]
     #[Assert\Choice(
@@ -132,30 +140,6 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
     public function setUid(string $uid): self
     {
         $this->uid = $uid;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?User
-    {
-        return $this->createdBy;
-    }
-
-    public function setCreatedBy(?User $createdBy): self
-    {
-        $this->createdBy = $createdBy;
 
         return $this;
     }

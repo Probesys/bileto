@@ -22,6 +22,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Message implements MetaEntityInterface, ActivityRecordableInterface
 {
+    use MetaEntityTrait;
+
     public const VIAS = ['webapp'];
     public const DEFAULT_VIA = 'webapp';
 
@@ -39,6 +41,12 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createdBy = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\ManyToOne]
+    private ?User $updatedBy = null;
 
     #[ORM\Column]
     private bool $isConfidential = false;
@@ -70,30 +78,6 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     public function setUid(string $uid): self
     {
         $this->uid = $uid;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?User
-    {
-        return $this->createdBy;
-    }
-
-    public function setCreatedBy(?User $createdBy): self
-    {
-        $this->createdBy = $createdBy;
 
         return $this;
     }

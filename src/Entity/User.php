@@ -36,6 +36,8 @@ class User implements
     MetaEntityInterface,
     ActivityRecordableInterface
 {
+    use MetaEntityTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -49,6 +51,12 @@ class User implements
 
     #[ORM\ManyToOne]
     private ?User $createdBy = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\ManyToOne]
+    private ?User $updatedBy = null;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(
@@ -117,30 +125,6 @@ class User implements
     public function setUid(string $uid): self
     {
         $this->uid = $uid;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?User
-    {
-        return $this->createdBy;
-    }
-
-    public function setCreatedBy(?User $createdBy): self
-    {
-        $this->createdBy = $createdBy;
 
         return $this;
     }

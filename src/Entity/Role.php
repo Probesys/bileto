@@ -28,6 +28,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 )]
 class Role implements MetaEntityInterface, ActivityRecordableInterface
 {
+    use MetaEntityTrait;
+
     public const TYPES = ['super', 'admin', 'orga'];
 
     public const PERMISSIONS = [
@@ -63,6 +65,12 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
 
     #[ORM\ManyToOne]
     private ?User $createdBy = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\ManyToOne]
+    private ?User $updatedBy = null;
 
     #[ORM\Column(length: 50, unique: true)]
     #[Assert\NotBlank(
@@ -121,30 +129,6 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
     public function setUid(string $uid): self
     {
         $this->uid = $uid;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?User
-    {
-        return $this->createdBy;
-    }
-
-    public function setCreatedBy(?User $createdBy): self
-    {
-        $this->createdBy = $createdBy;
 
         return $this;
     }

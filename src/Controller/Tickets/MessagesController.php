@@ -166,6 +166,9 @@ class MessagesController extends BaseController
             ]);
         }
 
+        $ticket->setUpdatedAt(Time::now());
+        $ticket->setUpdatedBy($user);
+
         $messageRepository->save($message, true);
         $ticketRepository->save($ticket, true);
 

@@ -44,14 +44,29 @@ class EntitySetMetaListener
             $entity->setUid($uid);
         }
 
+        /** @var ?\App\Entity\User $currentUser */
+        $currentUser = $this->security->getUser();
+        $now = Time::now();
+
         if (!$entity->getCreatedAt()) {
-            $entity->setCreatedAt(Time::now());
+            $entity->setCreatedAt($now);
         }
 
         if (!$entity->getCreatedBy()) {
-            /** @var ?\App\Entity\User $currentUser */
-            $currentUser = $this->security->getUser();
             $entity->setCreatedBy($currentUser);
         }
+
+        $entity->setUpdatedAt($now);
+        $entity->setUpdatedBy($currentUser);
+    }
+
+    public function preUpdate(MetaEntityInterface $entity): void
+    {
+        /** @var ?\App\Entity\User $currentUser */
+        $currentUser = $this->security->getUser();
+        $now = Time::now();
+
+        $entity->setUpdatedAt($now);
+        $entity->setUpdatedBy($currentUser);
     }
 }
