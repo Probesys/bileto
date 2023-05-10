@@ -70,6 +70,7 @@ layout.scroll_to_top: 'Défiler en haut'
 layout.skip_to_main_content: 'Accéder au contenu principal'
 layout.tickets: Tickets
 layout.user_menu_title: 'Menu de {name}'
+login.remember_me: 'Se souvenir de moi'
 login.submit: 'Se connecter'
 login.title: Connexion
 organizations.index.new_organization: 'Nouvelle organisation'

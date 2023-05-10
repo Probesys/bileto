@@ -16,6 +16,7 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
             provider: app_user_provider
@@ -28,6 +29,12 @@ security:
             logout:
                 path: logout
                 csrf_token_generator: security.csrf.token_manager
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 2592000 # 30 days in seconds
+                token_provider:
+                    doctrine: true
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
