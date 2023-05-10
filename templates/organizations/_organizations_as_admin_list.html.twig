@@ -6,7 +6,7 @@
 
 {% for organization in organizations %}
     <li class="row" data-test="organization-item">
-        <a class="anchor--noline" href="{{ path('organization', { uid: organization.uid }) }}">
+        <span class="row__item--extend">
             {% if parentName is defined %}
                 <span class="text--secondary">
                     {{ parentName }}&nbsp;/
@@ -14,11 +14,17 @@
             {% endif %}
 
             {{ organization.name }}
-        </a>
+        </span>
+
+        <span class="row__item--noshrink row flow-small">
+            <a href="{{ path('edit organization', { uid: organization.uid }) }}">
+                {{ 'organizations.index.edit' | trans }}
+            </a>
+        </span>
     </li>
 
     {{ include(
-        'organizations/_organizations_as_list.html.twig',
+        'organizations/_organizations_as_admin_list.html.twig',
         {
             organizations: organization.subOrganizations,
             parentName: organization.name,

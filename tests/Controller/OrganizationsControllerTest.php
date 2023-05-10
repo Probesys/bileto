@@ -46,10 +46,10 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Organizations');
-        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(2)', 'bar');
-        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(3)', 'Bar');
-        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(4)', 'foo');
-        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(5)', 'Foo');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(1)', 'bar');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(2)', 'Bar');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(3)', 'foo');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(4)', 'Foo');
     }
 
     public function testGetIndexListsSubOrganizations(): void
@@ -78,11 +78,11 @@ class OrganizationsControllerTest extends WebTestCase
             'My organization',
         );
         $this->assertSelectorTextContains(
-            '[data-test="organization-item"] [data-test="organization-item"]',
+            '[data-test="organization-item"] [data-test="organization-item"]:nth-child(1)',
             'My sub-organization',
         );
         $this->assertSelectorTextContains(
-            '[data-test="organization-item"] [data-test="organization-item"] [data-test="organization-item"]',
+            '[data-test="organization-item"] [data-test="organization-item"]:nth-child(2)',
             'My sub-sub-organization',
         );
     }

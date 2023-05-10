@@ -2,10 +2,14 @@
 /* Copyright 2022-2023 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
-.list--no-style {
+.list--nostyle {
     padding: 0;
 
     list-style: none;
+}
+
+.list--padded > li {
+    padding: 1rem 1.75rem;
 }
 
 .list--border {
@@ -13,10 +17,24 @@
     border-radius: 0.5rem;
 }
 
-.list--border > li {
-    padding: 1rem 1.75rem;
-}
-
 .list--border > li + li {
     border-top: 0.25rem solid var(--color-grey6);
+}
+
+.list--strip > li:first-child {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.list--strip > li:last-child {
+    border-bottom-right-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+.list--strip > li:nth-child(odd) {
+    background-color: var(--color-grey3);
+}
+
+.list--strip > li:nth-child(event) {
+    background-color: var(--color-grey4);
 }

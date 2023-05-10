@@ -54,14 +54,13 @@
 
                                 {% if organization.subOrganizations %}
                                     <div class="card__body">
-                                        {{ include(
-                                            'organizations/_organizations_as_list.html.twig',
-                                            {
-                                                organizations: organization.subOrganizations,
-                                                mode: 'see',
-                                            },
-                                            with_context = false
-                                        ) }}
+                                        <ul class="list--padded list--nostyle">
+                                            {{ include(
+                                                'organizations/_organizations_as_list.html.twig',
+                                                { organizations: organization.subOrganizations },
+                                                with_context = false
+                                            ) }}
+                                        </ul>
                                     </div>
                                 {% endif %}
                             </div>

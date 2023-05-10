@@ -21,38 +21,47 @@
         </div>
 
         <div class="wrapper-large flow">
-            <div class="grid">
-                <a class="card card--action" href="{{ path('new organization') }}">
-                    <span>
-                        {{ icon('plus') }}
-                        {{ 'organizations.index.new_organization' | trans }}
-                    </span>
+            <div class="row row--center row--always flow">
+                <a href="{{ path('new organization') }}" class="anchor--action">
+                    {{ icon('plus') }}
+                    {{ 'organizations.index.new_organization' | trans }}
                 </a>
 
-                {% for organization in organizations %}
-                    <div class="card flow" data-test="organization-item">
-                        <a class="card__title" href="{{ path('edit organization', { uid: organization.uid }) }}">
-                            {{ organization.name }}
-                        </a>
+                <p class="text--secondary">
+                    {{ 'organizations.index.number' | trans({ count: countOrganizations }) }}
+                </p>
+            </div>
 
-                        <div class="card__body">
+            <ul class="list--padded list--border list--nostyle">
+                {% for organization in organizations %}
+                    <li class="flow-small" data-test="organization-item">
+                        <div class="row">
+                            <span class="row__item--extend">
+                                {{ organization.name }}
+                            </span>
+
+                            <span class="row__item--noshrink row flow-small">
+                                <a href="{{ path('edit organization', { uid: organization.uid }) }}">
+                                    {{ 'organizations.index.edit' | trans }}
+                                </a>
+                            </span>
+                        </div>
+
+                        <ul class="list--padded list--nostyle list--strip text--small">
                             {{ include(
-                                'organizations/_organizations_as_list.html.twig',
-                                {
-                                    organizations: organization.subOrganizations,
-                                    mode: 'edit',
-                                },
+                                'organizations/_organizations_as_admin_list.html.twig',
+                                { organizations: organization.subOrganizations },
                                 with_context = false
                             ) }}
-                        </div>
+                        </ul>
 
-                        <div class="text--center text--small">
+                        <div class="text--small">
                             <a href="{{ path('new organization', { parent: organization.uid }) }}">
                                 {{ icon('plus') }}
-                                {{ 'organizations.index.new_sub_organization' | trans | raw }}
+                                {{ 'organizations.index.new_sub_organization' | trans }}
                             </a>
                         </div>
-                    </div>
+                    </li>
                 {% endfor %}
             </div>
         </div>

@@ -74,8 +74,10 @@ login.remember_me: 'Remember me'
 login.submit: Login
 login.title: 'Log in'
 organizations.edit.title: 'Edit an organization'
+organizations.index.edit: Edit
 organizations.index.new_organization: 'New organization'
-organizations.index.new_sub_organization: '<span class="sr-only">New</span> sub-organization'
+organizations.index.new_sub_organization: 'New sub-organization'
+organizations.index.number: '{count, plural, =0 {No organizations} one {1 organization} other {# organizations}}'
 organizations.index.title: Organizations
 organizations.name: Name
 organizations.new.submit: 'Create the organization'

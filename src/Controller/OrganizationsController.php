@@ -26,10 +26,12 @@ class OrganizationsController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:organizations');
 
         $organizations = $orgaRepository->findAll();
+        $countOrganizations = count($organizations);
         $organizations = $orgaSorter->asTree($organizations);
 
         return $this->render('organizations/index.html.twig', [
             'organizations' => $organizations,
+            'countOrganizations' => $countOrganizations,
         ]);
     }
 
