@@ -6,6 +6,8 @@
 
 namespace App\SearchEngine;
 
+use App\Entity\Ticket;
+
 /**
  * @phpstan-type FilterValues array<value-of<TicketFilter::SUPPORTED_FILTERS>, FilterValue[]>
  * @phpstan-type FilterValue string|int|null
@@ -118,6 +120,34 @@ class TicketFilter
      */
     public function setFilter(string $filter, array $values): void
     {
+        if ($filter === 'status') {
+            $acceptedValues = Ticket::STATUSES;
+            $acceptedValues[] = 'open';
+            $acceptedValues[] = 'finished';
+
+            foreach ($values as $value) {
+                if (!in_array($value, $acceptedValues)) {
+                    throw new \UnexpectedValueException("\"{$value}\" is not valid value for \"status\" filter");
+                }
+            }
+        }
+
+        if ($filter === 'type') {
+            foreach ($values as $value) {
+                if (!in_array($value, Ticket::TYPES)) {
+                    throw new \UnexpectedValueException("\"{$value}\" is not valid value for \"type\" filter");
+                }
+            }
+        }
+
+        if ($filter === 'urgency' || $filter === 'impact' || $filter === 'priority') {
+            foreach ($values as $value) {
+                if (!in_array($value, Ticket::WEIGHTS)) {
+                    throw new \UnexpectedValueException("\"{$value}\" is not valid value for \"{$filter}\" filter");
+                }
+            }
+        }
+
         if ($this->isActorFilter($filter)) {
             $values = $this->processActorValues($values);
         }
