@@ -1,0 +1,68 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'settings' %}
+
+{% block title %}{{ 'organizations.edit.title' | trans }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('settings/_sidebar.html.twig', { current: 'organizations' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <div class="layout__breadcrumb">
+            <a href="{{ path('organizations') }}">{{ 'organizations.index.title' | trans }}</a>
+            <h1>{{ 'organizations.edit.title' | trans }}</h1>
+        </div>
+
+        <form action="{{ path('update organization', { uid: organization.uid ?? null }) }}" method="post" class="wrapper-small flow">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('update organization') }}">
+
+            {% if error %}
+                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+            {% endif %}
+
+            <div class="flow-small">
+                <label for="name">
+                    {{ 'organizations.name' | trans }}
+                    <small class="text--secondary">
+                        {{ 'forms.max_chars' | trans({ number: 255 }) }}
+                    </small>
+                </label>
+
+                {% if errors.name is defined %}
+                    <p class="form__error" role="alert" id="name-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.name }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ name }}"
+                    required
+                    autofocus
+                    maxlength="255"
+                    {% if errors.name is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="name-error"
+                    {% endif %}
+                />
+            </div>
+
+            <div class="form__actions">
+                <button id="form-update-organization-submit" class="button--primary" type="submit">
+                    {{ 'forms.save_changes' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}

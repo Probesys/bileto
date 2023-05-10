@@ -31,14 +31,17 @@
 
                 {% for organization in organizations %}
                     <div class="card flow" data-test="organization-item">
-                        <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">
+                        <a class="card__title" href="{{ path('edit organization', { uid: organization.uid }) }}">
                             {{ organization.name }}
                         </a>
 
                         <div class="card__body">
                             {{ include(
                                 'organizations/_organizations_as_list.html.twig',
-                                { organizations: organization.subOrganizations },
+                                {
+                                    organizations: organization.subOrganizations,
+                                    mode: 'edit',
+                                },
                                 with_context = false
                             ) }}
                         </div>

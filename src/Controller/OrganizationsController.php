@@ -153,4 +153,55 @@ class OrganizationsController extends BaseController
             'uid' => $organization->getUid(),
         ]);
     }
+
+    #[Route('/organizations/{uid}/edit', name: 'edit organization', methods: ['GET', 'HEAD'])]
+    public function edit(Organization $organization): Response
+    {
+        $this->denyAccessUnlessGranted('admin:manage:organizations');
+
+        return $this->render('organizations/edit.html.twig', [
+            'organization' => $organization,
+            'name' => $organization->getName(),
+        ]);
+    }
+
+    #[Route('/organizations/{uid}/edit', name: 'update organization', methods: ['POST'])]
+    public function update(
+        Organization $organization,
+        Request $request,
+        OrganizationRepository $orgaRepository,
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:organizations');
+
+        /** @var string $name */
+        $name = $request->request->get('name', '');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('update organization', $csrfToken)) {
+            return $this->renderBadRequest('organizations/edit.html.twig', [
+                'organization' => $organization,
+                'name' => $name,
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+            ]);
+        }
+
+        $organization->setName($name);
+
+        $errors = $validator->validate($organization);
+        if (count($errors) > 0) {
+            return $this->renderBadRequest('organizations/edit.html.twig', [
+                'organization' => $organization,
+                'name' => $name,
+                'errors' => $this->formatErrors($errors),
+            ]);
+        }
+
+        $orgaRepository->save($organization, true);
+
+        return $this->redirectToRoute('organizations');
+    }
 }

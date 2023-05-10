@@ -56,7 +56,10 @@
                                     <div class="card__body">
                                         {{ include(
                                             'organizations/_organizations_as_list.html.twig',
-                                            { organizations: organization.subOrganizations },
+                                            {
+                                                organizations: organization.subOrganizations,
+                                                mode: 'see',
+                                            },
                                             with_context = false
                                         ) }}
                                     </div>

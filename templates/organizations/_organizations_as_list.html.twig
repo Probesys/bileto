@@ -8,13 +8,22 @@
     <ul class="organizations-list">
         {% for organization in organizations %}
             <li class="organizations-list__item" data-test="organization-item">
-                <a href="{{ path('organization', { uid: organization.uid }) }}">
+                {% if mode == 'edit' %}
+                    {% set url = path('edit organization', { uid: organization.uid }) %}
+                {% else %}
+                    {% set url = path('organization', { uid: organization.uid }) %}
+                {% endif %}
+
+                <a href="{{ url }}">
                     {{ organization.name }}
                 </a>
 
                 {{ include(
                     'organizations/_organizations_as_list.html.twig',
-                    { organizations: organization.subOrganizations },
+                    {
+                        organizations: organization.subOrganizations,
+                        mode: mode
+                    },
                     with_context = false
                 ) }}
             </li>

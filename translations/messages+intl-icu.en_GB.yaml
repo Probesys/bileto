@@ -73,6 +73,7 @@ layout.user_menu_title: 'Menu of {name}'
 login.remember_me: 'Remember me'
 login.submit: Login
 login.title: 'Log in'
+organizations.edit.title: 'Edit an organization'
 organizations.index.new_organization: 'New organization'
 organizations.index.new_sub_organization: '<span class="sr-only">New</span> sub-organization'
 organizations.index.title: Organizations

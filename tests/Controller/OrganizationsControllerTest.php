@@ -319,4 +319,117 @@ class OrganizationsControllerTest extends WebTestCase
         $client->catchExceptions(false);
         $client->request('GET', "/organizations/{$organization->getUid()}");
     }
+
+    public function testGetEditRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $organization = OrganizationFactory::createOne();
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/edit");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Edit an organization');
+    }
+
+    public function testGetEditFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/organizations/{$organization->getUid()}/edit");
+    }
+
+    public function testPostUpdateSavesTheOrganizationAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $oldName = 'Old name';
+        $newName = 'New name';
+        $organization = OrganizationFactory::createOne([
+            'name' => $oldName,
+        ]);
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
+            'name' => $newName,
+        ]);
+
+        $this->assertResponseRedirects('/organizations', 302);
+        $organization->refresh();
+        $this->assertSame($newName, $organization->getName());
+    }
+
+    public function testPostUpdateFailsIfNameIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $oldName = 'Old name';
+        $newName = str_repeat('a', 256);
+        $organization = OrganizationFactory::createOne([
+            'name' => $oldName,
+        ]);
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
+            'name' => $newName,
+        ]);
+
+        $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 255 characters');
+        $organization->refresh();
+        $this->assertSame($oldName, $organization->getName());
+    }
+
+    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $oldName = 'Old name';
+        $newName = 'New name';
+        $organization = OrganizationFactory::createOne([
+            'name' => $oldName,
+        ]);
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+            '_csrf_token' => 'not a token',
+            'name' => $newName,
+        ]);
+
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $organization->refresh();
+        $this->assertSame($oldName, $organization->getName());
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $oldName = 'Old name';
+        $newName = 'New name';
+        $organization = OrganizationFactory::createOne([
+            'name' => $oldName,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
+            'name' => $newName,
+        ]);
+    }
 }
