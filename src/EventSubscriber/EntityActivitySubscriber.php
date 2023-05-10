@@ -130,7 +130,9 @@ class EntityActivitySubscriber implements EventSubscriberInterface
 
     private function processChangesValue(mixed $value): mixed
     {
-        if (is_object($value)) {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format(\DateTimeInterface::ATOM);
+        } elseif (is_object($value)) {
             if (!is_callable([$value, 'getId'])) {
                 $class = $value::class;
                 throw new \LogicException("{$class} must implement getId()");
