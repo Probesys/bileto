@@ -9,10 +9,10 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\UserSorter;
-use App\Utils\Random;
 use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -49,6 +49,7 @@ class UsersController extends BaseController
         UserRepository $userRepository,
         ValidatorInterface $validator,
         TranslatorInterface $translator,
+        UserPasswordHasherInterface $passwordHasher,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -60,6 +61,9 @@ class UsersController extends BaseController
 
         /** @var string $name */
         $name = $request->request->get('name', '');
+
+        /** @var string $password */
+        $password = $request->request->get('password', '');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
@@ -76,7 +80,12 @@ class UsersController extends BaseController
         $newUser->setEmail($email);
         $newUser->setName($name);
         $newUser->setLocale($user->getLocale());
-        $newUser->setPassword(Random::hex(50));
+        $newUser->setPassword('');
+
+        if ($password !== '') {
+            $hashedPassword = $passwordHasher->hashPassword($newUser, $password);
+            $newUser->setPassword($hashedPassword);
+        }
 
         $errors = $validator->validate($newUser);
         if (count($errors) > 0) {

@@ -267,6 +267,7 @@ users.index.title: Utilisateurs
 users.language: Langue
 users.n_others: '{number, plural, =0 {aucun autre} one {1 autre} other {# autres}}'
 users.name: Nom
+users.new.leave_password_empty: '(laissez vide pour empêcher la connexion)'
 users.new.submit: 'Créer l’utilisateur'
 users.new.title: 'Nouvel utilisateur'
 users.password: 'Mot de passe'

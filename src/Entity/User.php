@@ -67,9 +67,6 @@ class User implements
     )]
     private ?string $email = null;
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 

@@ -87,11 +87,14 @@ class UsersControllerTest extends WebTestCase
     public function testPostCreateCreatesTheUserAndRedirects(): void
     {
         $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $email = 'alix@example.com';
         $name = 'Alix Pataquès';
+        $password = 'secret';
 
         $this->assertSame(1, UserFactory::count());
 
@@ -99,6 +102,7 @@ class UsersControllerTest extends WebTestCase
         $crawler = $client->submitForm('form-create-user-submit', [
             'email' => $email,
             'name' => $name,
+            'password' => $password,
         ]);
 
         $this->assertSame(2, UserFactory::count());
@@ -108,6 +112,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($name, $newUser->getName());
         $this->assertSame($user->getLocale(), $newUser->getLocale());
         $this->assertSame(20, strlen($newUser->getUid()));
+        $this->assertTrue($passwordHasher->isPasswordValid($newUser->object(), $password));
     }
 
     public function testPostCreateFailsIfEmailIsAlreadyUsed(): void

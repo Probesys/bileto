@@ -84,6 +84,38 @@
                 />
             </div>
 
+            <div class="flow-small">
+                <label for="password">
+                    {{ 'users.password' | trans }}
+                    <span class="text--secondary">
+                        {{ 'users.new.leave_password_empty' | trans }}
+                    </span>
+                </label>
+
+                <div class="input-container" data-controller="password">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="new-password"
+                        data-password-target="input"
+                    />
+
+                    <button
+                        type="button"
+                        role="switch"
+                        data-action="password#toggle"
+                        data-password-target="button"
+                    >
+                        {{ icon('eye') }}
+                        {{ icon('eye-slash') }}
+                        <span class="sr-only">
+                            {{ 'forms.show_password' | trans }}
+                        </span>
+                    </button>
+                </div>
+            </div>
+
             <div class="form__actions">
                 <button id="form-create-user-submit" class="button--primary" type="submit">
                     {{ 'users.new.submit' | trans }}
