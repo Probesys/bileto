@@ -53,6 +53,7 @@
                 </button>
             </div>
 
+            <input type="hidden" name="mode" value="quick">
             <input type="hidden" name="from" value="{{ from }}">
             <input type="hidden" name="query" value="{{ query }}">
         </form>
@@ -190,6 +191,8 @@
                     {{ 'tickets.search.help' | trans }}
                 </button>
             </p>
+
+            <input type="hidden" name="mode" value="advanced">
         </form>
     </div>
 </div>

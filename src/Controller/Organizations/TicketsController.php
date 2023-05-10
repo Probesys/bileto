@@ -49,7 +49,8 @@ class TicketsController extends BaseController
         /** @var ?string $queryString */
         $queryString = $request->query->get('q');
 
-        $searchMode = 'quick';
+        /** @var string $searchMode */
+        $searchMode = $request->query->get('mode', 'quick');
 
         $ticketSearcher->setOrganization($organization);
 
