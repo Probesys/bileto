@@ -203,7 +203,7 @@
 
                                 <div class="popup__separator"></div>
 
-                                <form action="{{ path('logout') }}" method="post">
+                                <form action="{{ path('logout') }}" method="post" data-turbo="false">
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
                                     <button class="popup__item" id="form-logout-submit" type="submit">
                                         {{ icon('logout') }}

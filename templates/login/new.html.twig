@@ -14,7 +14,7 @@
 
         <h1>{{ 'login.title' | trans }}</h1>
 
-        <form action="{{ path('login') }}" method="post" class="flow">
+        <form action="{{ path('login') }}" method="post" class="flow" data-turbo="false">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
             {% if error %}
