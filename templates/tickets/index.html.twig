@@ -66,7 +66,7 @@
 
                     {{ include(
                         'tickets/_sort_button.html.twig',
-                        { currentPath: path('tickets', { query: query }) },
+                        { currentPath: path('tickets', { q: query }) },
                         with_context = false
                     ) }}
                 </div>
