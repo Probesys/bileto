@@ -112,7 +112,7 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
     private ?User $assignee = null;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Organization $organization = null;
 
     /** @var Collection<int, Message> $messages */

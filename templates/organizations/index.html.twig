@@ -40,11 +40,15 @@
                                 {{ organization.name }}
                             </span>
 
-                            <span class="row__item--noshrink row flow-small">
+                            <div class="row__item--noshrink row row--always row--center flow-small">
                                 <a href="{{ path('edit organization', { uid: organization.uid }) }}">
                                     {{ 'organizations.index.edit' | trans }}
                                 </a>
-                            </span>
+
+                                <a href="{{ path('deletion organization', { uid: organization.uid }) }}">
+                                    {{ 'organizations.index.delete' | trans }}
+                                </a>
+                            </div>
                         </div>
 
                         <ul class="list--padded list--nostyle list--strip text--small">

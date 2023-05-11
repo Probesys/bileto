@@ -73,7 +73,13 @@ layout.user_menu_title: 'Menu de {name}'
 login.remember_me: 'Se souvenir de moi'
 login.submit: 'Se connecter'
 login.title: Connexion
+organizations.deletion.caution: "Attention\_!"
+organizations.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
+organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation <strong>«\_{organization}\_»</strong>. Cela supprimera également les sous-organisations, tickets et autorisations associées."
+organizations.deletion.submit: 'Supprimer l’organisation'
+organizations.deletion.title: 'Supprimer une organisation'
 organizations.edit.title: 'Modifier une organisation'
+organizations.index.delete: Supprimer
 organizations.index.edit: Modifier
 organizations.index.new_organization: 'Nouvelle organisation'
 organizations.index.new_sub_organization: 'Nouvelle sous-organisation'

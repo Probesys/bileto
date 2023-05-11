@@ -1,0 +1,50 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'settings' %}
+
+{% block title %}{{ 'organizations.deletion.title' | trans }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('settings/_sidebar.html.twig', { current: 'organizations' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <div class="layout__breadcrumb">
+            <a href="{{ path('organizations') }}">{{ 'organizations.index.title' | trans }}</a>
+            <h1>{{ 'organizations.deletion.title' | trans }}</h1>
+        </div>
+
+        <form action="{{ path('delete organization', { uid: organization.uid }) }}" method="post" class="wrapper-small flow">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete organization') }}">
+
+            {{ include('alerts/_alert.html.twig', {
+                type: 'warning',
+                title: 'organizations.deletion.caution' | trans,
+                message: 'organizations.deletion.going_delete' | trans({ organization: organization.name }),
+                raw: true,
+            }, with_context = false) }}
+
+            {% if error %}
+                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+            {% endif %}
+
+            <div class="form__actions">
+                <button
+                    id="form-delete-organization-submit"
+                    class="button--primary"
+                    type="submit"
+                    data-turbo-confirm="{{ 'organizations.deletion.confirm' | trans }}"
+                >
+                    {{ 'organizations.deletion.submit' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}

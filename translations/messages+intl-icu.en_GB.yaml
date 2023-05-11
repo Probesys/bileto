@@ -73,7 +73,13 @@ layout.user_menu_title: 'Menu of {name}'
 login.remember_me: 'Remember me'
 login.submit: Login
 login.title: 'Log in'
+organizations.deletion.caution: Caution!
+organizations.deletion.confirm: 'Are you sure that you want to delete this organization?'
+organizations.deletion.going_delete: 'You’re going to delete the organization <strong>“{organization}”</strong>. This will also delete the associated sub-organizations, tickets and authorizations.'
+organizations.deletion.submit: 'Delete the organization'
+organizations.deletion.title: 'Delete an organization'
 organizations.edit.title: 'Edit an organization'
+organizations.index.delete: Delete
 organizations.index.edit: Edit
 organizations.index.new_organization: 'New organization'
 organizations.index.new_sub_organization: 'New sub-organization'

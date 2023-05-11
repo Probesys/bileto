@@ -49,6 +49,27 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
     }
 
     /**
+     * @param Organization[] $organizations
+     */
+    public function removeInBatch(array $organizations): void
+    {
+        $entityManager = $this->getEntityManager();
+
+        $organizationIds = array_map(function (Organization $organization) {
+            return $organization->getId();
+        }, $organizations);
+
+        $query = $entityManager->createQuery(<<<SQL
+            DELETE FROM App\Entity\Organization o
+            WHERE o.id IN (:ids)
+        SQL);
+
+        $query->setParameter('ids', $organizationIds);
+
+        $query->execute();
+    }
+
+    /**
      * @return Organization[]
      */
     public function findLike(string $value): array
@@ -90,6 +111,28 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
             $queryBuilder->orWhere($expr);
             $queryBuilder->setParameter("id{$key}", $organizationId);
         }
+
+        $query = $queryBuilder->getQuery();
+        return $query->getResult();
+    }
+
+    /**
+     * @return Organization[]
+     */
+    public function findSubOrganizations(Organization $organization): array
+    {
+        $entityManager = $this->getEntityManager();
+        $queryBuilder = $entityManager->createQueryBuilder();
+
+        $queryBuilder->select('o');
+        $queryBuilder->from('\App\Entity\Organization', 'o');
+
+        $expr = $queryBuilder->expr()->like(
+            'o.parentsPath',
+            "CONCAT('%/', :id, '/%')"
+        );
+        $queryBuilder->where($expr);
+        $queryBuilder->setParameter('id', $organization->getId());
 
         $query = $queryBuilder->getQuery();
         return $query->getResult();

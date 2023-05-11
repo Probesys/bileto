@@ -4,6 +4,10 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
+{% if raw is not defined %}
+    {% set raw = false %}
+{% endif %}
+
 <div
     class="alert alert--{{ type }}"
     role="alert"
@@ -13,6 +17,10 @@
     <div class="alert__title">{{ title }}</div>
 
     <p class="alert__message">
-        {{ message }}
+        {% if raw %}
+            {{ message | raw }}
+        {% else %}
+            {{ message }}
+        {% endif %}
     </p>
 </div>

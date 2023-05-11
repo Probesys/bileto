@@ -53,6 +53,7 @@ class Authorization implements MetaEntityInterface, ActivityRecordableInterface
     private ?User $holder = null;
 
     #[ORM\ManyToOne(inversedBy: 'authorizations')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Organization $organization = null;
 
     public function getId(): ?int

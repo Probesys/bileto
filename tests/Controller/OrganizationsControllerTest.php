@@ -8,7 +8,10 @@ namespace App\Tests\Controller;
 
 use App\Entity\Organization;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\AuthorizationFactory;
+use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
+use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -430,6 +433,98 @@ class OrganizationsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
             'name' => $newName,
+        ]);
+    }
+
+    public function testGetDeletionRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $organization = OrganizationFactory::createOne();
+
+        $client->request('GET', "/organizations/{$organization->getUid()}/deletion");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Delete an organization');
+    }
+
+    public function testGetDeletionFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/organizations/{$organization->getUid()}/deletion");
+    }
+
+    public function testPostDeleteRemovesTheOrganizationAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $organization = OrganizationFactory::createOne();
+        $subOrganization = OrganizationFactory::createOne([
+            'parentsPath' => "/{$organization->getId()}/",
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $ticket = TicketFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $message = MessageFactory::createOne([
+            'ticket' => $ticket,
+        ]);
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
+        ]);
+
+        $this->assertResponseRedirects('/organizations', 302);
+        OrganizationFactory::assert()->notExists(['id' => $organization->getId()]);
+        OrganizationFactory::assert()->notExists(['id' => $subOrganization->getId()]);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        TicketFactory::assert()->notExists(['id' => $ticket->getId()]);
+        MessageFactory::assert()->notExists(['id' => $message->getId()]);
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $organization = OrganizationFactory::createOne();
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [
+            '_csrf_token' => 'not a token',
+        ]);
+
+        $this->assertResponseRedirects('/organizations', 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        OrganizationFactory::assert()->exists(['id' => $organization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
         ]);
     }
 }

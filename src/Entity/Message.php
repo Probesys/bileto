@@ -62,7 +62,7 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     private string $content = '';
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Ticket $ticket = null;
 
     public function getId(): ?int
