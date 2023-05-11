@@ -84,9 +84,9 @@ class TicketSearcher
     /**
      * @return Ticket[]
      */
-    public function getTickets(?Query $query = null): array
+    public function getTickets(?Query $query = null, string $sort = ''): array
     {
-        $sort = ['createdAt', 'DESC'];
+        $sort = $this->processSort($sort);
 
         $queries = [$this->orgaQuery];
 
@@ -116,5 +116,25 @@ class TicketSearcher
     public static function queryOwned(): Query
     {
         return Query::fromString(self::QUERY_OWNED);
+    }
+
+    /**
+     * @return array{string, 'ASC'|'DESC'}
+     */
+    private function processSort(string $sort): array
+    {
+        if ($sort === 'title-asc') {
+            return ['title', 'ASC'];
+        } elseif ($sort === 'title-desc') {
+            return ['title', 'DESC'];
+        } elseif ($sort === 'created-asc') {
+            return ['createdAt', 'ASC'];
+        } elseif ($sort === 'created-desc') {
+            return ['createdAt', 'DESC'];
+        } elseif ($sort === 'updated-asc') {
+            return ['updatedAt', 'ASC'];
+        } else {
+            return ['updatedAt', 'DESC'];
+        }
     }
 }

@@ -233,6 +233,13 @@ tickets.show.show_history: 'Afficher l’historique'
 tickets.show.status_to: 'Statut vers'
 tickets.show.urgency: "Urgence\_:"
 tickets.sidebar.title: 'Vos vues'
+tickets.sort.alphabetical: 'Ordre alphabétique'
+tickets.sort.label: 'Trier par'
+tickets.sort.newest: 'Plus récents'
+tickets.sort.oldest: 'Plus anciens'
+tickets.sort.oldest_activity: 'Activité ancienne'
+tickets.sort.recent_activity: 'Activité récente'
+tickets.sort.reverse_alphabetical: 'Ordre alphabétique inverse'
 tickets.status: Statut
 tickets.status.closed: Fermé
 tickets.status.edit.title: 'Modifier le statut'

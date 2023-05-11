@@ -233,6 +233,13 @@ tickets.show.show_history: 'Show history'
 tickets.show.status_to: 'Status to'
 tickets.show.urgency: 'Urgency:'
 tickets.sidebar.title: 'Your views'
+tickets.sort.alphabetical: 'Alphabetical order'
+tickets.sort.label: 'Sort by'
+tickets.sort.newest: Newest
+tickets.sort.oldest: Oldest
+tickets.sort.oldest_activity: 'Oldest activity'
+tickets.sort.recent_activity: 'Recent activity'
+tickets.sort.reverse_alphabetical: 'Reverse alphabetical order'
 tickets.status: Status
 tickets.status.closed: Closed
 tickets.status.edit.title: 'Edit the status'

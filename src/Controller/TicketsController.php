@@ -46,6 +46,9 @@ class TicketsController extends BaseController
         /** @var string $searchMode */
         $searchMode = $request->query->get('mode', 'quick');
 
+        /** @var string $sort */
+        $sort = $request->query->get('sort', 'updated-desc');
+
         $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
         if (in_array(null, $orgaIds)) {
             $organizations = $orgaRepository->findAll();
@@ -70,7 +73,7 @@ class TicketsController extends BaseController
 
         try {
             $query = Query::fromString($queryString);
-            $tickets = $ticketSearcher->getTickets($query);
+            $tickets = $ticketSearcher->getTickets($query, $sort);
             if ($query) {
                 $ticketFilter = TicketFilter::fromQuery($query);
             }

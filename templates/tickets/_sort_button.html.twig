@@ -1,0 +1,43 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<details
+    class="popup"
+    data-controller="popup"
+    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+>
+    <summary class="popup__opener">
+        <span class="button button--caret">
+            {{ 'tickets.sort.label' | trans }}
+        </span>
+    </summary>
+
+    <nav class="popup__container popup__container--right">
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=created-desc">
+            {{ 'tickets.sort.newest' | trans }}
+        </a>
+
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=created-asc">
+            {{ 'tickets.sort.oldest' | trans }}
+        </a>
+
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=updated-desc">
+            {{ 'tickets.sort.recent_activity' | trans }}
+        </a>
+
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=updated-asc">
+            {{ 'tickets.sort.oldest_activity' | trans }}
+        </a>
+
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=title-asc">
+            {{ 'tickets.sort.alphabetical' | trans }}
+        </a>
+
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=title-desc">
+            {{ 'tickets.sort.reverse_alphabetical' | trans }}
+        </a>
+    </nav>
+</details>
