@@ -49,7 +49,7 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
         }
     }
 
-    public function grant(User $user, Role $role, Organization $organization = null): void
+    public function grant(User $user, Role $role, ?Organization $organization = null): void
     {
         $authorization = new Authorization();
         $authorization->setHolder($user);

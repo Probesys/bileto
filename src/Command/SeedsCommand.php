@@ -116,6 +116,9 @@ class SeedsCommand extends Command
                 'name' => 'Probesys',
             ]);
 
+            // Make sure to have an ID for the Probesys organization.
+            $this->entityManager->flush();
+
             $orgaWebDivision = $this->orgaRepository->findOneOrCreateBy([
                 'name' => 'Web team',
                 'parentsPath' => "/{$orgaProbesys->getId()}/",
@@ -160,31 +163,22 @@ class SeedsCommand extends Command
                 }
             }
 
-            if (
-                $userAlix->getId() &&
-                !$this->authorizationRepository->getAdminAuthorizationFor($userAlix)
-            ) {
+            // Make sure that the users exist for the grant() method.
+            $this->entityManager->flush();
+
+            if (!$this->authorizationRepository->getAdminAuthorizationFor($userAlix)) {
                 $this->authorizationRepository->grant($userAlix, $roleSuper);
             }
 
-            if (
-                $userAlix->getId() &&
-                !$this->authorizationRepository->getOrgaAuthorizationFor($userAlix, null)
-            ) {
+            if (!$this->authorizationRepository->getOrgaAuthorizationFor($userAlix, null)) {
                 $this->authorizationRepository->grant($userAlix, $roleTech, null);
             }
 
-            if (
-                $userBenedict->getId() &&
-                !$this->authorizationRepository->getOrgaAuthorizationFor($userBenedict, $orgaWebDivision)
-            ) {
+            if (!$this->authorizationRepository->getOrgaAuthorizationFor($userBenedict, $orgaWebDivision)) {
                 $this->authorizationRepository->grant($userBenedict, $roleUser, $orgaWebDivision);
             }
 
-            if (
-                $userCharlie->getId() &&
-                !$this->authorizationRepository->getOrgaAuthorizationFor($userCharlie, $orgaFriendlyCoorp)
-            ) {
+            if (!$this->authorizationRepository->getOrgaAuthorizationFor($userCharlie, $orgaFriendlyCoorp)) {
                 $this->authorizationRepository->grant($userCharlie, $roleUser, $orgaFriendlyCoorp);
             }
 
