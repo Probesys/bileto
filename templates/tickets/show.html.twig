@@ -381,7 +381,7 @@
                                     data-turbo-preserve-scroll
                                 >
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
-                                    <input type="hidden" name="assigneeId" value="{{ app.user.id }}">
+                                    <input type="hidden" name="assigneeUid" value="{{ app.user.uid }}">
 
                                     →
                                     <button id="form-self-assign-submit" class="button--anchor" type="submit">
