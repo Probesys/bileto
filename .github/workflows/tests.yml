@@ -12,7 +12,12 @@ env:
 
 jobs:
     postgresql:
-        runs-on: ubuntu-22.04
+        runs-on: ${{ matrix.operating-system }}
+
+        strategy:
+            matrix:
+                operating-system: [ubuntu-22.04]
+                php-versions: ['8.1', '8.2']
 
         services:
             postgres:
@@ -36,7 +41,7 @@ jobs:
             - name: Setup the CI
               uses: ./.github/actions/setup
               with:
-                  php-version: 8.1
+                  php-version: ${{ matrix.php-versions }}
 
             - name: Run the test suite
               run: make test
@@ -44,7 +49,12 @@ jobs:
                   DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/bileto?serverVersion=14&charset=utf8"
 
     mariadb:
-        runs-on: ubuntu-22.04
+        runs-on: ${{ matrix.operating-system }}
+
+        strategy:
+            matrix:
+                operating-system: [ubuntu-22.04]
+                php-versions: ['8.1', '8.2']
 
         services:
             mariadb:
@@ -67,7 +77,7 @@ jobs:
             - name: Setup the CI
               uses: ./.github/actions/setup
               with:
-                  php-version: 8.1
+                  php-version: ${{ matrix.php-versions }}
 
             - name: Run the test suite
               run: make test
