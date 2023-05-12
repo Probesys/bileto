@@ -14,7 +14,7 @@
             aria-controls="search-quick-panel"
             aria-selected="{{ searchMode == 'quick' ? 'true' : 'false' }}"
         >
-            Recherche rapide
+            {{ 'tickets.search.quick_search' | trans }}
         </button>
 
         <button
@@ -25,7 +25,7 @@
             aria-controls="search-advanced-panel"
             aria-selected="{{ searchMode == 'advanced' ? 'true' : 'false' }}"
         >
-            Recherche avancée
+            {{ 'tickets.search.advanced_search' | trans }}
         </button>
     </div>
 

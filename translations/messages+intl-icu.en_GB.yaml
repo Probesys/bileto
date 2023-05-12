@@ -197,6 +197,7 @@ tickets.priority.low: Low
 tickets.priority.medium: Medium
 tickets.request: Request
 tickets.requester: Requester
+tickets.search.advanced_search: 'Advanced search'
 tickets.search.filters.actors: 'Filters “actors”'
 tickets.search.filters.priority: 'Filters “priority”'
 tickets.search.filters.status: 'Filter “status”'
@@ -206,6 +207,7 @@ tickets.search.filters.or: ' or '
 tickets.search.filters.used: 'Filters used'
 tickets.search.help: 'Show syntax help'
 tickets.search.label: 'Search using keywords or by using the advanced syntax'
+tickets.search.quick_search: 'Quick search'
 tickets.search.submit: Search
 tickets.search.tablist: 'Search modes'
 tickets.show.actions: Actions
