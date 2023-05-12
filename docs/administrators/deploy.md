@@ -24,14 +24,14 @@ PHP 8.1.12 ...
 ```
 
 Check your database version.
-If you use PostgreSQL (must be >= 14):
+If you use PostgreSQL (must be >= 11):
 
 ```console
 $ psql --version
 psql (PostgreSQL) 14.3
 ```
 
-Or if you use MariaDB (must be >= 10.6):
+Or if you use MariaDB (must be >= 10.4):
 
 ```console
 $ mariadb --version

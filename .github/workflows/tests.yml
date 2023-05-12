@@ -21,7 +21,7 @@ jobs:
 
         services:
             postgres:
-                image: postgres:14-alpine
+                image: postgres:11-alpine
                 env:
                     POSTGRES_USER: postgres
                     POSTGRES_PASSWORD: postgres
@@ -33,7 +33,7 @@ jobs:
                     --health-timeout 5s
                     --health-retries 5
 
-        name: Tests over PostgreSQL 14
+        name: Tests over PostgreSQL 11
 
         steps:
             - uses: actions/checkout@v3
@@ -46,7 +46,7 @@ jobs:
             - name: Run the test suite
               run: make test
               env:
-                  DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/bileto?serverVersion=14&charset=utf8"
+                  DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/bileto?serverVersion=11&charset=utf8"
 
     mariadb:
         runs-on: ${{ matrix.operating-system }}
@@ -58,7 +58,7 @@ jobs:
 
         services:
             mariadb:
-                image: mariadb:10.6
+                image: mariadb:10.4
                 ports:
                     - 3306:3306
                 env:
@@ -69,7 +69,7 @@ jobs:
                     --health-timeout=5s
                     --health-retries=5
 
-        name: Tests over MariaDB 10.6
+        name: Tests over MariaDB 10.4
 
         steps:
             - uses: actions/checkout@v3
@@ -82,4 +82,4 @@ jobs:
             - name: Run the test suite
               run: make test
               env:
-                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/bileto?serverVersion=mariadb-10.6.10'
+                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/bileto?serverVersion=mariadb-10.4.29'

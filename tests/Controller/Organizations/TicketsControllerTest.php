@@ -129,7 +129,7 @@ class TicketsControllerTest extends WebTestCase
             'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?view=owned");
+        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?view=owned&sort=title-asc");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="ticket-item"]:nth-child(1)', 'Ticket assigned to user');

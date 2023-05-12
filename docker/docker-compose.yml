@@ -35,14 +35,14 @@ services:
             - php
 
     database:
-        image: postgres:14-alpine
+        image: postgres:11-alpine
         restart: unless-stopped
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
 
     # database:
-    #     image: mariadb:10.6
+    #     image: mariadb:10.4
     #     restart: unless-stopped
     #     environment:
     #       - MARIADB_ROOT_PASSWORD=mariadb

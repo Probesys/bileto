@@ -22,7 +22,7 @@ Things may break between releases and it is not advised to use Bileto in product
 ![Screenshot of the home page of Bileto showing 3 opened tickets and 2 organizations](public/screenshot.png)
 
 It is written with [Symfony](https://symfony.com/) 6.2 and works with [PHP](https://www.php.net/) 8.1 or 8.2.
-The supported databases are PostgreSQL 14 and MariaDB 10.6.
+The supported databases are PostgreSQL >= 11 and MariaDB >= 10.4.
 
 It is developed by [Probesys](https://probesys.com) as a community project.
 
