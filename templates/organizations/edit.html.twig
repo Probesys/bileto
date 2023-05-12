@@ -21,7 +21,7 @@
             <h1>{{ 'organizations.edit.title' | trans }}</h1>
         </div>
 
-        <form action="{{ path('update organization', { uid: organization.uid ?? null }) }}" method="post" class="wrapper-small flow">
+        <form action="{{ path('update organization', { uid: organization.uid ?? null }) }}" method="post" class="wrapper wrapper--small flow">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('update organization') }}">
 
             {% if error %}

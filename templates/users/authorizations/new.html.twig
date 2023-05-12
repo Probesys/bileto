@@ -24,7 +24,7 @@
             <h1>{{ 'users.authorizations.new.title' | trans }}</h1>
         </div>
 
-        <form action="" method="post" class="wrapper-small flow" data-controller="new-authorization-form">
+        <form action="" method="post" class="wrapper wrapper--small flow" data-controller="new-authorization-form">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create user authorization') }}">
 
             {% if error %}

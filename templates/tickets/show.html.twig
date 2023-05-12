@@ -12,7 +12,7 @@
 
 {% block body %}
     <main class="layout__body flow flow--larger tickets-show">
-        <div class="layout__breadcrumb wrapper-large wrapper--center">
+        <div class="layout__breadcrumb wrapper wrapper--large wrapper--center">
             <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
             <h1>
                 {{ ticket.title }}
@@ -20,7 +20,7 @@
             </h1>
         </div>
 
-        <div class="wrapper-large wrapper--center row row--center row--middle flow">
+        <div class="wrapper wrapper--large wrapper--center row row--center row--middle flow">
             <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
             <span class="text--small row__item--extend">
@@ -49,7 +49,7 @@
             </button>
         </div>
 
-        <div class="wrapper-larger wrapper--center row flow flow--larger">
+        <div class="wrapper wrapper--larger wrapper--center row flow flow--larger">
             <div class="ticket__timeline row__item--extend flow flow--larger">
                 <div class="flow flow--larger timeline">
                     {% set timelineDate = null %}

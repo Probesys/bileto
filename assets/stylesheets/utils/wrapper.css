@@ -2,24 +2,26 @@
 /* Copyright 2022-2023 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
-.wrapper-text {
-    max-width: 55ch;
-}
-
-.wrapper-small {
-    max-width: 600px;
-}
-
 .wrapper {
-    max-width: 1000px;
+    --wrapper-max-width: 1000px;
+
+    max-width: var(--wrapper-max-width);
 }
 
-.wrapper-large {
-    max-width: 1200px;
+.wrapper--text {
+    --wrapper-max-width: 55ch;
 }
 
-.wrapper-larger {
-    max-width: 1400px;
+.wrapper--small {
+    --wrapper-max-width: 600px;
+}
+
+.wrapper--large {
+    --wrapper-max-width: 1200px;
+}
+
+.wrapper--larger {
+    --wrapper-max-width: 1400px;
 }
 
 .wrapper--center {

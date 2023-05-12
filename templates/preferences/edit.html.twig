@@ -17,7 +17,7 @@
         <form
             action="{{ path('update preferences') }}"
             method="post"
-            class="wrapper-small wrapper--center flow"
+            class="wrapper wrapper--small wrapper--center flow"
             data-turbo="false" {# The form can change attributes of the <html> tag, so we need to force the refresh of the page. #}
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('update preferences') }}">

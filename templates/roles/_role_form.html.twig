@@ -14,7 +14,7 @@
     {% set label = 'forms.save_changes' | trans %}
 {% endif %}
 
-<form action="{{ formAction }}" method="post" class="wrapper-small flow">
+<form action="{{ formAction }}" method="post" class="wrapper wrapper--small flow">
     <input type="hidden" name="_csrf_token" value="{{ csrfToken }}">
 
     {% if error %}

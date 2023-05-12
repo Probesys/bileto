@@ -21,7 +21,7 @@
             <h1>{{ 'users.new.title' | trans }}</h1>
         </div>
 
-        <form action="{{ path('create user') }}" method="post" class="wrapper-small flow">
+        <form action="{{ path('create user') }}" method="post" class="wrapper wrapper--small flow">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create user') }}">
 
             {% if error %}
