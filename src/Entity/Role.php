@@ -19,10 +19,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
-    fields: 'uid',
-    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
-)]
-#[UniqueEntity(
     fields: 'name',
     message: new TranslatableMessage('role.name.already_used', [], 'errors'),
 )]

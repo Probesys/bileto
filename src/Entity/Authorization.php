@@ -10,16 +10,10 @@ use App\EntityListener\EntitySetMetaListener;
 use App\Repository\AuthorizationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Translation\TranslatableMessage;
 
 #[ORM\Entity(repositoryClass: AuthorizationRepository::class)]
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[ORM\Table(name: '`authorizations`')]
-#[UniqueEntity(
-    fields: 'uid',
-    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
-)]
 class Authorization implements MetaEntityInterface, ActivityRecordableInterface
 {
     use MetaEntityTrait;

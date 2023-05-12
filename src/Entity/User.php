@@ -26,10 +26,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'email',
     message: new TranslatableMessage('user.email.already_used', [], 'errors'),
 )]
-#[UniqueEntity(
-    fields: 'uid',
-    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
-)]
 class User implements
     UserInterface,
     PasswordAuthenticatedUserInterface,

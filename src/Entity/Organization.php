@@ -14,16 +14,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
-#[UniqueEntity(
-    fields: 'uid',
-    message: new TranslatableMessage('meta.uid.already_used', [], 'errors'),
-)]
 class Organization implements MetaEntityInterface, ActivityRecordableInterface
 {
     use MetaEntityTrait;
