@@ -47,6 +47,10 @@
     "file": "assets/angle-down-261857b5.svg",
     "src": "assets/icons/angle-down.svg"
   },
+  "assets/icons/caret-down.svg": {
+    "file": "assets/caret-down-6c7f62eb.svg",
+    "src": "assets/icons/caret-down.svg"
+  },
   "assets/icons/circle-check-success.svg": {
     "file": "assets/circle-check-success-2753ccea.svg",
     "src": "assets/icons/circle-check-success.svg"
@@ -68,12 +72,12 @@
     "src": "assets/icons/user-secret.svg"
   },
   "assets/javascripts/application.js": {
-    "file": "assets/application-6090eebb.js",
+    "file": "assets/application-c6b18320.js",
     "isEntry": true,
     "src": "assets/javascripts/application.js"
   },
   "assets/stylesheets/application.css": {
-    "file": "assets/application-65f6eabc.css",
+    "file": "assets/application-c7d5e510.css",
     "isEntry": true,
     "src": "assets/stylesheets/application.css"
   }

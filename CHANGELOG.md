@@ -1,5 +1,49 @@
 # Changelog of Bileto
 
+## 2023-05-12 - 0.3.0-dev
+
+### New
+
+- Provide a search engine and a search syntax ([d83d996](https://github.com/Probesys/bileto/commit/d83d996), [abf6054](https://github.com/Probesys/bileto/commit/abf6054))
+- Allow to rename the organizations ([8afbde7](https://github.com/Probesys/bileto/commit/8afbde7))
+- Allow to delete the organizations ([0d85a97](https://github.com/Probesys/bileto/commit/0d85a97))
+- Allow to sort the lists of tickets ([5a4df55](https://github.com/Probesys/bileto/commit/5a4df55))
+- Track and display the last activity of tickets ([326fe08](https://github.com/Probesys/bileto/commit/326fe08))
+- Add a “remember me” checkbox to the login form ([2acd1de](https://github.com/Probesys/bileto/commit/2acd1de))
+
+### Improvements
+
+- Redesign the lists of organizations ([da08569](https://github.com/Probesys/bileto/commit/da08569))
+- Allow to set a password when creating users ([6e902ee](https://github.com/Probesys/bileto/commit/6e902ee))
+- Allow to (un)check all the roles at once ([ae96f71](https://github.com/Probesys/bileto/commit/ae96f71))
+- Add a margin below the modal titles ([ebbc1ac](https://github.com/Probesys/bileto/commit/ebbc1ac))
+
+### Bug fixes
+
+- Make the user name input really optional ([db3ae5a](https://github.com/Probesys/bileto/commit/db3ae5a))
+- Use the correct color scheme after login or logout ([9b95c80](https://github.com/Probesys/bileto/commit/9b95c80))
+- Allow public access to the Web Manifest ([3984d0d](https://github.com/Probesys/bileto/commit/3984d0d))
+
+### Documentation
+
+- Improve the production documentation about file permissions ([61a2e91](https://github.com/Probesys/bileto/commit/61a2e91))
+- Fix the documentation to reset the database in production ([ec44171](https://github.com/Probesys/bileto/commit/ec44171))
+- Fix the documentation to retrieve the latest Git tag ([a5bdf39](https://github.com/Probesys/bileto/commit/a5bdf39))
+- Document "Documentation" and "Technical" sections of the changelog ([ed4a960](https://github.com/Probesys/bileto/commit/ed4a960))
+
+### Technical
+
+- Add the support for PHP 8.2 ([36c38e0](https://github.com/Probesys/bileto/commit/36c38e0))
+- Add the support for PostgreSQL 11+ and MariaDB 10.4+ ([af667af](https://github.com/Probesys/bileto/commit/af667af))
+- Fix the seeds with MariaDB ([1946bb9](https://github.com/Probesys/bileto/commit/1946bb9))
+- Provide a Stimulus controller to control the checkboxes ([14828fb](https://github.com/Probesys/bileto/commit/14828fb))
+- Provide a `.row--wrap` class ([b370ad0](https://github.com/Probesys/bileto/commit/b370ad0))
+- Provide a CSS `.indent` class ([4aa8a10](https://github.com/Probesys/bileto/commit/4aa8a10))
+- Remove the `UniqueEntity` constraint from UID fields ([b2d8be7](https://github.com/Probesys/bileto/commit/b2d8be7))
+- Use the User UID instead of ID in actors forms ([95a1bfa](https://github.com/Probesys/bileto/commit/95a1bfa))
+- Disable XDebug when running PHPStan ([8024cb8](https://github.com/Probesys/bileto/commit/8024cb8))
+- Update the dependencies ([927e4df](https://github.com/Probesys/bileto/commit/927e4df), [15ff366](https://github.com/Probesys/bileto/commit/15ff366), [b2680c3](https://github.com/Probesys/bileto/commit/b2680c3), [04563c5](https://github.com/Probesys/bileto/commit/04563c5), [862a354](https://github.com/Probesys/bileto/commit/862a354))
+
 ## 2023-03-27 - 0.2.0-dev
 
 ### New
