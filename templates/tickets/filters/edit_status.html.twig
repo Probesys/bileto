@@ -12,14 +12,14 @@
     <form
         action="{{ path('combine filters') }}"
         method="post"
-        class="wrapper-small wrapper--center flow-large"
+        class="wrapper-small wrapper--center flow flow--large"
         data-controller="checkboxes"
     >
         <p class="text--secondary">
             {{ 'tickets.filters.status.info' | trans }}
         </p>
 
-        <div class="flow-small">
+        <div class="flow flow--small">
             <div>
                 <input
                     type="checkbox"
@@ -37,7 +37,7 @@
                 </label>
             </div>
 
-            <div class="indent flow-small">
+            <div class="indent flow flow--small">
                 {% for value, label in openStatuses %}
                     <div>
                         <input
@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <div class="flow-small">
+        <div class="flow flow--small">
             <div>
                 <input
                     type="checkbox"
@@ -75,7 +75,7 @@
                 </label>
             </div>
 
-            <div class="indent flow-small">
+            <div class="indent flow flow--small">
                 {% for value, label in finishedStatuses %}
                     <div>
                         <input

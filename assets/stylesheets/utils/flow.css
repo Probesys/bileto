@@ -2,68 +2,26 @@
 /* Copyright 2022-2023 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
-.flow-smaller > * {
-    --flow-size: 0.5rem;
-}
-
-.flow-small > * {
-    --flow-size: 1rem;
-}
-
 .flow > * {
     --flow-size: 2rem;
 }
 
-.flow-large > * {
+.flow--smaller > * {
+    --flow-size: 0.5rem;
+}
+
+.flow--small > * {
+    --flow-size: 1rem;
+}
+
+.flow--large > * {
     --flow-size: 3rem;
 }
 
-.flow-larger > * {
+.flow--larger > * {
     --flow-size: 4rem;
 }
 
-.flow-smaller > * + *,
-.flow-small > * + *,
-.flow > * + *,
-.flow-large > * + *,
-.flow-larger > * + * {
+.flow > * + * {
     margin-top: var(--flow-size);
-}
-
-.flow-smaller.row--always > * + *,
-.flow-small.row--always > * + *,
-.flow.row--always > * + *,
-.flow-large.row--always > * + *,
-.flow-larger.row--always > * + * {
-    margin-top: 0;
-    margin-left: var(--flow-size);
-}
-
-@media (min-width: 800px) {
-    .flow-smaller.row > * + *,
-    .flow-small.row > * + *,
-    .flow.row > * + *,
-    .flow-large.row > * + *,
-    .flow-larger.row > * + * {
-        margin-top: 0;
-        margin-left: var(--flow-size);
-    }
-}
-
-.flow-smaller.row--always.row--wrap > *,
-.flow-small.row--always.row--wrap > *,
-.flow.row--always.row--wrap > *,
-.flow-large.row--always.row--wrap > *,
-.flow-larger.row--always.row--wrap > * {
-    margin-bottom: var(--flow-size);
-}
-
-@media (min-width: 800px) {
-    .flow-smaller.row--wrap > *,
-    .flow-small.row--wrap > *,
-    .flow.row--wrap > *,
-    .flow-large.row--wrap > *,
-    .flow-larger.row--wrap > * {
-        margin-bottom: var(--flow-size);
-    }
 }

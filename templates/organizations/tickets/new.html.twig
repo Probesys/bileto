@@ -67,7 +67,7 @@
                 </div>
             {% endif %}
 
-            <div class="flow-small">
+            <div class="flow flow--small">
                 <label for="title">
                     {{ 'tickets.title' | trans }}
                     <small class="text--secondary">
@@ -97,7 +97,7 @@
                 />
             </div>
 
-            <div class="flow-small">
+            <div class="flow flow--small">
                 {% if errors.content is defined %}
                     <p class="form__error" role="alert" id="message-error">
                         <span class="sr-only">{{ 'forms.error' | trans }}</span>
@@ -134,7 +134,7 @@
 
             {% if is_granted('orga:update:tickets:actors', organization) %}
                 <div class="row flow">
-                    <div class="row__item--extend flow-small">
+                    <div class="row__item--extend flow flow--small">
                         <label for="requester">
                             {{ icon('user') }}
                             {{ 'tickets.requester' | trans }}
@@ -169,7 +169,7 @@
                         </select>
                     </div>
 
-                    <div class="row__item--extend flow-small">
+                    <div class="row__item--extend flow flow--small">
                         <label for="assignee">
                             {{ icon('headset') }}
                             {{ 'tickets.assignee' | trans }}
@@ -223,7 +223,7 @@
                     </summary>
 
                     <div class="row flow">
-                        <div class="row__item--extend flow-small">
+                        <div class="row__item--extend flow flow--small">
                             <label for="urgency">
                                 {{ 'tickets.urgency' | trans }}
                             </label>
@@ -259,7 +259,7 @@
                             </select>
                         </div>
 
-                        <div class="row__item--extend flow-small">
+                        <div class="row__item--extend flow flow--small">
                             <label for="impact">
                                 {{ 'tickets.impact' | trans }}
                             </label>
@@ -296,7 +296,7 @@
                         </div>
                     </div>
 
-                    <div class="flow-small">
+                    <div class="flow flow--small">
                         <label for="priority">
                             {{ 'tickets.priority' | trans }}
                         </label>

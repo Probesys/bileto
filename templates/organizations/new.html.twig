@@ -28,7 +28,7 @@
                 {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
             {% endif %}
 
-            <div class="flow-small">
+            <div class="flow flow--small">
                 <label for="name">
                     {{ 'organizations.name' | trans }}
                     <small class="text--secondary">
@@ -59,7 +59,7 @@
             </div>
 
             {% if parentOrganization %}
-                <div class="flow-small" data-test="form-group-parent-organization">
+                <div class="flow flow--small" data-test="form-group-parent-organization">
                     <label for="parent">
                         {{ 'organizations.parent_orga' | trans }}
                     </label>

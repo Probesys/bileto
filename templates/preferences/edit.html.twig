@@ -26,7 +26,7 @@
                 {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
             {% endif %}
 
-            <div class="flow-small">
+            <div class="flow flow--small">
                 <label for="locale">
                     {{ icon('language') }}
                     {{ 'users.language' | trans }}
@@ -56,7 +56,7 @@
                 </select>
             </div>
 
-            <div class="flow-small">
+            <div class="flow flow--small">
                 <label for="color-scheme">
                     {{ 'users.color_scheme' | trans }}
                 </label>

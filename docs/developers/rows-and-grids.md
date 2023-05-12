@@ -62,7 +62,7 @@ You can center all the items in their container with `.row--middle`:
 </div>
 ```
 
-To add space between row items, just use one of the `.flow*` classes:
+To add space between row items, just use the `.flow` classes:
 
 ```html
 <div class="row flow">

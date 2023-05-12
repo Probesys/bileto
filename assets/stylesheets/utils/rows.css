@@ -37,3 +37,25 @@
 .row__item--noshrink {
     flex-shrink: 0;
 }
+
+.row--always.flow > * + * {
+    margin-top: 0;
+    margin-left: var(--flow-size);
+}
+
+@media (min-width: 800px) {
+    .row.flow > * + * {
+        margin-top: 0;
+        margin-left: var(--flow-size);
+    }
+}
+
+.row--always.row--wrap.flow > * {
+    margin-bottom: var(--flow-size);
+}
+
+@media (min-width: 800px) {
+    .row--wrap.flow > * {
+        margin-bottom: var(--flow-size);
+    }
+}

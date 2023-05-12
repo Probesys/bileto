@@ -4,12 +4,12 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<nav class="layout__sidebar flow-smaller" aria-labelledby="sidebar-tickets-title">
+<nav class="layout__sidebar flow flow--smaller" aria-labelledby="sidebar-tickets-title">
     <div id="sidebar-tickets-title" class="sidebar__title">
         {{ 'tickets.sidebar.title' | trans }}
     </div>
 
-    <ul class="sidebar flow-smaller">
+    <ul class="sidebar flow flow--smaller">
         <li class="sidebar__item">
             <a
                 class="sidebar__anchor"
@@ -22,7 +22,7 @@
 
         <li class="sidebar__item">
             <a
-                class="sidebar__anchor row row--always row--center flow-small"
+                class="sidebar__anchor row row--always row--center flow flow--small"
                 href="?view=unassigned"
                 {{ current == 'unassigned' ? 'aria-current="page"' }}
             >
@@ -40,7 +40,7 @@
 
         <li class="sidebar__item">
             <a
-                class="sidebar__anchor row row--always row--center flow-small"
+                class="sidebar__anchor row row--always row--center flow flow--small"
                 href="?view=owned"
                 {{ current == 'owned' ? 'aria-current="page"' }}
             >

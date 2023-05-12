@@ -11,7 +11,7 @@
 {% block title %}{{ "#{ticket.title} (##{ticket.id}) – #{organization.name}" }}{% endblock %}
 
 {% block body %}
-    <main class="layout__body flow-larger tickets-show">
+    <main class="layout__body flow flow--larger tickets-show">
         <div class="layout__breadcrumb wrapper-large wrapper--center">
             <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
             <h1>
@@ -49,9 +49,9 @@
             </button>
         </div>
 
-        <div class="wrapper-larger wrapper--center row flow-larger">
-            <div class="ticket__timeline row__item--extend flow-larger">
-                <div class="flow-larger timeline">
+        <div class="wrapper-larger wrapper--center row flow flow--larger">
+            <div class="ticket__timeline row__item--extend flow flow--larger">
+                <div class="flow flow--larger timeline">
                     {% set timelineDate = null %}
                     {% for timelineItem in timeline.sortedItems %}
                         {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.createdAt.format('Y-m-d') %}
@@ -120,7 +120,7 @@
                                     {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
                                 {% endif %}
 
-                                <div class="flow-small">
+                                <div class="flow flow--small">
                                     {% if errors.content is defined %}
                                         <p class="form__error" role="alert" id="message-error">
                                             <span class="sr-only">{{ 'forms.error' | trans }}</span>
@@ -201,7 +201,7 @@
 
                                 <div class="row flow">
                                     {% if not ticket.isFinished %}
-                                        <div class="row__item--extend flow-small">
+                                        <div class="row__item--extend flow flow--small">
                                             {% if canUpdateStatus %}
                                                 <div class="row row--center row--always flow">
                                                     <label for="status-to">
@@ -258,7 +258,7 @@
                 </div>
             </div>
 
-            <div class="ticket__info text--small row__item--noshrink flow-larger">
+            <div class="ticket__info text--small row__item--noshrink flow flow--larger">
                 {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
                 {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
                 {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}

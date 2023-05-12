@@ -33,9 +33,9 @@
         id="search-quick-panel"
         data-tabs-target="tabpanel"
         aria-labelledby="search-quick-tab"
-        class="tabs__panel flow-smaller"
+        class="tabs__panel flow flow--smaller"
     >
-        <form method="post" action="{{ path('combine filters') }}" class="flow-small">
+        <form method="post" action="{{ path('combine filters') }}" class="flow flow--small">
             <div class="input-container">
                 <input
                     type="text"
@@ -62,7 +62,7 @@
             {{ 'tickets.search.filters.used' | trans }}
         </p>
 
-        <div class="row row--wrap flow-small">
+        <div class="row row--wrap flow flow--small">
             <details
                 class="popup"
                 data-controller="popup"
@@ -151,7 +151,7 @@
         aria-labelledby="search-advanced-tab"
         class="tabs__panel"
     >
-        <form method="get" action="" class="flow-small">
+        <form method="get" action="" class="flow flow--small">
             {% if error %}
                 <p class="form__error" role="alert" id="search-error">
                     <span class="sr-only">{{ 'forms.error' | trans }}</span>

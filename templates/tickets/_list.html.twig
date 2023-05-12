@@ -6,8 +6,8 @@
 
 <ul class="list-tickets list--padded list--border list--nostyle">
     {% for ticket in tickets %}
-        <li class="list-tickets__item flow-smaller" data-test="ticket-item">
-            <div class="row flow-smaller">
+        <li class="list-tickets__item flow flow--smaller" data-test="ticket-item">
+            <div class="row flow flow--smaller">
                 <div class="row__item--extend">
                     <h2 class="text--small">
                         <a class="list-tickets__anchor" href="{{ path('ticket', {'uid': ticket.uid}) }}">
@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="row row--baseline flow-smaller text--smaller">
+            <div class="row row--baseline flow flow--smaller text--smaller">
                 <div class="row__item--extend">
                     {% if ticket.createdAt == ticket.updatedAt %}
                         {% if ticket.type == 'request' %}
@@ -76,7 +76,7 @@
                     </a>
                 </div>
 
-                <div class="row row--always flow-small">
+                <div class="row row--always flow flow--small">
                     <span class="list-tickets__requester" title="{{ 'tickets.requester' | trans }}">
                         {{ icon('user') }}
 

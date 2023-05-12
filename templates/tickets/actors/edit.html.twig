@@ -21,7 +21,7 @@
             {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
         {% endif %}
 
-        <div class="flow-small">
+        <div class="flow flow--small">
             <label for="requester">
                 {{ icon('user') }}
                 {{ 'tickets.requester' | trans }}
@@ -56,7 +56,7 @@
             </select>
         </div>
 
-        <div class="flow-small">
+        <div class="flow flow--small">
             <label for="assignee">
                 {{ icon('headset') }}
                 {{ 'tickets.assignee' | trans }}
