@@ -6,7 +6,6 @@ authorization.user.already_orga: 'You cannot grant another orga role to this use
 csrf.invalid: 'The security token is invalid, please try again.'
 message.cannot_confidential: 'You are not authorized to answer confidentially.'
 message.content.required: 'Enter a message.'
-meta.uid.already_used: 'The unique identifier could not be generated, please try again.'
 organization.name.max_chars: 'Enter a name of less than {limit} characters.'
 organization.name.required: 'Enter a name.'
 organization.sub.invalid: 'Select an organization from the list.'

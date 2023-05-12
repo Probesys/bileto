@@ -6,7 +6,6 @@ authorization.user.already_orga: 'Vous ne pouvez pas accorder un autre rôle org
 csrf.invalid: 'Le jeton de sécurité est invalide, veuillez réessayer.'
 message.cannot_confidential: 'Vous n’êtes pas autorisé à répondre confidentiellement.'
 message.content.required: 'Saisissez un message.'
-meta.uid.already_used: 'L’identifiant unique n’a pas pu être généré, veuillez réessayer.'
 organization.name.max_chars: 'Saisissez un nom de moins de {limit} caractères.'
 organization.name.required: 'Saisissez un nom.'
 organization.sub.invalid: 'Sélectionnez une organisation de la liste.'
