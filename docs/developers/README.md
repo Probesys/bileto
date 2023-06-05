@@ -4,6 +4,7 @@
 - [Update the development environment](/docs/developers/update.md)
 - [Executing tests and linters](/docs/developers/tests.md)
 - [Managing the dependencies](/docs/developers/dependencies.md)
+- [Understanding GreenMail](/docs/developers/greenmail.md)
 - [Using the translations](/docs/developers/translations.md)
 - [Working with the roles & permissions](/docs/developers/roles.md)
 

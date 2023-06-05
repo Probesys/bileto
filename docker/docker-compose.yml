@@ -46,3 +46,10 @@ services:
     #     restart: unless-stopped
     #     environment:
     #       - MARIADB_ROOT_PASSWORD=mariadb
+
+    mailserver:
+        image: greenmail/standalone:2.0.0
+        restart: unless-stopped
+        ports:
+            - "3025:3025"
+            - "3143:3143"
