@@ -38,32 +38,8 @@ Ideas, bug reports and contributions are welcome. Please follow [the contributin
 
 ## Documentation
 
-Administrators guide:
-
-- [Deploy in production](/docs/administrators/deploy.md)
-- [Update the production environment](/docs/administrators/update.md)
-- [Changelog of Bileto](/CHANGELOG.md)
-
-Developers guide:
-
-- [Setup the development environment](/docs/developers/setup.md)
-- [Update the development environment](/docs/developers/update.md)
-- [Executing tests and linters](/docs/developers/tests.md)
-- [Managing the dependencies](/docs/developers/dependencies.md)
-- [Using the translations](/docs/developers/translations.md)
-- [Working with the roles & permissions](/docs/developers/roles.md)
-- [Working with the search engine](/docs/developers/search-engine.md)
-- [Declaring a new Entity](/docs/developers/entity.md)
-- Frontend:
-    - [Working with the icons](/docs/developers/icons.md)
-    - [Working with the modals](/docs/developers/modals.md)
-    - [Working with the popups](/docs/developers/popups.md)
-    - [Working with the notifications](/docs/developers/notifications.md)
-    - [Working with rows and grids](/docs/developers/rows-and-grids.md)
-
-Maintainers guide:
-
-- [How to release a version](/docs/maintainers/release.md)
+- [The Administrators' Guide](/docs/administrators/README.md)
+- [The Developers' Guide](/docs/developers/README.md)
 
 ## Credits
 
