@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,10 +22,10 @@ final class Version20230106093003RemoveOrganizationNameUniqueness extends Abstra
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('DROP INDEX UNIQ_C1EE637C5E237E06');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('DROP INDEX UNIQ_C1EE637C5E237E06 on `organization`');
         }
     }

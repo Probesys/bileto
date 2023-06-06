@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20230118103344CreateRole extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('CREATE SEQUENCE role_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
             $this->addSql(<<<SQL
                 CREATE TABLE role (
@@ -49,7 +51,7 @@ final class Version20230118103344CreateRole extends AbstractMigration
                 REFERENCES "users" (id)
                 NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql(<<<SQL
                 CREATE TABLE role (
                     id INT AUTO_INCREMENT NOT NULL,
@@ -79,12 +81,12 @@ final class Version20230118103344CreateRole extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('DROP SEQUENCE role_id_seq CASCADE');
             $this->addSql('ALTER TABLE role DROP CONSTRAINT FK_57698A6AB03A8386');
             $this->addSql('DROP TABLE role');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE role DROP FOREIGN KEY FK_57698A6AB03A8386');
             $this->addSql('DROP TABLE role');
         }

@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20220928142616CreateUser extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
             $this->addSql(<<<SQL
                 CREATE TABLE "user" (
@@ -29,7 +31,7 @@ final class Version20220928142616CreateUser extends AbstractMigration
                     PRIMARY KEY(id)
                 );
             SQL);
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql(<<<SQL
                 CREATE TABLE `user` (
                     id INT AUTO_INCREMENT NOT NULL,
@@ -42,11 +44,11 @@ final class Version20220928142616CreateUser extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
             $this->addSql('DROP TABLE "user"');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('DROP TABLE `user`');
         }
     }

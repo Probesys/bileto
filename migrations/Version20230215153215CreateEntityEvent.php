@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20230215153215CreateEntityEvent extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('CREATE SEQUENCE entity_event_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
             $this->addSql(<<<SQL
                 CREATE TABLE entity_event (
@@ -45,7 +47,7 @@ final class Version20230215153215CreateEntityEvent extends AbstractMigration
                 REFERENCES "users" (id)
                 NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql(<<<SQL
                 CREATE TABLE entity_event (
                     id INT AUTO_INCREMENT NOT NULL,
@@ -72,12 +74,12 @@ final class Version20230215153215CreateEntityEvent extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('DROP SEQUENCE entity_event_id_seq CASCADE');
             $this->addSql('ALTER TABLE entity_event DROP CONSTRAINT FK_975A3F5EB03A8386');
             $this->addSql('DROP TABLE entity_event');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE entity_event DROP FOREIGN KEY FK_975A3F5EB03A8386');
             $this->addSql('DROP TABLE entity_event');
         }

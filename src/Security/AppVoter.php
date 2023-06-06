@@ -12,6 +12,9 @@ use App\Repository\AuthorizationRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, string|Organization|null>
+ */
 class AppVoter extends Voter
 {
     private AuthorizationRepository $authorizationRepo;

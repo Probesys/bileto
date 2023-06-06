@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,20 +22,20 @@ final class Version20221123163702RenameMessageIsPrivateToIsConfidential extends 
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE message RENAME COLUMN is_private TO is_confidential');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE message CHANGE is_private is_confidential TINYINT(1) NOT NULL');
         }
     }
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE message RENAME COLUMN is_confidential TO is_private');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE message CHANGE is_confidential is_private TINYINT(1) NOT NULL');
         }
     }

@@ -121,10 +121,15 @@ Migrations must handle both PostgreSQL and MariaDB databases.
 To do that, start by adding the following code to both `up()` and `down()` methods:
 
 ```php
-$dbPlatform = $this->connection->getDatabasePlatform()->getName();
-if ($dbPlatform === 'postgresql') {
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+
+// ...
+
+$dbPlatform = $this->connection->getDatabasePlatform();
+if ($dbPlatform instanceof PostgreSQLPlatform) {
     // here goes the SQL queries for the PostgreSQL database
-} elseif ($dbPlatform === 'mysql') {
+} elseif ($dbPlatform instanceof MariaDBPlatform) {
     // here goes the SQL queries for the MariaDB database
 }
 ```

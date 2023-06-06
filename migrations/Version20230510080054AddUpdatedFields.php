@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20230510080054AddUpdatedFields extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE authorizations ADD updated_by_id INT DEFAULT NULL');
             $this->addSql('ALTER TABLE authorizations ADD updated_at TIMESTAMP(0) WITH TIME ZONE NOT NULL');
             $this->addSql('COMMENT ON COLUMN authorizations.updated_at IS \'(DC2Type:datetimetz_immutable)\'');
@@ -99,7 +101,7 @@ final class Version20230510080054AddUpdatedFields extends AbstractMigration
                 NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
             $this->addSql('CREATE INDEX IDX_1483A5E9896DBBDE ON users (updated_by_id)');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql(<<<SQL
                 ALTER TABLE authorizations
                 ADD updated_by_id INT DEFAULT NULL,
@@ -189,8 +191,8 @@ final class Version20230510080054AddUpdatedFields extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE organization DROP CONSTRAINT FK_C1EE637C896DBBDE');
             $this->addSql('DROP INDEX IDX_C1EE637C896DBBDE');
             $this->addSql('ALTER TABLE organization DROP updated_by_id');
@@ -219,7 +221,7 @@ final class Version20230510080054AddUpdatedFields extends AbstractMigration
             $this->addSql('DROP INDEX IDX_2BC15D69896DBBDE');
             $this->addSql('ALTER TABLE "authorizations" DROP updated_by_id');
             $this->addSql('ALTER TABLE "authorizations" DROP updated_at');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE ticket DROP FOREIGN KEY FK_97A0ADA3896DBBDE');
             $this->addSql('DROP INDEX IDX_97A0ADA3896DBBDE ON ticket');
             $this->addSql('ALTER TABLE ticket DROP updated_by_id, DROP updated_at');

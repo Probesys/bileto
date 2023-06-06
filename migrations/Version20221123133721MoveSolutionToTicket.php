@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20221123133721MoveSolutionToTicket extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE message DROP is_solution');
             $this->addSql('ALTER TABLE ticket ADD solution_id INT DEFAULT NULL');
             $this->addSql(<<<SQL
@@ -31,7 +33,7 @@ final class Version20221123133721MoveSolutionToTicket extends AbstractMigration
                 REFERENCES message (id) NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
             $this->addSql('CREATE UNIQUE INDEX UNIQ_97A0ADA31C0BE183 ON ticket (solution_id)');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE message DROP is_solution');
             $this->addSql('ALTER TABLE ticket ADD solution_id INT DEFAULT NULL');
             $this->addSql(<<<SQL
@@ -46,13 +48,13 @@ final class Version20221123133721MoveSolutionToTicket extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE message ADD is_solution BOOLEAN NOT NULL');
             $this->addSql('ALTER TABLE ticket DROP CONSTRAINT FK_97A0ADA31C0BE183');
             $this->addSql('DROP INDEX UNIQ_97A0ADA31C0BE183');
             $this->addSql('ALTER TABLE ticket DROP solution_id');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE ticket DROP FOREIGN KEY FK_97A0ADA31C0BE183');
             $this->addSql('DROP INDEX UNIQ_97A0ADA31C0BE183 ON ticket');
             $this->addSql('ALTER TABLE ticket DROP solution_id');

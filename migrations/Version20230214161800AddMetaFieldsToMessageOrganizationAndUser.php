@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20230214161800AddMetaFieldsToMessageOrganizationAndUser exten
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE message ADD uid VARCHAR(20) NOT NULL');
             $this->addSql('CREATE UNIQUE INDEX UNIQ_B6BD307F539B0606 ON message (uid)');
             $this->addSql('ALTER TABLE organization ADD created_by_id INT DEFAULT NULL');
@@ -46,7 +48,7 @@ final class Version20230214161800AddMetaFieldsToMessageOrganizationAndUser exten
                 NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
             $this->addSql('CREATE INDEX IDX_1483A5E9B03A8386 ON users (created_by_id)');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE message ADD uid VARCHAR(20) NOT NULL');
             $this->addSql('CREATE UNIQUE INDEX UNIQ_B6BD307F539B0606 ON message (uid)');
             $this->addSql(<<<SQL
@@ -78,8 +80,8 @@ final class Version20230214161800AddMetaFieldsToMessageOrganizationAndUser exten
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE organization DROP CONSTRAINT FK_C1EE637CB03A8386');
             $this->addSql('DROP INDEX IDX_C1EE637CB03A8386');
             $this->addSql('ALTER TABLE organization DROP created_by_id');
@@ -90,7 +92,7 @@ final class Version20230214161800AddMetaFieldsToMessageOrganizationAndUser exten
             $this->addSql('ALTER TABLE "users" DROP created_at');
             $this->addSql('DROP INDEX UNIQ_B6BD307F539B0606');
             $this->addSql('ALTER TABLE message DROP uid');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('DROP INDEX UNIQ_B6BD307F539B0606 ON message');
             $this->addSql('ALTER TABLE message DROP uid');
             $this->addSql('ALTER TABLE organization DROP FOREIGN KEY FK_C1EE637CB03A8386');

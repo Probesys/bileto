@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20221102091809CreateTicket extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('CREATE SEQUENCE ticket_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
             $this->addSql(<<<SQL
                 CREATE TABLE ticket (
@@ -71,7 +73,7 @@ final class Version20221102091809CreateTicket extends AbstractMigration
                 FOREIGN KEY (organization_id)
                 REFERENCES organization (id) NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql(<<<SQL
                 CREATE TABLE ticket (
                     id INT AUTO_INCREMENT NOT NULL,
@@ -124,15 +126,15 @@ final class Version20221102091809CreateTicket extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('DROP SEQUENCE ticket_id_seq CASCADE');
             $this->addSql('ALTER TABLE ticket DROP CONSTRAINT FK_97A0ADA3B03A8386');
             $this->addSql('ALTER TABLE ticket DROP CONSTRAINT FK_97A0ADA3ED442CF4');
             $this->addSql('ALTER TABLE ticket DROP CONSTRAINT FK_97A0ADA359EC7D60');
             $this->addSql('ALTER TABLE ticket DROP CONSTRAINT FK_97A0ADA332C8A3DE');
             $this->addSql('DROP TABLE ticket');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE ticket DROP FOREIGN KEY FK_97A0ADA3B03A8386');
             $this->addSql('ALTER TABLE ticket DROP FOREIGN KEY FK_97A0ADA3ED442CF4');
             $this->addSql('ALTER TABLE ticket DROP FOREIGN KEY FK_97A0ADA359EC7D60');

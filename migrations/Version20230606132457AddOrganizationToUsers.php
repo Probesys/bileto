@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20230606132457AddOrganizationToUsers extends AbstractMigratio
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE users ADD organization_id INT DEFAULT NULL');
             $this->addSql(<<<SQL
                 ALTER TABLE users
@@ -32,7 +34,7 @@ final class Version20230606132457AddOrganizationToUsers extends AbstractMigratio
                 NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
             $this->addSql('CREATE INDEX IDX_1483A5E932C8A3DE ON users (organization_id)');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE users ADD organization_id INT DEFAULT NULL');
             $this->addSql(<<<SQL
                 ALTER TABLE users
@@ -47,12 +49,12 @@ final class Version20230606132457AddOrganizationToUsers extends AbstractMigratio
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE "users" DROP CONSTRAINT FK_1483A5E932C8A3DE');
             $this->addSql('DROP INDEX IDX_1483A5E932C8A3DE');
             $this->addSql('ALTER TABLE "users" DROP organization_id');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE `users` DROP FOREIGN KEY FK_1483A5E932C8A3DE');
             $this->addSql('DROP INDEX IDX_1483A5E932C8A3DE ON `users`');
             $this->addSql('ALTER TABLE `users` DROP organization_id');

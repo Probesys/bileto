@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20230119140032CreateAuthorization extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('CREATE SEQUENCE "authorizations_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
             $this->addSql(<<<SQL
                 CREATE TABLE "authorizations" (
@@ -69,7 +71,7 @@ final class Version20230119140032CreateAuthorization extends AbstractMigration
                 REFERENCES organization (id)
                 NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql(<<<SQL
                 CREATE TABLE `authorizations` (
                     id INT AUTO_INCREMENT NOT NULL,
@@ -117,15 +119,15 @@ final class Version20230119140032CreateAuthorization extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('DROP SEQUENCE "authorizations_id_seq" CASCADE');
             $this->addSql('ALTER TABLE "authorizations" DROP CONSTRAINT FK_2BC15D69B03A8386');
             $this->addSql('ALTER TABLE "authorizations" DROP CONSTRAINT FK_2BC15D69D60322AC');
             $this->addSql('ALTER TABLE "authorizations" DROP CONSTRAINT FK_2BC15D69DEEE62D0');
             $this->addSql('ALTER TABLE "authorizations" DROP CONSTRAINT FK_2BC15D6932C8A3DE');
             $this->addSql('DROP TABLE "authorizations"');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE `authorizations` DROP FOREIGN KEY FK_2BC15D69B03A8386');
             $this->addSql('ALTER TABLE `authorizations` DROP FOREIGN KEY FK_2BC15D69D60322AC');
             $this->addSql('ALTER TABLE `authorizations` DROP FOREIGN KEY FK_2BC15D69DEEE62D0');

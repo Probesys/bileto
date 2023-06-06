@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20230511091245SetDeleteCascadeOnOrgaConstraints extends Abstr
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE authorizations DROP CONSTRAINT FK_2BC15D6932C8A3DE');
             $this->addSql(<<<SQL
                 ALTER TABLE authorizations
@@ -48,7 +50,7 @@ final class Version20230511091245SetDeleteCascadeOnOrgaConstraints extends Abstr
                 REFERENCES ticket (id)
                 ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE authorizations DROP FOREIGN KEY FK_2BC15D6932C8A3DE');
             $this->addSql(<<<SQL
                 ALTER TABLE authorizations
@@ -80,8 +82,8 @@ final class Version20230511091245SetDeleteCascadeOnOrgaConstraints extends Abstr
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE ticket DROP CONSTRAINT fk_97a0ada332c8a3de');
             $this->addSql(<<<SQL
                 ALTER TABLE ticket
@@ -108,7 +110,7 @@ final class Version20230511091245SetDeleteCascadeOnOrgaConstraints extends Abstr
                 REFERENCES ticket (id)
                 NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE `authorizations` DROP FOREIGN KEY FK_2BC15D6932C8A3DE');
             $this->addSql(<<<SQL
                 ALTER TABLE `authorizations`

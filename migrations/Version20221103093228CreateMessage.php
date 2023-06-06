@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,8 +22,8 @@ final class Version20221103093228CreateMessage extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('CREATE SEQUENCE message_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
             $this->addSql(<<<SQL
                 CREATE TABLE message (
@@ -51,7 +53,7 @@ final class Version20221103093228CreateMessage extends AbstractMigration
                 FOREIGN KEY (ticket_id)
                 REFERENCES ticket (id) NOT DEFERRABLE INITIALLY IMMEDIATE
             SQL);
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql(<<<SQL
                 CREATE TABLE message (
                     id INT AUTO_INCREMENT NOT NULL,
@@ -84,13 +86,13 @@ final class Version20221103093228CreateMessage extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('DROP SEQUENCE message_id_seq CASCADE');
             $this->addSql('ALTER TABLE message DROP CONSTRAINT FK_B6BD307FB03A8386');
             $this->addSql('ALTER TABLE message DROP CONSTRAINT FK_B6BD307F700047D2');
             $this->addSql('DROP TABLE message');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307FB03A8386');
             $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F700047D2');
             $this->addSql('DROP TABLE message');

@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,11 +22,11 @@ final class Version20221031163001AddUidToOrganization extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('ALTER TABLE organization ADD uid VARCHAR(20) NOT NULL');
             $this->addSql('CREATE UNIQUE INDEX UNIQ_C1EE637C539B0606 ON organization (uid)');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('ALTER TABLE organization ADD uid VARCHAR(20) NOT NULL');
             $this->addSql('CREATE UNIQUE INDEX UNIQ_C1EE637C539B0606 ON organization (uid)');
         }
@@ -32,11 +34,11 @@ final class Version20221031163001AddUidToOrganization extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $dbPlatform = $this->connection->getDatabasePlatform()->getName();
-        if ($dbPlatform === 'postgresql') {
+        $dbPlatform = $this->connection->getDatabasePlatform();
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $this->addSql('DROP INDEX UNIQ_C1EE637C539B0606');
             $this->addSql('ALTER TABLE organization DROP uid');
-        } elseif ($dbPlatform === 'mysql') {
+        } elseif ($dbPlatform instanceof MariaDBPlatform) {
             $this->addSql('DROP INDEX UNIQ_C1EE637C539B0606 ON organization');
             $this->addSql('ALTER TABLE organization DROP uid');
         }

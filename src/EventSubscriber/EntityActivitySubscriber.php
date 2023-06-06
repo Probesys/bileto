@@ -9,13 +9,17 @@ namespace App\EventSubscriber;
 use App\Entity\EntityEvent;
 use App\Entity\ActivityRecordableInterface;
 use App\Repository\EntityEventRepository;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ObjectManager;
 
-class EntityActivitySubscriber implements EventSubscriberInterface
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::postUpdate)]
+#[AsDoctrineListener(event: Events::preRemove)]
+#[AsDoctrineListener(event: Events::postRemove)]
+class EntityActivitySubscriber
 {
     private EntityEventRepository $entityEventRepository;
 
@@ -24,16 +28,6 @@ class EntityActivitySubscriber implements EventSubscriberInterface
     public function __construct(EntityEventRepository $entityEventRepository)
     {
         $this->entityEventRepository = $entityEventRepository;
-    }
-
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::postPersist,
-            Events::postUpdate,
-            Events::preRemove,
-            Events::postRemove,
-        ];
     }
 
     /**
