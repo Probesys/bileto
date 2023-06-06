@@ -62,6 +62,9 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('pending', $ticket->getStatus());
         $this->assertEquals($now, $ticket->getUpdatedAt());
         $this->assertsame($user->getId(), $ticket->getUpdatedBy()->getId());
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        $this->assertEmailHtmlBodyContains($email, $messageContent);
     }
 
     public function testPostCreateSanitizesTheMessageContent(): void

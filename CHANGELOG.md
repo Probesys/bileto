@@ -1,5 +1,14 @@
 # Changelog of Bileto
 
+## 2023-xx-yy - unreleased
+
+### Migration notes
+
+Bileto now requires that you configure a mail server to be used.
+In consequence, two new `MAILER_DSN` and `MAILER_FROM` environment variables must be set in production.
+See [the Symfony documentation](https://symfony.com/doc/7.0/mailer.html) to get help.
+It is already configured in development (see [the GreenMail documentation](/docs/developers/greenmail.md)).
+
 ## 2023-05-12 - 0.3.0-dev
 
 ### New
