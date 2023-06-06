@@ -9,6 +9,7 @@ namespace App\Controller\Tickets;
 use App\Controller\BaseController;
 use App\Entity\Message;
 use App\Entity\Ticket;
+use App\Notifier\NewMessageNotification;
 use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
@@ -18,6 +19,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,6 +38,7 @@ class MessagesController extends BaseController
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer,
         TranslatorInterface $translator,
+        NotifierInterface $notifier,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:create:tickets:messages', $organization);
@@ -171,6 +174,19 @@ class MessagesController extends BaseController
 
         $messageRepository->save($message, true);
         $ticketRepository->save($ticket, true);
+
+        if (!$message->isConfidential()) {
+            // If the message is confidential, it should not be sent to recipients
+            // who don't have the orga:see:tickets:messages:confidential
+            // permission. At the moment, I don't know what's the best solution
+            // to handle that so I've decided to never send the notification in
+            // that case. This will have to be improved in the future.
+
+            $notification = new NewMessageNotification($message);
+            foreach ($message->getRecipients() as $recipient) {
+                $notifier->send($notification, $recipient);
+            }
+        }
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

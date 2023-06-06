@@ -10,6 +10,7 @@ use App\EntityListener\EntitySetMetaListener;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -128,5 +129,28 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     public function getTimelineType(): string
     {
         return 'message';
+    }
+
+    /**
+     * @return Recipient[]
+     */
+    public function getRecipients(): array
+    {
+        $author = $this->getCreatedBy();
+        $ticket = $this->getTicket();
+        $requester = $ticket->getRequester();
+        $assignee = $ticket->getAssignee();
+
+        $recipients = [];
+
+        if ($requester !== $author) {
+            $recipients[] = new Recipient($requester->getEmail());
+        }
+
+        if ($assignee && $assignee !== $author && $assignee !== $requester) {
+            $recipients[] = new Recipient($assignee->getEmail());
+        }
+
+        return $recipients;
     }
 }
