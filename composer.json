@@ -9,6 +9,7 @@
         "ext-iconv": "*",
         "ext-intl": "*",
         "ext-pdo": "*",
+        "ext-xsl": "*",
         "ext-zip": "*",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",

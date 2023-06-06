@@ -9,6 +9,9 @@ In consequence, two new `MAILER_DSN` and `MAILER_FROM` environment variables mus
 See [the Symfony documentation](https://symfony.com/doc/7.0/mailer.html) to get help.
 It is already configured in development (see [the GreenMail documentation](/docs/developers/greenmail.md)).
 
+The PHP `xsl` extension is now required.
+You must make sure that it is installed on your server.
+
 ## 2023-05-12 - 0.3.0-dev
 
 ### New

@@ -50,7 +50,8 @@ Check the following PHP extensions are installed:
 - ctype
 - iconv
 - intl
-- PDO + pdo\_pgsql or pdo\_mysql (depending on which database you use)
+- pdo + pdo\_pgsql or pdo\_mysql (depending on which database you use)
+- xsl
 - zip
 
 ```console
