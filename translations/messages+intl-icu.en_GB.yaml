@@ -286,7 +286,10 @@ users.language: Language
 users.n_others: '{number, plural, =0 {no other} one {1 other} other {# other}}'
 users.name: Name
 users.new.leave_password_empty: '(leave empty to forbid login)'
+users.new.organization_caption: 'The tickets opened by email by this user will be attached to this organization.'
 users.new.submit: 'Create the user'
 users.new.title: 'New user'
+users.no_organization: 'No organization'
+users.organization: Organization
 users.password: Password
 users.yourself: yourself

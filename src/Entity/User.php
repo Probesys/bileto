@@ -100,6 +100,10 @@ class User implements
     #[ORM\Column]
     private ?bool $hideEvents = false;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Organization $organization = null;
+
     public function __construct()
     {
         $this->authorizations = new ArrayCollection();
@@ -240,6 +244,18 @@ class User implements
     public function setHideEvents(bool $hideEvents): self
     {
         $this->hideEvents = $hideEvents;
+
+        return $this;
+    }
+
+    public function getOrganization(): ?Organization
+    {
+        return $this->organization;
+    }
+
+    public function setOrganization(?Organization $organization): self
+    {
+        $this->organization = $organization;
 
         return $this;
     }

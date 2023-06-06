@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\User;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -95,6 +96,7 @@ class UsersControllerTest extends WebTestCase
         $email = 'alix@example.com';
         $name = 'Alix Pataquès';
         $password = 'secret';
+        $organization = OrganizationFactory::createOne();
 
         $this->assertSame(1, UserFactory::count());
 
@@ -103,6 +105,7 @@ class UsersControllerTest extends WebTestCase
             'email' => $email,
             'name' => $name,
             'password' => $password,
+            'organization' => $organization->getUid(),
         ]);
 
         $this->assertSame(2, UserFactory::count());
@@ -113,6 +116,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($user->getLocale(), $newUser->getLocale());
         $this->assertSame(20, strlen($newUser->getUid()));
         $this->assertTrue($passwordHasher->isPasswordValid($newUser->object(), $password));
+        $this->assertSame($organization->getId(), $newUser->getOrganization()->getId());
     }
 
     public function testPostCreateFailsIfEmailIsAlreadyUsed(): void

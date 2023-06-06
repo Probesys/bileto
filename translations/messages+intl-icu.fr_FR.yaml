@@ -286,7 +286,10 @@ users.language: Langue
 users.n_others: '{number, plural, =0 {aucun autre} one {1 autre} other {# autres}}'
 users.name: Nom
 users.new.leave_password_empty: '(laissez vide pour empêcher la connexion)'
+users.new.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
 users.new.submit: 'Créer l’utilisateur'
 users.new.title: 'Nouvel utilisateur'
+users.no_organization: 'Aucune organisation'
+users.organization: Organisation
 users.password: 'Mot de passe'
 users.yourself: vous

@@ -7,7 +7,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
+use App\Service\OrganizationSorter;
 use App\Service\UserSorter;
 use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,13 +35,20 @@ class UsersController extends BaseController
     }
 
     #[Route('/users/new', name: 'new user', methods: ['GET', 'HEAD'])]
-    public function new(): Response
-    {
+    public function new(
+        OrganizationRepository $organizationRepository,
+        OrganizationSorter $organizationSorter,
+    ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
+        $organizations = $organizationRepository->findAll();
+        $organizations = $organizationSorter->asTree($organizations);
+
         return $this->render('users/new.html.twig', [
+            'organizations' => $organizations,
             'email' => '',
             'name' => '',
+            'organizationUid' => '',
         ]);
     }
 
@@ -47,6 +56,8 @@ class UsersController extends BaseController
     public function create(
         Request $request,
         UserRepository $userRepository,
+        OrganizationRepository $organizationRepository,
+        OrganizationSorter $organizationSorter,
         ValidatorInterface $validator,
         TranslatorInterface $translator,
         UserPasswordHasherInterface $passwordHasher,
@@ -65,22 +76,33 @@ class UsersController extends BaseController
         /** @var string $password */
         $password = $request->request->get('password', '');
 
+        /** @var string $organizationUid */
+        $organizationUid = $request->request->get('organization', '');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
+        $organizations = $organizationRepository->findAll();
+        $organizations = $organizationSorter->asTree($organizations);
+
         if (!$this->isCsrfTokenValid('create user', $csrfToken)) {
             return $this->renderBadRequest('users/new.html.twig', [
+                'organizations' => $organizations,
                 'email' => $email,
                 'name' => $name,
+                'organizationUid' => $organizationUid,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
+
+        $organization = $organizationRepository->findOneBy(['uid' => $organizationUid]);
 
         $newUser = new User();
         $newUser->setEmail($email);
         $newUser->setName($name);
         $newUser->setLocale($user->getLocale());
         $newUser->setPassword('');
+        $newUser->setOrganization($organization);
 
         if ($password !== '') {
             $hashedPassword = $passwordHasher->hashPassword($newUser, $password);
@@ -90,8 +112,10 @@ class UsersController extends BaseController
         $errors = $validator->validate($newUser);
         if (count($errors) > 0) {
             return $this->renderBadRequest('users/new.html.twig', [
+                'organizations' => $organizations,
                 'email' => $email,
                 'name' => $name,
+                'organizationUid' => $organizationUid,
                 'errors' => $this->formatErrors($errors),
             ]);
         }

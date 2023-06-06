@@ -140,6 +140,7 @@ class SeedsCommand extends Command
             ], [
                 'name' => 'Alix Hambourg',
                 'password' => $password,
+                'organization' => $orgaProbesys,
             ]);
 
             $userBenedict = $this->userRepository->findOneOrCreateBy([
@@ -147,6 +148,7 @@ class SeedsCommand extends Command
             ], [
                 'name' => 'Benedict Aphone',
                 'password' => $password,
+                'organization' => $orgaWebDivision,
             ]);
 
             $userCharlie = $this->userRepository->findOneOrCreateBy([
@@ -154,6 +156,7 @@ class SeedsCommand extends Command
             ], [
                 'name' => 'Charlie Gature',
                 'password' => $password,
+                'organization' => $orgaFriendlyCoorp,
             ]);
 
             foreach ([$userAlix, $userBenedict, $userCharlie] as $user) {
