@@ -35,7 +35,8 @@
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/inky-extra": "^3.6",
         "twig/markdown-extra": "^3.6",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "webklex/php-imap": "^5.2"
     },
     "suggest": {
         "ext-pdo_mysql": "*",
