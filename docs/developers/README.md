@@ -12,6 +12,7 @@ Dedicated to the backend:
 
 - [Declaring a new Entity](/docs/developers/entity.md)
 - [Working with the search engine](/docs/developers/search-engine.md)
+- [Encrypting data](/docs/developers/encryptor.md)
 
 Dedicated to the frontend:
 

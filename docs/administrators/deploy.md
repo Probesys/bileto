@@ -51,6 +51,7 @@ Check the following PHP extensions are installed:
 - iconv
 - intl
 - pdo + pdo\_pgsql or pdo\_mysql (depending on which database you use)
+- sodium
 - xsl
 - zip
 
