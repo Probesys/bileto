@@ -30,6 +30,7 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
 
     public const PERMISSIONS = [
         'admin:*',
+        'admin:manage:mailboxes',
         'admin:manage:organizations',
         'admin:manage:roles',
         'admin:manage:users',

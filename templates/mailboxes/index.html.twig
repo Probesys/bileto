@@ -1,0 +1,41 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'settings' %}
+
+{% block title %}{{ 'mailboxes.index.title' | trans }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('settings/_sidebar.html.twig', { current: 'mailboxes' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow roles-index">
+        <div class="layout__breadcrumb">
+            <h1>{{ 'mailboxes.index.title' | trans }}</h1>
+        </div>
+
+        <div class="wrapper wrapper--large flow">
+            <div class="row row--center row--always flow">
+                <p class="text--secondary">
+                    {{ 'mailboxes.index.number' | trans({ count: mailboxes|length }) }}
+                </p>
+            </div>
+
+            <ul class="list--padded list--border list--nostyle">
+                {% for mailbox in mailboxes %}
+                    <li class="row" data-test="mailbox-item">
+                        <span class="row__item--extend">
+                            {{ mailbox.name }}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+{% endblock %}

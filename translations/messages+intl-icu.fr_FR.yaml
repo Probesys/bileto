@@ -73,6 +73,8 @@ layout.user_menu_title: 'Menu de {name}'
 login.remember_me: 'Se souvenir de moi'
 login.submit: 'Se connecter'
 login.title: Connexion
+mailboxes.index.number: '{count, plural, =0 {Aucune boite mail} one {1 boite mail} other {# boites mails}}'
+mailboxes.index.title: 'Boites mails'
 organizations.deletion.caution: "Attention\_!"
 organizations.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
 organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation <strong>«\_{organization}\_»</strong>. Cela supprimera également les sous-organisations, tickets et autorisations associées."
@@ -110,6 +112,7 @@ roles.new.submit: 'Créer le rôle'
 roles.new.title.admin: 'Nouveau rôle admin'
 roles.new.title.orga: 'Nouveau rôle orga'
 roles.permissions: Permissions
+roles.permissions.admin.manage.mailboxes: 'Gérer les boites mails'
 roles.permissions.admin.manage.organizations: 'Gérer les organisations'
 roles.permissions.admin.manage.roles: 'Gérer les roles'
 roles.permissions.admin.manage.users: 'Gérer les utilisateurs'
