@@ -73,8 +73,21 @@ layout.user_menu_title: 'Menu of {name}'
 login.remember_me: 'Remember me'
 login.submit: Login
 login.title: 'Log in'
+mailboxes.encryption: 'Encryption method'
+mailboxes.encryption.none: None
+mailboxes.encryption.ssl: SSL
+mailboxes.encryption.tls: TLS
+mailboxes.folder: Folder
+mailboxes.host: Hostname
+mailboxes.index.new_mailbox: 'New mailbox'
 mailboxes.index.number: '{count, plural, =0 {No mailboxes} one {1 mailbox} other {# mailboxes}}'
 mailboxes.index.title: Mailboxes
+mailboxes.name: 'Mailbox name'
+mailboxes.new.submit: 'Create the mailbox'
+mailboxes.new.title: 'New mailbox'
+mailboxes.password: Password
+mailboxes.port: 'Port IMAP'
+mailboxes.username: Username
 organizations.deletion.caution: Caution!
 organizations.deletion.confirm: 'Are you sure that you want to delete this organization?'
 organizations.deletion.going_delete: 'You’re going to delete the organization <strong>“{organization}”</strong>. This will also delete the associated sub-organizations, tickets and authorizations.'

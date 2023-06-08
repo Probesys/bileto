@@ -10,6 +10,8 @@ use App\EntityListener\EntitySetMetaListener;
 use App\Repository\MailboxRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MailboxRepository::class)]
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
@@ -38,30 +40,55 @@ class Mailbox implements MetaEntityInterface, ActivityRecordableInterface
     private ?User $updatedBy = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.name.required', [], 'errors'),
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.host.required', [], 'errors'),
+    )]
     private ?string $host = null;
 
     #[ORM\Column(length: 10)]
     private ?string $protocol = null;
 
     #[ORM\Column]
+    #[Assert\Range(
+        min: 0,
+        max: 65535,
+        notInRangeMessage: new TranslatableMessage('mailbox.port.invalid', [], 'errors'),
+    )]
     private ?int $port = null;
 
     #[ORM\Column(length: 10)]
+    #[Assert\Choice(
+        choices: ['tls', 'ssl', 'none'],
+        message: new TranslatableMessage('mailbox.encryption.invalid', [], 'errors'),
+    )]
     private ?string $encryption = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.username.required', [], 'errors'),
+    )]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     #[ORM\Column(length: 10)]
+    #[Assert\Choice(
+        choices: ['normal', 'oauth'],
+        message: new TranslatableMessage('mailbox.authentication.invalid', [], 'errors'),
+    )]
     private ?string $authentication = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.folder.required', [], 'errors'),
+    )]
     private ?string $folder = null;
 
     public function getId(): ?int

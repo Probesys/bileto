@@ -73,8 +73,21 @@ layout.user_menu_title: 'Menu de {name}'
 login.remember_me: 'Se souvenir de moi'
 login.submit: 'Se connecter'
 login.title: Connexion
+mailboxes.encryption: 'Méthode de chiffrement'
+mailboxes.encryption.none: Aucune
+mailboxes.encryption.ssl: SSL
+mailboxes.encryption.tls: TLS
+mailboxes.folder: Répertoire
+mailboxes.host: 'Nom d’hôte'
+mailboxes.index.new_mailbox: 'Nouvelle boite mail'
 mailboxes.index.number: '{count, plural, =0 {Aucune boite mail} one {1 boite mail} other {# boites mails}}'
 mailboxes.index.title: 'Boites mails'
+mailboxes.name: 'Nom de la boite mail'
+mailboxes.new.submit: 'Créer la boite mail'
+mailboxes.new.title: 'Nouvelle boite mail'
+mailboxes.password: 'Mot de passe'
+mailboxes.port: 'Port IMAP'
+mailboxes.username: 'Nom d’utilisateur'
 organizations.deletion.caution: "Attention\_!"
 organizations.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
 organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation <strong>«\_{organization}\_»</strong>. Cela supprimera également les sous-organisations, tickets et autorisations associées."

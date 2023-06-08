@@ -22,6 +22,11 @@
 
         <div class="wrapper wrapper--large flow">
             <div class="row row--center row--always flow">
+                <a href="{{ path('new mailbox') }}" class="anchor--action">
+                    {{ icon('plus') }}
+                    {{ 'mailboxes.index.new_mailbox' | trans }}
+                </a>
+
                 <p class="text--secondary">
                     {{ 'mailboxes.index.number' | trans({ count: mailboxes|length }) }}
                 </p>
