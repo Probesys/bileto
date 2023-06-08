@@ -104,6 +104,18 @@ You can use `.row__item--noshrink` for that:
 </div>
 ```
 
+For more control on the size of the items, you can use the `.row__item--size*` classes.
+They allows to place the items on a layout of 12 columns.
+For instance:
+
+```html
+<div class="row">
+    <div class="row__item--size3">Item 1</div>
+    <div class="row__item--size6">Item 2</div>
+    <div class="row__item--size3">Item 3</div>
+</div>
+```
+
 ## Grids
 
 If you need to organize the elements of your layout in two dimensions, you’ll need `.grid`:
