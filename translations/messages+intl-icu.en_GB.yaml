@@ -81,12 +81,15 @@ mailboxes.folder: Folder
 mailboxes.host: Hostname
 mailboxes.index.new_mailbox: 'New mailbox'
 mailboxes.index.number: '{count, plural, =0 {No mailboxes} one {1 mailbox} other {# mailboxes}}'
+mailboxes.index.test_mailbox: 'Test connection'
 mailboxes.index.title: Mailboxes
 mailboxes.name: 'Mailbox name'
 mailboxes.new.submit: 'Create the mailbox'
 mailboxes.new.title: 'New mailbox'
 mailboxes.password: Password
 mailboxes.port: 'Port IMAP'
+mailboxes.test.error: 'The connection failed: {error}'
+mailboxes.test.success: 'The connection works.'
 mailboxes.username: Username
 organizations.deletion.caution: Caution!
 organizations.deletion.confirm: 'Are you sure that you want to delete this organization?'

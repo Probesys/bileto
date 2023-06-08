@@ -38,6 +38,15 @@
                         <span class="row__item--extend">
                             {{ mailbox.name }}
                         </span>
+
+                        <span class="row__item--noshrink">
+                            <form method="POST" action="{{ path('test mailbox', { uid: mailbox.uid }) }}">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('test mailbox') }}">
+                                <button type="submit" class="button--anchor">
+                                    {{ 'mailboxes.index.test_mailbox' | trans }}
+                                </button>
+                            </form>
+                        </span>
                     </li>
                 {% endfor %}
             </ul>

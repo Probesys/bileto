@@ -13,8 +13,10 @@ use App\Service\MailboxSorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Webklex\PHPIMAP;
 
 class MailboxesController extends BaseController
 {
@@ -129,6 +131,48 @@ class MailboxesController extends BaseController
         }
 
         $mailboxRepository->save($mailbox, true);
+
+        return $this->redirectToRoute('mailboxes');
+    }
+
+    #[Route('/mailboxes/{uid}/test', name: 'test mailbox', methods: ['POST'])]
+    public function test(
+        Request $request,
+        Mailbox $mailbox,
+        TranslatorInterface $translator,
+        Encryptor $encryptor,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:mailboxes');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('test mailbox', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            return $this->redirectToRoute('mailboxes');
+        }
+
+        $clientManager = new PHPIMAP\ClientManager();
+        $client = $clientManager->make([
+            'host' => $mailbox->getHost(),
+            'protocol' => $mailbox->getProtocol(),
+            'port' => $mailbox->getPort(),
+            'encryption' => $mailbox->getEncryption(),
+            'validate_cert' => true,
+            'username' => $mailbox->getUsername(),
+            'password' => $encryptor->decrypt($mailbox->getPassword()),
+        ]);
+
+        try {
+            $client->connect();
+            $client->disconnect();
+
+            $this->addFlash('success', new TranslatableMessage('mailboxes.test.success'));
+        } catch (\Exception $e) {
+            $this->addFlash('error', new TranslatableMessage('mailboxes.test.error', [
+                'error' => $e->getMessage(),
+            ]));
+        }
 
         return $this->redirectToRoute('mailboxes');
     }
