@@ -19,7 +19,23 @@ Only SMTP and IMAP protocols are served as we only need these at the moment.
 
 ### In Bileto
 
-_Bileto is not configured yet to send or read emails._
+SMTP is already configured in Bileto to use the GreenMail server.
+You can find the configuration in the file [`.env`](/.env).
+It uses the address `noreply@example.com` to send emails.
+
+You can configure a mailbox with IMAP in the interface.
+As an admin, go to the “Settings > Mailboxes” and create a new mailbox.
+Configure it with the following information:
+
+- name: whatever name you want
+- hostname: `mailserver`
+- port: `3143`
+- encryption method: `None`
+- username: `alix@example.com` (for instance)
+- password: `secret` (or whatever)
+- folder: `INBOX`
+
+Once created, you can test the connection to verify that it works.
 
 ### With Thunderbird (or any external mail client)
 
