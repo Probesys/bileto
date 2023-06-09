@@ -21,6 +21,7 @@ class SettingsController extends BaseController
             'admin:manage:organizations' => 'organizations',
             'admin:manage:roles' => 'roles',
             'admin:manage:users' => 'users',
+            'admin:manage:mailboxes' => 'mailboxes',
         ];
 
         foreach ($permissionsToRoutes as $permission => $route) {

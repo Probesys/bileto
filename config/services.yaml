@@ -30,6 +30,10 @@ services:
         arguments:
             - '%kernel.environment%'
 
+    App\Security\Encryptor:
+        arguments:
+            - '%kernel.project_dir%/var/data/encrypt.key'
+
     App\Twig\ViteTagsExtension:
         arguments:
             - "%kernel.project_dir%/public/manifest.json"

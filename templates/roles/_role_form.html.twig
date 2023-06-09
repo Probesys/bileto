@@ -95,6 +95,11 @@
 
         {% if type == 'admin' %}
             {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'admin:manage:mailboxes',
+                label: 'roles.permissions.admin.manage.mailboxes' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
                 permission: 'admin:manage:organizations',
                 label: 'roles.permissions.admin.manage.organizations' | trans,
             }) }}

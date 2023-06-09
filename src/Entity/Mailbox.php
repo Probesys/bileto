@@ -1,0 +1,266 @@
+<?php
+
+// This file is part of Bileto.
+// Copyright 2022-2023 Probesys
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+namespace App\Entity;
+
+use App\EntityListener\EntitySetMetaListener;
+use App\Repository\MailboxRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
+
+#[ORM\Entity(repositoryClass: MailboxRepository::class)]
+#[ORM\EntityListeners([EntitySetMetaListener::class])]
+class Mailbox implements MetaEntityInterface, ActivityRecordableInterface
+{
+    use MetaEntityTrait;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $uid = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\ManyToOne]
+    private ?User $createdBy = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\ManyToOne]
+    private ?User $updatedBy = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.name.required', [], 'errors'),
+    )]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.host.required', [], 'errors'),
+    )]
+    private ?string $host = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $protocol = null;
+
+    #[ORM\Column]
+    #[Assert\Range(
+        min: 0,
+        max: 65535,
+        notInRangeMessage: new TranslatableMessage('mailbox.port.invalid', [], 'errors'),
+    )]
+    private ?int $port = null;
+
+    #[ORM\Column(length: 10)]
+    #[Assert\Choice(
+        choices: ['tls', 'ssl', 'none'],
+        message: new TranslatableMessage('mailbox.encryption.invalid', [], 'errors'),
+    )]
+    private ?string $encryption = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.username.required', [], 'errors'),
+    )]
+    private ?string $username = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
+    #[ORM\Column(length: 10)]
+    #[Assert\Choice(
+        choices: ['normal', 'oauth'],
+        message: new TranslatableMessage('mailbox.authentication.invalid', [], 'errors'),
+    )]
+    private ?string $authentication = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.folder.required', [], 'errors'),
+    )]
+    private ?string $folder = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(string $uid): self
+    {
+        $this->uid = $uid;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getUpdatedBy(): ?User
+    {
+        return $this->updatedBy;
+    }
+
+    public function setUpdatedBy(?User $updatedBy): self
+    {
+        $this->updatedBy = $updatedBy;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getHost(): ?string
+    {
+        return $this->host;
+    }
+
+    public function setHost(string $host): self
+    {
+        $this->host = $host;
+
+        return $this;
+    }
+
+    public function getProtocol(): ?string
+    {
+        return $this->protocol;
+    }
+
+    public function setProtocol(string $protocol): self
+    {
+        $this->protocol = $protocol;
+
+        return $this;
+    }
+
+    public function getPort(): ?int
+    {
+        return $this->port;
+    }
+
+    public function setPort(int $port): self
+    {
+        $this->port = $port;
+
+        return $this;
+    }
+
+    public function getEncryption(): ?string
+    {
+        return $this->encryption;
+    }
+
+    public function setEncryption(string $encryption): self
+    {
+        $this->encryption = $encryption;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getAuthentication(): ?string
+    {
+        return $this->authentication;
+    }
+
+    public function setAuthentication(string $authentication): self
+    {
+        $this->authentication = $authentication;
+
+        return $this;
+    }
+
+    public function getFolder(): ?string
+    {
+        return $this->folder;
+    }
+
+    public function setFolder(string $folder): self
+    {
+        $this->folder = $folder;
+
+        return $this;
+    }
+}

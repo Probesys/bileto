@@ -48,5 +48,18 @@
                 </a>
             </li>
         {% endif %}
+
+        {% if is_granted('admin:manage:mailboxes') %}
+            <li class="sidebar__item">
+                <a
+                    class="sidebar__anchor"
+                    href="{{ path('mailboxes') }}"
+                    {{ current == 'mailboxes' ? 'aria-current="page"' }}
+                >
+                    {{ icon('inbox') }}
+                    {{ 'mailboxes.index.title' | trans }}
+                </a>
+            </li>
+        {% endif %}
     </ul>
 </nav>
