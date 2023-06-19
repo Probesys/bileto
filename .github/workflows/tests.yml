@@ -86,4 +86,4 @@ jobs:
             - name: Run the test suite
               run: make test
               env:
-                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/bileto?serverVersion=mariadb-10.4.29'
+                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/bileto?serverVersion=10.4.29-MariaDB'
