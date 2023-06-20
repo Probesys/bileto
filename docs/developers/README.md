@@ -13,6 +13,7 @@ Dedicated to the backend:
 - [Declaring a new Entity](/docs/developers/entity.md)
 - [Working with the search engine](/docs/developers/search-engine.md)
 - [Encrypting data](/docs/developers/encryptor.md)
+- [The email collector](/docs/developers/email-collector.md)
 
 Dedicated to the frontend:
 

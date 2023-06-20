@@ -71,7 +71,6 @@ class FetchMailboxesHandler
             $client->disconnect();
         } catch (\Exception $e) {
             $this->logger->error("Mailbox #{$mailbox->getId()} error: {$e->getMessage()}");
-            return;
         }
     }
 }

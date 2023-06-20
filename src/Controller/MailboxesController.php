@@ -8,6 +8,7 @@ namespace App\Controller;
 
 use App\Entity\Mailbox;
 use App\Message\FetchMailboxes;
+use App\Message\CreateTicketsFromMailboxEmails;
 use App\Repository\MailboxRepository;
 use App\Security\Encryptor;
 use App\Service\MailboxSorter;
@@ -196,6 +197,7 @@ class MailboxesController extends BaseController
         }
 
         $bus->dispatch(new FetchMailboxes());
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
 
         return $this->redirectToRoute('mailboxes');
     }

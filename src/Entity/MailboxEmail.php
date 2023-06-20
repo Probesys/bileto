@@ -8,6 +8,7 @@ namespace App\Entity;
 
 use App\EntityListener\EntitySetMetaListener;
 use App\Repository\MailboxEmailRepository;
+use App\Utils\Time;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Webklex\PHPIMAP;
@@ -97,6 +98,7 @@ class MailboxEmail implements MetaEntityInterface, ActivityRecordableInterface
     public function setLastError(string $lastError): self
     {
         $this->lastError = $lastError;
+        $this->lastErrorAt = Time::now();
 
         return $this;
     }
@@ -104,13 +106,6 @@ class MailboxEmail implements MetaEntityInterface, ActivityRecordableInterface
     public function getLastErrorAt(): ?\DateTimeImmutable
     {
         return $this->lastErrorAt;
-    }
-
-    public function setLastErrorAt(?\DateTimeImmutable $lastErrorAt): self
-    {
-        $this->lastErrorAt = $lastErrorAt;
-
-        return $this;
     }
 
     public function getEmail(): PHPIMAP\Message
