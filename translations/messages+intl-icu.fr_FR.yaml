@@ -79,6 +79,7 @@ mailboxes.encryption.ssl: SSL
 mailboxes.encryption.tls: TLS
 mailboxes.folder: Répertoire
 mailboxes.host: 'Nom d’hôte'
+mailboxes.index.collect: 'Collecter les boites'
 mailboxes.index.new_mailbox: 'Nouvelle boite mail'
 mailboxes.index.number: '{count, plural, =0 {Aucune boite mail} one {1 boite mail} other {# boites mails}}'
 mailboxes.index.test_mailbox: 'Tester la connexion'

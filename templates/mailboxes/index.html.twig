@@ -21,15 +21,24 @@
         </div>
 
         <div class="wrapper wrapper--large flow">
-            <div class="row row--center row--always flow">
-                <a href="{{ path('new mailbox') }}" class="anchor--action">
-                    {{ icon('plus') }}
-                    {{ 'mailboxes.index.new_mailbox' | trans }}
-                </a>
+            <div class="row flow">
+                <div class="row__item--extend row row--center row--always flow">
+                    <a href="{{ path('new mailbox') }}" class="anchor--action">
+                        {{ icon('plus') }}
+                        {{ 'mailboxes.index.new_mailbox' | trans }}
+                    </a>
 
-                <p class="text--secondary">
-                    {{ 'mailboxes.index.number' | trans({ count: mailboxes|length }) }}
-                </p>
+                    <p class="text--secondary">
+                        {{ 'mailboxes.index.number' | trans({ count: mailboxes|length }) }}
+                    </p>
+                </div>
+
+                <form method="POST" action="{{ path('collect mailboxes') }}">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('collect mailboxes') }}">
+                    <button type="submit">
+                        {{ 'mailboxes.index.collect' | trans }}
+                    </button>
+                </form>
             </div>
 
             <ul class="list--padded list--border list--nostyle">

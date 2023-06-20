@@ -7,11 +7,13 @@
 namespace App\Controller;
 
 use App\Entity\Mailbox;
+use App\Message\FetchMailboxes;
 use App\Repository\MailboxRepository;
 use App\Security\Encryptor;
 use App\Service\MailboxSorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -173,6 +175,27 @@ class MailboxesController extends BaseController
                 'error' => $e->getMessage(),
             ]));
         }
+
+        return $this->redirectToRoute('mailboxes');
+    }
+
+    #[Route('/mailboxes/collect', name: 'collect mailboxes', methods: ['POST'])]
+    public function collect(
+        Request $request,
+        TranslatorInterface $translator,
+        MessageBusInterface $bus,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:mailboxes');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('collect mailboxes', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            return $this->redirectToRoute('mailboxes');
+        }
+
+        $bus->dispatch(new FetchMailboxes());
 
         return $this->redirectToRoute('mailboxes');
     }
