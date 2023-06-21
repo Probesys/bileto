@@ -20,3 +20,5 @@ framework:
                     a:
                         rel: noopener noreferrer
                         target: _blank
+
+                max_input_length: 1000000
