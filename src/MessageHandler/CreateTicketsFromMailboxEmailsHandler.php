@@ -10,6 +10,7 @@ use App\Entity\Ticket;
 use App\Entity\MailboxEmail;
 use App\Entity\Message;
 use App\Message\CreateTicketsFromMailboxEmails;
+use App\Notifier\NewMessageNotification;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Repository\MessageRepository;
@@ -20,6 +21,7 @@ use App\Security\Encryptor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Webklex\PHPIMAP;
 
@@ -33,6 +35,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private UserRepository $userRepository,
         private AccessDecisionManagerInterface $accessDecisionManager,
         private HtmlSanitizerInterface $appMessageSanitizer,
+        private NotifierInterface $notifier,
         private LoggerInterface $logger,
     ) {
     }
@@ -61,8 +64,29 @@ class CreateTicketsFromMailboxEmailsHandler
             }
 
             $token = new UserToken($requester);
+            $canCreateTicket = $this->accessDecisionManager->decide(
+                $token,
+                ['orga:create:tickets'],
+                $organization
+            );
+            $canAnswerTicket = $this->accessDecisionManager->decide(
+                $token,
+                ['orga:create:tickets:messages'],
+                $organization
+            );
 
-            if (!$this->accessDecisionManager->decide($token, ['orga:create:tickets'], $organization)) {
+            $ticket = null;
+            $ticketId = $mailboxEmail->extractTicketId();
+
+            if ($ticketId) {
+                $ticket = $this->ticketRepository->find($ticketId);
+            }
+
+            if ($ticket && (!$canAnswerTicket || $ticket->getStatus() === 'closed')) {
+                $ticket = null;
+            }
+
+            if (!$ticket && !$canCreateTicket) {
                 $this->markError($mailboxEmail, 'sender has not permission to create tickets');
                 continue;
             }
@@ -71,17 +95,19 @@ class CreateTicketsFromMailboxEmailsHandler
             $messageContent = $this->appMessageSanitizer->sanitize($mailboxEmail->getBody());
             $date = $mailboxEmail->getDate();
 
-            $ticket = new Ticket();
-            $ticket->setCreatedAt($date);
-            $ticket->setCreatedBy($requester);
-            $ticket->setTitle($subject);
-            $ticket->setType(Ticket::DEFAULT_TYPE);
-            $ticket->setStatus(Ticket::DEFAULT_STATUS);
-            $ticket->setUrgency(Ticket::DEFAULT_WEIGHT);
-            $ticket->setImpact(Ticket::DEFAULT_WEIGHT);
-            $ticket->setPriority(Ticket::DEFAULT_WEIGHT);
-            $ticket->setOrganization($organization);
-            $ticket->setRequester($requester);
+            if (!$ticket) {
+                $ticket = new Ticket();
+                $ticket->setCreatedAt($date);
+                $ticket->setCreatedBy($requester);
+                $ticket->setTitle($subject);
+                $ticket->setType(Ticket::DEFAULT_TYPE);
+                $ticket->setStatus(Ticket::DEFAULT_STATUS);
+                $ticket->setUrgency(Ticket::DEFAULT_WEIGHT);
+                $ticket->setImpact(Ticket::DEFAULT_WEIGHT);
+                $ticket->setPriority(Ticket::DEFAULT_WEIGHT);
+                $ticket->setOrganization($organization);
+                $ticket->setRequester($requester);
+            }
 
             $message = new Message();
             $message->setCreatedAt($date);
@@ -94,6 +120,11 @@ class CreateTicketsFromMailboxEmailsHandler
             $this->ticketRepository->save($ticket, true);
             $this->messageRepository->save($message, true);
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
+
+            $notification = new NewMessageNotification($message);
+            foreach ($message->getRecipients() as $recipient) {
+                $this->notifier->send($notification, $recipient);
+            }
         }
     }
 

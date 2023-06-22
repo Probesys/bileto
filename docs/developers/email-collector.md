@@ -26,8 +26,13 @@ For each `MailboxEmail`:
 
 1. it gets the requester (i.e. the `From` header);
 2. it gets the default organization of the requester;
-3. it checks the requester has the permission to create tickets in the organization;
-4. it creates the ticket based on the `Subject`, the `Date` and the `Body` of the email;
-5. it deletes the `MailboxEmail` from the database.
+3. it extracts a potential ticket ID from the email;
+4. if there is an ID, it checks that the requester can answer to the ticket and that the ticket is not closed;
+5. otherwise it checks the requester has the permission to create tickets in the organization and it creates one based on the `Subject`, the `Date` and the `Body` of the email;
+6. finally, it deletes the `MailboxEmail` from the database.
 
 If anything goes wrong during this process, the error is logged in the relevant `MailboxEmail` `lastError` field.
+
+To extract the ticket ID from the email, at the moment we only search for a `[#ID]` substring in the subject of the email.
+This technique is not very robust as it depends on the person to not rewrite the subject.
+Later, we’ll also include the ticket ID in the `Message-ID` header as well as in the email body.

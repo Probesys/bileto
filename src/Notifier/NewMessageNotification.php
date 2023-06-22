@@ -19,7 +19,7 @@ class NewMessageNotification extends Notification implements EmailNotificationIn
     public function __construct(Message $message)
     {
         $ticket = $message->getTicket();
-        $subject = "Re: #{$ticket->getId()} {$ticket->getTitle()}";
+        $subject = "Re: [#{$ticket->getId()}] {$ticket->getTitle()}";
 
         parent::__construct($subject, ['email']);
 

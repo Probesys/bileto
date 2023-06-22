@@ -158,4 +158,15 @@ class MailboxEmail implements MetaEntityInterface, ActivityRecordableInterface
         $date = $this->getEmail()->getDate()->first();
         return $date->toDateTimeImmutable();
     }
+
+    public function extractTicketId(): ?int
+    {
+        preg_match('/\[#(?P<id>\d+)\]/', $this->getSubject(), $matches);
+
+        if (isset($matches['id'])) {
+            return intval($matches['id']);
+        } else {
+            return null;
+        }
+    }
 }
