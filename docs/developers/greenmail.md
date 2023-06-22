@@ -21,9 +21,16 @@ Only SMTP and IMAP protocols are served as we only need these at the moment.
 
 SMTP is already configured in Bileto to use the GreenMail server.
 You can find the configuration in the file [`.env`](/.env).
-It uses the address `noreply@example.com` to send emails.
+It uses the address `support@example.com` to send emails.
 
-You can configure a mailbox with IMAP in the interface.
+When you setup the database, it also configures an IMAP Mailbox with the same address.
+If it’s not, run:
+
+```console
+$ ./docker/bin/console db:seeds:load
+```
+
+You can configure more mailboxes with IMAP in the interface.
 As an admin, go to the “Settings > Mailboxes” and create a new mailbox.
 Configure it with the following information:
 

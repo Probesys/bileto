@@ -7,11 +7,13 @@
 namespace App\Command;
 
 use App\Repository\AuthorizationRepository;
+use App\Repository\MailboxRepository;
 use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\RoleRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
+use App\Security\Encryptor;
 use App\Utils\Random;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -27,48 +29,19 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 )]
 class SeedsCommand extends Command
 {
-    private string $environment;
-
-    private EntityManagerInterface $entityManager;
-
-    private AuthorizationRepository $authorizationRepository;
-
-    private MessageRepository $messageRepository;
-
-    private OrganizationRepository $orgaRepository;
-
-    private RoleRepository $roleRepository;
-
-    private TicketRepository $ticketRepository;
-
-    private UserRepository $userRepository;
-
-    private UserPasswordHasherInterface $passwordHasher;
-
     public function __construct(
-        string $environment,
-        EntityManagerInterface $entityManager,
-        AuthorizationRepository $authorizationRepository,
-        MessageRepository $messageRepository,
-        OrganizationRepository $orgaRepository,
-        RoleRepository $roleRepository,
-        TicketRepository $ticketRepository,
-        UserRepository $userRepository,
-        UserPasswordHasherInterface $passwordHasher,
+        private string $environment,
+        private EntityManagerInterface $entityManager,
+        private AuthorizationRepository $authorizationRepository,
+        private MailboxRepository $mailboxRepository,
+        private MessageRepository $messageRepository,
+        private OrganizationRepository $orgaRepository,
+        private RoleRepository $roleRepository,
+        private TicketRepository $ticketRepository,
+        private UserRepository $userRepository,
+        private Encryptor $encryptor,
+        private UserPasswordHasherInterface $passwordHasher,
     ) {
-        $this->environment = $environment;
-
-        $this->entityManager = $entityManager;
-
-        $this->authorizationRepository = $authorizationRepository;
-        $this->messageRepository = $messageRepository;
-        $this->orgaRepository = $orgaRepository;
-        $this->roleRepository = $roleRepository;
-        $this->ticketRepository = $ticketRepository;
-        $this->userRepository = $userRepository;
-
-        $this->passwordHasher = $passwordHasher;
-
         parent::__construct();
     }
 
@@ -184,6 +157,20 @@ class SeedsCommand extends Command
             if (!$this->authorizationRepository->getOrgaAuthorizationFor($userCharlie, $orgaFriendlyCoorp)) {
                 $this->authorizationRepository->grant($userCharlie, $roleUser, $orgaFriendlyCoorp);
             }
+
+            // Seed mailboxes
+            $this->mailboxRepository->findOneOrCreateBy([
+                'name' => 'support@example.com',
+            ], [
+                'host' => 'mailserver',
+                'protocol' => 'imap',
+                'port' => 3143,
+                'encryption' => 'none',
+                'username' => 'support@example.com',
+                'password' => $this->encryptor->encrypt('secret'),
+                'authentication' => 'normal',
+                'folder' => 'INBOX',
+            ]);
 
             // Seed tickets
             $ticketEmails = $this->ticketRepository->findOneOrCreateBy([

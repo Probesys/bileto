@@ -17,10 +17,13 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Mailbox|null findOneBy(array $criteria, array $orderBy = null)
  * @method Mailbox[]    findAll()
  * @method Mailbox[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ *
+ * @method Mailbox findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false)
  */
 class MailboxRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

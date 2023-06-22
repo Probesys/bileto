@@ -7,6 +7,7 @@
 namespace App\Tests\Command;
 
 use App\Tests\CommandTestsHelper;
+use App\Tests\Factory\MailboxFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\UserFactory;
@@ -29,5 +30,6 @@ class SeedsCommandTest extends KernelTestCase
         $this->assertSame(3, RoleFactory::count());
         $this->assertSame(4, OrganizationFactory::count());
         $this->assertSame(3, UserFactory::count());
+        $this->assertSame(1, MailboxFactory::count());
     }
 }
