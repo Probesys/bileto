@@ -226,6 +226,44 @@ $ systemctl reload nginx
 
 Open Bileto in your web browser: it should display the login page.
 
+## Setup the Messenger worker
+
+The Messenger worker performs asynchronous jobs.
+It's a sort of Cron mechanism on steroids.
+We'll use Systemd in this documentation, but note that the only requirement is that a command needs to run in the background.
+
+Create the file `/etc/systemd/system/bileto-worker.service`:
+
+```systemd
+[Unit]
+Description=The Messenger worker for Bileto
+
+[Service]
+ExecStart=php /var/www/bileto/bin/console messenger:consume async scheduler_default --time-limit=3600
+
+User=www-data
+Group=www-data
+
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=default.target
+```
+
+Enable and start the service:
+
+```console
+# systemctl enable bileto-worker
+# systemctl start bileto-worker
+```
+
+You can find the logs with:
+
+```console
+# journalctl -f -u bileto-worker@service
+```
+
 ## Create your users
 
 You must create your first user with the command line:

@@ -12,6 +12,9 @@ It is already configured in development (see [the GreenMail documentation](/docs
 The PHP `sodium` and `xsl` extensions are now required.
 You must make sure that they are installed on your server.
 
+You must setup a Messenger worker.
+Read the [administrator guide to learn how](/docs/administrators/deploy.md) (nearly the end of the document).
+
 ## 2023-05-12 - 0.3.0-dev
 
 ### New

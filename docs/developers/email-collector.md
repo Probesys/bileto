@@ -36,3 +36,10 @@ If anything goes wrong during this process, the error is logged in the relevant 
 To extract the ticket ID from the email, at the moment we only search for a `[#ID]` substring in the subject of the email.
 This technique is not very robust as it depends on the person to not rewrite the subject.
 Later, we’ll also include the ticket ID in the `Message-ID` header as well as in the email body.
+
+## Scheduling
+
+You don’t have to fetch the emails manually each time you receive an email to the support.
+Indeed, the previous jobs are scheduled to be executed every minute.
+
+It’s declared in the [`DefaultScheduleProvider`](/src/Scheduler/DefaultScheduleProvider.php).

@@ -62,3 +62,9 @@ www-data$ php bin/console app:users:create --email=user@example.com --password=s
 ```console
 www-data$ php bin/console doctrine:migrations:migrate --no-interaction
 ```
+
+Finally, restart the Messenger worker with:
+
+```console
+# systemctl restart bileto-worker
+```
