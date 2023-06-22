@@ -10,8 +10,8 @@
 
 <!DOCTYPE html>
 <html
-    lang="{{ app.request.locale|locale_to_bcp47 }}"
-    data-locale="{{ app.request.locale }}"
+    lang="{{ app.locale|locale_to_bcp47 }}"
+    data-locale="{{ app.locale }}"
     data-color-scheme="{{ app.user ? app.user.colorScheme : 'auto' }}"
     data-controller="color-scheme"
 >
