@@ -19,7 +19,7 @@ services:
         image: bileto:dev
         build: .
         restart: unless-stopped
-        command: php bin/console messenger:consume async -vv
+        command: php bin/console messenger:consume async scheduler_default -vv
         volumes:
             - ..:/var/www/html:z
         user: $USER
