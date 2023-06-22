@@ -15,6 +15,7 @@ use App\Service\MailboxSorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -196,8 +197,12 @@ class MailboxesController extends BaseController
             return $this->redirectToRoute('mailboxes');
         }
 
-        $bus->dispatch(new FetchMailboxes());
-        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+        $bus->dispatch(new FetchMailboxes(), [
+            new TransportNamesStamp('sync'),
+        ]);
+        $bus->dispatch(new CreateTicketsFromMailboxEmails(), [
+            new TransportNamesStamp('sync'),
+        ]);
 
         return $this->redirectToRoute('mailboxes');
     }

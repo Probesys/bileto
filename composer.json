@@ -18,6 +18,7 @@
         "symfony/asset": "6.3.*",
         "symfony/console": "6.3.*",
         "symfony/doctrine-bridge": "6.3.*",
+        "symfony/doctrine-messenger": "6.3.*",
         "symfony/dotenv": "6.3.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.3.*",

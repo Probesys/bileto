@@ -6,8 +6,20 @@ version: '3'
 
 services:
     php:
+        image: bileto:dev
         build: .
         restart: unless-stopped
+        volumes:
+            - ..:/var/www/html:z
+        user: $USER
+        links:
+            - database
+
+    worker:
+        image: bileto:dev
+        build: .
+        restart: unless-stopped
+        command: php bin/console messenger:consume async -vv
         volumes:
             - ..:/var/www/html:z
         user: $USER
