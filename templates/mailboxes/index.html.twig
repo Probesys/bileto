@@ -48,14 +48,25 @@
                             {{ mailbox.name }}
                         </span>
 
-                        <span class="row__item--noshrink">
+                        <div class="row__item--noshrink row row--always row--center flow flow--small">
                             <form method="POST" action="{{ path('test mailbox', { uid: mailbox.uid }) }}">
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('test mailbox') }}">
                                 <button type="submit" class="button--anchor">
                                     {{ 'mailboxes.index.test_mailbox' | trans }}
                                 </button>
                             </form>
-                        </span>
+
+                            <form method="POST" action="{{ path('delete mailbox', { uid: mailbox.uid }) }}">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox') }}">
+                                <button
+                                    type="submit"
+                                    class="button--anchor"
+                                    data-turbo-confirm="{{ 'mailboxes.index.delete.confirm' | trans }}"
+                                >
+                                    {{ 'mailboxes.index.delete' | trans }}
+                                </button>
+                            </form>
+                        </div>
                     </li>
                 {% endfor %}
             </ul>

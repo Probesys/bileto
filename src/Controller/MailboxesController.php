@@ -206,4 +206,29 @@ class MailboxesController extends BaseController
 
         return $this->redirectToRoute('mailboxes');
     }
+
+    #[Route('/mailboxes/{uid}/deletion', name: 'delete mailbox', methods: ['POST'])]
+    public function delete(
+        Mailbox $mailbox,
+        Request $request,
+        MailboxRepository $mailboxRepository,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:mailboxes');
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('delete mailbox', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            return $this->redirectToRoute('mailboxes');
+        }
+
+        $mailboxRepository->remove($mailbox, true);
+
+        return $this->redirectToRoute('mailboxes');
+    }
 }

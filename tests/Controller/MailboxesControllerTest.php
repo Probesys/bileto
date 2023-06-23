@@ -9,6 +9,7 @@ namespace App\Tests\Controller;
 use App\Security\Encryptor;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\MailboxFactory;
+use App\Tests\Factory\MailboxEmailFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -211,6 +212,68 @@ class MailboxesControllerTest extends WebTestCase
             'username' => $username,
             'password' => $password,
             'folder' => $folder,
+        ]);
+    }
+
+    public function testPostDeleteRemovesTheMailboxAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $mailbox = MailboxFactory::createOne();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'mailbox' => $mailbox,
+        ]);
+
+        // We need to clear the entities or the MailboxEmail will stay in
+        // memory. An option would be to set `cascade: ['remove']` on
+        // Mailbox->mailboxEmails, but it would decrease the performance for no
+        // interest since we don't need it outside of the tests.
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
+        $doctrine = self::getContainer()->get('doctrine');
+        $entityManager = $doctrine->getManager();
+        $entityManager->clear();
+
+        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete mailbox'),
+        ]);
+
+        $this->assertResponseRedirects('/mailboxes', 302);
+        MailboxFactory::assert()->notExists(['id' => $mailbox->getId()]);
+        MailboxEmailFactory::assert()->notExists(['id' => $mailboxEmail->getId()]);
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $mailbox = MailboxFactory::createOne();
+
+        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/deletion", [
+            '_csrf_token' => 'not the token',
+        ]);
+
+        $this->assertResponseRedirects('/mailboxes', 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        MailboxFactory::assert()->exists(['id' => $mailbox->getId()]);
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $mailbox = MailboxFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete mailbox'),
         ]);
     }
 }

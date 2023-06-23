@@ -80,6 +80,8 @@ mailboxes.encryption.tls: TLS
 mailboxes.folder: Folder
 mailboxes.host: Hostname
 mailboxes.index.collect: 'Collect the mailboxes'
+mailboxes.index.delete: Delete
+mailboxes.index.delete.confirm: 'Are you sure that you want to delete this mailbox?'
 mailboxes.index.new_mailbox: 'New mailbox'
 mailboxes.index.number: '{count, plural, =0 {No mailboxes} one {1 mailbox} other {# mailboxes}}'
 mailboxes.index.test_mailbox: 'Test connection'
