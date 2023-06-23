@@ -35,6 +35,12 @@
                 </div>
             {% endif %}
 
+            {% if message.via == 'email' %}
+                <div title="{{ 'tickets.show.message.via_email' | trans }}">
+                    {{ icon('envelope') }}
+                </div>
+            {% endif %}
+
             {% if message.isConfidential %}
                 <div title="{{ 'tickets.show.message.confidential' | trans }}">
                     {{ icon('user-secret') }}

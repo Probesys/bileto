@@ -20,7 +20,7 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
 {
     use MetaEntityTrait;
 
-    public const VIAS = ['webapp'];
+    public const VIAS = ['webapp', 'email'];
     public const DEFAULT_VIA = 'webapp';
 
     #[ORM\Id]
