@@ -45,7 +45,10 @@ class CreateTicketsFromMailboxEmailsHandler
         $mailboxEmails = $this->mailboxEmailRepository->findAll();
 
         foreach ($mailboxEmails as $mailboxEmail) {
-            $senderEmail = $mailboxEmail->getFrom();
+            $senderEmail = $mailboxEmail->getReplyTo();
+            if (!$senderEmail) {
+                $senderEmail = $mailboxEmail->getFrom();
+            }
 
             $requester = $this->userRepository->findOneBy([
                 'email' => $senderEmail,

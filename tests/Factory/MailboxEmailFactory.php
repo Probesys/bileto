@@ -69,17 +69,19 @@ final class MailboxEmailFactory extends ModelFactory
     protected function initialize(): self
     {
         return $this->instantiateWith(function (array $attributes, string $class): MailboxEmail {
-            $rawEmail = <<<TEXT
+            $headers = <<<TEXT
                 Subject: {$attributes['subject']}\r
                 From: <{$attributes['from']}>\r
                 To: support@example.com\r
                 Date: {$attributes['date']->format(DATE_RFC1123)}\r
                 Content-Type: text/html\r
-                \r
-                \r
-                {$attributes['htmlBody']}
-
                 TEXT;
+
+            if (isset($attributes['replyTo'])) {
+                $headers .= "\nReply-To: <{$attributes['replyTo']}>\r";
+            }
+
+            $rawEmail = "{$headers}\n\r\n\r{$attributes['htmlBody']}";
 
             $clientManager = new PHPIMAP\ClientManager();
             $email = PHPIMAP\Message::fromString($rawEmail);

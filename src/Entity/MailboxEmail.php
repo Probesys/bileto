@@ -128,6 +128,17 @@ class MailboxEmail implements MetaEntityInterface, ActivityRecordableInterface
         return $this->getEmail()->getFrom()->first()->mail;
     }
 
+    public function getReplyTo(): ?string
+    {
+        $address = $this->getEmail()->getReplyTo()->first();
+
+        if (!$address) {
+            return null;
+        }
+
+        return $address->mail;
+    }
+
     public function getSubject(): string
     {
         $subject = $this->getEmail()->getSubject();
