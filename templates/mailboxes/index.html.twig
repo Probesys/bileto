@@ -43,30 +43,36 @@
 
             <ul class="list--padded list--border list--nostyle">
                 {% for mailbox in mailboxes %}
-                    <li class="row" data-test="mailbox-item">
-                        <span class="row__item--extend">
-                            {{ mailbox.name }}
-                        </span>
+                    <li class="flow flow--small" data-test="mailbox-item">
+                        <div class="row">
+                            <span class="row__item--extend">
+                                {{ mailbox.name }}
+                            </span>
 
-                        <div class="row__item--noshrink row row--always row--center flow flow--small">
-                            <form method="POST" action="{{ path('test mailbox', { uid: mailbox.uid }) }}">
-                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('test mailbox') }}">
-                                <button type="submit" class="button--anchor">
-                                    {{ 'mailboxes.index.test_mailbox' | trans }}
-                                </button>
-                            </form>
+                            <div class="row__item--noshrink row row--always row--center flow flow--small">
+                                <form method="POST" action="{{ path('test mailbox', { uid: mailbox.uid }) }}">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('test mailbox') }}">
+                                    <button type="submit" class="button--anchor">
+                                        {{ 'mailboxes.index.test_mailbox' | trans }}
+                                    </button>
+                                </form>
 
-                            <form method="POST" action="{{ path('delete mailbox', { uid: mailbox.uid }) }}">
-                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox') }}">
-                                <button
-                                    type="submit"
-                                    class="button--anchor"
-                                    data-turbo-confirm="{{ 'mailboxes.index.delete.confirm' | trans }}"
-                                >
-                                    {{ 'mailboxes.index.delete' | trans }}
-                                </button>
-                            </form>
+                                <form method="POST" action="{{ path('delete mailbox', { uid: mailbox.uid }) }}">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox') }}">
+                                    <button
+                                        type="submit"
+                                        class="button--anchor"
+                                        data-turbo-confirm="{{ 'mailboxes.index.delete.confirm' | trans }}"
+                                    >
+                                        {{ 'mailboxes.index.delete' | trans }}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
+
+                        {% if mailbox.lastError %}
+                            {{ include('alerts/_error.html.twig', { message: mailbox.lastError }, with_context = false) }}
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

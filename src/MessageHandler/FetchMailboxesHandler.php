@@ -53,6 +53,7 @@ class FetchMailboxesHandler
 
             $folder = $client->getFolderByPath($mailbox->getFolder());
             $messages = $folder->messages()->unseen()->get();
+            $error = '';
 
             foreach ($messages as $email) {
                 $mailboxEmail = new MailboxEmail($mailbox, $email);
@@ -61,16 +62,26 @@ class FetchMailboxesHandler
                 try {
                     $email->delete();
                 } catch (\Exception $e) {
+                    $error = $e->getMessage();
+
                     $this->logger->warning(
-                        "Mailbox #{$mailbox->getId()} error (will try to mark as seen): {$e->getMessage()}"
+                        "Mailbox #{$mailbox->getId()} error (will try to mark as seen): {$error}"
                     );
                     $email->setFlag('Seen');
                 }
             }
 
             $client->disconnect();
+
+            $mailbox->setLastError($error);
+            $this->mailboxRepository->save($mailbox, true);
         } catch (\Exception $e) {
-            $this->logger->error("Mailbox #{$mailbox->getId()} error: {$e->getMessage()}");
+            $error = $e->getMessage();
+
+            $mailbox->setLastError($error);
+            $this->mailboxRepository->save($mailbox, true);
+
+            $this->logger->error("Mailbox #{$mailbox->getId()} error: {$error}");
         }
     }
 }

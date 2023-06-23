@@ -91,7 +91,6 @@ mailboxes.new.submit: 'Create the mailbox'
 mailboxes.new.title: 'New mailbox'
 mailboxes.password: Password
 mailboxes.port: 'Port IMAP'
-mailboxes.test.error: 'The connection failed: {error}'
 mailboxes.test.success: 'The connection works.'
 mailboxes.username: Username
 organizations.deletion.caution: Caution!

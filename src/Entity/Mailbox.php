@@ -8,6 +8,7 @@ namespace App\Entity;
 
 use App\EntityListener\EntitySetMetaListener;
 use App\Repository\MailboxRepository;
+use App\Utils\Time;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -90,6 +91,17 @@ class Mailbox implements MetaEntityInterface, ActivityRecordableInterface
         message: new TranslatableMessage('mailbox.folder.required', [], 'errors'),
     )]
     private ?string $folder = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $lastError = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $lastErrorAt = null;
+
+    public function __construct()
+    {
+        $this->lastError = '';
+    }
 
     public function getId(): ?int
     {
@@ -202,5 +214,23 @@ class Mailbox implements MetaEntityInterface, ActivityRecordableInterface
         $this->folder = $folder;
 
         return $this;
+    }
+
+    public function getLastError(): ?string
+    {
+        return $this->lastError;
+    }
+
+    public function setLastError(string $lastError): self
+    {
+        $this->lastError = $lastError;
+        $this->lastErrorAt = Time::now();
+
+        return $this;
+    }
+
+    public function getLastErrorAt(): ?\DateTimeImmutable
+    {
+        return $this->lastErrorAt;
     }
 }

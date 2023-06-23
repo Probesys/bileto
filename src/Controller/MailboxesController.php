@@ -143,6 +143,7 @@ class MailboxesController extends BaseController
     public function test(
         Request $request,
         Mailbox $mailbox,
+        MailboxRepository $mailboxRepository,
         TranslatorInterface $translator,
         Encryptor $encryptor,
     ): Response {
@@ -171,11 +172,15 @@ class MailboxesController extends BaseController
             $client->connect();
             $client->disconnect();
 
+            $mailbox->setLastError('');
+            $mailboxRepository->save($mailbox, true);
+
             $this->addFlash('success', new TranslatableMessage('mailboxes.test.success'));
         } catch (\Exception $e) {
-            $this->addFlash('error', new TranslatableMessage('mailboxes.test.error', [
-                'error' => $e->getMessage(),
-            ]));
+            $error = $e->getMessage();
+
+            $mailbox->setLastError($error);
+            $mailboxRepository->save($mailbox, true);
         }
 
         return $this->redirectToRoute('mailboxes');

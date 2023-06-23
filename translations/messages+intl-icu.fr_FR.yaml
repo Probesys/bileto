@@ -91,7 +91,6 @@ mailboxes.new.submit: 'Créer la boite mail'
 mailboxes.new.title: 'Nouvelle boite mail'
 mailboxes.password: 'Mot de passe'
 mailboxes.port: 'Port IMAP'
-mailboxes.test.error: "La connexion a échoué\_: {error}"
 mailboxes.test.success: 'La connexion fonctionne.'
 mailboxes.username: 'Nom d’utilisateur'
 organizations.deletion.caution: "Attention\_!"
