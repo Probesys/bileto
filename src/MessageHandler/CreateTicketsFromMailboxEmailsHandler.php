@@ -79,10 +79,24 @@ class CreateTicketsFromMailboxEmailsHandler
             );
 
             $ticket = null;
-            $ticketId = $mailboxEmail->extractTicketId();
 
-            if ($ticketId) {
-                $ticket = $this->ticketRepository->find($ticketId);
+            $replyMessage = null;
+            $replyId = $mailboxEmail->getInReplyTo();
+
+            if ($replyId) {
+                $replyMessage = $this->messageRepository->findOneBy([
+                    'emailId' => $replyId,
+                ]);
+            }
+
+            if ($replyMessage) {
+                $ticket = $replyMessage->getTicket();
+            } else {
+                $ticketId = $mailboxEmail->extractTicketId();
+
+                if ($ticketId) {
+                    $ticket = $this->ticketRepository->find($ticketId);
+                }
             }
 
             if ($ticket && (!$canAnswerTicket || $ticket->getStatus() === 'closed')) {

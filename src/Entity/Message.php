@@ -60,6 +60,9 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Ticket $ticket = null;
 
+    #[ORM\Column(length: 1000, nullable: true)]
+    private ?string $emailId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,5 +121,15 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
         return 'message';
     }
 
+    public function getEmailId(): ?string
+    {
+        return $this->emailId;
+    }
 
+    public function setEmailId(?string $emailId): static
+    {
+        $this->emailId = $emailId;
+
+        return $this;
+    }
 }

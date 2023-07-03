@@ -70,5 +70,9 @@ class SendMessageEmailHandler
         $email->text(strip_tags($content));
 
         $sentEmail = $this->transportInterface->send($email);
+
+        $emailId = $sentEmail->getMessageId();
+        $message->setEmailId($emailId);
+        $this->messageRepository->save($message, true);
     }
 }
