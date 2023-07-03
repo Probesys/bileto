@@ -128,7 +128,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHeaderSame($email, 'To', $assignee->getEmail());
+        $this->assertEmailHeaderSame($email, 'Bcc', $assignee->getEmail());
     }
 
     public function testInvokeCreatesATicketIfTicketIdIsGivenButPermissionsAreInsufficient(): void
