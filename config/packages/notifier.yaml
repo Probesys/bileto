@@ -1,7 +1,0 @@
-framework:
-    notifier:
-        channel_policy:
-            urgent: ['email']
-            high: ['email']
-            medium: ['email']
-            low: ['email']
