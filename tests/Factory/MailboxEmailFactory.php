@@ -81,6 +81,10 @@ final class MailboxEmailFactory extends ModelFactory
                 $headers .= "\nReply-To: <{$attributes['replyTo']}>\r";
             }
 
+            if (isset($attributes['inReplyTo'])) {
+                $headers .= "\nIn-Reply-To: <{$attributes['inReplyTo']}>\r";
+            }
+
             $rawEmail = "{$headers}\n\r\n\r{$attributes['htmlBody']}";
 
             $clientManager = new PHPIMAP\ClientManager();

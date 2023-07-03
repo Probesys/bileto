@@ -10,7 +10,7 @@ use App\Entity\Ticket;
 use App\Entity\MailboxEmail;
 use App\Entity\Message;
 use App\Message\CreateTicketsFromMailboxEmails;
-use App\Notifier\NewMessageNotification;
+use App\Message\SendMessageEmail;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Repository\MessageRepository;
@@ -21,7 +21,7 @@ use App\Security\Encryptor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Notifier\NotifierInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Webklex\PHPIMAP;
 
@@ -35,7 +35,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private UserRepository $userRepository,
         private AccessDecisionManagerInterface $accessDecisionManager,
         private HtmlSanitizerInterface $appMessageSanitizer,
-        private NotifierInterface $notifier,
+        private MessageBusInterface $bus,
         private LoggerInterface $logger,
     ) {
     }
@@ -79,10 +79,24 @@ class CreateTicketsFromMailboxEmailsHandler
             );
 
             $ticket = null;
-            $ticketId = $mailboxEmail->extractTicketId();
 
-            if ($ticketId) {
-                $ticket = $this->ticketRepository->find($ticketId);
+            $replyMessage = null;
+            $replyId = $mailboxEmail->getInReplyTo();
+
+            if ($replyId) {
+                $replyMessage = $this->messageRepository->findOneBy([
+                    'emailId' => $replyId,
+                ]);
+            }
+
+            if ($replyMessage) {
+                $ticket = $replyMessage->getTicket();
+            } else {
+                $ticketId = $mailboxEmail->extractTicketId();
+
+                if ($ticketId) {
+                    $ticket = $this->ticketRepository->find($ticketId);
+                }
             }
 
             if ($ticket && (!$canAnswerTicket || $ticket->getStatus() === 'closed')) {
@@ -124,10 +138,7 @@ class CreateTicketsFromMailboxEmailsHandler
             $this->messageRepository->save($message, true);
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
 
-            $notification = new NewMessageNotification($message);
-            foreach ($message->getRecipients() as $recipient) {
-                $this->notifier->send($notification, $recipient);
-            }
+            $this->bus->dispatch(new SendMessageEmail($message->getId()));
         }
     }
 

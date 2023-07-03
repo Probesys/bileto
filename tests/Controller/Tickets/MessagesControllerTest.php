@@ -59,6 +59,7 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('webapp', $message->getVia());
+        $this->assertMatchesRegularExpression('/^[\w\d]*@example.com$/', $message->getEmailId());
         $this->assertSame('pending', $ticket->getStatus());
         $this->assertEquals($now, $ticket->getUpdatedAt());
         $this->assertsame($user->getId(), $ticket->getUpdatedBy()->getId());

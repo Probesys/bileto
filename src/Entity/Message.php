@@ -10,7 +10,6 @@ use App\EntityListener\EntitySetMetaListener;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -60,6 +59,9 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Ticket $ticket = null;
+
+    #[ORM\Column(length: 1000, nullable: true)]
+    private ?string $emailId = null;
 
     public function getId(): ?int
     {
@@ -119,26 +121,15 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
         return 'message';
     }
 
-    /**
-     * @return Recipient[]
-     */
-    public function getRecipients(): array
+    public function getEmailId(): ?string
     {
-        $author = $this->getCreatedBy();
-        $ticket = $this->getTicket();
-        $requester = $ticket->getRequester();
-        $assignee = $ticket->getAssignee();
+        return $this->emailId;
+    }
 
-        $recipients = [];
+    public function setEmailId(?string $emailId): static
+    {
+        $this->emailId = $emailId;
 
-        if ($requester !== $author) {
-            $recipients[] = new Recipient($requester->getEmail());
-        }
-
-        if ($assignee && $assignee !== $author && $assignee !== $requester) {
-            $recipients[] = new Recipient($assignee->getEmail());
-        }
-
-        return $recipients;
+        return $this;
     }
 }
