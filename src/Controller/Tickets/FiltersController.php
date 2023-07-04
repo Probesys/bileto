@@ -66,7 +66,7 @@ class FiltersController extends BaseController
                 'from' => $from,
             ]);
         } elseif ($filter === 'actors' || $filter === 'assignee' || $filter === 'requester' || $filter === 'involves') {
-            $users = $actorsLister->listUsers();
+            $users = $actorsLister->findAll();
             return $this->render("tickets/filters/edit_actors.html.twig", [
                 'ticketFilter' => $ticketFilter,
                 'users' => $users,

@@ -6,6 +6,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Organization;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -68,6 +69,29 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             OR LOWER(u.email) LIKE :value
         SQL);
         $query->setParameter('value', "%{$value}%");
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param int[] $orgaIds
+     *
+     * @return User[]
+     */
+    public function findByOrganizationIds(array $orgaIds): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT u
+            FROM App\Entity\User u
+            JOIN u.authorizations a
+            JOIN a.role r
+            WHERE (a.organization IN (:organizations) OR a.organization IS NULL)
+            AND (r.type = 'orga:user' OR r.type = 'orga:tech')
+        SQL);
+
+        $query->setParameter('organizations', $orgaIds);
 
         return $query->getResult();
     }

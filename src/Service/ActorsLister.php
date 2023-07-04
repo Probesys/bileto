@@ -6,6 +6,7 @@
 
 namespace App\Service;
 
+use App\Entity\Organization;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\UserSorter;
@@ -23,9 +24,35 @@ class ActorsLister
     /**
      * @return User[]
      */
-    public function listUsers(): array
+    public function findAllForOrganization(Organization $organization): array
     {
         $currentUser = $this->security->getUser();
+
+        $orgaIds = $organization->getParentOrganizationIds();
+        $orgaIds[] = $organization->getId();
+
+        $users = $this->userRepository->findByOrganizationIds($orgaIds);
+
+        $this->userSorter->sort($users);
+
+        $currentUserKey = array_search($currentUser, $users);
+        if ($currentUserKey !== false) {
+            // Make sure that the current user is first in the list
+            $user = $users[$currentUserKey];
+            unset($users[$currentUserKey]);
+            return array_merge([$user], $users);
+        } else {
+            return $users;
+        }
+    }
+
+    /**
+     * @return User[]
+     */
+    public function findAll(): array
+    {
+        $currentUser = $this->security->getUser();
+
         $users = $this->userRepository->findAll();
 
         $this->userSorter->sort($users);
