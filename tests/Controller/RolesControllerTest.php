@@ -33,11 +33,11 @@ class RolesControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
         RoleFactory::createOne([
             'name' => 'foo',
-            'type' => 'orga',
+            'type' => 'orga:tech',
         ]);
         RoleFactory::createOne([
             'name' => 'bar',
-            'type' => 'orga',
+            'type' => 'orga:tech',
         ]);
 
         $client->request('GET', '/roles');
@@ -119,6 +119,7 @@ class RolesControllerTest extends WebTestCase
         $crawler = $client->submitForm('form-save-role-submit', [
             'name' => $name,
             'description' => $description,
+            'type' => 'orga:tech',
         ]);
 
         Time::unfreeze();
@@ -129,9 +130,9 @@ class RolesControllerTest extends WebTestCase
         $role = RoleFactory::last();
         $this->assertSame($name, $role->getName());
         $this->assertSame($description, $role->getDescription());
-        // This permission is always set for admin roles
+        // This permission is always set for orga roles
         $this->assertSame(['orga:see'], $role->getPermissions());
-        $this->assertSame('orga', $role->getType());
+        $this->assertSame('orga:tech', $role->getType());
         $this->assertSame(20, strlen($role->getUid()));
         $this->assertEquals($now, $role->getCreatedAt());
         $this->assertSame($user->getId(), $role->getCreatedBy()->getId());
@@ -146,10 +147,11 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new?type=admin', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
+            'type' => 'admin',
         ]);
 
         $this->assertResponseRedirects('/roles', 302);
@@ -168,18 +170,19 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new?type=super', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
+            'type' => 'super',
         ]);
 
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
-        $this->assertSame('orga', $role->getType());
+        $this->assertSame('orga:user', $role->getType());
     }
 
-    public function testPostCreateCreatesAnOrgaRoleByDefault(): void
+    public function testPostCreateCreatesAnOrgaUserRoleByDefault(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -196,7 +199,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
-        $this->assertSame('orga', $role->getType());
+        $this->assertSame('orga:user', $role->getType());
     }
 
     public function testPostCreateSanitizesPermissionsForOrgaRole(): void
@@ -215,10 +218,11 @@ class RolesControllerTest extends WebTestCase
             'foo:bar',
         ];
 
-        $client->request('POST', '/roles/new?type=orga', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
+            'type' => 'orga:tech',
             'permissions' => $permissions,
         ]);
 
@@ -243,10 +247,11 @@ class RolesControllerTest extends WebTestCase
             'foo:bar',
         ];
 
-        $client->request('POST', '/roles/new?type=admin', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
+            'type' => 'admin',
             'permissions' => $permissions,
         ]);
 
@@ -264,7 +269,7 @@ class RolesControllerTest extends WebTestCase
         $name = '';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new?type=orga', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -283,7 +288,7 @@ class RolesControllerTest extends WebTestCase
         $name = str_repeat('a', 51);
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new?type=orga', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -302,7 +307,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = '';
 
-        $client->request('POST', '/roles/new?type=orga', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -321,7 +326,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = str_repeat('a', 256);
 
-        $client->request('POST', '/roles/new?type=orga', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -345,7 +350,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(2, RoleFactory::count());
 
-        $client->request('POST', '/roles/new?type=orga', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -364,7 +369,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new?type=orga', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => 'not a token',
             'name' => $name,
             'description' => $description,
@@ -385,7 +390,7 @@ class RolesControllerTest extends WebTestCase
         $description = 'What it does';
 
         $client->catchExceptions(false);
-        $client->request('POST', '/roles/new?type=orga', [
+        $client->request('POST', '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -398,7 +403,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
         $role = RoleFactory::createOne([
             'type' => $type,
         ]);
@@ -437,7 +442,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['admin', 'orga']),
+            'type' => RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']),
         ]);
 
         $client->catchExceptions(false);
@@ -450,20 +455,24 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $oldType = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
+        $newType = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
         $newDescription = 'Description of the new role';
-        if ($type === 'admin') {
+        if ($oldType === 'admin') {
             $oldPermissions = ['admin:manage:organizations'];
-            $newPermissions = ['admin:manage:roles'];
         } else {
             $oldPermissions = ['orga:create:tickets'];
+        }
+        if ($newType === 'admin') {
+            $newPermissions = ['admin:manage:roles'];
+        } else {
             $newPermissions = ['orga:create:tickets:messages'];
         }
         $role = RoleFactory::createOne([
-            'type' => $type,
+            'type' => $oldType,
             'name' => $oldName,
             'description' => $oldDescription,
             'permissions' => $oldPermissions,
@@ -473,6 +482,7 @@ class RolesControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
             'description' => $newDescription,
+            'type' => $newType,
             'permissions' => $newPermissions,
         ]);
 
@@ -480,7 +490,8 @@ class RolesControllerTest extends WebTestCase
         $role->refresh();
         $this->assertSame($newName, $role->getName());
         $this->assertSame($newDescription, $role->getDescription());
-        if ($type === 'admin') {
+        $this->assertSame($newType, $role->getType());
+        if ($newType === 'admin') {
             $newPermissions[] = 'admin:see';
         } else {
             $newPermissions[] = 'orga:see';
@@ -511,6 +522,7 @@ class RolesControllerTest extends WebTestCase
         $client->request('POST', "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
+            'type' => 'admin',
             'description' => $newDescription,
             'permissions' => $newPermissions,
         ]);
@@ -528,7 +540,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
         $oldName = 'Old role';
         $newName = '';
         $oldDescription = 'Description of the old role';
@@ -551,6 +563,7 @@ class RolesControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
             'description' => $newDescription,
+            'type' => $type,
             'permissions' => $newPermissions,
         ]);
 
@@ -567,7 +580,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
@@ -590,6 +603,7 @@ class RolesControllerTest extends WebTestCase
             '_csrf_token' => 'not a token',
             'name' => $newName,
             'description' => $newDescription,
+            'type' => $type,
             'permissions' => $newPermissions,
         ]);
 
@@ -626,6 +640,7 @@ class RolesControllerTest extends WebTestCase
         $client->request('POST', "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
+            'type' => 'admin',
             'description' => $newDescription,
             'permissions' => $newPermissions,
         ]);
@@ -638,7 +653,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
@@ -662,6 +677,7 @@ class RolesControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
             'description' => $newDescription,
+            'type' => $type,
             'permissions' => $newPermissions,
         ]);
     }

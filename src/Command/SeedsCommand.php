@@ -54,7 +54,7 @@ class SeedsCommand extends Command
             'name' => 'Technician',
         ], [
             'description' => 'Solve problems.',
-            'type' => 'orga',
+            'type' => 'orga:tech',
             'permissions' => [
                 'orga:create:tickets',
                 'orga:create:tickets:messages',
@@ -74,7 +74,7 @@ class SeedsCommand extends Command
             'name' => 'User',
         ], [
             'description' => 'Have problems.',
-            'type' => 'orga',
+            'type' => 'orga:user',
             'permissions' => [
                 'orga:create:tickets',
                 'orga:create:tickets:messages',

@@ -24,7 +24,7 @@ class RolesController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
         $adminRoles = $roleRepository->findBy(['type' => 'admin']);
-        $orgaRoles = $roleRepository->findBy(['type' => 'orga']);
+        $orgaRoles = $roleRepository->findBy(['type' => ['orga:user', 'orga:tech']]);
 
         $superRole = $roleRepository->findOrCreateSuperRole();
         $adminRoles[] = $superRole;
@@ -46,7 +46,11 @@ class RolesController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
         /** @var string $type */
-        $type = $request->query->get('type', 'orga');
+        $type = $request->query->get('type', 'orga:user');
+
+        if (!in_array($type, Role::TYPES) || $type === 'super') {
+            $type = 'orga:user';
+        }
 
         return $this->render('roles/new.html.twig', [
             'type' => $type,
@@ -69,7 +73,7 @@ class RolesController extends BaseController
         $user = $this->getUser();
 
         /** @var string $type */
-        $type = $request->query->get('type', 'orga');
+        $type = $request->request->get('type', 'orga:user');
 
         /** @var string $name */
         $name = $request->request->get('name', '');
@@ -83,13 +87,13 @@ class RolesController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        if ($type !== 'admin' && $type !== 'orga') {
-            $type = 'orga';
+        if (!in_array($type, Role::TYPES) || $type === 'super') {
+            $type = 'orga:user';
         }
 
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
-        } elseif ($type === 'orga' && !in_array('orga:see', $permissions)) {
+        } elseif (str_starts_with($type, 'orga:') && !in_array('orga:see', $permissions)) {
             $permissions[] = 'orga:see';
         }
 
@@ -155,13 +159,12 @@ class RolesController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        $type = $role->getType();
         if ($role->getType() === 'super') {
             throw $this->createNotFoundException('Super Role object cannot be loaded.');
         }
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
 
         /** @var string $name */
         $name = $request->request->get('name', '');
@@ -169,15 +172,22 @@ class RolesController extends BaseController
         /** @var string $description */
         $description = $request->request->get('description', '');
 
+        /** @var string $type */
+        $type = $request->request->get('type', 'orga:user');
+
         /** @var string[] $permissions */
         $permissions = $request->request->all('permissions');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
+        if (!in_array($type, Role::TYPES) || $type === 'super') {
+            $type = 'orga:user';
+        }
+
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
-        } elseif ($type === 'orga' && !in_array('orga:see', $permissions)) {
+        } elseif (str_starts_with($type, 'orga:') && !in_array('orga:see', $permissions)) {
             $permissions[] = 'orga:see';
         }
 
@@ -196,6 +206,7 @@ class RolesController extends BaseController
 
         $role->setName($name);
         $role->setDescription($description);
+        $role->setType($type);
         $role->setPermissions($permissions);
 
         $errors = $validator->validate($role);

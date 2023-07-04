@@ -26,7 +26,7 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
 {
     use MetaEntityTrait;
 
-    public const TYPES = ['super', 'admin', 'orga'];
+    public const TYPES = ['super', 'admin', 'orga:tech', 'orga:user'];
 
     public const PERMISSIONS = [
         'admin:*',
@@ -180,9 +180,15 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
     {
         $sanitizedPermissions = [];
 
+        if ($type === 'orga:user' || $type === 'orga:tech') {
+            $prefix = 'orga';
+        } else {
+            $prefix = $type;
+        }
+
         foreach ($permissions as $permission) {
             if (
-                str_starts_with($permission, $type . ':') &&
+                str_starts_with($permission, $prefix . ':') &&
                 in_array($permission, self::PERMISSIONS) &&
                 $permission !== 'admin:*' // it is reserved to the super admin role
             ) {

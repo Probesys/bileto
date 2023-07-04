@@ -25,8 +25,8 @@ export default class extends Controller {
         if (isOrgaChecked) {
             let selectedRole = '';
             this.roleOptionTargets.forEach((roleOption) => {
-                roleOption.hidden = roleOption.dataset.type !== 'orga';
-                if (roleOption.dataset.type === 'orga' && selectedRole === '') {
+                roleOption.hidden = !roleOption.dataset.type.startsWith('orga:');
+                if (roleOption.dataset.type.startsWith('orga:') && selectedRole === '') {
                     selectedRole = roleOption.value;
                 }
             });
@@ -35,8 +35,8 @@ export default class extends Controller {
         } else {
             let selectedRole = '';
             this.roleOptionTargets.forEach((roleOption) => {
-                roleOption.hidden = roleOption.dataset.type === 'orga';
-                if (roleOption.dataset.type !== 'orga' && selectedRole === '') {
+                roleOption.hidden = roleOption.dataset.type.startsWith('orga:');
+                if (!roleOption.dataset.type.startsWith('orga:') && selectedRole === '') {
                     selectedRole = roleOption.value;
                 }
             });
