@@ -33,8 +33,8 @@ class ActorsController extends BaseController
             $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
         }
 
-        $allUsers = $actorsLister->findAllForOrganization($organization);
-        $techUsers = $actorsLister->findAllForOrganization($organization, role: 'tech');
+        $allUsers = $actorsLister->findByOrganization($organization);
+        $techUsers = $actorsLister->findByOrganization($organization, role: 'tech');
         $requester = $ticket->getRequester();
         $assignee = $ticket->getAssignee();
 
@@ -78,8 +78,8 @@ class ActorsController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        $allUsers = $actorsLister->findAllForOrganization($organization);
-        $techUsers = $actorsLister->findAllForOrganization($organization, role: 'tech');
+        $allUsers = $actorsLister->findByOrganization($organization);
+        $techUsers = $actorsLister->findByOrganization($organization, role: 'tech');
 
         if (!$this->isCsrfTokenValid('update ticket actors', $csrfToken)) {
             return $this->renderBadRequest('tickets/actors/edit.html.twig', [

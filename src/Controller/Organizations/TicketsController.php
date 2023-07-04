@@ -107,8 +107,8 @@ class TicketsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
 
-        $allUsers = $actorsLister->findAllForOrganization($organization);
-        $techUsers = $actorsLister->findAllForOrganization($organization, role: 'tech');
+        $allUsers = $actorsLister->findByOrganization($organization);
+        $techUsers = $actorsLister->findByOrganization($organization, role: 'tech');
 
         return $this->render('organizations/tickets/new.html.twig', [
             'organization' => $organization,
@@ -194,8 +194,8 @@ class TicketsController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        $allUsers = $actorsLister->findAllForOrganization($organization);
-        $techUsers = $actorsLister->findAllForOrganization($organization, role: 'tech');
+        $allUsers = $actorsLister->findByOrganization($organization);
+        $techUsers = $actorsLister->findByOrganization($organization, role: 'tech');
 
         if (!$this->isCsrfTokenValid('create organization ticket', $csrfToken)) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [

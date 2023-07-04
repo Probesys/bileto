@@ -30,30 +30,19 @@ class ActorsLister
      *
      * @return User[]
      */
-    public function findAllForOrganization(Organization $organization, string $role = 'any'): array
+    public function findByOrganization(Organization $organization, string $role = 'any'): array
     {
+        /** @var User */
         $currentUser = $this->security->getUser();
 
         $authorizedOrgaIds = $this->findAuthorizedOrganizationIds($currentUser);
 
-        $orgaIds = $organization->getParentOrganizationIds();
-        $orgaIds[] = $organization->getId();
+        $organizationIds = $organization->getParentOrganizationIds();
+        $organizationIds[] = $organization->getId();
 
-        $orgaIds = array_intersect($authorizedOrgaIds, $orgaIds);
+        $organizationIds = array_intersect($authorizedOrgaIds, $organizationIds);
 
-        $users = $this->userRepository->findByOrganizationIds($orgaIds, $role);
-
-        $this->userSorter->sort($users);
-
-        $currentUserKey = array_search($currentUser, $users);
-        if ($currentUserKey !== false) {
-            // Make sure that the current user is first in the list
-            $user = $users[$currentUserKey];
-            unset($users[$currentUserKey]);
-            return array_merge([$user], $users);
-        } else {
-            return $users;
-        }
+        return $this->findByOrganizationIds($organizationIds, $role);
     }
 
     /**
@@ -63,17 +52,30 @@ class ActorsLister
      */
     public function findAll(string $role = 'any'): array
     {
+        /** @var User */
         $currentUser = $this->security->getUser();
 
         $authorizedOrgaIds = $this->findAuthorizedOrganizationIds($currentUser);
 
-        $users = $this->userRepository->findByOrganizationIds($authorizedOrgaIds, $role);
+        return $this->findByOrganizationIds($authorizedOrgaIds, $role);
+    }
+
+    /**
+     * @param int[] $organizationIds
+     * @param 'any'|'user'|'tech' $role
+     *
+     * @return User[]
+     */
+    private function findByOrganizationIds(array $organizationIds, string $role): array
+    {
+        $users = $this->userRepository->findByOrganizationIds($organizationIds, $role);
 
         $this->userSorter->sort($users);
 
+        // Make sure that the current user is the first of the list
+        $currentUser = $this->security->getUser();
         $currentUserKey = array_search($currentUser, $users);
         if ($currentUserKey !== false) {
-            // Make sure that the current user is first in the list
             $user = $users[$currentUserKey];
             unset($users[$currentUserKey]);
             return array_merge([$user], $users);
