@@ -6,6 +6,8 @@
 
 USER = $(shell id -u):$(shell id -g)
 
+DOCKER_COMPOSE = docker-compose -p bileto -f docker/docker-compose.yml
+
 ifdef NO_DOCKER
 	PHP = php
 	COMPOSER = composer
@@ -37,15 +39,15 @@ endif
 .PHONY: docker-start
 docker-start: ## Start a development server with Docker
 	@echo "Running webserver on http://localhost:8000"
-	docker-compose -p bileto -f docker/docker-compose.yml up
+	$(DOCKER_COMPOSE) up
 
 .PHONY: docker-build
 docker-build: ## Rebuild Docker containers
-	docker-compose -p bileto -f docker/docker-compose.yml build
+	$(DOCKER_COMPOSE) build
 
 .PHONY: docker-clean
 docker-clean: ## Clean the Docker stuff
-	docker-compose -p bileto -f docker/docker-compose.yml down
+	$(DOCKER_COMPOSE) down
 
 .PHONY: install
 install: ## Install the dependencies
@@ -67,11 +69,17 @@ db-reset: ## Reset the database
 ifndef FORCE
 	$(error Please run the operation with FORCE=true)
 endif
+ifndef NO_DOCKER
+	$(DOCKER_COMPOSE) stop worker
+endif
 	$(CONSOLE) doctrine:database:drop --force --if-exists
 	$(CONSOLE) doctrine:database:create
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
 	$(CONSOLE) cache:clear
 	$(CONSOLE) db:seeds:load
+ifndef NO_DOCKER
+	$(DOCKER_COMPOSE) start worker
+endif
 
 .PHONY: i18n-extract
 i18n-extract: ## Extract translations
