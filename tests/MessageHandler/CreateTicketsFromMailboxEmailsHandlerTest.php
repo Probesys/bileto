@@ -92,6 +92,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $assignee = UserFactory::createOne();
         $ticket = TicketFactory::createOne([
             'status' => 'new',
+            'organization' => $organization,
             'requester' => $user,
             'assignee' => $assignee,
         ]);
@@ -148,6 +149,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $assignee = UserFactory::createOne();
         $ticket = TicketFactory::createOne([
             'status' => 'new',
+            'organization' => $organization,
             'requester' => $user,
             'assignee' => $assignee,
         ]);
@@ -206,6 +208,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $ticket = TicketFactory::createOne([
             'status' => 'new',
+            'organization' => $organization,
         ]);
         $date = Factory::faker()->dateTime();
         /** @var string */
@@ -249,6 +252,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
         $ticket = TicketFactory::createOne([
             'status' => 'closed',
+            'organization' => $organization,
         ]);
         $date = Factory::faker()->dateTime();
         /** @var string */
@@ -308,6 +312,51 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
 
         $message = MessageFactory::first();
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
+    }
+
+    public function testInvokeCreatesATicketIfAccessIsForbiddenWhenAnswering(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $organization = OrganizationFactory::createOne();
+        $otherOrganization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        // The user has the expected permissions on its organization.
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:create:tickets:messages',
+        ], $organization->object());
+        // But the ticket is associated to another organization!
+        $ticket = TicketFactory::createOne([
+            'status' => 'new',
+            'organization' => $otherOrganization,
+        ]);
+        /** @var string */
+        $subject = Factory::faker()->words(3, true);
+        $subject = "Re: [#{$ticket->getId()}] " . $subject;
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(2, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::last();
+        $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
+        $this->assertSame($subject, $ticket->getTitle());
+        $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
     }
 
     public function testInvokeFailsIfRequesterDoesNotExists(): void

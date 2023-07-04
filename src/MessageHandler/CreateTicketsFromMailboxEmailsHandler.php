@@ -59,60 +59,45 @@ class CreateTicketsFromMailboxEmailsHandler
                 continue;
             }
 
-            $organization = $requester->getOrganization();
+            $requesterOrganization = $requester->getOrganization();
 
-            if (!$organization) {
+            if (!$requesterOrganization) {
                 $this->markError($mailboxEmail, 'sender is not attached to an organization');
                 continue;
             }
 
             $token = new UserToken($requester);
-            $canCreateTicket = $this->accessDecisionManager->decide(
-                $token,
-                ['orga:create:tickets'],
-                $organization
-            );
-            $canAnswerTicket = $this->accessDecisionManager->decide(
-                $token,
-                ['orga:create:tickets:messages'],
-                $organization
-            );
 
-            $ticket = null;
+            $ticket = $this->getAnsweredTicket($mailboxEmail, $token);
 
-            $replyMessage = null;
-            $replyId = $mailboxEmail->getInReplyTo();
+            $date = $mailboxEmail->getDate();
 
-            if ($replyId) {
-                $replyMessage = $this->messageRepository->findOneBy([
-                    'emailId' => $replyId,
-                ]);
-            }
+            if ($ticket) {
+                $canAnswerTicket = $this->accessDecisionManager->decide(
+                    $token,
+                    ['orga:create:tickets:messages'],
+                    $ticket->getOrganization(),
+                );
 
-            if ($replyMessage) {
-                $ticket = $replyMessage->getTicket();
-            } else {
-                $ticketId = $mailboxEmail->extractTicketId();
-
-                if ($ticketId) {
-                    $ticket = $this->ticketRepository->find($ticketId);
+                if (!$canAnswerTicket || $ticket->getStatus() === 'closed') {
+                    $ticket = null;
                 }
             }
 
-            if ($ticket && (!$canAnswerTicket || $ticket->getStatus() === 'closed')) {
-                $ticket = null;
-            }
-
-            if (!$ticket && !$canCreateTicket) {
-                $this->markError($mailboxEmail, 'sender has not permission to create tickets');
-                continue;
-            }
-
-            $subject = $mailboxEmail->getSubject();
-            $messageContent = $this->appMessageSanitizer->sanitize($mailboxEmail->getBody());
-            $date = $mailboxEmail->getDate();
-
             if (!$ticket) {
+                $canCreateTicket = $this->accessDecisionManager->decide(
+                    $token,
+                    ['orga:create:tickets'],
+                    $requesterOrganization,
+                );
+
+                if (!$canCreateTicket) {
+                    $this->markError($mailboxEmail, 'sender has not permission to create tickets');
+                    continue;
+                }
+
+                $subject = $mailboxEmail->getSubject();
+
                 $ticket = new Ticket();
                 $ticket->setCreatedAt($date);
                 $ticket->setCreatedBy($requester);
@@ -122,9 +107,11 @@ class CreateTicketsFromMailboxEmailsHandler
                 $ticket->setUrgency(Ticket::DEFAULT_WEIGHT);
                 $ticket->setImpact(Ticket::DEFAULT_WEIGHT);
                 $ticket->setPriority(Ticket::DEFAULT_WEIGHT);
-                $ticket->setOrganization($organization);
+                $ticket->setOrganization($requesterOrganization);
                 $ticket->setRequester($requester);
             }
+
+            $messageContent = $this->appMessageSanitizer->sanitize($mailboxEmail->getBody());
 
             $message = new Message();
             $message->setCreatedAt($date);
@@ -140,6 +127,31 @@ class CreateTicketsFromMailboxEmailsHandler
 
             $this->bus->dispatch(new SendMessageEmail($message->getId()));
         }
+    }
+
+    private function getAnsweredTicket(MailboxEmail $mailboxEmail, UserToken $token): ?Ticket
+    {
+        $replyId = $mailboxEmail->getInReplyTo();
+
+        if ($replyId) {
+            $replyMessage = $this->messageRepository->findOneBy([
+                'emailId' => $replyId,
+            ]);
+        } else {
+            $replyMessage = null;
+        }
+
+        if ($replyMessage) {
+            return $replyMessage->getTicket();
+        }
+
+        $ticketId = $mailboxEmail->extractTicketId();
+
+        if ($ticketId) {
+            return $this->ticketRepository->find($ticketId);
+        }
+
+        return null;
     }
 
     private function markError(MailboxEmail $mailboxEmail, string $error): void
