@@ -102,8 +102,8 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => null,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}/actors/edit");
-        $crawler = $client->submitForm('form-update-actors-submit', [
+        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'assigneeUid' => $assignee->getUid(),
         ]);

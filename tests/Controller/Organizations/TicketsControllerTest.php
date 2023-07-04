@@ -210,8 +210,8 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
-        $crawler = $client->submitForm('form-create-ticket-submit', [
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $requester->getUid(),
             'assigneeUid' => $assignee->getUid(),
