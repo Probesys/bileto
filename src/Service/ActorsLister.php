@@ -26,9 +26,11 @@ class ActorsLister
     }
 
     /**
+     * @param 'any'|'user'|'tech' $role
+     *
      * @return User[]
      */
-    public function findAllForOrganization(Organization $organization): array
+    public function findAllForOrganization(Organization $organization, string $role = 'any'): array
     {
         $currentUser = $this->security->getUser();
 
@@ -39,7 +41,7 @@ class ActorsLister
 
         $orgaIds = array_intersect($authorizedOrgaIds, $orgaIds);
 
-        $users = $this->userRepository->findByOrganizationIds($orgaIds);
+        $users = $this->userRepository->findByOrganizationIds($orgaIds, $role);
 
         $this->userSorter->sort($users);
 
@@ -55,15 +57,17 @@ class ActorsLister
     }
 
     /**
+     * @param 'any'|'user'|'tech' $role
+     *
      * @return User[]
      */
-    public function findAll(): array
+    public function findAll(string $role = 'any'): array
     {
         $currentUser = $this->security->getUser();
 
         $authorizedOrgaIds = $this->findAuthorizedOrganizationIds($currentUser);
 
-        $users = $this->userRepository->findByOrganizationIds($authorizedOrgaIds);
+        $users = $this->userRepository->findByOrganizationIds($authorizedOrgaIds, $role);
 
         $this->userSorter->sort($users);
 
