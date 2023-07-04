@@ -164,3 +164,29 @@
 .message__content * + ol {
     margin-top: 2rem;
 }
+
+.message__content th,
+.message__content td {
+    padding: initial;
+
+    font-size: 1em;
+
+    vertical-align: initial;
+}
+
+.message__content tbody tr {
+    border-bottom: none;
+}
+
+.message__content tbody tr:nth-child(even) {
+    background-color: var(--color-grey1);
+}
+
+.message__content blockquote {
+    margin-left: 0;
+    padding-left: 2rem;
+
+    color: var(--color-grey11);
+
+    border-left: 0.25rem solid var(--color-primary6);
+}
