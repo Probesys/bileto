@@ -8,18 +8,16 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\UserSorter;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class ActorsLister
 {
-    private UserRepository $userRepository;
-
-    private Security $security;
-
-    public function __construct(UserRepository $userRepository, Security $security)
-    {
-        $this->userRepository = $userRepository;
-        $this->security = $security;
+    public function __construct(
+        private UserRepository $userRepository,
+        private UserSorter $userSorter,
+        private Security $security,
+    ) {
     }
 
     /**
@@ -28,10 +26,13 @@ class ActorsLister
     public function listUsers(): array
     {
         $currentUser = $this->security->getUser();
-        $users = $this->userRepository->findBy([], ['email' => 'ASC']);
+        $users = $this->userRepository->findAll();
+
+        $this->userSorter->sort($users);
 
         $currentUserKey = array_search($currentUser, $users);
         if ($currentUserKey !== false) {
+            // Make sure that the current user is first in the list
             $user = $users[$currentUserKey];
             unset($users[$currentUserKey]);
             return array_merge([$user], $users);
