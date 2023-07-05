@@ -90,7 +90,13 @@ final class MailboxEmailFactory extends ModelFactory
             $clientManager = new PHPIMAP\ClientManager();
             $email = PHPIMAP\Message::fromString($rawEmail);
 
-            return new MailboxEmail($attributes['mailbox'], $email);
+            $mailboxEmail = new MailboxEmail($attributes['mailbox'], $email);
+
+            if (isset($attributes['lastError'])) {
+                $mailboxEmail->setLastError($attributes['lastError']);
+            }
+
+            return $mailboxEmail;
         });
     }
 

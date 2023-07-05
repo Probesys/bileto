@@ -44,4 +44,21 @@ class MailboxEmailRepository extends ServiceEntityRepository implements UidGener
             $this->getEntityManager()->flush();
         }
     }
+
+    /**
+     * @return MailboxEmail[]
+     */
+    public function findInError(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT me
+            FROM App\Entity\MailboxEmail me
+            WHERE me.lastErrorAt IS NOT NULL
+            ORDER BY me.createdAt DESC
+        SQL);
+
+        return $query->getResult();
+    }
 }

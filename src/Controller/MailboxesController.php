@@ -10,6 +10,7 @@ use App\Entity\Mailbox;
 use App\Message\FetchMailboxes;
 use App\Message\CreateTicketsFromMailboxEmails;
 use App\Repository\MailboxRepository;
+use App\Repository\MailboxEmailRepository;
 use App\Security\Encryptor;
 use App\Service\MailboxSorter;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,7 @@ class MailboxesController extends BaseController
     #[Route('/mailboxes', name: 'mailboxes', methods: ['GET', 'HEAD'])]
     public function index(
         MailboxRepository $mailboxRepository,
+        MailboxEmailRepository $mailboxEmailRepository,
         MailboxSorter $mailboxSorter,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
@@ -34,8 +36,11 @@ class MailboxesController extends BaseController
         $mailboxes = $mailboxRepository->findAll();
         $mailboxSorter->sort($mailboxes);
 
+        $errorMailboxEmails = $mailboxEmailRepository->findInError();
+
         return $this->render('mailboxes/index.html.twig', [
             'mailboxes' => $mailboxes,
+            'errorMailboxEmails' => $errorMailboxEmails,
         ]);
     }
 

@@ -76,6 +76,37 @@
                     </li>
                 {% endfor %}
             </ul>
+
+            {% if errorMailboxEmails %}
+                <h2>{{ 'mailboxes.index.emails.title' | trans }}</h2>
+
+                <ul class="list--padded list--border list--nostyle">
+                    {% for mailboxEmail in errorMailboxEmails %}
+                        <li class="flow flow--small" data-test="mailbox-email-item">
+                            <div class="row flow">
+                                <span class="row__item--extend">
+                                    {{ mailboxEmail.subject }}
+                                </span>
+
+                                <span class="text--secondary text--small">
+                                    {{ mailboxEmail.from }}
+                                </span>
+
+                                <span class="text--secondary text--small">
+                                    <time datetime="{{ mailboxEmail.date | dateIso }}">
+                                        {{ mailboxEmail.date | dateTrans }}
+                                    </time>
+                                </span>
+                            </div>
+
+                            <p class="text--error">
+                                {{ 'mailboxes.index.emails.error' | trans }}
+                                {{ mailboxEmail.lastError }}
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

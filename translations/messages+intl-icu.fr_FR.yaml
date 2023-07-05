@@ -80,6 +80,8 @@ mailboxes.encryption.tls: TLS
 mailboxes.folder: Répertoire
 mailboxes.host: 'Nom d’hôte'
 mailboxes.index.collect: 'Collecter les boites'
+mailboxes.index.emails.error: "Erreur\_:"
+mailboxes.index.emails.title: 'Emails en erreur'
 mailboxes.index.delete: Supprimer
 mailboxes.index.delete.confirm: "Êtes-vous sûr de vouloir supprimer cette boite mail\_?"
 mailboxes.index.new_mailbox: 'Nouvelle boite mail'

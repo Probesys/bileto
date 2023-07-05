@@ -45,6 +45,22 @@ class MailboxesControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="mailbox-item"]:nth-child(2)', 'Mailbox 2');
     }
 
+    public function testGetIndexListsMailboxEmailsInError(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        MailboxEmailFactory::createOne([
+            'lastError' => 'unknown sender',
+        ]);
+
+        $client->request('GET', '/mailboxes');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="mailbox-email-item"]', 'unknown sender');
+    }
+
     public function testGetIndexFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
