@@ -12,8 +12,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProfileController extends BaseController
 {
@@ -95,6 +96,8 @@ class ProfileController extends BaseController
         }
 
         $userRepository->save($user, true);
+
+        $this->addFlash('success', new TranslatableMessage('profile.saved'));
 
         return $this->redirectToRoute('profile');
     }

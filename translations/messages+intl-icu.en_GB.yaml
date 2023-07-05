@@ -109,11 +109,13 @@ organizations.name: Name
 organizations.new.submit: 'Create the organization'
 organizations.new.title: 'New organization'
 organizations.parent_orga: 'Parent organization'
+preferences.saved: 'Your changes have been successfully saved.'
 preferences.title: Preferences
 profile.current_password: 'Current password'
 profile.leave_password: 'Leave these fields blank to keep your current password.'
 profile.new_password: 'New password'
 profile.note: 'Note: the information of your profile can be visible to the other users.'
+profile.saved: 'Your changes have been successfully saved.'
 profile.title: Profile
 roles.description: Description
 roles.edit.title.admin: 'Edit admin role'

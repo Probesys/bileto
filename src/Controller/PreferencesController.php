@@ -13,8 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Router;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PreferencesController extends BaseController
 {
@@ -78,6 +79,8 @@ class PreferencesController extends BaseController
 
         $session = $requestStack->getSession();
         $session->set('_locale', $user->getLocale());
+
+        $this->addFlash('success', new TranslatableMessage('preferences.saved'));
 
         return $this->redirectToRoute('preferences');
     }
