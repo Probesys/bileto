@@ -60,6 +60,10 @@ class SendMessageEmailHandler
 
         $recipients = array_unique($recipients);
 
+        if (empty($recipients)) {
+            return;
+        }
+
         $subject = "Re: [#{$ticket->getId()}] {$ticket->getTitle()}";
 
         $email = new Email();
