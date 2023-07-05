@@ -70,8 +70,6 @@ class CreateTicketsFromMailboxEmailsHandler
 
             $ticket = $this->getAnsweredTicket($mailboxEmail, $token);
 
-            $date = $mailboxEmail->getDate();
-
             if ($ticket) {
                 $canAnswerTicket = $this->accessDecisionManager->decide(
                     $token,
@@ -99,7 +97,6 @@ class CreateTicketsFromMailboxEmailsHandler
                 $subject = $mailboxEmail->getSubject();
 
                 $ticket = new Ticket();
-                $ticket->setCreatedAt($date);
                 $ticket->setCreatedBy($requester);
                 $ticket->setTitle($subject);
                 $ticket->setType(Ticket::DEFAULT_TYPE);
@@ -114,7 +111,6 @@ class CreateTicketsFromMailboxEmailsHandler
             $messageContent = $this->appMessageSanitizer->sanitize($mailboxEmail->getBody());
 
             $message = new Message();
-            $message->setCreatedAt($date);
             $message->setCreatedBy($requester);
             $message->setContent($messageContent);
             $message->setTicket($ticket);

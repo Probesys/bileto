@@ -39,11 +39,9 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'organization' => $organization,
         ]);
         $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
-        $date = Factory::faker()->dateTime();
         $subject = Factory::faker()->words(3, true);
         $body = Factory::faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
-            'date' => $date,
             'from' => $user->getEmail(),
             'subject' => $subject,
             'htmlBody' => $body,
@@ -60,14 +58,12 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(1, MessageFactory::count());
 
         $ticket = TicketFactory::first();
-        $this->assertEquals($date, $ticket->getCreatedAt());
         $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
         $this->assertSame($subject, $ticket->getTitle());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
         $this->assertSame($user->getId(), $ticket->getRequester()->getId());
 
         $message = MessageFactory::first();
-        $this->assertEquals($date, $message->getCreatedAt());
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
         $sanitizedBody = trim($appMessageSanitizer->sanitize($body));
         $this->assertSame($sanitizedBody, $message->getContent());
@@ -96,13 +92,11 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'requester' => $user,
             'assignee' => $assignee,
         ]);
-        $date = Factory::faker()->dateTime();
         /** @var string */
         $subject = Factory::faker()->words(3, true);
         $subject = "Re: [#{$ticket->getId()}] " . $subject;
         $body = Factory::faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
-            'date' => $date,
             'from' => $user->getEmail(),
             'subject' => $subject,
             'htmlBody' => $body,
@@ -119,7 +113,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(1, MessageFactory::count());
 
         $message = MessageFactory::first();
-        $this->assertEquals($date, $message->getCreatedAt());
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
         $sanitizedBody = trim($appMessageSanitizer->sanitize($body));
         $this->assertSame($sanitizedBody, $message->getContent());
@@ -157,12 +150,10 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'ticket' => $ticket,
             'emailId' => $emailId,
         ]);
-        $date = Factory::faker()->dateTime();
         /** @var string */
         $subject = Factory::faker()->words(3, true);
         $body = Factory::faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
-            'date' => $date,
             'from' => $user->getEmail(),
             'inReplyTo' => $emailId,
             'subject' => $subject,
@@ -180,7 +171,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(2, MessageFactory::count());
 
         $message = MessageFactory::last();
-        $this->assertEquals($date, $message->getCreatedAt());
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
         $sanitizedBody = trim($appMessageSanitizer->sanitize($body));
         $this->assertSame($sanitizedBody, $message->getContent());
@@ -210,13 +200,11 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'status' => 'new',
             'organization' => $organization,
         ]);
-        $date = Factory::faker()->dateTime();
         /** @var string */
         $subject = Factory::faker()->words(3, true);
         $subject = "Re: [#{$ticket->getId()}] " . $subject;
         $body = Factory::faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
-            'date' => $date,
             'from' => $user->getEmail(),
             'subject' => $subject,
             'htmlBody' => $body,
@@ -254,13 +242,11 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'status' => 'closed',
             'organization' => $organization,
         ]);
-        $date = Factory::faker()->dateTime();
         /** @var string */
         $subject = Factory::faker()->words(3, true);
         $subject = "Re: [#{$ticket->getId()}] " . $subject;
         $body = Factory::faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
-            'date' => $date,
             'from' => $user->getEmail(),
             'subject' => $subject,
             'htmlBody' => $body,
@@ -292,7 +278,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'organization' => $organization,
         ]);
         $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
-        $date = Factory::faker()->dateTime();
         $subject = Factory::faker()->words(3, true);
         $body = Factory::faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
