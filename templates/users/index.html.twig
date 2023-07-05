@@ -49,11 +49,15 @@
                             {% endif %}
                         </span>
 
-                        <span class="row__item--noshrink">
+                        <div class="row__item--noshrink row row--always row--center flow flow--small">
+                            <a href="{{ path('edit user', { uid: user.uid }) }}">
+                                {{ 'users.index.edit' | trans }}
+                            </a>
+
                             <a href="{{ path('user authorizations', { uid: user.uid }) }}">
                                 {{ 'users.index.authorizations' | trans }}
                             </a>
-                        </span>
+                        </div>
                     </li>
                 {% endfor %}
             </ul>

@@ -217,4 +217,255 @@ class UsersControllerTest extends WebTestCase
             'name' => $name,
         ]);
     }
+
+    public function testGetEditRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+
+        $client->request('GET', "/users/{$user->getUid()}/edit");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Edit a user');
+    }
+
+    public function testGetEditFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/users/{$user->getUid()}/edit");
+    }
+
+    public function testPostUpdateSavesTheUser(): void
+    {
+        $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $oldEmail = 'alix@example.com';
+        $newEmail = 'benedict@example.com';
+        $oldName = 'Alix Pataquès';
+        $newName = 'Benedict Aphone';
+        $oldPassword = 'secret';
+        $newPassword = 'super secret';
+        $oldOrganization = OrganizationFactory::createOne();
+        $newOrganization = OrganizationFactory::createOne();
+        $otherUser = UserFactory::createOne([
+            'email' => $oldEmail,
+            'name' => $oldName,
+            'password' => $oldPassword,
+            'organization' => $oldOrganization,
+        ]);
+
+        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
+            'email' => $newEmail,
+            'name' => $newName,
+            'password' => $newPassword,
+            'organization' => $newOrganization->getUid(),
+        ]);
+
+        $this->assertResponseRedirects('/users', 302);
+        $otherUser->refresh();
+        $this->assertSame($newEmail, $otherUser->getEmail());
+        $this->assertSame($newName, $otherUser->getName());
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $newPassword));
+        $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
+    }
+
+    public function testPostUpdateDoesNotChangePasswordIfEmpty(): void
+    {
+        $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $oldEmail = 'alix@example.com';
+        $newEmail = 'benedict@example.com';
+        $oldName = 'Alix Pataquès';
+        $newName = 'Benedict Aphone';
+        $oldPassword = 'secret';
+        $newPassword = ''; // leave the password unchanged
+        $oldOrganization = OrganizationFactory::createOne();
+        $newOrganization = OrganizationFactory::createOne();
+        $otherUser = UserFactory::createOne([
+            'email' => $oldEmail,
+            'name' => $oldName,
+            'password' => $oldPassword,
+            'organization' => $oldOrganization,
+        ]);
+
+        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
+            'email' => $newEmail,
+            'name' => $newName,
+            'password' => $newPassword,
+            'organization' => $newOrganization->getUid(),
+        ]);
+
+        $this->assertResponseRedirects('/users', 302);
+        $otherUser->refresh();
+        $this->assertSame($newEmail, $otherUser->getEmail());
+        $this->assertSame($newName, $otherUser->getName());
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $oldPassword));
+        $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
+    }
+
+    public function testPostUpdateAcceptsEmptyOrganization(): void
+    {
+        $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $oldEmail = 'alix@example.com';
+        $newEmail = 'benedict@example.com';
+        $oldName = 'Alix Pataquès';
+        $newName = 'Benedict Aphone';
+        $oldPassword = 'secret';
+        $newPassword = 'super secret';
+        $oldOrganization = OrganizationFactory::createOne();
+        $otherUser = UserFactory::createOne([
+            'email' => $oldEmail,
+            'name' => $oldName,
+            'password' => $oldPassword,
+            'organization' => $oldOrganization,
+        ]);
+
+        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
+            'email' => $newEmail,
+            'name' => $newName,
+            'password' => $newPassword,
+            'organization' => '',
+        ]);
+
+        $this->assertResponseRedirects('/users', 302);
+        $otherUser->refresh();
+        $this->assertSame($newEmail, $otherUser->getEmail());
+        $this->assertSame($newName, $otherUser->getName());
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $newPassword));
+        $this->assertNull($otherUser->getOrganization());
+    }
+
+    public function testPostUpdateFailsIfParamsAreInvalid(): void
+    {
+        $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $oldEmail = 'alix@example.com';
+        $newEmail = 'not an email'; // oops
+        $oldName = 'Alix Pataquès';
+        $newName = 'Benedict Aphone';
+        $oldPassword = 'secret';
+        $newPassword = 'super secret';
+        $oldOrganization = OrganizationFactory::createOne();
+        $newOrganization = OrganizationFactory::createOne();
+        $otherUser = UserFactory::createOne([
+            'email' => $oldEmail,
+            'name' => $oldName,
+            'password' => $oldPassword,
+            'organization' => $oldOrganization,
+        ]);
+
+        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
+            'email' => $newEmail,
+            'name' => $newName,
+            'password' => $newPassword,
+            'organization' => $newOrganization->getUid(),
+        ]);
+
+        $this->assertSelectorTextContains('#email-error', 'Enter a valid email address');
+        $otherUser->refresh();
+        $this->assertSame($oldEmail, $otherUser->getEmail());
+        $this->assertSame($oldName, $otherUser->getName());
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $oldPassword));
+        $this->assertSame($oldOrganization->getId(), $otherUser->getOrganization()->getId());
+    }
+
+    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $oldEmail = 'alix@example.com';
+        $newEmail = 'benedict@example.com';
+        $oldName = 'Alix Pataquès';
+        $newName = 'Benedict Aphone';
+        $oldPassword = 'secret';
+        $newPassword = 'super secret';
+        $oldOrganization = OrganizationFactory::createOne();
+        $newOrganization = OrganizationFactory::createOne();
+        $otherUser = UserFactory::createOne([
+            'email' => $oldEmail,
+            'name' => $oldName,
+            'password' => $oldPassword,
+            'organization' => $oldOrganization,
+        ]);
+
+        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+            '_csrf_token' => 'not a token',
+            'email' => $newEmail,
+            'name' => $newName,
+            'password' => $newPassword,
+            'organization' => $newOrganization->getUid(),
+        ]);
+
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $otherUser->refresh();
+        $this->assertSame($oldEmail, $otherUser->getEmail());
+        $this->assertSame($oldName, $otherUser->getName());
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $oldPassword));
+        $this->assertSame($oldOrganization->getId(), $otherUser->getOrganization()->getId());
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $oldEmail = 'alix@example.com';
+        $newEmail = 'benedict@example.com';
+        $oldName = 'Alix Pataquès';
+        $newName = 'Benedict Aphone';
+        $oldPassword = 'secret';
+        $newPassword = 'super secret';
+        $oldOrganization = OrganizationFactory::createOne();
+        $newOrganization = OrganizationFactory::createOne();
+        $otherUser = UserFactory::createOne([
+            'email' => $oldEmail,
+            'name' => $oldName,
+            'password' => $oldPassword,
+            'organization' => $oldOrganization,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
+            'email' => $newEmail,
+            'name' => $newName,
+            'password' => $newPassword,
+            'organization' => $newOrganization->getUid(),
+        ]);
+    }
 }

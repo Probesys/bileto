@@ -124,4 +124,96 @@ class UsersController extends BaseController
 
         return $this->redirectToRoute('users');
     }
+
+    #[Route('/users/{uid}/edit', name: 'edit user', methods: ['GET', 'HEAD'])]
+    public function edit(
+        User $user,
+        OrganizationRepository $organizationRepository,
+        OrganizationSorter $organizationSorter,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:users');
+
+        $organizations = $organizationRepository->findAll();
+        $organizations = $organizationSorter->asTree($organizations);
+
+        $userOrganization = $user->getOrganization();
+
+        return $this->render('users/edit.html.twig', [
+            'user' => $user,
+            'organizations' => $organizations,
+            'email' => $user->getEmail(),
+            'name' => $user->getName(),
+            'organizationUid' => $userOrganization ? $userOrganization->getUid() : '',
+        ]);
+    }
+
+    #[Route('/users/{uid}/edit', name: 'update user', methods: ['POST'])]
+    public function update(
+        User $user,
+        Request $request,
+        UserRepository $userRepository,
+        OrganizationRepository $organizationRepository,
+        OrganizationSorter $organizationSorter,
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
+        UserPasswordHasherInterface $passwordHasher,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:users');
+
+        /** @var string $email */
+        $email = $request->request->get('email', '');
+
+        /** @var string $name */
+        $name = $request->request->get('name', '');
+
+        /** @var string $password */
+        $password = $request->request->get('password', '');
+
+        /** @var string $organizationUid */
+        $organizationUid = $request->request->get('organization', '');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        $organizations = $organizationRepository->findAll();
+        $organizations = $organizationSorter->asTree($organizations);
+
+        if (!$this->isCsrfTokenValid('update user', $csrfToken)) {
+            return $this->renderBadRequest('users/edit.html.twig', [
+                'user' => $user,
+                'organizations' => $organizations,
+                'email' => $email,
+                'name' => $name,
+                'organizationUid' => $organizationUid,
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+            ]);
+        }
+
+        $organization = $organizationRepository->findOneBy(['uid' => $organizationUid]);
+
+        $user->setEmail($email);
+        $user->setName($name);
+        $user->setOrganization($organization);
+
+        if ($password !== '') {
+            $hashedPassword = $passwordHasher->hashPassword($user, $password);
+            $user->setPassword($hashedPassword);
+        }
+
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            return $this->renderBadRequest('users/edit.html.twig', [
+                'user' => $user,
+                'organizations' => $organizations,
+                'email' => $email,
+                'name' => $name,
+                'organizationUid' => $organizationUid,
+                'errors' => $this->formatErrors($errors),
+            ]);
+        }
+
+        $userRepository->save($user, true);
+
+        return $this->redirectToRoute('users');
+    }
 }

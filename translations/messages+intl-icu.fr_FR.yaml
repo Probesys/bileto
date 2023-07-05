@@ -304,7 +304,11 @@ users.authorizations.new.organization_caption: 'L’autorisation peut être limi
 users.authorizations.new.role: 'Choisir un rôle'
 users.authorizations.new.submit: 'Créer l’autorisation'
 users.authorizations.new.title: 'Nouvelle autorisation'
+users.edit.leave_password_empty: 'Laissez vide pour conserver le mot de passe actuel.'
+users.edit.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
+users.edit.title: 'Modifier un utilisateur'
 users.index.authorizations: Autorisations
+users.index.edit: Modifier
 users.index.new_user: 'Nouvel utilisateur'
 users.index.number: '{count, plural, =0 {Aucun utilisateur} one {1 utilisateur} other {# utilisateurs}}'
 users.index.title: Utilisateurs
