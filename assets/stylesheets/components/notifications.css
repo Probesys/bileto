@@ -9,22 +9,30 @@
     right: 0;
     left: 0;
 
-    padding: 1rem;
+    padding: 3rem;
+
+    pointer-events: none;
 }
 
 .notifications__item {
-    padding: 1rem;
-    padding-left: 5rem;
+    position: relative;
 
+    max-width: 500px;
+    margin-left: auto;
+    padding: 2rem 5rem;
+
+    font-size: 0.9em;
     font-weight: bold;
 
     background-repeat: no-repeat;
     background-position: left 1rem center;
     background-size: 3rem;
     box-shadow: 1px 2px 3px 1px var(--color-box-shadow);
-    border-width: 1px;
-    border-style: solid;
+    border-left-width: 1rem;
+    border-left-style: solid;
     border-radius: 0.5rem;
+
+    pointer-events: auto;
 }
 
 .notifications__item--success {
@@ -32,7 +40,7 @@
 
     background-color: var(--color-success3);
     background-image: url("../../icons/circle-check-success.svg");
-    border-color: var(--color-success5);
+    border-color: var(--color-success9);
 }
 
 .notifications__item--error {
@@ -40,9 +48,17 @@
 
     background-color: var(--color-error3);
     background-image: url("../../icons/circle-exclamation-error.svg");
-    border-color: var(--color-error5);
+    border-color: var(--color-error9);
 }
 
 .notifications__item button {
-    float: right;
+    position: absolute;
+    top: 1.25rem; /* Align the button with the first line of the notification. */
+    right: 1rem;
+
+    color: currentcolor;
+
+    background: none;
+    box-shadow: none;
+    border: none;
 }

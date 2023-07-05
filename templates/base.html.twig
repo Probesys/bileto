@@ -53,7 +53,7 @@
 
         <div
             id="notifications"
-            class="notifications wrapper wrapper--small wrapper--center flow"
+            class="notifications flow"
             role="alert"
             aria-live="polite"
             aria-atomic="true"
@@ -62,7 +62,7 @@
             {% for label, messages in app.flashes(['success', 'error']) %}
                 {% for key, message in messages %}
                     <div
-                        class="notifications__item notifications__item--{{ label }} row row--center flow"
+                        class="notifications__item notifications__item--{{ label }}"
                         {% if label == "error" %}
                             role="alert"
                             aria-live="assertive"
