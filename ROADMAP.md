@@ -5,15 +5,16 @@ Please note we will not necessarily develop the features in the same order as th
 Also, everything will not be in the version 1.0.
 
 - [x] manage and list tickets;
-- [x] isolate users and tickets in organizations;
-- [x] manage of roles and permissions;
-- [ ] search, filter and ability to save them in “views”;
-- [ ] collect emails to create and answer to tickets by email;
-- [ ] notification system;
-- [ ] contracts and time spent;
+- [x] isolate users and tickets in (sub-)organizations;
+- [x] manage roles and permissions;
+- [x] search and/or filter tickets;
+- [x] collect emails to create and answer to tickets by email;
 - [ ] login with LDAP;
 - [ ] handle of images and attachments;
+- [ ] contracts and time spent;
 - [ ] business rules;
+- [ ] save search in “views”;
+- [ ] notification system;
 - [ ] <abbr>SLA</abbr>;
 - [ ] assets management;
 - [ ] <abbr>API</abbr>;
