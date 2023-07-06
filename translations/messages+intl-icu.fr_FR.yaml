@@ -74,6 +74,7 @@ login.remember_me: 'Se souvenir de moi'
 login.submit: 'Se connecter'
 login.title: Connexion
 mailboxes.edit.leave_password_empty: 'Laissez vide pour conserver le mot de passe actuel.'
+mailboxes.edit.test_mailbox: 'Tester la connexion'
 mailboxes.edit.title: 'Modifier une boite mail'
 mailboxes.encryption: 'Méthode de chiffrement'
 mailboxes.encryption.none: Aucune
@@ -93,7 +94,6 @@ mailboxes.index.delete: Supprimer
 mailboxes.index.delete.confirm: "Êtes-vous sûr de vouloir supprimer cette boite mail\_?"
 mailboxes.index.new_mailbox: 'Nouvelle boite mail'
 mailboxes.index.number: '{count, plural, =0 {Aucune boite mail} one {1 boite mail} other {# boites mails}}'
-mailboxes.index.test_mailbox: 'Tester la connexion'
 mailboxes.index.title: 'Boites mails'
 mailboxes.name: 'Nom de la boite mail'
 mailboxes.new.submit: 'Créer la boite mail'

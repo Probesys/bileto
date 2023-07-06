@@ -62,13 +62,6 @@
                                     {{ 'mailboxes.index.edit' | trans }}
                                 </a>
 
-                                <form method="POST" action="{{ path('test mailbox', { uid: mailbox.uid }) }}">
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('test mailbox') }}">
-                                    <button type="submit" class="button--anchor">
-                                        {{ 'mailboxes.index.test_mailbox' | trans }}
-                                    </button>
-                                </form>
-
                                 <form method="POST" action="{{ path('delete mailbox', { uid: mailbox.uid }) }}">
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox') }}">
                                     <button

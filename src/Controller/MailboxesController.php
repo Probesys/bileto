@@ -292,7 +292,9 @@ class MailboxesController extends BaseController
             $mailboxRepository->save($mailbox, true);
         }
 
-        return $this->redirectToRoute('mailboxes');
+        return $this->redirectToRoute('edit mailbox', [
+            'uid' => $mailbox->getUid(),
+        ]);
     }
 
     #[Route('/mailboxes/collect', name: 'collect mailboxes', methods: ['POST'])]

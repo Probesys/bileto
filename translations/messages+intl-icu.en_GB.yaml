@@ -74,6 +74,7 @@ login.remember_me: 'Remember me'
 login.submit: Login
 login.title: 'Log in'
 mailboxes.edit.leave_password_empty: 'Leave blank to keep the current password.'
+mailboxes.edit.test_mailbox: 'Test connection'
 mailboxes.edit.title: 'Edit a mailbox'
 mailboxes.encryption: 'Encryption method'
 mailboxes.encryption.none: None
@@ -93,7 +94,6 @@ mailboxes.index.delete: Delete
 mailboxes.index.delete.confirm: 'Are you sure that you want to delete this mailbox?'
 mailboxes.index.new_mailbox: 'New mailbox'
 mailboxes.index.number: '{count, plural, =0 {No mailboxes} one {1 mailbox} other {# mailboxes}}'
-mailboxes.index.test_mailbox: 'Test connection'
 mailboxes.index.title: Mailboxes
 mailboxes.name: 'Mailbox name'
 mailboxes.new.submit: 'Create the mailbox'

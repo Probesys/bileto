@@ -21,10 +21,19 @@
             <h1>{{ 'mailboxes.edit.title' | trans }}</h1>
         </div>
 
-        <div class="wrapper wrapper--small flow">
-            {% if mailbox.lastError %}
-                {{ include('alerts/_error.html.twig', { message: mailbox.lastError }, with_context = false) }}
-            {% endif %}
+        <div class="wrapper wrapper--small flow flow--larger">
+            <div class="flow">
+                <form method="POST" action="{{ path('test mailbox', { uid: mailbox.uid }) }}" class="text--right">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('test mailbox') }}">
+                    <button type="submit">
+                        {{ 'mailboxes.edit.test_mailbox' | trans }}
+                    </button>
+                </form>
+
+                {% if mailbox.lastError %}
+                    {{ include('alerts/_error.html.twig', { message: mailbox.lastError }, with_context = false) }}
+                {% endif %}
+            </div>
 
             <form action="{{ path('update mailbox', { uid: mailbox.uid }) }}" method="post" class="flow">
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('update mailbox') }}">
