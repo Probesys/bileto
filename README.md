@@ -9,11 +9,12 @@
 
 Bileto is a ticketing tool.
 It is designed to help you to manage your support as efficiently as possible.
-It allows you:
+It allows you to:
 
-- to manage your tickets (create, answer, manage their lifecycle) in a modern way (clear timeline, efficient lists);
-- to isolate your users and tickets in organizations;
-- to finely manage roles and permissions;
+- manage your tickets (create, answer, manage their lifecycle) in a modern way (clear timeline, efficient lists);
+- isolate your users and tickets in organizations;
+- finely manage roles and permissions;
+- create and answer to tickets by emails;
 - and a lot more to come: [see our roadmap to learn more.](/ROADMAP.md)
 
 **Please note that Bileto is in an active development phase.**
@@ -49,6 +50,7 @@ Bileto relies on a bunch of other projects:
 - [ESLint](https://eslint.org/)
 - [Font Awesome icons](https://fontawesome.com)
 - [PHP\_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+- [PHP-IMAP](https://www.php-imap.com/)
 - [PHPUnit](https://phpunit.de/)
 - [Radix UI Colors](https://www.radix-ui.com/colors)
 - [Stimulus](https://stimulus.hotwired.dev/)
