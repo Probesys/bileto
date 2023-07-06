@@ -15,6 +15,7 @@ use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Security\Encryptor;
 use App\Utils\Random;
+use App\Utils\Time;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -194,6 +195,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketEmails,
+                'createdAt' => Time::ago(1, 'day'),
                 'createdBy' => $userCharlie,
                 'via' => 'webapp',
             ]);
@@ -204,6 +206,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => true,
                 'ticket' => $ticketEmails,
+                'createdAt' => Time::ago(10, 'hours'),
                 'createdBy' => $userAlix,
                 'via' => 'webapp',
             ]);
@@ -214,6 +217,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketEmails,
+                'createdAt' => Time::ago(9, 'hours'),
                 'createdBy' => $userAlix,
                 'via' => 'webapp',
             ]);
@@ -238,6 +242,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketUpdate,
+                'createdAt' => Time::ago(5, 'days'),
                 'createdBy' => $userCharlie,
                 'via' => 'webapp',
             ]);
@@ -248,6 +253,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketUpdate,
+                'createdAt' => Time::now(),
                 'createdBy' => $userAlix,
                 'via' => 'webapp',
             ]);
@@ -274,6 +280,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketFilter,
+                'createdAt' => Time::ago(42, 'days'),
                 'createdBy' => $userBenedict,
                 'via' => 'webapp',
             ]);
