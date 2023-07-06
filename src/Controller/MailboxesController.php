@@ -219,6 +219,7 @@ class MailboxesController extends BaseController
         $mailbox->setUsername($username);
         $mailbox->setAuthentication('normal');
         $mailbox->setFolder($folder);
+        $mailbox->resetLastError();
 
         if ($password) {
             $encryptedPassword = $encryptor->encrypt($password);

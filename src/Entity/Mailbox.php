@@ -229,6 +229,14 @@ class Mailbox implements MetaEntityInterface, ActivityRecordableInterface
         return $this;
     }
 
+    public function resetLastError(): self
+    {
+        $this->lastError = '';
+        $this->lastErrorAt = null;
+
+        return $this;
+    }
+
     public function getLastErrorAt(): ?\DateTimeImmutable
     {
         return $this->lastErrorAt;
