@@ -263,6 +263,34 @@
                     </button>
                 </div>
             </form>
+
+            <div class="flow">
+                <h2>{{ 'mailboxes.deletion.title' | trans }}</h2>
+
+                <form action="{{ path('delete mailbox', { uid: mailbox.uid }) }}" method="post" class="flow">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox') }}">
+
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'warning',
+                        title: 'mailboxes.deletion.caution' | trans,
+                        message: 'mailboxes.deletion.going_delete' | trans({ mailbox: mailbox.name }),
+                    }, with_context = false) }}
+
+                    {% if error %}
+                        {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                    {% endif %}
+
+                    <div class="form__actions">
+                        <button
+                            class="button--primary"
+                            type="submit"
+                            data-turbo-confirm="{{ 'mailboxes.deletion.confirm' | trans }}"
+                        >
+                            {{ 'mailboxes.deletion.submit' | trans }}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </main>
 {% endblock %}

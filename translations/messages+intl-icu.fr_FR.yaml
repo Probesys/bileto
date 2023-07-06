@@ -73,6 +73,11 @@ layout.user_menu_title: 'Menu de {name}'
 login.remember_me: 'Se souvenir de moi'
 login.submit: 'Se connecter'
 login.title: Connexion
+mailboxes.deletion.caution: "Attention\_!"
+mailboxes.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette boite mail\_?"
+mailboxes.deletion.going_delete: "Vous êtes sur le point de supprimer la boite mail «\_{mailbox}\_». Les emails de cette boite ne seront plus récupérés."
+mailboxes.deletion.submit: 'Supprimer la boite mail'
+mailboxes.deletion.title: Suppression
 mailboxes.edit.leave_password_empty: 'Laissez vide pour conserver le mot de passe actuel.'
 mailboxes.edit.test_mailbox: 'Tester la connexion'
 mailboxes.edit.title: 'Modifier une boite mail'
@@ -90,8 +95,6 @@ mailboxes.index.emails.delete.confirm: "Êtes-vous sûr de vouloir supprimer cet
 mailboxes.index.emails.desc: 'Une fois leurs erreurs corrigées, ces emails seront traités à nouveau. Vous pouvez également les supprimer.'
 mailboxes.index.emails.error: "Erreur\_:"
 mailboxes.index.emails.title: 'Emails en erreur'
-mailboxes.index.delete: Supprimer
-mailboxes.index.delete.confirm: "Êtes-vous sûr de vouloir supprimer cette boite mail\_?"
 mailboxes.index.new_mailbox: 'Nouvelle boite mail'
 mailboxes.index.number: '{count, plural, =0 {Aucune boite mail} one {1 boite mail} other {# boites mails}}'
 mailboxes.index.title: 'Boites mails'

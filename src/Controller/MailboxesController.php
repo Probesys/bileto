@@ -341,7 +341,9 @@ class MailboxesController extends BaseController
 
         if (!$this->isCsrfTokenValid('delete mailbox', $csrfToken)) {
             $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
-            return $this->redirectToRoute('mailboxes');
+            return $this->redirectToRoute('edit mailbox', [
+                'uid' => $mailbox->getUid(),
+            ]);
         }
 
         $mailboxRepository->remove($mailbox, true);

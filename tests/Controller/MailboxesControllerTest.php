@@ -438,7 +438,7 @@ class MailboxesControllerTest extends WebTestCase
             '_csrf_token' => 'not the token',
         ]);
 
-        $this->assertResponseRedirects('/mailboxes', 302);
+        $this->assertResponseRedirects("/mailboxes/{$mailbox->getUid()}/edit", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
         MailboxFactory::assert()->exists(['id' => $mailbox->getId()]);

@@ -57,22 +57,9 @@
                                 {% endif %}
                             </span>
 
-                            <div class="row__item--noshrink row row--always row--center flow flow--small">
-                                <a href="{{ path('edit mailbox', { uid: mailbox.uid }) }}">
-                                    {{ 'mailboxes.index.edit' | trans }}
-                                </a>
-
-                                <form method="POST" action="{{ path('delete mailbox', { uid: mailbox.uid }) }}">
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox') }}">
-                                    <button
-                                        type="submit"
-                                        class="button--anchor"
-                                        data-turbo-confirm="{{ 'mailboxes.index.delete.confirm' | trans }}"
-                                    >
-                                        {{ 'mailboxes.index.delete' | trans }}
-                                    </button>
-                                </form>
-                            </div>
+                            <a href="{{ path('edit mailbox', { uid: mailbox.uid }) }}">
+                                {{ 'mailboxes.index.edit' | trans }}
+                            </a>
                         </div>
                     </li>
                 {% endfor %}
