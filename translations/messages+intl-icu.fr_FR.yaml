@@ -100,7 +100,7 @@ mailboxes.test.success: 'La connexion fonctionne.'
 mailboxes.username: 'Nom d’utilisateur'
 organizations.deletion.caution: "Attention\_!"
 organizations.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
-organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation <strong>«\_{organization}\_»</strong>. Cela supprimera également les sous-organisations, tickets et autorisations associées."
+organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les sous-organisations, tickets et autorisations associées."
 organizations.deletion.submit: 'Supprimer l’organisation'
 organizations.deletion.title: 'Supprimer une organisation'
 organizations.edit.title: 'Modifier une organisation'
