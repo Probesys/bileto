@@ -225,4 +225,30 @@ class RolesController extends BaseController
 
         return $this->redirectToRoute('roles');
     }
+
+    #[Route('/roles/{uid}/deletion', name: 'delete role', methods: ['POST'])]
+    public function delete(
+        Role $role,
+        Request $request,
+        RoleRepository $roleRepository,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:roles');
+
+        if ($role->getType() === 'super') {
+            throw $this->createNotFoundException('Super Role object cannot be deleted.');
+        }
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('delete role', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            return $this->redirectToRoute('edit role', ['uid' => $role->getUid()]);
+        }
+
+        $roleRepository->remove($role, true);
+
+        return $this->redirectToRoute('roles');
+    }
 }

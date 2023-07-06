@@ -122,6 +122,11 @@ profile.new_password: 'Nouveau mot de passe'
 profile.note: "Note\_: les informations de votre profil peuvent être visibles par les autres utilisateurs."
 profile.saved: 'Vos changements ont été sauvegardés.'
 profile.title: Profil
+roles.deletion.caution: "Attention\_!"
+roles.deletion.confirm: "Êtes-vous sûr de vouloir supprimer ce rôle\_?"
+roles.deletion.going_delete: "Vous êtes sur le point de supprimer le rôle «\_{role}\_». Cela supprimera également les autorisations associées."
+roles.deletion.submit: 'Supprimer le rôle'
+roles.deletion.title: Suppression
 roles.description: Description
 roles.edit.title.admin: 'Modifier le rôle admin'
 roles.edit.title.orga: 'Modifier le rôle orga'

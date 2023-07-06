@@ -21,12 +21,42 @@
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('roles') }}">{{ 'roles.index.title' | trans }}</a>
-            <h1>{{ pageTitle }}</h1>
+    <main class="layout__body flow flow--larger">
+        <div class="flow">
+            <div class="layout__breadcrumb">
+                <a href="{{ path('roles') }}">{{ 'roles.index.title' | trans }}</a>
+                <h1>{{ pageTitle }}</h1>
+            </div>
+
+            {{ include('roles/_role_form.html.twig', { mode: 'edit' }) }}
         </div>
 
-        {{ include('roles/_role_form.html.twig', { mode: 'edit' }) }}
+        <div class="flow">
+            <h2>{{ 'roles.deletion.title' | trans }}</h2>
+
+            <form action="{{ path('delete role', { uid: role.uid }) }}" method="post" class="wrapper wrapper--small flow">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete role') }}">
+
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'warning',
+                    title: 'roles.deletion.caution' | trans,
+                    message: 'roles.deletion.going_delete' | trans({ role: role.name }),
+                }, with_context = false) }}
+
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
+
+                <div class="form__actions">
+                    <button
+                        class="button--primary"
+                        type="submit"
+                        data-turbo-confirm="{{ 'roles.deletion.confirm' | trans }}"
+                    >
+                        {{ 'roles.deletion.submit' | trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
     </main>
 {% endblock %}

@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Role;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
@@ -679,6 +680,90 @@ class RolesControllerTest extends WebTestCase
             'description' => $newDescription,
             'type' => $type,
             'permissions' => $newPermissions,
+        ]);
+    }
+
+    public function testPostDeleteRemovesTheRoleAndAssociatedAuthorizationsAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $role = RoleFactory::createOne([
+            'type' => 'orga:tech',
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'role' => $role,
+        ]);
+
+        $client->request('POST', "/roles/{$role->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete role'),
+        ]);
+
+        $this->assertResponseRedirects('/roles', 302);
+        RoleFactory::assert()->notExists(['id' => $role->getId()]);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $role = RoleFactory::createOne([
+            'type' => 'orga:tech',
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'role' => $role,
+        ]);
+
+        $client->request('POST', "/roles/{$role->getUid()}/deletion", [
+            '_csrf_token' => 'not the token',
+        ]);
+
+        $this->assertResponseRedirects("/roles/{$role->getUid()}/edit", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        RoleFactory::assert()->exists(['id' => $role->getId()]);
+        AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfTypeIsSuper(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $role = RoleFactory::createOne([
+            'type' => 'super',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/roles/{$role->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete role'),
+        ]);
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $role = RoleFactory::createOne([
+            'type' => 'orga:tech',
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'role' => $role,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/roles/{$role->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete role'),
         ]);
     }
 }
