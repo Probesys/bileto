@@ -80,6 +80,9 @@ mailboxes.encryption.tls: TLS
 mailboxes.folder: Folder
 mailboxes.host: Hostname
 mailboxes.index.collect: 'Collect the mailboxes'
+mailboxes.index.emails.delete: Delete
+mailboxes.index.emails.delete.confirm: 'Are you sure that you want to delete this email?'
+mailboxes.index.emails.desc: 'Once you fix the errors, these emails will automatically be processed again. Otherwise, you can delete them.'
 mailboxes.index.emails.error: 'Error:'
 mailboxes.index.emails.title: 'Emails in error'
 mailboxes.index.delete: Delete

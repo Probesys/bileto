@@ -80,9 +80,13 @@
             {% if errorMailboxEmails %}
                 <h2>{{ 'mailboxes.index.emails.title' | trans }}</h2>
 
+                <p class="text--secondary">
+                    {{ 'mailboxes.index.emails.desc' | trans }}
+                </p>
+
                 <ul class="list--padded list--border list--nostyle">
                     {% for mailboxEmail in errorMailboxEmails %}
-                        <li class="flow flow--small" data-test="mailbox-email-item">
+                        <li class="flow" data-test="mailbox-email-item">
                             <div class="row flow">
                                 <span class="row__item--extend">
                                     {{ mailboxEmail.subject }}
@@ -99,10 +103,23 @@
                                 </span>
                             </div>
 
-                            <p class="text--error">
-                                {{ 'mailboxes.index.emails.error' | trans }}
-                                {{ mailboxEmail.lastError }}
-                            </p>
+                            <div class="row flow">
+                                <p class="row__item--extend text--error">
+                                    {{ 'mailboxes.index.emails.error' | trans }}
+                                    {{ mailboxEmail.lastError }}
+                                </p>
+
+                                <form method="POST" action="{{ path('delete mailbox email', { uid: mailboxEmail.uid }) }}">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox email') }}">
+                                    <button
+                                        type="submit"
+                                        class="button--anchor"
+                                        data-turbo-confirm="{{ 'mailboxes.index.emails.delete.confirm' | trans }}"
+                                    >
+                                        {{ 'mailboxes.index.emails.delete' | trans }}
+                                    </button>
+                                </form>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
