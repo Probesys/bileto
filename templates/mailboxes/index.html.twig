@@ -46,7 +46,15 @@
                     <li class="flow flow--small" data-test="mailbox-item">
                         <div class="row">
                             <span class="row__item--extend">
-                                {{ mailbox.name }}
+                                {% if mailbox.lastError %}
+                                    <span class="text--error">
+                                        {{ icon('circle-exclamation-error') }}
+                                        {{ mailbox.name }}
+                                        {{ 'mailboxes.index.error' | trans }}
+                                    </span>
+                                {% else %}
+                                    {{ mailbox.name }}
+                                {% endif %}
                             </span>
 
                             <div class="row__item--noshrink row row--always row--center flow flow--small">
@@ -73,10 +81,6 @@
                                 </form>
                             </div>
                         </div>
-
-                        {% if mailbox.lastError %}
-                            {{ include('alerts/_error.html.twig', { message: mailbox.lastError }, with_context = false) }}
-                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
