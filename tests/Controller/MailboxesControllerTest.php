@@ -231,6 +231,172 @@ class MailboxesControllerTest extends WebTestCase
         ]);
     }
 
+    public function testGetEditRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $mailbox = MailboxFactory::createOne();
+
+        $client->request('GET', "/mailboxes/{$mailbox->getUid()}/edit");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Edit a mailbox');
+    }
+
+    public function testGetEditFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $mailbox = MailboxFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/mailboxes/{$mailbox->getUid()}/edit");
+    }
+
+    public function testPostUpdateSavesTheMailboxAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $oldName = 'Old mailbox name';
+        $newName = 'New mailbox name';
+        $mailbox = MailboxFactory::createOne([
+            'name' => $oldName,
+        ]);
+
+        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update mailbox'),
+            'name' => $newName,
+            'host' => 'localhost',
+            'port' => 993,
+            'encryption' => 'ssl',
+            'username' => 'alix',
+            'password' => 'secret',
+            'folder' => 'INBOX',
+        ]);
+
+        $this->assertResponseRedirects("/mailboxes/{$mailbox->getUid()}/edit", 302);
+        $mailbox->refresh();
+        $this->assertSame($newName, $mailbox->getName());
+    }
+
+    public function testPostUpdateAcceptsEmptyPassword(): void
+    {
+        $client = static::createClient();
+        /** @var Encryptor */
+        $encryptor = static::getContainer()->get(Encryptor::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $password = 'secret';
+        $mailbox = MailboxFactory::createOne([
+            'password' => $password,
+        ]);
+
+        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update mailbox'),
+            'name' => 'My mailbox',
+            'host' => 'localhost',
+            'port' => 993,
+            'encryption' => 'ssl',
+            'username' => 'alix',
+            'password' => '',
+            'folder' => 'INBOX',
+        ]);
+
+        $this->assertResponseRedirects("/mailboxes/{$mailbox->getUid()}/edit", 302);
+        $mailbox->refresh();
+        $this->assertSame($password, $encryptor->decrypt($mailbox->getPassword()));
+    }
+
+    public function testPostUpdateFailsIfParamsAreInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $oldName = 'Old mailbox name';
+        $newName = '';
+        $mailbox = MailboxFactory::createOne([
+            'name' => $oldName,
+        ]);
+
+        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update mailbox'),
+            'name' => $newName,
+            'host' => 'localhost',
+            'port' => 993,
+            'encryption' => 'ssl',
+            'username' => 'alix',
+            'password' => 'secret',
+            'folder' => 'INBOX',
+        ]);
+
+        $this->assertSelectorTextContains('#name-error', 'Enter a name for the mailbox.');
+        $mailbox->refresh();
+        $this->assertSame($oldName, $mailbox->getName());
+    }
+
+    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $oldName = 'Old mailbox name';
+        $newName = 'New mailbox name';
+        $mailbox = MailboxFactory::createOne([
+            'name' => $oldName,
+        ]);
+
+        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+            '_csrf_token' => 'not a token',
+            'name' => $newName,
+            'host' => 'localhost',
+            'port' => 993,
+            'encryption' => 'ssl',
+            'username' => 'alix',
+            'password' => 'secret',
+            'folder' => 'INBOX',
+        ]);
+
+        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $mailbox->refresh();
+        $this->assertSame($oldName, $mailbox->getName());
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $oldName = 'Old mailbox name';
+        $newName = 'New mailbox name';
+        $mailbox = MailboxFactory::createOne([
+            'name' => $oldName,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update mailbox'),
+            'name' => $newName,
+            'host' => 'localhost',
+            'port' => 993,
+            'encryption' => 'ssl',
+            'username' => 'alix',
+            'password' => 'secret',
+            'folder' => 'INBOX',
+        ]);
+    }
+
     public function testPostDeleteRemovesTheMailboxAndRedirects(): void
     {
         $client = static::createClient();

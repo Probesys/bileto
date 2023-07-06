@@ -144,6 +144,108 @@ class MailboxesController extends BaseController
         return $this->redirectToRoute('mailboxes');
     }
 
+    #[Route('/mailboxes/{uid}/edit', name: 'edit mailbox', methods: ['GET', 'HEAD'])]
+    public function edit(Mailbox $mailbox): Response
+    {
+        $this->denyAccessUnlessGranted('admin:manage:mailboxes');
+
+        return $this->render('mailboxes/edit.html.twig', [
+            'mailbox' => $mailbox,
+            'name' => $mailbox->getName(),
+            'host' => $mailbox->getHost(),
+            'port' => $mailbox->getPort(),
+            'encryption' => $mailbox->getEncryption(),
+            'username' => $mailbox->getUsername(),
+            'folder' => $mailbox->getFolder(),
+        ]);
+    }
+
+    #[Route('/mailboxes/{uid}/edit', name: 'update mailbox', methods: ['POST'])]
+    public function update(
+        Mailbox $mailbox,
+        Request $request,
+        MailboxRepository $mailboxRepository,
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
+        Encryptor $encryptor,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:mailboxes');
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        /** @var string $name */
+        $name = $request->request->get('name', '');
+
+        /** @var string $host */
+        $host = $request->request->get('host', '');
+
+        /** @var integer $port */
+        $port = $request->request->getInt('port', 993);
+
+        /** @var string $encryption */
+        $encryption = $request->request->get('encryption', '');
+
+        /** @var string $username */
+        $username = $request->request->get('username', '');
+
+        /** @var string $password */
+        $password = $request->request->get('password', '');
+
+        /** @var string $folder */
+        $folder = $request->request->get('folder', '');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('update mailbox', $csrfToken)) {
+            return $this->renderBadRequest('mailboxes/edit.html.twig', [
+                'mailbox' => $mailbox,
+                'name' => $name,
+                'host' => $host,
+                'port' => $port,
+                'encryption' => $encryption,
+                'username' => $username,
+                'folder' => $folder,
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+            ]);
+        }
+
+        $mailbox->setName($name);
+        $mailbox->setHost($host);
+        $mailbox->setProtocol('imap');
+        $mailbox->setPort($port);
+        $mailbox->setEncryption($encryption);
+        $mailbox->setUsername($username);
+        $mailbox->setAuthentication('normal');
+        $mailbox->setFolder($folder);
+
+        if ($password) {
+            $encryptedPassword = $encryptor->encrypt($password);
+            $mailbox->setPassword($encryptedPassword);
+        }
+
+        $errors = $validator->validate($mailbox);
+        if (count($errors) > 0) {
+            return $this->renderBadRequest('mailboxes/edit.html.twig', [
+                'mailbox' => $mailbox,
+                'name' => $name,
+                'host' => $host,
+                'port' => $port,
+                'encryption' => $encryption,
+                'username' => $username,
+                'folder' => $folder,
+                'errors' => $this->formatErrors($errors),
+            ]);
+        }
+
+        $mailboxRepository->save($mailbox, true);
+
+        return $this->redirectToRoute('edit mailbox', [
+            'uid' => $mailbox->getUid(),
+        ]);
+    }
+
     #[Route('/mailboxes/{uid}/test', name: 'test mailbox', methods: ['POST'])]
     public function test(
         Request $request,
