@@ -101,6 +101,7 @@ mailboxes.password: 'Mot de passe'
 mailboxes.port: 'Port IMAP'
 mailboxes.test.success: 'La connexion fonctionne.'
 mailboxes.username: 'Nom d’utilisateur'
+notifications.saved: 'Vos changements ont été sauvegardés.'
 organizations.deletion.caution: "Attention\_!"
 organizations.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
 organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les sous-organisations, tickets et autorisations associées."
@@ -117,13 +118,11 @@ organizations.name: Nom
 organizations.new.submit: 'Créer l’organisation'
 organizations.new.title: 'Nouvelle organisation'
 organizations.parent_orga: 'Organisation parente'
-preferences.saved: 'Vos changements ont été sauvegardés.'
 preferences.title: Préférences
 profile.current_password: 'Mot de passe actuel'
 profile.leave_password: 'Laissez ces champs vides pour conserver votre mot de passe actuel.'
 profile.new_password: 'Nouveau mot de passe'
 profile.note: "Note\_: les informations de votre profil peuvent être visibles par les autres utilisateurs."
-profile.saved: 'Vos changements ont été sauvegardés.'
 profile.title: Profil
 roles.deletion.caution: "Attention\_!"
 roles.deletion.confirm: "Êtes-vous sûr de vouloir supprimer ce rôle\_?"

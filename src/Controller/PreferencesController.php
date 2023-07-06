@@ -80,7 +80,7 @@ class PreferencesController extends BaseController
         $session = $requestStack->getSession();
         $session->set('_locale', $user->getLocale());
 
-        $this->addFlash('success', new TranslatableMessage('preferences.saved'));
+        $this->addFlash('success', new TranslatableMessage('notifications.saved'));
 
         return $this->redirectToRoute('preferences');
     }

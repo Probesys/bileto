@@ -241,6 +241,8 @@ class MailboxesController extends BaseController
 
         $mailboxRepository->save($mailbox, true);
 
+        $this->addFlash('success', new TranslatableMessage('notifications.saved'));
+
         return $this->redirectToRoute('edit mailbox', [
             'uid' => $mailbox->getUid(),
         ]);

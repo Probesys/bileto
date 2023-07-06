@@ -97,7 +97,7 @@ class ProfileController extends BaseController
 
         $userRepository->save($user, true);
 
-        $this->addFlash('success', new TranslatableMessage('profile.saved'));
+        $this->addFlash('success', new TranslatableMessage('notifications.saved'));
 
         return $this->redirectToRoute('profile');
     }
