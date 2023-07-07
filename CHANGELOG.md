@@ -1,6 +1,6 @@
 # Changelog of Bileto
 
-## 2023-xx-yy - unreleased
+## 2023-07-07 - 0.4.0-dev
 
 ### Migration notes
 
@@ -14,6 +14,48 @@ You must make sure that they are installed on your server.
 
 You must setup a Messenger worker.
 Read the [administrator guide to learn how](/docs/administrators/deploy.md) (nearly the end of the document).
+
+### Security
+
+- Fix an <abbr>XSS</abbr> when deleting an organization ([718f757](https://github.com/Probesys/bileto/commit/718f757))
+
+### New
+
+- Send a notification when posting a new message ([eebc2f6](https://github.com/Probesys/bileto/commit/eebc2f6))
+- Allow to create and answer to tickets by emails
+    - Allow to manage IMAP mailboxes ([9afd7ab](https://github.com/Probesys/bileto/commit/9afd7ab), [a590954](https://github.com/Probesys/bileto/commit/a590954), [29d6446](https://github.com/Probesys/bileto/commit/29d6446))
+    - Allow to create tickets by emails ([d6c1293](https://github.com/Probesys/bileto/commit/d6c1293), [09ddf26](https://github.com/Probesys/bileto/commit/09ddf26))
+    - Allow to answer to a ticket by email ([b3305c1](https://github.com/Probesys/bileto/commit/b3305c1))
+    - List the emails in error on the mailboxes page ([a8fdfaa](https://github.com/Probesys/bileto/commit/a8fdfaa), [d8a3c6e](https://github.com/Probesys/bileto/commit/d8a3c6e))
+- Allow to assign a user to an organization ([f436203](https://github.com/Probesys/bileto/commit/f436203))
+- Allow to edit users ([854cce6](https://github.com/Probesys/bileto/commit/854cce6))
+- Allow to delete roles ([d547f7a](https://github.com/Probesys/bileto/commit/d547f7a))
+
+### Improvements
+
+- Display only tech users in the lists of assignees ([5360bf8](https://github.com/Probesys/bileto/commit/5360bf8))
+- Show a notification when profile/preferences are saved ([f989d0b](https://github.com/Probesys/bileto/commit/f989d0b))
+- Improve the look of the notifications ([f340549](https://github.com/Probesys/bileto/commit/f340549))
+- Show an icon on the messages sent by email ([f3ed9e8](https://github.com/Probesys/bileto/commit/f3ed9e8))
+
+### Documentation
+
+- Update the roadmap ([b2a7705](https://github.com/Probesys/bileto/commit/b2a7705))
+- Extract documentation indexes in dedicated files ([b6ae39e](https://github.com/Probesys/bileto/commit/b6ae39e))
+
+### Technical
+
+- Upgrade to Symfony 6.3 ([733d10d](https://github.com/Probesys/bileto/commit/733d10d))
+- Setup Symfony Messenger ([6e80eb9](https://github.com/Probesys/bileto/commit/6e80eb9), [d9afabc](https://github.com/Probesys/bileto/commit/d9afabc))
+- Separate orga roles in user and tech roles ([16701e6](https://github.com/Probesys/bileto/commit/16701e6))
+- Configure GreenMail ([adc8d35](https://github.com/Probesys/bileto/commit/adc8d35), [1be563f](https://github.com/Probesys/bileto/commit/1be563f))
+- Fix datetimes of Messages created in seeds ([9fe51fa](https://github.com/Probesys/bileto/commit/9fe51fa))
+- Fix the make db-reset command ([0f776ae](https://github.com/Probesys/bileto/commit/0f776ae))
+- Configure the CI for the `feat/*` branches ([a038af1](https://github.com/Probesys/bileto/commit/a038af1))
+- Move the getters and setters of Uid to MetaEntityTrait ([da6123a](https://github.com/Probesys/bileto/commit/da6123a))
+- Block html and body tags with HtmlSanitizer ([380eea1](https://github.com/Probesys/bileto/commit/380eea1))
+- Increase the `max_input_length` of HtmlSanitizer ([c685b16](https://github.com/Probesys/bileto/commit/c685b16))
+- Update the dependencies ([3be49e0](https://github.com/Probesys/bileto/commit/3be49e0), [29186b0](https://github.com/Probesys/bileto/commit/29186b0), [723451d](https://github.com/Probesys/bileto/commit/723451d), [0a85228](https://github.com/Probesys/bileto/commit/0a85228))
 
 ## 2023-05-12 - 0.3.0-dev
 
