@@ -14,6 +14,7 @@ Dedicated to the backend:
 - [Working with the search engine](/docs/developers/search-engine.md)
 - [Encrypting data](/docs/developers/encryptor.md)
 - [The email collector](/docs/developers/email-collector.md)
+- [Sort the entities](/docs/developers/sorters.md)
 
 Dedicated to the frontend:
 

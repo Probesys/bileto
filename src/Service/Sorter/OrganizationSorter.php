@@ -4,7 +4,7 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Service;
+namespace App\Service\Sorter;
 
 use App\Entity\Organization;
 
@@ -15,18 +15,14 @@ class OrganizationSorter extends LocaleSorter
      */
     public function sort(array &$organizations): void
     {
-        $collator = new \Collator($this->getLocale());
-        uasort($organizations, function (Organization $o1, Organization $o2) use ($collator) {
+        uasort($organizations, function (Organization $o1, Organization $o2) {
             $pathComparison = strcmp($o1->getParentsPath(), $o2->getParentsPath());
+
             if ($pathComparison !== 0) {
                 return $pathComparison;
-            } else {
-                $nameComparison = $collator->compare($o1->getName(), $o2->getName());
-                if ($nameComparison === false) {
-                    $nameComparison = 0;
-                }
-                return $nameComparison;
             }
+
+            return $this->localeCompare($o1->getName(), $o2->getName());
         });
     }
 

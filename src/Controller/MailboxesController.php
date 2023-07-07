@@ -12,7 +12,7 @@ use App\Message\CreateTicketsFromMailboxEmails;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Security\Encryptor;
-use App\Service\MailboxSorter;
+use App\Service\Sorter\MailboxSorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;

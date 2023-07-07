@@ -8,7 +8,7 @@ namespace App\Controller;
 
 use App\Entity\Organization;
 use App\Repository\OrganizationRepository;
-use App\Service\OrganizationSorter;
+use App\Service\Sorter\OrganizationSorter;
 use App\Utils\Time;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;

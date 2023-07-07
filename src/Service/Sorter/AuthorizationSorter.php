@@ -4,7 +4,7 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Service;
+namespace App\Service\Sorter;
 
 use App\Entity\Authorization;
 
@@ -15,15 +15,11 @@ class AuthorizationSorter extends LocaleSorter
      */
     public function sort(array &$authorizations): void
     {
-        $collator = new \Collator($this->getLocale());
-        uasort($authorizations, function (Authorization $a1, Authorization $a2) use ($collator) {
-            $roleComparison = $collator->compare(
+        uasort($authorizations, function (Authorization $a1, Authorization $a2) {
+            $roleComparison = $this->localeCompare(
                 $a1->getRole()->getName(),
                 $a2->getRole()->getName(),
             );
-            if ($roleComparison === false) {
-                $roleComparison = 0;
-            }
 
             if ($roleComparison !== 0) {
                 return $roleComparison;
@@ -40,12 +36,7 @@ class AuthorizationSorter extends LocaleSorter
                 return 1;
             }
 
-            $orgaComparison = $collator->compare($orga1->getName(), $orga2->getName());
-            if ($orgaComparison === false) {
-                $orgaComparison = 0;
-            }
-
-            return $orgaComparison;
+            return $this->localeCompare($orga1->getName(), $orga2->getName());
         });
     }
 }

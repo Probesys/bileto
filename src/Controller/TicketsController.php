@@ -14,7 +14,7 @@ use App\Repository\UserRepository;
 use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\SearchEngine\Query;
-use App\Service\OrganizationSorter;
+use App\Service\Sorter\OrganizationSorter;
 use App\Service\TicketTimeline;
 use App\Utils\Time;
 use Symfony\Bundle\SecurityBundle\Security;

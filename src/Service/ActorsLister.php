@@ -11,7 +11,7 @@ use App\Entity\User;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
-use App\Service\UserSorter;
+use App\Service\Sorter\UserSorter;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class ActorsLister
