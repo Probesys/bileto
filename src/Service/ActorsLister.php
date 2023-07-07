@@ -8,7 +8,6 @@ namespace App\Service;
 
 use App\Entity\Organization;
 use App\Entity\User;
-use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\Service\Sorter\UserSorter;
@@ -17,7 +16,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 class ActorsLister
 {
     public function __construct(
-        private AuthorizationRepository $authRepository,
         private OrganizationRepository $orgaRepository,
         private UserRepository $userRepository,
         private UserSorter $userSorter,
@@ -35,7 +33,8 @@ class ActorsLister
         /** @var User */
         $currentUser = $this->security->getUser();
 
-        $authorizedOrgaIds = $this->findAuthorizedOrganizationIds($currentUser);
+        $authorizedOrgas = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
+        $authorizedOrgaIds = array_map(fn ($orga) => $orga->getId(), $authorizedOrgas);
 
         $organizationIds = $organization->getParentOrganizationIds();
         $organizationIds[] = $organization->getId();
@@ -55,7 +54,8 @@ class ActorsLister
         /** @var User */
         $currentUser = $this->security->getUser();
 
-        $authorizedOrgaIds = $this->findAuthorizedOrganizationIds($currentUser);
+        $authorizedOrgas = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
+        $authorizedOrgaIds = array_map(fn ($orga) => $orga->getId(), $authorizedOrgas);
 
         return $this->findByOrganizationIds($authorizedOrgaIds, $role);
     }
@@ -82,22 +82,5 @@ class ActorsLister
         } else {
             return $users;
         }
-    }
-
-    /**
-     * @return int[]
-     */
-    private function findAuthorizedOrganizationIds(User $currentUser): array
-    {
-        $orgaIds = $this->authRepository->getAuthorizedOrganizationIds($currentUser);
-        if (in_array(null, $orgaIds)) {
-            $organizations = $this->orgaRepository->findAll();
-        } else {
-            $organizations = $this->orgaRepository->findWithSubOrganizations($orgaIds);
-        }
-
-        return array_map(function ($orga) {
-            return $orga->getId();
-        }, $organizations);
     }
 }

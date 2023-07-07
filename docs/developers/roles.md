@@ -127,6 +127,22 @@ if (/* some condition */) {
 }
 ```
 
+### Find organizations authorized for a user
+
+Users are authorized to access an organization if they are associated with an “organization” role.
+Granting access to an organization includes all its sub-organizations.
+To load all the organizations for which the user is authorized:
+
+```php
+namespace App\Repository\OrganizationRepository;
+
+function someController(OrganizationRepository $orgaRepository)
+{
+    $user = $this->getUser();
+    $organizations = $orgaRepository->findAuthorizedOrganizations($user);
+}
+```
+
 ## Adding new permissions
 
 To add new permissions to Bileto, you must begin to add it to the `PERMISSIONS` constant of [the `Role` entity](/src/Entity/Role.php).

@@ -7,6 +7,7 @@
 namespace App\Repository;
 
 use App\Entity\Organization;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -136,5 +137,32 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
 
         $query = $queryBuilder->getQuery();
         return $query->getResult();
+    }
+
+    /**
+     * @return Organization[]
+     */
+    public function findAuthorizedOrganizations(User $user): array
+    {
+        $entityManager = $this->getEntityManager();
+        $queryBuilder = $entityManager->createQueryBuilder();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT IDENTITY(a.organization)
+            FROM App\Entity\Authorization a
+            JOIN a.role r
+            WHERE a.holder = :user
+            AND (r.type = 'orga:user' OR r.type = 'orga:tech')
+        SQL);
+        $query->setParameter('user', $user);
+
+        $authorizedOrgaIds = $query->getSingleColumnResult();
+
+        if (in_array(null, $authorizedOrgaIds)) {
+            // If "null" is returned, it means that an authorization is applied globally.
+            return $this->findAll();
+        } else {
+            return $this->findWithSubOrganizations($authorizedOrgaIds);
+        }
     }
 }

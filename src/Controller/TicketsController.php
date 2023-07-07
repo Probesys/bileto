@@ -49,12 +49,7 @@ class TicketsController extends BaseController
         /** @var string $sort */
         $sort = $request->query->get('sort', 'updated-desc');
 
-        $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
-        if (in_array(null, $orgaIds)) {
-            $organizations = $orgaRepository->findAll();
-        } else {
-            $organizations = $orgaRepository->findWithSubOrganizations($orgaIds);
-        }
+        $organizations = $orgaRepository->findAuthorizedOrganizations($user);
 
         $ticketSearcher->setOrganizations($organizations);
 
@@ -123,12 +118,7 @@ class TicketsController extends BaseController
 
             $organizations = [$organization];
         } else {
-            $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
-            if (in_array(null, $orgaIds)) {
-                $organizations = $organizationRepository->findAll();
-            } else {
-                $organizations = $organizationRepository->findWithSubOrganizations($orgaIds);
-            }
+            $organizations = $organizationRepository->findAuthorizedOrganizations($user);
         }
 
         // Keep only the organizations in which the user can create tickets

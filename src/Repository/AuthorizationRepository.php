@@ -129,24 +129,4 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
             return $query->getOneOrNullResult();
         }
     }
-
-    /**
-     * @return int[]
-     */
-    public function getAuthorizedOrganizationIds(User $user): array
-    {
-        $entityManager = $this->getEntityManager();
-        $queryBuilder = $entityManager->createQueryBuilder();
-
-        $query = $entityManager->createQuery(<<<SQL
-            SELECT IDENTITY(a.organization)
-            FROM App\Entity\Authorization a
-            JOIN a.role r
-            WHERE a.holder = :user
-            AND (r.type = 'orga:user' OR r.type = 'orga:tech')
-        SQL);
-        $query->setParameter('user', $user);
-
-        return $query->getSingleColumnResult();
-    }
 }

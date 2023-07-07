@@ -26,12 +26,8 @@ class PagesController extends BaseController
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        $orgaIds = $authorizationRepository->getAuthorizedOrganizationIds($user);
-        if (in_array(null, $orgaIds)) {
-            $organizations = $orgaRepository->findAll();
-        } else {
-            $organizations = $orgaRepository->findWithSubOrganizations($orgaIds);
-        }
+
+        $organizations = $orgaRepository->findAuthorizedOrganizations($user);
         $organizations = $orgaSorter->asTree($organizations);
 
         $tickets = $ticketSearcher->getTickets(TicketSearcher::queryOwned());
