@@ -122,7 +122,9 @@ class UsersController extends BaseController
 
         $userRepository->save($newUser, true);
 
-        return $this->redirectToRoute('users');
+        return $this->redirectToRoute('new user authorization', [
+            'uid' => $newUser->getUid(),
+        ]);
     }
 
     #[Route('/users/{uid}/edit', name: 'edit user', methods: ['GET', 'HEAD'])]
