@@ -136,7 +136,12 @@ if ($dbPlatform instanceof PostgreSQLPlatform) {
 
 Then, generate the migration for the other database.
 You can do that by changing the `DATABASE_URL` environment variable of the [`.env`](/.env) file (see the commented variable).
-You must also reverse the commented database service in the [`docker-compose.yml`](/docker/docker-compose.yml) file and restart the Docker containers.
+You must also restart the Docker containers by enabling MariaDB:
+
+```console
+$ make docker-start DATABASE=mariadb
+```
+
 Don’t forget to re-setup the database:
 
 ```console
@@ -149,10 +154,14 @@ You can now delete the last generated migration file, and reverse your changes:
 
 ```console
 $ rm migrations/VersionXXXX.php
-$ git checkout -- .env docker/docker-compose.yml
+$ git checkout -- .env
 ```
 
-Restart the docker containers, and re-setup the database as previously.
+Restart the docker containers:
+
+```console
+$ make docker-start
+```
 
 **Note:** it is indeed quite inconvenient.
 You’re very welcome to suggest a better system to handle migrations for several databases!

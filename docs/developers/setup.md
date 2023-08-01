@@ -44,6 +44,18 @@ They are just shortcuts for common commands.
 If you want to know what they do, you can open the [Makefile](/Makefile) and locates the command that you are interested in.
 They are hopefully easily readable by newcomers.
 
+## Use MariaDB
+
+By default, `make docker-start` starts a PostgreSQL database.
+If you want to use MariaDB, just pass the `DATABASE` variable to the command:
+
+```console
+$ make docker-start DATABASE=mariadb
+```
+
+You’ll also need to change the `DATABASE_URL` value in the [`.env` file](/.env) (just uncomment the second line).
+If you want to make this change permanent, create a `.env.local` file and copy the line into it.
+
 ## Working in the Docker containers
 
 There are few scripts to allow to execute commands in the Docker containers easily:

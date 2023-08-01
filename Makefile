@@ -20,6 +20,12 @@ else
 	NPM = ./docker/bin/npm
 endif
 
+ifdef DATABASE
+	DOCKER_COMPOSE_PROFILE = --profile $(DATABASE)
+else
+	DOCKER_COMPOSE_PROFILE = --profile pgsql
+endif
+
 ifndef COVERAGE
 	COVERAGE = --coverage-html ./coverage
 endif
@@ -39,7 +45,7 @@ endif
 .PHONY: docker-start
 docker-start: ## Start a development server with Docker
 	@echo "Running webserver on http://localhost:8000"
-	$(DOCKER_COMPOSE) up
+	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_PROFILE) up
 
 .PHONY: docker-build
 docker-build: ## Rebuild Docker containers
