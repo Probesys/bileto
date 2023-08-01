@@ -45,22 +45,6 @@ $ composer --version
 Composer version 2.4.4 2022-10-27 14:39:29
 ```
 
-Check the following PHP extensions are installed:
-
-- ctype
-- iconv
-- intl
-- pdo + pdo\_pgsql or pdo\_mysql (depending on which database you use)
-- sodium
-- xsl
-- zip
-
-```console
-$ php -m
-[PHP Modules]
-...
-```
-
 ## Create the database
 
 Create a dedicated user and database for Bileto.
@@ -96,9 +80,27 @@ Clone the code:
 
 ```console
 $ git clone https://github.com/Probesys/bileto.git
+$ cd bileto
 ```
 
 If your user doesn't have the permission to write in this folder, execute the command as `root`.
+
+## Check the PHP extensions
+
+Check that the PHP extensions are installed:
+
+```console
+$ composer check-platform-reqs
+Checking platform requirements for packages in the vendor dir
+composer-plugin-api  2.3.0      success
+composer-runtime-api 2.2.2      success
+ext-ctype            8.1.10     success
+...
+ext-zip              1.19.5     success
+php                  8.1.10     success
+```
+
+If requirements are not met, you’ll have to install the missing extensions.
 
 ## About file permissions
 
@@ -109,7 +111,6 @@ In this documentation, we’ll use `www-data` because it is the most generic nam
 Set the owner of the files to the user that runs your webserver:
 
 ```console
-$ cd /var/www/bileto
 $ sudo chown -R www-data:www-data .
 ```
 
