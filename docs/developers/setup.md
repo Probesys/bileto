@@ -4,7 +4,8 @@
 
 The development environment is managed with Docker by default.
 
-First, make sure to install [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/). Both `docker` and `docker-compose` must be executable by your normal user.
+First, make sure to install [Docker Engine](https://docs.docker.com/engine/install/).
+The `docker` command must be executable by your normal user.
 
 ## Install Bileto
 
