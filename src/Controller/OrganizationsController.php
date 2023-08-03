@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\Entity\Organization;
 use App\Repository\OrganizationRepository;
 use App\Service\Sorter\OrganizationSorter;
+use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -138,7 +139,7 @@ class OrganizationsController extends BaseController
                 'organizations' => $organizations,
                 'name' => $name,
                 'selectedParentUid' => $selectedParentUid,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
@@ -199,7 +200,7 @@ class OrganizationsController extends BaseController
             return $this->renderBadRequest('organizations/edit.html.twig', [
                 'organization' => $organization,
                 'name' => $name,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 

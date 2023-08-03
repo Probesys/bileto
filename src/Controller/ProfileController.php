@@ -7,6 +7,7 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -91,7 +92,7 @@ class ProfileController extends BaseController
             return $this->renderBadRequest('profile/edit.html.twig', [
                 'name' => $name,
                 'email' => $email,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 

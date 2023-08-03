@@ -14,6 +14,7 @@ use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Service\TicketTimeline;
+use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -131,7 +132,7 @@ class MessagesController extends BaseController
                 'statuses' => $statuses,
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
@@ -165,7 +166,7 @@ class MessagesController extends BaseController
                 'statuses' => $statuses,
                 'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 

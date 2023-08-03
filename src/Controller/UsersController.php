@@ -11,6 +11,7 @@ use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\Sorter\UserSorter;
+use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -116,7 +117,7 @@ class UsersController extends BaseController
                 'email' => $email,
                 'name' => $name,
                 'organizationUid' => $organizationUid,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
@@ -210,7 +211,7 @@ class UsersController extends BaseController
                 'email' => $email,
                 'name' => $name,
                 'organizationUid' => $organizationUid,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 

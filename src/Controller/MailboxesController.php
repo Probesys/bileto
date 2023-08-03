@@ -13,6 +13,7 @@ use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Security\Encryptor;
 use App\Service\Sorter\MailboxSorter;
+use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -135,7 +136,7 @@ class MailboxesController extends BaseController
                 'username' => $username,
                 'password' => $password,
                 'folder' => $folder,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
@@ -236,7 +237,7 @@ class MailboxesController extends BaseController
                 'encryption' => $encryption,
                 'username' => $username,
                 'folder' => $folder,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 

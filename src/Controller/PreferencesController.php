@@ -7,6 +7,7 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Locales;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,7 +72,7 @@ class PreferencesController extends BaseController
                 'colorScheme' => $colorScheme,
                 'locale' => $locale,
                 'availableLanguages' => Locales::getSupportedLanguages(),
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 

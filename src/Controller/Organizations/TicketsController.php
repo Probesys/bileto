@@ -18,6 +18,7 @@ use App\SearchEngine\Query;
 use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\Service\ActorsLister;
+use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -296,7 +297,7 @@ class TicketsController extends BaseController
                 'priority' => $priority,
                 'allUsers' => $allUsers,
                 'techUsers' => $techUsers,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
@@ -321,7 +322,7 @@ class TicketsController extends BaseController
                 'priority' => $priority,
                 'allUsers' => $allUsers,
                 'techUsers' => $techUsers,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 

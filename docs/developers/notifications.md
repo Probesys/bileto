@@ -14,6 +14,7 @@ namespace App\Controller;
 use App\Controller\BaseController;
 use App\Entity\Ticket;
 use App\Repository\TicketRepository;
+use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,7 +45,7 @@ class TicketsController extends BaseController
 
         $errors = $validator->validate($ticket);
         if (count($errors) > 0) {
-            $error = implode(' ', $this->formatErrors($errors));
+            $error = implode(' ', ConstraintErrorsFormatter::format($errors));
             $this->addFlash('error', $error);
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),

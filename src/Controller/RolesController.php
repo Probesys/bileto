@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\Entity\Role;
 use App\Repository\RoleRepository;
 use App\Service\Sorter\RoleSorter;
+use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -122,7 +123,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
@@ -217,7 +218,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 

@@ -9,7 +9,6 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class BaseController extends AbstractController
 {
@@ -25,26 +24,6 @@ class BaseController extends AbstractController
         }
 
         return $this->render($view, $parameters, $response);
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    protected function formatErrors(ConstraintViolationListInterface $errors): array
-    {
-        $formattedErrors = [];
-        foreach ($errors as $error) {
-            $property = $error->getPropertyPath();
-            if (isset($formattedErrors[$property])) {
-                $formattedErrors[$property] = implode(
-                    ' ',
-                    [$formattedErrors[$property], $error->getMessage()],
-                );
-            } else {
-                $formattedErrors[$property] = $error->getMessage();
-            }
-        }
-        return $formattedErrors;
     }
 
     protected function isPathRedirectable(string $path): bool

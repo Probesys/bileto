@@ -9,6 +9,7 @@ namespace App\Controller\Tickets;
 use App\Controller\BaseController;
 use App\Entity\Ticket;
 use App\Repository\TicketRepository;
+use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -89,7 +90,7 @@ class PriorityController extends BaseController
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
-                'errors' => $this->formatErrors($errors),
+                'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
