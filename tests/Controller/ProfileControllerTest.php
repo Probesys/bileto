@@ -38,7 +38,7 @@ class ProfileControllerTest extends WebTestCase
 
         $client->request('GET', '/profile');
 
-        $this->assertResponseRedirects('http://localhost/login', 302);
+        $this->assertResponseRedirects('/login', 302);
     }
 
     public function testPostUpdateSavesTheUserAndRedirects(): void

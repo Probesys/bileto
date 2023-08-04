@@ -93,7 +93,7 @@ class PagesControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
 
-        $this->assertResponseRedirects('http://localhost/login', 302);
+        $this->assertResponseRedirects('/login', 302);
     }
 
     public function testGetAboutRendersCorrectly(): void

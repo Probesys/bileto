@@ -304,11 +304,6 @@ tickets.urgency: Urgence
 tickets.urgency.high: Haute
 tickets.urgency.low: Basse
 tickets.urgency.medium: Moyenne
-users.color_scheme: 'Schéma de couleurs'
-users.color_scheme.auto: Auto
-users.color_scheme.light: Clair
-users.color_scheme.dark: Sombre
-users.email: 'Adresse email'
 users.authorizations.index.new_authorization: 'Donner une autorisation'
 users.authorizations.index.revoke: Révoquer
 users.authorizations.index.revoke.confirm: "Êtes-vous sûr de vouloir révoquer cette autorisation\_?"
@@ -320,9 +315,15 @@ users.authorizations.new.organization_caption: 'L’autorisation peut être limi
 users.authorizations.new.role: 'Choisir un rôle'
 users.authorizations.new.submit: 'Créer l’autorisation'
 users.authorizations.new.title: 'Nouvelle autorisation'
+users.color_scheme: 'Schéma de couleurs'
+users.color_scheme.auto: Auto
+users.color_scheme.dark: Sombre
+users.color_scheme.light: Clair
 users.edit.leave_password_empty: 'Laissez vide pour conserver le mot de passe actuel.'
 users.edit.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
 users.edit.title: 'Modifier un utilisateur'
+users.email: 'Adresse email'
+users.identifier: 'Adresse email ou identifiant'
 users.index.authorizations: Autorisations
 users.index.edit: Modifier
 users.index.new_user: 'Nouvel utilisateur'

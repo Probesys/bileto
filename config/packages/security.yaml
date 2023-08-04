@@ -12,6 +12,7 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -21,10 +22,8 @@ security:
             lazy: true
             provider: app_user_provider
 
-            form_login:
-                login_path: login
-                check_path: login
-                enable_csrf: true
+            custom_authenticators:
+                - App\Security\FormLoginAuthenticator
 
             logout:
                 path: logout

@@ -45,20 +45,42 @@ class LoginControllerTest extends WebTestCase
     public function testPostLoginLogsTheUserAndRedirectsToHome(): void
     {
         $client = static::createClient();
-        $username = 'alix@example.com';
+        $identifier = 'alix@example.com';
         $password = 'secret';
         $user = UserFactory::createOne([
-            'email' => $username,
+            'email' => $identifier,
             'password' => $password,
         ]);
 
         $client->request('GET', '/login');
         $crawler = $client->submitForm('form-login-submit', [
-            '_username' => $username,
+            '_identifier' => $identifier,
             '_password' => $password,
         ]);
 
-        $this->assertResponseRedirects('http://localhost/', 302);
+        $this->assertResponseRedirects('/', 302);
+        $user = $this->getLoggedUser();
+        $this->assertNotNull($user);
+    }
+
+    public function testPostLoginWithLdapCreatesUser(): void
+    {
+        // If this test fails, it's probably because you didn't start the LDAP server.
+        // Please start the development environment using `make docker-start LDAP=true`
+
+        $client = static::createClient();
+        // This user exists in the LDAP directory.
+        // See the docker/ldap-ldifs/tree.ldif file.
+        $identifier = 'dominique';
+        $password = 'secret';
+
+        $client->request('GET', '/login');
+        $crawler = $client->submitForm('form-login-submit', [
+            '_identifier' => $identifier,
+            '_password' => $password,
+        ]);
+
+        $this->assertResponseRedirects('/', 302);
         $user = $this->getLoggedUser();
         $this->assertNotNull($user);
     }
@@ -66,20 +88,20 @@ class LoginControllerTest extends WebTestCase
     public function testPostLoginFailsIfPasswordIsIncorrect(): void
     {
         $client = static::createClient();
-        $username = 'alix@example.com';
+        $identifier = 'alix@example.com';
         $password = 'secret';
         $user = UserFactory::createOne([
-            'email' => $username,
+            'email' => $identifier,
             'password' => $password,
         ]);
 
         $client->request('GET', '/login');
         $crawler = $client->submitForm('form-login-submit', [
-            '_username' => $username,
+            '_identifier' => $identifier,
             '_password' => 'not the secret',
         ]);
 
-        $this->assertResponseRedirects('http://localhost/login', 302);
+        $this->assertResponseRedirects('/login', 302);
         $client->followRedirect();
 
         $this->assertSelectorTextContains(
@@ -93,16 +115,16 @@ class LoginControllerTest extends WebTestCase
     public function testPostLoginFailsIfUserDoesNotExist(): void
     {
         $client = static::createClient();
-        $username = 'alix@example.com';
+        $identifier = 'alix@example.com';
         $password = 'secret';
 
         $client->request('GET', '/login');
         $client->submitForm('form-login-submit', [
-            '_username' => $username,
+            '_identifier' => $identifier,
             '_password' => $password,
         ]);
 
-        $this->assertResponseRedirects('http://localhost/login', 302);
+        $this->assertResponseRedirects('/login', 302);
         $client->followRedirect();
 
         $this->assertSelectorTextContains(

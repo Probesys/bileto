@@ -10,6 +10,7 @@ use App\Entity\Organization;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -25,7 +26,10 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  *
  * @method User findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UidGeneratorInterface
+class UserRepository extends ServiceEntityRepository implements
+    PasswordUpgraderInterface,
+    UidGeneratorInterface,
+    UserLoaderInterface
 {
     use UidGeneratorTrait;
     use FindOrCreateTrait;
@@ -51,6 +55,33 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function loadUserByIdentifier(string $identifier): ?User
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT u
+            FROM App\Entity\User u
+            WHERE (u.ldapIdentifier IS NULL AND u.email = :identifier)
+            OR u.ldapIdentifier = :identifier
+        SQL);
+        $query->setParameter('identifier', $identifier);
+        return $query->getOneOrNullResult();
+    }
+
+    public function loadUserByEmail(string $email): ?User
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT u
+            FROM App\Entity\User u
+            WHERE u.email = :identifier
+        SQL);
+        $query->setParameter('identifier', $email);
+        return $query->getOneOrNullResult();
     }
 
     /**

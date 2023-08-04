@@ -304,11 +304,6 @@ tickets.urgency: Urgency
 tickets.urgency.high: High
 tickets.urgency.low: Low
 tickets.urgency.medium: Medium
-users.color_scheme: 'Color scheme'
-users.color_scheme.auto: Auto
-users.color_scheme.light: Light
-users.color_scheme.dark: Dark
-users.email: 'Email address'
 users.authorizations.index.new_authorization: 'Give an authorization'
 users.authorizations.index.revoke: Revoke
 users.authorizations.index.revoke.confirm: 'Are you sure that you want to revoke this authorization?'
@@ -320,9 +315,15 @@ users.authorizations.new.organization_caption: 'The authorization can be limited
 users.authorizations.new.role: 'Choose a role'
 users.authorizations.new.submit: 'Create the authorization'
 users.authorizations.new.title: 'New authorization'
+users.color_scheme: 'Color scheme'
+users.color_scheme.auto: Auto
+users.color_scheme.dark: Dark
+users.color_scheme.light: Light
 users.edit.leave_password_empty: 'Leave blank to keep the current password.'
 users.edit.organization_caption: 'The tickets opened by email by this user will be attached to this organization.'
 users.edit.title: 'Edit a user'
+users.email: 'Email address'
+users.identifier: 'Email address or identifier'
 users.index.authorizations: Authorizations
 users.index.edit: Edit
 users.index.new_user: 'New user'

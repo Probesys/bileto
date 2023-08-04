@@ -295,6 +295,6 @@ class TicketsControllerTest extends WebTestCase
 
         $client->request('GET', "/tickets/{$ticket->getUid()}");
 
-        $this->assertResponseRedirects('http://localhost/login', 302);
+        $this->assertResponseRedirects('/login', 302);
     }
 }
