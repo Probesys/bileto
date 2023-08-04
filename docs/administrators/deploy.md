@@ -277,3 +277,12 @@ www-data$ php bin/console app:users:create --email=user@example.com --password=s
 
 Then, try to login via the interface, it should work.
 You can start using Bileto now.
+
+## Optional: Configure an LDAP server
+
+If you want to authenticate your users against an LDAP server, you’ll need to configure Bileto a bit more.
+Open your `.env.local` file, and uncomment the `LDAP_*` variables.
+If you don’t find them, copy paste them from the [`env.sample` file](/env.sample).
+The comments above the variables should be clear enough to help you.
+
+To test your setup, try to login with a user and monitor the application logs for any related errors.
