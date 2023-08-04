@@ -124,6 +124,8 @@ organizations.new.title: 'Nouvelle organisation'
 organizations.parent_orga: 'Organisation parente'
 preferences.title: Préférences
 profile.current_password: 'Mot de passe actuel'
+profile.ldap.information: Information
+profile.ldap.managed: 'Vous ne pouvez pas modifier votre profil car votre compte est géré avec LDAP.'
 profile.leave_password: 'Laissez ces champs vides pour conserver votre mot de passe actuel.'
 profile.new_password: 'Nouveau mot de passe'
 profile.note: "Note\_: les informations de votre profil peuvent être visibles par les autres utilisateurs."

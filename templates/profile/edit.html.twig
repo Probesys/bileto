@@ -29,12 +29,23 @@
                 {{ 'profile.note' | trans }}
             </p>
 
+            {% if managedByLdap %}
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'info',
+                    title: 'profile.ldap.information' | trans,
+                    message: 'profile.ldap.managed' | trans,
+                }, with_context = false) }}
+            {% endif %}
+
             <div class="flow flow--small">
                 <label for="name">
                     {{ 'users.name' | trans }}
-                    <span class="text--secondary">
-                        {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
-                    </span>
+
+                    {% if not managedByLdap %}
+                        <span class="text--secondary">
+                            {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
+                        </span>
+                    {% endif %}
                 </label>
 
                 {% if errors.name is defined %}
@@ -55,6 +66,7 @@
                         aria-invalid="true"
                         aria-errormessage="name-error"
                     {% endif %}
+                    {{ managedByLdap ? 'disabled' }}
                 />
             </div>
 
@@ -81,91 +93,98 @@
                         aria-invalid="true"
                         aria-errormessage="email-error"
                     {% endif %}
+                    {{ managedByLdap ? 'disabled' }}
                 />
             </div>
 
-            <fieldset class="flow">
-                <legend>{{ 'users.password' | trans }}</legend>
+            {% if not managedByLdap %}
+                <fieldset class="flow">
+                    <legend>{{ 'users.password' | trans }}</legend>
 
-                <p class="form__caption">
-                    {{ 'profile.leave_password' | trans }}
-                </p>
+                    <p class="form__caption">
+                        {{ 'profile.leave_password' | trans }}
+                    </p>
 
-                <div class="flow flow--small">
-                    <label for="current-password">
-                        {{ 'profile.current_password' | trans }}
-                    </label>
+                    <div class="flow flow--small">
+                        <label for="current-password">
+                            {{ 'profile.current_password' | trans }}
+                        </label>
 
-                    {% if errors.password is defined %}
-                        <p class="form__error" role="alert" id="current-password-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.password }}
-                        </p>
-                    {% endif %}
+                        {% if errors.password is defined %}
+                            <p class="form__error" role="alert" id="current-password-error">
+                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                {{ errors.password }}
+                            </p>
+                        {% endif %}
 
-                    <div class="input-container" data-controller="password">
-                        <input
-                            type="password"
-                            id="current-password"
-                            name="currentPassword"
-                            autocomplete="current-password"
-                            data-password-target="input"
-                            {% if errors.password is defined %}
-                                aria-invalid="true"
-                                aria-errormessage="current-password-error"
-                            {% endif %}
-                        />
+                        <div class="input-container" data-controller="password">
+                            <input
+                                type="password"
+                                id="current-password"
+                                name="currentPassword"
+                                autocomplete="current-password"
+                                data-password-target="input"
+                                {% if errors.password is defined %}
+                                    aria-invalid="true"
+                                    aria-errormessage="current-password-error"
+                                {% endif %}
+                            />
 
-                        <button
-                            type="button"
-                            role="switch"
-                            data-action="password#toggle"
-                            data-password-target="button"
-                        >
-                            {{ icon('eye') }}
-                            {{ icon('eye-slash') }}
-                            <span class="sr-only">
-                                {{ 'forms.show_password' | trans }}
-                            </span>
-                        </button>
+                            <button
+                                type="button"
+                                role="switch"
+                                data-action="password#toggle"
+                                data-password-target="button"
+                            >
+                                {{ icon('eye') }}
+                                {{ icon('eye-slash') }}
+                                <span class="sr-only">
+                                    {{ 'forms.show_password' | trans }}
+                                </span>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="flow flow--small">
-                    <label for="new-password">
-                        {{ 'profile.new_password' | trans }}
-                    </label>
+                    <div class="flow flow--small">
+                        <label for="new-password">
+                            {{ 'profile.new_password' | trans }}
+                        </label>
 
-                    <div class="input-container" data-controller="password">
-                        <input
-                            type="password"
-                            id="new-password"
-                            name="newPassword"
-                            autocomplete="new-password"
-                            data-password-target="input"
-                        />
+                        <div class="input-container" data-controller="password">
+                            <input
+                                type="password"
+                                id="new-password"
+                                name="newPassword"
+                                autocomplete="new-password"
+                                data-password-target="input"
+                            />
 
-                        <button
-                            type="button"
-                            role="switch"
-                            data-action="password#toggle"
-                            data-password-target="button"
-                        >
-                            {{ icon('eye') }}
-                            {{ icon('eye-slash') }}
-                            <span class="sr-only">
-                                {{ 'forms.show_password' | trans }}
-                            </span>
-                        </button>
+                            <button
+                                type="button"
+                                role="switch"
+                                data-action="password#toggle"
+                                data-password-target="button"
+                            >
+                                {{ icon('eye') }}
+                                {{ icon('eye-slash') }}
+                                <span class="sr-only">
+                                    {{ 'forms.show_password' | trans }}
+                                </span>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </fieldset>
+                </fieldset>
 
-            <div class="form__actions">
-                <button id="form-update-profile-submit" class="button--primary" type="submit">
-                    {{ 'forms.save_changes' | trans }}
-                </button>
-            </div>
+                <div class="form__actions">
+                    <button
+                        id="form-update-profile-submit"
+                        class="button--primary"
+                        type="submit"
+                    >
+                        {{ 'forms.save_changes' | trans }}
+                    </button>
+                </div>
+            {% endif %}
         </form>
     </main>
 {% endblock %}

@@ -8,6 +8,7 @@ namespace App\Controller;
 
 use App\Repository\UserRepository;
 use App\Utils\ConstraintErrorsFormatter;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -20,13 +21,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ProfileController extends BaseController
 {
     #[Route('/profile', name: 'profile', methods: ['GET', 'HEAD'])]
-    public function edit(): Response
-    {
+    public function edit(
+        #[Autowire(env: 'bool:LDAP_ENABLED')]
+        bool $ldapEnabled,
+    ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         return $this->render('profile/edit.html.twig', [
             'name' => $user->getName(),
             'email' => $user->getEmail(),
+            'managedByLdap' => $ldapEnabled && $user->getAuthType() === 'ldap',
         ]);
     }
 
@@ -38,6 +42,8 @@ class ProfileController extends BaseController
         ValidatorInterface $validator,
         RequestStack $requestStack,
         TranslatorInterface $translator,
+        #[Autowire(env: 'bool:LDAP_ENABLED')]
+        bool $ldapEnabled,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -60,10 +66,22 @@ class ProfileController extends BaseController
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
+        $managedByLdap = $ldapEnabled && $user->getAuthType() === 'ldap';
+
+        if ($managedByLdap) {
+            return $this->renderBadRequest('profile/edit.html.twig', [
+                'name' => $name,
+                'email' => $email,
+                'managedByLdap' => $managedByLdap,
+                'error' => $translator->trans('user.ldap.cannot_update_profile', [], 'errors'),
+            ]);
+        }
+
         if (!$this->isCsrfTokenValid('update profile', $csrfToken)) {
             return $this->renderBadRequest('profile/edit.html.twig', [
                 'name' => $name,
                 'email' => $email,
+                'managedByLdap' => $managedByLdap,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -73,6 +91,7 @@ class ProfileController extends BaseController
                 return $this->renderBadRequest('profile/edit.html.twig', [
                     'name' => $name,
                     'email' => $email,
+                    'managedByLdap' => $managedByLdap,
                     'errors' => [
                         'password' => $translator->trans('user.password.dont_match', [], 'errors'),
                     ],
@@ -92,6 +111,7 @@ class ProfileController extends BaseController
             return $this->renderBadRequest('profile/edit.html.twig', [
                 'name' => $name,
                 'email' => $email,
+                'managedByLdap' => $managedByLdap,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }

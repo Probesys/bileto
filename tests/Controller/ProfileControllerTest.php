@@ -167,6 +167,35 @@ class ProfileControllerTest extends WebTestCase
         $this->assertFalse($passwordHasher->isPasswordValid($user->object(), $newPassword));
     }
 
+    public function testPostUpdateFailsIfManagedByLdap(): void
+    {
+        $client = static::createClient();
+        $initialName = Factory::faker()->unique()->userName();
+        $newName = Factory::faker()->unique()->userName();
+        $initialEmail = Factory::faker()->unique()->email();
+        $newEmail = Factory::faker()->unique()->email();
+        $user = UserFactory::createOne([
+            'name' => $initialName,
+            'email' => $initialEmail,
+            'ldapIdentifier' => 'charlie',
+        ]);
+        $client->loginUser($user->object());
+
+        $client->request('POST', '/profile', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
+            'name' => $newName,
+            'email' => $newEmail,
+        ]);
+
+        $this->assertSelectorTextContains(
+            '[data-test="alert-error"]',
+            'You can’t update your profile because it’s managed by LDAP.',
+        );
+        $user->refresh();
+        $this->assertSame($initialName, $user->getName());
+        $this->assertSame($initialEmail, $user->getEmail());
+    }
+
     public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
