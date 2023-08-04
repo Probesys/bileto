@@ -30,6 +30,14 @@
     border-color: var(--color-error9);
 }
 
+.alert--info {
+    color: var(--color-info12);
+
+    background-color: var(--color-info2);
+    background-image: url("../../icons/circle-info-info.svg");
+    border-color: var(--color-info9);
+}
+
 .alert--warning {
     color: var(--color-warning12);
 
@@ -48,6 +56,10 @@
 
 .alert--error .alert__title {
     color: var(--color-error9);
+}
+
+.alert--info .alert__title {
+    color: var(--color-info11);
 }
 
 .alert--warning .alert__title {
