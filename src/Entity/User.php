@@ -104,6 +104,9 @@ class User implements
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Organization $organization = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $ldapIdentifier = null;
+
     public function __construct()
     {
         $this->authorizations = new ArrayCollection();
@@ -246,5 +249,29 @@ class User implements
         $this->organization = $organization;
 
         return $this;
+    }
+
+    public function getLdapIdentifier(): ?string
+    {
+        return $this->ldapIdentifier;
+    }
+
+    public function setLdapIdentifier(string $ldapIdentifier): static
+    {
+        $this->ldapIdentifier = $ldapIdentifier;
+
+        return $this;
+    }
+
+    /**
+     * @return 'local'|'ldap'
+     */
+    public function getAuthType(): string
+    {
+        if ($this->getLdapIdentifier() === null) {
+            return 'local';
+        } else {
+            return 'ldap';
+        }
     }
 }

@@ -131,6 +131,7 @@ class SeedsCommand extends Command
                 'name' => 'Charlie Gature',
                 'password' => $password,
                 'organization' => $orgaFriendlyCoorp,
+                'ldapIdentifier' => 'charlie',
             ]);
 
             foreach ([$userAlix, $userBenedict, $userCharlie] as $user) {
