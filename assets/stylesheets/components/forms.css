@@ -38,6 +38,11 @@ textarea {
     min-height: 15rem;
 }
 
+input[disabled],
+textarea[disabled] {
+    color: var(--color-grey11);
+}
+
 input:not([disabled]):hover,
 input:not([disabled]):focus,
 textarea:not([disabled]):hover,
