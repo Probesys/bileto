@@ -42,6 +42,18 @@ services:
         arguments:
             - "%kernel.project_dir%/public/icons.svg"
 
+    Symfony\Component\Ldap\Ldap:
+        arguments: ['@Symfony\Component\Ldap\Adapter\ExtLdap\Adapter']
+        tags:
+            - ldap
+
+    Symfony\Component\Ldap\Adapter\ExtLdap\Adapter:
+        arguments:
+            - host: '%env(LDAP_HOST)%'
+              version: '%env(int:LDAP_VERSION)%'
+              port: '%env(int:LDAP_PORT)%'
+              encryption: '%env(LDAP_ENCRYPTION)%'
+
 when@dev:
     services:
         _defaults:

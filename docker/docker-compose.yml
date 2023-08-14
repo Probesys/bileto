@@ -63,3 +63,18 @@ services:
         ports:
             - "3025:3025"
             - "3143:3143"
+
+    ldap:
+        image: bitnami/openldap:2
+        ports:
+            - "1389:1389"
+            - "1636:1636"
+        environment:
+            - LDAP_ROOT=dc=example,dc=com
+            - LDAP_ADMIN_USERNAME=admin
+            - LDAP_ADMIN_PASSWORD=secret
+            - BITNAMI_DEBUG=true
+        volumes:
+            - ./ldap-ldifs:/ldifs:z
+        profiles:
+            - ldap

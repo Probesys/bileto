@@ -1,0 +1,147 @@
+<?php
+
+// This file is part of Bileto.
+// Copyright 2022-2023 Probesys
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+namespace App\Service;
+
+use App\Entity\User;
+use App\Utils\Random;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Ldap\Entry as LdapEntry;
+use Symfony\Component\Ldap\Exception\InvalidCredentialsException;
+use Symfony\Component\Ldap\Ldap as LdapConnector;
+use Symfony\Component\Ldap\LdapInterface;
+
+/**
+ * This class provides methods to connect to a LDAP server with a simple
+ * developer experience.
+ */
+class Ldap
+{
+    public function __construct(
+        private LdapConnector $ldapConnector,
+        private LoggerInterface $logger,
+        #[Autowire(env: 'LDAP_BASE_DN')]
+        private string $baseDn,
+        #[Autowire(env: 'LDAP_ADMIN_DN')]
+        private string $adminDn,
+        #[Autowire(env: 'LDAP_ADMIN_PASSWORD')]
+        private string $adminPassword,
+        #[Autowire(env: 'LDAP_USERS_DN')]
+        private string $usersDn,
+        #[Autowire(env: 'LDAP_SEARCH_QUERY')]
+        private string $searchQuery,
+        #[Autowire(env: 'default::LDAP_FIELD_EMAIL')]
+        private ?string $fieldEmail,
+        #[Autowire(env: 'default::LDAP_FIELD_FULLNAME')]
+        private ?string $fieldFullName,
+    ) {
+        $this->fieldEmail ??= 'mail';
+        $this->fieldFullName ??= 'cn';
+    }
+
+    /**
+     * Login a user to the LDAP server and return true on success, false otherwise.
+     */
+    public function loginUser(string $identifier, string $password): bool
+    {
+        $identifier = $this->ldapConnector->escape($identifier, '', LdapInterface::ESCAPE_DN);
+        $userDn = str_replace('{user_identifier}', $identifier, $this->usersDn);
+
+        try {
+            $this->ldapConnector->bind($userDn, $password);
+
+            return true;
+        } catch (InvalidCredentialsException) {
+            return false;
+        } catch (\Exception $e) {
+            $this->logger->critical("[Ldap#loginUser] Unexpected error: {$e->getMessage()}");
+            return false;
+        }
+    }
+
+    /**
+     * Search for a user in the LDAP directory.
+     *
+     * If the user can't be found, or if an error occurs, null is returned.
+     * The errors are logged so an admin can understand what's happening.
+     *
+     * The Ldap Entry is converted into a User before being returned.
+     * Only few attributes are supported for now: ldapIdentifier, email and
+     * name. The other attributes are not set, except password which is set to
+     * a random value.
+     */
+    public function searchUser(string $identifier): ?User
+    {
+        try {
+            $this->ldapConnector->bind($this->adminDn, $this->adminPassword);
+        } catch (InvalidCredentialsException) {
+            $this->logger->critical('[Ldap#searchUser] Invalid LDAP admin credentials.');
+            return null;
+        } catch (\Exception $e) {
+            $this->logger->critical("[Ldap#searchUser] Unexpected error: {$e->getMessage()}");
+            return null;
+        }
+
+        $identifier = $this->ldapConnector->escape($identifier, '', LdapInterface::ESCAPE_FILTER);
+        $searchQuery = str_replace('{user_identifier}', $identifier, $this->searchQuery);
+        $search = $this->ldapConnector->query($this->baseDn, $searchQuery, ['filter' => '*']);
+
+        $entries = $search->execute();
+
+        if (count($entries) > 1) {
+            $this->logger->error("[Ldap#searchUser] Several entries match the '{$searchQuery}' search query");
+            return null;
+        }
+
+        if (count($entries) === 0) {
+            return null;
+        }
+
+        $entry = $entries[0];
+
+        $email = $this->getEntryAttribute($entry, $this->fieldEmail);
+        if (!$email) {
+            $email = '';
+        }
+
+        $fullName = $this->getEntryAttribute($entry, $this->fieldFullName);
+        if (!$fullName) {
+            $fullName = '';
+        }
+
+        $user = new User();
+
+        $user->setLdapIdentifier($identifier);
+        $user->setEmail($email);
+        $user->setName($fullName);
+        $user->setPassword(Random::hex(50));
+
+        return $user;
+    }
+
+    /**
+     * Return the value of a Ldap Entry attribute as a string.
+     *
+     * If the Entry doesn't have the attribute, null is returned.
+     * If the Entry has multiple values for the given attribute, only the first
+     * is returned.
+     */
+    private function getEntryAttribute(LdapEntry $entry, string $attribute): ?string
+    {
+        if (!$entry->hasAttribute($attribute)) {
+            return null;
+        }
+
+        $values = $entry->getAttribute($attribute);
+
+        if (count($values) === 0) {
+            return null;
+        }
+
+        return $values[0];
+    }
+}

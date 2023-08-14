@@ -56,6 +56,30 @@ $ make docker-start DATABASE=mariadb
 You’ll also need to change the `DATABASE_URL` value in the [`.env` file](/.env) (just uncomment the second line).
 If you want to make this change permanent, create a `.env.local` file and copy the line into it.
 
+## Work with LDAP
+
+The LDAP server is not started by default.
+To start the LDAP server, pass the `LDAP` variable to the command:
+
+```console
+$ make docker-start LDAP=true
+```
+
+You’ll also have to create an `.env.local` file to enable LDAP support in Bileto:
+
+```dotenv
+LDAP_ENABLED=true
+```
+
+Everything else is already configured in the [`.env`](/.env) file.
+
+You can login with two users with LDAP:
+
+- `charlie` / `secret` (same as the previous `charlie@example.com` user, instead that you can't login with its email anymore)
+- `dominique` / `secret` (this user is created at login, so they have no organization nor permissions)
+
+You can still log in using the `alix@example.com` and `benedict@example.com` emails.
+
 ## Working in the Docker containers
 
 There are few scripts to allow to execute commands in the Docker containers easily:

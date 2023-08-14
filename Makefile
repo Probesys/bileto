@@ -26,6 +26,10 @@ else
 	DOCKER_COMPOSE_PROFILE = --profile pgsql
 endif
 
+ifdef LDAP
+	DOCKER_COMPOSE_PROFILE += --profile ldap
+endif
+
 ifndef COVERAGE
 	COVERAGE = --coverage-html ./coverage
 endif
