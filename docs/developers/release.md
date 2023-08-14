@@ -31,8 +31,9 @@ Organize the commits in the following sections:
 - New (`new:` prefix)
 - Improvements (`imp:` prefix)
 - Bug fixes (`fix:` prefix)
-- Documentation (`doc:` prefix)
 - Technical (`tec:` prefix)
+- Documentation (`doc:` prefix)
+- Developers (`dev:` prefix)
 - Misc (other prefixes)
 
 Feel free to rename the commit messages if you think they aren't clear enough (at least to remove the prefixes).
