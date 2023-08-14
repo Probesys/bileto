@@ -57,6 +57,21 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'New ticket');
     }
 
+    public function testGetNewRedirectsIfUserCanCreateTicketInItsDefaultOrganization(): void
+    {
+        $client = static::createClient();
+        list($orga1, $orga2) = OrganizationFactory::createMany(2);
+        $user = UserFactory::createOne([
+            'organization' => $orga1,
+        ]);
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets']);
+
+        $client->request('GET', '/tickets/new');
+
+        $this->assertResponseRedirects("/organizations/{$orga1->getUid()}/tickets/new", 302);
+    }
+
     public function testGetNewRedirectsIfOnlyOneOrganizationIsAccessible(): void
     {
         $client = static::createClient();

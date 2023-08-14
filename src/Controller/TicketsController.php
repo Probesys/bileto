@@ -107,6 +107,18 @@ class TicketsController extends BaseController
 
         $selectedOrganizationUid = $request->query->get('organization');
 
+        // If the user has a default organization and can create tickets in it,
+        // just redirect to the "new ticket" form of this organization.
+        $defaultOrganization = $user->getOrganization();
+        if ($defaultOrganization && $security->isGranted('orga:create:tickets', $defaultOrganization)) {
+            return $this->redirectToRoute('new organization ticket', [
+                'uid' => $defaultOrganization->getUid(),
+            ]);
+        }
+
+        // Otherwise, load the list of organizations they have access to (or
+        // only the selected organization, i.e. once the user has submitted the
+        // form).
         if ($selectedOrganizationUid) {
             $organization = $organizationRepository->findOneBy([
                 'uid' => $selectedOrganizationUid,
@@ -128,13 +140,18 @@ class TicketsController extends BaseController
         $organizations = array_values($organizations); // reset the keys of the array
 
         if (count($organizations) === 0) {
+            // The user doesn't have permission to create ticket!
             throw $this->createAccessDeniedException();
         } elseif (count($organizations) === 1) {
+            // The user has the permission to create tickets in only one
+            // organization, so let's redirect to it.
             return $this->redirectToRoute('new organization ticket', [
                 'uid' => $organizations[0]->getUid(),
             ]);
         }
 
+        // Finally, let the user choose in which organization they want to
+        // create a ticket.
         $organizations = $organizationSorter->asTree($organizations);
 
         return $this->render('tickets/new.html.twig', [
