@@ -45,16 +45,16 @@ class SynchronizeLdapHandlerTest extends WebTestCase
         /** @var MessageBusInterface */
         $bus = $container->get(MessageBusInterface::class);
         $user = UserFactory::createOne([
-            'email' => 'charlie@example.com',
+            'email' => 'cgature@example.com',
             'name' => 'C. Gature',
-            'ldapIdentifier' => 'cgature',
+            'ldapIdentifier' => 'charlie',
         ]);
 
         $bus->dispatch(new SynchronizeLdap());
 
         $user->refresh();
-        $this->assertSame('charlie', $user->getLdapIdentifier());
         $this->assertSame('charlie@example.com', $user->getEmail());
         $this->assertSame('Charlie Gature', $user->getName());
+        $this->assertSame('charlie', $user->getLdapIdentifier());
     }
 }

@@ -45,10 +45,11 @@ class SynchronizeLdapHandler
         $countErrors = 0;
 
         foreach ($ldapUsers as $ldapUser) {
-            $user = $userRepository->findOneBy(['email' => $ldapUser->getEmail()]);
+            $user = $userRepository->findOneBy([
+                'ldapIdentifier' => $ldapUser->getLdapIdentifier(),
+            ]);
 
             if ($user) {
-                $user->setLdapIdentifier($ldapUser->getLdapIdentifier());
                 $user->setEmail($ldapUser->getEmail());
                 $user->setName($ldapUser->getName());
 
