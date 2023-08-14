@@ -321,6 +321,50 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
     }
 
+    public function testPostUpdateDoesNotChangeEmailNameOrPasswordIfLdapIsEnabled(): void
+    {
+        $client = static::createClient();
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $oldEmail = 'alix@example.com';
+        $newEmail = 'benedict@example.com';
+        $oldName = 'Alix Pataquès';
+        $newName = 'Benedict Aphone';
+        $oldPassword = 'secret';
+        $newPassword = 'super secret';
+        $oldLdapIdentifier = 'alix';
+        $newLdapIdentifier = 'benedict';
+        $oldOrganization = OrganizationFactory::createOne();
+        $newOrganization = OrganizationFactory::createOne();
+        $otherUser = UserFactory::createOne([
+            'email' => $oldEmail,
+            'name' => $oldName,
+            'password' => $oldPassword,
+            'organization' => $oldOrganization,
+            'ldapIdentifier' => $oldLdapIdentifier,
+        ]);
+
+        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
+            'email' => $newEmail,
+            'name' => $newName,
+            'password' => $newPassword,
+            'organization' => $newOrganization->getUid(),
+            'ldapIdentifier' => $newLdapIdentifier,
+        ]);
+
+        $this->assertResponseRedirects('/users', 302);
+        $otherUser->refresh();
+        $this->assertSame($oldEmail, $otherUser->getEmail());
+        $this->assertSame($oldName, $otherUser->getName());
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $oldPassword));
+        $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
+        $this->assertSame($newLdapIdentifier, $otherUser->getLdapIdentifier());
+    }
+
     public function testPostUpdateAcceptsEmptyOrganization(): void
     {
         $client = static::createClient();

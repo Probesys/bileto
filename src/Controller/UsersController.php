@@ -13,6 +13,7 @@ use App\Service\Sorter\OrganizationSorter;
 use App\Service\Sorter\UserSorter;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -133,6 +134,8 @@ class UsersController extends BaseController
         User $user,
         OrganizationRepository $organizationRepository,
         OrganizationSorter $organizationSorter,
+        #[Autowire(env: 'bool:LDAP_ENABLED')]
+        bool $ldapEnabled,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -147,6 +150,9 @@ class UsersController extends BaseController
             'email' => $user->getEmail(),
             'name' => $user->getName(),
             'organizationUid' => $userOrganization ? $userOrganization->getUid() : '',
+            'ldapIdentifier' => $user->getLdapIdentifier(),
+            'ldapEnabled' => $ldapEnabled,
+            'managedByLdap' => $ldapEnabled && $user->getAuthType() === 'ldap',
         ]);
     }
 
@@ -160,6 +166,8 @@ class UsersController extends BaseController
         ValidatorInterface $validator,
         TranslatorInterface $translator,
         UserPasswordHasherInterface $passwordHasher,
+        #[Autowire(env: 'bool:LDAP_ENABLED')]
+        bool $ldapEnabled,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -172,6 +180,13 @@ class UsersController extends BaseController
         /** @var string $password */
         $password = $request->request->get('password', '');
 
+        /** @var string $ldapIdentifier */
+        $ldapIdentifier = $request->request->get('ldapIdentifier', '');
+
+        if ($ldapIdentifier === '') {
+            $ldapIdentifier = null;
+        }
+
         /** @var string $organizationUid */
         $organizationUid = $request->request->get('organization', '');
 
@@ -181,6 +196,15 @@ class UsersController extends BaseController
         $organizations = $organizationRepository->findAll();
         $organizations = $organizationSorter->asTree($organizations);
 
+        $managedByLdap = $ldapEnabled && $user->getAuthType() === 'ldap';
+
+        if ($managedByLdap) {
+            // If the user is managed by LDAP, these fields cannot be changed.
+            $email = $user->getEmail();
+            $name = $user->getName();
+            $password = '';
+        }
+
         if (!$this->isCsrfTokenValid('update user', $csrfToken)) {
             return $this->renderBadRequest('users/edit.html.twig', [
                 'user' => $user,
@@ -188,6 +212,9 @@ class UsersController extends BaseController
                 'email' => $email,
                 'name' => $name,
                 'organizationUid' => $organizationUid,
+                'ldapIdentifier' => $ldapIdentifier,
+                'ldapEnabled' => $ldapEnabled,
+                'managedByLdap' => $managedByLdap,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -197,6 +224,10 @@ class UsersController extends BaseController
         $user->setEmail($email);
         $user->setName($name);
         $user->setOrganization($organization);
+
+        if ($ldapEnabled) {
+            $user->setLdapIdentifier($ldapIdentifier);
+        }
 
         if ($password !== '') {
             $hashedPassword = $passwordHasher->hashPassword($user, $password);
@@ -211,6 +242,9 @@ class UsersController extends BaseController
                 'email' => $email,
                 'name' => $name,
                 'organizationUid' => $organizationUid,
+                'ldapIdentifier' => $ldapIdentifier,
+                'ldapEnabled' => $ldapEnabled,
+                'managedByLdap' => $managedByLdap,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }

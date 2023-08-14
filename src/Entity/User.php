@@ -256,7 +256,7 @@ class User implements
         return $this->ldapIdentifier;
     }
 
-    public function setLdapIdentifier(string $ldapIdentifier): static
+    public function setLdapIdentifier(?string $ldapIdentifier): static
     {
         $this->ldapIdentifier = $ldapIdentifier;
 

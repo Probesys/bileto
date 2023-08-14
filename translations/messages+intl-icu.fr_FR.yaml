@@ -321,6 +321,8 @@ users.color_scheme: 'Schéma de couleurs'
 users.color_scheme.auto: Auto
 users.color_scheme.dark: Sombre
 users.color_scheme.light: Clair
+users.edit.ldap.information: Information
+users.edit.ldap.managed: 'Certaines informations ne sont pas modifiables car ce compte est géré avec LDAP.'
 users.edit.leave_password_empty: 'Laissez vide pour conserver le mot de passe actuel.'
 users.edit.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
 users.edit.title: 'Modifier un utilisateur'
@@ -332,6 +334,7 @@ users.index.new_user: 'Nouvel utilisateur'
 users.index.number: '{count, plural, =0 {Aucun utilisateur} one {1 utilisateur} other {# utilisateurs}}'
 users.index.title: Utilisateurs
 users.language: Langue
+users.ldap_identifier: 'Identifiant LDAP'
 users.n_others: '{number, plural, =0 {aucun autre} one {1 autre} other {# autres}}'
 users.name: Nom
 users.new.leave_password_empty: '(laissez vide pour empêcher la connexion)'

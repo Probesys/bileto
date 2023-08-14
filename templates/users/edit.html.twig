@@ -28,6 +28,14 @@
                 {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
             {% endif %}
 
+            {% if managedByLdap %}
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'info',
+                    title: 'users.edit.ldap.information' | trans,
+                    message: 'users.edit.ldap.managed' | trans,
+                }, with_context = false) }}
+            {% endif %}
+
             <div class="flow flow--small">
                 <label for="email">
                     {{ 'users.email' | trans }}
@@ -51,15 +59,19 @@
                         aria-invalid="true"
                         aria-errormessage="email-error"
                     {% endif %}
+                    {{ managedByLdap ? 'disabled' }}
                 />
             </div>
 
             <div class="flow flow--small">
                 <label for="name">
                     {{ 'users.name' | trans }}
-                    <span class="text--secondary">
-                        {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
-                    </span>
+
+                    {% if not managedByLdap %}
+                        <span class="text--secondary">
+                            {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
+                        </span>
+                    {% endif %}
                 </label>
 
                 {% if errors.name is defined %}
@@ -80,45 +92,76 @@
                         aria-invalid="true"
                         aria-errormessage="name-error"
                     {% endif %}
+                    {{ managedByLdap ? 'disabled' }}
                 />
             </div>
 
-            <div class="flow flow--small">
-                <label for="password">
-                    {{ 'users.password' | trans }}
+            {% if ldapEnabled %}
+                <label for="ldap-identifier">
+                    {{ 'users.ldap_identifier' | trans }}
+
                     <span class="text--secondary">
                         {{ 'forms.optional' | trans }}
                     </span>
                 </label>
 
-                <p class="form__caption" id="password-caption">
-                    {{ 'users.edit.leave_password_empty' | trans }}
-                </p>
+                {% if errors.ldapIdentifier is defined %}
+                    <p class="form__error" role="alert" id="ldap-identifier-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.ldapIdentifier }}
+                    </p>
+                {% endif %}
 
-                <div class="input-container" data-controller="password">
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        autocomplete="new-password"
-                        data-password-target="input"
-                        aria-describedby="password-caption"
-                    />
+                <input
+                    type="text"
+                    id="ldap-identifier"
+                    name="ldapIdentifier"
+                    value="{{ ldapIdentifier }}"
+                    {% if errors.ldapIdentifier is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="ldap-identifier-error"
+                    {% endif %}
+                />
+            {% endif %}
 
-                    <button
-                        type="button"
-                        role="switch"
-                        data-action="password#toggle"
-                        data-password-target="button"
-                    >
-                        {{ icon('eye') }}
-                        {{ icon('eye-slash') }}
-                        <span class="sr-only">
-                            {{ 'forms.show_password' | trans }}
+            {% if not managedByLdap %}
+                <div class="flow flow--small">
+                    <label for="password">
+                        {{ 'users.password' | trans }}
+                        <span class="text--secondary">
+                            {{ 'forms.optional' | trans }}
                         </span>
-                    </button>
+                    </label>
+
+                    <p class="form__caption" id="password-caption">
+                        {{ 'users.edit.leave_password_empty' | trans }}
+                    </p>
+
+                    <div class="input-container" data-controller="password">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            autocomplete="new-password"
+                            data-password-target="input"
+                            aria-describedby="password-caption"
+                        />
+
+                        <button
+                            type="button"
+                            role="switch"
+                            data-action="password#toggle"
+                            data-password-target="button"
+                        >
+                            {{ icon('eye') }}
+                            {{ icon('eye-slash') }}
+                            <span class="sr-only">
+                                {{ 'forms.show_password' | trans }}
+                            </span>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
 
             <div class="flow flow--small">
                 <label for="organization">
