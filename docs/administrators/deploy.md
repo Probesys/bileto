@@ -286,3 +286,10 @@ If you don’t find them, copy paste them from the [`env.sample` file](/env.samp
 The comments above the variables should be clear enough to help you.
 
 To test your setup, try to login with a user and monitor the application logs for any related errors.
+
+The LDAP directory is synchronized every 12 hours, but new users can log into Bileto immediately.
+If you need to synchronize manually, you can run:
+
+```console
+www-data$ php bin/console app:ldap:sync
+```

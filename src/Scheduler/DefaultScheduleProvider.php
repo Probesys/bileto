@@ -6,8 +6,9 @@
 
 namespace App\Scheduler;
 
-use App\Message\FetchMailboxes;
 use App\Message\CreateTicketsFromMailboxEmails;
+use App\Message\FetchMailboxes;
+use App\Message\SynchronizeLdap;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -22,6 +23,8 @@ class DefaultScheduleProvider implements ScheduleProviderInterface
 
         $schedule->add(RecurringMessage::every('1 minute', new FetchMailboxes()));
         $schedule->add(RecurringMessage::every('1 minute', new CreateTicketsFromMailboxEmails()));
+
+        $schedule->add(RecurringMessage::every('12 hours', new SynchronizeLdap()));
 
         return $schedule;
     }

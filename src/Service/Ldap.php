@@ -32,15 +32,20 @@ class Ldap
         private string $adminPassword,
         #[Autowire(env: 'LDAP_USERS_DN')]
         private string $usersDn,
-        #[Autowire(env: 'LDAP_SEARCH_QUERY')]
-        private string $searchQuery,
+        #[Autowire(env: 'LDAP_QUERY_SEARCH_USER')]
+        private string $querySearchUser,
+        #[Autowire(env: 'LDAP_QUERY_LIST_USERS')]
+        private string $queryListUsers,
+        #[Autowire(env: 'default::LDAP_FIELD_IDENTIFIER')]
+        private ?string $fieldIdentifier,
         #[Autowire(env: 'default::LDAP_FIELD_EMAIL')]
         private ?string $fieldEmail,
         #[Autowire(env: 'default::LDAP_FIELD_FULLNAME')]
         private ?string $fieldFullName,
     ) {
+        $this->fieldIdentifier ??= 'cn';
         $this->fieldEmail ??= 'mail';
-        $this->fieldFullName ??= 'cn';
+        $this->fieldFullName ??= 'displayName';
     }
 
     /**
@@ -70,9 +75,8 @@ class Ldap
      * The errors are logged so an admin can understand what's happening.
      *
      * The Ldap Entry is converted into a User before being returned.
-     * Only few attributes are supported for now: ldapIdentifier, email and
-     * name. The other attributes are not set, except password which is set to
-     * a random value.
+     *
+     * @see self::convertLdapEntryToUser
      */
     public function searchUser(string $identifier): ?User
     {
@@ -87,13 +91,13 @@ class Ldap
         }
 
         $identifier = $this->ldapConnector->escape($identifier, '', LdapInterface::ESCAPE_FILTER);
-        $searchQuery = str_replace('{user_identifier}', $identifier, $this->searchQuery);
-        $search = $this->ldapConnector->query($this->baseDn, $searchQuery, ['filter' => '*']);
+        $querySearchUser = str_replace('{user_identifier}', $identifier, $this->querySearchUser);
+        $search = $this->ldapConnector->query($this->baseDn, $querySearchUser, ['filter' => '*']);
 
         $entries = $search->execute();
 
         if (count($entries) > 1) {
-            $this->logger->error("[Ldap#searchUser] Several entries match the '{$searchQuery}' search query");
+            $this->logger->error("[Ldap#searchUser] Several entries match the '{$querySearchUser}' search query");
             return null;
         }
 
@@ -101,7 +105,56 @@ class Ldap
             return null;
         }
 
-        $entry = $entries[0];
+        return $this->convertLdapEntryToUser($entries[0]);
+    }
+
+    /**
+     * List the users from the LDAP directory.
+     *
+     * The Ldap Entries are converted into Users before being returned.
+     *
+     * @see self::convertLdapEntryToUser
+     *
+     * @return User[]
+     */
+    public function listUsers(): array
+    {
+        try {
+            $this->ldapConnector->bind($this->adminDn, $this->adminPassword);
+        } catch (InvalidCredentialsException) {
+            $this->logger->critical('[Ldap#listUsers] Invalid LDAP admin credentials.');
+            return [];
+        } catch (\Exception $e) {
+            $this->logger->critical("[Ldap#listUsers] Unexpected error: {$e->getMessage()}");
+            return [];
+        }
+
+        $search = $this->ldapConnector->query($this->baseDn, $this->queryListUsers, ['filter' => '*']);
+
+        $entries = $search->execute();
+
+        $users = [];
+
+        foreach ($entries as $entry) {
+            $users[] = $this->convertLdapEntryToUser($entry);
+        }
+
+        return $users;
+    }
+
+    /**
+     * Convert a Ldap entry to an app User.
+     *
+     * Only few attributes are supported for now: ldapIdentifier, email and
+     * name. The other attributes are not set, except password which is set to
+     * a random value.
+     */
+    private function convertLdapEntryToUser(LdapEntry $entry): User
+    {
+        $identifier = $this->getEntryAttribute($entry, $this->fieldIdentifier);
+        if (!$identifier) {
+            $identifier = '';
+        }
 
         $email = $this->getEntryAttribute($entry, $this->fieldEmail);
         if (!$email) {
