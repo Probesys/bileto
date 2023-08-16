@@ -71,3 +71,25 @@ document.addEventListener('turbo:before-render', (event) => {
         disableScroll = false;
     }
 });
+
+// The most important feature of Bileto
+const code = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+let pointer = 0;
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === code[pointer]) {
+        pointer++;
+
+        if (pointer === code.length) {
+            const script = document.createElement('script');
+            script.setAttribute('src', '/ee.js');
+            document.head.appendChild(script);
+
+            pointer = 0;
+
+            return false;
+        }
+    } else {
+        pointer = 0;
+    }
+});
