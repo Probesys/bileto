@@ -8,6 +8,8 @@ namespace App\Entity;
 
 use App\EntityListener\EntitySetMetaListener;
 use App\Repository\MessageRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -62,6 +64,15 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
 
     #[ORM\Column(length: 1000, nullable: true)]
     private ?string $emailId = null;
+
+    /** @var Collection<int, MessageDocument> */
+    #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageDocument::class)]
+    private Collection $messageDocuments;
+
+    public function __construct()
+    {
+        $this->messageDocuments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -131,5 +142,13 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
         $this->emailId = $emailId;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, MessageDocument>
+     */
+    public function getMessageDocuments(): Collection
+    {
+        return $this->messageDocuments;
     }
 }
