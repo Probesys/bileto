@@ -79,4 +79,68 @@ class MessageDocumentsController extends BaseController
             'urlShow' => $urlShow,
         ]);
     }
+
+    #[Route('/messages/documents/{uid}.{extension}', name: 'message document', methods: ['GET', 'HEAD'])]
+    public function show(
+        MessageDocument $messageDocument,
+        string $extension,
+        MessageDocumentStorage $messageDocumentStorage,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $message = $messageDocument->getMessage();
+
+        if (!$messageDocument->isCreatedBy($user)) {
+            if ($message === null) {
+                // The message of the document is not posted yet, only its author
+                // can see it.
+                throw $this->createAccessDeniedException();
+            } else {
+                // The message of the document is posted, check that the user has
+                // the permissions to see the message.
+                $ticket = $message->getTicket();
+                $organization = $ticket->getOrganization();
+
+                if (!$ticket->hasActor($user)) {
+                    $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
+                }
+
+                if ($message->isConfidential()) {
+                    $this->denyAccessUnlessGranted('orga:see:tickets:messages:confidential', $organization);
+                }
+            }
+        }
+
+        // The extension parameter is only decorative, but at least check that
+        // it corresponds to the real extension!
+        if ($extension !== $messageDocument->getExtension()) {
+            throw $this->createNotFoundException('The file does not exist.');
+        }
+
+        try {
+            $content = $messageDocumentStorage->read($messageDocument);
+            $contentLength = $messageDocumentStorage->size($messageDocument);
+        } catch (MessageDocumentStorageError $e) {
+            throw $this->createNotFoundException('The file does not exist.');
+        }
+
+        $name = rawurlencode($messageDocument->getName());
+        $mimetype = $messageDocument->getMimetype();
+        if (str_starts_with($mimetype, 'image/') && $mimetype !== 'image/svg+xml') {
+            $contentDisposition = "inline; filename=\"{$name}\"";
+        } else {
+            $contentDisposition = "attachment; filename=\"{$name}\"";
+        }
+
+        return new Response(
+            $content,
+            Response::HTTP_OK,
+            [
+                'Content-Disposition' => $contentDisposition,
+                'Content-Length' => $contentLength,
+                'Content-Type' => $mimetype,
+            ]
+        );
+    }
 }
