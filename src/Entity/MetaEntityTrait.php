@@ -44,6 +44,14 @@ trait MetaEntityTrait
         return $this;
     }
 
+    public function isCreatedBy(User $user): bool
+    {
+        return (
+            $this->createdBy !== null &&
+            $this->createdBy->getId() === $user->getId()
+        );
+    }
+
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
@@ -66,5 +74,13 @@ trait MetaEntityTrait
         $this->updatedBy = $updatedBy;
 
         return $this;
+    }
+
+    public function isUpdatedBy(User $user): bool
+    {
+        return (
+            $this->updatedBy !== null &&
+            $this->updatedBy->getId() === $user->getId()
+        );
     }
 }
