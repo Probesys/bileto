@@ -18,6 +18,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Allow to upload and download MessageDocuments.
+ *
+ * @see docs/developers/document-upload.md
+ */
 class MessageDocumentsController extends BaseController
 {
     #[Route('/messages/documents/new', name: 'create message document', methods: ['POST'])]

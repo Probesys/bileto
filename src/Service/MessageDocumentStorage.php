@@ -12,7 +12,9 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
- * This class provides methods to save and read files as MessageDocuments
+ * This class provides methods to save and read files as MessageDocuments.
+ *
+ * @see docs/developers/document-upload.md
  */
 class MessageDocumentStorage
 {

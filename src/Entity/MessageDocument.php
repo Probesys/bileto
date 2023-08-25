@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Represent a document attached to a Message.
+ *
+ * @see docs/developers/document-upload.md
  */
 #[ORM\Entity(repositoryClass: MessageDocumentRepository::class)]
 #[ORM\EntityListeners([EntitySetMetaListener::class])]
