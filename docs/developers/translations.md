@@ -1,4 +1,4 @@
-# Using the translations
+# Translating Bileto
 
 Bileto uses the default system of translations of Symfony.
 Documentation:

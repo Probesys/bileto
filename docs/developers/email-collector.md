@@ -1,4 +1,4 @@
-# The email collector
+# Email collector
 
 Bileto allows you to configure mailboxes to receive emails.
 These emails are retrieved with <abbr>IMAP</abbr> and can be transformed in tickets.

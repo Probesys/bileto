@@ -1,4 +1,4 @@
-# Working with the search engine
+# Search engine
 
 The search engine is made of several parts:
 

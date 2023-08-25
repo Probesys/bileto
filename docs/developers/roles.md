@@ -1,4 +1,4 @@
-# Working with the roles & permissions
+# Roles & permissions
 
 In Bileto, the permissions are handled by the [Role](/src/Entity/Role.php) entity.
 Roles are associated to the users via the [Authorization](/src/Entity/Authorization.php) entity.

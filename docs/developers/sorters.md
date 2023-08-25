@@ -1,4 +1,4 @@
-# Sort the entities
+# Sorting the entities
 
 As you display entities in the interface, you’ll probably want to sort them by some fields.
 Most likely you will want to sort them by names or titles.

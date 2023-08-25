@@ -3,18 +3,13 @@
 - [Setup the development environment](/docs/developers/setup.md)
 - [Update the development environment](/docs/developers/update.md)
 - [Executing tests and linters](/docs/developers/tests.md)
-- [Managing the dependencies](/docs/developers/dependencies.md)
-- [Understanding GreenMail](/docs/developers/greenmail.md)
-- [Using the translations](/docs/developers/translations.md)
-- [Working with the roles & permissions](/docs/developers/roles.md)
+- [Translating Bileto](/docs/developers/translations.md)
 
 Dedicated to the backend:
 
 - [Declaring a new Entity](/docs/developers/entity.md)
-- [Working with the search engine](/docs/developers/search-engine.md)
 - [Encrypting data](/docs/developers/encryptor.md)
-- [The email collector](/docs/developers/email-collector.md)
-- [Sort the entities](/docs/developers/sorters.md)
+- [Sorting the entities](/docs/developers/sorters.md)
 
 Dedicated to the frontend:
 
@@ -26,4 +21,12 @@ Dedicated to the frontend:
 
 Dedicated to the maintainers:
 
+- [Managing the dependencies](/docs/developers/dependencies.md)
 - [How to release a version](/docs/developers/release.md)
+
+Architecture:
+
+- [Email collector](/docs/developers/email-collector.md)
+- [GreenMail](/docs/developers/greenmail.md)
+- [Roles & permissions](/docs/developers/roles.md)
+- [Search engine](/docs/developers/search-engine.md)

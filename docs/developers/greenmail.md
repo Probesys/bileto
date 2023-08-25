@@ -1,4 +1,4 @@
-# Understanding GreenMail
+# GreenMail
 
 To facilitate the configuration of Bileto in development, we use [GreenMail](https://greenmail-mail-test.github.io/greenmail/).
 
