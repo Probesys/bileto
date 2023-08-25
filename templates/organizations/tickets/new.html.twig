@@ -109,6 +109,8 @@
                     id="message"
                     name="message"
                     data-controller="tinymce"
+                    data-tinymce-upload-url-value="{{ path('create message document') }}"
+                    data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
                     {% if errors.content is defined %}
                         autofocus
                         aria-invalid="true"

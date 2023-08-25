@@ -5,6 +5,13 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
+    static get values () {
+        return {
+            uploadUrl: String,
+            uploadCsrf: String,
+        };
+    }
+
     connect () {
         const colorScheme = this.colorScheme;
 
@@ -34,6 +41,9 @@ export default class extends Controller {
             link_assume_external_targets: true,
             link_target_list: false,
             auto_focus: autofocus,
+            images_upload_handler: this.imagesUploader.bind(this),
+            relative_urls: false,
+            remove_script_host: false,
         };
 
         window.tinymce.init(configuration);
@@ -54,5 +64,73 @@ export default class extends Controller {
             }
         }
         return colorScheme;
+    }
+
+    imagesUploader (blobInfo, progress) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.withCredentials = false;
+            xhr.open('POST', this.uploadUrlValue);
+
+            xhr.upload.onprogress = (e) => {
+                progress(e.loaded / e.total * 100);
+            };
+
+            xhr.onload = () => {
+                if (xhr.status === 401) {
+                    // eslint-disable-next-line prefer-promise-reject-errors
+                    reject({ message: 'You are not authorized to upload files.', remove: true });
+                    return;
+                }
+
+                let json;
+                try {
+                    json = JSON.parse(xhr.responseText);
+                } catch (e) {
+                    console.error('Bad JSON from server: ' + xhr.responseText);
+
+                    // eslint-disable-next-line prefer-promise-reject-errors
+                    reject({ message: 'Bad response from the server.', remove: true });
+                    return;
+                }
+
+                if (
+                    json == null ||
+                    (typeof json !== 'object') ||
+                    (json.error == null && json.urlShow == null)
+                ) {
+                    console.error('Bad JSON from server: ' + xhr.responseText);
+
+                    // eslint-disable-next-line prefer-promise-reject-errors
+                    reject({ message: 'Bad response from the server.', remove: true });
+                    return;
+                }
+
+                if (json.error) {
+                    if (json.description) {
+                        console.error('Unexpected error from server: ' + json.description);
+                    }
+
+                    // eslint-disable-next-line prefer-promise-reject-errors
+                    reject({ message: json.error, remove: true });
+                    return;
+                }
+
+                resolve(json.urlShow);
+            };
+
+            xhr.onerror = () => {
+                console.error('Unexpected error from server: error code ' + xhr.status);
+
+                // eslint-disable-next-line prefer-promise-reject-errors
+                reject({ message: 'Bad response from the server.', remove: true });
+            };
+
+            const formData = new FormData();
+            formData.append('document', blobInfo.blob(), blobInfo.filename());
+            formData.append('_csrf_token', this.uploadCsrfValue);
+
+            xhr.send(formData);
+        });
     }
 }

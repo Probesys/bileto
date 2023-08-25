@@ -26,6 +26,7 @@ Dedicated to the maintainers:
 
 Architecture:
 
+- [Document upload](/docs/developers/document-upload.md)
 - [Email collector](/docs/developers/email-collector.md)
 - [GreenMail](/docs/developers/greenmail.md)
 - [Roles & permissions](/docs/developers/roles.md)

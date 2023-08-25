@@ -5,6 +5,7 @@
 /public/bundles/
 /public/dev_assets/*
 /public/manifest.dev.json
+/uploads/
 /var/
 /vendor/
 /node_modules/
