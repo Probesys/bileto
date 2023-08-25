@@ -29,6 +29,7 @@ class MessageDocument implements MetaEntityInterface, ActivityRecordableInterfac
      */
     public const ACCEPTED_MIMETYPES = [
         'application' => [
+            'gzip',
             'msword',
             'pdf',
             'vnd.ms-excel',
@@ -36,6 +37,13 @@ class MessageDocument implements MetaEntityInterface, ActivityRecordableInterfac
             'vnd.oasis.opendocument.text',
             'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'x-7z-compressed',
+            'x-bzip',
+            'x-bzip2',
+            'x-rar-compressed',
+            'x-tar',
+            'x-xz',
+            'zip',
         ],
         'image' => [
             'bmp',
