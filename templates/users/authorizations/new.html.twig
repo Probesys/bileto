@@ -24,7 +24,7 @@
             <h1>{{ 'users.authorizations.new.title' | trans }}</h1>
         </div>
 
-        <form action="" method="post" class="wrapper wrapper--small flow" data-controller="new-authorization-form">
+        <form action="" method="post" class="wrapper wrapper--small flow" data-controller="form-new-authorization">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create user authorization') }}">
 
             {% if error %}
@@ -39,8 +39,8 @@
                         name="type"
                         value="orga"
                         {{ type == 'orga' ? 'checked' }}
-                        data-action="new-authorization-form#refresh"
-                        data-new-authorization-form-target="radioOrga"
+                        data-action="form-new-authorization#refresh"
+                        data-form-new-authorization-target="radioOrga"
                     />
 
                     <label for="type-orga">
@@ -55,8 +55,8 @@
                         name="type"
                         value="admin"
                         {{ type == 'admin' ? 'checked' }}
-                        data-action="new-authorization-form#refresh"
-                        data-new-authorization-form-target="radioAdmin"
+                        data-action="form-new-authorization#refresh"
+                        data-form-new-authorization-target="radioAdmin"
                     />
 
                     <label for="type-admin">
@@ -86,13 +86,13 @@
                         aria-invalid="true"
                         aria-errormessage="role-error"
                     {% endif %}
-                    data-action="new-authorization-form#refreshRoleCaption"
-                    data-new-authorization-form-target="roleSelect"
+                    data-action="form-new-authorization#refreshRoleCaption"
+                    data-form-new-authorization-target="roleSelect"
                 >
                     {% for role in roles %}
                         <option
                             value="{{ role.uid }}"
-                            data-new-authorization-form-target="roleOption"
+                            data-form-new-authorization-target="roleOption"
                             data-type="{{ role.type }}"
                             {% if role.type == 'super' %}
                                 data-desc="{{ 'roles.super_admin.description' | trans }}"
@@ -114,11 +114,11 @@
                     class="form__caption"
                     aria-live="polite"
                     aria-atomic="true"
-                    data-new-authorization-form-target="roleCaption"
+                    data-form-new-authorization-target="roleCaption"
                 ></p>
             </div>
 
-            <div class="flow flow--small" data-new-authorization-form-target="organizationsGroup">
+            <div class="flow flow--small" data-form-new-authorization-target="organizationsGroup">
                 <label for="organization">
                     {{ 'users.authorizations.new.organization' | trans }}
                 </label>

@@ -110,9 +110,9 @@
                                 action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
                                 method="post"
                                 class="timeline__editor flow"
-                                data-controller="ticket-editor"
+                                data-controller="form-new-answer"
                                 data-turbo-preserve-scroll
-                                data-ticket-editor-ticket-status-value="{{ ticket.status }}"
+                                data-form-new-answer-ticket-status-value="{{ ticket.status }}"
                             >
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
 
@@ -134,6 +134,7 @@
                                         data-controller="tinymce"
                                         data-tinymce-upload-url-value="{{ path('create message document') }}"
                                         data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
+                                        data-form-new-answer-target="editor"
                                         {% if errors.content is defined %}
                                             autofocus
                                             aria-invalid="true"
@@ -159,8 +160,8 @@
                                                         id="is-confidential"
                                                         name="isConfidential"
                                                         {{ isConfidential ? 'checked' }}
-                                                        data-action="ticket-editor#refresh"
-                                                        data-ticket-editor-target="confidentialCheckbox"
+                                                        data-action="form-new-answer#refresh"
+                                                        data-form-new-answer-target="confidentialCheckbox"
                                                         {% if errors.isConfidential is defined %}
                                                             aria-invalid="true"
                                                             aria-errormessage="is-confidential-error"
@@ -181,8 +182,8 @@
                                                         name="isSolution"
                                                         {{ isSolution ? 'checked' }}
                                                         {{ ticket.isFinished ? 'disabled' }}
-                                                        data-action="ticket-editor#refresh"
-                                                        data-ticket-editor-target="solutionCheckbox"
+                                                        data-action="form-new-answer#refresh"
+                                                        data-form-new-answer-target="solutionCheckbox"
                                                     />
 
                                                     <label for="is-solution">
@@ -220,7 +221,7 @@
                                                             aria-invalid="true"
                                                             aria-errormessage="status-error"
                                                         {% endif %}
-                                                        data-ticket-editor-target="statusSelect"
+                                                        data-form-new-answer-target="statusSelect"
                                                     >
                                                         {% for value, label in statuses %}
                                                             <option value="{{ value }}" {{ value == status ? 'selected' }}>

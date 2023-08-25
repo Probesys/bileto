@@ -7,6 +7,8 @@ import { Application } from '@hotwired/stimulus';
 
 import CheckboxesController from '@/controllers/checkboxes_controller.js';
 import ColorSchemeController from '@/controllers/color_scheme_controller.js';
+import FormNewAnswerController from '@/controllers/form_new_answer_controller.js';
+import FormNewAuthorizationController from '@/controllers/form_new_authorization_controller.js';
 import FormPriorityController from '@/controllers/form_priority_controller.js';
 import ModalController from '@/controllers/modal_controller.js';
 import ModalOpenerController from '@/controllers/modal_opener_controller.js';
@@ -14,15 +16,15 @@ import MultiselectActorsController from '@/controllers/multiselect_actors_contro
 import NotificationsController from '@/controllers/notifications_controller.js';
 import PasswordController from '@/controllers/password_controller.js';
 import PopupController from '@/controllers/popup_controller.js';
-import NewAuthorizationFormController from '@/controllers/new_authorization_form_controller.js';
 import ScrollToController from '@/controllers/scroll_to_controller.js';
 import TabsController from '@/controllers/tabs_controller.js';
-import TicketEditorController from '@/controllers/ticket_editor_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
 
 const application = Application.start();
 application.register('checkboxes', CheckboxesController);
 application.register('color-scheme', ColorSchemeController);
+application.register('form-new-answer', FormNewAnswerController);
+application.register('form-new-authorization', FormNewAuthorizationController);
 application.register('form-priority', FormPriorityController);
 application.register('modal', ModalController);
 application.register('modal-opener', ModalOpenerController);
@@ -30,10 +32,8 @@ application.register('multiselect-actors', MultiselectActorsController);
 application.register('notifications', NotificationsController);
 application.register('password', PasswordController);
 application.register('popup', PopupController);
-application.register('new-authorization-form', NewAuthorizationFormController);
 application.register('scroll-to', ScrollToController);
 application.register('tabs', TabsController);
-application.register('ticket-editor', TicketEditorController);
 application.register('tinymce', TinymceController);
 
 // Make sure to visit the response when receiving the `turbo:frame-missing` event.
