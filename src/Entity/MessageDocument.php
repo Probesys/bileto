@@ -188,6 +188,39 @@ class MessageDocument implements MetaEntityInterface, ActivityRecordableInterfac
         );
     }
 
+    public function getType(): string
+    {
+        switch ($this->mimetype) {
+            case 'application/gzip':
+            case 'application/x-7z-compressed':
+            case 'application/x-bzip':
+            case 'application/x-bzip2':
+            case 'application/x-rar-compressed':
+            case 'application/x-tar':
+            case 'application/x-xz':
+            case 'application/zip':
+                return 'archive';
+            case 'application/msword':
+            case 'application/vnd.oasis.opendocument.text':
+            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                return 'doc';
+            case 'application/pdf':
+                return 'pdf';
+            case 'application/ms-excel':
+            case 'application/vnd.oasis.opendocument.spreadsheet':
+            case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                return 'spreadsheet';
+            case 'image/bmp':
+            case 'image/gif':
+            case 'image/jpeg':
+            case 'image/png':
+            case 'image/webp':
+                return 'image';
+            default:
+                return 'file';
+        }
+    }
+
     public function getHash(): ?string
     {
         return $this->hash;
