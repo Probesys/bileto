@@ -77,12 +77,19 @@ class MessageDocumentsController extends BaseController
             ],
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
+        $urlDelete = $this->generateUrl(
+            'delete message document',
+            [
+                'uid' => $messageDocument->getUid(),
+            ],
+        );
 
         return new JsonResponse([
             'uid' => $messageDocument->getUid(),
             'name' => $messageDocument->getName(),
             'type' => $messageDocument->getType(),
             'urlShow' => $urlShow,
+            'urlDelete' => $urlDelete,
         ]);
     }
 

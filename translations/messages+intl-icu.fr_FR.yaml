@@ -105,6 +105,7 @@ mailboxes.password: 'Mot de passe'
 mailboxes.port: 'Port IMAP'
 mailboxes.test.success: 'La connexion fonctionne.'
 mailboxes.username: 'Nom d’utilisateur'
+message_documents.remove: 'Retirer la pièce-jointe'
 notifications.saved: 'Vos changements ont été sauvegardés.'
 organizations.deletion.caution: "Attention\_!"
 organizations.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
