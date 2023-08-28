@@ -11,7 +11,7 @@
 
 .documents__link {
     display: block;
-    padding: 2rem;
+    padding: 2rem 1rem;
     /* Padding around the icon + icon size (see background properties) */
     padding-left: calc(1rem + 2rem + 1rem);
 
@@ -45,4 +45,8 @@
 
 .documents__item[data-type="file"] .documents__link {
     background-image: url('../../icons/file.svg');
+}
+
+.documents__delete {
+    padding: 2rem 1rem;
 }

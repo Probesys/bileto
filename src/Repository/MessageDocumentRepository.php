@@ -44,4 +44,18 @@ class MessageDocumentRepository extends ServiceEntityRepository implements UidGe
             $this->getEntityManager()->flush();
         }
     }
+
+    public function countByHash(string $hash): int
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT COUNT(md)
+            FROM App\Entity\MessageDocument md
+            WHERE md.hash = :hash
+        SQL);
+        $query->setParameter('hash', $hash);
+
+        return $query->getSingleScalarResult();
+    }
 }

@@ -9,9 +9,9 @@
     </ul>
 
     <template data-form-message-documents-target="documentTemplate">
-        <li class="documents__item" data-target="document">
+        <li class="documents__item row row--always row--center" data-target="document">
             <a
-                class="documents__link"
+                class="documents__link row__item--extend"
                 target="_blank"
                 data-target="document-link"
             >
@@ -20,6 +20,23 @@
                     data-target="document-name"
                 ></span>
             </a>
+
+            <form
+                class="documents__delete"
+                method="post"
+                action=""
+                data-target="document-delete-form"
+                data-action="form-message-documents#removeDocument"
+            >
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete message document') }}">
+                <button class="button--icon" type="submit">
+                    {{ icon('close') }}
+
+                    <span class="sr-only">
+                        {{ 'message_documents.remove' | trans }}
+                    </span>
+                </button>
+            </form>
         </li>
     </template>
 </div>

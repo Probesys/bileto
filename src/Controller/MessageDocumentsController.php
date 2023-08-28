@@ -77,12 +77,19 @@ class MessageDocumentsController extends BaseController
             ],
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
+        $urlDelete = $this->generateUrl(
+            'delete message document',
+            [
+                'uid' => $messageDocument->getUid(),
+            ],
+        );
 
         return new JsonResponse([
             'uid' => $messageDocument->getUid(),
             'name' => $messageDocument->getName(),
             'type' => $messageDocument->getType(),
             'urlShow' => $urlShow,
+            'urlDelete' => $urlDelete,
         ]);
     }
 
@@ -148,5 +155,41 @@ class MessageDocumentsController extends BaseController
                 'Content-Type' => $mimetype,
             ]
         );
+    }
+
+    #[Route('/messages/documents/{uid}/deletion', name: 'delete message document', methods: ['POST'])]
+    public function delete(
+        MessageDocument $messageDocument,
+        Request $request,
+        MessageDocumentRepository $messageDocumentRepository,
+        MessageDocumentStorage $messageDocumentStorage,
+        TranslatorInterface $translator,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$messageDocument->isCreatedBy($user)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$this->isCsrfTokenValid('delete message document', $csrfToken)) {
+            return new JsonResponse([
+                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+            ], 400);
+        }
+
+        $messageDocumentRepository->remove($messageDocument, true);
+
+        $countSameHashDocuments = $messageDocumentRepository->countByHash($messageDocument->getHash());
+        if ($countSameHashDocuments === 0) {
+            $messageDocumentStorage->remove($messageDocument);
+        }
+
+        return new JsonResponse([
+            'uid' => $messageDocument->getUid(),
+        ]);
     }
 }
