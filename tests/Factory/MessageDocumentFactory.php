@@ -11,6 +11,7 @@ use App\Repository\MessageDocumentRepository;
 use App\Security\Encryptor;
 use App\Utils\Random;
 use Symfony\Component\Mime\MimeTypes;
+use Zenstruck\Foundry\Instantiator;
 use Zenstruck\Foundry\RepositoryProxy;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -57,7 +58,7 @@ final class MessageDocumentFactory extends ModelFactory
     protected function getDefaults(): array
     {
         $hash = self::faker()->sha256();
-        $mimetype = self::faker()->randomElement(MessageDocument::ACCEPTED_MIMETYPES);
+        $mimetype = self::faker()->randomElement(array_keys(MessageDocument::ACCEPTED_MIMETYPES));
         $mimesubtype = self::faker()->randomElement(MessageDocument::ACCEPTED_MIMETYPES[$mimetype]);
         $mimetype = "{$mimetype}/{$mimesubtype}";
         $extension = MimeTypes::getDefault()->getExtensions($mimetype)[0];
@@ -68,6 +69,11 @@ final class MessageDocumentFactory extends ModelFactory
             'mimetype' => $mimetype,
             'hash' => 'sha256:' . $hash,
         ];
+    }
+
+    protected function initialize(): self
+    {
+        return $this->instantiateWith((new Instantiator())->alwaysForceProperties());
     }
 
     protected static function getClass(): string
