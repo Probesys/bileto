@@ -11,6 +11,7 @@ use App\Entity\Message;
 use App\Entity\Ticket;
 use App\Message\SendMessageEmail;
 use App\Repository\MessageRepository;
+use App\Repository\MessageDocumentRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Service\TicketTimeline;
@@ -32,6 +33,7 @@ class MessagesController extends BaseController
         Ticket $ticket,
         Request $request,
         MessageRepository $messageRepository,
+        MessageDocumentRepository $messageDocumentRepository,
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
         TicketTimeline $ticketTimeline,
@@ -54,6 +56,8 @@ class MessagesController extends BaseController
         /** @var string $messageContent */
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
+
+        $messageDocumentUids = $request->request->all('messageDocumentUids');
 
         /** @var boolean $isConfidential */
         $isConfidential = $request->request->getBoolean('isConfidential', false);
@@ -170,11 +174,21 @@ class MessagesController extends BaseController
             ]);
         }
 
+        $messageDocuments = $messageDocumentRepository->findBy([
+            'uid' => $messageDocumentUids,
+            'createdBy' => $user,
+        ]);
+
         $ticket->setUpdatedAt(Time::now());
         $ticket->setUpdatedBy($user);
 
         $messageRepository->save($message, true);
         $ticketRepository->save($ticket, true);
+
+        foreach ($messageDocuments as $messageDocument) {
+            $messageDocument->setMessage($message);
+            $messageDocumentRepository->save($messageDocument, true);
+        }
 
         $bus->dispatch(new SendMessageEmail($message->getId()));
 

@@ -21,5 +21,11 @@ export default class extends Controller {
         linkNode.href = doc.urlShow;
 
         this.documentsTarget.appendChild(docNode);
+
+        const hiddenInputNode = document.createElement('input');
+        hiddenInputNode.type = 'hidden';
+        hiddenInputNode.name = 'messageDocumentUids[]';
+        hiddenInputNode.value = doc.uid;
+        this.element.appendChild(hiddenInputNode);
     }
 }
