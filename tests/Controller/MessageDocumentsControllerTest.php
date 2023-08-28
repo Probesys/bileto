@@ -311,4 +311,97 @@ class MessageDocumentsControllerTest extends WebTestCase
         $client->catchExceptions(false);
         $client->request('GET', "/messages/documents/{$messageDocument->getUid()}.pdf");
     }
+
+    public function testPostDeleteRemovesTheDocument(): void
+    {
+        $client = static::createClient();
+        /** @var MessageDocumentStorage */
+        $messageDocumentStorage = static::getContainer()->get(MessageDocumentStorage::class);
+        /** @var MessageDocumentRepository */
+        $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $filepath = sys_get_temp_dir() . '/document.txt';
+        $expectedContent = 'Hello World!';
+        $hash = hash('sha256', $expectedContent);
+        file_put_contents($filepath, $expectedContent);
+        $document = new File($filepath);
+        $messageDocument = $messageDocumentStorage->store($document, 'My document');
+        $messageDocumentRepository->save($messageDocument, true);
+
+        $this->assertSame(1, MessageDocumentFactory::count());
+        $this->assertTrue($messageDocumentStorage->exists($messageDocument));
+
+        $client->request('POST', "/messages/documents/{$messageDocument->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete message document'),
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(0, MessageDocumentFactory::count());
+        $this->assertFalse($messageDocumentStorage->exists($messageDocument));
+
+        $response = $client->getResponse();
+        /** @var string */
+        $content = $response->getContent();
+        $responseData = json_decode($content, true);
+        $this->assertSame($messageDocument->getUid(), $responseData['uid']);
+    }
+
+    public function testPostDeleteFailsIfAccessIsDenied(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        /** @var MessageDocumentStorage */
+        $messageDocumentStorage = static::getContainer()->get(MessageDocumentStorage::class);
+        /** @var MessageDocumentRepository */
+        $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $filepath = sys_get_temp_dir() . '/document.txt';
+        $expectedContent = 'Hello World!';
+        $hash = hash('sha256', $expectedContent);
+        file_put_contents($filepath, $expectedContent);
+        $document = new File($filepath);
+        $messageDocument = $messageDocumentStorage->store($document, 'My document');
+        $messageDocumentRepository->save($messageDocument, true);
+        $otherUser = UserFactory::createOne();
+        $client->loginUser($otherUser->object());
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/messages/documents/{$messageDocument->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete message document'),
+        ]);
+    }
+
+    public function testPostDeleteFailsIfCsrfIsInvalid(): void
+    {
+        $client = static::createClient();
+        /** @var MessageDocumentStorage */
+        $messageDocumentStorage = static::getContainer()->get(MessageDocumentStorage::class);
+        /** @var MessageDocumentRepository */
+        $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $filepath = sys_get_temp_dir() . '/document.txt';
+        $expectedContent = 'Hello World!';
+        $hash = hash('sha256', $expectedContent);
+        file_put_contents($filepath, $expectedContent);
+        $document = new File($filepath);
+        $messageDocument = $messageDocumentStorage->store($document, 'My document');
+        $messageDocumentRepository->save($messageDocument, true);
+
+        $client->request('POST', "/messages/documents/{$messageDocument->getUid()}/deletion", [
+            '_csrf_token' => 'not the token',
+        ]);
+
+        $this->assertSame(1, MessageDocumentFactory::count());
+        $this->assertTrue($messageDocumentStorage->exists($messageDocument));
+
+        $response = $client->getResponse();
+        /** @var string */
+        $content = $response->getContent();
+        $responseData = json_decode($content, true);
+        $this->assertSame('The security token is invalid, please try again.', $responseData['error']);
+    }
 }

@@ -76,6 +76,15 @@ class MessageDocumentStorage
     }
 
     /**
+     * Return whether the file exists or not.
+     */
+    public function exists(MessageDocument $messageDocument): bool
+    {
+        $pathname = "{$this->uploadsDirectory}/{$messageDocument->getPathname()}";
+        return @file_exists($pathname);
+    }
+
+    /**
      * Return the size of the file related to the given MessageDocument.
      *
      * @throws MessageDocumentStorageError
@@ -109,5 +118,14 @@ class MessageDocumentStorage
         }
 
         return $content;
+    }
+
+    /**
+     * Remove the file related to the given MessageDocument.
+     */
+    public function remove(MessageDocument $messageDocument): bool
+    {
+        $pathname = "{$this->uploadsDirectory}/{$messageDocument->getPathname()}";
+        return @unlink($pathname);
     }
 }
