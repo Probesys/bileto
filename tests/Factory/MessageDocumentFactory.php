@@ -61,7 +61,7 @@ final class MessageDocumentFactory extends ModelFactory
         $mimetype = self::faker()->randomElement(array_keys(MessageDocument::ACCEPTED_MIMETYPES));
         $mimesubtype = self::faker()->randomElement(MessageDocument::ACCEPTED_MIMETYPES[$mimetype]);
         $mimetype = "{$mimetype}/{$mimesubtype}";
-        $extension = MimeTypes::getDefault()->getExtensions($mimetype)[0];
+        $extension = MimeTypes::getDefault()->getExtensions($mimetype)[0] ?? 'txt';
         return [
             'uid' => Random::hex(20),
             'name' => self::faker()->words(3, true),
