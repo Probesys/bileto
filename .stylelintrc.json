@@ -19,12 +19,7 @@
             }
         ],
 
-        "comment-empty-line-before": [
-            "always",
-            {
-                "ignore": ["after-comment"]
-            }
-        ],
+        "comment-empty-line-before": null,
 
         "custom-property-empty-line-before": null,
 
