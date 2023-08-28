@@ -116,6 +116,9 @@ export default class extends Controller {
                     return;
                 }
 
+                const newDocumentEvent = new CustomEvent('new-document', { detail: json });
+                this.element.dispatchEvent(newDocumentEvent);
+
                 resolve(json.urlShow);
             };
 

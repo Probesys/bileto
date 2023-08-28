@@ -11,6 +11,7 @@ use App\Entity\Message;
 use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Repository\MessageRepository;
+use App\Repository\MessageDocumentRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
@@ -132,6 +133,7 @@ class TicketsController extends BaseController
         Organization $organization,
         Request $request,
         MessageRepository $messageRepository,
+        MessageDocumentRepository $messageDocumentRepository,
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
@@ -152,6 +154,8 @@ class TicketsController extends BaseController
         /** @var string $messageContent */
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
+
+        $messageDocumentUids = $request->request->all('messageDocumentUids');
 
         if ($security->isGranted('orga:update:tickets:type', $organization)) {
             /** @var string $type */
@@ -326,8 +330,18 @@ class TicketsController extends BaseController
             ]);
         }
 
+        $messageDocuments = $messageDocumentRepository->findBy([
+            'uid' => $messageDocumentUids,
+            'createdBy' => $user,
+        ]);
+
         $ticketRepository->save($ticket, true);
         $messageRepository->save($message, true);
+
+        foreach ($messageDocuments as $messageDocument) {
+            $messageDocument->setMessage($message);
+            $messageDocumentRepository->save($messageDocument, true);
+        }
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

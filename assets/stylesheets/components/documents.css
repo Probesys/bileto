@@ -1,0 +1,48 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2023 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.documents__item {
+    font-size: 0.8em;
+
+    background-color: var(--color-grey3);
+    border-radius: 0.5rem;
+}
+
+.documents__link {
+    display: block;
+    padding: 2rem;
+    /* Padding around the icon + icon size (see background properties) */
+    padding-left: calc(1rem + 2rem + 1rem);
+
+    text-decoration: none;
+
+    background-repeat: no-repeat;
+    background-position: 1rem center;
+    background-size: 2rem;
+    border-radius: 0.5rem;
+}
+
+.documents__item[data-type="archive"] .documents__link {
+    background-image: url('../../icons/file-zipper.svg');
+}
+
+.documents__item[data-type="doc"] .documents__link {
+    background-image: url('../../icons/file-word.svg');
+}
+
+.documents__item[data-type="pdf"] .documents__link {
+    background-image: url('../../icons/file-pdf.svg');
+}
+
+.documents__item[data-type="speadsheet"] .documents__link {
+    background-image: url('../../icons/file-excel.svg');
+}
+
+.documents__item[data-type="image"] .documents__link {
+    background-image: url('../../icons/file-image.svg');
+}
+
+.documents__item[data-type="file"] .documents__link {
+    background-image: url('../../icons/file.svg');
+}

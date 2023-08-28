@@ -61,5 +61,35 @@
         <div class="message__content">
             {{ message.content | raw }}
         </div>
+
+        {% if message.messageDocuments is not empty %}
+            <div class="message__bottom flow flow--small">
+                <p class="text--secondary text--small">
+                    {{ 'tickets.message.attachments' | trans }}
+                </p>
+
+                <ul class="documents list--nostyle grid">
+                    {% for document in message.messageDocuments %}
+                        <li
+                            class="documents__item"
+                            data-target="document"
+                            data-type="{{ document.type }}"
+                        >
+                            <a
+                                class="documents__link"
+                                target="_blank"
+                                data-target="document-link"
+                                href="{{ url('message document', { uid: document.uid, extension: document.extension }) }}"
+                            >
+                                <span
+                                    class="documents__name"
+                                    data-target="document-name"
+                                >{{ document.name }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     </div>
 </article>

@@ -81,6 +81,7 @@ class MessageDocumentsController extends BaseController
         return new JsonResponse([
             'uid' => $messageDocument->getUid(),
             'name' => $messageDocument->getName(),
+            'type' => $messageDocument->getType(),
             'urlShow' => $urlShow,
         ]);
     }

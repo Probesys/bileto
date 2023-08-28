@@ -9,6 +9,7 @@ namespace App\Tests\Controller\Tickets;
 use App\Entity\Ticket;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\MessageFactory;
+use App\Tests\Factory\MessageDocumentFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
@@ -90,6 +91,38 @@ class MessagesControllerTest extends WebTestCase
 
         $message = MessageFactory::first();
         $this->assertSame('My message', $message->getContent());
+    }
+
+    public function testPostCreateAttachesDocumentsToMessage(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+        ]);
+        $messageContent = 'My message <style>body { background-color: pink; }</style>';
+        list($messageDocument1, $messageDocument2) = MessageDocumentFactory::createMany(2, [
+            'createdBy' => $user->object(),
+            'message' => null,
+        ]);
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'messageDocumentUids' => [
+                $messageDocument1->getUid(),
+                $messageDocument2->getUid(),
+            ],
+        ]);
+
+        $message = MessageFactory::first();
+        $messageDocument1->refresh();
+        $messageDocument2->refresh();
+        $this->assertNotNull($message);
+        $this->assertSame($message->getUid(), $messageDocument1->getMessage()->getUid());
+        $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
     }
 
     public function testPostCreateCanChangeTheTicketStatusIfPermissionsAreGranted(): void

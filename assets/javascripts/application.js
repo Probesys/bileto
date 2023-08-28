@@ -7,6 +7,7 @@ import { Application } from '@hotwired/stimulus';
 
 import CheckboxesController from '@/controllers/checkboxes_controller.js';
 import ColorSchemeController from '@/controllers/color_scheme_controller.js';
+import FormMessageDocumentsController from '@/controllers/form_message_documents_controller.js';
 import FormNewAnswerController from '@/controllers/form_new_answer_controller.js';
 import FormNewAuthorizationController from '@/controllers/form_new_authorization_controller.js';
 import FormPriorityController from '@/controllers/form_priority_controller.js';
@@ -23,6 +24,7 @@ import TinymceController from '@/controllers/tinymce_controller.js';
 const application = Application.start();
 application.register('checkboxes', CheckboxesController);
 application.register('color-scheme', ColorSchemeController);
+application.register('form-message-documents', FormMessageDocumentsController);
 application.register('form-new-answer', FormNewAnswerController);
 application.register('form-new-authorization', FormNewAuthorizationController);
 application.register('form-priority', FormPriorityController);

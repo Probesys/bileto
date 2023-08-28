@@ -190,3 +190,10 @@
 
     border-left: 0.25rem solid var(--color-primary6);
 }
+
+.message__bottom {
+    padding: 2rem;
+
+    background-color: var(--color-grey1);
+    border-radius: 0 0 0.5rem 0.5rem;
+}
