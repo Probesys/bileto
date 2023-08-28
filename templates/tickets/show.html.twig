@@ -110,7 +110,7 @@
                                 action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
                                 method="post"
                                 class="timeline__editor flow"
-                                data-controller="form-new-answer"
+                                data-controller="form-new-answer form-message-documents"
                                 data-turbo-preserve-scroll
                                 data-form-new-answer-ticket-status-value="{{ ticket.status }}"
                             >
@@ -135,6 +135,7 @@
                                         data-tinymce-upload-url-value="{{ path('create message document') }}"
                                         data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
                                         data-form-new-answer-target="editor"
+                                        data-action="new-document->form-message-documents#addDocument"
                                         {% if errors.content is defined %}
                                             autofocus
                                             aria-invalid="true"
@@ -142,6 +143,8 @@
                                         {% endif %}
                                     >{{ message }}</textarea>
                                 </div>
+
+                                {{ include('message_documents/_list.html.twig', { }, with_context = false) }}
 
                                 {% set canCreateConfidential = is_granted('orga:create:tickets:messages:confidential', organization) %}
                                 {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}

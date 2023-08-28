@@ -21,7 +21,7 @@
             action="{{ path('create organization ticket', {'uid': organization.uid}) }}"
             method="post"
             class="wrapper wrapper--center flow"
-            data-controller="form-priority"
+            data-controller="form-priority form-message-documents"
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization ticket') }}">
 
@@ -111,6 +111,7 @@
                     data-controller="tinymce"
                     data-tinymce-upload-url-value="{{ path('create message document') }}"
                     data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
+                    data-action="new-document->form-message-documents#addDocument"
                     {% if errors.content is defined %}
                         autofocus
                         aria-invalid="true"
@@ -118,6 +119,8 @@
                     {% endif %}
                 >{{ message }}</textarea>
             </div>
+
+            {{ include('message_documents/_list.html.twig', { }, with_context = false) }}
 
             {% if is_granted('orga:update:tickets:status', organization) %}
                 <div>

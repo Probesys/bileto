@@ -1,0 +1,25 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div>
+    <ul class="documents list--nostyle grid" data-form-message-documents-target="documents">
+    </ul>
+
+    <template data-form-message-documents-target="documentTemplate">
+        <li class="documents__item" data-target="document">
+            <a
+                class="documents__link"
+                target="_blank"
+                data-target="document-link"
+            >
+                <span
+                    class="documents__name"
+                    data-target="document-name"
+                ></span>
+            </a>
+        </li>
+    </template>
+</div>
