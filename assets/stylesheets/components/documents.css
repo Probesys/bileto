@@ -10,10 +10,13 @@
 }
 
 .documents__link {
-    display: block;
+    display: flex;
+    height: 100%;
     padding: 2rem 1rem;
     /* Padding around the icon + icon size (see background properties) */
     padding-left: calc(1rem + 2rem + 1rem);
+
+    align-items: center;
 
     text-decoration: none;
 
@@ -21,6 +24,8 @@
     background-position: 1rem center;
     background-size: 2rem;
     border-radius: 0.5rem;
+
+    overflow-wrap: anywhere;
 }
 
 .documents__item[data-type="archive"] .documents__link {
