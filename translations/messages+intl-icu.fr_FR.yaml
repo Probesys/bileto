@@ -105,6 +105,7 @@ mailboxes.password: 'Mot de passe'
 mailboxes.port: 'Port IMAP'
 mailboxes.test.success: 'La connexion fonctionne.'
 mailboxes.username: 'Nom d’utilisateur'
+message_documents.attachments: Pièces-jointes
 message_documents.remove: 'Retirer la pièce-jointe'
 notifications.saved: 'Vos changements ont été sauvegardés.'
 organizations.deletion.caution: "Attention\_!"
@@ -229,7 +230,6 @@ tickets.list.incident_opened_on: 'Incident ouvert le <time datetime="{dateIso}">
 tickets.list.incident_updated_on: 'Incident mis à jour le <time datetime="{dateIso}">{date}</time>'
 tickets.list.request_opened_on: 'Requête ouverte le <time datetime="{dateIso}">{date}</time>'
 tickets.list.request_updated_on: 'Requête mise à jour le <time datetime="{dateIso}">{date}</time>'
-tickets.message.attachments: Pièces-jointes
 tickets.new.choose_orga: 'Choisissez une organisation'
 tickets.new.mark_as_resolved: 'Ticket déjà résolu'
 tickets.new.title: 'Nouveau ticket'

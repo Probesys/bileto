@@ -105,6 +105,7 @@ mailboxes.password: Password
 mailboxes.port: 'Port IMAP'
 mailboxes.test.success: 'The connection works.'
 mailboxes.username: Username
+message_documents.attachments: Attachments
 message_documents.remove: 'Remove attachment'
 notifications.saved: 'Your changes have been successfully saved.'
 organizations.deletion.caution: Caution!
@@ -229,7 +230,6 @@ tickets.list.incident_opened_on: 'Incident opened on <time datetime="{dateIso}">
 tickets.list.incident_updated_on: 'Incident updated on <time datetime="{dateIso}">{date}</time>)'
 tickets.list.request_opened_on: 'Request opened on <time datetime="{dateIso}">{date}</time>'
 tickets.list.request_updated_on: 'Request updated on <time datetime="{dateIso}">{date}</time>'
-tickets.message.attachments: Attachments
 tickets.new.choose_orga: 'Choose an organization'
 tickets.new.mark_as_resolved: 'Ticket already resolved'
 tickets.new.title: 'New ticket'

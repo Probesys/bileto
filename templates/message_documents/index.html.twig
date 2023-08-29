@@ -6,6 +6,32 @@
 
 <turbo-frame id="message-documents" data-controller="message-documents">
     <div class="flow flow--small">
+        <div class="text--small row row--always row--center flow">
+            <p class="text--secondary">
+                {{ 'message_documents.attachments' | trans }}
+            </p>
+
+            <div>
+                <button
+                    type="button"
+                    data-action="message-documents#openFilesSelector"
+                    data-message-documents-target="uploadButton"
+                >
+                    Ajouter
+                </button>
+
+                <input
+                    name="document"
+                    type="file"
+                    hidden
+                    data-message-documents-target="filesSelector"
+                    data-action="message-documents#uploadFiles"
+                    data-upload-url="{{ path('create message document') }}"
+                    data-upload-csrf="{{ csrf_token('create message document') }}"
+                />
+            </div>
+        </div>
+
         <ul class="documents list--nostyle grid">
             {% for messageDocument in messageDocuments %}
                 {{ include(
