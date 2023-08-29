@@ -14,12 +14,16 @@ use App\Message\SendMessageEmail;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Repository\MessageRepository;
+use App\Repository\MessageDocumentRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Security\Authentication\UserToken;
 use App\Security\Encryptor;
+use App\Service\MessageDocumentStorage;
+use App\Service\MessageDocumentStorageError;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -31,6 +35,8 @@ class CreateTicketsFromMailboxEmailsHandler
     public function __construct(
         private MailboxEmailRepository $mailboxEmailRepository,
         private MessageRepository $messageRepository,
+        private MessageDocumentRepository $messageDocumentRepository,
+        private MessageDocumentStorage $messageDocumentStorage,
         private TicketRepository $ticketRepository,
         private UserRepository $userRepository,
         private AccessDecisionManagerInterface $accessDecisionManager,
@@ -119,6 +125,35 @@ class CreateTicketsFromMailboxEmailsHandler
 
             $this->ticketRepository->save($ticket, true);
             $this->messageRepository->save($message, true);
+
+            foreach ($mailboxEmail->getAttachments() as $attachment) {
+                $tmpPath = sys_get_temp_dir();
+                $filename = $attachment->getName();
+                $status = $attachment->save($tmpPath, $filename);
+
+                if (!$status) {
+                    $this->logger->warning(
+                        "MailboxEmail {$mailboxEmail->getId()} cannot import {$filename}: can't save in temporary dir"
+                    );
+                    continue;
+                }
+
+                $filepath = $tmpPath . '/' . $filename;
+                $file = new File($filepath, false);
+
+                try {
+                    $messageDocument = $this->messageDocumentStorage->store($file, $filename);
+                } catch (MessageDocumentStorageError $e) {
+                    $this->logger->warning(
+                        "MailboxEmail {$mailboxEmail->getId()} cannot import {$filename}: {$e->getMessage()}"
+                    );
+                    continue;
+                }
+
+                $messageDocument->setMessage($message);
+                $this->messageDocumentRepository->save($messageDocument, true);
+            }
+
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
 
             $this->bus->dispatch(new SendMessageEmail($message->getId()));

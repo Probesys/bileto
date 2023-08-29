@@ -176,6 +176,15 @@ class MailboxEmail implements MetaEntityInterface, ActivityRecordableInterface
         }
     }
 
+    /**
+     * @return PHPIMAP\Attachment[]
+     */
+    public function getAttachments(): array
+    {
+        $email = $this->getEmail();
+        return $email->getAttachments()->toArray();
+    }
+
     public function getDate(): \DateTimeImmutable
     {
         $date = $this->getEmail()->getDate()->first();
