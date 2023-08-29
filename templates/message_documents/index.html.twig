@@ -7,36 +7,12 @@
 <turbo-frame id="message-documents" data-controller="message-documents">
     <div class="flow flow--small">
         <ul class="documents list--nostyle grid">
-            {% for document in messageDocuments %}
-                <li
-                    class="documents__item row row--always row--center"
-                    data-type="{{ document.type }}"
-                    data-target="document-item"
-                >
-                    <a
-                        class="documents__link row__item--extend"
-                        target="_blank"
-                        href="{{ path('message document', { uid: document.uid, extension: document.extension }) }}"
-                    >
-                        <span class="documents__name" data-target="document-name">
-                            {{ document.name }}
-                        </span>
-                    </a>
-
-                    <button
-                        class="button--icon"
-                        type="button"
-                        data-action="message-documents#removeDocument"
-                        data-url="{{ path('delete message document', { uid: document.uid }) }}"
-                        data-csrf="{{ csrf_token('delete message document') }}"
-                    >
-                        {{ icon('close') }}
-
-                        <span class="sr-only">
-                            {{ 'message_documents.remove' | trans }}
-                        </span>
-                    </button>
-                </li>
+            {% for messageDocument in messageDocuments %}
+                {{ include(
+                    'message_documents/_message_document.html.twig',
+                    { messageDocument: messageDocument },
+                    with_context = false
+                ) }}
             {% endfor %}
         </ul>
     </div>

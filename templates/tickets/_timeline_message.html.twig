@@ -69,24 +69,12 @@
                 </p>
 
                 <ul class="documents list--nostyle grid">
-                    {% for document in message.messageDocuments %}
-                        <li
-                            class="documents__item"
-                            data-target="document"
-                            data-type="{{ document.type }}"
-                        >
-                            <a
-                                class="documents__link"
-                                target="_blank"
-                                data-target="document-link"
-                                href="{{ url('message document', { uid: document.uid, extension: document.extension }) }}"
-                            >
-                                <span
-                                    class="documents__name"
-                                    data-target="document-name"
-                                >{{ document.name }}</span>
-                            </a>
-                        </li>
+                    {% for messageDocument in message.messageDocuments %}
+                        {{ include(
+                            'message_documents/_message_document.html.twig',
+                            { messageDocument: messageDocument, displayRemove: false },
+                            with_context = false
+                        ) }}
                     {% endfor %}
                 </ul>
             </div>
