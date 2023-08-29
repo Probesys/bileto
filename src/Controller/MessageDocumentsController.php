@@ -51,6 +51,22 @@ class MessageDocumentsController extends BaseController
             ], 400);
         }
 
+        if (
+            $file->getError() === \UPLOAD_ERR_INI_SIZE ||
+            $file->getError() === \UPLOAD_ERR_FORM_SIZE
+        ) {
+            return new JsonResponse([
+                'error' => $translator->trans('message_document.too_large', [], 'errors'),
+            ], 400);
+        }
+
+        if (!$file->isValid()) {
+            return new JsonResponse([
+                'error' => $translator->trans('message_document.server_error', [], 'errors'),
+                'description' => $file->getErrorMessage(),
+            ], 400);
+        }
+
         try {
             $messageDocument = $messageDocumentStorage->store($file, $file->getClientOriginalName());
         } catch (MessageDocumentStorageError $e) {
