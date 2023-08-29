@@ -11,6 +11,7 @@ services:
         restart: unless-stopped
         volumes:
             - ..:/var/www/html:z
+            - ./php-custom.ini:/usr/local/etc/php/conf.d/custom.ini:z
         user: $USER
 
     worker:
@@ -20,6 +21,7 @@ services:
         command: php bin/console messenger:consume async scheduler_default -vv
         volumes:
             - ..:/var/www/html:z
+            - ./php-custom.ini:/usr/local/etc/php/conf.d/custom.ini:z
         user: $USER
 
     bundler:
