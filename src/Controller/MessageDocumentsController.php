@@ -86,10 +86,7 @@ class MessageDocumentsController extends BaseController
 
         return new JsonResponse([
             'uid' => $messageDocument->getUid(),
-            'name' => $messageDocument->getName(),
-            'type' => $messageDocument->getType(),
             'urlShow' => $urlShow,
-            'urlDelete' => $urlDelete,
         ]);
     }
 
@@ -188,8 +185,45 @@ class MessageDocumentsController extends BaseController
             $messageDocumentStorage->remove($messageDocument);
         }
 
+        $urlShow = $this->generateUrl(
+            'message document',
+            [
+                'uid' => $messageDocument->getUid(),
+                'extension' => $messageDocument->getExtension(),
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
         return new JsonResponse([
             'uid' => $messageDocument->getUid(),
+            'urlShow' => $urlShow,
+        ]);
+    }
+
+    #[Route('/messages/documents', name: 'message documents', methods: ['GET', 'HEAD'])]
+    public function index(
+        Request $request,
+        MessageDocumentRepository $messageDocumentRepository,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $conditions = [
+            'createdBy' => $user,
+        ];
+
+        $filter = $request->query->get('filter', '');
+        if ($filter === 'unattached') {
+            $conditions['message'] = null;
+        }
+
+        $messageDocuments = $messageDocumentRepository->findBy(
+            $conditions,
+            ['createdAt' => 'ASC'],
+        );
+
+        return $this->render('message_documents/index.html.twig', [
+            'messageDocuments' => $messageDocuments,
         ]);
     }
 }

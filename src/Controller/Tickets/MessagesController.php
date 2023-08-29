@@ -57,8 +57,6 @@ class MessagesController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
-        $messageDocumentUids = $request->request->all('messageDocumentUids');
-
         /** @var boolean $isConfidential */
         $isConfidential = $request->request->getBoolean('isConfidential', false);
 
@@ -174,16 +172,16 @@ class MessagesController extends BaseController
             ]);
         }
 
-        $messageDocuments = $messageDocumentRepository->findBy([
-            'uid' => $messageDocumentUids,
-            'createdBy' => $user,
-        ]);
-
         $ticket->setUpdatedAt(Time::now());
         $ticket->setUpdatedBy($user);
 
         $messageRepository->save($message, true);
         $ticketRepository->save($ticket, true);
+
+        $messageDocuments = $messageDocumentRepository->findBy([
+            'createdBy' => $user,
+            'message' => null,
+        ]);
 
         foreach ($messageDocuments as $messageDocument) {
             $messageDocument->setMessage($message);

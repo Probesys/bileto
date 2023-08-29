@@ -155,8 +155,6 @@ class TicketsController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
-        $messageDocumentUids = $request->request->all('messageDocumentUids');
-
         if ($security->isGranted('orga:update:tickets:type', $organization)) {
             /** @var string $type */
             $type = $request->request->get('type', Ticket::DEFAULT_TYPE);
@@ -330,13 +328,13 @@ class TicketsController extends BaseController
             ]);
         }
 
-        $messageDocuments = $messageDocumentRepository->findBy([
-            'uid' => $messageDocumentUids,
-            'createdBy' => $user,
-        ]);
-
         $ticketRepository->save($ticket, true);
         $messageRepository->save($message, true);
+
+        $messageDocuments = $messageDocumentRepository->findBy([
+            'createdBy' => $user,
+            'message' => null,
+        ]);
 
         foreach ($messageDocuments as $messageDocument) {
             $messageDocument->setMessage($message);

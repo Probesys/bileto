@@ -13,6 +13,7 @@ use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\MessageDocumentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
+use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -74,7 +75,6 @@ class MessageDocumentsControllerTest extends WebTestCase
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
         $this->assertSame($messageDocument->getUid(), $responseData['uid']);
-        $this->assertSame($messageDocument->getName(), $responseData['name']);
         $this->assertSame($expectedUrlShow, $responseData['urlShow']);
     }
 
@@ -315,6 +315,8 @@ class MessageDocumentsControllerTest extends WebTestCase
     public function testPostDeleteRemovesTheDocument(): void
     {
         $client = static::createClient();
+        /** @var RouterInterface */
+        $router = static::getContainer()->get('router');
         /** @var MessageDocumentStorage */
         $messageDocumentStorage = static::getContainer()->get(MessageDocumentStorage::class);
         /** @var MessageDocumentRepository */
@@ -344,7 +346,16 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var string */
         $content = $response->getContent();
         $responseData = json_decode($content, true);
+        $expectedUrlShow = $router->generate(
+            'message document',
+            [
+                'uid' => $messageDocument->getUid(),
+                'extension' => $messageDocument->getExtension(),
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
         $this->assertSame($messageDocument->getUid(), $responseData['uid']);
+        $this->assertSame($expectedUrlShow, $responseData['urlShow']);
     }
 
     public function testPostDeleteFailsIfAccessIsDenied(): void
@@ -403,5 +414,65 @@ class MessageDocumentsControllerTest extends WebTestCase
         $content = $response->getContent();
         $responseData = json_decode($content, true);
         $this->assertSame('The security token is invalid, please try again.', $responseData['error']);
+    }
+
+    public function testGetIndexListsTheFile(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $message = MessageFactory::createOne();
+        $messageDocument1 = MessageDocumentFactory::createOne([
+            'createdAt' => Time::ago(2, 'hour'),
+            'createdBy' => $user->object(),
+            'name' => 'foo.txt',
+            'message' => $message,
+        ]);
+        $messageDocument2 = MessageDocumentFactory::createOne([
+            'createdAt' => Time::ago(1, 'hour'),
+            'createdBy' => $user->object(),
+            'name' => 'bar.txt',
+            'message' => null,
+        ]);
+
+        $client->request('GET', '/messages/documents');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains(
+            '[data-target="document-item"]:nth-child(1) [data-target="document-name"]',
+            'foo.txt'
+        );
+        $this->assertSelectorTextContains(
+            '[data-target="document-item"]:nth-child(2) [data-target="document-name"]',
+            'bar.txt'
+        );
+    }
+
+    public function testGetIndexCanFilterUnattachedDocuments(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $message = MessageFactory::createOne();
+        $messageDocument1 = MessageDocumentFactory::createOne([
+            'createdAt' => Time::ago(2, 'hour'),
+            'createdBy' => $user->object(),
+            'name' => 'foo.txt',
+            'message' => $message,
+        ]);
+        $messageDocument2 = MessageDocumentFactory::createOne([
+            'createdAt' => Time::ago(1, 'hour'),
+            'createdBy' => $user->object(),
+            'name' => 'bar.txt',
+            'message' => null,
+        ]);
+
+        $client->request('GET', '/messages/documents?filter=unattached');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains(
+            '[data-target="document-item"]:nth-child(1) [data-target="document-name"]',
+            'bar.txt'
+        );
     }
 }

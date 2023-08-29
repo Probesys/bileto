@@ -135,7 +135,7 @@
                                         data-tinymce-upload-url-value="{{ path('create message document') }}"
                                         data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
                                         data-form-new-answer-target="editor"
-                                        data-action="new-document->form-message-documents#addDocument"
+                                        data-action="new-document->form-new-answer#newDocument remove-document->tinymce#removeImage"
                                         {% if errors.content is defined %}
                                             autofocus
                                             aria-invalid="true"
@@ -144,7 +144,16 @@
                                     >{{ message }}</textarea>
                                 </div>
 
-                                {{ include('message_documents/_list.html.twig', { }, with_context = false) }}
+                                <div>
+                                    <turbo-frame
+                                        id="message-documents"
+                                        src="{{ path('message documents', { filter: 'unattached' }) }}"
+                                        data-controller="message-documents"
+                                        data-form-new-answer-target="messageDocuments"
+                                        data-action="remove-document->form-new-answer#removeDocument new-document->message-documents#reload"
+                                    >
+                                    </turbo-frame>
+                                </div>
 
                                 {% set canCreateConfidential = is_granted('orga:create:tickets:messages:confidential', organization) %}
                                 {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}

@@ -136,4 +136,11 @@ export default class extends Controller {
             xhr.send(formData);
         });
     }
+
+    removeImage (event) {
+        const urlShow = event.detail.urlShow;
+        const selector = 'img[src="' + urlShow + '"]';
+        const images = window.tinymce.activeEditor.dom.select(selector);
+        window.tinymce.activeEditor.dom.remove(images);
+    }
 }
