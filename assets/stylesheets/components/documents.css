@@ -40,7 +40,7 @@
     background-image: url('../../icons/file-pdf.svg');
 }
 
-.documents__item[data-type="speadsheet"] .documents__link {
+.documents__item[data-type="spreadsheet"] .documents__link {
     background-image: url('../../icons/file-excel.svg');
 }
 
