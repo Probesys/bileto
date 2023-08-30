@@ -10,6 +10,7 @@
 
 @media (min-width: 1200px) {
     .tickets-show .ticket__info {
-        width: 350px;
+        width: 300px;
+        margin-left: 10rem;
     }
 }
