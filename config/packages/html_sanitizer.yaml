@@ -16,6 +16,9 @@ framework:
 
                 block_elements: ['html', 'body']
 
+                allow_attributes:
+                    width: ['img']
+
                 force_attributes:
                     a:
                         rel: noopener noreferrer
