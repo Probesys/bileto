@@ -20,33 +20,58 @@
             </h1>
         </div>
 
-        <div class="wrapper wrapper--large wrapper--center row row--center row--middle flow">
-            <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
+        <div class="wrapper wrapper--large wrapper--center flow text--small">
+            <div class="row row--center row--middle flow">
+                <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
-            <span class="text--small row__item--extend">
-                <strong>{{ ticket.createdBy.displayName }}</strong>
+                <span class="text--secondary text--small row__item--extend">
+                    <strong>{{ ticket.createdBy.displayName }}</strong>
 
-                {% if ticket.type == 'request' %}
-                    {{ 'tickets.show.opened_request' | trans | raw }}
-                {% else %}
-                    {{ 'tickets.show.opened_incident' | trans | raw }}
-                {% endif %}
+                    {% if ticket.type == 'request' %}
+                        {{ 'tickets.show.opened_request' | trans | raw }}
+                    {% else %}
+                        {{ 'tickets.show.opened_incident' | trans | raw }}
+                    {% endif %}
 
-                <time datetime="{{ ticket.createdAt | dateIso }}">
-                    {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
-                </time>
+                    <time datetime="{{ ticket.createdAt | dateIso }}">
+                        {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
+                    </time>
 
-                · {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
-            </span>
+                    · {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
+                </span>
+            </div>
 
-            <button
-                class="button--anchor"
-                data-controller="scroll-to"
-                data-scroll-to-target-value="#bottom"
-                data-action="scroll-to#scroll"
-            >
-                {{ 'tickets.show.scroll_to_bottom' | trans }}
-            </button>
+            <div class="row row--always row--center flow flow--small text--small">
+                <form
+                    method="post"
+                    action="{{ path('update hide events') }}"
+                    data-turbo-preserve-scroll
+                >
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update hide events') }}">
+                    <input type="hidden" name="from" value="{{ path('ticket', { uid: ticket.uid }) }}">
+
+                    {% if app.user.areEventsHidden %}
+                        <button class="button--discreet" name="hideEvents" value="false">
+                            {{ icon('eye') }}
+                            {{ 'tickets.show.show_history' | trans }}
+                        </button>
+                    {% else %}
+                        <button class="button--discreet" name="hideEvents" value="true">
+                            {{ icon('eye-slash') }}
+                            {{ 'tickets.show.hide_history' | trans }}
+                        </button>
+                    {% endif %}
+                </form>
+
+                <button
+                    class="button--discreet"
+                    data-controller="scroll-to"
+                    data-scroll-to-target-value="#bottom"
+                    data-action="scroll-to#scroll"
+                >
+                    {{ 'tickets.show.scroll_to_bottom' | trans }}
+                </button>
+            </div>
         </div>
 
         <div class="wrapper wrapper--larger wrapper--center row flow flow--larger">
@@ -81,28 +106,6 @@
                             {{ include('tickets/_timeline_event.html.twig', { event: timelineItem }) }}
                         {% endif %}
                     {% endfor %}
-
-                    <form
-                        class="timeline__events-visibility"
-                        method="post"
-                        action="{{ path('update hide events') }}"
-                        data-turbo-preserve-scroll
-                    >
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update hide events') }}">
-                        <input type="hidden" name="from" value="{{ path('ticket', { uid: ticket.uid }) }}">
-
-                        {% if app.user.areEventsHidden %}
-                            <button name="hideEvents" value="false">
-                                {{ icon('eye') }}
-                                {{ 'tickets.show.show_history' | trans }}
-                            </button>
-                        {% else %}
-                            <button name="hideEvents" value="true">
-                                {{ icon('eye-slash') }}
-                                {{ 'tickets.show.hide_history' | trans }}
-                            </button>
-                        {% endif %}
-                    </form>
 
                     <div id="bottom">
                         {% if is_granted('orga:create:tickets:messages', organization) %}

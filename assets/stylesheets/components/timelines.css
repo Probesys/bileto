@@ -81,14 +81,6 @@
     text-align: right;
 }
 
-.timeline__events-visibility {
-    position: relative;
-
-    margin-left: calc(var(--width-col-avatars) + 0.3rem); /** Align the icon with the timeline bar */
-
-    font-size: 0.8em;
-}
-
 .timeline__editor {
     position: relative;
 
