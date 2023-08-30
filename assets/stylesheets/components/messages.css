@@ -130,7 +130,7 @@
 .message__content {
     position: relative;
 
-    padding: 2rem;
+    padding: 3rem 2rem;
 
     background-color: var(--color-grey1);
     border-radius: 0 0 0.5rem 0.5rem;
