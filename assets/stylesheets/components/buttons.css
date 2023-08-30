@@ -104,6 +104,12 @@ button[disabled],
     background-color: transparent;
 }
 
+.button--discreet {
+    padding: 0.25rem 1.25rem;
+
+    border-width: 1px;
+}
+
 .button--caret {
     position: relative;
 

@@ -20,51 +20,138 @@
             </h1>
         </div>
 
-        <div class="wrapper wrapper--large wrapper--center row row--center row--middle flow">
-            <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
+        <div class="ticket__top wrapper wrapper--large wrapper--center flow text--small">
+            <div class="row row--center row--middle flow">
+                <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
-            <span class="text--small row__item--extend">
-                <strong>{{ ticket.createdBy.displayName }}</strong>
+                <span class="text--secondary text--small row__item--extend">
+                    <strong>{{ ticket.createdBy.displayName }}</strong>
 
-                {% if ticket.type == 'request' %}
-                    {{ 'tickets.show.opened_request' | trans | raw }}
-                {% else %}
-                    {{ 'tickets.show.opened_incident' | trans | raw }}
+                    {% if ticket.type == 'request' %}
+                        {{ 'tickets.show.opened_request' | trans | raw }}
+                    {% else %}
+                        {{ 'tickets.show.opened_incident' | trans | raw }}
+                    {% endif %}
+
+                    <time datetime="{{ ticket.createdAt | dateIso }}">
+                        {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
+                    </time>
+
+                    · {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
+                </span>
+
+                {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
+                {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
+                {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
+                {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
+
+                {% if menuHasItem %}
+                    <details
+                        class="popup"
+                        data-controller="popup"
+                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                    >
+                        <summary class="popup__opener">
+                            <span class="button button--caret">
+                                {{ 'tickets.show.actions' | trans }}
+                            </span>
+                        </summary>
+
+                        <nav class="popup__container popup__container--right">
+                            {% if canUpdateType %}
+                                <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
+                                    {% if ticket.type == 'request' %}
+                                        <input type="hidden" name="type" value="incident">
+                                        <button id="form-update-type-submit" class="popup__item" type="submit">
+                                            {{ 'tickets.show.actions.turn_into_incident' | trans }}
+                                        </button>
+                                    {% else %}
+                                        <input type="hidden" name="type" value="request">
+                                        <button id="form-update-type-submit" class="popup__item" type="submit">
+                                            {{ 'tickets.show.actions.turn_into_request' | trans }}
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            {% endif %}
+
+                            {% if canUpdateTitle %}
+                                <button
+                                    class="popup__item"
+                                    type="button"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
+                                >
+                                    {{ 'tickets.show.actions.rename' | trans }}
+                                </button>
+                            {% endif %}
+
+                            {% if canUpdateStatus %}
+                                <button
+                                    class="popup__item"
+                                    type="button"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
+                                >
+                                    {{ 'tickets.show.actions.update_status' | trans }}
+                                </button>
+                            {% endif %}
+                        </nav>
+                    </details>
                 {% endif %}
+            </div>
 
-                <time datetime="{{ ticket.createdAt | dateIso }}">
-                    {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
-                </time>
+            <div class="row row--always row--center flow flow--small text--small">
+                <form
+                    method="post"
+                    action="{{ path('update hide events') }}"
+                    data-turbo-preserve-scroll
+                >
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update hide events') }}">
+                    <input type="hidden" name="from" value="{{ path('ticket', { uid: ticket.uid }) }}">
 
-                · {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
-            </span>
+                    {% if app.user.areEventsHidden %}
+                        <button class="button--discreet" name="hideEvents" value="false">
+                            {{ icon('eye') }}
+                            {{ 'tickets.show.show_history' | trans }}
+                        </button>
+                    {% else %}
+                        <button class="button--discreet" name="hideEvents" value="true">
+                            {{ icon('eye-slash') }}
+                            {{ 'tickets.show.hide_history' | trans }}
+                        </button>
+                    {% endif %}
+                </form>
 
-            <button
-                class="button--anchor"
-                data-controller="scroll-to"
-                data-scroll-to-target-value="#bottom"
-                data-action="scroll-to#scroll"
-            >
-                {{ 'tickets.show.scroll_to_bottom' | trans }}
-            </button>
+                <button
+                    class="button--discreet"
+                    data-controller="scroll-to"
+                    data-scroll-to-target-value="#bottom"
+                    data-action="scroll-to#scroll"
+                >
+                    {{ 'tickets.show.scroll_to_bottom' | trans }}
+                </button>
+            </div>
         </div>
 
-        <div class="wrapper wrapper--larger wrapper--center row flow flow--larger">
+        <div class="wrapper wrapper--large wrapper--center row flow flow--larger">
             <div class="ticket__timeline row__item--extend flow flow--larger">
                 <div class="flow flow--larger timeline">
                     {% set timelineDate = null %}
                     {% for timelineItem in timeline.sortedItems %}
                         {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.createdAt.format('Y-m-d') %}
                             {% set diff = timelineDate ? timelineDate.diff(timelineItem.createdAt).d : 0 %}
-                            {% if diff >= 7 %}
-                                <div class="timeline__date-diff">
-                                    —&nbsp;{{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}&nbsp;—
-                                </div>
-                            {% endif %}
-
                             {% set timelineDate = timelineItem.createdAt %}
 
                             <h2 class="timeline__date">
+                                {% if diff >= 7 %}
+                                    <small class="timeline__date-diff">
+                                        {{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}&nbsp;—
+                                    </small>
+                                {% endif %}
+
                                 <time datetime="{{ timelineDate | date('Y-m-d') }}">
                                     {{ timelineDate | dateShort(true) }}
                                 </time>
@@ -81,28 +168,6 @@
                             {{ include('tickets/_timeline_event.html.twig', { event: timelineItem }) }}
                         {% endif %}
                     {% endfor %}
-
-                    <form
-                        class="timeline__events-visibility"
-                        method="post"
-                        action="{{ path('update hide events') }}"
-                        data-turbo-preserve-scroll
-                    >
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update hide events') }}">
-                        <input type="hidden" name="from" value="{{ path('ticket', { uid: ticket.uid }) }}">
-
-                        {% if app.user.areEventsHidden %}
-                            <button name="hideEvents" value="false">
-                                {{ icon('eye') }}
-                                {{ 'tickets.show.show_history' | trans }}
-                            </button>
-                        {% else %}
-                            <button name="hideEvents" value="true">
-                                {{ icon('eye-slash') }}
-                                {{ 'tickets.show.hide_history' | trans }}
-                            </button>
-                        {% endif %}
-                    </form>
 
                     <div id="bottom">
                         {% if is_granted('orga:create:tickets:messages', organization) %}
@@ -274,71 +339,6 @@
             </div>
 
             <div class="ticket__info text--small row__item--noshrink flow flow--larger">
-                {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
-                {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
-                {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
-                {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
-
-                {% if menuHasItem %}
-                    <div class="text--right">
-                        <details
-                            class="popup"
-                            data-controller="popup"
-                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                        >
-                            <summary class="popup__opener">
-                                <span class="button button--caret">
-                                    {{ icon('ellipsis') }}
-                                    {{ 'tickets.show.actions' | trans }}
-                                </span>
-                            </summary>
-
-                            <nav class="popup__container popup__container--right">
-                                {% if canUpdateType %}
-                                    <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
-                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
-                                        {% if ticket.type == 'request' %}
-                                            <input type="hidden" name="type" value="incident">
-                                            <button id="form-update-type-submit" class="popup__item" type="submit">
-                                                {{ 'tickets.show.actions.turn_into_incident' | trans }}
-                                            </button>
-                                        {% else %}
-                                            <input type="hidden" name="type" value="request">
-                                            <button id="form-update-type-submit" class="popup__item" type="submit">
-                                                {{ 'tickets.show.actions.turn_into_request' | trans }}
-                                            </button>
-                                        {% endif %}
-                                    </form>
-                                {% endif %}
-
-                                {% if canUpdateTitle %}
-                                    <button
-                                        class="popup__item"
-                                        type="button"
-                                        data-controller="modal-opener"
-                                        data-action="modal-opener#fetch"
-                                        data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
-                                    >
-                                        {{ 'tickets.show.actions.rename' | trans }}
-                                    </button>
-                                {% endif %}
-
-                                {% if canUpdateStatus %}
-                                    <button
-                                        class="popup__item"
-                                        type="button"
-                                        data-controller="modal-opener"
-                                        data-action="modal-opener#fetch"
-                                        data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
-                                    >
-                                        {{ 'tickets.show.actions.update_status' | trans }}
-                                    </button>
-                                {% endif %}
-                            </nav>
-                        </details>
-                    </div>
-                {% endif %}
-
                 <div class="flow">
                     <div class="row row--center row--always flow">
                         <span class="row__item--extend">

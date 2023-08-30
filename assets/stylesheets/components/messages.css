@@ -87,6 +87,8 @@
     display: flex;
     padding: 1rem 2rem;
 
+    align-items: center;
+
     font-size: 0.9em;
 
     background-color: var(--color-grey3);
@@ -102,10 +104,6 @@
     border-bottom-color: var(--color-success6);
 }
 
-.message--confidential .message__top {
-    background-image: linear-gradient(to right, var(--color-grey6), var(--color-grey3));
-}
-
 .message__top * + * {
     margin-left: 0.5rem;
 }
@@ -116,6 +114,20 @@
 
 .message__author {
     font-weight: bold;
+}
+
+.message__badge {
+    margin-left: 1rem;
+    padding: 0.25rem 0.5rem;
+
+    font-size: 0.8em;
+
+    border: 1px solid var(--color-grey6);
+    border-radius: 0.5rem;
+}
+
+.message--solution .message__badge {
+    border-color: var(--color-success6);
 }
 
 .message__date {
@@ -130,7 +142,7 @@
 .message__content {
     position: relative;
 
-    padding: 2rem;
+    padding: 3rem 2rem;
 
     background-color: var(--color-grey1);
     border-radius: 0 0 0.5rem 0.5rem;

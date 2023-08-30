@@ -29,27 +29,29 @@
 
     <div class="message__box">
         <div class="message__top">
-            {% if ticket.solution == message %}
-                <div title="{{ 'tickets.show.message.resolved' | trans }}">
-                    {{ icon('check') }}
-                </div>
-            {% endif %}
-
             {% if message.via == 'email' %}
                 <div title="{{ 'tickets.show.message.via_email' | trans }}">
                     {{ icon('envelope') }}
                 </div>
             {% endif %}
 
-            {% if message.isConfidential %}
-                <div title="{{ 'tickets.show.message.confidential' | trans }}">
-                    {{ icon('user-secret') }}
-                </div>
-            {% endif %}
-
             <div class="message__author">
                 {{ message.createdBy.displayName }}
             </div>
+
+            {% if ticket.solution == message %}
+                <div class="message__badge">
+                    {{ icon('check') }}
+                    {{ 'tickets.show.message.solution' | trans }}
+                </div>
+            {% endif %}
+
+            {% if message.isConfidential %}
+                <div class="message__badge">
+                    {{ icon('user-secret') }}
+                    {{ 'tickets.show.message.confidential' | trans }}
+                </div>
+            {% endif %}
 
             <div class="message__top-separator"></div>
 
