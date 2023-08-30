@@ -268,8 +268,8 @@ tickets.show.impact: 'Impact:'
 tickets.show.mark_as: 'Mark as…'
 tickets.show.mark_as.confidential: confidential
 tickets.show.mark_as.solution: solution
-tickets.show.message.confidential: 'This message is confidential'
-tickets.show.message.resolved: 'This message resolved the ticket'
+tickets.show.message.confidential: confidential
+tickets.show.message.solution: solution
 tickets.show.message.via_email: 'This message has been sent by email'
 tickets.show.number_messages: "{count, plural, =0 {No\_messages} one {1\_message} other {#\_messages}}"
 tickets.show.opened_incident: 'opened this <strong>incident</strong>'
