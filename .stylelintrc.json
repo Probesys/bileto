@@ -9,8 +9,6 @@
     "rules": {
         "stylistic/indentation": 4,
 
-        "at-rule-no-vendor-prefix": null,
-
         "declaration-empty-line-before": [
             "always",
             {
@@ -33,8 +31,6 @@
         ],
 
         "selector-class-pattern": null,
-
-        "property-no-vendor-prefix": null,
 
         "order/properties-order": [
             {

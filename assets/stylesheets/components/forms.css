@@ -187,8 +187,6 @@ select:not([multiple]) {
     background-position: right 0.75rem top 58%;
     background-size: 2rem;
 
-    -moz-appearance: none;
-    -webkit-appearance: none;
     appearance: none;
 }
 

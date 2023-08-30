@@ -11,7 +11,11 @@
     "lint-css": "stylelint assets/stylesheets/**/*.css",
     "lint-css-fix": "stylelint --fix assets/stylesheets/**/*.css"
   },
+  "browserslist": [
+    "defaults"
+  ],
   "devDependencies": {
+    "autoprefixer": "^10.4.15",
     "eslint": "^8.25.0",
     "eslint-config-standard": "^17.0.0",
     "stylelint": "^15.6.0",
