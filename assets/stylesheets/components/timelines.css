@@ -27,27 +27,28 @@
 }
 
 .timeline__date {
-    position: sticky;
-    z-index: 10;
-    top: 0;
-
     padding-top: 1rem;
     padding-bottom: 1rem;
 
-    text-align: center;
+    font-size: 0.9em;
+    text-align: right;
+}
+
+/* Hide the top of the timeline bar */
+.timeline__date:first-child {
+    position: relative;
 
     background-color: var(--color-grey1);
-    border-bottom: 1px solid var(--color-grey6);
+}
+
+.timeline__date + * {
+    margin-top: 0;
 }
 
 .timeline__date-diff {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-
     color: var(--color-grey11);
-    font-size: 0.9em;
     font-style: italic;
-    text-align: center;
+    font-weight: normal;
 }
 
 .timeline__event {

@@ -56,15 +56,15 @@
                     {% for timelineItem in timeline.sortedItems %}
                         {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.createdAt.format('Y-m-d') %}
                             {% set diff = timelineDate ? timelineDate.diff(timelineItem.createdAt).d : 0 %}
-                            {% if diff >= 7 %}
-                                <div class="timeline__date-diff">
-                                    —&nbsp;{{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}&nbsp;—
-                                </div>
-                            {% endif %}
-
                             {% set timelineDate = timelineItem.createdAt %}
 
                             <h2 class="timeline__date">
+                                {% if diff >= 7 %}
+                                    <small class="timeline__date-diff">
+                                        {{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}&nbsp;—
+                                    </small>
+                                {% endif %}
+
                                 <time datetime="{{ timelineDate | date('Y-m-d') }}">
                                     {{ timelineDate | dateShort(true) }}
                                 </time>
