@@ -90,9 +90,6 @@ class SeedsCommand extends Command
                 'name' => 'Probesys',
             ]);
 
-            // Make sure to have an ID for the Probesys organization.
-            $this->entityManager->flush();
-
             $orgaWebDivision = $this->orgaRepository->findOneOrCreateBy([
                 'name' => 'Web team',
                 'parentsPath' => "/{$orgaProbesys->getId()}/",
@@ -140,9 +137,6 @@ class SeedsCommand extends Command
                     $this->userRepository->save($user);
                 }
             }
-
-            // Make sure that the users exist for the grant() method.
-            $this->entityManager->flush();
 
             if (!$this->authorizationRepository->getAdminAuthorizationFor($userAlix)) {
                 $this->authorizationRepository->grant($userAlix, $roleSuper);
