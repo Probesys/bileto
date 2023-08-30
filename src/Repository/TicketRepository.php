@@ -77,7 +77,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     {
         $qb = $this->createSearchQueryBuilder($queries);
         $qb->select($qb->expr()->count('t.id'));
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

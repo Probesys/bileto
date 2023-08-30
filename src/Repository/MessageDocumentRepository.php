@@ -56,6 +56,6 @@ class MessageDocumentRepository extends ServiceEntityRepository implements UidGe
         SQL);
         $query->setParameter('hash', $hash);
 
-        return $query->getSingleScalarResult();
+        return (int) $query->getSingleScalarResult();
     }
 }
