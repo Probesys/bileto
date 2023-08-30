@@ -38,4 +38,22 @@ It can also refers to:
 When a translation is specific to a template/controller, the second keyword is generally the name of the controller action (e.g. `users.index.*`).
 It also can refer to an entity field (e.g. `users.email`).
 
+## Update the translations
+
+When you add new translations keys in the code, you can add the keys by yourself in the corresponding files.
+You also can run:
+
+```console
+$ make translations
+```
+
+This command will extract the translations from the code and update the corresponding files.
+This is easier if you have a lot of keys to insert to make sure you do not forget anything.
+Note that this command will also remove keys from the `security*.yaml` files.
+Please ignore these changes with:
+
+```console
+$ git restore translations/security*
+```
+
 **Please keep the translations keys in alphabetical order.**

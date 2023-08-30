@@ -91,8 +91,8 @@ ifndef NO_DOCKER
 	$(DOCKER_COMPOSE) start worker
 endif
 
-.PHONY: i18n-extract
-i18n-extract: ## Extract translations
+.PHONY: translations
+translations: ## Update the translations from the code
 	$(CONSOLE) translation:extract --format=yaml --force --clean en_GB
 	$(CONSOLE) translation:extract --format=yaml --force --clean fr_FR
 
