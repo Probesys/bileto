@@ -12,9 +12,11 @@ It is designed to help you to manage your support as efficiently as possible.
 It allows you to:
 
 - manage your tickets (create, answer, manage their lifecycle) in a modern way (clear timeline, efficient lists);
+- attach files to your messages;
 - isolate your users and tickets in organizations;
 - finely manage roles and permissions;
 - create and answer to tickets by emails;
+- login with LDAP;
 - and a lot more to come: [see our roadmap to learn more.](/ROADMAP.md)
 
 **Please note that Bileto is in an active development phase.**
