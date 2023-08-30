@@ -39,6 +39,68 @@
 
                     · {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
                 </span>
+
+                {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
+                {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
+                {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
+                {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
+
+                {% if menuHasItem %}
+                    <details
+                        class="popup"
+                        data-controller="popup"
+                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                    >
+                        <summary class="popup__opener">
+                            <span class="button button--caret">
+                                {{ 'tickets.show.actions' | trans }}
+                            </span>
+                        </summary>
+
+                        <nav class="popup__container popup__container--right">
+                            {% if canUpdateType %}
+                                <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
+                                    {% if ticket.type == 'request' %}
+                                        <input type="hidden" name="type" value="incident">
+                                        <button id="form-update-type-submit" class="popup__item" type="submit">
+                                            {{ 'tickets.show.actions.turn_into_incident' | trans }}
+                                        </button>
+                                    {% else %}
+                                        <input type="hidden" name="type" value="request">
+                                        <button id="form-update-type-submit" class="popup__item" type="submit">
+                                            {{ 'tickets.show.actions.turn_into_request' | trans }}
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            {% endif %}
+
+                            {% if canUpdateTitle %}
+                                <button
+                                    class="popup__item"
+                                    type="button"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
+                                >
+                                    {{ 'tickets.show.actions.rename' | trans }}
+                                </button>
+                            {% endif %}
+
+                            {% if canUpdateStatus %}
+                                <button
+                                    class="popup__item"
+                                    type="button"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
+                                >
+                                    {{ 'tickets.show.actions.update_status' | trans }}
+                                </button>
+                            {% endif %}
+                        </nav>
+                    </details>
+                {% endif %}
             </div>
 
             <div class="row row--always row--center flow flow--small text--small">
@@ -277,71 +339,6 @@
             </div>
 
             <div class="ticket__info text--small row__item--noshrink flow flow--larger">
-                {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
-                {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
-                {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
-                {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
-
-                {% if menuHasItem %}
-                    <div class="text--right">
-                        <details
-                            class="popup"
-                            data-controller="popup"
-                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                        >
-                            <summary class="popup__opener">
-                                <span class="button button--caret">
-                                    {{ icon('ellipsis') }}
-                                    {{ 'tickets.show.actions' | trans }}
-                                </span>
-                            </summary>
-
-                            <nav class="popup__container popup__container--right">
-                                {% if canUpdateType %}
-                                    <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
-                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
-                                        {% if ticket.type == 'request' %}
-                                            <input type="hidden" name="type" value="incident">
-                                            <button id="form-update-type-submit" class="popup__item" type="submit">
-                                                {{ 'tickets.show.actions.turn_into_incident' | trans }}
-                                            </button>
-                                        {% else %}
-                                            <input type="hidden" name="type" value="request">
-                                            <button id="form-update-type-submit" class="popup__item" type="submit">
-                                                {{ 'tickets.show.actions.turn_into_request' | trans }}
-                                            </button>
-                                        {% endif %}
-                                    </form>
-                                {% endif %}
-
-                                {% if canUpdateTitle %}
-                                    <button
-                                        class="popup__item"
-                                        type="button"
-                                        data-controller="modal-opener"
-                                        data-action="modal-opener#fetch"
-                                        data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
-                                    >
-                                        {{ 'tickets.show.actions.rename' | trans }}
-                                    </button>
-                                {% endif %}
-
-                                {% if canUpdateStatus %}
-                                    <button
-                                        class="popup__item"
-                                        type="button"
-                                        data-controller="modal-opener"
-                                        data-action="modal-opener#fetch"
-                                        data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
-                                    >
-                                        {{ 'tickets.show.actions.update_status' | trans }}
-                                    </button>
-                                {% endif %}
-                            </nav>
-                        </details>
-                    </div>
-                {% endif %}
-
                 <div class="flow">
                     <div class="row row--center row--always flow">
                         <span class="row__item--extend">
