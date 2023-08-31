@@ -47,6 +47,12 @@ advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incide
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: "Les valeurs possibles pour «\_type\_» sont\_: <code>incident</code> et <code>request</code>."
 advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
+errors.404.description: 'La page demandée n’a pas été trouvée. Vérifiez qu’il n’y a pas de faute dans l’URL.'
+errors.404.title: "Page non trouvée\_!"
+errors.back_home: 'Retour à la page d’accueil'
+errors.generic.description: 'Veuillez indiquer à votre administrateur ce que vous faisiez lorsque l’erreur s’est produite. Le problème sera résolu dès que possible.'
+errors.generic.sorry: 'Désolé pour la gêne occasionnée.'
+errors.generic.title: "Une erreur est survenue\_!"
 forms.error: Erreur
 forms.max_chars: '(max. {number} caractères)'
 forms.optional: (optionnel)

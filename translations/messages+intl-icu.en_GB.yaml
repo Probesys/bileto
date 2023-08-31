@@ -47,6 +47,12 @@ advanced_search_syntax.qualifiers.type.example1: 'Tickets of type “incident”
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: 'The possible values for “type“ are: <code>incident</code> and <code>request</code>.'
 advanced_search_syntax.title: 'Quick reference for the advanced syntax'
+errors.404.description: 'The requested page couldn’t be located. Checkout for any URL misspelling.'
+errors.404.title: 'Page not found!'
+errors.back_home: 'Back to the homepage'
+errors.generic.description: 'Please tell your administrator what you were doing when the error occurred. This will be fixed as soon as possible.'
+errors.generic.sorry: 'Sorry for any inconvenience caused.'
+errors.generic.title: 'An error has occured!'
 forms.error: Error
 forms.max_chars: '(max. {number} characters)'
 forms.optional: (optional)
