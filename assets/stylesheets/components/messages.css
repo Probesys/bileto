@@ -51,13 +51,13 @@
 
     flex: 1;
 
-    border: 1px solid var(--color-grey6);
+    border: 1px solid var(--color-grey7);
     border-radius: 0.5rem;
 }
 
 .message--solution .message__box {
     border-width: 2px;
-    border-color: var(--color-success6);
+    border-color: var(--color-success7);
 }
 
 @media (min-width: 800px) {
@@ -73,35 +73,35 @@
         width: 8px;
         height: 16px;
 
-        background-color: var(--color-grey6);
+        background-color: var(--color-grey7);
 
         clip-path: polygon(0 50%, 100% 0, 100% 100%);
     }
 
     .message--solution .message__box::before {
-        background-color: var(--color-success6);
+        background-color: var(--color-success7);
     }
 }
 
 .message__top {
     display: flex;
-    padding: 1rem 2rem;
+    padding: 0.75rem 2rem;
 
     align-items: center;
 
     font-size: 0.9em;
 
     background-color: var(--color-grey3);
-    border-bottom: 1px solid var(--color-grey6);
+    border-bottom: 1px solid var(--color-grey7);
     border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .message--solution .message__top {
     color: var(--color-success12);
 
-    background-color: var(--color-success3);
+    background-color: var(--color-success4);
     border-bottom-width: 2px;
-    border-bottom-color: var(--color-success6);
+    border-bottom-color: var(--color-success7);
 }
 
 .message__top * + * {
@@ -113,6 +113,7 @@
 }
 
 .message__author {
+    font-size: 0.9em;
     font-weight: bold;
 }
 
@@ -127,7 +128,7 @@
 }
 
 .message--solution .message__badge {
-    border-color: var(--color-success6);
+    border-color: var(--color-success7);
 }
 
 .message__date {
@@ -169,6 +170,10 @@
 
 [data-color-scheme="dark"] .message--confidential .message__content::after {
     background-image: url("../../icons/user-secret-light.svg");
+}
+
+.message--solution .message__content {
+    background-color: var(--color-success1);
 }
 
 .message__content * + p,

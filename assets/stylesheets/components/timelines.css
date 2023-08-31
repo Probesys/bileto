@@ -4,7 +4,7 @@
 
 .timeline {
     --width-col-avatars: 0rem; /* stylelint-disable-line length-zero-no-unit */
-    --position-timeline-bar: 3rem;
+    --position-timeline-bar: 1.5rem;
 
     position: relative;
 }
@@ -17,7 +17,7 @@
     bottom: 0;
     left: calc(var(--width-col-avatars) + var(--position-timeline-bar));
 
-    border-left: 0.3rem solid var(--color-grey6);
+    border-left: 0.25rem solid var(--color-grey6);
 }
 
 @media (min-width: 800px) {
@@ -87,5 +87,5 @@
     margin-left: var(--width-col-avatars);
 
     background-color: var(--color-grey1);
-    border-top: 0.3rem solid var(--color-grey6);
+    border-top: 0.25rem solid var(--color-grey6);
 }
