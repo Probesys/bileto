@@ -134,18 +134,12 @@ if ($dbPlatform instanceof PostgreSQLPlatform) {
 }
 ```
 
-Then, generate the migration for the other database.
+Then, generate the migration for MariaDB.
 You can do that by changing the `DATABASE_URL` environment variable of the [`.env`](/.env) file (see the commented variable).
 You must also restart the Docker containers by enabling MariaDB:
 
 ```console
 $ make docker-start DATABASE=mariadb
-```
-
-Don’t forget to re-setup the database:
-
-```console
-$ make db-reset FORCE=true
 ```
 
 Then, re-run the `make migration` command, and move the generated code in the previous file.
@@ -154,10 +148,10 @@ You can now delete the last generated migration file, and reverse your changes:
 
 ```console
 $ rm migrations/VersionXXXX.php
-$ git checkout -- .env
+$ git restore .env
 ```
 
-Restart the docker containers:
+Restart the docker containers to use PostgreSQL:
 
 ```console
 $ make docker-start
@@ -165,3 +159,4 @@ $ make docker-start
 
 **Note:** it is indeed quite inconvenient.
 You’re very welcome to suggest a better system to handle migrations for several databases!
+See ticket [#230](https://github.com/Probesys/bileto/issues/230).
