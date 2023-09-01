@@ -1,7 +1,6 @@
 # The Administrators' Guide
 
-**Warning:** Bileto is not ready for the production yet.
-You’ll probably lose your data during an upgrade.
+**Warning:** Bileto is not ready for the production yet, but it should be soon!
 
 - [Deploy in production](/docs/administrators/deploy.md)
 - [Update the production environment](/docs/administrators/update.md)

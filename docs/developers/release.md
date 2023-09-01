@@ -5,8 +5,8 @@
 There's a `make` command to release a new version of Bileto:
 
 ```console
-$ git checkout -b release/0.1.0-dev
-$ make release VERSION=0.1.0-dev
+$ git switch -c release/0.5.0-alpha
+$ make release VERSION=0.5.0-alpha
 ```
 
 It will write the version number in the file [`VERSION.txt`](/VERSION.txt) and build the assets for production.
@@ -34,9 +34,9 @@ Organize the commits in the following sections:
 - Technical (`tec:` prefix)
 - Documentation (`doc:` prefix)
 - Developers (`dev:` prefix)
-- Misc (other prefixes)
 
 Feel free to rename the commit messages if you think they aren't clear enough (at least to remove the prefixes).
+If several commits refer to a single important item, you can merge them into a single message, and list their references in parentheses.
 You can also remove messages if they don't bring value to the changelog (that's the purpose of the `misc:` prefix for instance).
 
 Finally, add links to GitHub commits on the hashes (e.g. `[83fdf85](https://github.com/Probesys/bileto/commit/83fdf85)`).
@@ -68,7 +68,6 @@ Once the version tag is pushed, you must publish the version on GitHub:
 3. name the release to the version tag (e.g. “0.1.0-dev”);
 4. copy the content of the changelog corresponding to the version;
 5. you should adapt the title levels in Markdown (i.e. titles of level 3 `###` must be changed by titles of level 2 `##`);
-6. if the release is a pre-version (i.e. ending by `-dev`, `-alpha` or `-beta`), check the “Set as a pre-release” checkbox.
 
 ## Fix mistakes made during the release
 
@@ -86,7 +85,7 @@ Delete the tag (replace `<VERSION_NUMBER>` by the version you're releasing):
 ```console
 $ git tag -d <VERSION_NUMBER>
 $ # and if you pushed the tag on GitHub
-$ git push origin :<VERSION_NUMBER>
+$ git push -d origin <VERSION_NUMBER>
 ```
 
 Then, fix your error, and re-run the release command:

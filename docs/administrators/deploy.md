@@ -4,8 +4,7 @@ In this documentation, it is expected that you're at ease with managing a webser
 Nginx is used as the webserver in this documentation.
 Apache should work as well, but it hasn't been tested.
 
-**Warning:** Bileto is not ready for the production yet.
-You’ll probably lose your data during an upgrade.
+**Warning:** Bileto is not ready for the production yet, but it should be soon!
 
 ## Check the requirements
 
@@ -85,23 +84,6 @@ $ cd bileto
 
 If your user doesn't have the permission to write in this folder, execute the command as `root`.
 
-## Check the PHP extensions
-
-Check that the PHP extensions are installed:
-
-```console
-$ composer check-platform-reqs
-Checking platform requirements for packages in the vendor dir
-composer-plugin-api  2.3.0      success
-composer-runtime-api 2.2.2      success
-ext-ctype            8.1.10     success
-...
-ext-zip              1.19.5     success
-php                  8.1.10     success
-```
-
-If requirements are not met, you’ll have to install the missing extensions.
-
 ## About file permissions
 
 You’ll have to make sure that the system user that runs the webserver can access the files under the `/var/www/bileto` directory.
@@ -138,10 +120,27 @@ The commands that need to be executed as `www-data` **will be prefixed by `www-d
 Checkout the code to the latest version of Bileto:
 
 ```
-www-data$ git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+www-data$ git switch $(git describe --tags $(git rev-list --tags --max-count=1))
 ```
 
 Go to GitHub if you want to find [the full list of releases](https://github.com/Probesys/bileto/releases).
+
+## Check the PHP extensions
+
+Check that the PHP extensions are installed:
+
+```console
+$ composer check-platform-reqs
+Checking platform requirements for packages in the vendor dir
+composer-plugin-api  2.3.0      success
+composer-runtime-api 2.2.2      success
+ext-ctype            8.1.10     success
+...
+ext-zip              1.19.5     success
+php                  8.1.10     success
+```
+
+If requirements are not met, you’ll have to install the missing extensions.
 
 ## Configure the application
 

@@ -20,7 +20,7 @@ It allows you to:
 - and a lot more to come: [see our roadmap to learn more.](/ROADMAP.md)
 
 **Please note that Bileto is in an active development phase.**
-Things may break between releases and it is not advised to use Bileto in production yet.
+It is not advised to use Bileto in production yet.
 
 ![Screenshot of the home page of Bileto showing 3 opened tickets and 2 organizations](public/screenshot.png)
 
