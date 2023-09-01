@@ -44,4 +44,16 @@ There’s no reasons to feel ashamed of not knowing something, and you’ll hope
 
 ## Contribute to the documentation
 
-At the moment, the documentation needs to be organized and completed. Please come back later!
+To contribute to the documentation (e.g. fix a typo, add a section), you need to follow the same process as for contributing to the code.
+
+The documentation is located in the `docs/` folder and is split into two parts:
+
+- [The Administrators' Guide](/docs/administrators/README.md) is for technical people who want to install Bileto on their server;
+- and [The Developers' Guide](/docs/developers/README.md) is for developers who want to contribute to the Bileto code.
+
+The latter is itself divided into five sections:
+
+- the global section is for all the developers;
+- the backend and frontend sections contain topics specific to the backend or the frontend work;
+- the maintainers section is intended to help us perform the maintenance tasks;
+- and the architecture section is intended to explain some technical decisions.
