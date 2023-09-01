@@ -7,41 +7,32 @@
 namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Output\NullOutput;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class MigrationsTest extends KernelTestCase
 {
+    use CommandTestsHelper;
     use ResetDatabase;
-
-    /** @var Application */
-    private $application;
-
-    /**
-     * @before
-     */
-    public function setupApplication(): void
-    {
-        $kernel = self::createKernel();
-        $this->application = new Application($kernel);
-        $this->application->setAutoExit(false);
-    }
 
     public function testMigrationsUpWork(): void
     {
-        $output = new NullOutput();
-
         // erase the database structure
-        $input = new StringInput('doctrine:schema:drop --force');
-        $result = $this->application->run($input, $output);
-        $this->assertSame(Command::SUCCESS, $result);
+        $tester = self::executeCommand('doctrine:schema:drop', [
+            '--force' => true
+        ]);
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
 
         // and apply the migrations one by one
-        $input = new StringInput('doctrine:migrations:migrate --no-interaction');
-        $result = $this->application->run($input, $output);
-        $this->assertSame(Command::SUCCESS, $result);
+        $tester = self::executeCommand('doctrine:migrations:migrate', [
+            '--no-interaction' => true
+        ]);
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertStringContainsString(
+            '[OK] Successfully migrated to version',
+            $tester->getDisplay(),
+        );
     }
 }
