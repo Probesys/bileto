@@ -58,18 +58,18 @@
             <input type="hidden" name="query" value="{{ query }}">
         </form>
 
-        <p class="form__caption">
-            {{ 'tickets.search.filters.used' | trans }}
-        </p>
+        <div class="text--small row row--center row--always flow">
+            <p class="text--secondary">
+                {{ 'tickets.search.filters.used' | trans }}
+            </p>
 
-        <div class="row row--wrap flow flow--small">
             <details
                 class="popup"
                 data-controller="popup"
                 data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
             >
                 <summary class="popup__opener">
-                    <span class="button button--caret button--primary">
+                    <span class="button button--discreet button--caret text--small">
                         {{ 'tickets.search.filters.new' | trans }}
                     </span>
                 </summary>
@@ -116,10 +116,12 @@
                     </button>
                 </nav>
             </details>
+        </div>
 
+        <div class="row row--wrap flow flow--small">
             {% for filter, values in ticketFilter.filters %}
                 <button
-                    class="text--left"
+                    class="text--left button--discreet text--small"
                     type="button"
                     data-controller="modal-opener"
                     data-action="modal-opener#fetch"
