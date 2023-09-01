@@ -26,19 +26,19 @@ trait CommandTestsHelper
     }
 
     /**
-     * @param string $command
+     * @param array<string, mixed> $args
      * @param array<string> $inputs
-     * @param array<string> $args
      */
     protected static function executeCommand(
         string $command,
-        array $inputs = [],
         array $args = [],
+        array $inputs = [],
     ): CommandTester {
         $command = self::$application->find($command);
         $commandTester = new CommandTester($command);
         $commandTester->setInputs($inputs);
         $commandTester->execute($args, [
+            'interactive' => !empty($inputs),
             'capture_stderr_separately' => true,
         ]);
         return $commandTester;

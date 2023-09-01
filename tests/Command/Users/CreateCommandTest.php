@@ -29,7 +29,7 @@ class CreateCommandTest extends KernelTestCase
 
         $this->assertSame(0, UserFactory::count());
 
-        $tester = self::executeCommand('app:users:create', [
+        $tester = self::executeCommand('app:users:create', [], [
             $email,
             $password,
         ]);
@@ -60,7 +60,7 @@ class CreateCommandTest extends KernelTestCase
 
         $this->assertSame(0, UserFactory::count());
 
-        $tester = self::executeCommand('app:users:create', [], [
+        $tester = self::executeCommand('app:users:create', [
             '--email' => $email,
             '--password' => $password,
         ]);
@@ -87,7 +87,7 @@ class CreateCommandTest extends KernelTestCase
 
         $this->assertSame(0, UserFactory::count());
 
-        $tester = self::executeCommand('app:users:create', [], [
+        $tester = self::executeCommand('app:users:create', [
             '--email' => $email,
             '--password' => $password,
         ]);
@@ -106,7 +106,7 @@ class CreateCommandTest extends KernelTestCase
 
         $this->assertSame(0, UserFactory::count());
 
-        $tester = self::executeCommand('app:users:create', [], [
+        $tester = self::executeCommand('app:users:create', [
             '--email' => $email,
             '--password' => $password,
         ]);
@@ -131,7 +131,7 @@ class CreateCommandTest extends KernelTestCase
 
         $this->assertSame(1, UserFactory::count());
 
-        $tester = self::executeCommand('app:users:create', [], [
+        $tester = self::executeCommand('app:users:create', [
             '--email' => $email,
             '--password' => $password,
         ]);
