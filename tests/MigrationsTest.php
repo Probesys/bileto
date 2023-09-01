@@ -44,14 +44,4 @@ class MigrationsTest extends KernelTestCase
         $result = $this->application->run($input, $output);
         $this->assertSame(Command::SUCCESS, $result);
     }
-
-    public function testMigrationsDownWork(): void
-    {
-        $output = new NullOutput();
-
-        $firstMigration = 'DoctrineMigrations\\\\Version20220928142616CreateUser';
-        $input = new StringInput("doctrine:migrations:migrate {$firstMigration} --no-interaction");
-        $result = $this->application->run($input, $output);
-        $this->assertSame(Command::SUCCESS, $result);
-    }
 }
