@@ -59,6 +59,34 @@
     "file": "assets/circle-exclamation-error-68874c1f.svg",
     "src": "assets/icons/circle-exclamation-error.svg"
   },
+  "assets/icons/circle-info-info.svg": {
+    "file": "assets/circle-info-info-09fd6e8e.svg",
+    "src": "assets/icons/circle-info-info.svg"
+  },
+  "assets/icons/file-excel.svg": {
+    "file": "assets/file-excel-1d591edc.svg",
+    "src": "assets/icons/file-excel.svg"
+  },
+  "assets/icons/file-image.svg": {
+    "file": "assets/file-image-65f564df.svg",
+    "src": "assets/icons/file-image.svg"
+  },
+  "assets/icons/file-pdf.svg": {
+    "file": "assets/file-pdf-f634b1cd.svg",
+    "src": "assets/icons/file-pdf.svg"
+  },
+  "assets/icons/file-word.svg": {
+    "file": "assets/file-word-d400d57a.svg",
+    "src": "assets/icons/file-word.svg"
+  },
+  "assets/icons/file-zipper.svg": {
+    "file": "assets/file-zipper-bd0ee9c9.svg",
+    "src": "assets/icons/file-zipper.svg"
+  },
+  "assets/icons/file.svg": {
+    "file": "assets/file-ed5c48b6.svg",
+    "src": "assets/icons/file.svg"
+  },
   "assets/icons/triangle-exclamation-warning.svg": {
     "file": "assets/triangle-exclamation-warning-5662122b.svg",
     "src": "assets/icons/triangle-exclamation-warning.svg"
@@ -72,12 +100,12 @@
     "src": "assets/icons/user-secret.svg"
   },
   "assets/javascripts/application.js": {
-    "file": "assets/application-cfee5d6e.js",
+    "file": "assets/application-74b02fd4.js",
     "isEntry": true,
     "src": "assets/javascripts/application.js"
   },
   "assets/stylesheets/application.css": {
-    "file": "assets/application-e949f82b.css",
+    "file": "assets/application-13f7cf92.css",
     "isEntry": true,
     "src": "assets/stylesheets/application.css"
   }

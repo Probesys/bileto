@@ -1,5 +1,52 @@
 # Changelog of Bileto
 
+## 2023-09-01 - 0.5.0-alpha
+
+### New
+
+- Add support for LDAP authentication ([7aca9e5](https://github.com/Probesys/bileto/commit/7aca9e5), [2acfbb7](https://github.com/Probesys/bileto/commit/2acfbb7), [75e4ce7](https://github.com/Probesys/bileto/commit/75e4ce7))
+- Allow to upload images and documents ([14f17fe](https://github.com/Probesys/bileto/commit/14f17fe), [9c8e22f](https://github.com/Probesys/bileto/commit/9c8e22f), [fdc305e](https://github.com/Probesys/bileto/commit/fdc305e), [c7ad8aa](https://github.com/Probesys/bileto/commit/c7ad8aa), [be20bb0](https://github.com/Probesys/bileto/commit/be20bb0))
+
+### Improvements
+
+- Improve the readability of the ticket page ([1c75799](https://github.com/Probesys/bileto/commit/1c75799), [8a3e75c](https://github.com/Probesys/bileto/commit/8a3e75c))
+- Customize the errors pages ([276501e](https://github.com/Probesys/bileto/commit/276501e))
+- Redirect automatically if user can create ticket in its default organization ([c590e40](https://github.com/Probesys/bileto/commit/c590e40))
+- Redirect to the "new authorization" page after creating a user ([35b1826](https://github.com/Probesys/bileto/commit/35b1826))
+
+### Bug fixes
+
+- Allow empty name to be entered in the profile ([7b549e7](https://github.com/Probesys/bileto/commit/7b549e7))
+
+### Techical
+
+- Update the Composer dependencies ([328f655](https://github.com/Probesys/bileto/commit/328f655))
+- Update the NPM dependencies ([29073ba](https://github.com/Probesys/bileto/commit/29073ba))
+
+### Documentation
+
+- Update the roadmap and the readme ([bec35c9](https://github.com/Probesys/bileto/commit/bec35c9))
+- Improve the doc to check requirements in production ([8f5ce4a](https://github.com/Probesys/bileto/commit/8f5ce4a))
+- Reorganize the developers documentation ([4fdd67f](https://github.com/Probesys/bileto/commit/4fdd67f))
+- Improve the doc to generate the migrations for MariaDB ([353fe63](https://github.com/Probesys/bileto/commit/353fe63))
+- Document the `dev:` prefix in the release section ([0bb57c4](https://github.com/Probesys/bileto/commit/0bb57c4))
+
+### Developers
+
+- Rename the make i18n-extract command ([3073863](https://github.com/Probesys/bileto/commit/3073863))
+- Configure the CSS autoprefixer NPM package ([9502721](https://github.com/Probesys/bileto/commit/9502721))
+- Add isCreatedBy and isUpdatedBy to the MetaEntityInterface ([e9801be](https://github.com/Probesys/bileto/commit/e9801be))
+- Extract a ConstraintErrorsFormatter from BaseController ([cc94181](https://github.com/Probesys/bileto/commit/cc94181))
+- Use Docker Compose v2 ([8d65095](https://github.com/Probesys/bileto/commit/8d65095))
+- Improve starting a MariaDB database in development ([bf01124](https://github.com/Probesys/bileto/commit/bf01124))
+- Provide an "info" alert ([f90870c](https://github.com/Probesys/bileto/commit/f90870c))
+- Style the disabled inputs and textareas correctly ([0a9ed91](https://github.com/Probesys/bileto/commit/0a9ed91))
+- Improve signature of CommandTestsHelper::executeCommand ([81816de](https://github.com/Probesys/bileto/commit/81816de))
+- Remove rollbacks test ([aa6b0d5](https://github.com/Probesys/bileto/commit/aa6b0d5))
+- Rename JS forms controllers TicketEditor and NewAuthorizationForm ([35ea05e](https://github.com/Probesys/bileto/commit/35ea05e))
+- Reorganize the env files ([b76098d](https://github.com/Probesys/bileto/commit/b76098d))
+- Remove the Stylelint rule about comments ([abfac89](https://github.com/Probesys/bileto/commit/abfac89))
+
 ## 2023-07-07 - 0.4.0-dev
 
 ### Migration notes
