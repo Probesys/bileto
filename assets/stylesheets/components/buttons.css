@@ -135,6 +135,17 @@ button[disabled],
     background-size: 0.7em;
 }
 
+.button--caret.button--discreet {
+    padding-right: 3.5rem;
+}
+
+.button--caret.button--discreet::after {
+    top: 0.4em;
+    right: 0.3em;
+
+    background-size: 0.6em;
+}
+
 .button__caption {
     display: block;
     margin-bottom: -0.7rem;
