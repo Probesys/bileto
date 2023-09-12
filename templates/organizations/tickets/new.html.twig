@@ -105,31 +105,33 @@
                     </p>
                 {% endif %}
 
-                <textarea
-                    id="message"
-                    name="message"
-                    data-controller="tinymce"
-                    data-tinymce-upload-url-value="{{ path('create message document') }}"
-                    data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
-                    data-form-new-ticket-target="editor"
-                    data-action="new-document->form-new-ticket#newDocument remove-document->tinymce#removeImage"
-                    {% if errors.content is defined %}
-                        autofocus
-                        aria-invalid="true"
-                        aria-errormessage="message-error"
-                    {% endif %}
-                >{{ message }}</textarea>
-            </div>
+                <div class="editor">
+                    <textarea
+                        id="message"
+                        name="message"
+                        data-controller="tinymce"
+                        data-tinymce-upload-url-value="{{ path('create message document') }}"
+                        data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
+                        data-form-new-ticket-target="editor"
+                        data-action="new-document->form-new-ticket#newDocument remove-document->tinymce#removeImage"
+                        {% if errors.content is defined %}
+                            autofocus
+                            aria-invalid="true"
+                            aria-errormessage="message-error"
+                        {% endif %}
+                    >{{ message }}</textarea>
 
-            <div>
-                <turbo-frame
-                    id="message-documents"
-                    src="{{ path('message documents', { filter: 'unattached' }) }}"
-                    data-controller="message-documents"
-                    data-form-new-ticket-target="messageDocuments"
-                    data-action="remove-document->form-new-ticket#removeDocument new-document->message-documents#reload"
-                >
-                </turbo-frame>
+                    <div class="editor__documents">
+                        <turbo-frame
+                            id="message-documents"
+                            src="{{ path('message documents', { filter: 'unattached' }) }}"
+                            data-controller="message-documents"
+                            data-form-new-ticket-target="messageDocuments"
+                            data-action="remove-document->form-new-ticket#removeDocument new-document->message-documents#reload"
+                        >
+                        </turbo-frame>
+                    </div>
+                </div>
             </div>
 
             {% if is_granted('orga:update:tickets:status', organization) %}

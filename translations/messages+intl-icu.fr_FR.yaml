@@ -112,6 +112,7 @@ mailboxes.port: 'Port IMAP'
 mailboxes.test.success: 'La connexion fonctionne.'
 mailboxes.username: 'Nom d’utilisateur'
 message_documents.attachments: Pièces-jointes
+message_documents.attachments.attach: 'Ajouter une pièce-jointe'
 message_documents.remove: 'Retirer la pièce-jointe'
 notifications.saved: 'Vos changements ont été sauvegardés.'
 organizations.deletion.caution: "Attention\_!"

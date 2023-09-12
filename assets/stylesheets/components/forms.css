@@ -249,15 +249,25 @@ legend {
     padding-left: 1rem;
 }
 
-.tox-tinymce {
-    border-color: var(--color-grey8) !important;
+.editor {
+    background-color: #fff;
+    border: 0.25rem solid var(--color-grey8);
+    border-radius: 0.5rem;
 
     transition: border-color 0.2s ease-in-out;
 }
 
-.tox-tinymce:hover,
-.tox-tinymce:focus-within {
-    border-color: var(--color-primary8) !important;
+.editor:hover,
+.editor:focus-within {
+    border-color: var(--color-primary8);
+}
+
+.editor__documents {
+    padding: 1.5rem;
+}
+
+.editor .tox-tinymce {
+    border: none;
 }
 
 .form__caption {

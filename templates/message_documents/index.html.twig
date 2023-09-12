@@ -14,11 +14,14 @@
             <div>
                 <button
                     type="button"
-                    class="button--discreet text--small"
+                    class="button--icon button--discreet text--smaller"
                     data-action="message-documents#openFilesSelector"
                     data-message-documents-target="uploadButton"
                 >
-                    Ajouter
+                    {{ icon('plus') }}
+                    <span class="sr-only">
+                        {{ 'message_documents.attachments.attach' | trans }}
+                    </span>
                 </button>
 
                 <input

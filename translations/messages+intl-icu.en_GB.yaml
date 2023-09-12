@@ -112,6 +112,7 @@ mailboxes.port: 'Port IMAP'
 mailboxes.test.success: 'The connection works.'
 mailboxes.username: Username
 message_documents.attachments: Attachments
+message_documents.attachments.attach: 'Attach a document'
 message_documents.remove: 'Remove attachment'
 notifications.saved: 'Your changes have been successfully saved.'
 organizations.deletion.caution: Caution!
