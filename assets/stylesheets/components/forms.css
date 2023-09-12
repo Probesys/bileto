@@ -250,11 +250,19 @@ legend {
 }
 
 .editor {
-    background-color: #fff;
+    background-color: var(--tinymce-background);
     border: 0.25rem solid var(--color-grey8);
     border-radius: 0.5rem;
 
     transition: border-color 0.2s ease-in-out;
+}
+
+[data-color-scheme="light"] .editor {
+    --tinymce-background: #fff;
+}
+
+[data-color-scheme="dark"] .editor {
+    --tinymce-background: #222f3e;
 }
 
 .editor:hover,
@@ -268,6 +276,7 @@ legend {
 
 .editor .tox-tinymce {
     border: none;
+    border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .form__caption {
