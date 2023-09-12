@@ -6,7 +6,7 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     static get targets () {
-        return ['confidentialCheckbox', 'solutionCheckbox', 'statusSelect', 'editor', 'messageDocuments'];
+        return ['confidentialCheckbox', 'solutionCheckbox', 'statusSelect'];
     }
 
     static get values () {
@@ -68,15 +68,5 @@ export default class extends Controller {
 
     get isFinished () {
         return this.ticketStatusValue === 'resolved' || this.ticketStatusValue === 'closed';
-    }
-
-    newDocument (event) {
-        const newDocumentEvent = new CustomEvent('new-document', { detail: event.detail });
-        this.messageDocumentsTarget.dispatchEvent(newDocumentEvent);
-    }
-
-    removeDocument (event) {
-        const removeDocumentEvent = new CustomEvent('remove-document', { detail: event.detail });
-        this.editorTarget.dispatchEvent(removeDocumentEvent);
     }
 }

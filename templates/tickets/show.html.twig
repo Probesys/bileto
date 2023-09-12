@@ -193,15 +193,15 @@
                                         </p>
                                     {% endif %}
 
-                                    <div class="editor">
+                                    <div class="editor" data-controller="editor">
                                         <textarea
                                             id="message"
                                             name="message"
                                             data-controller="tinymce"
                                             data-tinymce-upload-url-value="{{ path('create message document') }}"
                                             data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
-                                            data-form-new-answer-target="editor"
-                                            data-action="new-document->form-new-answer#newDocument remove-document->tinymce#removeImage"
+                                            data-editor-target="tinymce"
+                                            data-action="new-document->editor#newDocument remove-document->tinymce#removeImage"
                                             {% if errors.content is defined %}
                                                 autofocus
                                                 aria-invalid="true"
@@ -214,8 +214,8 @@
                                                 id="message-documents"
                                                 src="{{ path('message documents', { filter: 'unattached' }) }}"
                                                 data-controller="message-documents"
-                                                data-form-new-answer-target="messageDocuments"
-                                                data-action="remove-document->form-new-answer#removeDocument new-document->message-documents#reload"
+                                                data-editor-target="messageDocuments"
+                                                data-action="remove-document->editor#removeDocument new-document->message-documents#reload"
                                             >
                                             </turbo-frame>
                                         </div>

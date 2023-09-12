@@ -21,7 +21,7 @@
             action="{{ path('create organization ticket', {'uid': organization.uid}) }}"
             method="post"
             class="wrapper wrapper--center flow"
-            data-controller="form-priority form-new-ticket"
+            data-controller="form-priority"
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization ticket') }}">
 
@@ -105,15 +105,15 @@
                     </p>
                 {% endif %}
 
-                <div class="editor">
+                <div class="editor" data-controller="editor">
                     <textarea
                         id="message"
                         name="message"
                         data-controller="tinymce"
                         data-tinymce-upload-url-value="{{ path('create message document') }}"
                         data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
-                        data-form-new-ticket-target="editor"
-                        data-action="new-document->form-new-ticket#newDocument remove-document->tinymce#removeImage"
+                        data-editor-target="tinymce"
+                        data-action="new-document->editor#newDocument remove-document->tinymce#removeImage"
                         {% if errors.content is defined %}
                             autofocus
                             aria-invalid="true"
@@ -126,8 +126,8 @@
                             id="message-documents"
                             src="{{ path('message documents', { filter: 'unattached' }) }}"
                             data-controller="message-documents"
-                            data-form-new-ticket-target="messageDocuments"
-                            data-action="remove-document->form-new-ticket#removeDocument new-document->message-documents#reload"
+                            data-editor-target="messageDocuments"
+                            data-action="remove-document->editor#removeDocument new-document->message-documents#reload"
                         >
                         </turbo-frame>
                     </div>

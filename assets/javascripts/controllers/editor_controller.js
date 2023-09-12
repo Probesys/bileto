@@ -6,7 +6,7 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     static get targets () {
-        return ['editor', 'messageDocuments'];
+        return ['tinymce', 'messageDocuments'];
     }
 
     newDocument (event) {
@@ -16,6 +16,6 @@ export default class extends Controller {
 
     removeDocument (event) {
         const removeDocumentEvent = new CustomEvent('remove-document', { detail: event.detail });
-        this.editorTarget.dispatchEvent(removeDocumentEvent);
+        this.tinymceTarget.dispatchEvent(removeDocumentEvent);
     }
 }
