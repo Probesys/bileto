@@ -127,8 +127,6 @@ class MessagesControllerTest extends WebTestCase
 
     public function testPostCreateCanChangeTheTicketStatusIfPermissionsAreGranted(): void
     {
-        $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
@@ -151,44 +149,12 @@ class MessagesControllerTest extends WebTestCase
             'status' => 'pending',
         ]);
 
-        Time::unfreeze();
         $ticket->refresh();
         $this->assertSame('pending', $ticket->getStatus());
     }
 
-    public function testPostCreateForcesSolutionToFalseIfPermissionIsNotGranted(): void
+    public function testPostCreateSetsSolutionIfStatusIsResolved(): void
     {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), [
-            'orga:create:tickets:messages',
-        ]);
-        $ticket = TicketFactory::createOne([
-            'createdBy' => $user,
-        ]);
-        $messageContent = 'My message';
-
-        $this->assertSame(0, MessageFactory::count());
-
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'isSolution' => true,
-        ]);
-
-        $this->assertSame(1, MessageFactory::count());
-
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $message = MessageFactory::first();
-        $ticket->refresh();
-        $this->assertNull($ticket->getSolution());
-    }
-
-    public function testPostCreateForcesStatusToResolvedIfIsSolutionIsTrue(): void
-    {
-        $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
@@ -208,11 +174,9 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'in_progress',
-            'isSolution' => true,
+            'status' => 'resolved',
         ]);
 
-        Time::unfreeze();
         $this->assertSame(1, MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
@@ -222,10 +186,8 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('resolved', $ticket->getStatus());
     }
 
-    public function testPostCreateForcesIsSolutionToFalseIfIsConfidentialIsTrue(): void
+    public function testPostCreateDoesNotSetSolutionIfIsConfidentialIsTrue(): void
     {
-        $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
@@ -243,11 +205,10 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'isSolution' => true,
+            'status' => 'resolved',
             'isConfidential' => true,
         ]);
 
-        Time::unfreeze();
         $this->assertSame(1, MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
@@ -257,10 +218,41 @@ class MessagesControllerTest extends WebTestCase
         $this->assertNull($ticket->getSolution());
     }
 
-    public function testPostCreateDoesNotChangeTheTicketStatusAndForcesIsSolutionToFalseIfStatusIsFinished(): void
+    public function testPostCreateDoesNotChangeSolutionIfAlreadyExists(): void
     {
-        $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:create:tickets:messages:confidential',
+        ]);
+        $solution = MessageFactory::createOne();
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'solution' => $solution,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(1, MessageFactory::count());
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'status' => 'resolved',
+        ]);
+
+        $this->assertSame(2, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $message = MessageFactory::last();
+        $this->assertNotSame($solution->getId(), $message->getId());
+        $ticket->refresh();
+        $this->assertSame($solution->getId(), $ticket->getSolution()->getId());
+    }
+
+    public function testPostCreateDoesNotChangeTheTicketStatusIfStatusIsFinished(): void
+    {
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
@@ -281,19 +273,14 @@ class MessagesControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'status' => 'in_progress',
-            'isSolution' => true,
         ]);
 
-        Time::unfreeze();
         $ticket->refresh();
         $this->assertSame($initialStatus, $ticket->getStatus());
-        $this->assertNull($ticket->getSolution());
     }
 
     public function testPostCreateDoesNotChangeTheTicketStatusIfPermissionsAreNotGranted(): void
     {
-        $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
@@ -313,7 +300,6 @@ class MessagesControllerTest extends WebTestCase
             'status' => 'pending',
         ]);
 
-        Time::unfreeze();
         $ticket->refresh();
         $this->assertSame($initialStatus, $ticket->getStatus());
     }
@@ -382,7 +368,6 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'isSolution' => true,
             'isConfidential' => true,
         ]);
 

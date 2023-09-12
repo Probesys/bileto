@@ -298,11 +298,9 @@ tickets.show.actions.update_status: 'Modifier le statut'
 tickets.show.answer: Répondre
 tickets.show.assign_yourself: 'vous l’attribuer'
 tickets.show.closed: 'Ce ticket est clos.'
+tickets.show.confidential_answer: 'Réponse confidentielle'
 tickets.show.hide_history: 'Masquer l’historique'
 tickets.show.impact: "Impact\_:"
-tickets.show.mark_as: 'Marquer comme…'
-tickets.show.mark_as.confidential: confidentiel
-tickets.show.mark_as.solution: solution
 tickets.show.message.confidential: confidentiel
 tickets.show.message.solution: solution
 tickets.show.message.via_email: 'Ce message a été envoyé par email'

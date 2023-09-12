@@ -63,12 +63,8 @@ class MessagesController extends BaseController
         if ($security->isGranted('orga:update:tickets:status', $organization)) {
             /** @var string $status */
             $status = $request->request->get('status', '');
-
-            /** @var boolean $isSolution */
-            $isSolution = $request->request->getBoolean('isSolution', false);
         } else {
             $status = $ticket->getStatus();
-            $isSolution = false;
         }
 
         /** @var string $csrfToken */
@@ -88,7 +84,6 @@ class MessagesController extends BaseController
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => $statuses,
-                'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
@@ -108,7 +103,6 @@ class MessagesController extends BaseController
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => $statuses,
-                'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => [
                     'isConfidential' => $translator->trans('message.cannot_confidential', [], 'errors'),
@@ -132,24 +126,23 @@ class MessagesController extends BaseController
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => $statuses,
-                'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
-        if ($message->isConfidential()) {
-            $isSolution = false;
-        }
-
         if ($ticket->isFinished()) {
             $status = $ticket->getStatus();
-            $isSolution = false;
         }
+
+        $isSolution = (
+            $status === 'resolved' &&
+            !$message->isConfidential() &&
+            $ticket->getSolution() === null
+        );
 
         if ($isSolution) {
             $ticket->setSolution($message);
-            $status = 'resolved';
         }
 
         $initialStatus = $ticket->getStatus();
@@ -166,7 +159,6 @@ class MessagesController extends BaseController
                 'message' => $messageContent,
                 'status' => $status,
                 'statuses' => $statuses,
-                'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);

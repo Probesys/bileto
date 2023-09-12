@@ -180,9 +180,8 @@
                                 action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
                                 method="post"
                                 class="timeline__editor flow"
-                                data-controller="form-new-answer form-message-documents"
+                                data-controller="form-message-documents"
                                 data-turbo-preserve-scroll
-                                data-form-new-answer-ticket-status-value="{{ ticket.status }}"
                             >
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
 
@@ -227,69 +226,38 @@
                                     </div>
                                 </div>
 
-                                {% set canCreateConfidential = is_granted('orga:create:tickets:messages:confidential', organization) %}
-                                {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
+                                <div class="flow flow--smaller">
+                                    {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
+                                        <div>
+                                            <input
+                                                type="checkbox"
+                                                id="is-confidential"
+                                                name="isConfidential"
+                                                {{ isConfidential ? 'checked' }}
+                                                {% if errors.isConfidential is defined %}
+                                                    aria-invalid="true"
+                                                    aria-errormessage="is-confidential-error"
+                                                {% endif %}
+                                            />
 
-                                {% if canCreateConfidential or canUpdateStatus %}
-                                    <div class="row flow">
-                                        <label>
-                                            {{ 'tickets.show.mark_as' | trans }}
-                                        </label>
-
-                                        <div class="row row--always flow">
-                                            {% if canCreateConfidential %}
-                                                <div>
-                                                    <input
-                                                        type="checkbox"
-                                                        id="is-confidential"
-                                                        name="isConfidential"
-                                                        {{ isConfidential ? 'checked' }}
-                                                        data-action="form-new-answer#refresh"
-                                                        data-form-new-answer-target="confidentialCheckbox"
-                                                        {% if errors.isConfidential is defined %}
-                                                            aria-invalid="true"
-                                                            aria-errormessage="is-confidential-error"
-                                                        {% endif %}
-                                                    />
-
-                                                    <label for="is-confidential">
-                                                        {{ 'tickets.show.mark_as.confidential' | trans }}
-                                                    </label>
-                                                </div>
-                                            {% endif %}
-
-                                            {% if canUpdateStatus %}
-                                                <div>
-                                                    <input
-                                                        type="checkbox"
-                                                        id="is-solution"
-                                                        name="isSolution"
-                                                        {{ isSolution ? 'checked' }}
-                                                        {{ ticket.isFinished ? 'disabled' }}
-                                                        data-action="form-new-answer#refresh"
-                                                        data-form-new-answer-target="solutionCheckbox"
-                                                    />
-
-                                                    <label for="is-solution">
-                                                        {{ 'tickets.show.mark_as.solution' | trans }}
-                                                    </label>
-                                                </div>
-                                            {% endif %}
+                                            <label for="is-confidential">
+                                                {{ 'tickets.show.confidential_answer' | trans }}
+                                            </label>
                                         </div>
-                                    </div>
-                                {% endif %}
+                                    {% endif %}
 
-                                {% if errors.isConfidential is defined %}
-                                    <p class="form__error" role="alert" id="is-confidential-error">
-                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                        {{ errors.isConfidential }}
-                                    </p>
-                                {% endif %}
+                                    {% if errors.isConfidential is defined %}
+                                        <p class="form__error" role="alert" id="is-confidential-error">
+                                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                            {{ errors.isConfidential }}
+                                        </p>
+                                    {% endif %}
+                                </div>
 
                                 <div class="row flow">
                                     {% if not ticket.isFinished %}
                                         <div class="row__item--extend flow flow--small">
-                                            {% if canUpdateStatus %}
+                                            {% if is_granted('orga:update:tickets:status', organization) %}
                                                 <div class="row row--center row--always flow">
                                                     <label for="status-to">
                                                         {{ 'tickets.show.status_to' | trans }}
