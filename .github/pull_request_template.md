@@ -21,6 +21,7 @@
 - [ ] code is manually tested
 - [ ] permissions / authorizations are verified
 - [ ] interface works on both mobiles and big screens
+- [ ] interface works in both light and dark modes
 - [ ] accessibility has been tested
 - [ ] tests are up-to-date
 - [ ] locales are synchronized
