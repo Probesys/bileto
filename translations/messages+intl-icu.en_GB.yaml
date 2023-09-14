@@ -47,6 +47,24 @@ advanced_search_syntax.qualifiers.type.example1: 'Tickets of type “incident”
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: 'The possible values for “type“ are: <code>incident</code> and <code>request</code>.'
 advanced_search_syntax.title: 'Quick reference for the advanced syntax'
+contracts.days_consumed: "<strong>{days}\_d consumed</strong>"
+contracts.end_at: 'End on'
+contracts.hours_consumed: "<strong>{hours}\_h consumed</strong> on {maxHours}\_h"
+contracts.index.new_contract: 'New contract'
+contracts.index.no_contracts: 'No contracts'
+contracts.index.number: '{count, plural, =0 {No contracts} one {1 contract} other {# contracts}}'
+contracts.index.title: Contracts
+contracts.max_hours: 'Max number of hours'
+contracts.name: Name
+contracts.new.submit: 'Create the contract'
+contracts.new.title: 'New contract'
+contracts.notes: 'Private notes'
+contracts.show.notes_confidential: confidential
+contracts.start_at: 'Start on'
+contracts.status: Status
+contracts.status.coming: Coming
+contracts.status.finished: Finished
+contracts.status.ongoing: Ongoing
 errors.404.description: 'The requested page couldn’t be located. Checkout for any URL misspelling.'
 errors.404.title: 'Page not found!'
 errors.back_home: 'Back to the homepage'
@@ -131,6 +149,8 @@ organizations.name: Name
 organizations.new.submit: 'Create the organization'
 organizations.new.title: 'New organization'
 organizations.parent_orga: 'Parent organization'
+organizations.show.contracts: Contracts
+organizations.show.tickets: Tickets
 preferences.title: Preferences
 profile.current_password: 'Current password'
 profile.ldap.information: Information
@@ -167,6 +187,9 @@ roles.permissions.check_all: 'Check all'
 roles.permissions.orga.create.tickets: 'Create tickets'
 roles.permissions.orga.create.tickets.messages: 'Answer to tickets'
 roles.permissions.orga.create.tickets.messages.confidential: 'Answer confidentially to tickets'
+roles.permissions.orga.manage.contracts: 'Manage the contracts'
+roles.permissions.orga.see.contracts: 'See the contracts'
+roles.permissions.orga.see.contracts.notes: 'See the private notes of the contracts'
 roles.permissions.orga.see.tickets.all: 'See all the tickets of the organization'
 roles.permissions.orga.see.tickets.messages.confidential: 'See confidential answers'
 roles.permissions.orga.update.tickets.actors: 'Update the actors of a ticket'
