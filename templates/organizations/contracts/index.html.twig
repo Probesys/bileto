@@ -1,0 +1,73 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'contracts' %}
+
+{% block title %}{{ 'contracts.index.title' | trans }} – {{ organization.name }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <div class="flow wrapper wrapper--large wrapper--center">
+            <div class="layout__breadcrumb">
+                <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
+                <h1>{{ 'contracts.index.title' | trans }}</h1>
+            </div>
+
+            <div class="flow">
+                {% if contracts %}
+                    <ul class="list--padded list--border list--nostyle">
+                        {% for contract in contracts %}
+                            <li class="flow flow--smaller" data-test="contract-item">
+                                <div class="row row--always flow flow--smaller">
+                                    <div class="row__item--extend">
+                                        <h2 class="text--small">
+                                            {{ contract.name }}
+                                        </h2>
+                                    </div>
+
+                                    <div>
+                                        <span class="badge badge--smaller badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
+                                            <span class="sr-only">
+                                                {{ 'contracts.status' | trans }}
+                                            </span>
+
+                                            {{ contract.statusLabel | trans }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="row row--baseline flow flow--smaller text--smaller">
+                                    <div class="row__item--extend">
+                                        {{ 'contracts.hours_consumed' | trans({ 'hours': 0, 'maxHours': contract.maxHours }) | raw }}
+                                    </div>
+
+                                    <div>
+                                        <time datetime="{{ contract.startAt | dateIso }}">
+                                            {{ contract.startAt | dateTrans('dd MMM yyyy') }}
+                                        </time>
+
+                                        —
+
+                                        <time datetime="{{ contract.endAt | dateIso }}">
+                                            {{ contract.endAt | dateTrans('dd MMM yyyy') }}
+                                        </time>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="placeholder">
+                        {{ icon('contract') }}
+                        {{ 'contracts.index.no_contracts' | trans }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock %}
