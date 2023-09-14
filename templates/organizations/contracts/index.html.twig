@@ -19,6 +19,21 @@
             </div>
 
             <div class="flow">
+                <div class="row row--center row--always flow">
+                    {% if is_granted('orga:manage:contracts', organization) %}
+                        <a class="anchor--action" href="{{ path('new organization contract', { uid: organization.uid }) }}">
+                            {{ icon('plus') }}
+                            {{ 'contracts.index.new_contract' | trans }}
+                        </a>
+                    {% endif %}
+
+                    {% if contracts %}
+                        <p class="text--secondary">
+                            {{ 'contracts.index.number' | trans({ count: contracts|length }) }}
+                        </p>
+                    {% endif %}
+                </div>
+
                 {% if contracts %}
                     <ul class="list--padded list--border list--nostyle">
                         {% for contract in contracts %}
