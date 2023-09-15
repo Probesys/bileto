@@ -30,7 +30,7 @@ class DateFormatterExtension extends AbstractExtension
         ];
     }
 
-    public function dateTrans(\DateTimeInterface $date, string $format = 'dd MMM Y, HH:mm'): string
+    public function dateTrans(\DateTimeInterface $date, string $format = 'dd MMM yyyy, HH:mm'): string
     {
         return $this->dateTranslator->format($date, $format);
     }
@@ -55,7 +55,7 @@ class DateFormatterExtension extends AbstractExtension
         }
 
         if (!$cleverYear || $currentYear !== $dateYear) {
-            $format .= ' Y';
+            $format .= ' yyyy';
         }
 
         $format .= ', HH:mm';
@@ -78,7 +78,7 @@ class DateFormatterExtension extends AbstractExtension
         }
 
         if (!$cleverYear || $currentYear !== $dateYear) {
-            $format .= ' Y';
+            $format .= ' yyyy';
         }
 
         return $this->dateTrans($date, $format);

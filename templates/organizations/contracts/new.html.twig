@@ -111,7 +111,7 @@
                         type="date"
                         id="start-at"
                         name="startAt"
-                        value="{{ startAt ? startAt | dateTrans('Y-MM-dd') }}"
+                        value="{{ startAt ? startAt | dateTrans('yyyy-MM-dd') }}"
                         required
                         data-form-new-contract-target="startAt"
                         data-action="form-new-contract#updateEndAt"
@@ -138,7 +138,7 @@
                         type="date"
                         id="end-at"
                         name="endAt"
-                        value="{{ endAt ? endAt | dateTrans('Y-MM-dd') }}"
+                        value="{{ endAt ? endAt | dateTrans('yyyy-MM-dd') }}"
                         required
                         data-form-new-contract-target="endAt"
                         {% if errors.endAt is defined %}
