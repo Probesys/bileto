@@ -10,6 +10,7 @@ use App\Controller\BaseController;
 use App\Entity\Message;
 use App\Entity\Organization;
 use App\Entity\Ticket;
+use App\Repository\ContractRepository;
 use App\Repository\MessageRepository;
 use App\Repository\MessageDocumentRepository;
 use App\Repository\OrganizationRepository;
@@ -132,6 +133,7 @@ class TicketsController extends BaseController
     public function create(
         Organization $organization,
         Request $request,
+        ContractRepository $contractRepository,
         MessageRepository $messageRepository,
         MessageDocumentRepository $messageDocumentRepository,
         OrganizationRepository $organizationRepository,
@@ -282,6 +284,11 @@ class TicketsController extends BaseController
         $ticket->setRequester($requester);
         if ($assignee) {
             $ticket->setAssignee($assignee);
+        }
+
+        $contracts = $contractRepository->findOngoingByOrganization($organization);
+        if (count($contracts) === 1) {
+            $ticket->addContract($contracts[0]);
         }
 
         $errors = $validator->validate($ticket);

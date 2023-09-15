@@ -7,6 +7,8 @@
 namespace App\Repository;
 
 use App\Entity\Contract;
+use App\Entity\Organization;
+use App\Utils;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -43,5 +45,30 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @return Contract[]
+     */
+    public function findOngoingByOrganization(Organization $organization): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $now = Utils\Time::now();
+        $orgaIds = $organization->getParentOrganizationIds();
+        $orgaIds[] = $organization->getId();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT c
+            FROM App\Entity\Contract c
+            WHERE c.startAt <= :now
+            AND :now < c.endAt
+            AND c.organization IN (:orgaIds)
+        SQL);
+
+        $query->setParameter('now', $now);
+        $query->setParameter('orgaIds', $orgaIds);
+
+        return $query->getResult();
     }
 }

@@ -8,11 +8,13 @@ namespace App\Tests\MessageHandler;
 
 use App\Message\CreateTicketsFromMailboxEmails;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\MailboxEmailFactory;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
+use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -70,6 +72,43 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('email', $message->getVia());
+    }
+
+    public function testInvokeCreatesATicketAndCanAttachAContractIfItExists(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        // Log the user so the created Contract has a createdBy and a updatedBy
+        // fields set.
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $subject = Factory::faker()->words(3, true);
+        $body = Factory::faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+        ]);
+        $ongoingContract = ContractFactory::createOne([
+            'organization' => $organization,
+            'startAt' => Time::ago(1, 'week'),
+            'endAt' => Time::fromNow(1, 'week'),
+        ]);
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $ticket = TicketFactory::first();
+        $this->assertNotNull($ticket);
+        $ticketContract = $ticket->getOngoingContract();
+        $this->assertNotNull($ticketContract);
+        $this->assertSame($ongoingContract->getId(), $ticketContract->getId());
     }
 
     public function testInvokeAnswersToTicketIfTicketIdIsGiven(): void
