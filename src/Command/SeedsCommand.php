@@ -71,6 +71,24 @@ class SeedsCommand extends Command
             ],
         ]);
 
+        $roleSalesman = $this->roleRepository->findOneOrCreateBy([
+            'name' => 'Salesman',
+        ], [
+            'description' => 'Manage the contracts.',
+            'type' => 'orga:user',
+            'permissions' => [
+                'orga:create:tickets',
+                'orga:create:tickets:messages',
+                'orga:create:tickets:messages:confidential',
+                'orga:manage:contracts',
+                'orga:see',
+                'orga:see:contracts',
+                'orga:see:contracts:notes',
+                'orga:see:tickets:all',
+                'orga:see:tickets:messages:confidential',
+            ],
+        ]);
+
         $roleUser = $this->roleRepository->findOneOrCreateBy([
             'name' => 'User',
         ], [
@@ -122,7 +140,7 @@ class SeedsCommand extends Command
             ], [
                 'name' => 'Benedict Aphone',
                 'password' => $password,
-                'organization' => $orgaWebDivision,
+                'organization' => $orgaProbesys,
             ]);
 
             $userCharlie = $this->userRepository->findOneOrCreateBy([
@@ -153,7 +171,7 @@ class SeedsCommand extends Command
             }
 
             if (!$this->authorizationRepository->getOrgaAuthorizationFor($userBenedict, $orgaWebDivision)) {
-                $this->authorizationRepository->grant($userBenedict, $roleUser, $orgaWebDivision);
+                $this->authorizationRepository->grant($userBenedict, $roleSalesman, null);
             }
 
             if (!$this->authorizationRepository->getOrgaAuthorizationFor($userCharlie, $orgaFriendlyCoorp)) {
