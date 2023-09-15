@@ -417,6 +417,19 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
         return $this->contracts;
     }
 
+    public function getOngoingContract(): ?Contract
+    {
+        $contracts = $this->getContracts();
+
+        foreach ($contracts as $contract) {
+            if ($contract->getStatus() === 'ongoing') {
+                return $contract;
+            }
+        }
+
+        return null;
+    }
+
     public function addContract(Contract $contract): static
     {
         if (!$this->contracts->contains($contract)) {
