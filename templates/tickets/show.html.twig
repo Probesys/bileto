@@ -14,6 +14,11 @@
     <main class="layout__body flow flow--larger tickets-show">
         <div class="layout__breadcrumb wrapper wrapper--large wrapper--center">
             <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
+
+            <a href="{{ path('organization tickets', { uid: organization.uid }) }}">
+                {{ 'tickets.index.title' | trans }}
+            </a>
+
             <h1>
                 {{ ticket.title }}
                 <span class="ticket__id">#{{ ticket.id }}</span>

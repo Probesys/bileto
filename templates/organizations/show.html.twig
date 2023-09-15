@@ -20,7 +20,7 @@
             <a class="card card--action" href="{{ path('organization tickets', { uid: organization.uid }) }}">
                 <span>
                     {{ icon('ticket') }}
-                    {{ 'organizations.show.tickets' | trans }}
+                    {{ 'tickets.index.title' | trans }}
                 </span>
             </a>
 
@@ -28,7 +28,7 @@
                 <a class="card card--action" href="{{ path('organization contracts', { uid: organization.uid }) }}">
                     <span>
                         {{ icon('contract') }}
-                        {{ 'organizations.show.contracts' | trans }}
+                        {{ 'contracts.index.title' | trans }}
                     </span>
                 </a>
             {% endif %}
