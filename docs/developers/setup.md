@@ -36,7 +36,7 @@ $ make db-setup
 Open [localhost:8000](http://localhost:8000) and login with one of the following credentials:
 
 - `alix@example.com` / `secret` (super-admin and technician for all the organizations)
-- `benedict@example.com` / `secret` (user in the “Web team” organization)
+- `benedict@example.com` / `secret` (salesman for all the organizations)
 - `charlie@example.com` / `secret` (user in the “Friendly Coorp” organization)
 
 A note about the `make` commands: they might feel magic, but they are not!

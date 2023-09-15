@@ -297,7 +297,24 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
     }
 
-    public function testGetShowRedirectsToTickets(): void
+    public function testGetShowRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:see',
+            'orga:see:contracts',
+        ], $organization->object());
+
+        $client->request('GET', "/organizations/{$organization->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', $organization->getName());
+    }
+
+    public function testGetShowRedirectsToTicketsIfContractsAreNotAccessible(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();

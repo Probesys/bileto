@@ -47,6 +47,24 @@ advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incide
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: "Les valeurs possibles pour «\_type\_» sont\_: <code>incident</code> et <code>request</code>."
 advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
+contracts.days_consumed: "<strong>{days, plural, =0 {0\_j consommé} one {1\_j consommé} other {#\_j consommés}}</strong>"
+contracts.end_at: 'Termine le'
+contracts.hours_consumed: "<strong>{hours, plural, =0 {0\_h consommée} one {1\_h consommée} other {#\_h consommées}}</strong> sur {maxHours}\_h"
+contracts.index.new_contract: 'Nouveau contrat'
+contracts.index.no_contracts: 'Aucun contrat'
+contracts.index.number: '{count, plural, =0 {Aucun contrat} one {1 contrat} other {# contrats}}'
+contracts.index.title: Contrats
+contracts.max_hours: 'Nombre max. d’heures'
+contracts.name: Nom
+contracts.new.submit: 'Créer le contrat'
+contracts.new.title: 'Nouveau contrat'
+contracts.notes: 'Notes privées'
+contracts.show.notes_confidential: confidentielles
+contracts.start_at: 'Démarre le'
+contracts.status: Statut
+contracts.status.coming: 'À venir'
+contracts.status.finished: Terminé
+contracts.status.ongoing: 'En cours'
 errors.404.description: 'La page demandée n’a pas été trouvée. Vérifiez qu’il n’y a pas de faute dans l’URL.'
 errors.404.title: "Page non trouvée\_!"
 errors.back_home: 'Retour à la page d’accueil'
@@ -131,6 +149,8 @@ organizations.name: Nom
 organizations.new.submit: 'Créer l’organisation'
 organizations.new.title: 'Nouvelle organisation'
 organizations.parent_orga: 'Organisation parente'
+organizations.show.contracts: Contrats
+organizations.show.tickets: Tickets
 preferences.title: Préférences
 profile.current_password: 'Mot de passe actuel'
 profile.ldap.information: Information
@@ -167,6 +187,9 @@ roles.permissions.check_all: 'Tout cocher'
 roles.permissions.orga.create.tickets: 'Créer des tickets'
 roles.permissions.orga.create.tickets.messages: 'Répondre aux tickets'
 roles.permissions.orga.create.tickets.messages.confidential: 'Répondre confidentiellement aux tickets'
+roles.permissions.orga.manage.contracts: 'Gérer les contrats'
+roles.permissions.orga.see.contracts: 'Voir les contrats'
+roles.permissions.orga.see.contracts.notes: 'Voir les notes privées des contrats'
 roles.permissions.orga.see.tickets.all: 'Voir tous les tickets de l’organisation'
 roles.permissions.orga.see.tickets.messages.confidential: 'Voir les réponses confidentielles'
 roles.permissions.orga.update.tickets.actors: 'Mettre à jour les acteurs d’un ticket'

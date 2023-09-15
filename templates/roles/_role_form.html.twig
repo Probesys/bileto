@@ -197,6 +197,21 @@
                 permission: 'orga:update:tickets:type',
                 label: 'roles.permissions.orga.update.tickets.type' | trans,
             }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:see:contracts',
+                label: 'roles.permissions.orga.see.contracts' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:see:contracts:notes',
+                label: 'roles.permissions.orga.see.contracts.notes' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:manage:contracts',
+                label: 'roles.permissions.orga.manage.contracts' | trans,
+            }) }}
         {% endif %}
     </fieldset>
 

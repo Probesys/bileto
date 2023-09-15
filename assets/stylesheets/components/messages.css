@@ -61,7 +61,7 @@
 }
 
 @media (min-width: 800px) {
-    .message__box::before {
+    .message__avatar + .message__box::before {
         content: " ";
 
         position: absolute;
@@ -78,7 +78,7 @@
         clip-path: polygon(0 50%, 100% 0, 100% 100%);
     }
 
-    .message--solution .message__box::before {
+    .message--solution .message__avatar + .message__box::before {
         background-color: var(--color-success7);
     }
 }

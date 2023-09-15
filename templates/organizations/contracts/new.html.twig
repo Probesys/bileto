@@ -1,0 +1,186 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'contracts' %}
+
+{% block title %}{{ 'contracts.new.title' | trans }} – {{ organization.name }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <div class="layout__breadcrumb wrapper wrapper--large wrapper--center">
+            <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
+            <a href="{{ path('organization contracts', { uid: organization.uid }) }}">
+                {{ 'contracts.index.title' | trans }}
+            </a>
+            <h1>{{ 'contracts.new.title' | trans }}</h1>
+        </div>
+
+        <form
+            action="{{ path('create organization contract', {'uid': organization.uid}) }}"
+            method="post"
+            class="wrapper wrapper--small wrapper--center flow"
+            data-controller="form-new-contract"
+        >
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization contract') }}">
+
+            {% if error %}
+                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+            {% endif %}
+
+            <div class="flow flow--small">
+                <label for="name">
+                    {{ 'contracts.name' | trans }}
+
+                    <small class="text--secondary">
+                        {{ 'forms.max_chars' | trans({ number: 255 }) }}
+                    </small>
+                </label>
+
+                {% if errors.name is defined %}
+                    <p class="form__error" role="alert" id="name-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.name }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ name }}"
+                    required
+                    maxlength="255"
+                    {% if errors.name is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="name-error"
+                    {% endif %}
+                />
+            </div>
+
+            <div class="row flow">
+                <div class="row__item--extend flow flow--small">
+                    <label for="max-hours">
+                        {{ 'contracts.max_hours' | trans }}
+                    </label>
+
+                    {% if errors.maxHours is defined %}
+                        <p class="form__error" role="alert" id="max-hours-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.maxHours }}
+                        </p>
+                    {% endif %}
+
+                    <input
+                        type="number"
+                        id="max-hours"
+                        name="maxHours"
+                        value="{{ maxHours }}"
+                        min="0"
+                        step="1"
+                        required
+                        {% if errors.maxHours is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="max-hours-error"
+                        {% endif %}
+                    />
+                </div>
+
+                <div class="row__item--extend">
+                </div>
+            </div>
+
+            <div class="row flow">
+                <div class="row__item--extend flow flow--small">
+                    <label for="start-at">
+                        {{ 'contracts.start_at' | trans }}
+                    </label>
+
+                    {% if errors.startAt is defined %}
+                        <p class="form__error" role="alert" id="start-at-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.startAt }}
+                        </p>
+                    {% endif %}
+
+                    <input
+                        type="date"
+                        id="start-at"
+                        name="startAt"
+                        value="{{ startAt ? startAt | dateTrans('Y-MM-dd') }}"
+                        required
+                        data-form-new-contract-target="startAt"
+                        data-action="form-new-contract#updateEndAt"
+                        {% if errors.maxHours is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="max-hours-error"
+                        {% endif %}
+                    />
+                </div>
+
+                <div class="row__item--extend flow flow--small">
+                    <label for="end-at">
+                        {{ 'contracts.end_at' | trans }}
+                    </label>
+
+                    {% if errors.endAt is defined %}
+                        <p class="form__error" role="alert" id="end-at-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.endAt }}
+                        </p>
+                    {% endif %}
+
+                    <input
+                        type="date"
+                        id="end-at"
+                        name="endAt"
+                        value="{{ endAt ? endAt | dateTrans('Y-MM-dd') }}"
+                        required
+                        data-form-new-contract-target="endAt"
+                        {% if errors.endAt is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="max-hours-error"
+                        {% endif %}
+                    />
+                </div>
+            </div>
+
+            <div class="flow flow--small">
+                <label for="notes">
+                    {{ icon('user-secret') }}
+                    {{ 'contracts.notes' | trans }}
+
+                    <small class="text--secondary">
+                        {{ 'forms.optional' | trans }}
+                    </small>
+                </label>
+
+                {% if errors.notes is defined %}
+                    <p class="form__error" role="alert" id="notes-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.notes }}
+                    </p>
+                {% endif %}
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    {% if errors.notes is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="notes-error"
+                    {% endif %}
+                >{{ notes }}</textarea>
+            </div>
+
+            <div class="form__actions">
+                <button class="button--primary" type="submit">
+                    {{ 'contracts.new.submit' | trans }}
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}
