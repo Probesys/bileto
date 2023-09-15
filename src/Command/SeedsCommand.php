@@ -62,6 +62,7 @@ class SeedsCommand extends Command
                 'orga:create:tickets:messages:confidential',
                 'orga:see',
                 'orga:see:tickets:all',
+                'orga:see:tickets:contracts',
                 'orga:see:tickets:messages:confidential',
                 'orga:update:tickets:actors',
                 'orga:update:tickets:priority',
@@ -85,7 +86,9 @@ class SeedsCommand extends Command
                 'orga:see:contracts',
                 'orga:see:contracts:notes',
                 'orga:see:tickets:all',
+                'orga:see:tickets:contracts',
                 'orga:see:tickets:messages:confidential',
+                'orga:update:tickets:contracts',
             ],
         ]);
 
@@ -98,6 +101,7 @@ class SeedsCommand extends Command
                 'orga:create:tickets',
                 'orga:create:tickets:messages',
                 'orga:see',
+                'orga:see:tickets:contracts',
                 'orga:update:tickets:title',
             ],
         ]);
