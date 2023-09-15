@@ -24,6 +24,7 @@
             action="{{ path('create organization contract', {'uid': organization.uid}) }}"
             method="post"
             class="wrapper wrapper--small wrapper--center flow"
+            data-controller="form-new-contract"
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization contract') }}">
 
@@ -112,6 +113,8 @@
                         name="startAt"
                         value="{{ startAt ? startAt | dateTrans('Y-MM-dd') }}"
                         required
+                        data-form-new-contract-target="startAt"
+                        data-action="form-new-contract#updateEndAt"
                         {% if errors.maxHours is defined %}
                             aria-invalid="true"
                             aria-errormessage="max-hours-error"
@@ -137,6 +140,7 @@
                         name="endAt"
                         value="{{ endAt ? endAt | dateTrans('Y-MM-dd') }}"
                         required
+                        data-form-new-contract-target="endAt"
                         {% if errors.endAt is defined %}
                             aria-invalid="true"
                             aria-errormessage="max-hours-error"
