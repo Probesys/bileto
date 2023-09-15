@@ -1,0 +1,37 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'organizations' %}
+
+{% block title %}{{ organization.name }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow wrapper wrapper--large wrapper--center">
+        <div class="layout__breadcrumb">
+            <h1>{{ organization.name }}</h1>
+        </div>
+
+        <div class="grid">
+            <a class="card card--action" href="{{ path('organization tickets', { uid: organization.uid }) }}">
+                <span>
+                    {{ icon('ticket') }}
+                    {{ 'organizations.show.tickets' | trans }}
+                </span>
+            </a>
+
+            {% if is_granted('orga:see:contracts', organization) %}
+                <a class="card card--action" href="{{ path('organization contracts', { uid: organization.uid }) }}">
+                    <span>
+                        {{ icon('contract') }}
+                        {{ 'organizations.show.contracts' | trans }}
+                    </span>
+                </a>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

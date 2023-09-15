@@ -12,6 +12,7 @@ use App\Service\Sorter\OrganizationSorter;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -149,12 +150,20 @@ class OrganizationsController extends BaseController
     }
 
     #[Route('/organizations/{uid}', name: 'organization', methods: ['GET', 'HEAD'])]
-    public function show(Organization $organization): Response
-    {
+    public function show(
+        Organization $organization,
+        Security $security,
+    ): Response {
         $this->denyAccessUnlessGranted('orga:see', $organization);
 
-        return $this->redirectToRoute('organization tickets', [
-            'uid' => $organization->getUid(),
+        if (!$security->isGranted('orga:see:contracts', $organization)) {
+            return $this->redirectToRoute('organization tickets', [
+                'uid' => $organization->getUid(),
+            ]);
+        }
+
+        return $this->render('organizations/show.html.twig', [
+            'organization' => $organization,
         ]);
     }
 
