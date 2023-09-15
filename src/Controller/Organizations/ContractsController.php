@@ -13,6 +13,7 @@ use App\Repository\ContractRepository;
 use App\Repository\OrganizationRepository;
 use App\Utils;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -141,6 +142,21 @@ class ContractsController extends BaseController
 
         return $this->redirectToRoute('organization contracts', [
             'uid' => $organization->getUid(),
+        ]);
+    }
+
+    #[Route('/organizations/{uid}/contracts/{contract_uid}', name: 'organization contract', methods: ['GET', 'HEAD'])]
+    public function show(
+        Organization $organization,
+        #[MapEntity(mapping: ['contract_uid' => 'uid'])]
+        Contract $contract,
+        Request $request,
+    ): Response {
+        $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
+
+        return $this->render('organizations/contracts/show.html.twig', [
+            'organization' => $organization,
+            'contract' => $contract,
         ]);
     }
 }

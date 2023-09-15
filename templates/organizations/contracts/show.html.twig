@@ -1,0 +1,90 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'contracts' %}
+
+{% block title %}{{ contract.name }} – {{ organization.name }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow wrapper wrapper--large wrapper--center">
+        <div class="layout__breadcrumb">
+            <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
+
+            <a href="{{ path('organization contracts', { uid: organization.uid }) }}">
+                {{ 'contracts.index.title' | trans }}
+            </a>
+
+            <h1>{{ contract.name }}</h1>
+        </div>
+
+        <div class="wrapper wrapper--small flow flow--larger">
+            <div>
+                <span class="badge badge--bold badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
+                    <span class="sr-only">
+                        {{ 'contracts.status' | trans }}
+                    </span>
+
+                    {{ contract.statusLabel | trans }}
+                </span>
+            </div>
+
+            <div class="flow flow--small">
+                <span class="text--small" id="contract-hours-consumed">
+                    {{ 'contracts.hours_consumed' | trans({ 'hours': 0, 'maxHours': contract.maxHours }) | raw }}
+                </span>
+
+                <progress value="0" max="{{ contract.maxHours }}" aria-labelledby="contract-hours-consumed">
+                </progress>
+            </div>
+
+            <div class="flow flow--small">
+                <div class="row row--center row--always flow text--small">
+                    <div class="row__item--extend" id="contract-days-consumed">
+                        {{ 'contracts.days_consumed' | trans({ 'days': contract.daysProgress }) | raw }}
+                    </div>
+
+                    <div class="text--secondary">
+                        <time datetime="{{ contract.startAt | dateIso }}">
+                            {{ contract.startAt | dateTrans('dd MMM yyyy') }}
+                        </time>
+
+                        —
+
+                        <time datetime="{{ contract.endAt | dateIso }}">
+                            {{ contract.endAt | dateTrans('dd MMM yyyy') }}
+                        </time>
+                    </div>
+                </div>
+
+                <progress value="{{ contract.daysProgress }}" max="{{ contract.daysDuration }}" aria-labelledby="contract-days-consumed">
+                </progress>
+            </div>
+
+            {% if contract.notes and is_granted('orga:see:contracts:notes', organization) %}
+                <article class="message message--confidential">
+                    <div class="message__box">
+                        <div class="message__top">
+                            <h2 class="text--small">
+                                {{ 'contracts.notes' | trans }}
+                            </h2>
+
+                            <div class="message__badge">
+                                {{ icon('user-secret') }}
+                                {{ 'contracts.show.notes_confidential' | trans }}
+                            </div>
+                        </div>
+
+                        <p class="message__content">
+                            {{ contract.notes | nl2br }}
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

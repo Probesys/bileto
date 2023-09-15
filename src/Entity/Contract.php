@@ -208,4 +208,35 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
             'finished' => new TranslatableMessage('contracts.status.finished'),
         ];
     }
+
+    /**
+     * Return the number of days between startAt and endAt.
+     */
+    public function getDaysDuration(): int
+    {
+        $interval = $this->startAt->diff($this->endAt);
+        // We add a day because e.g. 2023-01-01 00:00:00 to 2023-01-01 23:59:59
+        // will return 0 day, while we consider on our side that a whole day
+        // passed.
+        return intval($interval->format('%a')) + 1;
+    }
+
+    /**
+     * Return the number of days since startAt. It returns 0 if startAt is in
+     * the future, or the contract duration if endAt is in the past.
+     */
+    public function getDaysProgress(): int
+    {
+        $now = Utils\Time::now();
+        if ($now < $this->startAt) {
+            return 0;
+        }
+
+        if ($now >= $this->endAt) {
+            return $this->getDaysDuration();
+        }
+
+        $interval = $this->startAt->diff($now);
+        return intval($interval->format('%a'));
+    }
 }

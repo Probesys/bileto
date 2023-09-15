@@ -41,7 +41,9 @@
                                 <div class="row row--always flow flow--smaller">
                                     <div class="row__item--extend">
                                         <h2 class="text--small">
-                                            {{ contract.name }}
+                                            <a href="{{ path('organization contract', {'uid': organization.uid, 'contract_uid': contract.uid }) }}">
+                                                {{ contract.name }}
+                                            </a>
                                         </h2>
                                     </div>
 
