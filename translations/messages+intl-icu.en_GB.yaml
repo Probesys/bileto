@@ -211,6 +211,10 @@ settings.index.title: Settings
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee
+tickets.contract: Contract
+tickets.contracts.edit.title: 'Edit the contract'
+tickets.contracts.none: 'No contract'
+tickets.contracts.ongoing: 'Ongoing contract'
 tickets.events.assignee.assigned: '<strong>{username}</strong> assigned the ticket to <i>{newValue}</i>'
 tickets.events.assignee.changed: '<strong>{username}</strong> changed the assignee from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.events.assignee.unassigned: '<strong>{username}</strong> removed the assignee <i>{oldValue}</i>'
