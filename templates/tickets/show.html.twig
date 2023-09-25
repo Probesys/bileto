@@ -465,6 +465,20 @@
                                 {{ icon('contract') }}
                                 <strong>{{ 'tickets.contract' | trans }}</strong>
                             </span>
+
+                            {% if is_granted('orga:update:tickets:contracts', organization) %}
+                                <button
+                                    class="button--icon"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket contracts', { uid: ticket.uid }) }}"
+                                >
+                                    {{ icon('gear') }}
+                                    <span class="sr-only">
+                                        {{ 'tickets.contracts.edit.title' | trans }}
+                                    </span>
+                                </button>
+                            {% endif %}
                         </div>
 
                         {% set ongoingContract = ticket.ongoingContract %}

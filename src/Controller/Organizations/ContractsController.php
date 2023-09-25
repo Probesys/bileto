@@ -11,6 +11,7 @@ use App\Entity\Contract;
 use App\Entity\Organization;
 use App\Repository\ContractRepository;
 use App\Repository\OrganizationRepository;
+use App\Service\Sorter\ContractSorter;
 use App\Utils;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -28,6 +29,7 @@ class ContractsController extends BaseController
         Request $request,
         ContractRepository $contractRepository,
         OrganizationRepository $organizationRepository,
+        ContractSorter $contractSorter,
         Security $security,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
@@ -51,7 +53,8 @@ class ContractsController extends BaseController
 
         $contracts = $contractRepository->findBy([
             'organization' => $allowedOrganizations,
-        ], ['endAt' => 'DESC']);
+        ]);
+        $contractSorter->sort($contracts);
 
         return $this->render('organizations/contracts/index.html.twig', [
             'organization' => $organization,
