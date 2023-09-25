@@ -9,6 +9,8 @@ namespace App\Entity;
 use App\EntityListener\EntitySetMetaListener;
 use App\Repository\ContractRepository;
 use App\Utils;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -86,6 +88,15 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Organization $organization = null;
+
+    /** @var Collection<int, Ticket> $tickets */
+    #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'contracts')]
+    private Collection $tickets;
+
+    public function __construct()
+    {
+        $this->tickets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -238,5 +249,13 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
 
         $interval = $this->startAt->diff($now);
         return intval($interval->format('%a'));
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
     }
 }
