@@ -9,6 +9,7 @@ namespace App\Tests\Controller\Organizations;
 use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\MessageDocumentFactory;
 use App\Tests\Factory\OrganizationFactory;
@@ -287,6 +288,35 @@ class TicketsControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $message = MessageFactory::first();
         $this->assertSame('My message', $message->getContent());
+    }
+
+    public function testPostCreateAttachesAContractIfItExists(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $title = 'My ticket';
+        $messageContent = 'My message';
+        $ongoingContract = ContractFactory::createOne([
+            'organization' => $organization,
+            'startAt' => Time::ago(1, 'week'),
+            'endAt' => Time::fromNow(1, 'week'),
+        ]);
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterUid' => $user->getUid(),
+            'message' => $messageContent,
+        ]);
+
+        $ticket = TicketFactory::first();
+        $this->assertNotNull($ticket);
+        $ticketContract = $ticket->getOngoingContract();
+        $this->assertNotNull($ticketContract);
+        $this->assertSame($ongoingContract->getId(), $ticketContract->getId());
     }
 
     public function testPostCreateAttachesDocumentsToMessage(): void

@@ -457,6 +457,57 @@
                         {{ ticket.impactLabel | trans }}
                     </p>
                 </div>
+
+                {% if is_granted('orga:see:tickets:contracts', organization) %}
+                    <div class="flow">
+                        <div class="row row--center row--always flow">
+                            <span class="row__item--extend">
+                                {{ icon('contract') }}
+                                <strong>{{ 'tickets.contract' | trans }}</strong>
+                            </span>
+
+                            {% if is_granted('orga:update:tickets:contracts', organization) %}
+                                <button
+                                    class="button--icon"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket contracts', { uid: ticket.uid }) }}"
+                                >
+                                    {{ icon('gear') }}
+                                    <span class="sr-only">
+                                        {{ 'tickets.contracts.edit.title' | trans }}
+                                    </span>
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        {% set ongoingContract = ticket.ongoingContract %}
+                        {% if ongoingContract %}
+                            <p>
+                                {% if is_granted('orga:see:contracts', organization) %}
+                                    <a class="anchor--noline" href="{{ path('organization contract', { uid: organization.uid, contract_uid: ongoingContract.uid }) }}">
+                                        {{ ongoingContract.name }}
+                                    </a>
+                                {% else %}
+                                    {{ ongoingContract.name }}
+                                {% endif %}
+                            </p>
+
+                            <div>
+                                <span class="text--small" id="contract-hours-consumed">
+                                    {{ 'contracts.hours_consumed' | trans({ 'hours': 0, 'maxHours': ongoingContract.maxHours }) | raw }}
+                                </span>
+
+                                <progress value="0" max="{{ ongoingContract.maxHours }}" aria-labelledby="contract-hours-consumed">
+                                </progress>
+                            </div>
+                        {% else %}
+                            <p class="text--secondary">
+                                {{ 'tickets.contracts.none' | trans }}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </main>

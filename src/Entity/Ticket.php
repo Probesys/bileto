@@ -117,9 +117,14 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\OneToOne(cascade: ['persist'])]
     private ?Message $solution = null;
 
+    /** @var Collection<int, Contract> $contracts */
+    #[ORM\ManyToMany(targetEntity: Contract::class, inversedBy: 'tickets')]
+    private Collection $contracts;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->contracts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -400,6 +405,43 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
     public function setSolution(?Message $solution): self
     {
         $this->solution = $solution;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contract>
+     */
+    public function getContracts(): Collection
+    {
+        return $this->contracts;
+    }
+
+    public function getOngoingContract(): ?Contract
+    {
+        $contracts = $this->getContracts();
+
+        foreach ($contracts as $contract) {
+            if ($contract->getStatus() === 'ongoing') {
+                return $contract;
+            }
+        }
+
+        return null;
+    }
+
+    public function addContract(Contract $contract): static
+    {
+        if (!$this->contracts->contains($contract)) {
+            $this->contracts->add($contract);
+        }
+
+        return $this;
+    }
+
+    public function removeContract(Contract $contract): static
+    {
+        $this->contracts->removeElement($contract);
 
         return $this;
     }

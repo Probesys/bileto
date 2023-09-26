@@ -6,11 +6,12 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\Ticket;
 use App\Entity\MailboxEmail;
 use App\Entity\Message;
+use App\Entity\Ticket;
 use App\Message\CreateTicketsFromMailboxEmails;
 use App\Message\SendMessageEmail;
+use App\Repository\ContractRepository;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Repository\MessageRepository;
@@ -33,6 +34,7 @@ use Webklex\PHPIMAP;
 class CreateTicketsFromMailboxEmailsHandler
 {
     public function __construct(
+        private ContractRepository $contractRepository,
         private MailboxEmailRepository $mailboxEmailRepository,
         private MessageRepository $messageRepository,
         private MessageDocumentRepository $messageDocumentRepository,
@@ -112,6 +114,11 @@ class CreateTicketsFromMailboxEmailsHandler
                 $ticket->setPriority(Ticket::DEFAULT_WEIGHT);
                 $ticket->setOrganization($requesterOrganization);
                 $ticket->setRequester($requester);
+
+                $contracts = $this->contractRepository->findOngoingByOrganization($requesterOrganization);
+                if (count($contracts) === 1) {
+                    $ticket->addContract($contracts[0]);
+                }
             }
 
             $messageContent = $this->appMessageSanitizer->sanitize($mailboxEmail->getBody());

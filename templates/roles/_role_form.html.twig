@@ -174,8 +174,18 @@
             }) }}
 
             {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:see:tickets:contracts',
+                label: 'roles.permissions.orga.see.tickets.contracts' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
                 permission: 'orga:update:tickets:actors',
                 label: 'roles.permissions.orga.update.tickets.actors' | trans,
+            }) }}
+
+            {{ include('roles/_permission_checkbox.html.twig', {
+                permission: 'orga:update:tickets:contracts',
+                label: 'roles.permissions.orga.update.tickets.contracts' | trans,
             }) }}
 
             {{ include('roles/_permission_checkbox.html.twig', {
