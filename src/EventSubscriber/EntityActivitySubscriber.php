@@ -62,8 +62,10 @@ class EntityActivitySubscriber
         $entityChanges = $unitOfWork->getEntityChangeSet($entity);
         $entityChanges = $this->processChanges($entityChanges);
 
-        $entityEvent = EntityEvent::initUpdate($entity, $entityChanges);
-        $this->entityEventRepository->save($entityEvent, true);
+        if ($entityChanges) {
+            $entityEvent = EntityEvent::initUpdate($entity, $entityChanges);
+            $this->entityEventRepository->save($entityEvent, true);
+        }
     }
 
     /**
