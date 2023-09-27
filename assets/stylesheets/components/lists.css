@@ -35,6 +35,6 @@
     background-color: var(--color-grey3);
 }
 
-.list--strip > li:nth-child(event) {
+.list--strip > li:nth-child(even) {
     background-color: var(--color-grey4);
 }
