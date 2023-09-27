@@ -59,6 +59,18 @@ docker-build: ## Rebuild Docker containers
 docker-clean: ## Clean the Docker stuff
 	$(DOCKER_COMPOSE) down
 
+.PHONY: docker-image
+docker-image: ## Build the Docker image for production (take a VERSION argument)
+ifndef VERSION
+	$(error You need to provide a "VERSION" argument)
+endif
+	docker build \
+		--build-arg VERSION="$(VERSION)" \
+		--build-arg SOURCE_COMMIT="$(shell git describe --match '' --always --abbrev=42 --dirty)" \
+		-t ghcr.io/probesys/bileto:$(VERSION) \
+		-f docker/production/Dockerfile \
+		.
+
 .PHONY: install
 install: ## Install the dependencies
 	$(COMPOSER) install

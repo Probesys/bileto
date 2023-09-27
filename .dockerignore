@@ -1,0 +1,8 @@
+/.env.*
+/.git/
+/docs/
+/node_modules/
+/tests/
+/var/
+/vendor/
+/public/dev_assets/
