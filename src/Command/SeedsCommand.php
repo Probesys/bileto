@@ -51,6 +51,10 @@ class SeedsCommand extends Command
         // Seed roles (for both development and production environments)
         $roleSuper = $this->roleRepository->findOrCreateSuperRole();
 
+        if ($this->roleRepository->count([]) > 1 && $this->environment === 'prod') {
+            return Command::SUCCESS;
+        }
+
         $roleTech = $this->roleRepository->findOneOrCreateBy([
             'name' => 'Technician',
         ], [
