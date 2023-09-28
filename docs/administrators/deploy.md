@@ -6,7 +6,9 @@ Apache should work as well, but it hasn't been tested.
 
 **Warning:** Bileto is not ready for the production yet, but it should be soon!
 
-## Check the requirements
+## Installation
+
+### Check the requirements
 
 Check Git is installed:
 
@@ -44,7 +46,7 @@ $ composer --version
 Composer version 2.4.4 2022-10-27 14:39:29
 ```
 
-## Create the database
+### Create the database
 
 Create a dedicated user and database for Bileto.
 
@@ -67,7 +69,7 @@ MariaDB [(none)]> GRANT ALL PRIVILEGES ON bileto_production.* TO 'bileto_user'@'
 MariaDB [(none)]> FLUSH PRIVILEGES;
 ```
 
-## Download the code
+### Download the code
 
 You may want to put Bileto under a specific folder on your server, for instance:
 
@@ -84,7 +86,7 @@ $ cd bileto
 
 If your user doesn't have the permission to write in this folder, execute the command as `root`.
 
-## About file permissions
+### About file permissions
 
 You’ll have to make sure that the system user that runs the webserver can access the files under the `/var/www/bileto` directory.
 This user is often `www-data`, `apache` or `nginx`.
@@ -115,7 +117,7 @@ If your current user is not in the sudoers list, you’ll need to execute the `s
 
 The commands that need to be executed as `www-data` **will be prefixed by `www-data$` instead of simply `$` in the rest of the documentation.**
 
-## Switch to the latest version
+### Switch to the latest version
 
 Checkout the code to the latest version of Bileto:
 
@@ -125,7 +127,7 @@ www-data$ git switch $(git describe --tags $(git rev-list --tags --max-count=1))
 
 Go to GitHub if you want to find [the full list of releases](https://github.com/Probesys/bileto/releases).
 
-## Check the PHP extensions
+### Check the PHP extensions
 
 Check that the PHP extensions are installed:
 
@@ -142,7 +144,7 @@ php                  8.1.10     success
 
 If requirements are not met, you’ll have to install the missing extensions.
 
-## Configure the application
+### Configure the application
 
 Create a `.env.local` file:
 
@@ -159,7 +161,7 @@ The file is commented to help you to change it.
 www-data$ chmod 400 .env.local
 ```
 
-## Install the dependencies
+### Install the dependencies
 
 Install the Composer dependencies:
 
@@ -169,7 +171,7 @@ www-data$ composer install --no-dev --optimize-autoloader
 
 You don't need to install the NPM dependencies because the assets are already pre-built for production.
 
-## Setup the database
+### Setup the database
 
 Initialize the database:
 
@@ -178,7 +180,7 @@ www-data$ php bin/console doctrine:migrations:migrate --no-interaction
 www-data$ php bin/console db:seeds:load
 ```
 
-## Configure the webserver
+### Configure the webserver
 
 Configure your webserver to serve Bileto.
 With Nginx:
@@ -226,7 +228,7 @@ $ systemctl reload nginx
 
 Open Bileto in your web browser: it should display the login page.
 
-## Setup the Messenger worker
+### Setup the Messenger worker
 
 The Messenger worker performs asynchronous jobs.
 It's a sort of Cron mechanism on steroids.
@@ -264,7 +266,7 @@ You can find the logs with:
 # journalctl -f -u bileto-worker@service
 ```
 
-## Create your users
+### Create your users
 
 You must create your first user with the command line:
 
@@ -277,7 +279,7 @@ www-data$ php bin/console app:users:create --email=user@example.com --password=s
 Then, try to login via the interface, it should work.
 You can start using Bileto now.
 
-## Optional: Configure an LDAP server
+### Optional: Configure an LDAP server
 
 If you want to authenticate your users against an LDAP server, you’ll need to configure Bileto a bit more.
 Open your `.env.local` file, and uncomment the `LDAP_*` variables.
@@ -291,4 +293,41 @@ If you need to synchronize manually, you can run:
 
 ```console
 www-data$ php bin/console app:ldap:sync
+```
+
+## Updating the production environment
+
+**Please always start by checking the migration notes in [the changelog](/CHANGELOG.md) before updating Bileto.**
+
+Remember that commands prefixed by `www-data$` need to be run as the `www-data` user.
+[Read more about file permissions.](#about-file-permissions)
+
+Pull the changes with Git:
+
+```console
+www-data$ git fetch
+```
+
+Switch to the latest version:
+
+```console
+www-data$ git switch $(git describe --tags $(git rev-list --tags --max-count=1))
+```
+
+Install the new/updated dependencies:
+
+```console
+www-data$ composer install --no-dev --optimize-autoloader
+```
+
+Execute the migrations:
+
+```console
+www-data$ php bin/console doctrine:migrations:migrate --no-interaction
+```
+
+Finally, restart the Messenger worker with:
+
+```console
+# systemctl restart bileto-worker
 ```
