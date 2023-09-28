@@ -73,6 +73,8 @@ COPY docker/production/entrypoint.sh /entrypoint.sh
 
 # Install the Composer dependencies and set correct permissions
 RUN composer install --no-dev --optimize-autoloader --no-scripts \
+    && mkdir /var/www/html/var \
+    && mkdir /var/www/html/uploads \
     && chown -R www-data:www-data /var/www/html/
 
 USER www-data
