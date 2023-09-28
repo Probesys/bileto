@@ -1,5 +1,8 @@
 # Deploy in production
 
+This document explains how to install Bileto with a “standard” setup.
+[Learn how to install Bileto with Docker.](/docs/administrators/docker.md)
+
 In this documentation, it is expected that you're at ease with managing a webserver with PHP.
 Nginx is used as the webserver in this documentation.
 Apache should work as well, but it hasn't been tested.

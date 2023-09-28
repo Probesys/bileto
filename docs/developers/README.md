@@ -31,3 +31,4 @@ Architecture:
 - [GreenMail](/docs/developers/greenmail.md)
 - [Roles & permissions](/docs/developers/roles.md)
 - [Search engine](/docs/developers/search-engine.md)
+- [The Docker images](/docs/developers/docker-images.md)
