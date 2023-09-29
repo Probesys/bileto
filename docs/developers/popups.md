@@ -64,6 +64,23 @@ A form to perform an action:
 </form>
 ```
 
+Radio buttons to select an option:
+
+```twig
+<div>
+    <input
+        id="status-pending"
+        type="radio"
+        name="status"
+        value="pending"
+    />
+
+    <label class="popup__item" for="status-pending">
+        {{ 'tickets.status.pending' | trans }}
+    </label>
+</div>
+```
+
 ## Menu position
 
 You can align the menu with the button either on the right:
@@ -77,6 +94,13 @@ On the left:
 
 ```html
 <nav class="popup__container popup__container--left">
+</nav>
+```
+
+On the top:
+
+```html
+<nav class="popup__container popup__container--top">
 </nav>
 ```
 
