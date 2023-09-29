@@ -22,7 +22,7 @@ It allows you to:
 **Please note that Bileto is in an active development phase.**
 It is not advised to use Bileto in production yet.
 
-![Screenshot of the home page of Bileto showing 3 opened tickets and 2 organizations](public/screenshot.png)
+![Screenshot of the tickets page of Bileto showing 3 opened tickets and a search form.](public/screenshot.webp)
 
 It is written with [Symfony](https://symfony.com/) 6.3 and works with [PHP](https://www.php.net/) 8.1 or 8.2.
 The supported databases are PostgreSQL >= 11 and MariaDB >= 10.4.
