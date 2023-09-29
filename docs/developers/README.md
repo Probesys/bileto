@@ -13,6 +13,7 @@ Dedicated to the backend:
 
 Dedicated to the frontend:
 
+- [Working with the buttons](/docs/developers/buttons.md)
 - [Working with the icons](/docs/developers/icons.md)
 - [Working with the modals](/docs/developers/modals.md)
 - [Working with the popups](/docs/developers/popups.md)

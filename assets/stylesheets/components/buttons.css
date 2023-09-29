@@ -153,3 +153,24 @@ button[disabled],
     color: var(--color-grey11);
     font-size: 0.75em;
 }
+
+.button-group {
+    display: inline-flex;
+}
+
+.button-group .button-group__item {
+    height: 100%;
+}
+
+.button-group > .button-group__item:not(:first-child),
+.button-group > *:not(:first-child) .button-group__item {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.button-group > .button-group__item:not(:last-child),
+.button-group > *:not(:last-child) .button-group__item {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
