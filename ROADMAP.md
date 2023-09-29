@@ -12,7 +12,7 @@ Also, everything will not be in the version 1.0.
 - [x] login with LDAP;
 - [x] upload of images and attachments;
 - [ ] contracts and time spent (planned for [0.6.0-alpha](https://github.com/Probesys/bileto/milestone/6));
-- [ ] business rules (planned for [0.7.0-alpha](https://github.com/Probesys/bileto/milestone/7));
+- [ ] business rules (planned for [0.8.0-alpha](https://github.com/Probesys/bileto/milestone/7));
 - [ ] save search in “views”;
 - [ ] notification system;
 - [ ] <abbr>SLA</abbr>;
