@@ -189,6 +189,18 @@
                                     {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
                                 {% endif %}
 
+                                {% if ticket.status == 'resolved' %}
+                                    <p class="text--center text--success">
+                                        {{ icon('check') }}
+                                        {{ 'tickets.show.resolved' | trans }}
+                                    </p>
+                                {% elseif ticket.status == 'closed' %}
+                                    <p class="text--center text--secondary">
+                                        {{ icon('close') }}
+                                        {{ 'tickets.show.closed' | trans }}
+                                    </p>
+                                {% endif %}
+
                                 <div class="flow flow--small">
                                     {% if errors.content is defined %}
                                         <p class="form__error" role="alert" id="message-error">
@@ -254,58 +266,96 @@
                                     {% endif %}
                                 </div>
 
-                                <div class="row flow">
-                                    {% if not ticket.isFinished %}
-                                        <div class="row__item--extend flow flow--small">
-                                            {% if is_granted('orga:update:tickets:status', organization) %}
-                                                <div class="row row--center row--always flow">
-                                                    <label for="status-to">
-                                                        {{ 'tickets.show.status_to' | trans }}
-                                                    </label>
+                                <div class="text--right">
+                                    <div class="answer-button button-group" data-controller="button-select">
+                                        <button
+                                            id="form-create-message-submit"
+                                            class="button--primary button-group__item"
+                                            type="submit"
+                                            data-button-select-target="button"
+                                        >
+                                            {{ 'tickets.show.answer' | trans }}
+                                        </button>
 
-                                                    <select
-                                                        id="status-to"
-                                                        name="status"
-                                                        required
-                                                        {{ ticket.isFinished ? 'disabled' }}
-                                                        {% if errors.status is defined %}
-                                                            autofocus
-                                                            aria-invalid="true"
-                                                            aria-errormessage="status-error"
-                                                        {% endif %}
-                                                        data-form-new-answer-target="statusSelect"
-                                                    >
-                                                        {% for value, label in statuses %}
-                                                            <option value="{{ value }}" {{ value == status ? 'selected' }}>
-                                                                {{ label | trans }}
-                                                            </option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
+                                        {% if not ticket.isFinished and ticket.assignee == app.user %}
+                                            <details
+                                                class="popup"
+                                                data-controller="popup"
+                                                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                                            >
+                                                <summary class="popup__opener">
+                                                    <span class="button button--primary button-group__item">
+                                                        {{ icon('caret-down') }}
+                                                        <span class="sr-only">
+                                                            {{ 'tickets.show.answer.select_method' | trans }}
+                                                        </span>
+                                                    </span>
+                                                </summary>
 
-                                                {% if errors.status is defined %}
-                                                    <p class="form__error" role="alert" id="status-error">
-                                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                                        {{ errors.status }}
-                                                    </p>
-                                                {% endif %}
-                                            {% endif %}
-                                        </div>
-                                    {% elseif ticket.status == 'resolved' %}
-                                        <p class="row__item--extend text--success">
-                                            {{ icon('check') }}
-                                            {{ 'tickets.show.resolved' | trans }}
-                                        </p>
-                                    {% elseif ticket.status == 'closed' %}
-                                        <p class="row__item--extend text--secondary">
-                                            {{ icon('close') }}
-                                            {{ 'tickets.show.closed' | trans }}
-                                        </p>
-                                    {% endif %}
+                                                <nav class="popup__container popup__container--right popup__container--top">
+                                                    {% set checkedRadio = status == 'pending' or status == 'resolved' or status == 'closed' ? status : 'unchanged' %}
+                                                    {% set checkedRadio = checkedRadio == ticket.status ? 'unchanged' : checkedRadio %}
+                                                    <div>
+                                                        <input
+                                                            id="status-unchanged"
+                                                            type="radio"
+                                                            name="status"
+                                                            value=""
+                                                            data-action="button-select#update click->popup#close"
+                                                            {{ checkedRadio == 'unchanged' ? 'checked' }}
+                                                        />
+                                                        <label class="popup__item" for="status-unchanged">
+                                                            {{ 'tickets.show.answer' | trans }}
+                                                        </label>
+                                                    </div>
 
-                                    <button id="form-create-message-submit" class="button--primary row__item--extend" type="submit">
-                                        {{ 'tickets.show.answer' | trans }}
-                                    </button>
+                                                    <div>
+                                                        <input
+                                                            id="status-pending"
+                                                            type="radio"
+                                                            name="status"
+                                                            value="pending"
+                                                            data-action="button-select#update click->popup#close"
+                                                            {{ checkedRadio == 'pending' ? 'checked' }}
+                                                        />
+                                                        <label class="popup__item" for="status-pending">
+                                                            {{ 'tickets.show.answer.and_pending' | trans }}
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="popup__separator"></div>
+
+                                                    <div>
+                                                        <input
+                                                            id="status-resolved"
+                                                            type="radio"
+                                                            name="status"
+                                                            value="resolved"
+                                                            data-action="button-select#update click->popup#close"
+                                                            {{ checkedRadio == 'resolved' ? 'checked' }}
+                                                        />
+                                                        <label class="popup__item" for="status-resolved">
+                                                            {{ 'tickets.show.answer.and_resolve' | trans }}
+                                                        </label>
+                                                    </div>
+
+                                                    <div>
+                                                        <input
+                                                            id="status-closed"
+                                                            type="radio"
+                                                            name="status"
+                                                            value="closed"
+                                                            data-action="button-select#update click->popup#close"
+                                                            {{ checkedRadio == 'closed' ? 'checked' }}
+                                                        />
+                                                        <label class="popup__item" for="status-closed">
+                                                            {{ 'tickets.show.answer.and_close' | trans }}
+                                                        </label>
+                                                    </div>
+                                                </nav>
+                                            </details>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </form>
                         {% endif %}

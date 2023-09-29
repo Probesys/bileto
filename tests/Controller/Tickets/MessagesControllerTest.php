@@ -125,19 +125,44 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
     }
 
-    public function testPostCreateCanChangeTheTicketStatusIfPermissionsAreGranted(): void
+    public function testPostCreateChangesStatusToInProgressIfUserIsRequester(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), [
             'orga:create:tickets:messages',
-            'orga:update:tickets:status',
         ]);
-        $initialStatus = 'in_progress';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
+            'requester' => $user,
+            'status' => 'pending',
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+        ]);
+
+        $ticket->refresh();
+        $this->assertSame('in_progress', $ticket->getStatus());
+    }
+
+    public function testPostCreateChangesStatusToSelectedStatusIfUserIsAssignee(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+        ]);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'assignee' => $user,
+            'status' => 'in_progress',
         ]);
         $messageContent = 'My message';
 
@@ -160,11 +185,11 @@ class MessagesControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), [
             'orga:create:tickets:messages',
-            'orga:update:tickets:status',
         ]);
         $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'assignee' => $user,
             'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
@@ -197,6 +222,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'assignee' => $user,
         ]);
         $messageContent = 'My message';
 
@@ -230,6 +256,7 @@ class MessagesControllerTest extends WebTestCase
         $solution = MessageFactory::createOne();
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'assignee' => $user,
             'solution' => $solution,
         ]);
         $messageContent = 'My message';
@@ -258,11 +285,11 @@ class MessagesControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), [
             'orga:create:tickets:messages',
-            'orga:update:tickets:status',
         ]);
         $initialStatus = Factory::faker()->randomElement(Ticket::FINISHED_STATUSES);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
+            'assignee' => $user,
             'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
@@ -324,34 +351,6 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#message-error', 'Enter a message');
-    }
-
-    public function testPostCreateFailsIfStatusIsInvalid(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), [
-            'orga:create:tickets:messages',
-            'orga:update:tickets:status',
-        ]);
-        $initialStatus = Factory::faker()->randomElement(Ticket::OPEN_STATUSES);
-        $ticket = TicketFactory::createOne([
-            'createdBy' => $user,
-            'status' => $initialStatus,
-        ]);
-        $messageContent = 'My message';
-
-        $this->assertSame(0, MessageFactory::count());
-
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'status' => 'invalid',
-        ]);
-
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#status-error', 'Select a status from the list');
     }
 
     public function testPostCreateFailsIfIsConfidentialIsTrueButAccessIsNotGranted(): void

@@ -5,6 +5,7 @@
 import * as Turbo from '@hotwired/turbo'; // eslint-disable-line no-unused-vars
 import { Application } from '@hotwired/stimulus';
 
+import ButtonSelectController from '@/controllers/button_select_controller.js';
 import CheckboxesController from '@/controllers/checkboxes_controller.js';
 import ColorSchemeController from '@/controllers/color_scheme_controller.js';
 import EditorController from '@/controllers/editor_controller.js';
@@ -23,6 +24,7 @@ import TabsController from '@/controllers/tabs_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
 
 const application = Application.start();
+application.register('button-select', ButtonSelectController);
 application.register('checkboxes', CheckboxesController);
 application.register('color-scheme', ColorSchemeController);
 application.register('editor', EditorController);
