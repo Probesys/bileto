@@ -60,24 +60,29 @@ class MessagesController extends BaseController
         /** @var boolean $isConfidential */
         $isConfidential = $request->request->getBoolean('isConfidential', false);
 
-        if ($security->isGranted('orga:update:tickets:status', $organization)) {
-            /** @var string $status */
-            $status = $request->request->get('status', '');
+        $status = $ticket->getStatus();
+        if (
+            $user == $ticket->getAssignee() &&
+            !$ticket->isFinished()
+        ) {
+            $requestedStatus = $request->request->getString('status');
 
-            /** @var boolean $isSolution */
-            $isSolution = $request->request->getBoolean('isSolution', false);
-        } else {
-            $status = $ticket->getStatus();
-            $isSolution = false;
+            if (in_array($requestedStatus, Ticket::STATUSES)) {
+                $status = $requestedStatus;
+            }
+
+            if ($status === 'new' && !$isConfidential) {
+                $status = 'in_progress';
+            }
+        } elseif (
+            $user == $ticket->getRequester() &&
+            ($status === 'pending' || $status === 'resolved')
+        ) {
+            $status = 'in_progress';
         }
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
-
-        $statuses = Ticket::getStatusesWithLabels();
-        if ($ticket->getStatus() !== 'new') {
-            unset($statuses['new']);
-        }
 
         if (!$this->isCsrfTokenValid('create ticket message', $csrfToken)) {
             return $this->renderBadRequest('tickets/show.html.twig', [
@@ -87,8 +92,6 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'status' => $status,
-                'statuses' => $statuses,
-                'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
@@ -107,8 +110,6 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'status' => $status,
-                'statuses' => $statuses,
-                'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => [
                     'isConfidential' => $translator->trans('message.cannot_confidential', [], 'errors'),
@@ -131,25 +132,19 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'status' => $status,
-                'statuses' => $statuses,
-                'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
-        if ($message->isConfidential()) {
-            $isSolution = false;
-        }
-
-        if ($ticket->isFinished()) {
-            $status = $ticket->getStatus();
-            $isSolution = false;
-        }
+        $isSolution = (
+            $status === 'resolved' &&
+            !$message->isConfidential() &&
+            $ticket->getSolution() === null
+        );
 
         if ($isSolution) {
             $ticket->setSolution($message);
-            $status = 'resolved';
         }
 
         $initialStatus = $ticket->getStatus();
@@ -165,8 +160,6 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'status' => $status,
-                'statuses' => $statuses,
-                'isSolution' => $isSolution,
                 'isConfidential' => $isConfidential,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);

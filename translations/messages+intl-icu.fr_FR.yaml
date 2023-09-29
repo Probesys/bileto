@@ -296,13 +296,15 @@ tickets.show.actions.turn_into_incident: 'Changer en incident'
 tickets.show.actions.turn_into_request: 'Changer en demande'
 tickets.show.actions.update_status: 'Modifier le statut'
 tickets.show.answer: Répondre
+tickets.show.answer.and_close: 'Répondre et clore'
+tickets.show.answer.and_pending: 'Répondre et mettre en attente'
+tickets.show.answer.and_resolve: 'Répondre et résoudre'
+tickets.show.answer.select_method: 'Sélectionner une autre méthode pour répondre.'
 tickets.show.assign_yourself: 'vous l’attribuer'
 tickets.show.closed: 'Ce ticket est clos.'
+tickets.show.confidential_answer: 'Réponse confidentielle'
 tickets.show.hide_history: 'Masquer l’historique'
 tickets.show.impact: "Impact\_:"
-tickets.show.mark_as: 'Marquer comme…'
-tickets.show.mark_as.confidential: confidentiel
-tickets.show.mark_as.solution: solution
 tickets.show.message.confidential: confidentiel
 tickets.show.message.solution: solution
 tickets.show.message.via_email: 'Ce message a été envoyé par email'
@@ -313,7 +315,6 @@ tickets.show.opened_request: 'a ouvert cette <strong>demande</strong>'
 tickets.show.resolved: 'Ce ticket est résolu.'
 tickets.show.scroll_to_bottom: 'Défiler en bas'
 tickets.show.show_history: 'Afficher l’historique'
-tickets.show.status_to: 'Statut vers'
 tickets.show.urgency: "Urgence\_:"
 tickets.sidebar.title: 'Vos vues'
 tickets.sort.alphabetical: 'Ordre alphabétique'

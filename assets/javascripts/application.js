@@ -5,10 +5,10 @@
 import * as Turbo from '@hotwired/turbo'; // eslint-disable-line no-unused-vars
 import { Application } from '@hotwired/stimulus';
 
+import ButtonSelectController from '@/controllers/button_select_controller.js';
 import CheckboxesController from '@/controllers/checkboxes_controller.js';
 import ColorSchemeController from '@/controllers/color_scheme_controller.js';
 import EditorController from '@/controllers/editor_controller.js';
-import FormNewAnswerController from '@/controllers/form_new_answer_controller.js';
 import FormNewAuthorizationController from '@/controllers/form_new_authorization_controller.js';
 import FormNewContractController from '@/controllers/form_new_contract_controller.js';
 import FormPriorityController from '@/controllers/form_priority_controller.js';
@@ -24,10 +24,10 @@ import TabsController from '@/controllers/tabs_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
 
 const application = Application.start();
+application.register('button-select', ButtonSelectController);
 application.register('checkboxes', CheckboxesController);
 application.register('color-scheme', ColorSchemeController);
 application.register('editor', EditorController);
-application.register('form-new-answer', FormNewAnswerController);
 application.register('form-new-authorization', FormNewAuthorizationController);
 application.register('form-new-contract', FormNewContractController);
 application.register('form-priority', FormPriorityController);

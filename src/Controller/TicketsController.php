@@ -174,11 +174,6 @@ class TicketsController extends BaseController
             $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
         }
 
-        $statuses = Ticket::getStatusesWithLabels();
-        if ($ticket->getStatus() !== 'new') {
-            unset($statuses['new']);
-        }
-
         $timeline = $ticketTimeline->build($ticket);
 
         return $this->render('tickets/show.html.twig', [
@@ -187,9 +182,7 @@ class TicketsController extends BaseController
             'organization' => $organization,
             'today' => Time::relative('today'),
             'message' => '',
-            'status' => 'pending',
-            'statuses' => $statuses,
-            'isSolution' => false,
+            'status' => '',
             'isConfidential' => false,
         ]);
     }
