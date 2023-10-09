@@ -183,6 +183,7 @@ class TicketsController extends BaseController
             'today' => Time::relative('today'),
             'message' => '',
             'status' => '',
+            'minutesSpent' => 0,
             'isConfidential' => false,
         ]);
     }

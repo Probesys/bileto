@@ -9,11 +9,13 @@ namespace App\Controller\Tickets;
 use App\Controller\BaseController;
 use App\Entity\Message;
 use App\Entity\Ticket;
+use App\Entity\TimeSpent;
 use App\Message\SendMessageEmail;
 use App\Repository\MessageRepository;
 use App\Repository\MessageDocumentRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
+use App\Repository\TimeSpentRepository;
 use App\Service\TicketTimeline;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
@@ -36,6 +38,7 @@ class MessagesController extends BaseController
         MessageDocumentRepository $messageDocumentRepository,
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
+        TimeSpentRepository $timeSpentRepository,
         TicketTimeline $ticketTimeline,
         Security $security,
         ValidatorInterface $validator,
@@ -53,12 +56,15 @@ class MessagesController extends BaseController
             $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
         }
 
-        /** @var string $messageContent */
-        $messageContent = $request->request->get('message', '');
+        $messageContent = $request->request->getString('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
-        /** @var boolean $isConfidential */
         $isConfidential = $request->request->getBoolean('isConfidential', false);
+
+        $minutesSpent = $request->request->getInt('timeSpent', 0);
+        if ($minutesSpent < 0) {
+            $minutesSpent = 0;
+        }
 
         $status = $ticket->getStatus();
         if (
@@ -92,6 +98,7 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'status' => $status,
+                'minutesSpent' => $minutesSpent,
                 'isConfidential' => $isConfidential,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
@@ -110,6 +117,7 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'status' => $status,
+                'minutesSpent' => $minutesSpent,
                 'isConfidential' => $isConfidential,
                 'errors' => [
                     'isConfidential' => $translator->trans('message.cannot_confidential', [], 'errors'),
@@ -132,6 +140,7 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'status' => $status,
+                'minutesSpent' => $minutesSpent,
                 'isConfidential' => $isConfidential,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
@@ -160,6 +169,7 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'status' => $status,
+                'minutesSpent' => $minutesSpent,
                 'isConfidential' => $isConfidential,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
@@ -170,6 +180,41 @@ class MessagesController extends BaseController
 
         $messageRepository->save($message, true);
         $ticketRepository->save($ticket, true);
+
+        if ($minutesSpent > 0 && $security->isGranted('orga:create:tickets:time_spent', $organization)) {
+            $contract = $ticket->getOngoingContract();
+
+            if ($contract) {
+                $contractAvailableMinutes = $contract->getRemainingMinutes();
+
+                // If there is more spent time than time available in the
+                // contract, we don't want to charge the entire time. So we
+                // just charge the available time. Then, the remaining time
+                // will be set in a separated uncharged TimeSpent.
+                if ($minutesSpent > $contractAvailableMinutes) {
+                    $timeSpent = new TimeSpent();
+                    $timeSpent->setTicket($ticket);
+                    $timeSpent->setTime($contractAvailableMinutes);
+                    $timeSpent->setRealTime($contractAvailableMinutes);
+                    $timeSpent->setContract($contract);
+
+                    $timeSpentRepository->save($timeSpent, true);
+
+                    // Calculate the remaining time, and make sure it will not
+                    // be charged.
+                    $minutesSpent = $minutesSpent - $contractAvailableMinutes;
+                    $contract = null;
+                }
+            }
+
+            $timeSpent = new TimeSpent();
+            $timeSpent->setTicket($ticket);
+            $timeSpent->setTime($minutesSpent);
+            $timeSpent->setRealTime($minutesSpent);
+            $timeSpent->setContract($contract);
+
+            $timeSpentRepository->save($timeSpent, true);
+        }
 
         $messageDocuments = $messageDocumentRepository->findBy([
             'createdBy' => $user,

@@ -239,24 +239,60 @@
                                 </div>
 
                                 <div class="flow flow--smaller">
-                                    {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
-                                        <div>
-                                            <input
-                                                type="checkbox"
-                                                id="is-confidential"
-                                                name="isConfidential"
-                                                {{ isConfidential ? 'checked' }}
-                                                {% if errors.isConfidential is defined %}
-                                                    aria-invalid="true"
-                                                    aria-errormessage="is-confidential-error"
-                                                {% endif %}
-                                            />
+                                    <div class="row row--always row--center">
+                                        <div class="row__item--extend">
+                                            {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
+                                                <input
+                                                    type="checkbox"
+                                                    id="is-confidential"
+                                                    name="isConfidential"
+                                                    {{ isConfidential ? 'checked' }}
+                                                    {% if errors.isConfidential is defined %}
+                                                        aria-invalid="true"
+                                                        aria-errormessage="is-confidential-error"
+                                                    {% endif %}
+                                                />
 
-                                            <label for="is-confidential">
-                                                {{ 'tickets.show.confidential_answer' | trans }}
-                                            </label>
+                                                <label for="is-confidential">
+                                                    {{ 'tickets.show.confidential_answer' | trans }}
+                                                </label>
+                                            {% endif %}
                                         </div>
-                                    {% endif %}
+
+                                        {% if is_granted('orga:create:tickets:time_spent', organization) %}
+                                            <div
+                                                data-controller="switch"
+                                                data-action="keydown.esc->switch#change"
+                                                data-switch-for-param="time-spent-button"
+                                            >
+                                                <div data-switch-target="panel" id="time-spent-button" {{ minutesSpent > 0 ? 'hidden' }}>
+                                                    <button
+                                                        class="button--discreet text--small"
+                                                        type="button"
+                                                        data-action="switch#change"
+                                                        data-switch-for-param="time-spent-input"
+                                                    >
+                                                        {{ icon('clock') }}
+                                                        {{ 'tickets.time_spent' | trans }}
+                                                    </button>
+                                                </div>
+
+                                                <div data-switch-target="panel" id="time-spent-input" {{ minutesSpent == 0 ? 'hidden' }}>
+                                                    <label>
+                                                        <input
+                                                            class="input--size2"
+                                                            name="timeSpent"
+                                                            type="number"
+                                                            value="{{ minutesSpent }}"
+                                                            min="0"
+                                                        />
+
+                                                        {{ 'tickets.show.minutes' | trans }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
 
                                     {% if errors.isConfidential is defined %}
                                         <p class="form__error" role="alert" id="is-confidential-error">

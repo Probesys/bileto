@@ -8,9 +8,11 @@ namespace App\Tests\Controller\Tickets;
 
 use App\Entity\Ticket;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\MessageDocumentFactory;
 use App\Tests\Factory\TicketFactory;
+use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils\Time;
@@ -123,6 +125,66 @@ class MessagesControllerTest extends WebTestCase
         $this->assertNotNull($message);
         $this->assertSame($message->getUid(), $messageDocument1->getMessage()->getUid());
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
+    }
+
+    public function testPostCreateAcceptsTimeSpent(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:create:tickets:time_spent',
+        ]);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+        ]);
+        $messageContent = 'My message';
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'timeSpent' => 20,
+        ]);
+
+        $timeSpent = TimeSpentFactory::first();
+        $this->assertSame(20, $timeSpent->getTime());
+        $this->assertSame($ticket->getId(), $timeSpent->getTicket()->getId());
+    }
+
+    public function testPostCreateCanCreateTwoTimeSpentIfContractIsAlmostFinished(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:create:tickets:time_spent',
+        ]);
+        $contract = ContractFactory::createOne([
+            'startAt' => Time::ago(1, 'week'),
+            'endAt' => Time::fromNow(1, 'week'),
+            'maxHours' => 1,
+        ]);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+        ]);
+        $ticket->addContract($contract->object());
+        $messageContent = 'My message';
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'timeSpent' => 80,
+        ]);
+
+        list($timeSpent1, $timeSpent2) = TimeSpentFactory::all();
+        $this->assertSame(60, $timeSpent1->getTime());
+        $this->assertSame($ticket->getId(), $timeSpent1->getTicket()->getId());
+        $this->assertSame($contract->getId(), $timeSpent1->getContract()->getId());
+        $this->assertSame(20, $timeSpent2->getTime());
+        $this->assertSame($ticket->getId(), $timeSpent2->getTicket()->getId());
+        $this->assertNull($timeSpent2->getContract());
     }
 
     public function testPostCreateChangesStatusToInProgressIfUserIsRequester(): void

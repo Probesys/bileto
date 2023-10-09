@@ -156,6 +156,28 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
         return $this;
     }
 
+    public function getConsumedMinutes(): int
+    {
+        $times = array_map(function (TimeSpent $timeSpent) {
+            return $timeSpent->getTime();
+        }, $this->getTimeSpents()->getValues());
+
+        /** @var int */
+        $consumedHours = array_sum($times);
+
+        return $consumedHours;
+    }
+
+    public function getConsumedHours(): float
+    {
+        return $this->getConsumedMinutes() / 60;
+    }
+
+    public function getRemainingMinutes(): int
+    {
+        return ($this->getMaxHours() * 60) - $this->getConsumedMinutes();
+    }
+
     public function getNotes(): ?string
     {
         return $this->notes;
