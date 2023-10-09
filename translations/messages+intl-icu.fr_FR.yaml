@@ -321,6 +321,9 @@ tickets.show.opened_request: 'a ouvert cette <strong>demande</strong>'
 tickets.show.resolved: 'Ce ticket est résolu.'
 tickets.show.scroll_to_bottom: 'Défiler en bas'
 tickets.show.show_history: 'Afficher l’historique'
+tickets.show.time_spent: "{count, plural, one {1\_minute passée} other {#\_minutes passées}}"
+tickets.show.time_spent.charged: "({count, plural, one {1\_minute facturée} other {#\_minutes facturées}})"
+tickets.show.time_spent.not_charged: '(non facturées)'
 tickets.show.urgency: "Urgence\_:"
 tickets.sidebar.title: 'Vos vues'
 tickets.sort.alphabetical: 'Ordre alphabétique'

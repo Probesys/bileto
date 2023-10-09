@@ -80,6 +80,51 @@
     text-align: right;
 }
 
+.timeline__time-spent {
+    display: flex;
+    margin-right: 2rem;
+    margin-left: var(--width-col-avatars);
+
+    flex-direction: row;
+    align-items: center;
+}
+
+.timeline__time-spent::before {
+    content: '';
+
+    z-index: 10;
+
+    display: block;
+    width: 3.4rem;
+    height: 3.4rem;
+
+    background-color: var(--color-grey6);
+    background-image: url('../../icons/clock.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+    border-radius: 50%;
+}
+
+.timeline__time-spent + .timeline__time-spent {
+    margin-top: 2rem;
+}
+
+.timeline__time-spent-message {
+    padding-right: 2rem;
+    padding-left: 1rem;
+
+    flex: 1;
+}
+
+.timeline__time-spent-date {
+    flex-shrink: 0;
+
+    color: var(--color-grey11);
+    font-size: var(--font-size-small);
+    text-align: right;
+}
+
 .timeline__editor {
     position: relative;
 

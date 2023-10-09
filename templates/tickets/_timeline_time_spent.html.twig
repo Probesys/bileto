@@ -1,0 +1,25 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div class="timeline__time-spent" data-test="time-spent-item">
+    <div class="timeline__time-spent-message">
+        {{ 'tickets.show.time_spent' | trans({ count: timeSpent.realTime }) }}
+
+        {% if timeSpent.contract is null %}
+            <span class="text--secondary text--small">
+                {{ 'tickets.show.time_spent.not_charged' | trans }}
+            </span>
+        {% elseif timeSpent.realTime != timeSpent.time %}
+            <span class="text--secondary text--small">
+                {{ 'tickets.show.time_spent.charged' | trans({ count: timeSpent.time }) }}
+            </span>
+        {% endif %}
+    </div>
+
+    <time class="timeline__time-spent-date" datetime="{{ timeSpent.createdAt | dateIso }}">
+        {{ timeSpent.createdAt | dateTrans('HH:mm') }}
+    </time>
+</div>

@@ -169,6 +169,8 @@
 
                         {% if timelineItem.timelineType == 'message' %}
                             {{ include('tickets/_timeline_message.html.twig', { message: timelineItem }) }}
+                        {% elseif timelineItem.timelineType == 'time_spent' %}
+                            {{ include('tickets/_timeline_time_spent.html.twig', { timeSpent: timelineItem }) }}
                         {% elseif timelineItem.timelineType == 'event' %}
                             {{ include('tickets/_timeline_event.html.twig', { event: timelineItem }) }}
                         {% endif %}
