@@ -61,9 +61,14 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
         $query = $entityManager->createQuery(<<<SQL
             SELECT c
             FROM App\Entity\Contract c
+            LEFT JOIN c.timeSpents ts
+
             WHERE c.startAt <= :now
             AND :now < c.endAt
             AND c.organization IN (:orgaIds)
+
+            GROUP BY c.id
+            HAVING c.maxHours > (COALESCE(SUM(ts.time), 0) / 60.0)
         SQL);
 
         $query->setParameter('now', $now);

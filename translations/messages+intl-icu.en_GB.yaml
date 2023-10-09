@@ -49,7 +49,7 @@ advanced_search_syntax.qualifiers.type.values: 'The possible values for â€œtypeâ
 advanced_search_syntax.title: 'Quick reference for the advanced syntax'
 contracts.days_consumed: "<strong>{days}\_d consumed</strong>"
 contracts.end_at: 'End on'
-contracts.hours_consumed: "<strong>{hours}\_h consumed</strong> on {maxHours}\_h"
+contracts.hours_consumed: '<strong>{hours} consumed</strong> on {maxHours}h'
 contracts.index.new_contract: 'New contract'
 contracts.index.no_contracts: 'No contracts'
 contracts.index.number: '{count, plural, =0 {No contracts} one {1 contract} other {# contracts}}'

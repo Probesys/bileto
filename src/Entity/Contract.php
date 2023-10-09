@@ -207,6 +207,10 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
      */
     public function getStatus(): string
     {
+        if ($this->getConsumedHours() >= $this->getMaxHours()) {
+            return 'finished';
+        }
+
         $today = Utils\Time::now();
         if ($today < $this->startAt) {
             return 'coming';
