@@ -93,9 +93,14 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'contracts')]
     private Collection $tickets;
 
+    /** @var Collection<int, TimeSpent> $timeSpents */
+    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: TimeSpent::class)]
+    private Collection $timeSpents;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
+        $this->timeSpents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -257,5 +262,35 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
     public function getTickets(): Collection
     {
         return $this->tickets;
+    }
+
+    /**
+     * @return Collection<int, TimeSpent>
+     */
+    public function getTimeSpents(): Collection
+    {
+        return $this->timeSpents;
+    }
+
+    public function addTimeSpent(TimeSpent $timeSpent): static
+    {
+        if (!$this->timeSpents->contains($timeSpent)) {
+            $this->timeSpents->add($timeSpent);
+            $timeSpent->setContract($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeSpent(TimeSpent $timeSpent): static
+    {
+        if ($this->timeSpents->removeElement($timeSpent)) {
+            // set the owning side to null (unless already changed)
+            if ($timeSpent->getContract() === $this) {
+                $timeSpent->setContract(null);
+            }
+        }
+
+        return $this;
     }
 }
