@@ -57,6 +57,22 @@ textarea[aria-invalid] {
     border-color: var(--color-error11);
 }
 
+.input--size1 {
+    width: 6rem;
+}
+
+.input--size2 {
+    width: 10rem;
+}
+
+.input--size3 {
+    width: 15rem;
+}
+
+.input--size4 {
+    width: 20rem;
+}
+
 /**
  * Accessible custom checkboxes and radio buttons.
  * @see https://www.a11ywithlindsey.com/blog/create-custom-keyboard-accesible-checkboxes
