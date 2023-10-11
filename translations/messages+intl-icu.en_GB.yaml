@@ -82,6 +82,9 @@ home.no_tickets: 'No tickets'
 home.title: 'Welcome to Bileto'
 home.your_organizations: '{count, plural, one {Your organization} other {Your organizations}}'
 home.your_tickets: 'Your tickets'
+hours_formatter.hours: '{hours}h'
+hours_formatter.hours_and_minutes: "{hours}h\_{minutes}m"
+hours_formatter.minutes: '{minutes}m'
 layout.activate_javascript: 'You need to activate the JavaScript in order to use Bileto.'
 layout.home: Home
 layout.logout: Logout
