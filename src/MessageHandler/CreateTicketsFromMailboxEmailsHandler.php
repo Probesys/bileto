@@ -158,6 +158,7 @@ class CreateTicketsFromMailboxEmailsHandler
                 }
 
                 $messageDocument->setMessage($message);
+                $messageDocument->setCreatedBy($requester);
                 $this->messageDocumentRepository->save($messageDocument, true);
             }
 
