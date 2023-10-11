@@ -20,6 +20,7 @@ import NotificationsController from '@/controllers/notifications_controller.js';
 import PasswordController from '@/controllers/password_controller.js';
 import PopupController from '@/controllers/popup_controller.js';
 import ScrollToController from '@/controllers/scroll_to_controller.js';
+import SwitchController from '@/controllers/switch_controller.js';
 import TabsController from '@/controllers/tabs_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
 
@@ -39,6 +40,7 @@ application.register('notifications', NotificationsController);
 application.register('password', PasswordController);
 application.register('popup', PopupController);
 application.register('scroll-to', ScrollToController);
+application.register('switch', SwitchController);
 application.register('tabs', TabsController);
 application.register('tinymce', TinymceController);
 
