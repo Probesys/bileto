@@ -31,7 +31,6 @@
 .tabs__panel {
     padding: 2rem;
 
-    background-color: var(--color-grey2);
     border: var(--width-border) solid var(--color-grey7);
     border-radius: 0 0 0.5rem 0.5rem;
 }
