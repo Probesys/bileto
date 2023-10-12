@@ -36,8 +36,6 @@
     padding-top: 1rem;
     padding-bottom: 1rem;
 
-    font-size: 0.9em;
-
     background-color: var(--color-primary3);
     border-top: var(--width-border) solid var(--color-primary7);
 }

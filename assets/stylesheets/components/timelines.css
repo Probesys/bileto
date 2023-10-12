@@ -30,7 +30,7 @@
     padding-top: 1rem;
     padding-bottom: 1rem;
 
-    font-size: 0.9em;
+    font-size: var(--font-size-normal);
     text-align: right;
 }
 
@@ -60,7 +60,7 @@
     align-items: baseline;
 
     color: var(--color-grey11);
-    font-size: 0.8em;
+    font-size: var(--font-size-small);
 }
 
 .timeline__event + .timeline__event {
@@ -77,7 +77,6 @@
 .timeline__event-date {
     flex-shrink: 0;
 
-    font-size: 0.9em;
     text-align: right;
 }
 

@@ -20,7 +20,7 @@ textarea {
 
     color: inherit;
     font-family: inherit;
-    font-size: 1em;
+    font-size: var(--font-size-normal);
     line-height: 1.5;
 
     background-color: var(--color-grey1);
@@ -162,7 +162,7 @@ select {
 
     color: inherit;
     font-family: inherit;
-    font-size: 1em;
+    font-size: var(--font-size-normal);
     line-height: 1.5;
     text-overflow: ellipsis;
 
@@ -286,14 +286,14 @@ legend {
     padding-left: 0.75rem;
 
     color: var(--color-grey11);
-    font-size: 0.85em;
+    font-size: var(--font-size-small);
 }
 
 .form__error {
     padding-left: 1.75em;
 
     color: var(--color-error11);
-    font-size: 0.9em;
+    font-size: var(--font-size-small);
     font-weight: bold;
 
     background-image: url("../../icons/circle-exclamation-error.svg");

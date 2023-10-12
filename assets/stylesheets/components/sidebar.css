@@ -30,10 +30,6 @@ ul.sidebar {
     color: var(--color-grey11);
 }
 
-.sidebar__item {
-    font-size: 1.1em;
-}
-
 .sidebar__anchor {
     display: block;
     padding: 1rem;
@@ -69,6 +65,4 @@ ul.sidebar {
 
 .sidebar__anchor .icon {
     margin-right: 0.5rem;
-
-    font-size: 0.9em;
 }
