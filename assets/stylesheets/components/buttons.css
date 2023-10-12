@@ -16,7 +16,7 @@ button,
     background-image: linear-gradient(to bottom, rgb(0 0 0 / 0%), rgb(0 0 0 / 5%));
     box-shadow: 0 1px 2px var(--color-box-shadow);
     border: var(--width-border) solid var(--color-grey8);
-    border-radius: 0.75rem;
+    border-radius: 2rem;
 
     transition:
         background-color 0.2s ease-in-out,
