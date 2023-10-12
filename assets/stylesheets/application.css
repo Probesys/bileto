@@ -3,9 +3,9 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 @import "./_reset.css";
-@import "./_colors.dark.css";
-@import "./_colors.light.css";
 @import "./_fonts.css";
+@import "./variables/colors.dark.css";
+@import "./variables/colors.light.css";
 @import "./variables/sizes.css";
 @import "./utils/flow.css";
 @import "./utils/grids.css";
