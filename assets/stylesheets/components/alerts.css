@@ -9,7 +9,7 @@
     background-repeat: no-repeat;
     background-position: left 1rem top 1.5rem;
     background-size: 3rem;
-    border-width: 0.25rem;
+    border-width: var(--width-border-bold);
     border-style: solid;
     border-radius: 0.5rem;
 }

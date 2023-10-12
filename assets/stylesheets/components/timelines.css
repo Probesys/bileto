@@ -17,7 +17,7 @@
     bottom: 0;
     left: calc(var(--width-col-avatars) + var(--position-timeline-bar));
 
-    border-left: 0.25rem solid var(--color-grey6);
+    border-left: var(--width-border-bold) solid var(--color-grey6);
 }
 
 @media (min-width: 800px) {
@@ -87,5 +87,5 @@
     margin-left: var(--width-col-avatars);
 
     background-color: var(--color-grey1);
-    border-top: 0.25rem solid var(--color-grey6);
+    border-top: var(--width-border-bold) solid var(--color-grey6);
 }

@@ -55,7 +55,7 @@
 a.card__title {
     text-decoration: none;
 
-    outline-offset: -0.3rem;
+    outline-offset: calc(-1 * var(--width-outline));
 }
 
 .card__body {

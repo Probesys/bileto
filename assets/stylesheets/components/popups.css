@@ -23,7 +23,7 @@
 }
 
 .popup__opener:focus > * {
-    outline: 0.3rem solid var(--color-primary9);
+    outline: var(--width-outline) solid var(--color-primary9);
 }
 
 .popup__container {
@@ -39,7 +39,7 @@
     font-size: 0.9em;
 
     background-color: var(--color-primary3);
-    border-top: 0.3rem solid var(--color-primary7);
+    border-top: var(--width-border) solid var(--color-primary7);
 }
 
 @media (min-width: 800px) {
@@ -50,8 +50,8 @@
         min-width: 27rem;
 
         box-shadow: 1px 2px 3px 1px var(--color-box-shadow);
-        border: 0.2rem solid var(--color-primary7);
-        border-top-width: 0.3rem;
+        border: var(--width-border) solid var(--color-primary7);
+        border-top-width: var(--width-border);
         border-radius: 0.75rem;
     }
 
@@ -96,7 +96,7 @@
         content: "";
 
         position: absolute;
-        top: -10px;
+        top: -8px;
 
         display: block;
         width: 16px;
@@ -123,7 +123,7 @@
 
     .popup__container--top::before {
         top: auto;
-        bottom: -10px;
+        bottom: -8px;
 
         transform: rotate(180deg);
     }
@@ -197,7 +197,7 @@ input[type="radio"]:focus + .popup__item {
 
     background-color: var(--color-primary5);
 
-    outline: 0.3rem solid var(--color-primary9);
+    outline: var(--width-outline) solid var(--color-primary9);
     outline-offset: -0.1rem;
 }
 

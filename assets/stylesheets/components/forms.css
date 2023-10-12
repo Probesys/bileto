@@ -25,7 +25,7 @@ textarea {
 
     background-color: var(--color-grey1);
     box-shadow: 2px 2px 3px var(--color-box-shadow) inset;
-    border: 0.25rem solid var(--color-grey8);
+    border: var(--width-border-input) solid var(--color-grey8);
     border-radius: 0.5rem;
 
     transition:
@@ -100,7 +100,7 @@ input[type="radio"] + label::before {
 
     background-color: var(--color-grey1);
     box-shadow: 2px 2px 3px var(--color-box-shadow) inset;
-    border: 0.25rem solid var(--color-grey8);
+    border: var(--width-border-input) solid var(--color-grey8);
     border-radius: 0.5rem;
 
     transition:
@@ -113,7 +113,7 @@ input[type="radio"] + label::before {
 }
 
 input[type="checkbox"]:focus + label::before {
-    outline: 0.3rem solid var(--color-primary9);
+    outline: var(--width-outline) solid var(--color-primary9);
 }
 
 input[type="checkbox"]:checked + label::before,
@@ -140,8 +140,8 @@ input[type="radio"]:checked + label::after {
     height: 0.75rem;
     margin-top: -0.3rem;
 
-    border-bottom: 0.25rem solid var(--color-grey12);
-    border-left: 0.25rem solid var(--color-grey12);
+    border-bottom: var(--width-border-bold) solid var(--color-grey12);
+    border-left: var(--width-border-bold) solid var(--color-grey12);
 
     transform: rotate(-45deg);
 }
@@ -151,8 +151,8 @@ input[type="radio"]:checked + label::after {
     margin-top: 0;
 
     background-color: var(--color-grey12);
-    border-top: 0.25rem solid var(--color-grey12);
-    border-right: 0.25rem solid var(--color-grey12);
+    border-top: var(--width-border-bold) solid var(--color-grey12);
+    border-right: var(--width-border-bold) solid var(--color-grey12);
     border-radius: 50%;
 }
 
@@ -167,7 +167,7 @@ select {
     text-overflow: ellipsis;
 
     background-color: var(--color-grey3);
-    border: 0.25rem solid var(--color-grey8);
+    border: var(--width-border-input) solid var(--color-grey8);
     border-radius: 0.5rem;
 
     transition:
@@ -228,8 +228,8 @@ fieldset {
 
     background-color: var(--color-grey2);
     border: none;
-    border-top: 0.25rem solid var(--color-grey6);
-    border-bottom: 0.25rem solid var(--color-grey6);
+    border-top: var(--width-border) solid var(--color-grey6);
+    border-bottom: var(--width-border) solid var(--color-grey6);
 }
 
 @media (min-width: 800px) {
@@ -237,7 +237,7 @@ fieldset {
         margin-right: -1.25rem;
         margin-left: -1.25rem;
 
-        border: 0.25rem solid var(--color-grey6);
+        border: var(--width-border) solid var(--color-grey6);
         border-radius: 0.5rem;
     }
 }
@@ -251,7 +251,7 @@ legend {
 
 .editor {
     background-color: var(--tinymce-background);
-    border: 0.25rem solid var(--color-grey8);
+    border: var(--width-border-input) solid var(--color-grey8);
     border-radius: 0.5rem;
 
     transition: border-color 0.2s ease-in-out;
@@ -272,6 +272,8 @@ legend {
 
 .editor__documents {
     padding: 1.5rem;
+
+    border-top: var(--width-border) solid var(--color-grey8);
 }
 
 .editor .tox-tinymce {
@@ -337,7 +339,7 @@ legend {
     box-shadow: none;
     border-color: transparent;
 
-    outline-offset: -0.3rem;
+    outline-offset: calc(-1 * var(--width-outline));
 }
 
 .input-container button:hover,

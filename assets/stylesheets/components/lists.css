@@ -13,12 +13,12 @@
 }
 
 .list--border {
-    border: 0.25rem solid var(--color-grey6);
+    border: var(--width-border) solid var(--color-grey7);
     border-radius: 0.5rem;
 }
 
 .list--border > li + li {
-    border-top: 0.25rem solid var(--color-grey6);
+    border-top: var(--width-border) solid var(--color-grey7);
 }
 
 .list--strip > li:first-child {

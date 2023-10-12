@@ -42,7 +42,7 @@ ul.sidebar {
     text-decoration: none;
     white-space: nowrap;
 
-    border-left: 0.75rem solid transparent;
+    border-left: var(--width-border-bolder) solid transparent;
     border-radius: 0.5rem;
 
     transition:

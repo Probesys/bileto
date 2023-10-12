@@ -6,6 +6,7 @@
 @import "./_colors.dark.css";
 @import "./_colors.light.css";
 @import "./_fonts.css";
+@import "./variables/sizes.css";
 @import "./utils/flow.css";
 @import "./utils/grids.css";
 @import "./utils/indent.css";
@@ -77,7 +78,7 @@ body {
 }
 
 *:focus {
-    outline: 0.3rem solid var(--color-primary9);
+    outline: var(--width-outline) solid var(--color-primary9);
 }
 
 h1 {

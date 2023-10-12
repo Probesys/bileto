@@ -37,7 +37,7 @@
 
     opacity: 0.9;
     background-color: var(--color-grey1);
-    border: 1px solid var(--color-grey7);
+    border: var(--width-border) solid var(--color-grey7);
     border-radius: 2rem;
 }
 
@@ -51,12 +51,12 @@
 
     flex: 1;
 
-    border: 1px solid var(--color-grey7);
+    border: var(--width-border) solid var(--color-grey7);
     border-radius: 0.5rem;
 }
 
 .message--solution .message__box {
-    border-width: 2px;
+    border-width: var(--width-border-bold);
     border-color: var(--color-success7);
 }
 
@@ -92,7 +92,7 @@
     font-size: 0.9em;
 
     background-color: var(--color-grey3);
-    border-bottom: 1px solid var(--color-grey7);
+    border-bottom: var(--width-border) solid var(--color-grey7);
     border-radius: 0.5rem 0.5rem 0 0;
 }
 
@@ -100,7 +100,7 @@
     color: var(--color-success12);
 
     background-color: var(--color-success4);
-    border-bottom-width: 2px;
+    border-bottom-width: var(--width-border-bold);
     border-bottom-color: var(--color-success7);
 }
 
@@ -123,7 +123,7 @@
 
     font-size: 0.8em;
 
-    border: 1px solid var(--color-grey6);
+    border: var(--width-border) solid var(--color-grey6);
     border-radius: 0.5rem;
 }
 
@@ -205,12 +205,13 @@
 
     color: var(--color-grey11);
 
-    border-left: 0.25rem solid var(--color-primary6);
+    border-left: var(--width-border-bold) solid var(--color-primary6);
 }
 
 .message__bottom {
     padding: 2rem;
 
     background-color: var(--color-grey1);
+    border-top: var(--width-border) solid var(--color-grey6);
     border-radius: 0 0 0.5rem 0.5rem;
 }
