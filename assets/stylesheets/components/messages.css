@@ -3,9 +3,21 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 .message {
+    --message-background: var(--color-grey2);
+    --message-background-header: var(--color-grey3);
+    --message-border-color: var(--color-grey7);
+    --message-border-width: var(--width-border);
+
     display: flex;
 
     align-items: flex-start;
+}
+
+.message--solution {
+    --message-background: var(--color-success1);
+    --message-background-header: var(--color-success4);
+    --message-border-color: var(--color-success7);
+    --message-border-width: var(--width-border-bold);
 }
 
 .message__avatar {
@@ -37,7 +49,7 @@
 
     opacity: 0.9;
     background-color: var(--color-grey1);
-    border: 1px solid var(--color-grey7);
+    border: var(--message-border-width) solid var(--message-border-color);
     border-radius: 2rem;
 }
 
@@ -51,13 +63,8 @@
 
     flex: 1;
 
-    border: 1px solid var(--color-grey7);
+    border: var(--message-border-width) solid var(--message-border-color);
     border-radius: 0.5rem;
-}
-
-.message--solution .message__box {
-    border-width: 2px;
-    border-color: var(--color-success7);
 }
 
 @media (min-width: 800px) {
@@ -73,13 +80,9 @@
         width: 8px;
         height: 16px;
 
-        background-color: var(--color-grey7);
+        background-color: var(--message-border-color);
 
         clip-path: polygon(0 50%, 100% 0, 100% 100%);
-    }
-
-    .message--solution .message__avatar + .message__box::before {
-        background-color: var(--color-success7);
     }
 }
 
@@ -89,19 +92,15 @@
 
     align-items: center;
 
-    font-size: 0.9em;
+    font-size: var(--font-size-small);
 
-    background-color: var(--color-grey3);
-    border-bottom: 1px solid var(--color-grey7);
+    background-color: var(--message-background-header);
+    border-bottom: var(--message-border-width) solid var(--message-border-color);
     border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .message--solution .message__top {
     color: var(--color-success12);
-
-    background-color: var(--color-success4);
-    border-bottom-width: 2px;
-    border-bottom-color: var(--color-success7);
 }
 
 .message__top * + * {
@@ -113,7 +112,6 @@
 }
 
 .message__author {
-    font-size: 0.9em;
     font-weight: bold;
 }
 
@@ -121,19 +119,14 @@
     margin-left: 1rem;
     padding: 0.25rem 0.5rem;
 
-    font-size: 0.8em;
+    font-size: var(--font-size-small);
 
-    border: 1px solid var(--color-grey6);
+    border: var(--width-border) solid var(--message-border-color);
     border-radius: 0.5rem;
-}
-
-.message--solution .message__badge {
-    border-color: var(--color-success7);
 }
 
 .message__date {
     color: var(--color-grey11);
-    font-size: 0.9em;
 }
 
 .message--solution .message__date {
@@ -145,7 +138,7 @@
 
     padding: 3rem 2rem;
 
-    background-color: var(--color-grey1);
+    background-color: var(--message-background);
     border-radius: 0 0 0.5rem 0.5rem;
 }
 
@@ -172,10 +165,6 @@
     background-image: url("../../icons/user-secret-light.svg");
 }
 
-.message--solution .message__content {
-    background-color: var(--color-success1);
-}
-
 .message__content * + p,
 .message__content * + ul,
 .message__content * + ol {
@@ -186,7 +175,7 @@
 .message__content td {
     padding: initial;
 
-    font-size: 1em;
+    font-size: var(--font-size-normal);
 
     vertical-align: initial;
 }
@@ -195,8 +184,12 @@
     border-bottom: none;
 }
 
+.message__content tbody tr:nth-child(odd) {
+    background-color: var(--message-background);
+}
+
 .message__content tbody tr:nth-child(even) {
-    background-color: var(--color-grey1);
+    background-color: var(--message-background);
 }
 
 .message__content blockquote {
@@ -205,12 +198,13 @@
 
     color: var(--color-grey11);
 
-    border-left: 0.25rem solid var(--color-primary6);
+    border-left: var(--width-border-bold) solid var(--color-primary6);
 }
 
 .message__bottom {
     padding: 2rem;
 
-    background-color: var(--color-grey1);
+    background-color: var(--message-background);
+    border-top: var(--message-border-width) solid var(--message-border-color);
     border-radius: 0 0 0.5rem 0.5rem;
 }

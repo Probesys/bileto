@@ -24,13 +24,13 @@
 .badge--smaller {
     padding: 0.25rem 0.5rem;
 
-    font-size: 0.8em;
+    font-size: var(--font-size-smaller);
 }
 
 .badge--small {
     padding: 0.25rem 0.75rem;
 
-    font-size: 0.9em;
+    font-size: var(--font-size-small);
 }
 
 .badge--blue {

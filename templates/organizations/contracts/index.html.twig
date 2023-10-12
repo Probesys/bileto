@@ -40,7 +40,7 @@
                             <li class="flow flow--smaller" data-test="contract-item">
                                 <div class="row row--always flow flow--smaller">
                                     <div class="row__item--extend">
-                                        <h2 class="text--small">
+                                        <h2 class="text--normal">
                                             <a href="{{ path('organization contract', {'uid': organization.uid, 'contract_uid': contract.uid }) }}">
                                                 {{ contract.name }}
                                             </a>
@@ -48,7 +48,7 @@
                                     </div>
 
                                     <div>
-                                        <span class="badge badge--smaller badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
+                                        <span class="badge badge--small badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
                                             <span class="sr-only">
                                                 {{ 'contracts.status' | trans }}
                                             </span>
@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row row--baseline flow flow--smaller text--smaller">
+                                <div class="row row--baseline flow flow--smaller text--small">
                                     <div class="row__item--extend">
                                         {{ 'contracts.hours_consumed' | trans({ 'hours': 0, 'maxHours': contract.maxHours }) | raw }}
                                     </div>

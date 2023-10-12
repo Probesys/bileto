@@ -3,9 +3,10 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 @import "./_reset.css";
-@import "./_colors.dark.css";
-@import "./_colors.light.css";
 @import "./_fonts.css";
+@import "./variables/colors.dark.css";
+@import "./variables/colors.light.css";
+@import "./variables/sizes.css";
 @import "./utils/flow.css";
 @import "./utils/grids.css";
 @import "./utils/indent.css";
@@ -70,27 +71,21 @@ body {
     background: var(--color-grey2);
 }
 
-@media (min-width: 800px) {
-    body {
-        font-size: 225%;
-    }
-}
-
 *:focus {
-    outline: 0.3rem solid var(--color-primary9);
+    outline: var(--width-outline) solid var(--color-primary9);
 }
 
 h1 {
-    font-size: 1.3em;
+    font-size: var(--font-size-bigger);
     text-align: center;
 }
 
 h2 {
-    font-size: 1.1em;
+    font-size: var(--font-size-big);
 }
 
 h3 {
-    font-size: 0.9em;
+    font-size: var(--font-size-normal);
 }
 
 summary {

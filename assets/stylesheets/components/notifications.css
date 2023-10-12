@@ -21,14 +21,13 @@
     margin-left: auto;
     padding: 2rem 5rem;
 
-    font-size: 0.9em;
     font-weight: bold;
 
     background-repeat: no-repeat;
     background-position: left 1rem center;
     background-size: 3rem;
     box-shadow: 1px 2px 3px 1px var(--color-box-shadow);
-    border-left-width: 1rem;
+    border-left-width: var(--width-border-bolder);
     border-left-style: solid;
     border-radius: 0.5rem;
 

@@ -9,7 +9,7 @@
         <li class="list-tickets__item flow flow--smaller" data-test="ticket-item">
             <div class="row flow flow--smaller">
                 <div class="row__item--extend">
-                    <h2 class="text--small">
+                    <h2 class="text--normal">
                         <a class="list-tickets__anchor" href="{{ path('ticket', {'uid': ticket.uid}) }}">
                             {{ ticket.title }}
 
@@ -19,7 +19,7 @@
                 </div>
 
                 <div>
-                    <span class="badge badge--smaller badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">
+                    <span class="badge badge--small badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">
                         {{ icon('status') }}
 
                         <span class="sr-only">
@@ -29,7 +29,7 @@
                         {{ ticket.statusLabel | trans }}
                     </span>
 
-                    <span class="badge badge--smaller badge--{{ ticket.priorityBadgeColor }}" title="{{ 'tickets.priority' | trans }}">
+                    <span class="badge badge--small badge--{{ ticket.priorityBadgeColor }}" title="{{ 'tickets.priority' | trans }}">
                         {{ icon('priority') }}
 
                         <span class="sr-only">
@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="row row--baseline flow flow--smaller text--smaller">
+            <div class="row row--baseline flow flow--smaller text--small">
                 <div class="row__item--extend">
                     {% if ticket.createdAt == ticket.updatedAt %}
                         {% if ticket.type == 'request' %}

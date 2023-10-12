@@ -11,7 +11,7 @@
 {% block title %}{{ "#{ticket.title} (##{ticket.id}) – #{organization.name}" }}{% endblock %}
 
 {% block body %}
-    <main class="layout__body flow flow--larger tickets-show">
+    <main class="layout__body flow flow--large tickets-show">
         <div class="layout__breadcrumb wrapper wrapper--large wrapper--center">
             <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
 
@@ -25,11 +25,11 @@
             </h1>
         </div>
 
-        <div class="ticket__top wrapper wrapper--large wrapper--center flow text--small">
+        <div class="ticket__top wrapper wrapper--large wrapper--center flow">
             <div class="row row--center row--middle flow">
                 <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
 
-                <span class="text--secondary text--small row__item--extend">
+                <span class="text--secondary row__item--extend">
                     <strong>{{ ticket.createdBy.displayName }}</strong>
 
                     {% if ticket.type == 'request' %}

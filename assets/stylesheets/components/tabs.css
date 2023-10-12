@@ -5,7 +5,7 @@
 .tabs {
     display: flex;
 
-    margin-bottom: -0.25rem;
+    margin-bottom: -1px;
 }
 
 .tabs > * + * {
@@ -13,7 +13,7 @@
 }
 
 .tabs__button {
-    font-size: 0.9em;
+    line-height: initial;
 
     background: none;
     box-shadow: none;
@@ -31,8 +31,7 @@
 .tabs__panel {
     padding: 2rem;
 
-    background-color: var(--color-grey2);
-    border: 0.25rem solid var(--color-grey6);
+    border: var(--width-border) solid var(--color-grey7);
     border-radius: 0 0 0.5rem 0.5rem;
 }
 

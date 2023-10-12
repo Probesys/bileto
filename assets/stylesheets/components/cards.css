@@ -44,7 +44,7 @@
 .card__title {
     display: block;
 
-    font-size: 1.1em;
+    font-size: var(--font-size-big);
     font-weight: bold;
     text-align: center;
     overflow-wrap: anywhere;
@@ -55,7 +55,7 @@
 a.card__title {
     text-decoration: none;
 
-    outline-offset: -0.3rem;
+    outline-offset: calc(-1 * var(--width-outline));
 }
 
 .card__body {

@@ -18,7 +18,7 @@ a {
     text-decoration: none;
 
     background-color: var(--color-primary3);
-    border: 0.25rem solid currentcolor;
+    border: var(--width-border) solid currentcolor;
     border-radius: 0.5rem;
 
     transition: background-color 0.2s ease-in-out;

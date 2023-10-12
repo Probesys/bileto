@@ -5,7 +5,7 @@
 .tickets-show .ticket__top {
     padding-bottom: 4rem;
 
-    border-bottom: 0.25rem solid var(--color-grey4);
+    border-bottom: var(--width-border) solid var(--color-grey4);
 }
 
 @media (min-width: 800px) {
