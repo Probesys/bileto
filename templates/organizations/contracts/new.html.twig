@@ -146,6 +146,42 @@
             </div>
 
             <div class="flow flow--small">
+                <label for="billing-interval">
+                    {{ 'contracts.new.billing_interval' | trans }}
+
+                    <small class="text--secondary">
+                        {{ 'forms.optional' | trans }}
+                    </small>
+                </label>
+
+                <p class="form__caption" id="billing-interval-caption">
+                    {{ 'contracts.new.billing_interval.caption' | trans }}
+                </p>
+
+                {% if errors.billingInterval is defined %}
+                    <p class="form__error" role="alert" id="billing-interval-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.billingInterval }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="number"
+                    id="billing-interval"
+                    name="billingInterval"
+                    value=""
+                    min="0"
+                    step="1"
+                    class="input--size3"
+                    aria-describedby="billing-interval-caption"
+                    {% if errors.billingInterval is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="billing-interval-error"
+                    {% endif %}
+                />
+            </div>
+
+            <div class="flow flow--small">
                 <label for="notes">
                     {{ icon('user-secret') }}
                     {{ 'contracts.notes' | trans }}

@@ -138,6 +138,7 @@ class ContractsControllerTest extends WebTestCase
         $maxHours = 10;
         $startAt = new \DateTimeImmutable('2023-09-01');
         $endAt = new \DateTimeImmutable('2023-12-31');
+        $billingInterval = 30;
         $notes = 'Some notes';
 
         $this->assertSame(0, ContractFactory::count());
@@ -148,6 +149,7 @@ class ContractsControllerTest extends WebTestCase
             'maxHours' => $maxHours,
             'startAt' => $startAt->format('Y-m-d'),
             'endAt' => $endAt->format('Y-m-d'),
+            'billingInterval' => $billingInterval,
             'notes' => $notes,
         ]);
 
@@ -160,6 +162,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertEquals($startAt, $contract->getStartAt());
         $expectedEndAt = $endAt->modify('23:59:59');
         $this->assertEquals($expectedEndAt, $contract->getEndAt());
+        $this->assertSame($billingInterval, $contract->getBillingInterval());
         $this->assertSame($notes, $contract->getNotes());
     }
 

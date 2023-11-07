@@ -97,6 +97,9 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\OneToMany(mappedBy: 'contract', targetEntity: TimeSpent::class)]
     private Collection $timeSpents;
 
+    #[ORM\Column(options: ["default" => 0])]
+    private ?int $billingInterval = null;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -316,6 +319,18 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
                 $timeSpent->setContract(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBillingInterval(): ?int
+    {
+        return $this->billingInterval;
+    }
+
+    public function setBillingInterval(int $billingInterval): static
+    {
+        $this->billingInterval = $billingInterval;
 
         return $this;
     }

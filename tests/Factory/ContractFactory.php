@@ -65,6 +65,7 @@ final class ContractFactory extends ModelFactory
             'startAt' => $startAt,
             'endAt' => $endAt,
             'maxHours' => self::faker()->numberBetween(1, 9000),
+            'billingInterval' => 0,
             'notes' => '',
         ];
     }

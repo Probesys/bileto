@@ -33,6 +33,12 @@
                 </span>
             </div>
 
+            {% if contract.billingInterval %}
+                <p>
+                    {{ 'contracts.show.billing_interval' | trans({ count: contract.billingInterval }) }}
+                </p>
+            {% endif %}
+
             <div class="flow flow--small">
                 <span class="text--small" id="contract-hours-consumed">
                     {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
