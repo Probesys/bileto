@@ -60,6 +60,7 @@ final class ContractFactory extends ModelFactory
 
         return [
             'uid' => Random::hex(20),
+            'organization' => OrganizationFactory::new(),
             'name' => self::faker()->words(3, true),
             'startAt' => $startAt,
             'endAt' => $endAt,
