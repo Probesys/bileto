@@ -64,38 +64,6 @@
 
             <div class="row flow">
                 <div class="row__item--extend flow flow--small">
-                    <label for="max-hours">
-                        {{ 'contracts.max_hours' | trans }}
-                    </label>
-
-                    {% if errors.maxHours is defined %}
-                        <p class="form__error" role="alert" id="max-hours-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.maxHours }}
-                        </p>
-                    {% endif %}
-
-                    <input
-                        type="number"
-                        id="max-hours"
-                        name="maxHours"
-                        value="{{ maxHours }}"
-                        min="0"
-                        step="1"
-                        required
-                        {% if errors.maxHours is defined %}
-                            aria-invalid="true"
-                            aria-errormessage="max-hours-error"
-                        {% endif %}
-                    />
-                </div>
-
-                <div class="row__item--extend">
-                </div>
-            </div>
-
-            <div class="row flow">
-                <div class="row__item--extend flow flow--small">
                     <label for="start-at">
                         {{ 'contracts.start_at' | trans }}
                     </label>
@@ -147,6 +115,34 @@
                         {% endif %}
                     />
                 </div>
+            </div>
+
+            <div class="flow flow--small">
+                <label for="max-hours">
+                    {{ 'contracts.max_hours' | trans }}
+                </label>
+
+                {% if errors.maxHours is defined %}
+                    <p class="form__error" role="alert" id="max-hours-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.maxHours }}
+                    </p>
+                {% endif %}
+
+                <input
+                    type="number"
+                    id="max-hours"
+                    name="maxHours"
+                    value="{{ maxHours }}"
+                    min="0"
+                    step="1"
+                    required
+                    class="input--size3"
+                    {% if errors.maxHours is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="max-hours-error"
+                    {% endif %}
+                />
             </div>
 
             <div class="flow flow--small">
