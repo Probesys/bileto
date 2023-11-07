@@ -183,9 +183,11 @@ class MessagesController extends BaseController
 
         if ($minutesSpent > 0 && $security->isGranted('orga:create:tickets:time_spent', $organization)) {
             $contract = $ticket->getOngoingContract();
+            $minutesCharged = $minutesSpent;
 
             if ($contract) {
                 $contractAvailableMinutes = $contract->getRemainingMinutes();
+                $billingInterval = $contract->getBillingInterval();
 
                 // If there is more spent time than time available in the
                 // contract, we don't want to charge the entire time. So we
@@ -203,13 +205,17 @@ class MessagesController extends BaseController
                     // Calculate the remaining time, and make sure it will not
                     // be charged.
                     $minutesSpent = $minutesSpent - $contractAvailableMinutes;
+                    $minutesCharged = $minutesSpent;
                     $contract = null;
+                } elseif ($billingInterval > 0) {
+                    $minutesCharged = intval(ceil($minutesSpent / $billingInterval)) * $billingInterval;
+                    $minutesCharged = min($minutesCharged, $contractAvailableMinutes);
                 }
             }
 
             $timeSpent = new TimeSpent();
             $timeSpent->setTicket($ticket);
-            $timeSpent->setTime($minutesSpent);
+            $timeSpent->setTime($minutesCharged);
             $timeSpent->setRealTime($minutesSpent);
             $timeSpent->setContract($contract);
 

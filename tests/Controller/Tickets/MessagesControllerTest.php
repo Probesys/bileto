@@ -152,6 +152,40 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($ticket->getId(), $timeSpent->getTicket()->getId());
     }
 
+    public function testPostCanAssociateTimeSpentToContract(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:create:tickets:time_spent',
+        ]);
+        $contract = ContractFactory::createOne([
+            'startAt' => Time::ago(1, 'week'),
+            'endAt' => Time::fromNow(1, 'week'),
+            'maxHours' => 10,
+            'billingInterval' => 30,
+        ]);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+        ]);
+        $ticket->addContract($contract->object());
+        $messageContent = 'My message';
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'timeSpent' => 10,
+        ]);
+
+        $timeSpent = TimeSpentFactory::first();
+        $this->assertSame(30, $timeSpent->getTime());
+        $this->assertSame(10, $timeSpent->getRealTime());
+        $this->assertSame($ticket->getId(), $timeSpent->getTicket()->getId());
+        $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
+    }
+
     public function testPostCreateCanCreateTwoTimeSpentIfContractIsAlmostFinished(): void
     {
         $client = static::createClient();
