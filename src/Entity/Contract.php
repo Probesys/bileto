@@ -93,9 +93,14 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'contracts')]
     private Collection $tickets;
 
+    /** @var Collection<int, TimeSpent> $timeSpents */
+    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: TimeSpent::class)]
+    private Collection $timeSpents;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
+        $this->timeSpents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -151,6 +156,28 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
         return $this;
     }
 
+    public function getConsumedMinutes(): int
+    {
+        $times = array_map(function (TimeSpent $timeSpent) {
+            return $timeSpent->getTime();
+        }, $this->getTimeSpents()->getValues());
+
+        /** @var int */
+        $consumedHours = array_sum($times);
+
+        return $consumedHours;
+    }
+
+    public function getConsumedHours(): float
+    {
+        return $this->getConsumedMinutes() / 60;
+    }
+
+    public function getRemainingMinutes(): int
+    {
+        return ($this->getMaxHours() * 60) - $this->getConsumedMinutes();
+    }
+
     public function getNotes(): ?string
     {
         return $this->notes;
@@ -180,6 +207,10 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
      */
     public function getStatus(): string
     {
+        if ($this->getConsumedHours() >= $this->getMaxHours()) {
+            return 'finished';
+        }
+
         $today = Utils\Time::now();
         if ($today < $this->startAt) {
             return 'coming';
@@ -257,5 +288,35 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
     public function getTickets(): Collection
     {
         return $this->tickets;
+    }
+
+    /**
+     * @return Collection<int, TimeSpent>
+     */
+    public function getTimeSpents(): Collection
+    {
+        return $this->timeSpents;
+    }
+
+    public function addTimeSpent(TimeSpent $timeSpent): static
+    {
+        if (!$this->timeSpents->contains($timeSpent)) {
+            $this->timeSpents->add($timeSpent);
+            $timeSpent->setContract($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeSpent(TimeSpent $timeSpent): static
+    {
+        if ($this->timeSpents->removeElement($timeSpent)) {
+            // set the owning side to null (unless already changed)
+            if ($timeSpent->getContract() === $this) {
+                $timeSpent->setContract(null);
+            }
+        }
+
+        return $this;
     }
 }

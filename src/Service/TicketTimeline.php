@@ -13,16 +13,10 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class TicketTimeline
 {
-    private EntityEventRepository $entityEventRepository;
-
-    private Security $security;
-
     public function __construct(
-        EntityEventRepository $entityEventRepository,
-        Security $security,
+        private EntityEventRepository $entityEventRepository,
+        private Security $security,
     ) {
-        $this->entityEventRepository = $entityEventRepository;
-        $this->security = $security;
     }
 
     public function build(Ticket $ticket): Timeline
@@ -41,6 +35,11 @@ class TicketTimeline
         }
 
         $timeline->addItems($messages);
+
+        if ($this->security->isGranted('orga:see:tickets:time_spent', $organization)) {
+            $timeSpents = $ticket->getTimeSpents()->getValues();
+            $timeline->addItems($timeSpents);
+        }
 
         /** @var \App\Entity\User $user */
         $user = $this->security->getUser();

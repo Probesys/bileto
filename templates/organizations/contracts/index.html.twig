@@ -60,7 +60,7 @@
 
                                 <div class="row row--baseline flow flow--smaller text--small">
                                     <div class="row__item--extend">
-                                        {{ 'contracts.hours_consumed' | trans({ 'hours': 0, 'maxHours': contract.maxHours }) | raw }}
+                                        {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
                                     </div>
 
                                     <div>

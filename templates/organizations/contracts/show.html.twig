@@ -35,10 +35,10 @@
 
             <div class="flow flow--small">
                 <span class="text--small" id="contract-hours-consumed">
-                    {{ 'contracts.hours_consumed' | trans({ 'hours': 0, 'maxHours': contract.maxHours }) | raw }}
+                    {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
                 </span>
 
-                <progress value="0" max="{{ contract.maxHours }}" aria-labelledby="contract-hours-consumed">
+                <progress value="{{ contract.consumedHours }}" max="{{ contract.maxHours }}" aria-labelledby="contract-hours-consumed">
                 </progress>
             </div>
 

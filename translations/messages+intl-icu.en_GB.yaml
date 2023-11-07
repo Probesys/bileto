@@ -49,7 +49,7 @@ advanced_search_syntax.qualifiers.type.values: 'The possible values for â€œtypeâ
 advanced_search_syntax.title: 'Quick reference for the advanced syntax'
 contracts.days_consumed: "<strong>{days}\_d consumed</strong>"
 contracts.end_at: 'End on'
-contracts.hours_consumed: "<strong>{hours}\_h consumed</strong> on {maxHours}\_h"
+contracts.hours_consumed: '<strong>{hours} consumed</strong> on {maxHours}h'
 contracts.index.new_contract: 'New contract'
 contracts.index.no_contracts: 'No contracts'
 contracts.index.number: '{count, plural, =0 {No contracts} one {1 contract} other {# contracts}}'
@@ -188,12 +188,14 @@ roles.permissions.check_all: 'Check all'
 roles.permissions.orga.create.tickets: 'Create tickets'
 roles.permissions.orga.create.tickets.messages: 'Answer to tickets'
 roles.permissions.orga.create.tickets.messages.confidential: 'Answer confidentially to tickets'
+roles.permissions.orga.create.tickets.time_spent: 'Record time spent'
 roles.permissions.orga.manage.contracts: 'Manage the contracts'
 roles.permissions.orga.see.contracts: 'See the contracts'
 roles.permissions.orga.see.contracts.notes: 'See the private notes of the contracts'
 roles.permissions.orga.see.tickets.all: 'See all the tickets of the organization'
 roles.permissions.orga.see.tickets.contracts: 'See the contract of the tickets'
 roles.permissions.orga.see.tickets.messages.confidential: 'See confidential answers'
+roles.permissions.orga.see.tickets.time_spent: 'See time spent'
 roles.permissions.orga.update.tickets.actors: 'Update the actors of a ticket'
 roles.permissions.orga.update.tickets.contracts: 'Update the contract of a ticket'
 roles.permissions.orga.update.tickets.priority: 'Update the priority of a ticket'
@@ -311,6 +313,7 @@ tickets.show.impact: 'Impact:'
 tickets.show.message.confidential: confidential
 tickets.show.message.solution: solution
 tickets.show.message.via_email: 'This message has been sent by email'
+tickets.show.minutes: minutes
 tickets.show.number_messages: "{count, plural, =0 {No\_messages} one {1\_message} other {#\_messages}}"
 tickets.show.opened_incident: 'opened this <strong>incident</strong>'
 tickets.show.opened_on: 'on {date}'
@@ -318,6 +321,9 @@ tickets.show.opened_request: 'opened this <strong>request</strong>'
 tickets.show.resolved: 'This ticket is resolved.'
 tickets.show.scroll_to_bottom: 'Scroll to bottom'
 tickets.show.show_history: 'Show history'
+tickets.show.time_spent: "{count, plural, one {1\_minute spent} other {#\_minutes spent}}"
+tickets.show.time_spent.charged: "({count, plural, one {1\_minute charged} other {#\_minutes charged}})"
+tickets.show.time_spent.not_charged: '(not charged)'
 tickets.show.urgency: 'Urgency:'
 tickets.sidebar.title: 'Your views'
 tickets.sort.alphabetical: 'Alphabetical order'
@@ -337,6 +343,7 @@ tickets.status.open: Open
 tickets.status.pending: Pending
 tickets.status.planned: Planned
 tickets.status.resolved: Resolved
+tickets.time_spent: 'Time spent'
 tickets.timeline.diff_days: '{days} days later'
 tickets.timeline.today: (today)
 tickets.title: Title
