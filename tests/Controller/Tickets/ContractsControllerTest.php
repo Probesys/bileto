@@ -10,6 +10,7 @@ use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
+use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils;
@@ -106,6 +107,59 @@ class ContractsControllerTest extends WebTestCase
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame($newContract->getId(), $contracts[0]->getId());
+    }
+
+    public function testPostUpdateCanChargeNotChargedTimeSpent(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:update:tickets:contracts']);
+        $organization = OrganizationFactory::createOne();
+        $oldContract = ContractFactory::createOne([
+            'organization' => $organization,
+            'startAt' => Utils\Time::ago(1, 'week'),
+            'endAt' => Utils\Time::fromNow(1, 'week'),
+        ]);
+        $newContract = ContractFactory::createOne([
+            'organization' => $organization,
+            'startAt' => Utils\Time::ago(1, 'week'),
+            'endAt' => Utils\Time::fromNow(1, 'week'),
+            'billingInterval' => 30,
+        ]);
+        $ticket = TicketFactory::createOne([
+            'organization' => $organization,
+            'createdBy' => $user,
+            'contracts' => [$oldContract],
+        ]);
+        $timeSpentCharged = TimeSpentFactory::createOne([
+            'ticket' => $ticket,
+            'contract' => $oldContract,
+        ]);
+        $timeSpentNotCharged = TimeSpentFactory::createOne([
+            'ticket' => $ticket,
+            'contract' => null,
+            'time' => 15,
+            'realTime' => 15,
+        ]);
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/contracts/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
+            'ongoingContractUid' => $newContract->getUid(),
+            'chargeTimeSpent' => true,
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->refresh();
+        $contracts = $ticket->getContracts();
+        $this->assertSame(1, count($contracts));
+        $this->assertSame($newContract->getId(), $contracts[0]->getId());
+        $timeSpentCharged->refresh();
+        $this->assertSame($oldContract->getId(), $timeSpentCharged->getContract()->getId());
+        $timeSpentNotCharged->refresh();
+        $this->assertSame($newContract->getId(), $timeSpentNotCharged->getContract()->getId());
+        $this->assertSame(30, $timeSpentNotCharged->getTime());
+        $this->assertSame(15, $timeSpentNotCharged->getRealTime());
     }
 
     public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void

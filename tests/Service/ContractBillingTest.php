@@ -99,4 +99,73 @@ class ContractBillingTest extends WebTestCase
         $this->assertSame(15, $timeSpent->getTime());
         $this->assertSame($minutes, $timeSpent->getRealTime());
     }
+
+    public function testChargeTimeSpents(): void
+    {
+        $contract = ContractFactory::createOne([
+            'maxHours' => 1,
+            'billingInterval' => 0,
+        ])->object();
+        $minutes = 20;
+        $timeSpent = TimeSpentFactory::createOne([
+            'contract' => null,
+            'realTime' => $minutes,
+        ])->object();
+
+        $this->contractBilling->chargeTimeSpents($contract, [$timeSpent]);
+
+        $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
+        $this->assertSame($minutes, $timeSpent->getTime());
+        $this->assertSame($minutes, $timeSpent->getRealTime());
+    }
+
+    public function testChargeTimeSpentsDoNotChargeMoreThanAvailableTime(): void
+    {
+        $contract = ContractFactory::createOne([
+            'maxHours' => 1,
+            'billingInterval' => 0,
+        ])->object();
+        $timeSpent1 = TimeSpentFactory::createOne([
+            'contract' => null,
+            'realTime' => 20,
+        ])->object();
+        $timeSpent2 = TimeSpentFactory::createOne([
+            'contract' => null,
+            'realTime' => 50,
+        ])->object();
+        $timeSpent3 = TimeSpentFactory::createOne([
+            'contract' => null,
+            'realTime' => 20,
+        ])->object();
+
+        $this->contractBilling->chargeTimeSpents($contract, [$timeSpent1, $timeSpent2, $timeSpent3]);
+
+        $this->assertSame($contract->getId(), $timeSpent1->getContract()->getId());
+        $this->assertSame(20, $timeSpent1->getTime());
+        $this->assertSame(20, $timeSpent1->getRealTime());
+        $this->assertNull($timeSpent2->getContract());
+        // Even if this TimeSpent could have been associated to the contract,
+        // the ContractBilling service stopped at the first TimeSpent
+        // overflowing the available time.
+        $this->assertNull($timeSpent3->getContract());
+    }
+
+    public function testChargeTimeSpentsChargesConsideringBillingInterval(): void
+    {
+        $contract = ContractFactory::createOne([
+            'maxHours' => 1,
+            'billingInterval' => 30,
+        ])->object();
+        $minutes = 20;
+        $timeSpent = TimeSpentFactory::createOne([
+            'contract' => null,
+            'realTime' => $minutes,
+        ])->object();
+
+        $this->contractBilling->chargeTimeSpents($contract, [$timeSpent]);
+
+        $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
+        $this->assertSame(30, $timeSpent->getTime());
+        $this->assertSame($minutes, $timeSpent->getRealTime());
+    }
 }

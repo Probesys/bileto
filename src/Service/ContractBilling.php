@@ -45,6 +45,36 @@ class ContractBilling
     }
 
     /**
+     * Try to associate TimeSpents with the given contract.
+     *
+     * TimeSpents are associated while there is enough time available in the
+     * contract. Once a TimeSpent has more time than available time, it stops
+     * even if the following TimeSpents have less time.
+     *
+     * @param TimeSpent[] $timeSpents
+     */
+    public function chargeTimeSpents(Contract $contract, array $timeSpents): void
+    {
+        $availableTime = $contract->getRemainingMinutes();
+        $billingInterval = $contract->getBillingInterval();
+
+        foreach ($timeSpents as $timeSpent) {
+            // If there is more spent time than time available in the contract,
+            // we consider that we can't charge more time so we stop here.
+            if ($timeSpent->getRealTime() > $availableTime) {
+                break;
+            }
+
+            $timeCharged = $this->calculateChargedTime($timeSpent->getRealTime(), $billingInterval, $availableTime);
+
+            $timeSpent->setTime($timeCharged);
+            $timeSpent->setContract($contract);
+
+            $availableTime = $availableTime - $timeCharged;
+        }
+    }
+
+    /**
      * Round up time to a multiplier of billing interval (in the limit of the
      * available time).
      */

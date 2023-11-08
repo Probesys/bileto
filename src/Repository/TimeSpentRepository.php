@@ -36,6 +36,20 @@ class TimeSpentRepository extends ServiceEntityRepository implements UidGenerato
         }
     }
 
+    /**
+     * @param TimeSpent[] $entities
+     */
+    public function saveBatch(array $entities, bool $flush = false): void
+    {
+        foreach ($entities as $entity) {
+            $this->save($entity, false);
+        }
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
     public function remove(TimeSpent $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
