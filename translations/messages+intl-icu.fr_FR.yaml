@@ -56,9 +56,12 @@ contracts.index.number: '{count, plural, =0 {Aucun contrat} one {1 contrat} othe
 contracts.index.title: Contrats
 contracts.max_hours: 'Nombre max. d’heures'
 contracts.name: Nom
+contracts.new.billing_interval: 'Intervalle de facturation en minutes'
+contracts.new.billing_interval.caption: 'Le temps passé sur les tickets sera arrondi pour le décompte de la facturation (ex. pour 15 minutes de temps passés, 30 minutes seront décomptés pour un intervalle de facturation correspondant).'
 contracts.new.submit: 'Créer le contrat'
 contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
+contracts.show.billing_interval: "Intervalle de facturation\_: {count, plural, one {1 minute} other {# minutes}}"
 contracts.show.notes_confidential: confidentielles
 contracts.start_at: 'Démarre le'
 contracts.status: Statut

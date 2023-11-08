@@ -78,6 +78,7 @@ class ContractsController extends BaseController
             'maxHours' => 10,
             'startAt' => $startAt,
             'endAt' => $endAt,
+            'billingInterval' => 0,
             'notes' => '',
         ]);
     }
@@ -96,6 +97,7 @@ class ContractsController extends BaseController
         $maxHours = $request->request->getInt('maxHours');
         $startAt = $request->request->getString('startAt');
         $endAt = $request->request->getString('endAt');
+        $billingInterval = $request->request->getInt('billingInterval');
         $notes = $request->request->getString('notes');
         $csrfToken = $request->request->getString('_csrf_token');
 
@@ -109,6 +111,7 @@ class ContractsController extends BaseController
                 'maxHours' => $maxHours,
                 'startAt' => $startAt,
                 'endAt' => $endAt,
+                'billingInterval' => $billingInterval,
                 'notes' => $notes,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
@@ -118,6 +121,7 @@ class ContractsController extends BaseController
         $contract->setOrganization($organization);
         $contract->setName($name);
         $contract->setMaxHours($maxHours);
+        $contract->setBillingInterval($billingInterval);
         $contract->setNotes($notes);
 
         if ($startAt) {
@@ -136,6 +140,7 @@ class ContractsController extends BaseController
                 'maxHours' => $maxHours,
                 'startAt' => $startAt,
                 'endAt' => $endAt,
+                'billingInterval' => $billingInterval,
                 'notes' => $notes,
                 'errors' => Utils\ConstraintErrorsFormatter::format($errors),
             ]);
