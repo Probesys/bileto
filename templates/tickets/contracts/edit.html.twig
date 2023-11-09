@@ -42,6 +42,18 @@
             </select>
         </div>
 
+        <div>
+            <input
+                type="checkbox"
+                id="charge-time-spent"
+                name="chargeTimeSpent"
+            />
+
+            <label for="charge-time-spent">
+                {{ 'tickets.contracts.edit.bill_not_charged_time_spent' | trans }}
+            </label>
+        </div>
+
         <div class="form__actions">
             <button class="button--primary" type="submit">
                 {{ 'forms.save_changes' | trans }}

@@ -16,6 +16,7 @@ use App\Repository\MessageDocumentRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TimeSpentRepository;
+use App\Service\ContractBilling;
 use App\Service\TicketTimeline;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
@@ -39,6 +40,7 @@ class MessagesController extends BaseController
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
         TimeSpentRepository $timeSpentRepository,
+        ContractBilling $contractBilling,
         TicketTimeline $ticketTimeline,
         Security $security,
         ValidatorInterface $validator,
@@ -183,43 +185,29 @@ class MessagesController extends BaseController
 
         if ($minutesSpent > 0 && $security->isGranted('orga:create:tickets:time_spent', $organization)) {
             $contract = $ticket->getOngoingContract();
-            $minutesCharged = $minutesSpent;
 
             if ($contract) {
-                $contractAvailableMinutes = $contract->getRemainingMinutes();
-                $billingInterval = $contract->getBillingInterval();
+                $timeSpent = $contractBilling->chargeTime($contract, $minutesSpent);
+                $timeSpent->setTicket($ticket);
+                $timeSpentRepository->save($timeSpent, true);
 
-                // If there is more spent time than time available in the
-                // contract, we don't want to charge the entire time. So we
-                // just charge the available time. Then, the remaining time
-                // will be set in a separated uncharged TimeSpent.
-                if ($minutesSpent > $contractAvailableMinutes) {
+                // Calculate the remaining time that is not charged (e.g.
+                // because there wasn't enough time in the contract).
+                $remainingNotChargedTime = $minutesSpent - $timeSpent->getRealTime();
+                if ($remainingNotChargedTime > 0) {
                     $timeSpent = new TimeSpent();
                     $timeSpent->setTicket($ticket);
-                    $timeSpent->setTime($contractAvailableMinutes);
-                    $timeSpent->setRealTime($contractAvailableMinutes);
-                    $timeSpent->setContract($contract);
-
+                    $timeSpent->setTime($remainingNotChargedTime);
+                    $timeSpent->setRealTime($remainingNotChargedTime);
                     $timeSpentRepository->save($timeSpent, true);
-
-                    // Calculate the remaining time, and make sure it will not
-                    // be charged.
-                    $minutesSpent = $minutesSpent - $contractAvailableMinutes;
-                    $minutesCharged = $minutesSpent;
-                    $contract = null;
-                } elseif ($billingInterval > 0) {
-                    $minutesCharged = intval(ceil($minutesSpent / $billingInterval)) * $billingInterval;
-                    $minutesCharged = min($minutesCharged, $contractAvailableMinutes);
                 }
+            } else {
+                $timeSpent = new TimeSpent();
+                $timeSpent->setTicket($ticket);
+                $timeSpent->setTime($minutesSpent);
+                $timeSpent->setRealTime($minutesSpent);
+                $timeSpentRepository->save($timeSpent, true);
             }
-
-            $timeSpent = new TimeSpent();
-            $timeSpent->setTicket($ticket);
-            $timeSpent->setTime($minutesCharged);
-            $timeSpent->setRealTime($minutesSpent);
-            $timeSpent->setContract($contract);
-
-            $timeSpentRepository->save($timeSpent, true);
         }
 
         $messageDocuments = $messageDocumentRepository->findBy([

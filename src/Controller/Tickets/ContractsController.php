@@ -10,7 +10,9 @@ use App\Controller\BaseController;
 use App\Entity\Ticket;
 use App\Repository\ContractRepository;
 use App\Repository\TicketRepository;
+use App\Repository\TimeSpentRepository;
 use App\Service\Sorter\ContractSorter;
+use App\Service\ContractBilling;
 use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,6 +54,8 @@ class ContractsController extends BaseController
         Request $request,
         ContractRepository $contractRepository,
         TicketRepository $ticketRepository,
+        TimeSpentRepository $timeSpentRepository,
+        ContractBilling $contractBilling,
         ContractSorter $contractSorter,
         TranslatorInterface $translator,
     ): Response {
@@ -66,6 +70,8 @@ class ContractsController extends BaseController
         }
 
         $ongoingContractUid = $request->request->getString('ongoingContractUid');
+
+        $chargeTimeSpent = $request->request->getBoolean('chargeTimeSpent');
 
         $csrfToken = $request->request->getString('_csrf_token');
 
@@ -98,6 +104,12 @@ class ContractsController extends BaseController
         }
 
         $ticketRepository->save($ticket, true);
+
+        if ($chargeTimeSpent && $newOngoingContract) {
+            $timeSpents = $ticket->getTimeSpentsNotCharged()->getValues();
+            $contractBilling->chargeTimeSpents($newOngoingContract, $timeSpents);
+            $timeSpentRepository->saveBatch($timeSpents, true);
+        }
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

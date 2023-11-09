@@ -459,6 +459,22 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
         return $this->timeSpents;
     }
 
+    /**
+     * @return Collection<int, TimeSpent>
+     */
+    public function getTimeSpentsNotCharged(): Collection
+    {
+        $criteria = Criteria::create();
+        $expr = Criteria::expr()->isNull('contract');
+        $criteria->where($expr);
+        $criteria->orderBy(['createdAt' => 'ASC']);
+
+        /** @var ArrayCollection<int, TimeSpent> */
+        $timeSpents = $this->timeSpents;
+
+        return $timeSpents->matching($criteria);
+    }
+
     public function addTimeSpent(TimeSpent $timeSpent): static
     {
         if (!$this->timeSpents->contains($timeSpent)) {

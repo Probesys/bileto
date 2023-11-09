@@ -220,6 +220,7 @@ tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee
 tickets.contract: Contract
+tickets.contracts.edit.bill_not_charged_time_spent: 'Bill on this contract any unbilled time spent'
 tickets.contracts.edit.title: 'Edit the contract'
 tickets.contracts.none: 'No contract'
 tickets.contracts.ongoing: 'Ongoing contract'
