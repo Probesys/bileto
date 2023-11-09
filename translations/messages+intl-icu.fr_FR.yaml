@@ -64,6 +64,7 @@ contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
 contracts.show.billing_interval: "Intervalle de facturation\_: {count, plural, one {1 minute} other {# minutes}}"
 contracts.show.notes_confidential: confidentielles
+contracts.show.renew: Renouveler
 contracts.start_at: 'Démarre le'
 contracts.status: Statut
 contracts.status.coming: 'À venir'

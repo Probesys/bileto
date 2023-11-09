@@ -66,20 +66,43 @@ class ContractsController extends BaseController
     public function new(
         Organization $organization,
         Request $request,
+        ContractRepository $contractRepository,
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $startAt = Utils\Time::now();
-        $endAt = Utils\Time::relative('last day of december');
+        $fromContractUid = $request->query->getString('from');
+
+        $contract = null;
+        if ($fromContractUid) {
+            $contract = $contractRepository->findOneBy([
+                'uid' => $fromContractUid,
+            ]);
+        }
+
+        if ($contract) {
+            $name = $contract->getRenewedName();
+            $maxHours = $contract->getMaxHours();
+            $startAt = $contract->getEndAt()->modify('+1 day');
+            $endAt = $startAt->modify('last day of december');
+            $billingInterval = $contract->getBillingInterval();
+            $notes = $contract->getNotes();
+        } else {
+            $name = '';
+            $maxHours = 10;
+            $startAt = Utils\Time::now();
+            $endAt = Utils\Time::relative('last day of december');
+            $billingInterval = 0;
+            $notes = '';
+        }
 
         return $this->render('organizations/contracts/new.html.twig', [
             'organization' => $organization,
-            'name' => '',
-            'maxHours' => 10,
+            'name' => $name,
+            'maxHours' => $maxHours,
             'startAt' => $startAt,
             'endAt' => $endAt,
-            'billingInterval' => 0,
-            'notes' => '',
+            'billingInterval' => $billingInterval,
+            'notes' => $notes,
         ]);
     }
 

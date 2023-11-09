@@ -116,6 +116,16 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
         return $this->name;
     }
 
+    public function getRenewedName(): ?string
+    {
+        if (preg_match('/\d$/', $this->name) === 1) {
+            $name = $this->name;
+            return strval(++$name);
+        } else {
+            return $this->name;
+        }
+    }
+
     public function setName(string $name): static
     {
         $this->name = $name;
