@@ -152,6 +152,9 @@ class TicketQueryBuilder
             $qualifier === 'priority'
         ) {
             return $this->buildExpr('t.' . $qualifier, $value, $condition->not());
+        } elseif ($qualifier === 'contract') {
+            $value = $this->processContractQualifier($value);
+            return $this->buildExpr('c.id', $value, $condition->not());
         } elseif ($qualifier === 'no' && ($value === 'assignee' || $value === 'solution')) {
             return $this->buildExpr('t.' . $value, null, $condition->not());
         } elseif ($qualifier === 'has' && ($value === 'assignee' || $value === 'solution')) {
@@ -313,6 +316,35 @@ class TicketQueryBuilder
 
             if ($ids) {
                 $valuesToReturn = array_merge($valuesToReturn, $ids);
+            } else {
+                $valuesToReturn[] = -1;
+            }
+        }
+
+        if (count($valuesToReturn) === 1) {
+            return $valuesToReturn[0];
+        } else {
+            return $valuesToReturn;
+        }
+    }
+
+    /**
+     * @param string|string[] $value
+     *
+     * @return int|int[]
+     */
+    private function processContractQualifier(mixed $value): mixed
+    {
+        if (!is_array($value)) {
+            $value = [$value];
+        }
+
+        $valuesToReturn = [];
+
+        foreach ($value as $v) {
+            $id = $this->extractId($v);
+            if ($id) {
+                $valuesToReturn[] = $id;
             } else {
                 $valuesToReturn[] = -1;
             }

@@ -10,6 +10,7 @@ use App\Entity\Ticket;
 use App\SearchEngine\Query;
 use App\SearchEngine\TicketSearcher;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
@@ -157,6 +158,32 @@ class TicketSearcherTest extends WebTestCase
 
         $this->assertSame(1, count($tickets));
         $this->assertSame($ticket->getId(), $tickets[0]->getId());
+    }
+
+    public function testGetTicketsCanRestrictToAGivenContract(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $contract1 = ContractFactory::createOne();
+        $contract2 = ContractFactory::createOne();
+        $ticket1 = TicketFactory::createOne([
+            'assignee' => $user,
+            'contracts' => [$contract1],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'assignee' => $user,
+            'contracts' => [$contract2],
+        ]);
+
+        $query = Query::fromString('contract:#' . $contract1->getId());
+        $tickets = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, count($tickets));
+        $this->assertSame($ticket1->getId(), $tickets[0]->getId());
     }
 
     public function testGetTicketsTakesCareOfSpecificPermissions(): void
