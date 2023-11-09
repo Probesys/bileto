@@ -61,6 +61,12 @@
                                 <div class="row row--baseline flow flow--smaller text--small">
                                     <div class="row__item--extend">
                                         {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
+
+                                        ⋅
+
+                                        <a href="{{ path('organization tickets', { uid: contract.organization.uid, q: 'contract:#' ~ contract.id }) }}">
+                                            {{ 'contracts.index.tickets' | trans({ count: contract.tickets.count }) }}
+                                        </a>
                                     </div>
 
                                     <div>

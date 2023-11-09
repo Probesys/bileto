@@ -418,6 +418,18 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(-1, $parameters['q0p0']);
     }
 
+    public function testBuildWithQualifierContract(): void
+    {
+        $query = SearchEngine\Query::fromString('contract:#1');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+
+        $this->assertSame(<<<SQL
+            c.id = :q0p0
+            SQL, $dql);
+        $this->assertSame(1, $parameters['q0p0']);
+    }
+
     public function testBuildWithQualifierUid(): void
     {
         $query = SearchEngine\Query::fromString('uid:abcde');

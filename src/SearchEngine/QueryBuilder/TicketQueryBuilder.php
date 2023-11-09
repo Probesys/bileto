@@ -96,9 +96,9 @@ class TicketQueryBuilder
             foreach ($value as $v) {
                 $id = $this->extractId($v);
                 if ($id !== null) {
-                    $exprs[] = $this->buildExpr('id', $id, false);
+                    $exprs[] = $this->buildExpr('t.id', $id, false);
                 } else {
-                    $exprs[] = $this->buildExprLike('title', $v, false);
+                    $exprs[] = $this->buildExprLike('t.title', $v, false);
                 }
             }
 
@@ -113,9 +113,9 @@ class TicketQueryBuilder
             $id = $this->extractId($value);
 
             if ($id !== null) {
-                return $this->buildExpr('id', $id, $condition->not());
+                return $this->buildExpr('t.id', $id, $condition->not());
             } else {
-                return $this->buildExprLike('title', $value, $condition->not());
+                return $this->buildExprLike('t.title', $value, $condition->not());
             }
         }
     }
@@ -127,14 +127,14 @@ class TicketQueryBuilder
 
         if ($qualifier === 'status') {
             $value = $this->processStatusQualifier($value);
-            return $this->buildExpr('status', $value, $condition->not());
+            return $this->buildExpr('t.status', $value, $condition->not());
         } elseif ($qualifier === 'assignee' || $qualifier === 'requester') {
             $value = $this->processActorQualifier($value);
-            return $this->buildExpr($qualifier, $value, $condition->not());
+            return $this->buildExpr('t.' . $qualifier, $value, $condition->not());
         } elseif ($qualifier === 'involves') {
             $value = $this->processActorQualifier($value);
-            $assigneeWhere = $this->buildExpr('assignee', $value, false);
-            $requesterWhere = $this->buildExpr('requester', $value, false);
+            $assigneeWhere = $this->buildExpr('t.assignee', $value, false);
+            $requesterWhere = $this->buildExpr('t.requester', $value, false);
             $where = "{$assigneeWhere} OR {$requesterWhere}";
             if ($condition->not()) {
                 return "NOT ({$where})";
@@ -143,7 +143,7 @@ class TicketQueryBuilder
             }
         } elseif ($qualifier === 'org') {
             $value = $this->processOrganizationQualifier($value);
-            return $this->buildExpr('organization', $value, $condition->not());
+            return $this->buildExpr('t.organization', $value, $condition->not());
         } elseif (
             $qualifier === 'uid' ||
             $qualifier === 'type' ||
@@ -151,11 +151,14 @@ class TicketQueryBuilder
             $qualifier === 'impact' ||
             $qualifier === 'priority'
         ) {
-            return $this->buildExpr($qualifier, $value, $condition->not());
+            return $this->buildExpr('t.' . $qualifier, $value, $condition->not());
+        } elseif ($qualifier === 'contract') {
+            $value = $this->processContractQualifier($value);
+            return $this->buildExpr('c.id', $value, $condition->not());
         } elseif ($qualifier === 'no' && ($value === 'assignee' || $value === 'solution')) {
-            return $this->buildExpr($value, null, $condition->not());
+            return $this->buildExpr('t.' . $value, null, $condition->not());
         } elseif ($qualifier === 'has' && ($value === 'assignee' || $value === 'solution')) {
-            return $this->buildExpr($value, null, !$condition->not());
+            return $this->buildExpr('t.' . $value, null, !$condition->not());
         } else {
             if (is_array($value)) {
                 $value = implode(',', $value);
@@ -181,21 +184,21 @@ class TicketQueryBuilder
     private function buildExpr(string $field, mixed $value, bool $not): string
     {
         if ($value === null && $not) {
-            return "t.{$field} IS NOT NULL";
+            return "{$field} IS NOT NULL";
         } elseif ($value === null) {
-            return "t.{$field} IS NULL";
+            return "{$field} IS NULL";
         } elseif (is_array($value) && $not) {
             $key = $this->registerParameter($value);
-            return "t.{$field} NOT IN (:{$key})";
+            return "{$field} NOT IN (:{$key})";
         } elseif (is_array($value)) {
             $key = $this->registerParameter($value);
-            return "t.{$field} IN (:{$key})";
+            return "{$field} IN (:{$key})";
         } elseif ($not) {
             $key = $this->registerParameter($value);
-            return "t.{$field} != :{$key}";
+            return "{$field} != :{$key}";
         } else {
             $key = $this->registerParameter($value);
-            return "t.{$field} = :{$key}";
+            return "{$field} = :{$key}";
         }
     }
 
@@ -207,9 +210,9 @@ class TicketQueryBuilder
         $value = mb_strtolower($value);
         $key = $this->registerParameter("%{$value}%");
         if ($not) {
-            return "LOWER(t.{$field}) NOT LIKE :{$key}";
+            return "LOWER({$field}) NOT LIKE :{$key}";
         } else {
-            return "LOWER(t.{$field}) LIKE :{$key}";
+            return "LOWER({$field}) LIKE :{$key}";
         }
     }
 
@@ -313,6 +316,35 @@ class TicketQueryBuilder
 
             if ($ids) {
                 $valuesToReturn = array_merge($valuesToReturn, $ids);
+            } else {
+                $valuesToReturn[] = -1;
+            }
+        }
+
+        if (count($valuesToReturn) === 1) {
+            return $valuesToReturn[0];
+        } else {
+            return $valuesToReturn;
+        }
+    }
+
+    /**
+     * @param string|string[] $value
+     *
+     * @return int|int[]
+     */
+    private function processContractQualifier(mixed $value): mixed
+    {
+        if (!is_array($value)) {
+            $value = [$value];
+        }
+
+        $valuesToReturn = [];
+
+        foreach ($value as $v) {
+            $id = $this->extractId($v);
+            if ($id) {
+                $valuesToReturn[] = $id;
             } else {
                 $valuesToReturn[] = -1;
             }

@@ -87,6 +87,10 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     {
         $qb = $this->createQueryBuilder('t');
 
+        if ($this->mustIncludeContracts($queries)) {
+            $qb->leftJoin('t.contracts', 'c');
+        }
+
         foreach ($queries as $sequence => $query) {
             list($whereQuery, $parameters) = $this->ticketQueryBuilder->build($query, $sequence);
 
@@ -98,5 +102,21 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
         }
 
         return $qb;
+    }
+
+    /**
+     * @param SearchEngine\Query[] $queries
+     */
+    private function mustIncludeContracts(array $queries): bool
+    {
+        foreach ($queries as $query) {
+            foreach ($query->getConditions() as $condition) {
+                if ($condition->isQualifierCondition() && $condition->getQualifier() === 'contract') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
