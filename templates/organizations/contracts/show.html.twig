@@ -34,10 +34,12 @@
                     </span>
                 </div>
 
-                <a class="anchor--action" href="{{ path('new organization contract', { uid: organization.uid, from: contract.uid }) }}">
-                    {{ icon('repeat') }}
-                    {{ 'contracts.show.renew' | trans }}
-                </a>
+                {% if is_granted('orga:manage:contracts', organization) %}
+                    <a class="anchor--action" href="{{ path('new organization contract', { uid: organization.uid, from: contract.uid }) }}">
+                        {{ icon('repeat') }}
+                        {{ 'contracts.show.renew' | trans }}
+                    </a>
+                {% endif %}
             </div>
 
             {% if contract.billingInterval %}
