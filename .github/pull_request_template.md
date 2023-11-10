@@ -2,11 +2,6 @@
 
 <!-- Copy-paste the URL to the related issue(s) if any ("N/A" if not applicable). -->
 
-## Changes
-
-<!-- List the changes you’ve made in this pull request in order to help the
-  -- reviewers to understand how to review it. -->
-
 ## How to test manually
 
 <!-- List actions (step by step) of what have to be done in order to test your
