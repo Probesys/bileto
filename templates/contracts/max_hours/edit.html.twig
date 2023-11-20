@@ -1,0 +1,46 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'contracts.max_hours.edit.title' | trans }}{% endblock %}
+
+{% block body %}
+    <form
+        action="{{ path('update contract max hours', {'uid': contract.uid}) }}"
+        method="post"
+        class="wrapper wrapper--small wrapper--center flow"
+    >
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update contract max hours') }}">
+
+        {% if error %}
+            {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+        {% endif %}
+
+        <div class="flow flow--small">
+            <label for="additional-hours">
+                {{ 'contracts.max_hours.edit.additional_hours' | trans }}
+            </label>
+
+            <input
+                type="number"
+                id="additional-hours"
+                name="additionalHours"
+                value="{{ additionalHours }}"
+                min="0"
+                step="1"
+                required
+                class="input--size3"
+            />
+        </div>
+
+        <div class="form__actions">
+            <button class="button--primary" type="submit">
+                {{ 'forms.save_changes' | trans }}
+            </button>
+        </div>
+    </form>
+{% endblock %}

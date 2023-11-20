@@ -49,9 +49,20 @@
             {% endif %}
 
             <div class="flow flow--small">
-                <span class="text--small" id="contract-hours-consumed">
-                    {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
-                </span>
+                <div class="row row--center row--always flow text--small">
+                    <div class="row__item--extend" id="contract-hours-consumed">
+                        {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
+                    </div>
+
+                    <button
+                        class="button--discreet"
+                        data-controller="modal-opener"
+                        data-action="modal-opener#fetch"
+                        data-modal-opener-href-value="{{ path('edit contract max hours', { uid: contract.uid }) }}"
+                    >
+                        {{ 'contracts.show.extend' | trans }}
+                    </button>
+                </div>
 
                 <progress value="{{ contract.consumedHours }}" max="{{ contract.maxHours }}" aria-labelledby="contract-hours-consumed">
                 </progress>
