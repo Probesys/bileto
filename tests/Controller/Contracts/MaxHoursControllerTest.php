@@ -4,7 +4,7 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\Controller\Tickets;
+namespace App\Tests\Controller\Contracts;
 
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
