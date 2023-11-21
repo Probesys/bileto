@@ -47,6 +47,11 @@ advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incide
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: "Les valeurs possibles pour «\_type\_» sont\_: <code>incident</code> et <code>request</code>."
 advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
+contracts.alerts.edit.date_alert.after: 'jours de la fin du contrat.'
+contracts.alerts.edit.date_alert.before: 'Alerter à'
+contracts.alerts.edit.hours_alert.after: '% des heures seront consommées.'
+contracts.alerts.edit.hours_alert.before: 'Alerter lorsque'
+contracts.alerts.edit.title: 'Configurer les alertes du contrat'
 contracts.days_consumed: "<strong>{days, plural, =0 {0\_j consommé} one {1\_j consommé} other {#\_j consommés}}</strong>"
 contracts.end_at: 'Termine le'
 contracts.hours_consumed: "<strong>{hours} consommée(s)</strong> sur {maxHours}\_h"
@@ -68,6 +73,7 @@ contracts.show.billing_interval: "Intervalle de facturation\_: {count, plural, o
 contracts.show.extend: Rallonger
 contracts.show.notes_confidential: confidentielles
 contracts.show.renew: Renouveler
+contracts.show.set_up_alerts: 'Configurer les alertes'
 contracts.start_at: 'Démarre le'
 contracts.status: Statut
 contracts.status.coming: 'À venir'

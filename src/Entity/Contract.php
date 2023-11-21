@@ -100,10 +100,19 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\Column(options: ["default" => 0])]
     private ?int $billingInterval = null;
 
+    #[ORM\Column(options: ['default' => 0])]
+    private ?int $hoursAlert = null;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private ?int $dateAlert = null;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->timeSpents = new ArrayCollection();
+        $this->billingInterval = 0;
+        $this->hoursAlert = 0;
+        $this->dateAlert = 0;
     }
 
     public function getId(): ?int
@@ -341,6 +350,30 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
     public function setBillingInterval(int $billingInterval): static
     {
         $this->billingInterval = $billingInterval;
+
+        return $this;
+    }
+
+    public function getHoursAlert(): ?int
+    {
+        return $this->hoursAlert;
+    }
+
+    public function setHoursAlert(int $hoursAlert): static
+    {
+        $this->hoursAlert = $hoursAlert;
+
+        return $this;
+    }
+
+    public function getDateAlert(): ?int
+    {
+        return $this->dateAlert;
+    }
+
+    public function setDateAlert(int $dateAlert): static
+    {
+        $this->dateAlert = $dateAlert;
 
         return $this;
     }

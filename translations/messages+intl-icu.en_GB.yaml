@@ -47,6 +47,11 @@ advanced_search_syntax.qualifiers.type.example1: 'Tickets of type “incident”
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: 'The possible values for “type“ are: <code>incident</code> and <code>request</code>.'
 advanced_search_syntax.title: 'Quick reference for the advanced syntax'
+contracts.alerts.edit.date_alert.after: 'days before the end of the contract.'
+contracts.alerts.edit.date_alert.before: Alert
+contracts.alerts.edit.hours_alert.after: '% of the hours have been consumed.'
+contracts.alerts.edit.hours_alert.before: 'Alert when'
+contracts.alerts.edit.title: 'Set up contract alerts'
 contracts.days_consumed: "<strong>{days}\_d consumed</strong>"
 contracts.end_at: 'End on'
 contracts.hours_consumed: '<strong>{hours} consumed</strong> on {maxHours}h'
@@ -68,6 +73,7 @@ contracts.show.billing_interval: 'Billing interval: {count, plural, one {1 minut
 contracts.show.extend: Extend
 contracts.show.notes_confidential: confidential
 contracts.show.renew: Renew
+contracts.show.set_up_alerts: 'Set up alerts'
 contracts.start_at: 'Start on'
 contracts.status: Status
 contracts.status.coming: Coming
