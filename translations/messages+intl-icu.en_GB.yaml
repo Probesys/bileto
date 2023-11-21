@@ -55,6 +55,7 @@ contracts.alerts.edit.title: 'Set up contract alerts'
 contracts.days_consumed: "<strong>{days}\_d consumed</strong>"
 contracts.end_at: 'End on'
 contracts.hours_consumed: '<strong>{hours} consumed</strong> on {maxHours}h'
+contracts.index.alert: Alert
 contracts.index.new_contract: 'New contract'
 contracts.index.no_contracts: 'No contracts'
 contracts.index.number: '{count, plural, =0 {No contracts} one {1 contract} other {# contracts}}'
@@ -74,6 +75,7 @@ contracts.show.extend: Extend
 contracts.show.notes_confidential: confidential
 contracts.show.renew: Renew
 contracts.show.set_up_alerts: 'Set up alerts'
+contracts.show.warning: Warning
 contracts.start_at: 'Start on'
 contracts.status: Status
 contracts.status.coming: Coming

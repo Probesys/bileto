@@ -64,6 +64,15 @@
             <div class="flow flow--small">
                 <div class="row row--center row--always flow text--small">
                     <div class="row__item--extend" id="contract-hours-consumed">
+                        {% if contract.hoursAlertActivated %}
+                            <span>
+                                {{ icon('triangle-exclamation-warning') }}
+                                <span class="sr-only">
+                                    {{ 'contracts.show.warning' | trans }}
+                                </span>
+                            </span>
+                        {% endif %}
+
                         {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
                     </div>
 
@@ -77,13 +86,27 @@
                     </button>
                 </div>
 
-                <progress value="{{ contract.consumedHours }}" max="{{ contract.maxHours }}" aria-labelledby="contract-hours-consumed">
+                <progress
+                    value="{{ contract.consumedHours }}"
+                    max="{{ contract.maxHours }}"
+                    class="{{ contract.hoursAlertActivated ? 'progress--warning' }}"
+                    aria-labelledby="contract-hours-consumed"
+                >
                 </progress>
             </div>
 
             <div class="flow flow--small">
                 <div class="row row--center row--always flow text--small">
                     <div class="row__item--extend" id="contract-days-consumed">
+                        {% if contract.dateAlertActivated %}
+                            <span>
+                                {{ icon('triangle-exclamation-warning') }}
+                                <span class="sr-only">
+                                    {{ 'contracts.show.warning' | trans }}
+                                </span>
+                            </span>
+                        {% endif %}
+
                         {{ 'contracts.days_consumed' | trans({ 'days': contract.daysProgress }) | raw }}
                     </div>
 
@@ -100,7 +123,12 @@
                     </div>
                 </div>
 
-                <progress value="{{ contract.daysProgress }}" max="{{ contract.daysDuration }}" aria-labelledby="contract-days-consumed">
+                <progress
+                    value="{{ contract.daysProgress }}"
+                    max="{{ contract.daysDuration }}"
+                    class="{{ contract.dateAlertActivated ? 'progress--warning' }}"
+                    aria-labelledby="contract-days-consumed"
+                >
                 </progress>
             </div>
 

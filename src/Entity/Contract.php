@@ -359,6 +359,15 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
         return $this->hoursAlert;
     }
 
+    public function getHoursOfAlert(): ?float
+    {
+        if ($this->getHoursAlert() <= 0) {
+            return null;
+        }
+
+        return $this->getHoursAlert() * $this->getMaxHours() / 100;
+    }
+
     public function setHoursAlert(int $hoursAlert): static
     {
         $this->hoursAlert = $hoursAlert;
@@ -366,9 +375,40 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
         return $this;
     }
 
+    public function isHoursAlertActivated(): bool
+    {
+        $hoursOfAlert = $this->getHoursOfAlert();
+        return (
+            $this->getStatus() === 'ongoing' &&
+            $hoursOfAlert !== null &&
+            $this->getConsumedHours() >= $hoursOfAlert
+        );
+    }
+
     public function getDateAlert(): ?int
     {
         return $this->dateAlert;
+    }
+
+    public function getDateOfAlert(): ?\DateTimeImmutable
+    {
+        if ($this->getDateAlert() <= 0) {
+            return null;
+        }
+
+        return $this->getEndAt()->modify("-{$this->getDateAlert()} days 00:00:00");
+    }
+
+    public function getDateAlertPercent(): float
+    {
+        $dateOfAlert = $this->getDateOfAlert();
+        if ($dateOfAlert === null) {
+            return 0;
+        }
+
+        $interval = $this->startAt->diff($dateOfAlert);
+        $daysSinceStart = intval($interval->format('%a'));
+        return round($daysSinceStart * 100 / $this->getDaysDuration(), 2);
     }
 
     public function setDateAlert(int $dateAlert): static
@@ -376,5 +416,20 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
         $this->dateAlert = $dateAlert;
 
         return $this;
+    }
+
+    public function isDateAlertActivated(): bool
+    {
+        $dateOfAlert = $this->getDateOfAlert();
+        return (
+            $this->getStatus() === 'ongoing' &&
+            $dateOfAlert !== null &&
+            utils\Time::now() >= $dateOfAlert
+        );
+    }
+
+    public function isAlertActivated(): bool
+    {
+        return $this->isHoursAlertActivated() || $this->isDateAlertActivated();
     }
 }
