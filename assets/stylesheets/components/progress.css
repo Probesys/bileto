@@ -18,3 +18,34 @@ progress::-webkit-progress-bar,
 progress::-moz-progress-bar {
     background-color: var(--color-primary9);
 }
+
+.progress-with-marker {
+    position: relative;
+}
+
+.progress__marker {
+    position: absolute;
+    top: 0;
+    left: var(--marker-percent);
+
+    padding-top: 2.5rem;
+
+    font-size: 0.8em;
+    text-align: center;
+
+    transform: translateX(-50%);
+}
+
+.progress__marker::before {
+    content: '';
+
+    position: absolute;
+    top: 0;
+    left: calc(50% - 1px);
+
+    display: block;
+    width: 0;
+    height: 2.5rem;
+
+    border-left: 2px dotted var(--color-grey12);
+}
