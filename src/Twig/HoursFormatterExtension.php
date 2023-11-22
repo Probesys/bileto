@@ -20,8 +20,23 @@ class HoursFormatterExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
+            new TwigFilter('formatHours', [$this, 'formatHours']),
             new TwigFilter('formatMinutes', [$this, 'formatMinutes']),
         ];
+    }
+
+    /**
+     * Return the given hours formatted as hours and minutes.
+     *
+     * Hours can be given as float. The decimal part of the number is
+     * transformed to minutes. For instance, 2.5 will return "2h 30m".
+     */
+    public function formatHours(int|float $hours): string
+    {
+        $hoursOnly = intval(floor($hours));
+        $minutes = intval(($hours - $hoursOnly) * 60);
+
+        return $this->format($hoursOnly, $minutes);
     }
 
     /**
@@ -32,18 +47,23 @@ class HoursFormatterExtension extends AbstractExtension
         $hours = intdiv($minutes, 60);
         $remainingMinutes = $minutes % 60;
 
-        if ($remainingMinutes === 0) {
+        return $this->format($hours, $remainingMinutes);
+    }
+
+    private function format(int $hours, int $minutes): string
+    {
+        if ($minutes === 0) {
             return $this->translator->trans('hours_formatter.hours', [
                 'hours' => $hours,
             ]);
         } elseif ($hours === 0) {
             return $this->translator->trans('hours_formatter.minutes', [
-                'minutes' => $remainingMinutes,
+                'minutes' => $minutes,
             ]);
         } else {
             return $this->translator->trans('hours_formatter.hours_and_minutes', [
                 'hours' => $hours,
-                'minutes' => $remainingMinutes,
+                'minutes' => $minutes,
             ]);
         }
     }
