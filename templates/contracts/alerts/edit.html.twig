@@ -1,0 +1,69 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'contracts.alerts.edit.title' | trans }}{% endblock %}
+
+{% block body %}
+    <form
+        action="{{ path('update contract alerts', {'uid': contract.uid}) }}"
+        method="post"
+        class="wrapper wrapper--small wrapper--center flow"
+    >
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update contract alerts') }}">
+
+        {% if error %}
+            {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+        {% endif %}
+
+        <div class="flow flow--small">
+            <label for="hours-alert">
+                {{ 'contracts.alerts.edit.hours_alert.before' | trans }}
+
+                <input
+                    type="number"
+                    id="hours-alert"
+                    name="hoursAlert"
+                    value="{{ hoursAlert }}"
+                    min="0"
+                    max="100"
+                    step="1"
+                    required
+                    class="input--size2"
+                />
+
+                {{ 'contracts.alerts.edit.hours_alert.after' | trans }}
+            </label>
+        </div>
+
+        <div class="flow flow--small">
+            <label for="date-alert">
+                {{ 'contracts.alerts.edit.date_alert.before' | trans }}
+
+                <input
+                    type="number"
+                    id="date-alert"
+                    name="dateAlert"
+                    value="{{ dateAlert }}"
+                    min="0"
+                    max="{{ contract.daysDuration }}"
+                    step="1"
+                    required
+                    class="input--size2"
+                />
+
+                {{ 'contracts.alerts.edit.date_alert.after' | trans }}
+            </label>
+        </div>
+
+        <div class="form__actions">
+            <button class="button--primary" type="submit">
+                {{ 'forms.save_changes' | trans }}
+            </button>
+        </div>
+    </form>
+{% endblock %}

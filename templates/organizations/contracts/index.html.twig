@@ -48,6 +48,13 @@
                                     </div>
 
                                     <div>
+                                        {% if contract.alertActivated %}
+                                            <span class="badge badge--small badge--orange">
+                                                {{ icon('triangle-exclamation-warning') }}
+                                                {{ 'contracts.index.alert' | trans }}
+                                            </span>
+                                        {% endif %}
+
                                         <span class="badge badge--small badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
                                             <span class="sr-only">
                                                 {{ 'contracts.status' | trans }}

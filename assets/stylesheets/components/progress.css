@@ -19,6 +19,16 @@ progress::-moz-progress-bar {
     background-color: var(--color-primary9);
 }
 
+.progress--warning {
+    background-color: var(--color-warning2);
+    border-color: var(--color-warning9);
+}
+
+.progress--warning::-webkit-progress-bar,
+.progress--warning::-moz-progress-bar {
+    background-color: var(--color-warning9);
+}
+
 .progress-with-marker {
     position: relative;
 }

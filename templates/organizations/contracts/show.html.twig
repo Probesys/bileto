@@ -23,7 +23,7 @@
         </div>
 
         <div class="wrapper wrapper--small flow flow--larger">
-            <div class="row row--always row--center">
+            <div class="row row--always row--center flow flow--small">
                 <div class="row__item--extend">
                     <span class="badge badge--bold badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
                         <span class="sr-only">
@@ -35,7 +35,20 @@
                 </div>
 
                 {% if is_granted('orga:manage:contracts', organization) %}
-                    <a class="anchor--action" href="{{ path('new organization contract', { uid: organization.uid, from: contract.uid }) }}">
+                    <button
+                        class="button--icon"
+                        data-controller="modal-opener"
+                        data-action="modal-opener#fetch"
+                        data-modal-opener-href-value="{{ path('edit contract alerts', { uid: contract.uid }) }}"
+                    >
+                        {{ icon('bell') }}
+
+                        <span class="sr-only">
+                            {{ 'contracts.show.set_up_alerts' | trans }}
+                        </span>
+                    </button>
+
+                    <a class="button" href="{{ path('new organization contract', { uid: organization.uid, from: contract.uid }) }}">
                         {{ icon('repeat') }}
                         {{ 'contracts.show.renew' | trans }}
                     </a>
@@ -51,6 +64,15 @@
             <div class="flow flow--small">
                 <div class="row row--center row--always flow text--small">
                     <div class="row__item--extend" id="contract-hours-consumed">
+                        {% if contract.hoursAlertActivated %}
+                            <span>
+                                {{ icon('triangle-exclamation-warning') }}
+                                <span class="sr-only">
+                                    {{ 'contracts.show.warning' | trans }}
+                                </span>
+                            </span>
+                        {% endif %}
+
                         {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
                     </div>
 
@@ -64,13 +86,39 @@
                     </button>
                 </div>
 
-                <progress value="{{ contract.consumedHours }}" max="{{ contract.maxHours }}" aria-labelledby="contract-hours-consumed">
-                </progress>
+                <div class="progress-with-marker">
+                    <progress
+                        value="{{ contract.consumedHours }}"
+                        max="{{ contract.maxHours }}"
+                        class="{{ contract.hoursAlertActivated ? 'progress--warning' }}"
+                        aria-labelledby="contract-hours-consumed"
+                    >
+                    </progress>
+
+                    {% if contract.hoursAlert > 0 %}
+                        <div class="progress__marker" style="--marker-percent: {{ contract.hoursAlert }}%;">
+                            <span class="sr-only">
+                                {{ 'contracts.show.alert' | trans }}
+                            </span>
+
+                            {{ contract.hoursOfAlert | formatHours }}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="flow flow--small">
                 <div class="row row--center row--always flow text--small">
                     <div class="row__item--extend" id="contract-days-consumed">
+                        {% if contract.dateAlertActivated %}
+                            <span>
+                                {{ icon('triangle-exclamation-warning') }}
+                                <span class="sr-only">
+                                    {{ 'contracts.show.warning' | trans }}
+                                </span>
+                            </span>
+                        {% endif %}
+
                         {{ 'contracts.days_consumed' | trans({ 'days': contract.daysProgress }) | raw }}
                     </div>
 
@@ -87,8 +135,27 @@
                     </div>
                 </div>
 
-                <progress value="{{ contract.daysProgress }}" max="{{ contract.daysDuration }}" aria-labelledby="contract-days-consumed">
-                </progress>
+                <div class="progress-with-marker">
+                    <progress
+                        value="{{ contract.daysProgress }}"
+                        max="{{ contract.daysDuration }}"
+                        class="{{ contract.dateAlertActivated ? 'progress--warning' }}"
+                        aria-labelledby="contract-days-consumed"
+                    >
+                    </progress>
+
+                    {% if contract.dateAlert > 0 %}
+                        <div class="progress__marker" style="--marker-percent: {{ contract.dateAlertPercent }}%;">
+                            <span class="sr-only">
+                                {{ 'contracts.show.alert' | trans }}
+                            </span>
+
+                            <time datetime="{{ contract.dateOfAlert | dateIso }}">
+                                {{ contract.dateOfAlert | dateTrans('dd MMM') }}
+                            </time>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
 
             {% if contract.notes and is_granted('orga:see:contracts:notes', organization) %}
