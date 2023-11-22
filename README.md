@@ -17,6 +17,7 @@ It allows you to:
 - finely manage roles and permissions;
 - create and answer to tickets by emails;
 - login with LDAP;
+- track time through contracts;
 - and a lot more to come: [see our roadmap to learn more.](/ROADMAP.md)
 
 **Please note that Bileto is in an active development phase.**

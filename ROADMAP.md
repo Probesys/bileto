@@ -11,9 +11,9 @@ Also, everything will not be in the version 1.0.
 - [x] collect emails to create and answer to tickets by email;
 - [x] login with LDAP;
 - [x] upload of images and attachments;
-- [ ] contracts and time spent (planned for [0.6.0-alpha](https://github.com/Probesys/bileto/milestone/6));
+- [x] contracts and time spent;
+- [ ] save search in “views” (planned for [0.7.0-alpha](https://github.com/Probesys/bileto/milestone/9));
 - [ ] business rules (planned for [0.8.0-alpha](https://github.com/Probesys/bileto/milestone/7));
-- [ ] save search in “views”;
 - [ ] notification system;
 - [ ] <abbr>SLA</abbr>;
 - [ ] assets management;
