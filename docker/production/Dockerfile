@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Build the assets
-FROM node:alpine AS assets
+FROM node:20-alpine AS assets
 
 WORKDIR /app
 COPY package*.json /app

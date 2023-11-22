@@ -25,7 +25,7 @@ services:
         user: $USER
 
     bundler:
-        image: node:18-alpine
+        image: node:20-alpine
         restart: unless-stopped
         command: npm run watch
         working_dir: /app
