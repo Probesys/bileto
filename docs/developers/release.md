@@ -1,5 +1,13 @@
 # How to release a version
 
+## Before the release
+
+First, make sure that all the issues from the current milestone are done.
+Also, see if you can fix any minor bugs or small technical debt issues first: that's always a good thing to do.
+
+Before releasing a version, you should at least update the dependencies to their latest patch versions.
+[Read more about managing the dependencies.](/docs/developers/dependencies.md)
+
 ## Start the release process
 
 There's a `make` command to release a new version of Bileto:
