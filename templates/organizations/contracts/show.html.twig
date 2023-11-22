@@ -86,13 +86,25 @@
                     </button>
                 </div>
 
-                <progress
-                    value="{{ contract.consumedHours }}"
-                    max="{{ contract.maxHours }}"
-                    class="{{ contract.hoursAlertActivated ? 'progress--warning' }}"
-                    aria-labelledby="contract-hours-consumed"
-                >
-                </progress>
+                <div class="progress-with-marker">
+                    <progress
+                        value="{{ contract.consumedHours }}"
+                        max="{{ contract.maxHours }}"
+                        class="{{ contract.hoursAlertActivated ? 'progress--warning' }}"
+                        aria-labelledby="contract-hours-consumed"
+                    >
+                    </progress>
+
+                    {% if contract.hoursAlert > 0 %}
+                        <div class="progress__marker" style="--marker-percent: {{ contract.hoursAlert }}%;">
+                            <span class="sr-only">
+                                {{ 'contracts.show.alert' | trans }}
+                            </span>
+
+                            {{ contract.hoursOfAlert | formatHours }}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="flow flow--small">
@@ -123,13 +135,27 @@
                     </div>
                 </div>
 
-                <progress
-                    value="{{ contract.daysProgress }}"
-                    max="{{ contract.daysDuration }}"
-                    class="{{ contract.dateAlertActivated ? 'progress--warning' }}"
-                    aria-labelledby="contract-days-consumed"
-                >
-                </progress>
+                <div class="progress-with-marker">
+                    <progress
+                        value="{{ contract.daysProgress }}"
+                        max="{{ contract.daysDuration }}"
+                        class="{{ contract.dateAlertActivated ? 'progress--warning' }}"
+                        aria-labelledby="contract-days-consumed"
+                    >
+                    </progress>
+
+                    {% if contract.dateAlert > 0 %}
+                        <div class="progress__marker" style="--marker-percent: {{ contract.dateAlertPercent }}%;">
+                            <span class="sr-only">
+                                {{ 'contracts.show.alert' | trans }}
+                            </span>
+
+                            <time datetime="{{ contract.dateOfAlert | dateIso }}">
+                                {{ contract.dateOfAlert | dateTrans('dd MMM') }}
+                            </time>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
 
             {% if contract.notes and is_granted('orga:see:contracts:notes', organization) %}

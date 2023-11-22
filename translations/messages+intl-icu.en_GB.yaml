@@ -70,6 +70,7 @@ contracts.new.billing_interval.caption: 'The time spent on tickets will be round
 contracts.new.submit: 'Create the contract'
 contracts.new.title: 'New contract'
 contracts.notes: 'Private notes'
+contracts.show.alert: Alert
 contracts.show.billing_interval: 'Billing interval: {count, plural, one {1 minute} other {# minutes}}'
 contracts.show.extend: Extend
 contracts.show.notes_confidential: confidential

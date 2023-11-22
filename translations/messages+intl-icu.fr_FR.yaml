@@ -70,6 +70,7 @@ contracts.new.billing_interval.caption: 'Le temps passé sur les tickets sera ar
 contracts.new.submit: 'Créer le contrat'
 contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
+contracts.show.alert: Alerte
 contracts.show.billing_interval: "Intervalle de facturation\_: {count, plural, one {1 minute} other {# minutes}}"
 contracts.show.extend: Rallonger
 contracts.show.notes_confidential: confidentielles
