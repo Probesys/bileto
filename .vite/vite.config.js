@@ -1,8 +1,7 @@
 import { defineConfig } from 'vite';
 import autoprefixer from 'autoprefixer';
 import emptyAssetsDirPlugin from './empty-assets-dir-plugin.js';
-
-const path = require('path');
+import path from 'path';
 
 export default defineConfig(({ mode }) => {
     const buildConfig = {

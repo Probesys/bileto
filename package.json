@@ -2,6 +2,7 @@
   "name": "bileto",
   "license": "AGPL-3.0-or-later",
   "repository": "github:Probesys/bileto",
+  "type": "module",
   "scripts": {
     "watch": "vite build --config .vite/vite.config.js --mode development --watch",
     "build": "vite build --config .vite/vite.config.js --mode production",
@@ -23,7 +24,7 @@
     "stylelint-order": "^6.0.0",
     "stylelint-stylistic": "^0.4.0",
     "svg-sprite": "^2.0.1",
-    "vite": "^4.0.0"
+    "vite": "^5.0.0"
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.1.0",
