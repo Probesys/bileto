@@ -1,5 +1,63 @@
 # Changelog of Bileto
 
+## 2023-11-23 - 0.6.0-alpha
+
+### New
+
+- Allow to create and list contracts ([c66bd7e](https://github.com/Probesys/bileto/commit/c66bd7e), [1895e83](https://github.com/Probesys/bileto/commit/1895e83), [e546c01](https://github.com/Probesys/bileto/commit/e546c01), [e40e54a](https://github.com/Probesys/bileto/commit/e40e54a))
+- Allow to assign contracts to tickets ([fc3e93e](https://github.com/Probesys/bileto/commit/fc3e93e), [e2af93d](https://github.com/Probesys/bileto/commit/e2af93d))
+- Allow to list the tickets of a contract ([61dda9a](https://github.com/Probesys/bileto/commit/61dda9a))
+- Allow to set up alerts on the contracts ([f385dd6](https://github.com/Probesys/bileto/commit/f385dd6))
+- Allow to record time spent ([35ab22c](https://github.com/Probesys/bileto/commit/35ab22c))
+
+### Improvements
+
+- Simplify the answer form ([1e93d8e](https://github.com/Probesys/bileto/commit/1e93d8e))
+- Put documents visually in the TinyMCE editor ([2bb4837](https://github.com/Probesys/bileto/commit/2bb4837))
+- Improve accessibility of popups ([c723bb3](https://github.com/Probesys/bileto/commit/c723bb3))
+- Rebalance the global font sizes and borders width ([17e03df](https://github.com/Probesys/bileto/commit/17e03df))
+- Round off the buttons ([d140f2b](https://github.com/Probesys/bileto/commit/d140f2b))
+- Lighten the look of the "quick search" filters ([5b7b737](https://github.com/Probesys/bileto/commit/5b7b737))
+- Improve breadcrumb to navigate in tickets ([d8479a1](https://github.com/Probesys/bileto/commit/d8479a1))
+- Improve the look of discreet buttons with caret ([2a71ef1](https://github.com/Probesys/bileto/commit/2a71ef1))
+- Remove the underline of anchors rendered as buttons ([06bd6ac](https://github.com/Probesys/bileto/commit/06bd6ac))
+
+### Bug fixes
+
+- Handle email attachments correctly ([c558ef3](https://github.com/Probesys/bileto/commit/c558ef3))
+- Adapt the editor background to color scheme ([035a9b2](https://github.com/Probesys/bileto/commit/035a9b2))
+- Don't try to recreate roles in production ([a3a6cf2](https://github.com/Probesys/bileto/commit/a3a6cf2))
+- Fix the strip list style for even items ([bc52f30](https://github.com/Probesys/bileto/commit/bc52f30))
+- Fix the year format rendered by the Twig `dateTrans` filter ([55ef233](https://github.com/Probesys/bileto/commit/55ef233))
+- Don't track empty entity changes ([256b79a](https://github.com/Probesys/bileto/commit/256b79a))
+
+### Technical
+
+- Provide a Docker image for production ([dd71926](https://github.com/Probesys/bileto/commit/dd71926), [42260f5](https://github.com/Probesys/bileto/commit/42260f5), [392db06](https://github.com/Probesys/bileto/commit/392db06))
+- Update the dependencies ([f31533b](https://github.com/Probesys/bileto/commit/f31533b), [ae0762f](https://github.com/Probesys/bileto/commit/ae0762f))
+
+### Documentation
+
+- Explain how to contribute to the documentation ([7ea774e](https://github.com/Probesys/bileto/commit/7ea774e))
+- Adapt the documentation for the "alpha" phase ([56d9058](https://github.com/Probesys/bileto/commit/56d9058))
+- Merge the deploy and update files for administrators ([3664744](https://github.com/Probesys/bileto/commit/3664744))
+- Add a process before releasing a version ([c4382d4](https://github.com/Probesys/bileto/commit/c4382d4))
+- Update the roadmap ([e568670](https://github.com/Probesys/bileto/commit/e568670))
+- Update the screenshot ([1abb8a2](https://github.com/Probesys/bileto/commit/1abb8a2))
+
+### Developers
+
+- Upgrade to NodeJS 20 ([fda833c](https://github.com/Probesys/bileto/commit/fda833c))
+- Upgrade to Vite 5 ([8e08be9](https://github.com/Probesys/bileto/commit/8e08be9))
+- Restore security files on make translations ([9b1afa7](https://github.com/Probesys/bileto/commit/9b1afa7))
+- Provide a JS Switch controller ([3bea2cd](https://github.com/Probesys/bileto/commit/3bea2cd))
+- Allow to limit the size of inputs ([da36f4d](https://github.com/Probesys/bileto/commit/da36f4d))
+- Provide a HoursFormatter Twig extension ([c35caec](https://github.com/Probesys/bileto/commit/c35caec), [f16f071](https://github.com/Probesys/bileto/commit/f16f071))
+- Add buttons groups ([3772fa8](https://github.com/Probesys/bileto/commit/3772fa8))
+- Refactor the transfer of events of the editor ([a308460](https://github.com/Probesys/bileto/commit/a308460))
+- Remove the Changes section from the PR template ([303262d](https://github.com/Probesys/bileto/commit/303262d))
+- Add a check for color scheme to the PR checklist ([e7c0868](https://github.com/Probesys/bileto/commit/e7c0868))
+
 ## 2023-09-01 - 0.5.0-alpha
 
 ### New
