@@ -8,6 +8,7 @@ namespace App\MessageHandler;
 
 use App\Entity\MailboxEmail;
 use App\Entity\Message;
+use App\Entity\MessageDocument;
 use App\Entity\Ticket;
 use App\Message\CreateTicketsFromMailboxEmails;
 use App\Message\SendMessageEmail;
@@ -133,34 +134,14 @@ class CreateTicketsFromMailboxEmailsHandler
             $this->ticketRepository->save($ticket, true);
             $this->messageRepository->save($message, true);
 
-            foreach ($mailboxEmail->getAttachments() as $attachment) {
-                $tmpPath = sys_get_temp_dir();
-                $filename = $attachment->getName();
-                $status = $attachment->save($tmpPath, $filename);
+            $messageDocuments = $this->storeAttachments($mailboxEmail);
 
-                if (!$status) {
-                    $this->logger->warning(
-                        "MailboxEmail {$mailboxEmail->getId()} cannot import {$filename}: can't save in temporary dir"
-                    );
-                    continue;
-                }
-
-                $filepath = $tmpPath . '/' . $filename;
-                $file = new File($filepath, false);
-
-                try {
-                    $messageDocument = $this->messageDocumentStorage->store($file, $filename);
-                } catch (MessageDocumentStorageError $e) {
-                    $this->logger->warning(
-                        "MailboxEmail {$mailboxEmail->getId()} cannot import {$filename}: {$e->getMessage()}"
-                    );
-                    continue;
-                }
-
+            foreach ($messageDocuments as $messageDocument) {
                 $messageDocument->setMessage($message);
                 $messageDocument->setCreatedBy($requester);
-                $this->messageDocumentRepository->save($messageDocument, true);
             }
+
+            $this->messageDocumentRepository->saveBatch($messageDocuments, true);
 
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
 
@@ -191,6 +172,43 @@ class CreateTicketsFromMailboxEmailsHandler
         }
 
         return null;
+    }
+
+    /**
+     * @return array<string, MessageDocument>
+     */
+    private function storeAttachments(MailboxEmail $mailboxEmail): array
+    {
+        $messageDocuments = [];
+
+        $tmpPath = sys_get_temp_dir();
+
+        foreach ($mailboxEmail->getAttachments() as $attachment) {
+            $id = $attachment->getId();
+            $filename = $attachment->getName();
+            $status = $attachment->save($tmpPath, $filename);
+
+            if (!$status) {
+                $this->logger->warning(
+                    "MailboxEmail {$mailboxEmail->getId()} cannot import {$filename}: can't save in temporary dir"
+                );
+                continue;
+            }
+
+            $filepath = $tmpPath . '/' . $filename;
+            $file = new File($filepath, false);
+
+            try {
+                $messageDocuments[$id] = $this->messageDocumentStorage->store($file, $filename);
+            } catch (MessageDocumentStorageError $e) {
+                $this->logger->warning(
+                    "MailboxEmail {$mailboxEmail->getId()} cannot import {$filename}: {$e->getMessage()}"
+                );
+                continue;
+            }
+        }
+
+        return $messageDocuments;
     }
 
     private function markError(MailboxEmail $mailboxEmail, string $error): void

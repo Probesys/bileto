@@ -36,6 +36,20 @@ class MessageDocumentRepository extends ServiceEntityRepository implements UidGe
         }
     }
 
+    /**
+     * @param MessageDocument[] $entities
+     */
+    public function saveBatch(array $entities, bool $flush = false): void
+    {
+        foreach ($entities as $entity) {
+            $this->save($entity, false);
+        }
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
     public function remove(MessageDocument $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
