@@ -1,5 +1,12 @@
 # Changelog of Bileto
 
+## unreleased
+
+### Migration notes
+
+You need to set the new environment variable `APP_BASE_URL` in your `.env.local` file (see [env.sample](/env.sample)).
+This variable is used to generate absolute URLs in non-HTTP contexts (i.e. from the command line).
+
 ## 2023-11-23 - 0.6.0-alpha
 
 ### New
