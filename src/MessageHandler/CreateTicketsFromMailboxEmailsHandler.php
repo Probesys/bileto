@@ -28,6 +28,7 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Webklex\PHPIMAP;
 
@@ -46,6 +47,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private HtmlSanitizerInterface $appMessageSanitizer,
         private MessageBusInterface $bus,
         private LoggerInterface $logger,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -122,11 +124,9 @@ class CreateTicketsFromMailboxEmailsHandler
                 }
             }
 
-            $messageContent = $this->appMessageSanitizer->sanitize($mailboxEmail->getBody());
-
             $message = new Message();
             $message->setCreatedBy($requester);
-            $message->setContent($messageContent);
+            $message->setContent(''); // this is set below
             $message->setTicket($ticket);
             $message->setIsConfidential(false);
             $message->setVia('email');
@@ -142,6 +142,17 @@ class CreateTicketsFromMailboxEmailsHandler
             }
 
             $this->messageDocumentRepository->saveBatch($messageDocuments, true);
+
+            $messageContent = $mailboxEmail->getBody();
+            // Inline attachments (i.e. <img>) have URLs of type: `cid:<id>`.
+            // Here we replace these URLs with the application URLs to the message documents.
+            $messageContent = $this->replaceAttachmentsUrls($messageContent, $messageDocuments);
+            // Sanitize the HTML only after replacing the URLs or it would
+            // remove the `src` attributes as the `cid:` scheme is forbidden.
+            $messageContent = $this->appMessageSanitizer->sanitize($messageContent);
+
+            $message->setContent($messageContent);
+            $this->messageRepository->save($message, true);
 
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
 
@@ -209,6 +220,51 @@ class CreateTicketsFromMailboxEmailsHandler
         }
 
         return $messageDocuments;
+    }
+
+    /**
+     * Replace (in the given content) the image src attributes of the inline
+     * attachments with the URLs of the corresponding message documents.
+     *
+     * @param array<string, MessageDocument> $messageDocuments
+     */
+    private function replaceAttachmentsUrls(string $content, array $messageDocuments): string
+    {
+        $contentDom = new \DOMDocument();
+        $contentDom->loadHTML($content);
+        $contentDomXPath = new \DomXPath($contentDom);
+
+        foreach ($messageDocuments as $attachmentId => $messageDocument) {
+            $imageNodes = $contentDomXPath->query("//img[@src='cid:{$attachmentId}']");
+
+            if ($imageNodes === false || $imageNodes->length === 0) {
+                // no corresponding node, the document was probably not inlined
+                continue;
+            }
+
+            $messageDocumentUrl = $this->urlGenerator->generate(
+                'message document',
+                [
+                    'uid' => $messageDocument->getUid(),
+                    'extension' => $messageDocument->getExtension(),
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+
+            foreach ($imageNodes as $imageNode) {
+                if ($imageNode instanceof \DOMElement) {
+                    $imageNode->setAttribute('src', $messageDocumentUrl);
+                }
+            }
+        }
+
+        $result = $contentDom->saveHTML();
+
+        if ($result === false) {
+            return $content;
+        }
+
+        return $result;
     }
 
     private function markError(MailboxEmail $mailboxEmail, string $error): void
