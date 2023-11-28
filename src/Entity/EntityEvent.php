@@ -110,6 +110,14 @@ class EntityEvent implements MetaEntityInterface
         return $this;
     }
 
+    /**
+     * Return true if the EntityEvent references the specified field.
+     */
+    public function refersTo(string $field): bool
+    {
+        return isset($this->changes[$field]);
+    }
+
     public static function initInsert(ActivityRecordableInterface $entity): self
     {
         $entityEvent = new self();

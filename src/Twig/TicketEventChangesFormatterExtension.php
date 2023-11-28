@@ -8,6 +8,7 @@ namespace App\Twig;
 
 use App\Entity\EntityEvent;
 use App\Entity\User;
+use App\Repository\ContractRepository;
 use App\Repository\UserRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
@@ -15,14 +16,11 @@ use Twig\TwigFilter;
 
 class TicketEventChangesFormatterExtension extends AbstractExtension
 {
-    private UserRepository $userRepository;
-
-    private TranslatorInterface $translator;
-
-    public function __construct(UserRepository $userRepository, TranslatorInterface $translator)
-    {
-        $this->userRepository = $userRepository;
-        $this->translator = $translator;
+    public function __construct(
+        private ContractRepository $contractRepository,
+        private UserRepository $userRepository,
+        private TranslatorInterface $translator,
+    ) {
     }
 
     public function getFilters(): array
@@ -57,6 +55,8 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             return $this->formatRequesterChanges($user, $fieldChanges);
         } elseif ($field === 'solution') {
             return $this->formatSolutionChanges($user, $fieldChanges);
+        } elseif ($field === 'ongoingContract') {
+            return $this->formatOngoingContractChanges($user, $fieldChanges);
         } else {
             return $this->formatChanges($user, $field, $fieldChanges);
         }
@@ -229,6 +229,49 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             return $this->translator->trans(
                 'tickets.events.solution.changed',
                 ['username' => $username],
+            );
+        }
+    }
+
+    /**
+     * @param array<?int> $changes
+     */
+    private function formatOngoingContractChanges(User $user, array $changes): string
+    {
+        $username = $this->escape($user->getDisplayName());
+
+        if ($changes[0] === null) {
+            $newContract = $this->contractRepository->find($changes[1]);
+            $newContractName = $this->escape($newContract->getName());
+            return $this->translator->trans(
+                'tickets.events.ongoing_contract.new',
+                [
+                    'username' => $username,
+                    'newValue' => $newContractName,
+                ],
+            );
+        } elseif ($changes[1] === null) {
+            $oldContract = $this->contractRepository->find($changes[0]);
+            $oldContractName = $this->escape($oldContract->getName());
+            return $this->translator->trans(
+                'tickets.events.ongoing_contract.removed',
+                [
+                    'username' => $username,
+                    'oldValue' => $oldContractName,
+                ],
+            );
+        } else {
+            $oldContract = $this->contractRepository->find($changes[0]);
+            $oldContractName = $this->escape($oldContract->getName());
+            $newContract = $this->contractRepository->find($changes[1]);
+            $newContractName = $this->escape($newContract->getName());
+            return $this->translator->trans(
+                'tickets.events.ongoing_contract.changed',
+                [
+                    'username' => $username,
+                    'oldValue' => $oldContractName,
+                    'newValue' => $newContractName,
+                ],
             );
         }
     }
