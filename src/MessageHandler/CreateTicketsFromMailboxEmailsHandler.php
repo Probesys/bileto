@@ -231,6 +231,17 @@ class CreateTicketsFromMailboxEmailsHandler
     private function replaceAttachmentsUrls(string $content, array $messageDocuments): string
     {
         $contentDom = new \DOMDocument();
+
+        // DOMDocument::loadHTML considers the source string to be encoded in
+        // ISO-8859-1 by default. In order to not ending with weird characters,
+        // we encode the non-ASCII chars (i.e. all chars above >0x80) to HTML
+        // entities.
+        $content = mb_encode_numericentity(
+            $content,
+            [0x80, 0x10FFFF, 0, -1],
+            'UTF-8'
+        );
+
         $contentDom->loadHTML($content);
         $contentDomXPath = new \DomXPath($contentDom);
 
