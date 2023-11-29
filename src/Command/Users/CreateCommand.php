@@ -60,12 +60,13 @@ class CreateCommand extends Command
     }
 
     protected function configure(): void
-    {
-        $this
-            ->addOption('email', '', InputOption::VALUE_OPTIONAL, 'The email of the user.')
-            ->addOption('password', '', InputOption::VALUE_OPTIONAL, 'The password of the user.')
-        ;
-    }
+{
+    $this
+        ->addOption('email', '', InputOption::VALUE_OPTIONAL, 'The email of the user.')
+        ->addOption('password', '', InputOption::VALUE_OPTIONAL, 'The password of the user.')
+        ->addOption('language', 'l', InputOption::VALUE_OPTIONAL, 'The language of the user (en_GB or fr_FR).', 'en_GB');
+}
+
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
