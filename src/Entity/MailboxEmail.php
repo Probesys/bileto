@@ -153,14 +153,7 @@ class MailboxEmail implements MetaEntityInterface, ActivityRecordableInterface
 
     public function getSubject(): string
     {
-        $subject = $this->getEmail()->getSubject();
-        $decodedSubject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, "UTF-8");
-
-        if ($decodedSubject === false) {
-            return $subject;
-        }
-
-        return $decodedSubject;
+        return $this->getEmail()->getSubject();
     }
 
     public function getBody(): string

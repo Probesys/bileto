@@ -7,6 +7,11 @@
 You need to set the new environment variable `APP_BASE_URL` in your `.env.local` file (see [env.sample](/env.sample)).
 This variable is used to generate absolute URLs in non-HTTP contexts (i.e. from the command line).
 
+The PHP `imap` module is now required.
+Bileto uses [PHP-IMAP](https://github.com/Webklex/php-imap) which should make the module optional.
+Unfortunately, the library doesn't decode email subjects and attachments correctly by itself.
+It works a lot better with the module installed.
+
 ## 2023-11-23 - 0.6.0-alpha
 
 ### New
