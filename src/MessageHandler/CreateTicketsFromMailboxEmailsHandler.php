@@ -230,6 +230,10 @@ class CreateTicketsFromMailboxEmailsHandler
      */
     private function replaceAttachmentsUrls(string $content, array $messageDocuments): string
     {
+        if (!$content) {
+            return '';
+        }
+
         $contentDom = new \DOMDocument();
 
         // DOMDocument::loadHTML considers the source string to be encoded in
