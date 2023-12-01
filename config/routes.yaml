@@ -3,5 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 controllers:
-    resource: ../src/Controller/
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
     type: attribute

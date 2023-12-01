@@ -1,0 +1,7 @@
+# This file is part of Bileto.
+# Copyright 2022-2023 Probesys
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+_security_logout:
+    resource: security.route_loader.logout
+    type: service

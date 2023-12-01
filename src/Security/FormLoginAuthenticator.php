@@ -6,6 +6,7 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Ldap;
 use App\Utils\ConstraintErrorsFormatter;
@@ -39,6 +40,9 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
+    /**
+     * @param UserProviderInterface<User> $userProvider
+     */
     public function __construct(
         private Ldap $ldap,
         private LoggerInterface $logger,
