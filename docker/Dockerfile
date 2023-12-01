@@ -2,7 +2,7 @@
 # Copyright 2022-2023 Probesys
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 ENV COMPOSER_HOME /tmp
 

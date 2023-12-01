@@ -20,11 +20,11 @@ $ git --version
 git version 2.38.1
 ```
 
-Check PHP version (must be >= 8.1):
+Check PHP version (must be >= 8.2):
 
 ```console
 $ php --version
-PHP 8.1.12 ...
+PHP 8.2.13 ...
 ```
 
 Check your database version.
@@ -142,7 +142,7 @@ composer-runtime-api 2.2.2      success
 ext-ctype            8.1.10     success
 ...
 ext-zip              1.19.5     success
-php                  8.1.10     success
+php                  8.2.13     success
 ```
 
 If requirements are not met, you’ll have to install the missing extensions.
@@ -198,7 +198,7 @@ server {
     }
 
     location ~ ^/index\.php(/|$) {
-        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
 

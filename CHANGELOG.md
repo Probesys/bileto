@@ -4,6 +4,8 @@
 
 ### Migration notes
 
+Bileto now requires PHP 8.2+.
+
 You need to set the new environment variable `APP_BASE_URL` in your `.env.local` file (see [env.sample](/env.sample)).
 This variable is used to generate absolute URLs in non-HTTP contexts (i.e. from the command line).
 
