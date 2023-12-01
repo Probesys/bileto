@@ -38,7 +38,7 @@ class LocalesTest extends TestCase
     /**
      * @return string[][][]
      */
-    public function englishRequestedLocale(): array
+    public static function englishRequestedLocale(): array
     {
         return [
             [[]],
@@ -55,7 +55,7 @@ class LocalesTest extends TestCase
     /**
      * @return string[][][]
      */
-    public function frenchRequestedLocale(): array
+    public static function frenchRequestedLocale(): array
     {
         return [
             [['fr_FR']],

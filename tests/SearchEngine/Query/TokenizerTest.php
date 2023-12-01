@@ -106,7 +106,7 @@ class TokenizerTest extends TestCase
     /**
      * @return array<array{string, Token[]}>
      */
-    public function tokensProvider(): array
+    public static function tokensProvider(): array
     {
         // Note that positions are wrong in the Tokens. This is because it
         // would be too complicated to maintain correctly and efficiently.
