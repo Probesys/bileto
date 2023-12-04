@@ -15,7 +15,7 @@ class OrganizationSorter extends LocaleSorter
      */
     public function sort(array &$organizations): void
     {
-        uasort($organizations, function (Organization $o1, Organization $o2) {
+        uasort($organizations, function (Organization $o1, Organization $o2): int {
             $pathComparison = strcmp($o1->getParentsPath(), $o2->getParentsPath());
 
             if ($pathComparison !== 0) {

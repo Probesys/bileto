@@ -270,7 +270,7 @@ class TicketQueryBuilder
             } else {
                 $users = $this->userRepository->findLike($v);
 
-                $ids = array_map(function ($user) {
+                $ids = array_map(function ($user): int {
                     return $user->getId();
                 }, $users);
             }
@@ -309,7 +309,7 @@ class TicketQueryBuilder
             } else {
                 $organizations = $this->organizationRepository->findLike($v);
 
-                $ids = array_map(function ($orga) {
+                $ids = array_map(function ($orga): int {
                     return $orga->getId();
                 }, $organizations);
             }

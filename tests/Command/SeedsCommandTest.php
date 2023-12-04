@@ -26,7 +26,7 @@ class SeedsCommandTest extends KernelTestCase
     {
         $tester = self::executeCommand('db:seeds:load');
 
-        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertSame(4, RoleFactory::count());
         $this->assertSame(4, OrganizationFactory::count());
         $this->assertSame(3, UserFactory::count());

@@ -42,13 +42,13 @@ class MessageDocumentsController extends BaseController
         if (!$this->isCsrfTokenValid('create message document', $csrfToken)) {
             return new JsonResponse([
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         if (!($file instanceof UploadedFile)) {
             return new JsonResponse([
                 'error' => $translator->trans('message_document.required', [], 'errors'),
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         if (
@@ -57,14 +57,14 @@ class MessageDocumentsController extends BaseController
         ) {
             return new JsonResponse([
                 'error' => $translator->trans('message_document.too_large', [], 'errors'),
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$file->isValid()) {
             return new JsonResponse([
                 'error' => $translator->trans('message_document.server_error', [], 'errors'),
                 'description' => $file->getErrorMessage(),
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -74,12 +74,12 @@ class MessageDocumentsController extends BaseController
                 return new JsonResponse([
                     'error' => $translator->trans('message_document.mimetype.rejected', [], 'errors'),
                     'description' => $e->getMessage(),
-                ], 400);
+                ], Response::HTTP_BAD_REQUEST);
             } else {
                 return new JsonResponse([
                     'error' => $translator->trans('message_document.server_error', [], 'errors'),
                     'description' => $e->getMessage(),
-                ], 500);
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -191,7 +191,7 @@ class MessageDocumentsController extends BaseController
         if (!$this->isCsrfTokenValid('delete message document', $csrfToken)) {
             return new JsonResponse([
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $messageDocumentRepository->remove($messageDocument, true);

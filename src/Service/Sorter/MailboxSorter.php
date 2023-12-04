@@ -15,7 +15,7 @@ class MailboxSorter extends LocaleSorter
      */
     public function sort(array &$mailboxes): void
     {
-        uasort($mailboxes, function (Mailbox $m1, Mailbox $m2) {
+        uasort($mailboxes, function (Mailbox $m1, Mailbox $m2): int {
             return $this->localeCompare($m1->getName(), $m2->getName());
         });
     }

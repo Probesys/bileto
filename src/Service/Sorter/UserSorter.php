@@ -15,7 +15,7 @@ class UserSorter extends LocaleSorter
      */
     public function sort(array &$users): void
     {
-        uasort($users, function (User $u1, User $u2) {
+        uasort($users, function (User $u1, User $u2): int {
             return $this->localeCompare($u1->getDisplayName(), $u2->getDisplayName());
         });
     }

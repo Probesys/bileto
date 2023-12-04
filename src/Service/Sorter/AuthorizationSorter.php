@@ -15,7 +15,7 @@ class AuthorizationSorter extends LocaleSorter
      */
     public function sort(array &$authorizations): void
     {
-        uasort($authorizations, function (Authorization $a1, Authorization $a2) {
+        uasort($authorizations, function (Authorization $a1, Authorization $a2): int {
             $roleComparison = $this->localeCompare(
                 $a1->getRole()->getName(),
                 $a2->getRole()->getName(),

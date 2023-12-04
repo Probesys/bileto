@@ -18,7 +18,7 @@ class SecretCommandTest extends KernelTestCase
     {
         $tester = self::executeCommand('app:secret');
 
-        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertSame(32, strlen(trim($tester->getDisplay())));
     }
 }

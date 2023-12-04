@@ -134,7 +134,7 @@ class TicketsController extends BaseController
         }
 
         // Keep only the organizations in which the user can create tickets
-        $organizations = array_filter($organizations, function ($organization) use ($security) {
+        $organizations = array_filter($organizations, function ($organization) use ($security): bool {
             return $security->isGranted('orga:create:tickets', $organization);
         });
         $organizations = array_values($organizations); // reset the keys of the array

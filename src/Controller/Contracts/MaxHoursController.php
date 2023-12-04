@@ -19,7 +19,6 @@ class MaxHoursController extends BaseController
     #[Route('/contracts/{uid}/max-hours/edit', name: 'edit contract max hours', methods: ['GET', 'HEAD'])]
     public function edit(
         Contract $contract,
-        Request $request,
     ): Response {
         $organization = $contract->getOrganization();
 

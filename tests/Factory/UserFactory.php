@@ -50,14 +50,10 @@ use Zenstruck\Foundry\Proxy;
  */
 final class UserFactory extends ModelFactory
 {
-    /** @var UserPasswordHasherInterface */
-    private $passwordHasher;
-
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
-    {
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher,
+    ) {
         parent::__construct();
-
-        $this->passwordHasher = $passwordHasher;
     }
 
     /**
@@ -75,7 +71,7 @@ final class UserFactory extends ModelFactory
 
     protected function initialize(): self
     {
-        return $this->afterInstantiate(function (User $user) {
+        return $this->afterInstantiate(function (User $user): void {
             $hashedPassword = $this->passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
         });

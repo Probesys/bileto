@@ -26,7 +26,6 @@ class ContractsController extends BaseController
     #[Route('/organizations/{uid}/contracts', name: 'organization contracts', methods: ['GET', 'HEAD'])]
     public function index(
         Organization $organization,
-        Request $request,
         ContractRepository $contractRepository,
         OrganizationRepository $organizationRepository,
         ContractSorter $contractSorter,
@@ -181,7 +180,6 @@ class ContractsController extends BaseController
         Organization $organization,
         #[MapEntity(mapping: ['contract_uid' => 'uid'])]
         Contract $contract,
-        Request $request,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
 

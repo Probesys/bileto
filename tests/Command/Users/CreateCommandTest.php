@@ -34,7 +34,7 @@ class CreateCommandTest extends KernelTestCase
             $password,
         ]);
 
-        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertSame(
             "The user \"{$email}\" has been created.\n",
             $tester->getDisplay()
@@ -65,7 +65,7 @@ class CreateCommandTest extends KernelTestCase
             '--password' => $password,
         ]);
 
-        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertSame(
             "The user \"{$email}\" has been created.\n",
             $tester->getDisplay()
@@ -92,7 +92,7 @@ class CreateCommandTest extends KernelTestCase
             '--password' => $password,
         ]);
 
-        $this->assertSame(Command::INVALID, $tester->getStatusCode());
+        $this->assertSame(Command::INVALID, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertSame("Enter a valid email address.\n", $tester->getErrorOutput());
         $this->assertSame(0, UserFactory::count());
     }
@@ -111,7 +111,7 @@ class CreateCommandTest extends KernelTestCase
             '--password' => $password,
         ]);
 
-        $this->assertSame(Command::INVALID, $tester->getStatusCode());
+        $this->assertSame(Command::INVALID, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertSame(
             "Enter an email address.\n",
             $tester->getErrorOutput()
@@ -136,7 +136,7 @@ class CreateCommandTest extends KernelTestCase
             '--password' => $password,
         ]);
 
-        $this->assertSame(Command::INVALID, $tester->getStatusCode());
+        $this->assertSame(Command::INVALID, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertSame(
             "Enter a different email address, this one is already in use.\n",
             $tester->getErrorOutput()

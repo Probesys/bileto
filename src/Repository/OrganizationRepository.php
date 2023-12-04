@@ -56,7 +56,7 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
     {
         $entityManager = $this->getEntityManager();
 
-        $organizationIds = array_map(function (Organization $organization) {
+        $organizationIds = array_map(function (Organization $organization): int {
             return $organization->getId();
         }, $organizations);
 

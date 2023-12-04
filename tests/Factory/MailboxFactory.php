@@ -50,14 +50,10 @@ use Zenstruck\Foundry\Proxy;
  */
 final class MailboxFactory extends ModelFactory
 {
-    /** @var Encryptor */
-    private $encryptor;
-
-    public function __construct(Encryptor $encryptor)
-    {
+    public function __construct(
+        private Encryptor $encryptor,
+    ) {
         parent::__construct();
-
-        $this->encryptor = $encryptor;
     }
 
     /**
@@ -81,7 +77,7 @@ final class MailboxFactory extends ModelFactory
 
     protected function initialize(): self
     {
-        return $this->afterInstantiate(function (Mailbox $mailbox) {
+        return $this->afterInstantiate(function (Mailbox $mailbox): void {
             $encryptedPassword = $this->encryptor->encrypt($mailbox->getPassword());
             $mailbox->setPassword($encryptedPassword);
         });

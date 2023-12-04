@@ -53,7 +53,7 @@ class TicketTimeline
             if (!$this->security->isGranted('orga:see:tickets:contracts', $organization)) {
                 // Make sure to remove events referencing contracts if the user
                 // doesn't have the permission to see them.
-                $events = array_filter($events, function ($event) {
+                $events = array_filter($events, function ($event): bool {
                     return !$event->refersTo('ongoingContract');
                 });
             }

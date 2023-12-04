@@ -76,7 +76,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findAll();
 
         $this->assertSame(2, count($users));
-        $userIds = array_map(fn ($user) => $user->getId(), $users);
+        $userIds = array_map(fn ($user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertContains($otherUser->getId(), $userIds);
     }
@@ -107,7 +107,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findAll();
 
         $this->assertSame(2, count($users));
-        $userIds = array_map(fn ($user) => $user->getId(), $users);
+        $userIds = array_map(fn ($user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertContains($otherUser->getId(), $userIds);
     }
@@ -135,7 +135,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findAll();
 
         $this->assertSame(1, count($users));
-        $userIds = array_map(fn ($user) => $user->getId(), $users);
+        $userIds = array_map(fn ($user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertNotContains($otherUser->getId(), $userIds);
     }
@@ -166,7 +166,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findAll(role: 'tech');
 
         $this->assertSame(1, count($users));
-        $userIds = array_map(fn ($user) => $user->getId(), $users);
+        $userIds = array_map(fn ($user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertNotContains($otherUser->getId(), $userIds);
     }
@@ -194,7 +194,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findByOrganization($organization->object());
 
         $this->assertSame(2, count($users));
-        $userIds = array_map(fn ($user) => $user->getId(), $users);
+        $userIds = array_map(fn ($user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertContains($otherUser->getId(), $userIds);
     }
@@ -223,7 +223,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findByOrganization($organization->object(), role: 'user');
 
         $this->assertSame(1, count($users));
-        $userIds = array_map(fn ($user) => $user->getId(), $users);
+        $userIds = array_map(fn ($user): int => $user->getId(), $users);
         $this->assertNotContains($this->currentUser->getId(), $userIds);
         $this->assertContains($otherUser->getId(), $userIds);
     }
@@ -256,7 +256,7 @@ class ActorsListerTest extends WebTestCase
 
         // but both users are returned!
         $this->assertSame(2, count($users));
-        $userIds = array_map(fn ($user) => $user->getId(), $users);
+        $userIds = array_map(fn ($user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertContains($otherUser->getId(), $userIds);
     }
@@ -314,7 +314,7 @@ class ActorsListerTest extends WebTestCase
         // Only the user from the sub-organization is returned as current user
         // isn't authorized in the parent organization
         $this->assertSame(1, count($users));
-        $userIds = array_map(fn ($user) => $user->getId(), $users);
+        $userIds = array_map(fn ($user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertNotContains($otherUser->getId(), $userIds);
     }

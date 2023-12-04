@@ -28,34 +28,13 @@ use Doctrine\Persistence\ManagerRegistry;
 )]
 class CreateCommand extends Command
 {
-    /** @var UserRepository */
-    private $userRepository;
-
-    /** @var RoleRepository */
-    private $roleRepository;
-
-    /** @var AuthorizationRepository */
-    private $authorizationRepository;
-
-    /** @var UserPasswordHasherInterface */
-    private $passwordHasher;
-
-    /** @var ValidatorInterface */
-    private $validator;
-
     public function __construct(
-        UserRepository $userRepository,
-        RoleRepository $roleRepository,
-        AuthorizationRepository $authorizationRepository,
-        UserPasswordHasherInterface $passwordHasher,
-        ValidatorInterface $validator,
+        private UserRepository $userRepository,
+        private RoleRepository $roleRepository,
+        private AuthorizationRepository $authorizationRepository,
+        private UserPasswordHasherInterface $passwordHasher,
+        private ValidatorInterface $validator,
     ) {
-        $this->userRepository = $userRepository;
-        $this->roleRepository = $roleRepository;
-        $this->authorizationRepository = $authorizationRepository;
-        $this->passwordHasher = $passwordHasher;
-        $this->validator = $validator;
-
         parent::__construct();
     }
 

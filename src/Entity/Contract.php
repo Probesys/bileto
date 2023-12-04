@@ -180,7 +180,7 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
 
     public function getConsumedMinutes(): int
     {
-        $times = array_map(function (TimeSpent $timeSpent) {
+        $times = array_map(function (TimeSpent $timeSpent): int {
             return $timeSpent->getTime();
         }, $this->getTimeSpents()->getValues());
 

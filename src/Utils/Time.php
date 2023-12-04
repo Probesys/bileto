@@ -8,8 +8,7 @@ namespace App\Utils;
 
 class Time
 {
-    /** @var \DateTimeImmutable|null $freezedNow */
-    private static $freezedNow;
+    private static ?\DateTimeImmutable $freezedNow = null;
 
     public static function now(): \DateTimeImmutable
     {

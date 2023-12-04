@@ -34,7 +34,7 @@ class ActorsLister
         $currentUser = $this->security->getUser();
 
         $authorizedOrgas = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
-        $authorizedOrgaIds = array_map(fn ($orga) => $orga->getId(), $authorizedOrgas);
+        $authorizedOrgaIds = array_map(fn ($orga): int => $orga->getId(), $authorizedOrgas);
 
         $organizationIds = $organization->getParentOrganizationIds();
         $organizationIds[] = $organization->getId();
@@ -55,7 +55,7 @@ class ActorsLister
         $currentUser = $this->security->getUser();
 
         $authorizedOrgas = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
-        $authorizedOrgaIds = array_map(fn ($orga) => $orga->getId(), $authorizedOrgas);
+        $authorizedOrgaIds = array_map(fn ($orga): int => $orga->getId(), $authorizedOrgas);
 
         return $this->findByOrganizationIds($authorizedOrgaIds, $role);
     }

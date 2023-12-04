@@ -34,7 +34,7 @@ class LoginController extends BaseController
     }
 
     #[Route('/logout', name: 'logout', methods: ['POST'])]
-    public function logout(): void
+    public function logout(): never
     {
         // controller can be blank: it will never be called!
         throw new \Exception('Don’t forget to activate logout in security.yaml'); // @codeCoverageIgnore

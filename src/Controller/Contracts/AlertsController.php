@@ -19,7 +19,6 @@ class AlertsController extends BaseController
     #[Route('/contracts/{uid}/alerts/edit', name: 'edit contract alerts', methods: ['GET', 'HEAD'])]
     public function edit(
         Contract $contract,
-        Request $request,
     ): Response {
         $organization = $contract->getOrganization();
 

@@ -48,11 +48,11 @@ class TransFilterExtension extends AbstractExtension
             $filter === 'urgency' ||
             $filter === 'impact'
         ) {
-            return array_map(function ($value) use ($filter) {
+            return array_map(function ($value) use ($filter): string {
                 return $this->translator->trans("tickets.{$filter}.{$value}");
             }, $values);
         } elseif ($filter === 'type') {
-            return array_map(function ($value) {
+            return array_map(function ($value): string {
                 return $this->translator->trans("tickets.{$value}");
             }, $values);
         } elseif ($filter === 'assignee' || $filter === 'requester' || $filter === 'involves') {

@@ -15,7 +15,7 @@ class RoleSorter extends LocaleSorter
      */
     public function sort(array &$roles): void
     {
-        uasort($roles, function (Role $r1, Role $r2) {
+        uasort($roles, function (Role $r1, Role $r2): int {
             return $this->localeCompare($r1->getName(), $r2->getName());
         });
     }

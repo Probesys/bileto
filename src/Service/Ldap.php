@@ -101,7 +101,7 @@ class Ldap
             return null;
         }
 
-        if (count($entries) === 0) {
+        if (count($entries) === 0 || $entries[0] === null) {
             return null;
         }
 

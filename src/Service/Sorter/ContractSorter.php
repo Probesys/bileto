@@ -15,7 +15,7 @@ class ContractSorter extends LocaleSorter
      */
     public function sort(array &$contracts): void
     {
-        uasort($contracts, function (Contract $c1, Contract $c2) {
+        uasort($contracts, function (Contract $c1, Contract $c2): int {
             $endAtDiff = $c2->getEndAt()->getTimestamp() - $c1->getEndAt()->getTimestamp();
 
             if ($endAtDiff === 0) {

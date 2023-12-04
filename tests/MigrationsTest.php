@@ -22,14 +22,14 @@ class MigrationsTest extends KernelTestCase
             '--force' => true
         ]);
 
-        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode(), $tester->getDisplay());
 
         // and apply the migrations one by one
         $tester = self::executeCommand('doctrine:migrations:migrate', [
             '--no-interaction' => true
         ]);
 
-        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertStringContainsString(
             '[OK] Successfully migrated to version',
             $tester->getDisplay(),

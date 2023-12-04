@@ -132,7 +132,7 @@ class TicketSearcherTest extends WebTestCase
         $tickets = $ticketSearcher->getTickets();
 
         $this->assertSame(2, count($tickets));
-        $ticketIds = array_map(function ($ticket) {
+        $ticketIds = array_map(function ($ticket): int {
             return $ticket->getId();
         }, $tickets);
         $this->assertContains($ticket1->getId(), $ticketIds);
