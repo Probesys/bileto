@@ -5,6 +5,6 @@
 
 SCRIPT_PATH=$(dirname $(realpath -s $0))
 export COMPOSE_PROJECT_NAME=bileto
-export COMPOSE_FILE=$SCRIPT_PATH/../docker-compose.yml
+export COMPOSE_FILE=$SCRIPT_PATH/../development/docker-compose.yml
 
 docker compose exec pgsql psql -U postgres "$@"

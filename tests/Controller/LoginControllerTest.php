@@ -70,7 +70,7 @@ class LoginControllerTest extends WebTestCase
 
         $client = static::createClient();
         // This user exists in the LDAP directory.
-        // See the docker/ldap-ldifs/tree.ldif file.
+        // See the docker/development/ldap-ldifs/tree.ldif file.
         $identifier = 'dominique';
         $password = 'secret';
 

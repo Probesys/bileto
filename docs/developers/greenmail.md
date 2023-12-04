@@ -11,7 +11,7 @@ Later, the GreenMail server will also be used to read mails from an inbox with I
 ## Setup
 
 GreenMail is an application that run in a Docker container.
-It is setup in [the `docker-compose.yml` file](/docker/docker-compose.yml) (see the `mailserver` service).
+It is setup in [the `docker-compose.yml` file](/docker/development/docker-compose.yml) (see the `mailserver` service).
 
 Only SMTP and IMAP protocols are served as we only need these at the moment.
 
