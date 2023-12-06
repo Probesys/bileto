@@ -1,0 +1,57 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2023 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% if pagination.mustPaginate %}
+    {% set route_name = app.request.attributes.get('_route') %}
+    {% set route_parameters = app.request.attributes.get('_route_params') %}
+    {% set route_parameters = route_parameters|merge(app.request.query.all) %}
+
+    <nav class="pagination">
+        <ul class="pagination__container">
+            {% if pagination.currentPageIsFirst %}
+                <li class="pagination__item pagination__item--prev pagination__item--disabled">
+                    {{ 'pagination.previous' | trans }}
+                </li>
+            {% else %}
+                <li class="pagination__item pagination__item--prev">
+                    <a class="pagination__link" href="{{ path(route_name, route_parameters|merge({'page': pagination.previousPage })) }}">
+                        {{ 'pagination.previous' | trans }}
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for pageNumber in pagination.pagesNumbers %}
+                {% if pageNumber == 'ellipsis' %}
+                    <li class="pagination__item pagination__item--ellipsis">
+                        …
+                    </li>
+                {% else %}
+                    <li class="pagination__item pagination__item--number {{ pagination.isCurrentPage(pageNumber) ? 'pagination__item--current' }}">
+                        <a
+                            class="pagination__link"
+                            href="{{ path(route_name, route_parameters|merge({'page': pageNumber })) }}"
+                            {{ pagination.isCurrentPage(pageNumber) ? 'aria-current="page"' }}
+                        >
+                            {{ pageNumber }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if pagination.currentPageIsLast %}
+                <li class="pagination__item pagination__item--next pagination__item--disabled">
+                    {{ 'pagination.next' | trans }}
+                </li>
+            {% else %}
+                <li class="pagination__item pagination__item--next">
+                    <a class="pagination__link" href="{{ path(route_name, route_parameters|merge({'page': pagination.nextPage })) }}">
+                        {{ 'pagination.next' | trans }}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

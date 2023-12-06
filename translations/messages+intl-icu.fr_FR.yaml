@@ -169,6 +169,8 @@ organizations.name: Nom
 organizations.new.submit: 'Créer l’organisation'
 organizations.new.title: 'Nouvelle organisation'
 organizations.parent_orga: 'Organisation parente'
+pagination.next: Suivant
+pagination.previous: Précédent
 preferences.title: Préférences
 profile.current_password: 'Mot de passe actuel'
 profile.ldap.information: Information

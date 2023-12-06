@@ -27,6 +27,7 @@
 @import "./components/messages.css";
 @import "./components/modal.css";
 @import "./components/notifications.css";
+@import "./components/pagination.css";
 @import "./components/placeholders.css";
 @import "./components/popups.css";
 @import "./components/progress.css";
