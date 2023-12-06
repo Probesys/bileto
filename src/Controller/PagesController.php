@@ -30,10 +30,13 @@ class PagesController extends BaseController
         $organizations = $orgaRepository->findAuthorizedOrganizations($user);
         $organizations = $orgaSorter->asTree($organizations);
 
-        $tickets = $ticketSearcher->getTickets(TicketSearcher::queryOwned());
+        $ticketsPagination = $ticketSearcher->getTickets(TicketSearcher::queryOwned(), 'updated-desc', [
+            'page' => 1,
+            'maxResults' => 5,
+        ]);
 
         return $this->render('pages/home.html.twig', [
-            'tickets' => $tickets,
+            'ticketsPagination' => $ticketsPagination,
             'organizations' => $organizations,
         ]);
     }

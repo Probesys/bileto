@@ -94,6 +94,7 @@ forms.optional: (optional)
 forms.optional_max_chars: '(optional, max. {number} characters)'
 forms.save_changes: 'Save the changes'
 forms.show_password: 'Show password as plain text. Note: this will visually expose your password.'
+home.all_your_tickets: 'See all your tickets'
 home.new_ticket: 'New ticket'
 home.no_tickets: 'No tickets'
 home.title: 'Welcome to Bileto'

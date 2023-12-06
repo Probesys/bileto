@@ -57,9 +57,9 @@
                             </a>
                         {% endif %}
 
-                        {% if tickets %}
+                        {% if ticketsPagination.count > 0 %}
                             <p class="text--secondary">
-                                {{ 'tickets.index.number' | trans({ count: tickets|length }) }}
+                                {{ 'tickets.index.number' | trans({ count: ticketsPagination.countAll }) }}
                             </p>
                         {% endif %}
                     </div>
@@ -71,12 +71,20 @@
                     ) }}
                 </div>
 
-                {% if tickets %}
-                    {{ include(
-                        'tickets/_list.html.twig',
-                        { tickets: tickets },
-                        with_context = false
-                    ) }}
+                {% if ticketsPagination.count > 0 %}
+                    <div class="flow flow--small">
+                        {{ include(
+                            'tickets/_list.html.twig',
+                            { tickets: ticketsPagination.items },
+                            with_context = false
+                        ) }}
+
+                        {{ include(
+                            '_pagination.html.twig',
+                            { pagination: ticketsPagination },
+                            with_context = false
+                        ) }}
+                    </div>
                 {% else %}
                     <p class="placeholder">
                         {{ icon('ticket') }}

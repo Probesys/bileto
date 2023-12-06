@@ -16,6 +16,7 @@ use App\SearchEngine\TicketSearcher;
 use App\SearchEngine\Query;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\TicketTimeline;
+use App\Utils\Pagination;
 use App\Utils\Time;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,6 +37,8 @@ class TicketsController extends BaseController
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
+
+        $page = $request->query->getInt('page', 1);
 
         /** @var string $view */
         $view = $request->query->get('view', 'all');
@@ -68,12 +71,15 @@ class TicketsController extends BaseController
 
         try {
             $query = Query::fromString($queryString);
-            $tickets = $ticketSearcher->getTickets($query, $sort);
+            $ticketsPagination = $ticketSearcher->getTickets($query, $sort, [
+                'page' => $page,
+                'maxResults' => 25,
+            ]);
             if ($query) {
                 $ticketFilter = TicketFilter::fromQuery($query);
             }
         } catch (\Exception $e) {
-            $tickets = [];
+            $ticketsPagination = Pagination::empty();
             $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
         }
 
@@ -83,7 +89,7 @@ class TicketsController extends BaseController
         }
 
         return $this->render('tickets/index.html.twig', [
-            'tickets' => $tickets,
+            'ticketsPagination' => $ticketsPagination,
             'countToAssign' => $ticketSearcher->countTickets(TicketSearcher::queryUnassigned()),
             'countOwned' => $ticketSearcher->countTickets(TicketSearcher::queryOwned()),
             'view' => $view,

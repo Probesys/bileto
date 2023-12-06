@@ -36,10 +36,10 @@ class TicketSearcherTest extends WebTestCase
             'assignee' => $user,
         ]);
 
-        $tickets = $ticketSearcher->getTickets();
+        $ticketsPagination = $ticketSearcher->getTickets();
 
-        $this->assertSame(1, count($tickets));
-        $this->assertSame($ticket->getId(), $tickets[0]->getId());
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
     }
 
     public function testGetTicketsReturnsTicketRequestedByUser(): void
@@ -54,10 +54,10 @@ class TicketSearcherTest extends WebTestCase
             'requester' => $user,
         ]);
 
-        $tickets = $ticketSearcher->getTickets();
+        $ticketsPagination = $ticketSearcher->getTickets();
 
-        $this->assertSame(1, count($tickets));
-        $this->assertSame($ticket->getId(), $tickets[0]->getId());
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
     }
 
     public function testGetTicketsDoesNotReturnTicketNotInvolvingUser(): void
@@ -70,9 +70,9 @@ class TicketSearcherTest extends WebTestCase
         $client->loginUser($user->object());
         $ticket = TicketFactory::createOne();
 
-        $tickets = $ticketSearcher->getTickets();
+        $ticketsPagination = $ticketSearcher->getTickets();
 
-        $this->assertSame(0, count($tickets));
+        $this->assertSame(0, $ticketsPagination->count);
     }
 
     public function testGetTicketsCanRestrictToAGivenOrganization(): void
@@ -95,10 +95,10 @@ class TicketSearcherTest extends WebTestCase
         ]);
         $ticketSearcher->setOrganization($organization1->object());
 
-        $tickets = $ticketSearcher->getTickets();
+        $ticketsPagination = $ticketSearcher->getTickets();
 
-        $this->assertSame(1, count($tickets));
-        $this->assertSame($ticket1->getId(), $tickets[0]->getId());
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
     }
 
     public function testGetTicketsCanRestrictToAListOfGivenOrganizations(): void
@@ -129,12 +129,12 @@ class TicketSearcherTest extends WebTestCase
             $organization2->object(),
         ]);
 
-        $tickets = $ticketSearcher->getTickets();
+        $ticketsPagination = $ticketSearcher->getTickets();
 
-        $this->assertSame(2, count($tickets));
+        $this->assertSame(2, $ticketsPagination->count);
         $ticketIds = array_map(function ($ticket): int {
             return $ticket->getId();
-        }, $tickets);
+        }, $ticketsPagination->items);
         $this->assertContains($ticket1->getId(), $ticketIds);
         $this->assertContains($ticket2->getId(), $ticketIds);
     }
@@ -154,10 +154,10 @@ class TicketSearcherTest extends WebTestCase
         ]);
         $ticketSearcher->setOrganization($organization->object());
 
-        $tickets = $ticketSearcher->getTickets();
+        $ticketsPagination = $ticketSearcher->getTickets();
 
-        $this->assertSame(1, count($tickets));
-        $this->assertSame($ticket->getId(), $tickets[0]->getId());
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
     }
 
     public function testGetTicketsCanRestrictToAGivenContract(): void
@@ -180,10 +180,10 @@ class TicketSearcherTest extends WebTestCase
         ]);
 
         $query = Query::fromString('contract:#' . $contract1->getId());
-        $tickets = $ticketSearcher->getTickets($query);
+        $ticketsPagination = $ticketSearcher->getTickets($query);
 
-        $this->assertSame(1, count($tickets));
-        $this->assertSame($ticket1->getId(), $tickets[0]->getId());
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
     }
 
     public function testGetTicketsTakesCareOfSpecificPermissions(): void
@@ -205,9 +205,9 @@ class TicketSearcherTest extends WebTestCase
         ]);
         $ticketSearcher->setOrganization($organization->object());
 
-        $tickets = $ticketSearcher->getTickets();
+        $ticketsPagination = $ticketSearcher->getTickets();
 
-        $this->assertSame(0, count($tickets));
+        $this->assertSame(0, $ticketsPagination->count);
     }
 
     public function testGetTicketsReturnsTicketMatchingAQuery(): void
@@ -228,10 +228,10 @@ class TicketSearcherTest extends WebTestCase
         ]);
 
         $query = Query::fromString('status:new');
-        $tickets = $ticketSearcher->getTickets($query);
+        $ticketsPagination = $ticketSearcher->getTickets($query);
 
-        $this->assertSame(1, count($tickets));
-        $this->assertSame($ticket1->getId(), $tickets[0]->getId());
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
     }
 
     public function testCountTicketsReturnsNumberOfTickets(): void

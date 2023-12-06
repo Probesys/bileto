@@ -27,12 +27,22 @@
                     {% endif %}
                 </div>
 
-                {% if tickets %}
-                    {{ include(
-                        'tickets/_list.html.twig',
-                        { tickets: tickets },
-                        with_context = false
-                    ) }}
+                {% if ticketsPagination.count > 0 %}
+                    <div class="flow flow--small">
+                        {{ include(
+                            'tickets/_list.html.twig',
+                            { tickets: ticketsPagination.items },
+                            with_context = false
+                        ) }}
+
+                        {% if ticketsPagination.mustPaginate %}
+                            <div>
+                                <a href="{{ path('tickets', { 'view': 'owned' }) }}">
+                                    {{ 'home.all_your_tickets' | trans }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
                 {% else %}
                     <p class="placeholder">
                         {{ icon('ticket') }}

@@ -9,9 +9,10 @@ namespace App\Repository;
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\SearchEngine;
+use App\Utils\Pagination;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM;
 use Doctrine\ORM\Query\Expr;
 
 /**
@@ -23,6 +24,8 @@ use Doctrine\ORM\Query\Expr;
  * @method Ticket[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  *
  * @method Ticket findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false)
+ *
+ * @phpstan-import-type PaginationOptions from Pagination
  */
 class TicketRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
@@ -60,14 +63,19 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     /**
      * @param SearchEngine\Query[] $queries
      * @param array{string, 'ASC'|'DESC'} $sort
+     * @param PaginationOptions $paginationOptions
      *
-     * @return Ticket[]
+     * @return Pagination<Ticket>
      */
-    public function findByQueries(array $queries, array $sort): array
+    public function findByQueries(array $queries, array $sort, array $paginationOptions): Pagination
     {
         $qb = $this->createSearchQueryBuilder($queries);
         $qb->orderBy("t.{$sort[0]}", $sort[1]);
-        return $qb->getQuery()->getResult();
+
+        /** @var Pagination<Ticket> */
+        $pagination = Pagination::paginate($qb->getQuery(), $paginationOptions);
+
+        return $pagination;
     }
 
     /**
@@ -83,7 +91,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     /**
      * @param SearchEngine\Query[] $queries
      */
-    private function createSearchQueryBuilder(array $queries): QueryBuilder
+    private function createSearchQueryBuilder(array $queries): ORM\QueryBuilder
     {
         $qb = $this->createQueryBuilder('t');
 

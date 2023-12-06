@@ -10,8 +10,12 @@ use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\Repository\TicketRepository;
+use App\Utils\Pagination;
 use Symfony\Bundle\SecurityBundle\Security;
 
+/**
+ * @phpstan-import-type PaginationOptions from Pagination
+ */
 class TicketSearcher
 {
     public const QUERY_DEFAULT = 'status:open';
@@ -82,10 +86,19 @@ class TicketSearcher
     }
 
     /**
-     * @return Ticket[]
+     * @param ?PaginationOptions $paginationOptions
+     *
+     * @return Pagination<Ticket>
      */
-    public function getTickets(?Query $query = null, string $sort = ''): array
+    public function getTickets(?Query $query = null, string $sort = '', ?array $paginationOptions = null): Pagination
     {
+        if ($paginationOptions === null) {
+            $paginationOptions = [
+                'page' => 1,
+                'maxResults' => 25,
+            ];
+        }
+
         $sort = $this->processSort($sort);
 
         $queries = [$this->orgaQuery];
@@ -94,7 +107,7 @@ class TicketSearcher
             $queries[] = $query;
         }
 
-        return $this->ticketRepository->findByQueries($queries, $sort);
+        return $this->ticketRepository->findByQueries($queries, $sort, $paginationOptions);
     }
 
     public function countTickets(?Query $query = null): int
