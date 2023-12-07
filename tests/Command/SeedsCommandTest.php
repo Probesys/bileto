@@ -28,7 +28,7 @@ class SeedsCommandTest extends KernelTestCase
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode(), $tester->getDisplay());
         $this->assertSame(4, RoleFactory::count());
-        $this->assertSame(4, OrganizationFactory::count());
+        $this->assertSame(2, OrganizationFactory::count());
         $this->assertSame(3, UserFactory::count());
         $this->assertSame(1, MailboxFactory::count());
     }

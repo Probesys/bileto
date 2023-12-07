@@ -59,12 +59,16 @@
                             ) }}
                         </ul>
 
+                        {# Disabled while we are considering a better solution.
+                         # See https://github.com/Probesys/bileto/issues/516
+
                         <div class="text--small">
                             <a href="{{ path('new organization', { parent: organization.uid }) }}">
                                 {{ icon('plus') }}
                                 {{ 'organizations.index.new_sub_organization' | trans }}
                             </a>
                         </div>
+                        #}
                     </li>
                 {% endfor %}
             </div>

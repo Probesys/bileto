@@ -121,19 +121,6 @@ class SeedsCommand extends Command
                 'name' => 'Probesys',
             ]);
 
-            // Make sure to have an ID for the Probesys organization.
-            $this->entityManager->flush();
-
-            $orgaWebDivision = $this->orgaRepository->findOneOrCreateBy([
-                'name' => 'Web team',
-                'parentsPath' => "/{$orgaProbesys->getId()}/",
-            ]);
-
-            $orgaNetworkDivision = $this->orgaRepository->findOneOrCreateBy([
-                'name' => 'Network team',
-                'parentsPath' => "/{$orgaProbesys->getId()}/",
-            ]);
-
             $orgaFriendlyCoorp = $this->orgaRepository->findOneOrCreateBy([
                 'name' => 'Friendly Coorp',
             ]);
@@ -183,7 +170,7 @@ class SeedsCommand extends Command
                 $this->authorizationRepository->grant($userAlix, $roleTech, null);
             }
 
-            if (!$this->authorizationRepository->getOrgaAuthorizationFor($userBenedict, $orgaWebDivision)) {
+            if (!$this->authorizationRepository->getOrgaAuthorizationFor($userBenedict, null)) {
                 $this->authorizationRepository->grant($userBenedict, $roleSalesman, null);
             }
 
@@ -299,7 +286,7 @@ class SeedsCommand extends Command
                 'urgency' => 'medium',
                 'impact' => 'medium',
                 'priority' => 'medium',
-                'organization' => $orgaWebDivision,
+                'organization' => $orgaProbesys,
                 'requester' => $userBenedict,
                 'assignee' => null,
             ]);
