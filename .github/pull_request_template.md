@@ -11,7 +11,9 @@
 
 <!-- Make sure all the todos are checked before asking for review. If you think
   -- one of the item isn’t applicable to this PR, please check it anyway and
-  -- precise "N/A" next to it. -->
+  -- precise "N/A" next to it.
+  -- Get help: https://github.com/Probesys/bileto/blob/main/CONTRIBUTING.md#open-a-pull-request-pr
+  -->
 
 - [ ] code is manually tested
 - [ ] permissions / authorizations are verified
@@ -20,5 +22,5 @@
 - [ ] accessibility has been tested
 - [ ] tests are up-to-date
 - [ ] locales are synchronized
-- [ ] copyright notices are up-to-date
-- [ ] documentation is up-to-date (including migration notes)
+- [ ] copyright notices are up to date
+- [ ] documentation is up to date (including migration notes)
