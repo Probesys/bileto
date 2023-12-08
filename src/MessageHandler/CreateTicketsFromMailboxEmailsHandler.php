@@ -83,7 +83,7 @@ class CreateTicketsFromMailboxEmailsHandler
 
             $token = new UserToken($requester);
 
-            $ticket = $this->getAnsweredTicket($mailboxEmail, $token);
+            $ticket = $this->getAnsweredTicket($mailboxEmail);
 
             if ($ticket) {
                 $canAnswerTicket = $this->accessDecisionManager->decide(
@@ -114,11 +114,6 @@ class CreateTicketsFromMailboxEmailsHandler
 
                 $ticket = new Ticket();
                 $ticket->setTitle($subject);
-                $ticket->setType(Ticket::DEFAULT_TYPE);
-                $ticket->setStatus(Ticket::DEFAULT_STATUS);
-                $ticket->setUrgency(Ticket::DEFAULT_WEIGHT);
-                $ticket->setImpact(Ticket::DEFAULT_WEIGHT);
-                $ticket->setPriority(Ticket::DEFAULT_WEIGHT);
                 $ticket->setOrganization($requesterOrganization);
                 $ticket->setRequester($requester);
 
@@ -164,7 +159,7 @@ class CreateTicketsFromMailboxEmailsHandler
         }
     }
 
-    private function getAnsweredTicket(MailboxEmail $mailboxEmail, UserToken $token): ?Ticket
+    private function getAnsweredTicket(MailboxEmail $mailboxEmail): ?Ticket
     {
         $replyId = $mailboxEmail->getInReplyTo();
 
