@@ -6,8 +6,11 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\TicketRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -18,10 +21,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class Ticket implements MetaEntityInterface, ActivityRecordableInterface
+class Ticket implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     public const TYPES = ['request', 'incident'];
     public const DEFAULT_TYPE = 'request';
@@ -130,11 +133,6 @@ class Ticket implements MetaEntityInterface, ActivityRecordableInterface
         $this->messages = new ArrayCollection();
         $this->contracts = new ArrayCollection();
         $this->timeSpents = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getType(): ?string

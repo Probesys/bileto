@@ -6,8 +6,11 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\MessageRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -16,10 +19,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class Message implements MetaEntityInterface, ActivityRecordableInterface
+class Message implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     public const VIAS = ['webapp', 'email'];
     public const DEFAULT_VIA = 'webapp';
@@ -72,11 +75,6 @@ class Message implements MetaEntityInterface, ActivityRecordableInterface
     public function __construct()
     {
         $this->messageDocuments = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function isConfidential(): ?bool

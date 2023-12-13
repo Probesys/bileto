@@ -6,8 +6,11 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\OrganizationRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,10 +21,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class Organization implements MetaEntityInterface, ActivityRecordableInterface
+class Organization implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     public const MAX_DEPTH = 3;
 
@@ -78,11 +81,6 @@ class Organization implements MetaEntityInterface, ActivityRecordableInterface
         $this->tickets = new ArrayCollection();
         $this->parentsPath = '/';
         $this->authorizations = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

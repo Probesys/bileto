@@ -6,17 +6,21 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\RecordableEntityInterface;
+use App\ActivityMonitor\TrackableEntityInterface;
+use App\ActivityMonitor\TrackableEntityTrait;
 use App\Repository\EntityEventRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EntityEventRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[ORM\Index(columns: ['entity_type', 'entity_id'])]
-class EntityEvent implements MetaEntityInterface
+class EntityEvent implements TrackableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use TrackableEntityTrait;
+    use UidEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -118,7 +122,7 @@ class EntityEvent implements MetaEntityInterface
         return isset($this->changes[$field]);
     }
 
-    public static function initInsert(ActivityRecordableInterface $entity): self
+    public static function initInsert(RecordableEntityInterface $entity): self
     {
         $entityEvent = new self();
         $entityEvent->type = 'insert';
@@ -131,7 +135,7 @@ class EntityEvent implements MetaEntityInterface
     /**
      * @param array<string, mixed[]> $changes
      */
-    public static function initUpdate(ActivityRecordableInterface $entity, array $changes): self
+    public static function initUpdate(RecordableEntityInterface $entity, array $changes): self
     {
         $entityEvent = new self();
         $entityEvent->type = 'update';
@@ -141,7 +145,7 @@ class EntityEvent implements MetaEntityInterface
         return $entityEvent;
     }
 
-    public static function initDelete(ActivityRecordableInterface $entity): self
+    public static function initDelete(RecordableEntityInterface $entity): self
     {
         $entityEvent = new self();
         $entityEvent->type = 'delete';

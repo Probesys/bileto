@@ -6,8 +6,11 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\MailboxRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use App\Utils\Time;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,10 +18,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MailboxRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class Mailbox implements MetaEntityInterface, ActivityRecordableInterface
+class Mailbox implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -101,11 +104,6 @@ class Mailbox implements MetaEntityInterface, ActivityRecordableInterface
     public function __construct()
     {
         $this->lastError = '';
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

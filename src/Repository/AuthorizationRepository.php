@@ -10,6 +10,8 @@ use App\Entity\Authorization;
 use App\Entity\Organization;
 use App\Entity\Role;
 use App\Entity\User;
+use App\Uid\UidGeneratorInterface;
+use App\Uid\UidGeneratorTrait;
 use App\Utils\Time;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

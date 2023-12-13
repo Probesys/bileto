@@ -9,6 +9,8 @@ namespace App\Repository;
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\SearchEngine;
+use App\Uid\UidGeneratorInterface;
+use App\Uid\UidGeneratorTrait;
 use App\Utils\Pagination;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

@@ -8,6 +8,8 @@ namespace App\Repository;
 
 use App\Entity\Contract;
 use App\Entity\Organization;
+use App\Uid\UidGeneratorInterface;
+use App\Uid\UidGeneratorTrait;
 use App\Utils;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

@@ -6,8 +6,11 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\MessageDocumentRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,10 +20,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @see docs/developers/document-upload.md
  */
 #[ORM\Entity(repositoryClass: MessageDocumentRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class MessageDocument implements MetaEntityInterface, ActivityRecordableInterface
+class MessageDocument implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     /**
      * The list of mimetypes (separated in types => subtypes arrays) that we
@@ -90,11 +93,6 @@ class MessageDocument implements MetaEntityInterface, ActivityRecordableInterfac
 
     #[ORM\ManyToOne(inversedBy: 'messageDocuments')]
     private ?Message $message = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getName(): ?string
     {

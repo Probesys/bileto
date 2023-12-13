@@ -4,14 +4,19 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Entity;
+namespace App\ActivityMonitor;
 
-interface MetaEntityInterface
+use App\Entity\User;
+
+/**
+ * Allow to track changes at en entity level (i.e. setting createdAt,
+ * createdBy, updatedAt and updatedBy).
+ *
+ * @see TrackableEntitiesSubscriber
+ * @see TrackableEntitiesTrait
+ */
+interface TrackableEntityInterface
 {
-    public function getUid(): ?string;
-
-    public function setUid(string $uid): self;
-
     public function getCreatedAt(): ?\DateTimeImmutable;
 
     public function setCreatedAt(\DateTimeImmutable $createdAt): self;

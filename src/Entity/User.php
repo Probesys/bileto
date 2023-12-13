@@ -6,8 +6,11 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\UserRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use App\Utils\Locales;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,7 +23,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[ORM\Table(name: '`users`')]
 #[UniqueEntity(
     fields: 'email',
@@ -29,10 +31,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class User implements
     UserInterface,
     PasswordAuthenticatedUserInterface,
-    MetaEntityInterface,
-    ActivityRecordableInterface
+    MonitorableEntityInterface,
+    UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -110,11 +113,6 @@ class User implements
     public function __construct()
     {
         $this->authorizations = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getEmail(): ?string

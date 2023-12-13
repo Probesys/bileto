@@ -4,22 +4,15 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Entity;
+namespace App\ActivityMonitor;
 
-trait MetaEntityTrait
+use App\Entity\User;
+
+/**
+ * @see TrackableEntityInterface
+ */
+trait TrackableEntityTrait
 {
-    public function getUid(): ?string
-    {
-        return $this->uid;
-    }
-
-    public function setUid(string $uid): self
-    {
-        $this->uid = $uid;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;

@@ -4,10 +4,13 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Repository;
+namespace App\Uid;
 
 use App\Utils\Random;
 
+/**
+ * @see UidGeneratorInterface
+ */
 trait UidGeneratorTrait
 {
     public function generateUid(int $length = 20): string

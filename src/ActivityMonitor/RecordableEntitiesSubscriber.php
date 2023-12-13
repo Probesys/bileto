@@ -4,10 +4,9 @@
 // Copyright 2022-2023 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\EventSubscriber;
+namespace App\ActivityMonitor;
 
 use App\Entity\EntityEvent;
-use App\Entity\ActivityRecordableInterface;
 use App\Repository\EntityEventRepository;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
@@ -15,29 +14,35 @@ use Doctrine\ORM\PersistentCollection;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * Monitor the insertions, updates and deletions of entities and save them as
+ * EntityEvents. Only entities implementing the RecordableEntityInterface are
+ * monitored.
+ */
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::preRemove)]
 #[AsDoctrineListener(event: Events::postRemove)]
-class EntityActivitySubscriber
+class RecordableEntitiesSubscriber
 {
-    private EntityEventRepository $entityEventRepository;
-
     private ?EntityEvent $entityEventRemove = null;
 
-    public function __construct(EntityEventRepository $entityEventRepository)
-    {
-        $this->entityEventRepository = $entityEventRepository;
+    public function __construct(
+        private EntityEventRepository $entityEventRepository
+    ) {
     }
 
     /**
+     * Save the insertions of the RecordableEntityInterface entities as
+     * EntityEvents.
+     *
      * @param LifecycleEventArgs<ObjectManager> $args
      */
     public function postPersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 
-        if (!($entity instanceof ActivityRecordableInterface)) {
+        if (!($entity instanceof RecordableEntityInterface)) {
             return;
         }
 
@@ -46,13 +51,16 @@ class EntityActivitySubscriber
     }
 
     /**
+     * Save the updates of the RecordableEntityInterface entities as
+     * EntityEvents.
+     *
      * @param LifecycleEventArgs<ObjectManager> $args
      */
     public function postUpdate(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 
-        if (!($entity instanceof ActivityRecordableInterface)) {
+        if (!($entity instanceof RecordableEntityInterface)) {
             return;
         }
 
@@ -69,22 +77,30 @@ class EntityActivitySubscriber
     }
 
     /**
+     * Store the entity event related to the deletions of the
+     * RecordableEntityInterface entities.
+     *
+     * We need to initialize the EntityEvent in preRemove callback because
+     * the entity id will always be null in postRemove. We don't want to save
+     * the EntityEvent immediately because the deletion can fail (due to
+     * foreign keys in the database for instance).
+     *
      * @param LifecycleEventArgs<ObjectManager> $args
      */
     public function preRemove(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 
-        if (!($entity instanceof ActivityRecordableInterface)) {
+        if (!($entity instanceof RecordableEntityInterface)) {
             return;
         }
 
-        // We need to initialize the EntityEvent in preRemove callback because
-        // the entity id will always be null in postRemove.
         $this->entityEventRemove = EntityEvent::initDelete($entity);
     }
 
     /**
+     * Save the entity event related to a deletion.
+     *
      * @param LifecycleEventArgs<ObjectManager> $args
      */
     public function postRemove(LifecycleEventArgs $args): void
@@ -98,9 +114,15 @@ class EntityActivitySubscriber
     }
 
     /**
+     * Return a list of changes.
+     *
+     * The returned array is indexed by the changed fields and the values are
+     * the changes. A change is an array containing two elements: the old and
+     * the new values of the field.
+     *
      * @param array<string, array<int, mixed>|PersistentCollection<int, object>> $changes
      *
-     * @return array<string, array<int, mixed>>
+     * @return array<string, array{mixed, mixed}>
      */
     private function processChanges(array $changes): array
     {
@@ -132,6 +154,11 @@ class EntityActivitySubscriber
         return $processedChanges;
     }
 
+    /**
+     * Return a stringifiable representation of the given value.
+     *
+     * @return string|int|float|bool|null
+     */
     private function processChangesValue(mixed $value): mixed
     {
         if ($value instanceof \DateTimeInterface) {

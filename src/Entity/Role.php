@@ -6,8 +6,11 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\RoleRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -17,14 +20,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[UniqueEntity(
     fields: 'name',
     message: new TranslatableMessage('role.name.already_used', [], 'errors'),
 )]
-class Role implements MetaEntityInterface, ActivityRecordableInterface
+class Role implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     public const TYPES = ['super', 'admin', 'orga:tech', 'orga:user'];
 
@@ -118,11 +121,6 @@ class Role implements MetaEntityInterface, ActivityRecordableInterface
     public function __construct()
     {
         $this->authorizations = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

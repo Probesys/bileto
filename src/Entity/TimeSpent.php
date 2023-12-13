@@ -6,16 +6,19 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\TimeSpentRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TimeSpentRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class TimeSpent implements MetaEntityInterface, ActivityRecordableInterface
+class TimeSpent implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -51,11 +54,6 @@ class TimeSpent implements MetaEntityInterface, ActivityRecordableInterface
 
     #[ORM\ManyToOne(inversedBy: 'timeSpents')]
     private ?Contract $contract = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getTicket(): ?Ticket
     {

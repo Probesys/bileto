@@ -7,6 +7,8 @@
 namespace App\Repository;
 
 use App\Entity\Role;
+use App\Uid\UidGeneratorInterface;
+use App\Uid\UidGeneratorTrait;
 use App\Utils\Time;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

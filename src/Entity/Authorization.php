@@ -6,17 +6,20 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\AuthorizationRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuthorizationRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
 #[ORM\Table(name: '`authorizations`')]
-class Authorization implements MetaEntityInterface, ActivityRecordableInterface
+class Authorization implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -49,11 +52,6 @@ class Authorization implements MetaEntityInterface, ActivityRecordableInterface
     #[ORM\ManyToOne(inversedBy: 'authorizations')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Organization $organization = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getRole(): ?Role
     {

@@ -18,37 +18,97 @@ You should adapt the generated migrations, at least to handle both PostgreSQL an
 
 Documentation: [symfony.com](https://symfony.com/doc/current/doctrine.html).
 
-## Meta fields
+## Monitorable entities
 
-All the entities must include a set of meta fields:
+Almost all the entities must be “monitorable”.
+The monitoring consists in two things:
 
-- `uid`: the id used in the URLs and forms (more difficult to guess than an incremental id)
-- `createdAt`: the creation date of the entity
-- `createdBy`: the user who created the entity
+- tracking the entities, i.e. their fields `createdAt`, `createdBy`, `updatedAt` and `updatedBy` are set automatically on insertions and updates
+- recording the events of the entities, i.e. [`EntityEvents`](/src/Entity/EntityEvent.php) are created on insertions, updates and deletions
 
-To handle that, please add the [`EntitySetMetaListener`](/src/EntityListener/EntitySetMetaListener.php) entity listener to your entity.
-You must implement the [`MetaEntityInterface`](/src/Entity/MetaEntityInterface.php) interface too.
-It requires to implements the setters and getters for the mentionned fields.
+To handle that, you must implement [the `MonitorableEntityInterface` interface](/src/ActivityMonitor/MonitorableEntityInterface.php).
+This can be done easily by using [the `MonitorableEntityTrait` trait](/src/ActivityMonitor/MonitorableEntityTrait.php).
 
 ```php
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
-use Doctrine\ORM\Mapping as ORM;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class Foo implements MetaEntityInterface
+class Foo implements MonitorableEntityInterface
 {
+    use MonitorableEntityTrait;
+
     // ...
 }
 ```
 
-For this to work, the corresponding repository must implements the [`UidGeneratorInterface`](/src/Repository/UidGeneratorInterface.php).
-This can be easily done by using the trait [`UidGeneratorTrait`](/src/Repository/UidGeneratorTrait.php).
+If you need an entity to be only trackable or only recordable, you can implement one of the [`TrackableEntityInterface`](/src/ActivityMonitor/TrackableEntityInterface.php) or [`RecordableEntityInterface`](/src/ActivityMonitor/RecordableEntityInterface.php) interfaces with their corresponding traits.
+
+The `createdBy` and `updatedBy` fields of the trackable entities are set with the value of the currently connected user by default.
+However, sometimes you need to set these fields while there is no connected user (e.g. in a CLI context).
+You can specify an active user by using the `ActiveUser::change()` method:
+
+```php
+class SomeService
+{
+    public function __construct(
+        private ActiveUser $activeUser,
+    ) {
+    }
+
+    public function someAction()
+    {
+        $user = /* Load some user from the database */;
+
+        $this->activeUser->change($user);
+
+        // Do some work and save entities
+        // ...
+
+        // Remember to reset the user at the end to avoid side-effects.
+        $this->activeUser->change(null);
+    }
+}
+```
+
+To understand how the monitorable behaviours work, take a look at the implementations of the [`TrackableEntitiesSubscriber`](/src/ActivityMonitor/TrackableEntitiesSubscriber.php) and [`RecordableEntitiesSubscriber`](/src/ActivityMonitor/RecordableEntitiesSubscriber.php) subscribers.
+
+## The UID field
+
+All the entities have both id and uid fields.
+
+The id is a standard incremented integer.
+It can be used as an easy-to-remember id in some parts of the application (e.g. to find a ticket by its id).
+
+However, we don't use these ids in URLs in order to avoid guessable URLs.
+This is why we introduced uids.
+A uid is a random string of 20 characters generated during database insertions.
+
+To have robust uids, the entity must implement [the `UidEntityInterface` interface](/src/Uid/UidEntityInterface.php) with [the `UidEntityTrait` trait](/src/Uid/UidEntityTrait.php).
+
+```php
+namespace App\Entity;
+
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
+
+class Foo implements UidEntityInterface
+{
+    use UidEntityTrait;
+
+    // ...
+}
+```
+
+For this to work, the corresponding repository must also implement [the `UidGeneratorInterface`](/src/Uid/UidGeneratorInterface.php).
+This can be easily done by using [the `UidGeneratorTrait` trait](/src/Uid/UidGeneratorTrait.php).
 
 ```php
 namespace App\Repository;
 
+use App\Uid\UidGeneratorInterface;
+use App\Uid\UidGeneratorTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -60,35 +120,7 @@ class FooRepository extends ServiceEntityRepository implements UidGeneratorInter
 }
 ```
 
-## Record activity
-
-All the event activity of the entities must be recorded in database.
-An event is either: `insert`, `update` or `delete`.
-
-You have to implement the [`ActivityRecordableInterface`](/src/Entity/ActivityRecordableInterface.php).
-It only require that you implement the `getId()` method, which should already be the case.
-
-```php
-namespace App\Entity;
-
-class Foo implements ActivityRecordableInterface
-{
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    // ...
-}
-```
-
-Behind the scene, a Doctrine Lifecycle Subscriber ([`EntityActivitySubscriber`](/src/EventSubscriber/EntityActivitySubscriber.php)) listens for `postPersist`, `postUpdate` and `preRemove`/`postRemove` events to record the events.
-All the events are stored with the [`EntityEvent`](/src/Entity/EntityEvent.php) entity.
+Take a look to [the `UidEntitiesSubscriber` subscriber](/src/Uid/UidEntitiesSubscriber.php) to understand how it works.
 
 ## Migrations
 

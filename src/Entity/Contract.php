@@ -6,8 +6,11 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\ContractRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use App\Utils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,10 +20,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ContractRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class Contract implements MetaEntityInterface, ActivityRecordableInterface
+class Contract implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     public const STATUSES = ['coming', 'ongoing', 'finished'];
 
@@ -113,11 +116,6 @@ class Contract implements MetaEntityInterface, ActivityRecordableInterface
         $this->billingInterval = 0;
         $this->hoursAlert = 0;
         $this->dateAlert = 0;
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

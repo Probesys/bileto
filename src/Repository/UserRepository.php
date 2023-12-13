@@ -8,6 +8,8 @@ namespace App\Repository;
 
 use App\Entity\Organization;
 use App\Entity\User;
+use App\Uid\UidGeneratorInterface;
+use App\Uid\UidGeneratorTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;

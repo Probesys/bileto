@@ -6,18 +6,21 @@
 
 namespace App\Entity;
 
-use App\EntityListener\EntitySetMetaListener;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\MailboxEmailRepository;
+use App\Uid\UidEntityInterface;
+use App\Uid\UidEntityTrait;
 use App\Utils\Time;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Webklex\PHPIMAP;
 
 #[ORM\Entity(repositoryClass: MailboxEmailRepository::class)]
-#[ORM\EntityListeners([EntitySetMetaListener::class])]
-class MailboxEmail implements MetaEntityInterface, ActivityRecordableInterface
+class MailboxEmail implements MonitorableEntityInterface, UidEntityInterface
 {
-    use MetaEntityTrait;
+    use MonitorableEntityTrait;
+    use UidEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -59,11 +62,6 @@ class MailboxEmail implements MetaEntityInterface, ActivityRecordableInterface
         $this->mailbox = $mailbox;
         $this->raw = $email->getHeader()->raw . "\r\n\r\n" . $email->getRawBody();
         $this->lastError = '';
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getRaw(): ?string
