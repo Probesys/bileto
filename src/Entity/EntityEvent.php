@@ -126,7 +126,7 @@ class EntityEvent implements TrackableEntityInterface, UidEntityInterface
     {
         $entityEvent = new self();
         $entityEvent->type = 'insert';
-        $entityEvent->entityType = $entity::class;
+        $entityEvent->entityType = $entity->getEntityType();
         $entityEvent->entityId = $entity->getId();
         $entityEvent->changes = [];
         return $entityEvent;
@@ -139,7 +139,7 @@ class EntityEvent implements TrackableEntityInterface, UidEntityInterface
     {
         $entityEvent = new self();
         $entityEvent->type = 'update';
-        $entityEvent->entityType = $entity::class;
+        $entityEvent->entityType = $entity->getEntityType();
         $entityEvent->entityId = $entity->getId();
         $entityEvent->changes = $changes;
         return $entityEvent;
@@ -149,7 +149,7 @@ class EntityEvent implements TrackableEntityInterface, UidEntityInterface
     {
         $entityEvent = new self();
         $entityEvent->type = 'delete';
-        $entityEvent->entityType = $entity::class;
+        $entityEvent->entityType = $entity->getEntityType();
         $entityEvent->entityId = $entity->getId();
         $entityEvent->changes = [];
         return $entityEvent;

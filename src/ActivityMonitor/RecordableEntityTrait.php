@@ -15,4 +15,11 @@ trait RecordableEntityTrait
     {
         return $this->id;
     }
+
+    public function getEntityType(): string
+    {
+        // Don't use static::class or get_class as they may return a Doctrine
+        // proxy class instead of the entity class!
+        return self::class;
+    }
 }

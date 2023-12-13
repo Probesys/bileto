@@ -15,4 +15,6 @@ namespace App\ActivityMonitor;
 interface RecordableEntityInterface
 {
     public function getId(): ?int;
+
+    public function getEntityType(): string;
 }
