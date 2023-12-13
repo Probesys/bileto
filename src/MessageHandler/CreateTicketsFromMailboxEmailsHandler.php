@@ -6,6 +6,7 @@
 
 namespace App\MessageHandler;
 
+use App\ActivityMonitor\ActiveUser;
 use App\Entity\MailboxEmail;
 use App\Entity\Message;
 use App\Entity\MessageDocument;
@@ -48,6 +49,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private MessageBusInterface $bus,
         private LoggerInterface $logger,
         private UrlGeneratorInterface $urlGenerator,
+        private ActiveUser $activeUser,
     ) {
     }
 
@@ -77,6 +79,8 @@ class CreateTicketsFromMailboxEmailsHandler
                 continue;
             }
 
+            $this->activeUser->change($requester);
+
             $token = new UserToken($requester);
 
             $ticket = $this->getAnsweredTicket($mailboxEmail, $token);
@@ -102,13 +106,13 @@ class CreateTicketsFromMailboxEmailsHandler
 
                 if (!$canCreateTicket) {
                     $this->markError($mailboxEmail, 'sender has not permission to create tickets');
+                    $this->activeUser->change(null);
                     continue;
                 }
 
                 $subject = $mailboxEmail->getSubject();
 
                 $ticket = new Ticket();
-                $ticket->setCreatedBy($requester);
                 $ticket->setTitle($subject);
                 $ticket->setType(Ticket::DEFAULT_TYPE);
                 $ticket->setStatus(Ticket::DEFAULT_STATUS);
@@ -125,7 +129,6 @@ class CreateTicketsFromMailboxEmailsHandler
             }
 
             $message = new Message();
-            $message->setCreatedBy($requester);
             $message->setContent(''); // this is set below
             $message->setTicket($ticket);
             $message->setIsConfidential(false);
@@ -138,7 +141,6 @@ class CreateTicketsFromMailboxEmailsHandler
 
             foreach ($messageDocuments as $messageDocument) {
                 $messageDocument->setMessage($message);
-                $messageDocument->setCreatedBy($requester);
             }
 
             $this->messageDocumentRepository->saveBatch($messageDocuments, true);
@@ -157,6 +159,8 @@ class CreateTicketsFromMailboxEmailsHandler
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
 
             $this->bus->dispatch(new SendMessageEmail($message->getId()));
+
+            $this->activeUser->change(null);
         }
     }
 
