@@ -163,7 +163,6 @@ organizations.edit.title: 'Modifier une organisation'
 organizations.index.delete: Supprimer
 organizations.index.edit: Modifier
 organizations.index.new_organization: 'Nouvelle organisation'
-organizations.index.new_sub_organization: 'Nouvelle sous-organisation'
 organizations.index.number: '{count, plural, =0 {Aucune organisation} one {1 organisation} other {# organisations}}'
 organizations.index.title: Organisations
 organizations.name: Nom
