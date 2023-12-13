@@ -331,63 +331,31 @@
                                                 </summary>
 
                                                 <nav class="popup__container popup__container--right popup__container--top">
-                                                    {% set checkedRadio = status == 'pending' or status == 'resolved' or status == 'closed' ? status : 'unchanged' %}
-                                                    {% set checkedRadio = checkedRadio == ticket.status ? 'unchanged' : checkedRadio %}
                                                     <div>
                                                         <input
-                                                            id="status-unchanged"
+                                                            id="answer-action-none"
                                                             type="radio"
-                                                            name="status"
-                                                            value=""
+                                                            name="answerAction"
+                                                            value="none"
                                                             data-action="button-select#update click->popup#close"
-                                                            {{ checkedRadio == 'unchanged' ? 'checked' }}
+                                                            {{ answerAction == 'none' ? 'checked' }}
                                                         />
-                                                        <label class="popup__item" for="status-unchanged">
+                                                        <label class="popup__item" for="answer-action-none">
                                                             {{ 'tickets.show.answer' | trans }}
                                                         </label>
                                                     </div>
 
                                                     <div>
                                                         <input
-                                                            id="status-pending"
+                                                            id="answer-action-new-solution"
                                                             type="radio"
-                                                            name="status"
-                                                            value="pending"
+                                                            name="answerAction"
+                                                            value="new solution"
                                                             data-action="button-select#update click->popup#close"
-                                                            {{ checkedRadio == 'pending' ? 'checked' }}
+                                                            {{ answerAction == 'new solution' ? 'checked' }}
                                                         />
-                                                        <label class="popup__item" for="status-pending">
-                                                            {{ 'tickets.show.answer.and_pending' | trans }}
-                                                        </label>
-                                                    </div>
-
-                                                    <div class="popup__separator"></div>
-
-                                                    <div>
-                                                        <input
-                                                            id="status-resolved"
-                                                            type="radio"
-                                                            name="status"
-                                                            value="resolved"
-                                                            data-action="button-select#update click->popup#close"
-                                                            {{ checkedRadio == 'resolved' ? 'checked' }}
-                                                        />
-                                                        <label class="popup__item" for="status-resolved">
-                                                            {{ 'tickets.show.answer.and_resolve' | trans }}
-                                                        </label>
-                                                    </div>
-
-                                                    <div>
-                                                        <input
-                                                            id="status-closed"
-                                                            type="radio"
-                                                            name="status"
-                                                            value="closed"
-                                                            data-action="button-select#update click->popup#close"
-                                                            {{ checkedRadio == 'closed' ? 'checked' }}
-                                                        />
-                                                        <label class="popup__item" for="status-closed">
-                                                            {{ 'tickets.show.answer.and_close' | trans }}
+                                                        <label class="popup__item" for="answer-action-new-solution">
+                                                            {{ 'tickets.show.answer.with_solution' | trans }}
                                                         </label>
                                                     </div>
                                                 </nav>

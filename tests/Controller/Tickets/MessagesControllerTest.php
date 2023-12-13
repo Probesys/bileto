@@ -247,7 +247,7 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('in_progress', $ticket->getStatus());
     }
 
-    public function testPostCreateChangesStatusToSelectedStatusIfUserIsAssignee(): void
+    public function testPostCreateChangesStatusToPendingStatusIfUserIsAssignee(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -267,14 +267,13 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'pending',
         ]);
 
         $ticket->refresh();
         $this->assertSame('pending', $ticket->getStatus());
     }
 
-    public function testPostCreateSetsSolutionIfStatusIsResolved(): void
+    public function testPostCreateSetsSolutionIfActionIsNewSolutionAndUserIsAssignee(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -295,7 +294,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'resolved',
+            'answerAction' => 'new solution',
         ]);
 
         $this->assertSame(1, MessageFactory::count());
@@ -303,6 +302,8 @@ class MessagesControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $message = MessageFactory::first();
         $ticket->refresh();
+        $this->assertNotNull($message);
+        $this->assertNotNull($ticket->getSolution());
         $this->assertSame($message->getId(), $ticket->getSolution()->getId());
         $this->assertSame('resolved', $ticket->getStatus());
     }
@@ -327,7 +328,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'resolved',
+            'answerAction' => 'new solution',
             'isConfidential' => true,
         ]);
 
@@ -362,7 +363,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'resolved',
+            'answerAction' => 'new solution',
         ]);
 
         $this->assertSame(2, MessageFactory::count());
@@ -374,7 +375,7 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($solution->getId(), $ticket->getSolution()->getId());
     }
 
-    public function testPostCreateDoesNotChangeTheTicketStatusIfStatusIsFinished(): void
+    public function testPostCreateDoesNotSetSolutionIfStatusIsFinished(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -382,7 +383,7 @@ class MessagesControllerTest extends WebTestCase
         $this->grantOrga($user->object(), [
             'orga:create:tickets:messages',
         ]);
-        $initialStatus = Factory::faker()->randomElement(Ticket::FINISHED_STATUSES);
+        $initialStatus = 'closed';
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => $user,
@@ -395,23 +396,24 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'in_progress',
+            'answerAction' => 'new solution',
         ]);
 
         $ticket->refresh();
         $this->assertSame($initialStatus, $ticket->getStatus());
     }
 
-    public function testPostCreateDoesNotChangeTheTicketStatusIfPermissionsAreNotGranted(): void
+    public function testPostCreateDoesNotSetSolutionIfUserIsRequester(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
-        $initialStatus = 'in_progress';
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+        ]);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
-            'status' => $initialStatus,
+            'requester' => $user,
         ]);
         $messageContent = 'My message';
 
@@ -420,11 +422,14 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'status' => 'pending',
+            'answerAction' => 'new solution',
         ]);
 
+        $this->assertSame(1, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticket->refresh();
-        $this->assertSame($initialStatus, $ticket->getStatus());
+        $this->assertNull($ticket->getSolution());
     }
 
     public function testPostCreateFailsIfMessageIsEmpty(): void

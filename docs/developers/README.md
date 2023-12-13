@@ -11,6 +11,7 @@ Dedicated to the backend:
 - [Encrypting data](/docs/developers/encryptor.md)
 - [Sorting the entities](/docs/developers/sorters.md)
 - [How to paginate the entities](/docs/developers/pagination.md)
+- [Working with the tickets' events](/docs/developers/tickets-events.md)
 
 Dedicated to the frontend:
 

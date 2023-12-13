@@ -12,15 +12,17 @@ use App\Entity\Ticket;
 use App\Entity\TimeSpent;
 use App\Message\SendMessageEmail;
 use App\Repository\MessageRepository;
-use App\Repository\MessageDocumentRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TimeSpentRepository;
 use App\Service\ContractBilling;
 use App\Service\TicketTimeline;
+use App\TicketActivity\MessageEvent;
+use App\TicketActivity\TicketEvent;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +38,6 @@ class MessagesController extends BaseController
         Ticket $ticket,
         Request $request,
         MessageRepository $messageRepository,
-        MessageDocumentRepository $messageDocumentRepository,
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
         TimeSpentRepository $timeSpentRepository,
@@ -47,6 +48,7 @@ class MessagesController extends BaseController
         HtmlSanitizerInterface $appMessageSanitizer,
         TranslatorInterface $translator,
         MessageBusInterface $bus,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:create:tickets:messages', $organization);
@@ -68,26 +70,7 @@ class MessagesController extends BaseController
             $minutesSpent = 0;
         }
 
-        $status = $ticket->getStatus();
-        if (
-            $user == $ticket->getAssignee() &&
-            !$ticket->isFinished()
-        ) {
-            $requestedStatus = $request->request->getString('status');
-
-            if (in_array($requestedStatus, Ticket::STATUSES)) {
-                $status = $requestedStatus;
-            }
-
-            if ($status === 'new' && !$isConfidential) {
-                $status = 'in_progress';
-            }
-        } elseif (
-            $user == $ticket->getRequester() &&
-            ($status === 'pending' || $status === 'resolved')
-        ) {
-            $status = 'in_progress';
-        }
+        $answerAction = $request->request->getString('answerAction', 'none');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
@@ -99,9 +82,9 @@ class MessagesController extends BaseController
                 'organization' => $organization,
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
-                'status' => $status,
                 'minutesSpent' => $minutesSpent,
                 'isConfidential' => $isConfidential,
+                'answerAction' => $answerAction,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -118,7 +101,7 @@ class MessagesController extends BaseController
                 'organization' => $organization,
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
-                'status' => $status,
+                'answerAction' => $answerAction,
                 'minutesSpent' => $minutesSpent,
                 'isConfidential' => $isConfidential,
                 'errors' => [
@@ -141,36 +124,7 @@ class MessagesController extends BaseController
                 'organization' => $organization,
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
-                'status' => $status,
-                'minutesSpent' => $minutesSpent,
-                'isConfidential' => $isConfidential,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
-        $isSolution = (
-            $status === 'resolved' &&
-            !$message->isConfidential() &&
-            $ticket->getSolution() === null
-        );
-
-        if ($isSolution) {
-            $ticket->setSolution($message);
-        }
-
-        $initialStatus = $ticket->getStatus();
-        $ticket->setStatus($status);
-
-        $errors = $validator->validate($ticket);
-        if (count($errors) > 0) {
-            $ticket->setStatus($initialStatus);
-            return $this->renderBadRequest('tickets/show.html.twig', [
-                'ticket' => $ticket,
-                'timeline' => $ticketTimeline->build($ticket),
-                'organization' => $organization,
-                'today' => Time::relative('today'),
-                'message' => $messageContent,
-                'status' => $status,
+                'answerAction' => $answerAction,
                 'minutesSpent' => $minutesSpent,
                 'isConfidential' => $isConfidential,
                 'errors' => ConstraintErrorsFormatter::format($errors),
@@ -180,8 +134,16 @@ class MessagesController extends BaseController
         $ticket->setUpdatedAt(Time::now());
         $ticket->setUpdatedBy($user);
 
-        $messageRepository->save($message, true);
         $ticketRepository->save($ticket, true);
+        $messageRepository->save($message, true);
+
+        $messageEvent = new MessageEvent($message);
+
+        if ($user == $ticket->getAssignee() && $answerAction === 'new solution') {
+            $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_SOLUTION);
+        } else {
+            $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
+        }
 
         if ($minutesSpent > 0 && $security->isGranted('orga:create:tickets:time_spent', $organization)) {
             $contract = $ticket->getOngoingContract();
@@ -208,16 +170,6 @@ class MessagesController extends BaseController
                 $timeSpent->setRealTime($minutesSpent);
                 $timeSpentRepository->save($timeSpent, true);
             }
-        }
-
-        $messageDocuments = $messageDocumentRepository->findBy([
-            'createdBy' => $user,
-            'message' => null,
-        ]);
-
-        foreach ($messageDocuments as $messageDocument) {
-            $messageDocument->setMessage($message);
-            $messageDocumentRepository->save($messageDocument, true);
         }
 
         $bus->dispatch(new SendMessageEmail($message->getId()));

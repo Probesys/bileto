@@ -13,7 +13,6 @@ use App\Entity\MessageDocument;
 use App\Entity\Ticket;
 use App\Message\CreateTicketsFromMailboxEmails;
 use App\Message\SendMessageEmail;
-use App\Repository\ContractRepository;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Repository\MessageRepository;
@@ -24,7 +23,10 @@ use App\Security\Authentication\UserToken;
 use App\Security\Encryptor;
 use App\Service\MessageDocumentStorage;
 use App\Service\MessageDocumentStorageError;
+use App\TicketActivity\MessageEvent;
+use App\TicketActivity\TicketEvent;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -37,7 +39,6 @@ use Webklex\PHPIMAP;
 class CreateTicketsFromMailboxEmailsHandler
 {
     public function __construct(
-        private ContractRepository $contractRepository,
         private MailboxEmailRepository $mailboxEmailRepository,
         private MessageRepository $messageRepository,
         private MessageDocumentRepository $messageDocumentRepository,
@@ -50,6 +51,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private LoggerInterface $logger,
         private UrlGeneratorInterface $urlGenerator,
         private ActiveUser $activeUser,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -97,6 +99,8 @@ class CreateTicketsFromMailboxEmailsHandler
                 }
             }
 
+            $isNewTicket = false;
+
             if (!$ticket) {
                 $canCreateTicket = $this->accessDecisionManager->decide(
                     $token,
@@ -117,27 +121,11 @@ class CreateTicketsFromMailboxEmailsHandler
                 $ticket->setOrganization($requesterOrganization);
                 $ticket->setRequester($requester);
 
-                $contracts = $this->contractRepository->findOngoingByOrganization($requesterOrganization);
-                if (count($contracts) === 1) {
-                    $ticket->addContract($contracts[0]);
-                }
+                $this->ticketRepository->save($ticket, true);
+                $isNewTicket = true;
             }
-
-            $message = new Message();
-            $message->setContent(''); // this is set below
-            $message->setTicket($ticket);
-            $message->setIsConfidential(false);
-            $message->setVia('email');
-
-            $this->ticketRepository->save($ticket, true);
-            $this->messageRepository->save($message, true);
 
             $messageDocuments = $this->storeAttachments($mailboxEmail);
-
-            foreach ($messageDocuments as $messageDocument) {
-                $messageDocument->setMessage($message);
-            }
-
             $this->messageDocumentRepository->saveBatch($messageDocuments, true);
 
             $messageContent = $mailboxEmail->getBody();
@@ -148,8 +136,21 @@ class CreateTicketsFromMailboxEmailsHandler
             // remove the `src` attributes as the `cid:` scheme is forbidden.
             $messageContent = $this->appMessageSanitizer->sanitize($messageContent);
 
+            $message = new Message();
             $message->setContent($messageContent);
+            $message->setTicket($ticket);
+            $message->setIsConfidential(false);
+            $message->setVia('email');
+
             $this->messageRepository->save($message, true);
+
+            if ($isNewTicket) {
+                $ticketEvent = new TicketEvent($ticket);
+                $this->eventDispatcher->dispatch($ticketEvent, TicketEvent::CREATED);
+            }
+
+            $messageEvent = new MessageEvent($message);
+            $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
 
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
 

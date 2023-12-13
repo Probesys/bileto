@@ -195,7 +195,6 @@ class TicketsControllerTest extends WebTestCase
         list(
             $user,
             $requester,
-            $assignee
         ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
@@ -216,7 +215,7 @@ class TicketsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $requester->getUid(),
-            'assigneeUid' => $assignee->getUid(),
+            'assigneeUid' => null,
             'type' => 'incident',
             'urgency' => 'high',
             'impact' => 'high',
@@ -241,7 +240,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame('high', $ticket->getPriority());
         $this->assertNull($ticket->getSolution());
         $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
-        $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());
+        $this->assertNull($ticket->getAssignee());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
         $message = MessageFactory::first();
         $this->assertSame($messageContent, $message->getContent());
@@ -350,6 +349,51 @@ class TicketsControllerTest extends WebTestCase
         $this->assertNotNull($message);
         $this->assertSame($message->getUid(), $messageDocument1->getMessage()->getUid());
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
+    }
+
+    public function testPostCreateCanAssignsAUser(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:status',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterUid' => $requester->getUid(),
+            'assigneeUid' => $assignee->getUid(),
+            'type' => 'incident',
+            'urgency' => 'high',
+            'impact' => 'high',
+            'priority' => 'high',
+            'message' => $messageContent,
+        ]);
+
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $this->assertSame('in_progress', $ticket->getStatus());
+        $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());
     }
 
     public function testPostCreateCanMarkATicketAsResolved(): void

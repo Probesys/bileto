@@ -405,6 +405,11 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         return $this->solution;
     }
 
+    public function hasSolution(): bool
+    {
+        return $this->solution !== null;
+    }
+
     public function setSolution(?Message $solution): self
     {
         $this->solution = $solution;

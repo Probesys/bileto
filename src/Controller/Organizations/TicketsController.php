@@ -12,7 +12,6 @@ use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Repository\ContractRepository;
 use App\Repository\MessageRepository;
-use App\Repository\MessageDocumentRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
@@ -20,10 +19,13 @@ use App\SearchEngine\Query;
 use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\Service\ActorsLister;
+use App\TicketActivity\MessageEvent;
+use App\TicketActivity\TicketEvent;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Pagination;
 use App\Utils\Time;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -141,7 +143,6 @@ class TicketsController extends BaseController
         Request $request,
         ContractRepository $contractRepository,
         MessageRepository $messageRepository,
-        MessageDocumentRepository $messageDocumentRepository,
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
@@ -150,6 +151,7 @@ class TicketsController extends BaseController
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer,
         TranslatorInterface $translator,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
 
@@ -272,30 +274,14 @@ class TicketsController extends BaseController
             $assignee = null;
         }
 
-        if ($isResolved) {
-            $status = 'resolved';
-        } else {
-            $status = Ticket::DEFAULT_STATUS;
-        }
-
         $ticket = new Ticket();
         $ticket->setTitle($title);
         $ticket->setType($type);
-        $ticket->setStatus($status);
         $ticket->setUrgency($urgency);
         $ticket->setImpact($impact);
         $ticket->setPriority($priority);
         $ticket->setOrganization($organization);
-
         $ticket->setRequester($requester);
-        if ($assignee) {
-            $ticket->setAssignee($assignee);
-        }
-
-        $contracts = $contractRepository->findOngoingByOrganization($organization);
-        if (count($contracts) === 1) {
-            $ticket->addContract($contracts[0]);
-        }
 
         $errors = $validator->validate($ticket);
         if (count($errors) > 0) {
@@ -344,14 +330,24 @@ class TicketsController extends BaseController
         $ticketRepository->save($ticket, true);
         $messageRepository->save($message, true);
 
-        $messageDocuments = $messageDocumentRepository->findBy([
-            'createdBy' => $user,
-            'message' => null,
-        ]);
+        $ticketEvent = new TicketEvent($ticket);
+        $eventDispatcher->dispatch($ticketEvent, TicketEvent::CREATED);
 
-        foreach ($messageDocuments as $messageDocument) {
-            $messageDocument->setMessage($message);
-            $messageDocumentRepository->save($messageDocument, true);
+        $messageEvent = new MessageEvent($message);
+        $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
+
+        if ($assignee) {
+            $ticket->setAssignee($assignee);
+            $ticketRepository->save($ticket, true);
+
+            $eventDispatcher->dispatch($ticketEvent, TicketEvent::ASSIGNED);
+        }
+
+        if ($isResolved) {
+            $ticket->setStatus('resolved');
+            $ticketRepository->save($ticket, true);
+
+            $eventDispatcher->dispatch($ticketEvent, TicketEvent::RESOLVED);
         }
 
         return $this->redirectToRoute('ticket', [

@@ -11,6 +11,8 @@ use App\Entity\Ticket;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Service\ActorsLister;
+use App\TicketActivity\TicketEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -55,6 +57,7 @@ class ActorsController extends BaseController
         UserRepository $userRepository,
         ActorsLister $actorsLister,
         TranslatorInterface $translator,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
@@ -124,9 +127,17 @@ class ActorsController extends BaseController
             $assignee = null;
         }
 
+        $previousAssignee = $ticket->getAssignee();
+
         $ticket->setRequester($requester);
         $ticket->setAssignee($assignee);
+
         $ticketRepository->save($ticket, true);
+
+        if ($previousAssignee != $assignee) {
+            $ticketEvent = new TicketEvent($ticket);
+            $eventDispatcher->dispatch($ticketEvent, TicketEvent::ASSIGNED);
+        }
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),
