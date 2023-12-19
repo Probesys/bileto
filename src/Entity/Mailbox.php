@@ -101,9 +101,20 @@ class Mailbox implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $lastErrorAt = null;
 
+    #[ORM\Column(length: 255, options: ['default' => 'delete'])]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('mailbox.post_action.required', [], 'errors'),
+    )]
+    #[Assert\Regex(
+        pattern: '/^(delete|mark as read)$/',
+        message: new TranslatableMessage('mailbox.post_action.invalid', [], 'errors'),
+    )]
+    private ?string $postAction = null;
+
     public function __construct()
     {
         $this->lastError = '';
+        $this->postAction = 'delete';
     }
 
     public function getName(): ?string
@@ -238,5 +249,17 @@ class Mailbox implements MonitorableEntityInterface, UidEntityInterface
     public function getLastErrorAt(): ?\DateTimeImmutable
     {
         return $this->lastErrorAt;
+    }
+
+    public function getPostAction(): ?string
+    {
+        return $this->postAction;
+    }
+
+    public function setPostAction(string $postAction): static
+    {
+        $this->postAction = $postAction;
+
+        return $this;
     }
 }

@@ -51,6 +51,8 @@ class FetchMailboxesHandler
         try {
             $client->connect();
 
+            $postAction = $mailbox->getPostAction();
+
             $folder = $client->getFolderByPath($mailbox->getFolder());
             $messages = $folder->messages()->unseen()->get();
             $error = '';
@@ -59,14 +61,18 @@ class FetchMailboxesHandler
                 $mailboxEmail = new MailboxEmail($mailbox, $email);
                 $this->mailboxEmailRepository->save($mailboxEmail, true);
 
-                try {
-                    $email->delete();
-                } catch (\Exception $e) {
-                    $error = $e->getMessage();
+                if ($postAction === 'delete') {
+                    try {
+                        $email->delete();
+                    } catch (\Exception $e) {
+                        $error = $e->getMessage();
 
-                    $this->logger->warning(
-                        "Mailbox #{$mailbox->getId()} error (will try to mark as seen): {$error}"
-                    );
+                        $this->logger->warning(
+                            "Mailbox #{$mailbox->getId()} error (will try to mark as seen): {$error}"
+                        );
+                        $email->setFlag('Seen');
+                    }
+                } elseif ($postAction === 'mark as read') {
                     $email->setFlag('Seen');
                 }
             }

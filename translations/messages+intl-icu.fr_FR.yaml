@@ -148,6 +148,9 @@ mailboxes.new.submit: 'Créer la boite mail'
 mailboxes.new.title: 'Nouvelle boite mail'
 mailboxes.password: 'Mot de passe'
 mailboxes.port: 'Port IMAP'
+mailboxes.post_action: 'Action à effectuer sur les emails'
+mailboxes.post_action.delete: Supprimer
+mailboxes.post_action.mark_as_read: 'Marquer comme lus'
 mailboxes.test.success: 'La connexion fonctionne.'
 mailboxes.username: 'Nom d’utilisateur'
 message_documents.attachments: Pièces-jointes

@@ -234,6 +234,36 @@
                 />
             </div>
 
+            <div class="flow flow--small">
+                <label for="post-action">
+                    {{ 'mailboxes.post_action' | trans }}
+                </label>
+
+                {% if errors.postAction is defined %}
+                    <p class="form__error" role="alert" id="post-action-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.postAction }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="post-action"
+                    name="postAction"
+                    required
+                    {% if errors.postAction is defined %}
+                        aria-invalid="true"
+                        aria-errormessage="post-action-error"
+                    {% endif %}
+                >
+                    <option value="delete" {{ "delete" == postAction ? 'selected' }}>
+                        {{ 'mailboxes.post_action.delete' | trans }}
+                    </option>
+                    <option value="mark as read" {{ "mark as read" == postAction ? 'selected' }}>
+                        {{ 'mailboxes.post_action.mark_as_read' | trans }}
+                    </option>
+                </select>
+            </div>
+
             <div class="form__actions">
                 <button id="form-create-mailbox-submit" class="button--primary" type="submit">
                     {{ 'mailboxes.new.submit' | trans }}

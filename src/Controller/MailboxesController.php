@@ -58,6 +58,7 @@ class MailboxesController extends BaseController
             'username' => '',
             'password' => '',
             'folder' => 'INBOX',
+            'postAction' => 'delete',
         ]);
     }
 
@@ -95,6 +96,9 @@ class MailboxesController extends BaseController
         /** @var string $folder */
         $folder = $request->request->get('folder', '');
 
+        /** @var string $postAction */
+        $postAction = $request->request->get('postAction', 'delete');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -107,6 +111,7 @@ class MailboxesController extends BaseController
                 'username' => $username,
                 'password' => $password,
                 'folder' => $folder,
+                'postAction' => $postAction,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -120,6 +125,7 @@ class MailboxesController extends BaseController
         $mailbox->setUsername($username);
         $mailbox->setAuthentication('normal');
         $mailbox->setFolder($folder);
+        $mailbox->setPostAction($postAction);
 
         if ($password) {
             $encryptedPassword = $encryptor->encrypt($password);
@@ -136,6 +142,7 @@ class MailboxesController extends BaseController
                 'username' => $username,
                 'password' => $password,
                 'folder' => $folder,
+                'postAction' => $postAction,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
@@ -158,6 +165,7 @@ class MailboxesController extends BaseController
             'encryption' => $mailbox->getEncryption(),
             'username' => $mailbox->getUsername(),
             'folder' => $mailbox->getFolder(),
+            'postAction' => $mailbox->getPostAction(),
         ]);
     }
 
@@ -196,6 +204,9 @@ class MailboxesController extends BaseController
         /** @var string $folder */
         $folder = $request->request->get('folder', '');
 
+        /** @var string $postAction */
+        $postAction = $request->request->get('postAction', 'delete');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -208,6 +219,7 @@ class MailboxesController extends BaseController
                 'encryption' => $encryption,
                 'username' => $username,
                 'folder' => $folder,
+                'postAction' => $postAction,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -220,6 +232,7 @@ class MailboxesController extends BaseController
         $mailbox->setUsername($username);
         $mailbox->setAuthentication('normal');
         $mailbox->setFolder($folder);
+        $mailbox->setPostAction($postAction);
         $mailbox->resetLastError();
 
         if ($password) {
@@ -237,6 +250,7 @@ class MailboxesController extends BaseController
                 'encryption' => $encryption,
                 'username' => $username,
                 'folder' => $folder,
+                'postAction' => $postAction,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }

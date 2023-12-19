@@ -148,6 +148,9 @@ mailboxes.new.submit: 'Create the mailbox'
 mailboxes.new.title: 'New mailbox'
 mailboxes.password: Password
 mailboxes.port: 'Port IMAP'
+mailboxes.post_action: 'Action to be taken on emails'
+mailboxes.post_action.delete: Delete
+mailboxes.post_action.mark_as_read: 'Mark as read'
 mailboxes.test.success: 'The connection works.'
 mailboxes.username: Username
 message_documents.attachments: Attachments
