@@ -6,8 +6,10 @@ version: '3'
 
 services:
     php:
-        image: bileto:dev
-        build: .
+        image: bileto:php-dev
+        build:
+            context: .
+            dockerfile: Dockerfile.php
         restart: unless-stopped
         volumes:
             - ../..:/var/www/html:z
@@ -15,8 +17,10 @@ services:
         user: $USER
 
     worker:
-        image: bileto:dev
-        build: .
+        image: bileto:php-dev
+        build:
+            context: .
+            dockerfile: Dockerfile.php
         restart: unless-stopped
         command: php bin/console messenger:consume async scheduler_default -vv
         volumes:
@@ -25,7 +29,10 @@ services:
         user: $USER
 
     bundler:
-        image: node:20-alpine
+        image: bileto:dev-node
+        build:
+            context: .
+            dockerfile: Dockerfile.node
         restart: unless-stopped
         command: npm run watch
         working_dir: /app

@@ -1,0 +1,7 @@
+# This file is part of Bileto.
+# Copyright 2022-2023 Probesys
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+FROM node:20-alpine
+
+ENV npm_config_cache="/tmp/npm-cache"
