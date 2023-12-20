@@ -44,20 +44,6 @@
                         <div>
                             <input
                                 type="radio"
-                                id="type-request"
-                                name="type"
-                                value="request"
-                                {{ type == 'request' ? 'checked' }}
-                            />
-
-                            <label for="type-request">
-                                {{ 'tickets.request' | trans }}
-                            </label>
-                        </div>
-
-                        <div>
-                            <input
-                                type="radio"
                                 id="type-incident"
                                 name="type"
                                 value="incident"
@@ -66,6 +52,20 @@
 
                             <label for="type-incident">
                                 {{ 'tickets.incident' | trans }}
+                            </label>
+                        </div>
+
+                        <div>
+                            <input
+                                type="radio"
+                                id="type-request"
+                                name="type"
+                                value="request"
+                                {{ type == 'request' ? 'checked' }}
+                            />
+
+                            <label for="type-request">
+                                {{ 'tickets.request' | trans }}
                             </label>
                         </div>
                     </div>

@@ -27,7 +27,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     use UidEntityTrait;
 
     public const TYPES = ['request', 'incident'];
-    public const DEFAULT_TYPE = 'request';
+    public const DEFAULT_TYPE = 'incident';
 
     public const STATUSES = ['new', 'in_progress', 'planned', 'pending', 'resolved', 'closed'];
     public const OPEN_STATUSES = ['new', 'in_progress', 'planned', 'pending'];

@@ -456,7 +456,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $this->assertSame($title, $ticket->getTitle());
         $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
-        $this->assertSame('request', $ticket->getType());
+        $this->assertSame('incident', $ticket->getType());
         $this->assertSame('new', $ticket->getStatus());
         $this->assertSame('medium', $ticket->getUrgency());
         $this->assertSame('medium', $ticket->getImpact());
