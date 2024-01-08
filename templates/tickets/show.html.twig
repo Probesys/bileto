@@ -305,63 +305,84 @@
                                 </div>
 
                                 <div class="text--right">
-                                    <div class="answer-button button-group" data-controller="button-select">
-                                        <button
-                                            id="form-create-message-submit"
-                                            class="button--primary button-group__item"
-                                            type="submit"
-                                            data-button-select-target="button"
-                                        >
-                                            {{ 'tickets.show.answer' | trans }}
-                                        </button>
-
-                                        {% if not ticket.isFinished and ticket.assignee == app.user %}
-                                            <details
-                                                class="popup"
-                                                data-controller="popup"
-                                                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                                    {% if ticket.status == 'resolved' and ticket.requester == app.user %}
+                                        <div class="answer-button row row--always flow flow--small">
+                                            <button
+                                                type="submit"
+                                                name="answerAction"
+                                                value="refuse solution"
                                             >
-                                                <summary class="popup__opener">
-                                                    <span class="button button--primary button-group__item">
-                                                        {{ icon('caret-down') }}
-                                                        <span class="sr-only">
-                                                            {{ 'tickets.show.answer.select_method' | trans }}
+                                                {{ 'tickets.show.refuse' | trans }}
+                                            </button>
+
+                                            <button
+                                                class="button--primary"
+                                                type="submit"
+                                                name="answerAction"
+                                                value="approve solution"
+                                            >
+                                                {{ 'tickets.show.approve' | trans }}
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <div class="answer-button button-group" data-controller="button-select">
+                                            <button
+                                                id="form-create-message-submit"
+                                                class="button--primary button-group__item"
+                                                type="submit"
+                                                data-button-select-target="button"
+                                            >
+                                                {{ 'tickets.show.answer' | trans }}
+                                            </button>
+
+                                            {% if not ticket.isFinished and ticket.assignee == app.user %}
+                                                <details
+                                                    class="popup"
+                                                    data-controller="popup"
+                                                    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                                                >
+                                                    <summary class="popup__opener">
+                                                        <span class="button button--primary button-group__item">
+                                                            {{ icon('caret-down') }}
+                                                            <span class="sr-only">
+                                                                {{ 'tickets.show.answer.select_method' | trans }}
+                                                            </span>
                                                         </span>
-                                                    </span>
-                                                </summary>
+                                                    </summary>
 
-                                                <nav class="popup__container popup__container--right popup__container--top">
-                                                    <div>
-                                                        <input
-                                                            id="answer-action-none"
-                                                            type="radio"
-                                                            name="answerAction"
-                                                            value="none"
-                                                            data-action="button-select#update click->popup#close"
-                                                            {{ answerAction == 'none' ? 'checked' }}
-                                                        />
-                                                        <label class="popup__item" for="answer-action-none">
-                                                            {{ 'tickets.show.answer' | trans }}
-                                                        </label>
-                                                    </div>
+                                                    <nav class="popup__container popup__container--right popup__container--top">
+                                                        <div>
+                                                            <input
+                                                                id="answer-action-none"
+                                                                type="radio"
+                                                                name="answerAction"
+                                                                value="none"
+                                                                data-action="button-select#update click->popup#close"
+                                                                {{ answerAction == 'none' ? 'checked' }}
+                                                            />
+                                                            <label class="popup__item" for="answer-action-none">
+                                                                {{ 'tickets.show.answer' | trans }}
+                                                            </label>
+                                                        </div>
 
-                                                    <div>
-                                                        <input
-                                                            id="answer-action-new-solution"
-                                                            type="radio"
-                                                            name="answerAction"
-                                                            value="new solution"
-                                                            data-action="button-select#update click->popup#close"
-                                                            {{ answerAction == 'new solution' ? 'checked' }}
-                                                        />
-                                                        <label class="popup__item" for="answer-action-new-solution">
-                                                            {{ 'tickets.show.answer.with_solution' | trans }}
-                                                        </label>
-                                                    </div>
-                                                </nav>
-                                            </details>
-                                        {% endif %}
-                                    </div>
+                                                        <div>
+                                                            <input
+                                                                id="answer-action-new-solution"
+                                                                type="radio"
+                                                                name="answerAction"
+                                                                value="new solution"
+                                                                data-action="button-select#update click->popup#close"
+                                                                {{ answerAction == 'new solution' ? 'checked' }}
+                                                            />
+                                                            <label class="popup__item" for="answer-action-new-solution">
+                                                                {{ 'tickets.show.answer.with_solution' | trans }}
+                                                            </label>
+                                                        </div>
+                                                    </nav>
+                                                </details>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </form>
                         {% endif %}

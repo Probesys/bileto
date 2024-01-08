@@ -141,6 +141,10 @@ class MessagesController extends BaseController
 
         if ($user == $ticket->getAssignee() && $answerAction === 'new solution') {
             $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_SOLUTION);
+        } elseif ($user == $ticket->getRequester() && $answerAction === 'approve solution') {
+            $eventDispatcher->dispatch($messageEvent, MessageEvent::APPROVED_SOLUTION);
+        } elseif ($user == $ticket->getRequester() && $answerAction === 'refuse solution') {
+            $eventDispatcher->dispatch($messageEvent, MessageEvent::REFUSED_SOLUTION);
         } else {
             $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
         }

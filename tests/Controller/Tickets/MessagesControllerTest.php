@@ -432,6 +432,71 @@ class MessagesControllerTest extends WebTestCase
         $this->assertNull($ticket->getSolution());
     }
 
+    public function testPostCreateRefusesSolutionIfActionIsRefuseSolutionAndUserIsRequester(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+        ]);
+        $initialStatus = 'resolved';
+        $solution = MessageFactory::createOne();
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => $user,
+            'status' => $initialStatus,
+            'solution' => $solution,
+        ]);
+        $messageContent = 'My message';
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'answerAction' => 'refuse solution',
+        ]);
+
+        $this->assertSame(2, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->refresh();
+        $this->assertNull($ticket->getSolution());
+        $this->assertSame('in_progress', $ticket->getStatus());
+    }
+
+    public function testPostCreateApprovesSolutionIfActionIsApproveSolutionAndUserIsRequester(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+        ]);
+        $initialStatus = 'resolved';
+        $solution = MessageFactory::createOne();
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => $user,
+            'status' => $initialStatus,
+            'solution' => $solution,
+        ]);
+        $messageContent = 'My message';
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'answerAction' => 'approve solution',
+        ]);
+
+        $this->assertSame(2, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->refresh();
+        $this->assertNotNull($ticket->getSolution());
+        $this->assertSame($solution->getId(), $ticket->getSolution()->getId());
+        $this->assertSame('closed', $ticket->getStatus());
+    }
+
     public function testPostCreateFailsIfMessageIsEmpty(): void
     {
         $client = static::createClient();

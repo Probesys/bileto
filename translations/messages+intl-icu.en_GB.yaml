@@ -329,6 +329,7 @@ tickets.show.actions.update_status: 'Edit the status'
 tickets.show.answer: Answer
 tickets.show.answer.select_method: 'Select a different method to answer.'
 tickets.show.answer.with_solution: 'Answer with a solution'
+tickets.show.approve: Approve
 tickets.show.assign_yourself: 'assign yourself'
 tickets.show.closed: 'This ticket is closed.'
 tickets.show.confidential_answer: 'Confidential answer'
@@ -342,6 +343,7 @@ tickets.show.number_messages: "{count, plural, =0 {No\_messages} one {1\_message
 tickets.show.opened_incident: 'opened this <strong>incident</strong>'
 tickets.show.opened_on: 'on {date}'
 tickets.show.opened_request: 'opened this <strong>request</strong>'
+tickets.show.refuse: Refuse
 tickets.show.resolved: 'This ticket is resolved.'
 tickets.show.scroll_to_bottom: 'Scroll to bottom'
 tickets.show.show_history: 'Show history'

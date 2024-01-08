@@ -24,6 +24,8 @@ class LifecycleSubscriber implements EventSubscriberInterface
             TicketEvent::ASSIGNED => 'processAssignedTicket',
             MessageEvent::CREATED => 'processAnswer',
             MessageEvent::CREATED_SOLUTION => 'processNewSolution',
+            MessageEvent::APPROVED_SOLUTION => 'processApprovedSolution',
+            MessageEvent::REFUSED_SOLUTION => 'processRefusedSolution',
         ];
     }
 
@@ -102,5 +104,40 @@ class LifecycleSubscriber implements EventSubscriberInterface
 
         $ticketEvent = new TicketEvent($ticket);
         $this->eventDispatcher->dispatch($ticketEvent, TicketEvent::RESOLVED);
+    }
+
+    /**
+     * Close a ticket when a solution is approved.
+     */
+    public function processApprovedSolution(MessageEvent $event): void
+    {
+        $message = $event->getMessage();
+        $ticket = $message->getTicket();
+
+        if ($ticket->getStatus() !== 'resolved') {
+            return;
+        }
+
+        $ticket->setStatus('closed');
+
+        $this->ticketRepository->save($ticket, true);
+    }
+
+    /**
+     * Reopen a ticket when a solution is refused.
+     */
+    public function processRefusedSolution(MessageEvent $event): void
+    {
+        $message = $event->getMessage();
+        $ticket = $message->getTicket();
+
+        if ($ticket->getStatus() !== 'resolved') {
+            return;
+        }
+
+        $ticket->setStatus('in_progress');
+        $ticket->setSolution(null);
+
+        $this->ticketRepository->save($ticket, true);
     }
 }

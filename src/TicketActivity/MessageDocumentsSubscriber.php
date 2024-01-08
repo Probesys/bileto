@@ -19,6 +19,8 @@ class MessageDocumentsSubscriber implements EventSubscriberInterface
         return [
             MessageEvent::CREATED => 'attachMessageDocuments',
             MessageEvent::CREATED_SOLUTION => 'attachMessageDocuments',
+            MessageEvent::APPROVED_SOLUTION => 'attachMessageDocuments',
+            MessageEvent::REFUSED_SOLUTION => 'attachMessageDocuments',
         ];
     }
 
