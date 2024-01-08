@@ -201,6 +201,10 @@
     border-left: var(--width-border-bold) solid var(--color-primary6);
 }
 
+.message__content pre {
+    white-space: pre-wrap;
+}
+
 .message__bottom {
     padding: 2rem;
 
