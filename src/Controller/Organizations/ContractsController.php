@@ -115,12 +115,12 @@ class ContractsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $name = $request->request->getString('name');
+        $name = trim($request->request->getString('name'));
         $maxHours = $request->request->getInt('maxHours');
         $startAt = $request->request->getString('startAt');
         $endAt = $request->request->getString('endAt');
         $billingInterval = $request->request->getInt('billingInterval');
-        $notes = $request->request->getString('notes');
+        $notes = trim($request->request->getString('notes'));
         $csrfToken = $request->request->getString('_csrf_token');
 
         $startAt = \DateTimeImmutable::createFromFormat('Y-m-d', $startAt);
