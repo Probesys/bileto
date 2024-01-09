@@ -72,6 +72,7 @@ contracts.max_hours.edit.additional_hours: 'Number of additional hours'
 contracts.max_hours.edit.title: 'Extend the number of hours of the contract'
 contracts.new.title: 'New contract'
 contracts.notes: 'Private notes'
+contracts.show.actions: Actions
 contracts.show.alert: Alert
 contracts.show.billing_interval: 'Billing interval: {count, plural, one {1 minute} other {# minutes}}'
 contracts.show.extend: Extend

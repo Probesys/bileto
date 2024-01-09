@@ -72,6 +72,7 @@ contracts.max_hours.edit.additional_hours: 'Nombre d’heures supplémentaires'
 contracts.max_hours.edit.title: 'Rallonger le nombre d’heures du contrat'
 contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
+contracts.show.actions: Actions
 contracts.show.alert: Alerte
 contracts.show.billing_interval: "Intervalle de facturation\_: {count, plural, one {1 minute} other {# minutes}}"
 contracts.show.extend: Rallonger
