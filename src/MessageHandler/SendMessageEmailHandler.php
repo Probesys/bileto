@@ -8,16 +8,20 @@ namespace App\MessageHandler;
 
 use App\Repository\MessageRepository;
 use App\Message\SendMessageEmail;
+use App\Service\MessageDocumentStorage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\File;
 
 #[AsMessageHandler]
 class SendMessageEmailHandler
 {
     public function __construct(
         private MessageRepository $messageRepository,
+        private MessageDocumentStorage $messageDocumentStorage,
         private TransportInterface $transportInterface,
         private LoggerInterface $logger,
     ) {
@@ -72,6 +76,17 @@ class SendMessageEmailHandler
         $content = $message->getContent();
         $email->html($content);
         $email->text(strip_tags($content));
+
+        foreach ($message->getMessageDocuments() as $messageDocument) {
+            $filepath = $this->messageDocumentStorage->getPathname($messageDocument);
+            $file = new File($filepath);
+            $dataPart = new DataPart(
+                $file,
+                $messageDocument->getName(),
+                $messageDocument->getMimetype()
+            );
+            $email->addPart($dataPart);
+        }
 
         $sentEmail = $this->transportInterface->send($email);
 

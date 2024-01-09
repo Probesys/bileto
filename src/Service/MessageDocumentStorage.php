@@ -61,7 +61,7 @@ class MessageDocumentStorage
         $messageDocument->setMimetype($mimetype);
         $messageDocument->setHash(self::HASH_ALGO, $hash);
 
-        $pathname = "{$this->uploadsDirectory}/{$messageDocument->getPathname()}";
+        $pathname = $this->getPathname($messageDocument);
         if (!file_exists($pathname)) {
             $directory = "{$this->uploadsDirectory}/{$messageDocument->getFilepath()}";
 
@@ -80,7 +80,7 @@ class MessageDocumentStorage
      */
     public function exists(MessageDocument $messageDocument): bool
     {
-        $pathname = "{$this->uploadsDirectory}/{$messageDocument->getPathname()}";
+        $pathname = $this->getPathname($messageDocument);
         return @file_exists($pathname);
     }
 
@@ -92,7 +92,7 @@ class MessageDocumentStorage
      */
     public function size(MessageDocument $messageDocument): int
     {
-        $pathname = "{$this->uploadsDirectory}/{$messageDocument->getPathname()}";
+        $pathname = $this->getPathname($messageDocument);
         $filesize = @filesize($pathname);
 
         if ($filesize === false) {
@@ -110,7 +110,7 @@ class MessageDocumentStorage
      */
     public function read(MessageDocument $messageDocument): string
     {
-        $pathname = "{$this->uploadsDirectory}/{$messageDocument->getPathname()}";
+        $pathname = $this->getPathname($messageDocument);
         $content = @file_get_contents($pathname);
 
         if ($content === false) {
@@ -125,7 +125,12 @@ class MessageDocumentStorage
      */
     public function remove(MessageDocument $messageDocument): bool
     {
-        $pathname = "{$this->uploadsDirectory}/{$messageDocument->getPathname()}";
+        $pathname = $this->getPathname($messageDocument);
         return @unlink($pathname);
+    }
+
+    public function getPathname(MessageDocument $messageDocument): string
+    {
+        return "{$this->uploadsDirectory}/{$messageDocument->getPathname()}";
     }
 }
