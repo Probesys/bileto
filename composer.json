@@ -24,6 +24,7 @@
         "symfony/dotenv": "6.4.*",
         "symfony/event-dispatcher": "6.4.*",
         "symfony/flex": "^2",
+        "symfony/form": "6.4.*",
         "symfony/framework-bundle": "6.4.*",
         "symfony/html-sanitizer": "6.4.*",
         "symfony/ldap": "6.4.*",
