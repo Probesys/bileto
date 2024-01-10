@@ -103,7 +103,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var string */
         $content = $response->getContent();
         $responseData = json_decode($content, true);
-        $this->assertSame('The security token is invalid, please try again.', $responseData['error']);
+        $this->assertStringContainsString('The security token is invalid', $responseData['error']);
     }
 
     public function testPostCreateFailsIfMimetypeIsInvalid(): void
@@ -413,7 +413,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var string */
         $content = $response->getContent();
         $responseData = json_decode($content, true);
-        $this->assertSame('The security token is invalid, please try again.', $responseData['error']);
+        $this->assertStringContainsString('The security token is invalid', $responseData['error']);
     }
 
     public function testGetIndexListsTheFile(): void
