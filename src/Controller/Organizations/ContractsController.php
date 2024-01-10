@@ -9,6 +9,7 @@ namespace App\Controller\Organizations;
 use App\Controller\BaseController;
 use App\Entity\Contract;
 use App\Entity\Organization;
+use App\Form\Type\ContractType;
 use App\Repository\ContractRepository;
 use App\Repository\OrganizationRepository;
 use App\Service\Sorter\ContractSorter;
@@ -79,29 +80,16 @@ class ContractsController extends BaseController
         }
 
         if ($contract) {
-            $name = $contract->getRenewedName();
-            $maxHours = $contract->getMaxHours();
-            $startAt = $contract->getEndAt()->modify('+1 day');
-            $endAt = $startAt->modify('last day of december');
-            $billingInterval = $contract->getBillingInterval();
-            $notes = $contract->getNotes();
+            $contract = $contract->getRenewed();
         } else {
-            $name = '';
-            $maxHours = 10;
-            $startAt = Utils\Time::now();
-            $endAt = Utils\Time::relative('last day of december');
-            $billingInterval = 0;
-            $notes = '';
+            $contract = new Contract();
         }
+
+        $form = $this->createForm(ContractType::class, $contract);
 
         return $this->render('organizations/contracts/new.html.twig', [
             'organization' => $organization,
-            'name' => $name,
-            'maxHours' => $maxHours,
-            'startAt' => $startAt,
-            'endAt' => $endAt,
-            'billingInterval' => $billingInterval,
-            'notes' => $notes,
+            'form' => $form,
         ]);
     }
 
@@ -115,59 +103,19 @@ class ContractsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $name = trim($request->request->getString('name'));
-        $maxHours = $request->request->getInt('maxHours');
-        $startAt = $request->request->getString('startAt');
-        $endAt = $request->request->getString('endAt');
-        $billingInterval = $request->request->getInt('billingInterval');
-        $notes = trim($request->request->getString('notes'));
-        $csrfToken = $request->request->getString('_csrf_token');
-
-        $startAt = \DateTimeImmutable::createFromFormat('Y-m-d', $startAt);
-        $endAt = \DateTimeImmutable::createFromFormat('Y-m-d', $endAt);
-
-        if (!$this->isCsrfTokenValid('create organization contract', $csrfToken)) {
-            return $this->renderBadRequest('organizations/contracts/new.html.twig', [
-                'organization' => $organization,
-                'name' => $name,
-                'maxHours' => $maxHours,
-                'startAt' => $startAt,
-                'endAt' => $endAt,
-                'billingInterval' => $billingInterval,
-                'notes' => $notes,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
-            ]);
-        }
-
         $contract = new Contract();
-        $contract->setOrganization($organization);
-        $contract->setName($name);
-        $contract->setMaxHours($maxHours);
-        $contract->setBillingInterval($billingInterval);
-        $contract->setNotes($notes);
+        $form = $this->createForm(ContractType::class, $contract);
+        $form->handleRequest($request);
 
-        if ($startAt) {
-            $contract->setStartAt($startAt);
-        }
-
-        if ($endAt) {
-            $contract->setEndAt($endAt);
-        }
-
-        $errors = $validator->validate($contract);
-        if (count($errors) > 0) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->renderBadRequest('organizations/contracts/new.html.twig', [
                 'organization' => $organization,
-                'name' => $name,
-                'maxHours' => $maxHours,
-                'startAt' => $startAt,
-                'endAt' => $endAt,
-                'billingInterval' => $billingInterval,
-                'notes' => $notes,
-                'errors' => Utils\ConstraintErrorsFormatter::format($errors),
+                'form' => $form,
             ]);
         }
 
+        $contract = $form->getData();
+        $contract->setOrganization($organization);
         $contractRepository->save($contract, true);
 
         return $this->redirectToRoute('organization contracts', [

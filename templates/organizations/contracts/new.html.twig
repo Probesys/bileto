@@ -20,20 +20,14 @@
             <h1>{{ 'contracts.new.title' | trans }}</h1>
         </div>
 
-        <form
-            action="{{ path('create organization contract', {'uid': organization.uid}) }}"
-            method="post"
-            class="wrapper wrapper--small wrapper--center flow"
-            data-controller="form-new-contract"
-        >
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization contract') }}">
-
-            {% if error %}
-                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-            {% endif %}
+        {{ form_start(form, { attr: {
+            'class': 'wrapper wrapper--small wrapper--center flow',
+            'data-controller': 'form-new-contract',
+        }}) }}
+            {{ form_errors(form) }}
 
             <div class="flow flow--small">
-                <label for="name">
+                <label for="{{ field_id(form.name) }}">
                     {{ 'contracts.name' | trans }}
 
                     <small class="text--secondary">
@@ -41,112 +35,92 @@
                     </small>
                 </label>
 
-                {% if errors.name is defined %}
-                    <p class="form__error" role="alert" id="name-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.name }}
-                    </p>
-                {% endif %}
+                {{ form_errors(form.name) }}
 
                 <input
                     type="text"
-                    id="name"
-                    name="name"
-                    value="{{ name }}"
+                    id="{{ field_id(form.name) }}"
+                    name="{{ field_name(form.name) }}"
+                    value="{{ field_value(form.name) }}"
                     required
                     maxlength="255"
-                    {% if errors.name is defined %}
+                    {% if field_has_errors(form.name) %}
                         aria-invalid="true"
-                        aria-errormessage="name-error"
+                        aria-errormessage="{{ field_id(form.name, 'error') }}"
                     {% endif %}
                 />
             </div>
 
             <div class="row flow">
                 <div class="row__item--extend flow flow--small">
-                    <label for="start-at">
+                    <label for="{{ field_id(form.startAt) }}">
                         {{ 'contracts.start_at' | trans }}
                     </label>
 
-                    {% if errors.startAt is defined %}
-                        <p class="form__error" role="alert" id="start-at-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.startAt }}
-                        </p>
-                    {% endif %}
+                    {{ form_errors(form.startAt) }}
 
                     <input
                         type="date"
-                        id="start-at"
-                        name="startAt"
-                        value="{{ startAt ? startAt | dateTrans('yyyy-MM-dd') }}"
+                        id="{{ field_id(form.startAt) }}"
+                        name="{{ field_name(form.startAt) }}"
+                        value="{{ field_value(form.startAt) }}"
                         required
                         data-form-new-contract-target="startAt"
                         data-action="form-new-contract#updateEndAt"
-                        {% if errors.startAt is defined %}
+                        {% if field_has_errors(form.startAt) %}
                             aria-invalid="true"
-                            aria-errormessage="start-at-error"
+                            aria-errormessage="{{ field_id(form.startAt, 'error') }}"
                         {% endif %}
                     />
                 </div>
 
                 <div class="row__item--extend flow flow--small">
-                    <label for="end-at">
+                    <label for="{{ field_id(form.endAt) }}">
                         {{ 'contracts.end_at' | trans }}
                     </label>
 
-                    {% if errors.endAt is defined %}
-                        <p class="form__error" role="alert" id="end-at-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.endAt }}
-                        </p>
-                    {% endif %}
+                    {{ form_errors(form.endAt) }}
 
                     <input
                         type="date"
-                        id="end-at"
-                        name="endAt"
-                        value="{{ endAt ? endAt | dateTrans('yyyy-MM-dd') }}"
+                        id="{{ field_id(form.endAt) }}"
+                        name="{{ field_name(form.endAt) }}"
+                        value="{{ field_value(form.endAt) }}"
                         required
                         data-form-new-contract-target="endAt"
-                        {% if errors.endAt is defined %}
+                        {% if field_has_errors(form.endAt) %}
                             aria-invalid="true"
-                            aria-errormessage="end-at-error"
+                            aria-errormessage="{{ field_id(form.endAt, 'error') }}"
                         {% endif %}
                     />
                 </div>
             </div>
 
             <div class="flow flow--small">
-                <label for="max-hours">
+                <label for="{{ field_id(form.maxHours) }}">
                     {{ 'contracts.max_hours' | trans }}
                 </label>
 
-                {% if errors.maxHours is defined %}
-                    <p class="form__error" role="alert" id="max-hours-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.maxHours }}
-                    </p>
-                {% endif %}
+                {{ form_errors(form.maxHours) }}
 
                 <input
                     type="number"
-                    id="max-hours"
-                    name="maxHours"
-                    value="{{ maxHours }}"
+                    id="{{ field_id(form.maxHours) }}"
+                    name="{{ field_name(form.maxHours) }}"
+                    value="{{ field_value(form.maxHours) }}"
                     min="0"
                     step="1"
                     required
                     class="input--size3"
-                    {% if errors.maxHours is defined %}
+                    {% if field_has_errors(form.maxHours) %}
                         aria-invalid="true"
-                        aria-errormessage="max-hours-error"
+                        aria-errormessage="{{ field_id(form.maxHours, 'error') }}"
                     {% endif %}
                 />
             </div>
 
             <div class="flow flow--small">
-                <label for="billing-interval">
+                <label for="{{ field_id(form.billingInterval) }}">
                     {{ 'contracts.new.billing_interval' | trans }}
 
                     <small class="text--secondary">
@@ -154,35 +128,30 @@
                     </small>
                 </label>
 
-                <p class="form__caption" id="billing-interval-caption">
+                <p class="form__caption" id="{{ field_id(form.billingInterval, 'caption') }}">
                     {{ 'contracts.new.billing_interval.caption' | trans }}
                 </p>
 
-                {% if errors.billingInterval is defined %}
-                    <p class="form__error" role="alert" id="billing-interval-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.billingInterval }}
-                    </p>
-                {% endif %}
+                {{ form_errors(form.billingInterval) }}
 
                 <input
                     type="number"
-                    id="billing-interval"
-                    name="billingInterval"
-                    value="{{ billingInterval > 0 ? billingInterval }}"
+                    id="{{ field_id(form.billingInterval) }}"
+                    name="{{ field_name(form.billingInterval) }}"
+                    value="{{ field_value(form.billingInterval) }}"
                     min="0"
                     step="1"
                     class="input--size3"
-                    aria-describedby="billing-interval-caption"
-                    {% if errors.billingInterval is defined %}
+                    aria-describedby="{{ field_id(form.billingInterval, 'caption') }}"
+                    {% if field_has_errors(form.billingInterval) %}
                         aria-invalid="true"
-                        aria-errormessage="billing-interval-error"
+                        aria-errormessage="{{ field_id(form.billingInterval, 'error') }}"
                     {% endif %}
                 />
             </div>
 
             <div class="flow flow--small">
-                <label for="notes">
+                <label for="{{ field_id(form.notes) }}">
                     {{ icon('user-secret') }}
                     {{ 'contracts.notes' | trans }}
 
@@ -191,21 +160,16 @@
                     </small>
                 </label>
 
-                {% if errors.notes is defined %}
-                    <p class="form__error" role="alert" id="notes-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.notes }}
-                    </p>
-                {% endif %}
+                {{ form_errors(form.notes) }}
 
                 <textarea
-                    id="notes"
-                    name="notes"
-                    {% if errors.notes is defined %}
+                    id="{{ field_id(form.notes) }}"
+                    name="{{ field_name(form.notes) }}"
+                    {% if field_has_errors(form.notes) %}
                         aria-invalid="true"
-                        aria-errormessage="notes-error"
+                        aria-errormessage="{{ field_id(form.notes, 'error') }}"
                     {% endif %}
-                >{{ notes }}</textarea>
+                >{{ field_value(form.notes) }}</textarea>
             </div>
 
             <div class="form__actions">
@@ -213,6 +177,6 @@
                     {{ 'contracts.new.submit' | trans }}
                 </button>
             </div>
-        </form>
+        {{ form_end(form) }}
     </main>
 {% endblock %}

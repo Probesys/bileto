@@ -113,7 +113,12 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
     {
         $this->tickets = new ArrayCollection();
         $this->timeSpents = new ArrayCollection();
+        $this->name = '';
+        $this->maxHours = 10;
+        $this->startAt = Utils\Time::now();
+        $this->endAt = Utils\Time::relative('last day of december');
         $this->billingInterval = 0;
+        $this->notes = '';
         $this->hoursAlert = 0;
         $this->dateAlert = 0;
     }
@@ -429,5 +434,24 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
     public function isAlertActivated(): bool
     {
         return $this->isHoursAlertActivated() || $this->isDateAlertActivated();
+    }
+
+    public function getRenewed(): Contract
+    {
+        $contract = new Contract();
+
+        $contract->setName($this->getRenewedName());
+        $contract->setMaxHours($this->getMaxHours());
+        $startAt = $this->getEndAt()->modify('+1 day');
+        $contract->setStartAt($startAt);
+        $endAt = $startAt->modify('last day of december');
+        $contract->setEndAt($endAt);
+        $contract->setBillingInterval($this->getBillingInterval());
+        $contract->setNotes($this->getNotes());
+        $contract->setHoursAlert($this->getHoursAlert());
+        $contract->setDateAlert($this->getDateAlert());
+        $contract->setOrganization($this->getOrganization());
+
+        return $contract;
     }
 }

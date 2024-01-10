@@ -1,0 +1,27 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% use 'form_div_layout.html.twig' %}
+
+{%- block form_errors -%}
+    {%- if errors|length == 1 -%}
+        <p class="form__error" role="alert" id="{{ field_id(id, 'error') }}">
+            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+
+            {{ errors[0].message }}
+        </p>
+    {%- elseif errors|length > 1 -%}
+        <div class="form__error" role="alert" id="{{ field_id(id, 'error') }}">
+            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error.message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}

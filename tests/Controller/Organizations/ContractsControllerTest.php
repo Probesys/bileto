@@ -144,13 +144,15 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame(0, ContractFactory::count());
 
         $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization contract'),
-            'name' => $name,
-            'maxHours' => $maxHours,
-            'startAt' => $startAt->format('Y-m-d'),
-            'endAt' => $endAt->format('Y-m-d'),
-            'billingInterval' => $billingInterval,
-            'notes' => $notes,
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'contract'),
+                'name' => $name,
+                'maxHours' => $maxHours,
+                'startAt' => $startAt->format('Y-m-d'),
+                'endAt' => $endAt->format('Y-m-d'),
+                'billingInterval' => $billingInterval,
+                'notes' => $notes,
+            ],
         ]);
 
         $this->assertResponseRedirects("/organizations/{$organization->getUid()}/contracts", 302);
@@ -183,15 +185,17 @@ class ContractsControllerTest extends WebTestCase
         $notes = 'Some notes';
 
         $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization contract'),
-            'name' => $name,
-            'maxHours' => $maxHours,
-            'startAt' => $startAt->format('Y-m-d'),
-            'endAt' => $endAt->format('Y-m-d'),
-            'notes' => $notes,
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'contract'),
+                'name' => $name,
+                'maxHours' => $maxHours,
+                'startAt' => $startAt->format('Y-m-d'),
+                'endAt' => $endAt->format('Y-m-d'),
+                'notes' => $notes,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 255 characters.');
+        $this->assertSelectorTextContains('#contract_name-error', 'Enter a name of less than 255 characters.');
         $this->assertSame(0, ContractFactory::count());
     }
 
@@ -212,14 +216,17 @@ class ContractsControllerTest extends WebTestCase
 
         $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization contract'),
-            'name' => $name,
-            'maxHours' => $maxHours,
-            'startAt' => 'not-a-date',
-            'endAt' => $endAt->format('Y-m-d'),
-            'notes' => $notes,
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'contract'),
+                'name' => $name,
+                'maxHours' => $maxHours,
+                'startAt' => 'not-a-date',
+                'endAt' => $endAt->format('Y-m-d'),
+                'notes' => $notes,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#start-at-error', 'Enter a start date.');
+        $this->assertSelectorTextContains('#contract_startAt-error', 'Please enter a valid date');
         $this->assertSame(0, ContractFactory::count());
     }
 
@@ -240,15 +247,17 @@ class ContractsControllerTest extends WebTestCase
         $notes = 'Some notes';
 
         $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
-            '_csrf_token' => 'not a token',
-            'name' => $name,
-            'maxHours' => $maxHours,
-            'startAt' => $startAt->format('Y-m-d'),
-            'endAt' => $endAt->format('Y-m-d'),
-            'notes' => $notes,
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'not a token'),
+                'name' => $name,
+                'maxHours' => $maxHours,
+                'startAt' => $startAt->format('Y-m-d'),
+                'endAt' => $endAt->format('Y-m-d'),
+                'notes' => $notes,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->assertSelectorTextContains('#contract-error', 'The security token is invalid');
         $this->assertSame(0, ContractFactory::count());
     }
 
@@ -271,12 +280,14 @@ class ContractsControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization contract'),
-            'name' => $name,
-            'maxHours' => $maxHours,
-            'startAt' => $startAt->format('Y-m-d'),
-            'endAt' => $endAt->format('Y-m-d'),
-            'notes' => $notes,
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'contract'),
+                'name' => $name,
+                'maxHours' => $maxHours,
+                'startAt' => $startAt->format('Y-m-d'),
+                'endAt' => $endAt->format('Y-m-d'),
+                'notes' => $notes,
+            ],
         ]);
     }
 }

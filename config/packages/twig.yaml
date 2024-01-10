@@ -4,6 +4,7 @@
 
 twig:
     default_path: '%kernel.project_dir%/templates'
+    form_themes: ['form/bileto_theme.html.twig']
     globals:
         errors: []
         error: null
