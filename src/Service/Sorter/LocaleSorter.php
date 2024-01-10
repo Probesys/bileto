@@ -45,7 +45,7 @@ class LocaleSorter
         $fieldsComparison = $collator->compare($field1, $field2);
 
         if ($fieldsComparison === false) {
-            $fieldsComparison = 0;
+            $fieldsComparison = strcmp($field1, $field2);
         }
 
         return $fieldsComparison;
