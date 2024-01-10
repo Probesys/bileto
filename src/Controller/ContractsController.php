@@ -4,19 +4,20 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Controller\Contracts;
+namespace App\Controller;
 
 use App\Controller\BaseController;
 use App\Entity\Contract;
+use App\Form\Type\ContractType;
 use App\Repository\ContractRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class MaxHoursController extends BaseController
+class ContractsController extends BaseController
 {
-    #[Route('/contracts/{uid}/max-hours/edit', name: 'edit contract max hours', methods: ['GET', 'HEAD'])]
+    #[Route('/contracts/{uid}/edit', name: 'edit contract', methods: ['GET', 'HEAD'])]
     public function edit(
         Contract $contract,
     ): Response {
@@ -24,14 +25,16 @@ class MaxHoursController extends BaseController
 
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        return $this->render('contracts/max_hours/edit.html.twig', [
+        $form = $this->createForm(ContractType::class, $contract);
+
+        return $this->render('contracts/edit.html.twig', [
             'organization' => $organization,
             'contract' => $contract,
-            'additionalHours' => 0,
+            'form' => $form,
         ]);
     }
 
-    #[Route('/contracts/{uid}/max-hours/edit', name: 'update contract max hours', methods: ['POST'])]
+    #[Route('/contracts/{uid}/edit', name: 'update contract', methods: ['POST'])]
     public function update(
         Contract $contract,
         Request $request,
@@ -42,25 +45,18 @@ class MaxHoursController extends BaseController
 
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $additionalHours = $request->request->getInt('additionalHours');
-        $csrfToken = $request->request->getString('_csrf_token');
+        $form = $this->createForm(ContractType::class, $contract);
+        $form->handleRequest($request);
 
-        if ($additionalHours < 0) {
-            $additionalHours = 0;
-        }
-
-        if (!$this->isCsrfTokenValid('update contract max hours', $csrfToken)) {
-            return $this->renderBadRequest('contracts/max_hours/edit.html.twig', [
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->renderBadRequest('contracts/edit.html.twig', [
                 'organization' => $organization,
                 'contract' => $contract,
-                'additionalHours' => $additionalHours,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'form' => $form,
             ]);
         }
 
-        $maxHours = $contract->getMaxHours() + $additionalHours;
-        $contract->setMaxHours($maxHours);
-
+        $contract = $form->getData();
         $contractRepository->save($contract, true);
 
         return $this->redirectToRoute('organization contract', [

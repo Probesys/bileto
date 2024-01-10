@@ -56,14 +56,9 @@
                                 {{ 'contracts.show.set_up_alerts' | trans }}
                             </button>
 
-                            <button
-                                class="popup__item"
-                                data-controller="modal-opener"
-                                data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('edit contract max hours', { uid: contract.uid }) }}"
-                            >
-                                {{ 'contracts.show.extend' | trans }}
-                            </button>
+                            <a class="popup__item" href="{{ path('edit contract', { uid: contract.uid }) }}">
+                                {{ 'contracts.show.edit' | trans }}
+                            </a>
 
                             <a class="popup__item" href="{{ path('new organization contract', { uid: organization.uid, from: contract.uid }) }}">
                                 {{ 'contracts.show.renew' | trans }}
