@@ -155,9 +155,9 @@ class ContractsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/contracts", 302);
         $this->assertSame(1, ContractFactory::count());
         $contract = ContractFactory::first();
+        $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $this->assertSame($name, $contract->getName());
         $this->assertSame($maxHours, $contract->getMaxHours());
         $expectedStartAt = $startAt->modify('00:00:00');

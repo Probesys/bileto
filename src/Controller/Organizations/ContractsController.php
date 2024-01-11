@@ -118,8 +118,8 @@ class ContractsController extends BaseController
         $contract->initDefaultAlerts();
         $contractRepository->save($contract, true);
 
-        return $this->redirectToRoute('organization contracts', [
-            'uid' => $organization->getUid(),
+        return $this->redirectToRoute('contract', [
+            'uid' => $contract->getUid(),
         ]);
     }
 }
