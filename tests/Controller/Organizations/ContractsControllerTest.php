@@ -166,6 +166,8 @@ class ContractsControllerTest extends WebTestCase
         $this->assertEquals($expectedEndAt, $contract->getEndAt());
         $this->assertSame($billingInterval, $contract->getBillingInterval());
         $this->assertSame($notes, $contract->getNotes());
+        $this->assertSame(80, $contract->getHoursAlert());
+        $this->assertSame(24, $contract->getDateAlert()); // 20% of the days duration
     }
 
     public function testPostCreateFailsIfNameIsInvalid(): void

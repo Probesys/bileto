@@ -115,6 +115,7 @@ class ContractsController extends BaseController
 
         $contract = $form->getData();
         $contract->setOrganization($organization);
+        $contract->initDefaultAlerts();
         $contractRepository->save($contract, true);
 
         return $this->redirectToRoute('organization contracts', [

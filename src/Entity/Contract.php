@@ -357,6 +357,13 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
         return $this;
     }
 
+    public function initDefaultAlerts(): void
+    {
+        $this->hoursAlert = 80;
+        $daysDuration = $this->getDaysDuration();
+        $this->dateAlert = intval(round($daysDuration * 0.2));
+    }
+
     public function getHoursAlert(): ?int
     {
         return $this->hoursAlert;
