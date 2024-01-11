@@ -53,7 +53,15 @@ contracts.alerts.edit.hours_alert.after: '% des heures seront consommées.'
 contracts.alerts.edit.hours_alert.before: 'Alerter lorsque'
 contracts.alerts.edit.title: 'Configurer les alertes du contrat'
 contracts.days_consumed: "<strong>{days, plural, =0 {0\_j consommé} one {1\_j consommé} other {#\_j consommés}}</strong>"
-contracts.end_at: 'Termine le'
+contracts.edit.title: 'Modifier un contrat'
+contracts.form.billing_interval: 'Intervalle de facturation en minutes'
+contracts.form.billing_interval.caption: 'Le temps passé sur les tickets sera arrondi pour le décompte de la facturation (ex. pour 15 minutes de temps passés, 30 minutes seront décomptés pour un intervalle de facturation correspondant).'
+contracts.form.end_at: 'Termine le'
+contracts.form.max_hours: 'Nombre max. d’heures'
+contracts.form.name: Nom
+contracts.form.new: 'Créer le contrat'
+contracts.form.notes: 'Notes privées'
+contracts.form.start_at: 'Démarre le'
 contracts.hours_consumed: "<strong>{hours} consommée(s)</strong> sur {maxHours}\_h"
 contracts.index.alert: Alerte
 contracts.index.new_contract: 'Nouveau contrat'
@@ -61,23 +69,16 @@ contracts.index.no_contracts: 'Aucun contrat'
 contracts.index.number: '{count, plural, =0 {Aucun contrat} one {1 contrat} other {# contrats}}'
 contracts.index.tickets: '{count, plural, =0 {Aucun ticket} one {1 ticket} other {# tickets}}'
 contracts.index.title: Contrats
-contracts.max_hours: 'Nombre max. d’heures'
-contracts.max_hours.edit.additional_hours: 'Nombre d’heures supplémentaires'
-contracts.max_hours.edit.title: 'Rallonger le nombre d’heures du contrat'
-contracts.name: Nom
-contracts.new.billing_interval: 'Intervalle de facturation en minutes'
-contracts.new.billing_interval.caption: 'Le temps passé sur les tickets sera arrondi pour le décompte de la facturation (ex. pour 15 minutes de temps passés, 30 minutes seront décomptés pour un intervalle de facturation correspondant).'
-contracts.new.submit: 'Créer le contrat'
 contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
+contracts.show.actions: Actions
 contracts.show.alert: Alerte
 contracts.show.billing_interval: "Intervalle de facturation\_: {count, plural, one {1 minute} other {# minutes}}"
-contracts.show.extend: Rallonger
+contracts.show.edit: 'Modifier le contrat'
 contracts.show.notes_confidential: confidentielles
 contracts.show.renew: Renouveler
 contracts.show.set_up_alerts: 'Configurer les alertes'
 contracts.show.warning: Attention
-contracts.start_at: 'Démarre le'
 contracts.status: Statut
 contracts.status.coming: 'À venir'
 contracts.status.finished: Terminé

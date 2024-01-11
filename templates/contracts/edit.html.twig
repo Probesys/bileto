@@ -8,7 +8,7 @@
 
 {% set currentPage = 'contracts' %}
 
-{% block title %}{{ 'contracts.new.title' | trans }} – {{ organization.name }}{% endblock %}
+{% block title %}{{ 'contracts.edit.title' | trans }} – {{ organization.name }}{% endblock %}
 
 {% block body %}
     <main class="layout__body flow">
@@ -17,12 +17,15 @@
             <a href="{{ path('organization contracts', { uid: organization.uid }) }}">
                 {{ 'contracts.index.title' | trans }}
             </a>
-            <h1>{{ 'contracts.new.title' | trans }}</h1>
+            <a href="{{ path('organization contract', { uid: organization.uid, contract_uid: contract.uid }) }}">
+                {{ contract.name }}
+            </a>
+            <h1>{{ 'contracts.edit.title' | trans }}</h1>
         </div>
 
         {{ include('contracts/_form.html.twig', {
             'form': form,
-            'submit_label': 'contracts.form.new' | trans,
+            'submit_label': 'forms.save_changes' | trans,
         }) }}
     </main>
 {% endblock %}

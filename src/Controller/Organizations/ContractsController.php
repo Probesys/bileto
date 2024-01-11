@@ -103,8 +103,7 @@ class ContractsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $contract = new Contract();
-        $form = $this->createForm(ContractType::class, $contract);
+        $form = $this->createForm(ContractType::class);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
