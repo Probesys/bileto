@@ -80,8 +80,12 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
         message: new TranslatableMessage('contract.max_hours.required', [], 'errors'),
     )]
     #[Assert\GreaterThan(
-        propertyPath: 'consumedHours',
+        value: 0,
         message: new TranslatableMessage('contract.max_hours.greater_than_zero', [], 'errors'),
+    )]
+    #[Assert\GreaterThanOrEqual(
+        propertyPath: 'consumedHours',
+        message: new TranslatableMessage('contract.max_hours.greater_than_or_equal', [], 'errors'),
     )]
     private ?int $maxHours = null;
 

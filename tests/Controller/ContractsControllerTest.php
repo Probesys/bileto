@@ -111,7 +111,7 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains(
             '#contract_maxHours-error',
-            'Enter a number of hours greater than 2.'
+            'Enter a number of hours greater than or equal 2.'
         );
         $contract->refresh();
         $this->assertSame($oldName, $contract->getName());
