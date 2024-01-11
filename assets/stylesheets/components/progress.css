@@ -9,14 +9,19 @@ progress {
 
     background-color: var(--color-primary2);
     border: var(--width-border) solid var(--color-primary9);
-    border-radius: 0.5rem;
+    border-radius: 1rem;
 
     appearance: none;
 }
 
 progress::-webkit-progress-bar,
 progress::-moz-progress-bar {
+    max-width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    margin: 1px;
+
     background-color: var(--color-primary9);
+    border-radius: 1rem;
 }
 
 .progress--warning {
