@@ -28,7 +28,7 @@ PHP 8.2.13 ...
 ```
 
 Check your database version.
-If you use PostgreSQL (must be >= 11):
+If you use PostgreSQL (must be >= 12):
 
 ```console
 $ psql --version

@@ -14,6 +14,8 @@ Bileto uses [PHP-IMAP](https://github.com/Webklex/php-imap) which should make th
 Unfortunately, the library doesn't decode email subjects and attachments correctly by itself.
 It works a lot better with the module installed.
 
+PostgreSQL >= 12 is now required. If you’re still using PostgreSQL 11, you must upgrade to a newer version.
+
 ## 2023-11-23 - 0.6.0-alpha
 
 ### New
