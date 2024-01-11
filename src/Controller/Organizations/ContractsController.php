@@ -122,18 +122,4 @@ class ContractsController extends BaseController
             'uid' => $organization->getUid(),
         ]);
     }
-
-    #[Route('/organizations/{uid}/contracts/{contract_uid}', name: 'organization contract', methods: ['GET', 'HEAD'])]
-    public function show(
-        Organization $organization,
-        #[MapEntity(mapping: ['contract_uid' => 'uid'])]
-        Contract $contract,
-    ): Response {
-        $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
-
-        return $this->render('organizations/contracts/show.html.twig', [
-            'organization' => $organization,
-            'contract' => $contract,
-        ]);
-    }
 }

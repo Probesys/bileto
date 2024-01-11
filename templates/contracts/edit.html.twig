@@ -17,7 +17,7 @@
             <a href="{{ path('organization contracts', { uid: organization.uid }) }}">
                 {{ 'contracts.index.title' | trans }}
             </a>
-            <a href="{{ path('organization contract', { uid: organization.uid, contract_uid: contract.uid }) }}">
+            <a href="{{ path('contract', { uid: contract.uid }) }}">
                 {{ contract.name }}
             </a>
             <h1>{{ 'contracts.edit.title' | trans }}</h1>

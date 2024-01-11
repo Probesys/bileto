@@ -69,8 +69,7 @@ class AlertsControllerTest extends WebTestCase
             'dateAlert' => 300,
         ]);
 
-        $organization = $contract->getOrganization();
-        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/contracts/{$contract->getUid()}", 302);
+        $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $contract->refresh();
         $this->assertSame(80, $contract->getHoursAlert());
         $this->assertSame(300, $contract->getDateAlert());
@@ -96,7 +95,7 @@ class AlertsControllerTest extends WebTestCase
         ]);
 
         $organization = $contract->getOrganization();
-        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/contracts/{$contract->getUid()}", 302);
+        $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $contract->refresh();
         $this->assertSame(0, $contract->getHoursAlert());
         $this->assertSame(0, $contract->getDateAlert());
@@ -122,7 +121,7 @@ class AlertsControllerTest extends WebTestCase
         ]);
 
         $organization = $contract->getOrganization();
-        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/contracts/{$contract->getUid()}", 302);
+        $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $contract->refresh();
         $this->assertSame(100, $contract->getHoursAlert());
         $this->assertSame($contract->getDaysDuration(), $contract->getDateAlert());

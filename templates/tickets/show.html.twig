@@ -530,7 +530,7 @@
                         {% if ongoingContract %}
                             <p>
                                 {% if is_granted('orga:see:contracts', organization) %}
-                                    <a class="anchor--noline" href="{{ path('organization contract', { uid: organization.uid, contract_uid: ongoingContract.uid }) }}">
+                                    <a class="anchor--noline" href="{{ path('contract', { uid: ongoingContract.uid }) }}">
                                         {{ ongoingContract.name }}
                                     </a>
                                 {% else %}

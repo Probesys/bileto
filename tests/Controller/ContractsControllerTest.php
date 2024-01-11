@@ -75,8 +75,7 @@ class ContractsControllerTest extends WebTestCase
             ],
         ]);
 
-        $organization = $contract->getOrganization();
-        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/contracts/{$contract->getUid()}", 302);
+        $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $contract->refresh();
         $this->assertSame($newName, $contract->getName());
         $this->assertSame($newMaxHours, $contract->getMaxHours());

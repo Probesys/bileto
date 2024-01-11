@@ -17,6 +17,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContractsController extends BaseController
 {
+    #[Route('/contracts/{uid}', name: 'contract', methods: ['GET', 'HEAD'])]
+    public function show(Contract $contract): Response
+    {
+        $organization = $contract->getOrganization();
+
+        $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
+
+        return $this->render('contracts/show.html.twig', [
+            'organization' => $organization,
+            'contract' => $contract,
+        ]);
+    }
+
     #[Route('/contracts/{uid}/edit', name: 'edit contract', methods: ['GET', 'HEAD'])]
     public function edit(
         Contract $contract,
@@ -59,9 +72,8 @@ class ContractsController extends BaseController
         $contract = $form->getData();
         $contractRepository->save($contract, true);
 
-        return $this->redirectToRoute('organization contract', [
-            'uid' => $organization->getUid(),
-            'contract_uid' => $contract->getUid(),
+        return $this->redirectToRoute('contract', [
+            'uid' => $contract->getUid(),
         ]);
     }
 }
