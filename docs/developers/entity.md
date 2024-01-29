@@ -136,6 +136,12 @@ And applied with:
 $ make db-migrate
 ```
 
+If you need to rollback the last change (to fix the migration for instance), you can run:
+
+```console
+$ make db-rollback
+```
+
 ### Rename the file
 
 You should rename the generated file and class by appending a more comprehensive name.

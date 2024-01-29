@@ -86,6 +86,10 @@ db-setup: ## Setup the database
 db-migrate: ## Migrate the database
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
 
+.PHONY: db-rollback
+db-rollback: ## Rollback the database to the previous version
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction prev
+
 .PHONY: db-reset
 db-reset: ## Reset the database
 ifndef FORCE
