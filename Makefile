@@ -107,8 +107,8 @@ endif
 translations: ## Update the translations from the code
 	$(CONSOLE) translation:extract --format=yaml --force --clean en_GB
 	$(CONSOLE) translation:extract --format=yaml --force --clean fr_FR
-	# Restore the security files as keys are removed from them whereas they should not.
-	git restore translations/security+intl-icu.*
+	# Restore these files as keys are removed from them whereas they should not.
+	git restore translations/security+intl-icu.* translations/validators+intl-icu.*
 
 .PHONY: migration
 migration: ## Generate a database migration from entities changes
