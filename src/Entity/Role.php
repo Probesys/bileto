@@ -29,7 +29,7 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
-    public const TYPES = ['super', 'admin', 'orga:tech', 'orga:user'];
+    public const TYPES = ['super', 'admin', 'operational', 'user'];
 
     public const PERMISSIONS = [
         'admin:*',
@@ -185,7 +185,7 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
     {
         $sanitizedPermissions = [];
 
-        if ($type === 'orga:user' || $type === 'orga:tech') {
+        if ($type === 'user' || $type === 'operational') {
             $prefix = 'orga';
         } else {
             $prefix = $type;

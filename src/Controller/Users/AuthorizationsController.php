@@ -57,7 +57,7 @@ class AuthorizationsController extends BaseController
         $organizations = $organizationRepository->findAll();
         $organizations = $organizationSorter->asTree($organizations);
         $roles = $roleRepository->findBy([
-            'type' => ['orga:user', 'orga:tech', 'admin'],
+            'type' => ['user', 'operational', 'admin'],
         ]);
         if ($security->isGranted('admin:*')) {
             $superRole = $roleRepository->findOrCreateSuperRole();
@@ -94,7 +94,7 @@ class AuthorizationsController extends BaseController
         $organizations = $organizationSorter->asTree($organizations);
         $roles = $roleRepository->findAll();
         $roles = $roleRepository->findBy([
-            'type' => ['orga:user', 'orga:tech', 'admin'],
+            'type' => ['user', 'operational', 'admin'],
         ]);
         if ($security->isGranted('admin:*')) {
             $superRole = $roleRepository->findOrCreateSuperRole();

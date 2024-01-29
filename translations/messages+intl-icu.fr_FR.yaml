@@ -231,7 +231,7 @@ roles.super_admin: Super-admin
 roles.super_admin.description: 'Un rôle spécial avec un accès à toute l’administration (ne peut pas être modifié).'
 roles.type.admin: 'Rôle administrateur'
 roles.type.orga: 'Rôle orga'
-roles.type.orga.tech: 'Rôle technicien'
+roles.type.orga.operational: 'Rôle opérationnel'
 roles.type.orga.user: 'Rôle utilisateur'
 settings.index.no_access: 'Vous n’avez pas accès à l’administration.'
 settings.index.no_access_advice: 'Votre rôle administrateur n’a probablement aucune permission. Vous devriez contacter un autre administrateur pour corriger cela.'

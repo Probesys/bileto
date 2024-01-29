@@ -38,7 +38,7 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
         $roleB = RoleFactory::createOne([
             'name' => 'Role B',
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $orgaA = OrganizationFactory::createOne([
             'name' => 'Orga A',
@@ -159,7 +159,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $organization = OrganizationFactory::createOne();
 
@@ -278,7 +278,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $role = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), ['orga:see'], $organization->object());

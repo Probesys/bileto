@@ -25,7 +25,7 @@ class RolesController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
         $adminRoles = $roleRepository->findBy(['type' => 'admin']);
-        $orgaRoles = $roleRepository->findBy(['type' => ['orga:user', 'orga:tech']]);
+        $orgaRoles = $roleRepository->findBy(['type' => ['user', 'operational']]);
 
         $superRole = $roleRepository->findOrCreateSuperRole();
         $adminRoles[] = $superRole;
@@ -47,10 +47,10 @@ class RolesController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
         /** @var string $type */
-        $type = $request->query->get('type', 'orga:user');
+        $type = $request->query->get('type', 'user');
 
         if (!in_array($type, Role::TYPES) || $type === 'super') {
-            $type = 'orga:user';
+            $type = 'user';
         }
 
         return $this->render('roles/new.html.twig', [
@@ -74,7 +74,7 @@ class RolesController extends BaseController
         $user = $this->getUser();
 
         /** @var string $type */
-        $type = $request->request->get('type', 'orga:user');
+        $type = $request->request->get('type', 'user');
 
         /** @var string $name */
         $name = $request->request->get('name', '');
@@ -89,12 +89,15 @@ class RolesController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!in_array($type, Role::TYPES) || $type === 'super') {
-            $type = 'orga:user';
+            $type = 'user';
         }
 
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
-        } elseif (str_starts_with($type, 'orga:') && !in_array('orga:see', $permissions)) {
+        } elseif (
+            ($type === 'user' || $type === 'operational') &&
+            !in_array('orga:see', $permissions)
+        ) {
             $permissions[] = 'orga:see';
         }
 
@@ -174,7 +177,7 @@ class RolesController extends BaseController
         $description = $request->request->get('description', '');
 
         /** @var string $type */
-        $type = $request->request->get('type', 'orga:user');
+        $type = $request->request->get('type', 'user');
 
         /** @var string[] $permissions */
         $permissions = $request->request->all('permissions');
@@ -183,12 +186,15 @@ class RolesController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!in_array($type, Role::TYPES) || $type === 'super') {
-            $type = 'orga:user';
+            $type = 'user';
         }
 
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
-        } elseif (str_starts_with($type, 'orga:') && !in_array('orga:see', $permissions)) {
+        } elseif (
+            ($type === 'user' || $type === 'operational') &&
+            !in_array('orga:see', $permissions)
+        ) {
             $permissions[] = 'orga:see';
         }
 

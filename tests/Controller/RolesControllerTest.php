@@ -34,11 +34,11 @@ class RolesControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
         RoleFactory::createOne([
             'name' => 'foo',
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         RoleFactory::createOne([
             'name' => 'bar',
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
 
         $client->request('GET', '/roles');
@@ -120,7 +120,7 @@ class RolesControllerTest extends WebTestCase
         $crawler = $client->submitForm('form-save-role-submit', [
             'name' => $name,
             'description' => $description,
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
 
         Time::unfreeze();
@@ -133,7 +133,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame($description, $role->getDescription());
         // This permission is always set for orga roles
         $this->assertSame(['orga:see'], $role->getPermissions());
-        $this->assertSame('orga:tech', $role->getType());
+        $this->assertSame('operational', $role->getType());
         $this->assertSame(20, strlen($role->getUid()));
         $this->assertEquals($now, $role->getCreatedAt());
         $this->assertSame($user->getId(), $role->getCreatedBy()->getId());
@@ -180,7 +180,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
-        $this->assertSame('orga:user', $role->getType());
+        $this->assertSame('user', $role->getType());
     }
 
     public function testPostCreateCreatesAnOrgaUserRoleByDefault(): void
@@ -200,7 +200,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
-        $this->assertSame('orga:user', $role->getType());
+        $this->assertSame('user', $role->getType());
     }
 
     public function testPostCreateSanitizesPermissionsForOrgaRole(): void
@@ -223,7 +223,7 @@ class RolesControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
-            'type' => 'orga:tech',
+            'type' => 'operational',
             'permissions' => $permissions,
         ]);
 
@@ -404,7 +404,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'operational', 'user']);
         $role = RoleFactory::createOne([
             'type' => $type,
         ]);
@@ -443,7 +443,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']),
+            'type' => RoleFactory::faker()->randomElement(['admin', 'operational', 'user']),
         ]);
 
         $client->catchExceptions(false);
@@ -456,8 +456,8 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $oldType = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
-        $newType = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
+        $oldType = RoleFactory::faker()->randomElement(['admin', 'operational', 'user']);
+        $newType = RoleFactory::faker()->randomElement(['admin', 'operational', 'user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
@@ -541,7 +541,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'operational', 'user']);
         $oldName = 'Old role';
         $newName = '';
         $oldDescription = 'Description of the old role';
@@ -581,7 +581,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'operational', 'user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
@@ -654,7 +654,7 @@ class RolesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $type = RoleFactory::faker()->randomElement(['admin', 'orga:tech', 'orga:user']);
+        $type = RoleFactory::faker()->randomElement(['admin', 'operational', 'user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
@@ -690,7 +690,7 @@ class RolesControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $role = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $authorization = AuthorizationFactory::createOne([
             'role' => $role,
@@ -712,7 +712,7 @@ class RolesControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
         $role = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $authorization = AuthorizationFactory::createOne([
             'role' => $role,
@@ -755,7 +755,7 @@ class RolesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $role = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $authorization = AuthorizationFactory::createOne([
             'role' => $role,

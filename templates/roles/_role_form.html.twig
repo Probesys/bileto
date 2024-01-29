@@ -87,13 +87,13 @@
             <div>
                 <input
                     type="radio"
-                    id="type-orga-user"
+                    id="type-user"
                     name="type"
-                    value="orga:user"
-                    {{ type == 'orga:user' ? 'checked' }}
+                    value="user"
+                    {{ type == 'user' ? 'checked' }}
                 />
 
-                <label for="type-orga-user">
+                <label for="type-user">
                     {{ 'roles.type.orga.user' | trans }}
                 </label>
             </div>
@@ -101,14 +101,14 @@
             <div>
                 <input
                     type="radio"
-                    id="type-orga-tech"
+                    id="type-operational"
                     name="type"
-                    value="orga:tech"
-                    {{ type == 'orga:tech' ? 'checked' }}
+                    value="operational"
+                    {{ type == 'operational' ? 'checked' }}
                 />
 
-                <label for="type-orga-tech">
-                    {{ 'roles.type.orga.tech' | trans }}
+                <label for="type-operational">
+                    {{ 'roles.type.orga.operational' | trans }}
                 </label>
             </div>
         </div>

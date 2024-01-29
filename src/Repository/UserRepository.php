@@ -107,11 +107,11 @@ class UserRepository extends ServiceEntityRepository implements
 
     /**
      * @param int[] $orgaIds
-     * @param 'any'|'user'|'tech' $role
+     * @param 'any'|'user'|'operational' $roleType
      *
      * @return User[]
      */
-    public function findByOrganizationIds(array $orgaIds, string $role = 'any'): array
+    public function findByOrganizationIds(array $orgaIds, string $roleType = 'any'): array
     {
         $entityManager = $this->getEntityManager();
 
@@ -124,12 +124,10 @@ class UserRepository extends ServiceEntityRepository implements
             AND r.type IN (:types)
         SQL);
 
-        if ($role === 'user') {
-            $types = ['orga:user'];
-        } elseif ($role === 'tech') {
-            $types = ['orga:tech'];
+        if ($roleType === 'any') {
+            $types = ['user', 'operational'];
         } else {
-            $types = ['orga:user', 'orga:tech'];
+            $types = [$roleType];
         }
 
         $query->setParameter('organizations', $orgaIds);

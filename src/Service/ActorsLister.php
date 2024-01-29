@@ -24,11 +24,11 @@ class ActorsLister
     }
 
     /**
-     * @param 'any'|'user'|'tech' $role
+     * @param 'any'|'user'|'operational' $roleType
      *
      * @return User[]
      */
-    public function findByOrganization(Organization $organization, string $role = 'any'): array
+    public function findByOrganization(Organization $organization, string $roleType = 'any'): array
     {
         /** @var User */
         $currentUser = $this->security->getUser();
@@ -41,15 +41,15 @@ class ActorsLister
 
         $organizationIds = array_intersect($authorizedOrgaIds, $organizationIds);
 
-        return $this->findByOrganizationIds($organizationIds, $role);
+        return $this->findByOrganizationIds($organizationIds, $roleType);
     }
 
     /**
-     * @param 'any'|'user'|'tech' $role
+     * @param 'any'|'user'|'operational' $roleType
      *
      * @return User[]
      */
-    public function findAll(string $role = 'any'): array
+    public function findAll(string $roleType = 'any'): array
     {
         /** @var User */
         $currentUser = $this->security->getUser();
@@ -57,18 +57,18 @@ class ActorsLister
         $authorizedOrgas = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
         $authorizedOrgaIds = array_map(fn ($orga): int => $orga->getId(), $authorizedOrgas);
 
-        return $this->findByOrganizationIds($authorizedOrgaIds, $role);
+        return $this->findByOrganizationIds($authorizedOrgaIds, $roleType);
     }
 
     /**
      * @param int[] $organizationIds
-     * @param 'any'|'user'|'tech' $role
+     * @param 'any'|'user'|'operational' $roleType
      *
      * @return User[]
      */
-    private function findByOrganizationIds(array $organizationIds, string $role): array
+    private function findByOrganizationIds(array $organizationIds, string $roleType): array
     {
-        $users = $this->userRepository->findByOrganizationIds($organizationIds, $role);
+        $users = $this->userRepository->findByOrganizationIds($organizationIds, $roleType);
 
         $this->userSorter->sort($users);
 

@@ -67,11 +67,11 @@ class FiltersController extends BaseController
             ]);
         } elseif ($filter === 'actors' || $filter === 'assignee' || $filter === 'requester' || $filter === 'involves') {
             $allUsers = $actorsLister->findAll();
-            $techUsers = $actorsLister->findAll(role: 'tech');
+            $operationalUsers = $actorsLister->findAll(roleType: 'operational');
             return $this->render("tickets/filters/edit_actors.html.twig", [
                 'ticketFilter' => $ticketFilter,
                 'allUsers' => $allUsers,
-                'techUsers' => $techUsers,
+                'operationalUsers' => $operationalUsers,
                 'query' => $textualQuery,
                 'from' => $from,
             ]);

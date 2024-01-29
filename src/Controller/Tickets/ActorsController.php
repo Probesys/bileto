@@ -36,7 +36,7 @@ class ActorsController extends BaseController
         }
 
         $allUsers = $actorsLister->findByOrganization($organization);
-        $techUsers = $actorsLister->findByOrganization($organization, role: 'tech');
+        $operationalUsers = $actorsLister->findByOrganization($organization, roleType: 'operational');
         $requester = $ticket->getRequester();
         $assignee = $ticket->getAssignee();
 
@@ -45,7 +45,7 @@ class ActorsController extends BaseController
             'requesterUid' => $requester ? $requester->getUid() : '',
             'assigneeUid' => $assignee ? $assignee->getUid() : '',
             'allUsers' => $allUsers,
-            'techUsers' => $techUsers,
+            'operationalUsers' => $operationalUsers,
         ]);
     }
 
@@ -82,7 +82,7 @@ class ActorsController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         $allUsers = $actorsLister->findByOrganization($organization);
-        $techUsers = $actorsLister->findByOrganization($organization, role: 'tech');
+        $operationalUsers = $actorsLister->findByOrganization($organization, roleType: 'operational');
 
         if (!$this->isCsrfTokenValid('update ticket actors', $csrfToken)) {
             return $this->renderBadRequest('tickets/actors/edit.html.twig', [
@@ -90,7 +90,7 @@ class ActorsController extends BaseController
                 'requesterUid' => $requesterUid,
                 'assigneeUid' => $assigneeUid,
                 'allUsers' => $allUsers,
-                'techUsers' => $techUsers,
+                'operationalUsers' => $operationalUsers,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -102,7 +102,7 @@ class ActorsController extends BaseController
                 'requesterUid' => $requesterUid,
                 'assigneeUid' => $assigneeUid,
                 'allUsers' => $allUsers,
-                'techUsers' => $techUsers,
+                'operationalUsers' => $operationalUsers,
                 'errors' => [
                     'requester' => $translator->trans('ticket.requester.invalid', [], 'errors'),
                 ],
@@ -117,7 +117,7 @@ class ActorsController extends BaseController
                     'requesterUid' => $requesterUid,
                     'assigneeUid' => $assigneeUid,
                     'allUsers' => $allUsers,
-                    'techUsers' => $techUsers,
+                    'operationalUsers' => $operationalUsers,
                     'errors' => [
                         'assignee' => $translator->trans('ticket.assignee.invalid', [], 'errors'),
                     ],

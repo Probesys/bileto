@@ -119,7 +119,7 @@ class TicketsController extends BaseController
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
 
         $allUsers = $actorsLister->findByOrganization($organization);
-        $techUsers = $actorsLister->findByOrganization($organization, role: 'tech');
+        $operationalUsers = $actorsLister->findByOrganization($organization, roleType: 'operational');
 
         return $this->render('organizations/tickets/new.html.twig', [
             'organization' => $organization,
@@ -133,7 +133,7 @@ class TicketsController extends BaseController
             'impact' => Ticket::DEFAULT_WEIGHT,
             'priority' => Ticket::DEFAULT_WEIGHT,
             'allUsers' => $allUsers,
-            'techUsers' => $techUsers,
+            'operationalUsers' => $operationalUsers,
         ]);
     }
 
@@ -208,7 +208,7 @@ class TicketsController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         $allUsers = $actorsLister->findByOrganization($organization);
-        $techUsers = $actorsLister->findByOrganization($organization, role: 'tech');
+        $operationalUsers = $actorsLister->findByOrganization($organization, roleType: 'operational');
 
         if (!$this->isCsrfTokenValid('create organization ticket', $csrfToken)) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
@@ -223,7 +223,7 @@ class TicketsController extends BaseController
                 'impact' => $impact,
                 'priority' => $priority,
                 'allUsers' => $allUsers,
-                'techUsers' => $techUsers,
+                'operationalUsers' => $operationalUsers,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -242,7 +242,7 @@ class TicketsController extends BaseController
                 'impact' => $impact,
                 'priority' => $priority,
                 'allUsers' => $allUsers,
-                'techUsers' => $techUsers,
+                'operationalUsers' => $operationalUsers,
                 'errors' => [
                     'requester' => $translator->trans('ticket.requester.invalid', [], 'errors'),
                 ],
@@ -264,7 +264,7 @@ class TicketsController extends BaseController
                     'impact' => $impact,
                     'priority' => $priority,
                     'allUsers' => $allUsers,
-                    'techUsers' => $techUsers,
+                    'operationalUsers' => $operationalUsers,
                     'errors' => [
                         'assignee' => $translator->trans('ticket.assignee.invalid', [], 'errors'),
                     ],
@@ -297,7 +297,7 @@ class TicketsController extends BaseController
                 'impact' => $impact,
                 'priority' => $priority,
                 'allUsers' => $allUsers,
-                'techUsers' => $techUsers,
+                'operationalUsers' => $operationalUsers,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
@@ -322,7 +322,7 @@ class TicketsController extends BaseController
                 'impact' => $impact,
                 'priority' => $priority,
                 'allUsers' => $allUsers,
-                'techUsers' => $techUsers,
+                'operationalUsers' => $operationalUsers,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
