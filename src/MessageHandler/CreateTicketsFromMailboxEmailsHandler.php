@@ -251,7 +251,7 @@ class CreateTicketsFromMailboxEmailsHandler
             'UTF-8'
         );
 
-        $contentDom->loadHTML($content);
+        $contentDom->loadHTML($content, \LIBXML_NOERROR);
         $contentDomXPath = new \DomXPath($contentDom);
 
         foreach ($messageDocuments as $attachmentId => $messageDocument) {
