@@ -69,6 +69,7 @@ class RolesController extends BaseController
             'name' => '',
             'description' => '',
             'permissions' => [],
+            'assignablePermissions' => Role::assignablePermissions($type),
         ]);
     }
 
@@ -120,6 +121,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'assignablePermissions' => Role::assignablePermissions($type),
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -137,6 +139,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'assignablePermissions' => Role::assignablePermissions($type),
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
@@ -160,6 +163,7 @@ class RolesController extends BaseController
             'name' => $role->getName(),
             'description' => $role->getDescription(),
             'permissions' => $role->getPermissions(),
+            'assignablePermissions' => Role::assignablePermissions($role->getType()),
         ]);
     }
 
@@ -210,6 +214,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'assignablePermissions' => Role::assignablePermissions($type),
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -225,6 +230,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'assignablePermissions' => Role::assignablePermissions($type),
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }

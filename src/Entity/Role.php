@@ -32,31 +32,59 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
     public const TYPES = ['super', 'admin', 'operational', 'user'];
 
     public const PERMISSIONS = [
-        'admin:*',
-        'admin:manage:mailboxes',
-        'admin:manage:organizations',
-        'admin:manage:roles',
-        'admin:manage:users',
-        'admin:see',
+        'super' => [
+            'admin:*',
+        ],
 
-        'orga:create:tickets',
-        'orga:create:tickets:messages',
-        'orga:create:tickets:messages:confidential',
-        'orga:create:tickets:time_spent',
-        'orga:manage:contracts',
-        'orga:see',
-        'orga:see:contracts',
-        'orga:see:contracts:notes',
-        'orga:see:tickets:all',
-        'orga:see:tickets:contracts',
-        'orga:see:tickets:messages:confidential',
-        'orga:see:tickets:time_spent',
-        'orga:update:tickets:actors',
-        'orga:update:tickets:contracts',
-        'orga:update:tickets:priority',
-        'orga:update:tickets:status',
-        'orga:update:tickets:title',
-        'orga:update:tickets:type',
+        'admin' => [
+            'admin:manage:mailboxes',
+            'admin:manage:organizations',
+            'admin:manage:roles',
+            'admin:manage:users',
+            'admin:see',
+        ],
+
+        'operational' => [
+            'orga:create:tickets',
+            'orga:create:tickets:messages',
+            'orga:create:tickets:messages:confidential',
+            'orga:create:tickets:time_spent',
+            'orga:manage:contracts',
+            'orga:see',
+            'orga:see:contracts',
+            'orga:see:contracts:notes',
+            'orga:see:tickets:all',
+            'orga:see:tickets:contracts',
+            'orga:see:tickets:messages:confidential',
+            'orga:see:tickets:time_spent',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:contracts',
+            'orga:update:tickets:priority',
+            'orga:update:tickets:status',
+            'orga:update:tickets:title',
+            'orga:update:tickets:type',
+        ],
+
+        'user' => [
+            'orga:create:tickets',
+            'orga:create:tickets:messages',
+            'orga:create:tickets:messages:confidential',
+            'orga:create:tickets:time_spent',
+            'orga:manage:contracts',
+            'orga:see',
+            'orga:see:contracts',
+            'orga:see:contracts:notes',
+            'orga:see:tickets:all',
+            'orga:see:tickets:contracts',
+            'orga:see:tickets:messages:confidential',
+            'orga:see:tickets:time_spent',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:contracts',
+            'orga:update:tickets:priority',
+            'orga:update:tickets:status',
+            'orga:update:tickets:title',
+            'orga:update:tickets:type',
+        ],
     ];
 
     #[ORM\Id]
@@ -107,7 +135,6 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\Column(type: Types::ARRAY)]
     #[Assert\All([
         new Assert\NotBlank(),
-        new Assert\Choice(choices: self::PERMISSIONS),
     ])]
     private array $permissions = [];
 
@@ -183,25 +210,21 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
      */
     public static function sanitizePermissions(string $type, array $permissions): array
     {
-        $sanitizedPermissions = [];
+        $availablePermissions = self::PERMISSIONS[$type] ?? [];
+        // We use array_values to reindex the returned array.
+        return array_values(array_intersect($availablePermissions, $permissions));
+    }
 
-        if ($type === 'user' || $type === 'operational') {
-            $prefix = 'orga';
-        } else {
-            $prefix = $type;
-        }
-
-        foreach ($permissions as $permission) {
-            if (
-                str_starts_with($permission, $prefix . ':') &&
-                in_array($permission, self::PERMISSIONS) &&
-                $permission !== 'admin:*' // it is reserved to the super admin role
-            ) {
-                $sanitizedPermissions[] = $permission;
-            }
-        }
-
-        return $sanitizedPermissions;
+    /**
+     * @return string[]
+     */
+    public static function assignablePermissions(string $type): array
+    {
+        return array_diff(
+            Role::PERMISSIONS[$type],
+            // Don't return these permissions as they are implicit to the roles.
+            ['orga:see', 'admin:see'],
+        );
     }
 
     public function hasPermission(string $permission): bool
