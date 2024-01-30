@@ -57,3 +57,17 @@ $ git restore translations/security*
 ```
 
 **Please keep the translations keys in alphabetical order.**
+
+## Dynamic keys
+
+Some translation keys can be built dynamically with code, for instance:
+
+```twig
+{% for permission in permissions %}
+    {{ 'roles.permissions.' ~ permission | trans }}
+{% endfor %}
+```
+
+In this case, the command to update the translations will not detect them.
+This is why you need to put these keys in a special file: [`Misc/AdditionalTranslations.php`](/src/Misc/AdditionalTranslations.php).
+This file is never loaded by the application.

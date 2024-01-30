@@ -1,62 +1,65 @@
 # Roles & permissions
 
 In Bileto, the permissions are handled by the [Role](/src/Entity/Role.php) entity.
-Roles are associated to the users via the [Authorization](/src/Entity/Authorization.php) entity.
 
+Roles are associated to the users via the [Authorization](/src/Entity/Authorization.php) entity.
 An authorization is associated to a role and a user.
 It also can be associated to an organization.
 
-## Administrative roles
+In Bileto, roles can be created by the administrators in order to customize the access given to the users.
 
-The admin roles give access to the global "Settings" section and the related actions.
+## The permissions
 
-Authorizations associated to an admin role are never associated to an organization: they are always applied globally.
+The permissions allow the actions of a user in Bileto.
+For instance, there is a specific permission to create tickets, and another one to update the title of a ticket.
+Permissions are directly attached to the roles.
+When creating a role, an administrator can select the permissions that will be attached to the role.
 
-Permissions examples:
+## The types of roles
 
-- access to the global settings (always applied): `admin:see`
-    - manage the roles: `admin:manage:roles`
-    - manage the users: `admin:manage:users`
-    - manage the organizations: `admin:manage:organizations`
+There are three (or four) types of roles:
 
-Only one admin role can be given to a user.
+- Administrator (and Super): these roles give access to the administration of Bileto. There is one and only one “Super” role which cannot be removed.
+- Operational: these roles give access to the back office and allow users with operational roles to be assigned to tickets.
+- User: these roles are intended to the end-users so they have access to the assistance tools.
 
-Moreover, a special "super-admin" role is automatically created in the database and cannot be deleted, nor modified.
+The type defines the kind of permissions that can be attached to a role.
+For instance, an Operational role can “Answer confidentially to tickets”, while User roles cannot.
+
+## The authorizations
+
+By default, a user can do nothing in Bileto: it needs to be attached to a role first.
+A user is attached to a role thanks to an Authorization.
+An Authorization is the object that attaches a user to a role and an optional organization.
+The organization defines the scope of the authorization.
+
+## The scope of authorizations
+
+An authorization can be limited to a certain organization, or it can be applied globally.
+It's called the scope of the authorization.
+The scope is only relevant to the Operational and User roles.
+Indeed, the Administrator roles give permissions outside of the organizations.
+
+## Authorizations conflicts
+
+A user cannot have two authorizations concerning the same scope.
+Bileto refuses to give two authorizations concerning the same organization to a user.
+
+However, two scopes can be in conflict (e.g. an authorization with a global scope, and another one associated to an organization).
+When the scope of two authorizations conflict with each other, it's the most specific one which applies (organization > global).
+
+Also, only one administrator role can be given to a user.
+
+## The “Super” role
+
+A special Super role is automatically created in the database and cannot be deleted, nor modified.
 It has the unique `admin:*` permission, which means it gives access to everything in the administration.
 It is especially useful to recover from a mistake.
 For instance, in the case you've removed the permissions to manage roles from all the other admin roles.
 
-## Organization roles
+## Technical aspects
 
-The orga roles are applied to the actions available inside an organization (e.g. create a ticket, change the status of a ticket).
-
-Authorizations associated to the orga roles are associated to zero or one organization.
-If an authorization is not associated to an organization, it is applied to all the organizations.
-The authorization is applied in cascade to the sub-organizations.
-It is the most specific authorization which applies (sub-organization > organization > global).
-
-Permissions examples:
-
-- see the organization: `orga:see`
-    - manage the organization: `orga:manage`
-- list the users: `orga:list:users`
-    - manage the users: `orga:manage:users`
-- list the contracts: `orga:list:contracts`
-    - manage the contracts: `orga:manage:contracts`
-- create a ticket: `orga:create:tickets`
-- list all the tickets: `orga:list:tickets:all`
-- answer to tickets: `orga:create:tickets:messages`
-    - answer with confidential message: `orga:create:tickets:messages:confidential`
-    - answer with a solution: `orga:create:tickets:messages:solution`
-- update the ticket status: `orga:update:tickets:status`
-- update the ticket type: `orga:update:tickets:type`
-- update the ticket title: `orga:update:tickets:title`
-- update the ticket actors: `orga:update:tickets:actors`
-- update the ticket priority: `orga:update:tickets:priority`
-- see the ticket contract: `orga:see:tickets:contract`
-    - update the ticket contract: `orga:update:tickets:contract`
-
-## Granting roles to users
+### Granting roles to users
 
 You can grant a role to a user with the [`AuthorizationRepository`](/src/Repository/AuthorizationRepository.php):
 
@@ -66,24 +69,24 @@ $role = /* get some role */;
 
 $authorizationRepository->grant($user, $role);
 
-// or, to grant a role limited to a certain organization
+// or, to grant a role scoped to a certain organization
 $organization = /* get some organization */;
 $authorizationRepository->grant($user, $role, $organization);
 ```
 
-## Checking permissions with Symfony
+### Checking permissions with Symfony
 
 **Note of caution:** the Symfony roles are not related to the Bileto roles and **we don't use them.**
 Only the method `getRoles()` of the `User` entity returns a "Symfony role" because this method is required by the authentication system.
 
-### The `Voter`
+#### The `Voter`
 
 Documentation: [symfony.com](https://symfony.com/doc/current/security/voters.html)
 
 Bileto has a unique Voter to check the permission of a user: [`AppVoter`](/src/Security/AppVoter.php).
 It loads the applicable user authorization and related role, then it checks that the role includes the current checked permission.
 
-### How to check the permissions
+#### How to check the permissions
 
 Documentation: [symfony.com](https://symfony.com/doc/current/security.html#access-control-authorization)
 
@@ -119,7 +122,7 @@ Or that a permission is given at least by one authorization:
 $this->denyAccessUnlessGranted('orga:see', 'any');
 ```
 
-You should not need this, but it is possible to create an error of access manually with:
+It is also possible to create an error of access manually with:
 
 ```php
 if (/* some condition */) {
@@ -127,9 +130,9 @@ if (/* some condition */) {
 }
 ```
 
-### Find organizations authorized for a user
+#### Find organizations authorized for a user
 
-Users are authorized to access an organization if they are associated with an “organization” role.
+Users are authorized to access an organization if they are associated with an “operational” or a “user” role.
 Granting access to an organization includes all its sub-organizations.
 To load all the organizations for which the user is authorized:
 
@@ -143,20 +146,23 @@ function someController(OrganizationRepository $orgaRepository)
 }
 ```
 
-## Adding new permissions
+### Adding new permissions
 
-To add new permissions to Bileto, you must begin to add it to the `PERMISSIONS` constant of [the `Role` entity](/src/Entity/Role.php).
+To add new permissions to Bileto, you must add it to the `PERMISSIONS` constant of [the `Role` entity](/src/Entity/Role.php).
+A permission is given for a specific type of role.
+
+The admin permissions are completely separated from the other.
+The permissions of the operational and user roles can overlap though.
+In this case, you must add the permission in both groups.
+
 Please see below to learn the syntax of the permissions.
 
-Then, you must allow administrators to create roles using this new permission.
-This can be done by adding a checkbox to [the `roles/_role_form.html.twig` template](/templates/roles/_role_form.html.twig).
-
-### Permission syntax
+#### Permission syntax
 
 The permissions are represented as strings compounds of several terms separated by colons (`:`).
 
 The first term is always one of `admin` or `orga`.
-This is to easily check that a permission belongs to the current role (e.g. `orga:update` doesn't belong to `admin` roles).
+This is to easily check that a permission can be scoped (`orga`), or only applies to the administration (`admin`).
 
 The second term must be a verb of action among the following:
 
@@ -175,3 +181,9 @@ Several other terms can follow then:
 - a resource, usually in plural form, e.g. `orga:create:tickets` (to create _tickets_)
 - an attribute of a resource, e.g. `orga:update:tickets:title` (to update the _title_ of tickets)
 - a free term to specify a variation, e.g. `orga:create:tickets:messages:confidential` (to create _confidential_ messages in the tickets)
+
+#### Translating permissions
+
+When you create a new permission, you must give it a translated label which appears in the "new/edit role" forms.
+As the translation keys are built dynamically, the Symfony `translation:extract` cannot extract them.
+This is why you need to put the translation key corresponding to the permission in a special file: [`Misc/AdditionalTranslations.php`](/src/Misc/AdditionalTranslations.php).
