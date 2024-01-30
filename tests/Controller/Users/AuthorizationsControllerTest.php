@@ -38,7 +38,7 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
         $roleB = RoleFactory::createOne([
             'name' => 'Role B',
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $orgaA = OrganizationFactory::createOne([
             'name' => 'Orga A',
@@ -69,10 +69,22 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Authorizations');
-        $this->assertSelectorTextContains('[data-test="authorization-item"]:nth-child(2)', 'Role A');
-        $this->assertSelectorTextContains('[data-test="authorization-item"]:nth-child(3)', 'Role B * global *');
-        $this->assertSelectorTextContains('[data-test="authorization-item"]:nth-child(4)', 'Role B Orga A');
-        $this->assertSelectorTextContains('[data-test="authorization-item"]:nth-child(5)', 'Role B Orga B');
+        $this->assertSelectorTextContains(
+            '[data-test="authorization-item"]:nth-child(2)',
+            'Role A'
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="authorization-item"]:nth-child(3)',
+            'Role B Operational * global *'
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="authorization-item"]:nth-child(4)',
+            'Role B Operational Orga A'
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="authorization-item"]:nth-child(5)',
+            'Role B Operational Orga B'
+        );
     }
 
     public function testGetIndexFailsIfAccessIsForbidden(): void
@@ -159,7 +171,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $organization = OrganizationFactory::createOne();
 
@@ -278,7 +290,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $role = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), ['orga:see'], $organization->object());
@@ -291,7 +303,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains(
             '[data-test="alert-error"]',
-            'You cannot grant another orga role to this user in this organization'
+            'You cannot grant another role to this user in this organization'
         );
         $this->assertSame(2, AuthorizationFactory::count());
     }

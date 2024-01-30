@@ -7,8 +7,6 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     static get targets () {
         return [
-            'radioOrga',
-            'radioAdmin',
             'roleSelect',
             'roleOption',
             'roleCaption',
@@ -21,28 +19,25 @@ export default class extends Controller {
     }
 
     refresh () {
-        const isOrgaChecked = this.radioOrgaTarget.checked;
-        if (isOrgaChecked) {
-            let selectedRole = '';
-            this.roleOptionTargets.forEach((roleOption) => {
-                roleOption.hidden = !roleOption.dataset.type.startsWith('orga:');
-                if (roleOption.dataset.type.startsWith('orga:') && selectedRole === '') {
-                    selectedRole = roleOption.value;
-                }
-            });
-            this.roleSelectTarget.value = selectedRole;
-            this.organizationsGroupTarget.hidden = false;
-        } else {
-            let selectedRole = '';
-            this.roleOptionTargets.forEach((roleOption) => {
-                roleOption.hidden = roleOption.dataset.type.startsWith('orga:');
-                if (!roleOption.dataset.type.startsWith('orga:') && selectedRole === '') {
-                    selectedRole = roleOption.value;
-                }
-            });
-            this.roleSelectTarget.value = selectedRole;
-            this.organizationsGroupTarget.hidden = true;
-        }
+        const selectedType = this.element.querySelector('input[name="type"]:checked').value;
+
+        let selectedRole = '';
+
+        this.roleOptionTargets.forEach((roleOption) => {
+            const displayRole = (
+                roleOption.dataset.type === selectedType ||
+                (roleOption.dataset.type === 'super' && selectedType === 'admin')
+            );
+
+            roleOption.hidden = !displayRole;
+
+            if (displayRole && selectedRole === '') {
+                selectedRole = roleOption.value;
+            }
+        });
+
+        this.roleSelectTarget.value = selectedRole;
+        this.organizationsGroupTarget.hidden = selectedType === 'admin';
 
         this.refreshRoleCaption();
     }

@@ -24,18 +24,29 @@ class RolesController extends BaseController
     {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
-        $adminRoles = $roleRepository->findBy(['type' => 'admin']);
-        $orgaRoles = $roleRepository->findBy(['type' => ['orga:user', 'orga:tech']]);
+        // Make sure the "super" role exists
+        $roleRepository->findOrCreateSuperRole();
 
-        $superRole = $roleRepository->findOrCreateSuperRole();
-        $adminRoles[] = $superRole;
+        $roles = $roleRepository->findAll();
+        $roleSorter->sort($roles);
 
-        $roleSorter->sort($adminRoles);
-        $roleSorter->sort($orgaRoles);
+        $rolesByTypes = [
+            'super' => null,
+            'admin' => [],
+            'operational' => [],
+            'user' => [],
+        ];
+
+        foreach ($roles as $role) {
+            if ($role->getType() === 'super') {
+                $rolesByTypes['super'] = $role;
+            } else {
+                $rolesByTypes[$role->getType()][] = $role;
+            }
+        }
 
         return $this->render('roles/index.html.twig', [
-            'adminRoles' => $adminRoles,
-            'orgaRoles' => $orgaRoles,
+            'rolesByTypes' => $rolesByTypes,
         ]);
     }
 
@@ -47,10 +58,10 @@ class RolesController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
         /** @var string $type */
-        $type = $request->query->get('type', 'orga:user');
+        $type = $request->query->get('type', 'user');
 
         if (!in_array($type, Role::TYPES) || $type === 'super') {
-            $type = 'orga:user';
+            $type = 'user';
         }
 
         return $this->render('roles/new.html.twig', [
@@ -58,6 +69,7 @@ class RolesController extends BaseController
             'name' => '',
             'description' => '',
             'permissions' => [],
+            'assignablePermissions' => Role::assignablePermissions($type),
         ]);
     }
 
@@ -74,7 +86,7 @@ class RolesController extends BaseController
         $user = $this->getUser();
 
         /** @var string $type */
-        $type = $request->request->get('type', 'orga:user');
+        $type = $request->request->get('type', 'user');
 
         /** @var string $name */
         $name = $request->request->get('name', '');
@@ -89,12 +101,15 @@ class RolesController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!in_array($type, Role::TYPES) || $type === 'super') {
-            $type = 'orga:user';
+            $type = 'user';
         }
 
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
-        } elseif (str_starts_with($type, 'orga:') && !in_array('orga:see', $permissions)) {
+        } elseif (
+            ($type === 'user' || $type === 'operational') &&
+            !in_array('orga:see', $permissions)
+        ) {
             $permissions[] = 'orga:see';
         }
 
@@ -106,6 +121,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'assignablePermissions' => Role::assignablePermissions($type),
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -123,6 +139,7 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'assignablePermissions' => Role::assignablePermissions($type),
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
@@ -143,10 +160,10 @@ class RolesController extends BaseController
 
         return $this->render('roles/edit.html.twig', [
             'role' => $role,
-            'type' => $role->getType(),
             'name' => $role->getName(),
             'description' => $role->getDescription(),
             'permissions' => $role->getPermissions(),
+            'assignablePermissions' => Role::assignablePermissions($role->getType()),
         ]);
     }
 
@@ -173,22 +190,19 @@ class RolesController extends BaseController
         /** @var string $description */
         $description = $request->request->get('description', '');
 
-        /** @var string $type */
-        $type = $request->request->get('type', 'orga:user');
-
         /** @var string[] $permissions */
         $permissions = $request->request->all('permissions');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        if (!in_array($type, Role::TYPES) || $type === 'super') {
-            $type = 'orga:user';
-        }
-
+        $type = $role->getType();
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
-        } elseif (str_starts_with($type, 'orga:') && !in_array('orga:see', $permissions)) {
+        } elseif (
+            ($type === 'user' || $type === 'operational') &&
+            !in_array('orga:see', $permissions)
+        ) {
             $permissions[] = 'orga:see';
         }
 
@@ -197,27 +211,26 @@ class RolesController extends BaseController
         if (!$this->isCsrfTokenValid('update role', $csrfToken)) {
             return $this->renderBadRequest('roles/edit.html.twig', [
                 'role' => $role,
-                'type' => $role->getType(),
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'assignablePermissions' => Role::assignablePermissions($type),
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
         $role->setName($name);
         $role->setDescription($description);
-        $role->setType($type);
         $role->setPermissions($permissions);
 
         $errors = $validator->validate($role);
         if (count($errors) > 0) {
             return $this->renderBadRequest('roles/edit.html.twig', [
                 'role' => $role,
-                'type' => $role->getType(),
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'assignablePermissions' => Role::assignablePermissions($type),
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }

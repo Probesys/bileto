@@ -80,40 +80,6 @@
         />
     </div>
 
-    {% if type == 'admin' %}
-        <input type="hidden" name="type" value="admin">
-    {% else %}
-        <div class="row row--always flow">
-            <div>
-                <input
-                    type="radio"
-                    id="type-orga-user"
-                    name="type"
-                    value="orga:user"
-                    {{ type == 'orga:user' ? 'checked' }}
-                />
-
-                <label for="type-orga-user">
-                    {{ 'roles.type.orga.user' | trans }}
-                </label>
-            </div>
-
-            <div>
-                <input
-                    type="radio"
-                    id="type-orga-tech"
-                    name="type"
-                    value="orga:tech"
-                    {{ type == 'orga:tech' ? 'checked' }}
-                />
-
-                <label for="type-orga-tech">
-                    {{ 'roles.type.orga.tech' | trans }}
-                </label>
-            </div>
-        </div>
-    {% endif %}
-
     <fieldset class="flow" data-controller="checkboxes">
         <legend>{{ 'roles.permissions' | trans }}</legend>
 
@@ -127,111 +93,42 @@
             </button>
         </div>
 
-        {% if type == 'admin' %}
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'admin:manage:mailboxes',
-                label: 'roles.permissions.admin.manage.mailboxes' | trans,
-            }) }}
+        {% for permission in assignablePermissions %}
+            <div>
+                <input
+                    type="checkbox"
+                    id="{{ permission }}"
+                    name="permissions[]"
+                    value="{{ permission }}"
+                    {{ permission in permissions ? 'checked' }}
+                />
 
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'admin:manage:organizations',
-                label: 'roles.permissions.admin.manage.organizations' | trans,
-            }) }}
+                <label for="{{ permission }}">
+                    {{ permission | rolePermissionToLabel | trans }}
+                </label>
+            </div>
+        {% endfor %}
 
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'admin:manage:roles',
-                label: 'roles.permissions.admin.manage.roles' | trans,
-            }) }}
+        {% if type == 'operational' %}
+            {# This permission is inherent in the operational roles and cannot
+             # be unset. In fact, it doesn't even exist as a permission in the
+             # code, it is only implied by the type of the role.
+             # This checkbox exists only to make it clear that operational
+             # roles implies that these users can be assigned to tickets.
+             #}
 
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'admin:manage:users',
-                label: 'roles.permissions.admin.manage.users' | trans,
-            }) }}
-        {% else %}
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:create:tickets',
-                label: 'roles.permissions.orga.create.tickets' | trans,
-            }) }}
+            <div>
+                <input
+                    type="checkbox"
+                    id="fake:orga:update:tickets:assignee"
+                    disabled
+                    checked
+                />
 
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:see:tickets:all',
-                label: 'roles.permissions.orga.see.tickets.all' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:create:tickets:messages',
-                label: 'roles.permissions.orga.create.tickets.messages' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:create:tickets:messages:confidential',
-                label: 'roles.permissions.orga.create.tickets.messages.confidential' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:see:tickets:messages:confidential',
-                label: 'roles.permissions.orga.see.tickets.messages.confidential' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:see:tickets:time_spent',
-                label: 'roles.permissions.orga.see.tickets.time_spent' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:create:tickets:time_spent',
-                label: 'roles.permissions.orga.create.tickets.time_spent' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:see:tickets:contracts',
-                label: 'roles.permissions.orga.see.tickets.contracts' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:update:tickets:actors',
-                label: 'roles.permissions.orga.update.tickets.actors' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:update:tickets:contracts',
-                label: 'roles.permissions.orga.update.tickets.contracts' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:update:tickets:priority',
-                label: 'roles.permissions.orga.update.tickets.priority' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:update:tickets:status',
-                label: 'roles.permissions.orga.update.tickets.status' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:update:tickets:title',
-                label: 'roles.permissions.orga.update.tickets.title' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:update:tickets:type',
-                label: 'roles.permissions.orga.update.tickets.type' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:see:contracts',
-                label: 'roles.permissions.orga.see.contracts' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:see:contracts:notes',
-                label: 'roles.permissions.orga.see.contracts.notes' | trans,
-            }) }}
-
-            {{ include('roles/_permission_checkbox.html.twig', {
-                permission: 'orga:manage:contracts',
-                label: 'roles.permissions.orga.manage.contracts' | trans,
-            }) }}
+                <label for="fake:orga:update:tickets:assignee">
+                    {{ 'roles.permissions.be_assigned_to_tickets' | trans }}
+                </label>
+            </div>
         {% endif %}
     </fieldset>
 
@@ -240,4 +137,6 @@
             {{ label }}
         </button>
     </div>
+
+    <input type="hidden" name="type" value="{{ type }}">
 </form>

@@ -31,20 +31,34 @@
                 {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
             {% endif %}
 
-            <div class="row row--always flow">
+            <div class="row flow">
                 <div>
                     <input
                         type="radio"
-                        id="type-orga"
+                        id="type-user"
                         name="type"
-                        value="orga"
-                        {{ type == 'orga' ? 'checked' }}
+                        value="user"
+                        {{ type == 'user' ? 'checked' }}
                         data-action="form-new-authorization#refresh"
-                        data-form-new-authorization-target="radioOrga"
                     />
 
-                    <label for="type-orga">
-                        {{ 'roles.type.orga' | trans }}
+                    <label for="type-user">
+                        {{ 'roles.type.user' | trans }}
+                    </label>
+                </div>
+
+                <div>
+                    <input
+                        type="radio"
+                        id="type-operational"
+                        name="type"
+                        value="operational"
+                        {{ type == 'operational' ? 'checked' }}
+                        data-action="form-new-authorization#refresh"
+                    />
+
+                    <label for="type-operational">
+                        {{ 'roles.type.operational' | trans }}
                     </label>
                 </div>
 
@@ -56,7 +70,6 @@
                         value="admin"
                         {{ type == 'admin' ? 'checked' }}
                         data-action="form-new-authorization#refresh"
-                        data-form-new-authorization-target="radioAdmin"
                     />
 
                     <label for="type-admin">

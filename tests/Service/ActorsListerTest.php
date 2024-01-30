@@ -55,7 +55,7 @@ class ActorsListerTest extends WebTestCase
     {
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['orga:tech', 'orga:user']),
+            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
         ]);
         // The current user must have an authorization on the users'
         // organizations that we want to list.
@@ -85,7 +85,7 @@ class ActorsListerTest extends WebTestCase
     {
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['orga:tech', 'orga:user']),
+            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
         ]);
         $organization = OrganizationFactory::createOne();
         $subOrganization = OrganizationFactory::createOne([
@@ -116,7 +116,7 @@ class ActorsListerTest extends WebTestCase
     {
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['orga:tech', 'orga:user']),
+            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
         ]);
         $organization = OrganizationFactory::createOne();
         $otherOrga = OrganizationFactory::createOne();
@@ -144,10 +144,10 @@ class ActorsListerTest extends WebTestCase
     {
         $otherUser = UserFactory::createOne();
         $roleUser = RoleFactory::createOne([
-            'type' => 'orga:user',
+            'type' => 'user',
         ]);
         $roleTech = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         // $currentUser has a "tech" role
         $this->authRepository->grant(
@@ -163,7 +163,7 @@ class ActorsListerTest extends WebTestCase
         );
 
         // and we ask for tech actors only
-        $users = $this->actorsLister->findAll(role: 'tech');
+        $users = $this->actorsLister->findAll(roleType: 'operational');
 
         $this->assertSame(1, count($users));
         $userIds = array_map(fn ($user): int => $user->getId(), $users);
@@ -176,7 +176,7 @@ class ActorsListerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['orga:tech', 'orga:user']),
+            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
         ]);
         // The $currentUser must have an authorization on the requested
         // organization.
@@ -204,10 +204,10 @@ class ActorsListerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $otherUser = UserFactory::createOne();
         $roleUser = RoleFactory::createOne([
-            'type' => 'orga:user',
+            'type' => 'user',
         ]);
         $roleTech = RoleFactory::createOne([
-            'type' => 'orga:tech',
+            'type' => 'operational',
         ]);
         $this->authRepository->grant(
             $this->currentUser,
@@ -220,7 +220,7 @@ class ActorsListerTest extends WebTestCase
             $organization->object(),
         );
 
-        $users = $this->actorsLister->findByOrganization($organization->object(), role: 'user');
+        $users = $this->actorsLister->findByOrganization($organization->object(), roleType: 'user');
 
         $this->assertSame(1, count($users));
         $userIds = array_map(fn ($user): int => $user->getId(), $users);
@@ -236,7 +236,7 @@ class ActorsListerTest extends WebTestCase
         ]);
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['orga:tech', 'orga:user']),
+            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
         ]);
         // $currentUser is in the parent organization
         $this->authRepository->grant(
@@ -267,7 +267,7 @@ class ActorsListerTest extends WebTestCase
         $otherOrganization = OrganizationFactory::createOne();
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['orga:tech', 'orga:user']),
+            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
         ]);
         $this->authRepository->grant(
             $this->currentUser,
@@ -293,7 +293,7 @@ class ActorsListerTest extends WebTestCase
         ]);
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['orga:tech', 'orga:user']),
+            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
         ]);
         // This time, $currentUser is in the sub-organization
         $this->authRepository->grant(

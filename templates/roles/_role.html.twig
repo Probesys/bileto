@@ -1,0 +1,15 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div class="card" data-test="role-{{ role.type }}-item">
+    <a class="card__title" href="{{ path('edit role', { uid: role.uid }) }}">
+        {{ role.name }}
+    </a>
+
+    <p class="card__body text--secondary text--small text--center">
+        {{ role.description }}
+    </p>
+</div>
