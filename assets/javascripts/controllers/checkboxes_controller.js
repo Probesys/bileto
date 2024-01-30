@@ -14,7 +14,7 @@ export default class extends Controller {
     }
 
     checkAll (event) {
-        const checkboxes = this.element.querySelectorAll('input[type="checkbox"]');
+        const checkboxes = this.element.querySelectorAll('input[type="checkbox"]:not([disabled])');
 
         checkboxes.forEach((checkbox) => {
             checkbox.checked = true;
@@ -24,7 +24,7 @@ export default class extends Controller {
     }
 
     uncheckAll (event) {
-        const checkboxes = this.element.querySelectorAll('input[type="checkbox"]');
+        const checkboxes = this.element.querySelectorAll('input[type="checkbox"]:not([disabled])');
 
         checkboxes.forEach((checkbox) => {
             checkbox.checked = false;

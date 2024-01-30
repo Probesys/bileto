@@ -132,8 +132,8 @@ input[type="checkbox"]:focus + label::before {
     outline: var(--width-outline) solid var(--color-primary9);
 }
 
-input[type="checkbox"]:checked + label::before,
-input[type="radio"]:checked + label::before {
+input[type="checkbox"]:not([disabled]):checked + label::before,
+input[type="radio"]:not([disabled]):checked + label::before {
     border-color: var(--color-grey11);
 }
 
@@ -170,6 +170,11 @@ input[type="radio"]:checked + label::after {
     border-top: var(--width-border-bold) solid var(--color-grey12);
     border-right: var(--width-border-bold) solid var(--color-grey12);
     border-radius: 50%;
+}
+
+input[type="checkbox"]:disabled:checked + label::after,
+input[type="radio"]:disabled:checked + label::after {
+    border-color: var(--color-grey11);
 }
 
 select {
