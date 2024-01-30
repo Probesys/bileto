@@ -190,7 +190,8 @@ roles.deletion.submit: 'Delete the role'
 roles.deletion.title: Deletion
 roles.description: Description
 roles.edit.title.admin: 'Edit administrator role'
-roles.edit.title.orga: 'Edit orga role'
+roles.edit.title.operational: 'Edit operational role'
+roles.edit.title.user: 'Edit user role'
 roles.index.admin_roles.desc: 'The administrator roles provide access to the application’s settings.'
 roles.index.admin_roles.new: 'New administrator role'
 roles.index.admin_roles.title: 'Administrator roles'
@@ -204,7 +205,8 @@ roles.index.user_roles.title: 'User roles'
 roles.name: Name
 roles.new.submit: 'Create the role'
 roles.new.title.admin: 'New administrator role'
-roles.new.title.orga: 'New orga role'
+roles.new.title.operational: 'New operational role'
+roles.new.title.user: 'New user role'
 roles.permissions: Permissions
 roles.permissions.admin.manage.mailboxes: 'Manage the mailboxes'
 roles.permissions.admin.manage.organizations: 'Manage the organizations'
@@ -234,8 +236,6 @@ roles.super_admin: Super-admin
 roles.super_admin.description: 'A special role with an access to all the administration (cannot be modified).'
 roles.type.admin: 'Administrator role'
 roles.type.orga: 'Orga role'
-roles.type.orga.operational: 'Operational role'
-roles.type.orga.user: 'User role'
 settings.index.no_access: 'You don’t have access to the administration.'
 settings.index.no_access_advice: 'Your administrator role has probably no permissions. You should contact another administrator to fix this.'
 settings.index.title: Settings

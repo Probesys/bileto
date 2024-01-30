@@ -57,7 +57,7 @@
                 <p class="text--secondary">{{ 'roles.index.operational_roles.desc' | trans }}</p>
 
                 <div class="grid">
-                    <a class="card card--action" href="{{ path('new role', { type: 'orga' }) }}">
+                    <a class="card card--action" href="{{ path('new role', { type: 'operational' }) }}">
                         <span>
                             {{ icon('plus') }}
                             {{ 'roles.index.operational_roles.new' | trans }}
@@ -76,7 +76,7 @@
                 <p class="text--secondary">{{ 'roles.index.user_roles.desc' | trans }}</p>
 
                 <div class="grid">
-                    <a class="card card--action" href="{{ path('new role', { type: 'orga' }) }}">
+                    <a class="card card--action" href="{{ path('new role', { type: 'user' }) }}">
                         <span>
                             {{ icon('plus') }}
                             {{ 'roles.index.user_roles.new' | trans }}

@@ -7,11 +7,14 @@
 {% extends 'base.html.twig' %}
 
 {% set currentPage = 'settings' %}
+{% set type = role.type %}
 
 {% if type == 'admin' %}
     {% set pageTitle = 'roles.edit.title.admin' | trans %}
-{% else %}
-    {% set pageTitle = 'roles.edit.title.orga' | trans %}
+{% elseif type == 'operational' %}
+    {% set pageTitle = 'roles.edit.title.operational' | trans %}
+{% elseif type == 'user' %}
+    {% set pageTitle = 'roles.edit.title.user' | trans %}
 {% endif %}
 
 {% block title %}{{ pageTitle }}{% endblock %}

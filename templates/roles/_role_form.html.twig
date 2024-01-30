@@ -80,40 +80,6 @@
         />
     </div>
 
-    {% if type == 'admin' %}
-        <input type="hidden" name="type" value="admin">
-    {% else %}
-        <div class="row row--always flow">
-            <div>
-                <input
-                    type="radio"
-                    id="type-user"
-                    name="type"
-                    value="user"
-                    {{ type == 'user' ? 'checked' }}
-                />
-
-                <label for="type-user">
-                    {{ 'roles.type.orga.user' | trans }}
-                </label>
-            </div>
-
-            <div>
-                <input
-                    type="radio"
-                    id="type-operational"
-                    name="type"
-                    value="operational"
-                    {{ type == 'operational' ? 'checked' }}
-                />
-
-                <label for="type-operational">
-                    {{ 'roles.type.orga.operational' | trans }}
-                </label>
-            </div>
-        </div>
-    {% endif %}
-
     <fieldset class="flow" data-controller="checkboxes">
         <legend>{{ 'roles.permissions' | trans }}</legend>
 
@@ -240,4 +206,6 @@
             {{ label }}
         </button>
     </div>
+
+    <input type="hidden" name="type" value="{{ type }}">
 </form>

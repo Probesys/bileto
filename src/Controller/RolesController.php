@@ -157,7 +157,6 @@ class RolesController extends BaseController
 
         return $this->render('roles/edit.html.twig', [
             'role' => $role,
-            'type' => $role->getType(),
             'name' => $role->getName(),
             'description' => $role->getDescription(),
             'permissions' => $role->getPermissions(),
@@ -187,19 +186,13 @@ class RolesController extends BaseController
         /** @var string $description */
         $description = $request->request->get('description', '');
 
-        /** @var string $type */
-        $type = $request->request->get('type', 'user');
-
         /** @var string[] $permissions */
         $permissions = $request->request->all('permissions');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        if (!in_array($type, Role::TYPES) || $type === 'super') {
-            $type = 'user';
-        }
-
+        $type = $role->getType();
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
         } elseif (
@@ -214,7 +207,6 @@ class RolesController extends BaseController
         if (!$this->isCsrfTokenValid('update role', $csrfToken)) {
             return $this->renderBadRequest('roles/edit.html.twig', [
                 'role' => $role,
-                'type' => $role->getType(),
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
@@ -224,14 +216,12 @@ class RolesController extends BaseController
 
         $role->setName($name);
         $role->setDescription($description);
-        $role->setType($type);
         $role->setPermissions($permissions);
 
         $errors = $validator->validate($role);
         if (count($errors) > 0) {
             return $this->renderBadRequest('roles/edit.html.twig', [
                 'role' => $role,
-                'type' => $role->getType(),
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,

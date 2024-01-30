@@ -10,8 +10,10 @@
 
 {% if type == 'admin' %}
     {% set pageTitle = 'roles.new.title.admin' | trans %}
-{% else %}
-    {% set pageTitle = 'roles.new.title.orga' | trans %}
+{% elseif type == 'operational' %}
+    {% set pageTitle = 'roles.new.title.operational' | trans %}
+{% elseif type == 'user' %}
+    {% set pageTitle = 'roles.new.title.user' | trans %}
 {% endif %}
 
 {% block title %}{{ pageTitle }}{% endblock %}
