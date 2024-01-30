@@ -189,18 +189,18 @@ roles.deletion.going_delete: "Vous êtes sur le point de supprimer le rôle «\_
 roles.deletion.submit: 'Supprimer le rôle'
 roles.deletion.title: Suppression
 roles.description: Description
-roles.edit.title.admin: 'Modifier le rôle admin'
+roles.edit.title.admin: 'Modifier le rôle administrateur'
 roles.edit.title.orga: 'Modifier le rôle orga'
-roles.index.admin_roles.desc: 'Les rôles admin donnent accès à la gestion de l’application.'
-roles.index.admin_roles.new: 'Nouveau rôle admin'
-roles.index.admin_roles.title: 'Rôles admin'
+roles.index.admin_roles.desc: 'Les rôles administrateur donnent accès à la gestion de l’application.'
+roles.index.admin_roles.new: 'Nouveau rôle administrateur'
+roles.index.admin_roles.title: 'Rôles administrateur'
 roles.index.orga_roles.desc: 'Les rôles organisation vous permettent de personnaliser les permissions liées aux organisations.'
 roles.index.orga_roles.new: 'Nouveau rôle orga'
 roles.index.orga_roles.title: 'Rôles organisation'
 roles.index.title: Rôles
 roles.name: Nom
 roles.new.submit: 'Créer le rôle'
-roles.new.title.admin: 'Nouveau rôle admin'
+roles.new.title.admin: 'Nouveau rôle administrateur'
 roles.new.title.orga: 'Nouveau rôle orga'
 roles.permissions: Permissions
 roles.permissions.admin.manage.mailboxes: 'Gérer les boites mails'
@@ -229,12 +229,12 @@ roles.permissions.uncheck_all: 'Tout décocher'
 roles.scope_global: '* global *'
 roles.super_admin: Super-admin
 roles.super_admin.description: 'Un rôle spécial avec un accès à toute l’administration (ne peut pas être modifié).'
-roles.type.admin: 'Rôle admin'
+roles.type.admin: 'Rôle administrateur'
 roles.type.orga: 'Rôle orga'
 roles.type.orga.tech: 'Rôle technicien'
 roles.type.orga.user: 'Rôle utilisateur'
 settings.index.no_access: 'Vous n’avez pas accès à l’administration.'
-settings.index.no_access_advice: 'Votre rôle admin n’a probablement aucune permission. Vous devriez contacter un autre administrateur pour corriger cela.'
+settings.index.no_access_advice: 'Votre rôle administrateur n’a probablement aucune permission. Vous devriez contacter un autre administrateur pour corriger cela.'
 settings.index.title: Gestion
 tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'

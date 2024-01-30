@@ -189,18 +189,18 @@ roles.deletion.going_delete: 'You’re going to delete the “{role}” role. Th
 roles.deletion.submit: 'Delete the role'
 roles.deletion.title: Deletion
 roles.description: Description
-roles.edit.title.admin: 'Edit admin role'
+roles.edit.title.admin: 'Edit administrator role'
 roles.edit.title.orga: 'Edit orga role'
-roles.index.admin_roles.desc: 'The admin roles provide access to the application’s settings.'
-roles.index.admin_roles.new: 'New admin role'
-roles.index.admin_roles.title: 'Admin roles'
+roles.index.admin_roles.desc: 'The administrator roles provide access to the application’s settings.'
+roles.index.admin_roles.new: 'New administrator role'
+roles.index.admin_roles.title: 'Administrator roles'
 roles.index.orga_roles.desc: 'The organization roles allow you to customize permissions related to the organizations.'
 roles.index.orga_roles.new: 'New orga role'
 roles.index.orga_roles.title: 'Organization roles'
 roles.index.title: Roles
 roles.name: Name
 roles.new.submit: 'Create the role'
-roles.new.title.admin: 'New admin role'
+roles.new.title.admin: 'New administrator role'
 roles.new.title.orga: 'New orga role'
 roles.permissions: Permissions
 roles.permissions.admin.manage.mailboxes: 'Manage the mailboxes'
@@ -229,12 +229,12 @@ roles.permissions.uncheck_all: 'Uncheck all'
 roles.scope_global: '* global *'
 roles.super_admin: Super-admin
 roles.super_admin.description: 'A special role with an access to all the administration (cannot be modified).'
-roles.type.admin: 'Admin role'
+roles.type.admin: 'Administrator role'
 roles.type.orga: 'Orga role'
 roles.type.orga.tech: 'Technician role'
 roles.type.orga.user: 'User role'
 settings.index.no_access: 'You don’t have access to the administration.'
-settings.index.no_access_advice: 'Your admin role has probably no permissions. You should contact another administrator to fix this.'
+settings.index.no_access_advice: 'Your administrator role has probably no permissions. You should contact another administrator to fix this.'
 settings.index.title: Settings
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
