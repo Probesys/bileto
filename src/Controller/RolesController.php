@@ -24,18 +24,29 @@ class RolesController extends BaseController
     {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
-        $adminRoles = $roleRepository->findBy(['type' => 'admin']);
-        $orgaRoles = $roleRepository->findBy(['type' => ['user', 'operational']]);
+        // Make sure the "super" role exists
+        $roleRepository->findOrCreateSuperRole();
 
-        $superRole = $roleRepository->findOrCreateSuperRole();
-        $adminRoles[] = $superRole;
+        $roles = $roleRepository->findAll();
+        $roleSorter->sort($roles);
 
-        $roleSorter->sort($adminRoles);
-        $roleSorter->sort($orgaRoles);
+        $rolesByTypes = [
+            'super' => null,
+            'admin' => [],
+            'operational' => [],
+            'user' => [],
+        ];
+
+        foreach ($roles as $role) {
+            if ($role->getType() === 'super') {
+                $rolesByTypes['super'] = $role;
+            } else {
+                $rolesByTypes[$role->getType()][] = $role;
+            }
+        }
 
         return $this->render('roles/index.html.twig', [
-            'adminRoles' => $adminRoles,
-            'orgaRoles' => $orgaRoles,
+            'rolesByTypes' => $rolesByTypes,
         ]);
     }
 

@@ -34,54 +34,57 @@
                         </span>
                     </a>
 
-                    {% for role in adminRoles %}
-                        <div class="card" data-test="role-{{ role.type }}-item">
-                            {% if role.type == 'super' %}
-                                <div class="card__title">
-                                    {{ icon('crown') }}
-                                    {{ 'roles.super_admin' | trans }}
-                                </div>
-                            {% else %}
-                                <a class="card__title" href="{{ path('edit role', { uid: role.uid }) }}">
-                                    {{ role.name }}
-                                </a>
-                            {% endif %}
-
-                            <p class="card__body text--secondary text--small text--center">
-                                {% if role.type == 'super' %}
-                                    {{ 'roles.super_admin.description' | trans }}
-                                {% else %}
-                                    {{ role.description }}
-                                {% endif %}
-                            </p>
+                    <div class="card" data-test="role-super-item">
+                        <div class="card__title">
+                            {{ icon('crown') }}
+                            {{ 'roles.super_admin' | trans }}
                         </div>
+
+                        <p class="card__body text--secondary text--small text--center">
+                            {{ 'roles.super_admin.description' | trans }}
+                        </p>
+                    </div>
+
+                    {% for role in rolesByTypes['admin'] %}
+                        {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
                     {% endfor %}
                 </div>
             </div>
 
             <div class="flow">
-                <h2>{{ 'roles.index.orga_roles.title' | trans }}</h2>
+                <h2>{{ 'roles.index.operational_roles.title' | trans }}</h2>
 
-                <p class="text--secondary">{{ 'roles.index.orga_roles.desc' | trans }}</p>
+                <p class="text--secondary">{{ 'roles.index.operational_roles.desc' | trans }}</p>
 
                 <div class="grid">
                     <a class="card card--action" href="{{ path('new role', { type: 'orga' }) }}">
                         <span>
                             {{ icon('plus') }}
-                            {{ 'roles.index.orga_roles.new' | trans }}
+                            {{ 'roles.index.operational_roles.new' | trans }}
                         </span>
                     </a>
 
-                    {% for role in orgaRoles %}
-                        <div class="card" data-test="role-orga-item">
-                            <a class="card__title" href="{{ path('edit role', { uid: role.uid }) }}">
-                                {{ role.name }}
-                            </a>
+                    {% for role in rolesByTypes['operational'] %}
+                        {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
+                    {% endfor %}
+                </div>
+            </div>
 
-                            <p class="card__body text--secondary text--small text--center">
-                                {{ role.description }}
-                            </p>
-                        </div>
+            <div class="flow">
+                <h2>{{ 'roles.index.user_roles.title' | trans }}</h2>
+
+                <p class="text--secondary">{{ 'roles.index.user_roles.desc' | trans }}</p>
+
+                <div class="grid">
+                    <a class="card card--action" href="{{ path('new role', { type: 'orga' }) }}">
+                        <span>
+                            {{ icon('plus') }}
+                            {{ 'roles.index.user_roles.new' | trans }}
+                        </span>
+                    </a>
+
+                    {% for role in rolesByTypes['user'] %}
+                        {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
                     {% endfor %}
                 </div>
             </div>
