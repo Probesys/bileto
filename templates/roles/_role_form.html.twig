@@ -108,6 +108,28 @@
                 </label>
             </div>
         {% endfor %}
+
+        {% if type == 'operational' %}
+            {# This permission is inherent in the operational roles and cannot
+             # be unset. In fact, it doesn't even exist as a permission in the
+             # code, it is only implied by the type of the role.
+             # This checkbox exists only to make it clear that operational
+             # roles implies that these users can be assigned to tickets.
+             #}
+
+            <div>
+                <input
+                    type="checkbox"
+                    id="fake:orga:update:tickets:assignee"
+                    disabled
+                    checked
+                />
+
+                <label for="fake:orga:update:tickets:assignee">
+                    {{ 'roles.permissions.be_assigned_to_tickets' | trans }}
+                </label>
+            </div>
+        {% endif %}
     </fieldset>
 
     <div class="form__actions">
