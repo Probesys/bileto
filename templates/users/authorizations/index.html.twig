@@ -44,20 +44,22 @@
                         <div class="card__body flow flow--small text--center">
                             {% if authorization.role.type == 'operational' or authorization.role.type == 'user' %}
                                 <div>
-                                    <strong>
-                                        {% if authorization.organization %}
-                                            {{ authorization.organization.name }}
-                                        {% else %}
-                                            {{ 'roles.scope_global' | trans }}
-                                        {% endif %}
-                                    </strong>
+                                    {% if authorization.role.type == 'operational' %}
+                                        {{ 'roles.type.operational' | trans }}
+                                    {% else %}
+                                        {{ 'roles.type.user' | trans }}
+                                    {% endif %}
                                 </div>
 
-                                <div class="text--secondary text--small text--italic">
-                                    {{ 'roles.type.orga' | trans }}
+                                <div class="text--secondary">
+                                    {% if authorization.organization %}
+                                        {{ authorization.organization.name }}
+                                    {% else %}
+                                        {{ 'roles.scope_global' | trans }}
+                                    {% endif %}
                                 </div>
                             {% else %}
-                                <div class="text--secondary text--small text--italic">
+                                <div>
                                     {{ 'roles.type.admin' | trans }}
                                 </div>
                             {% endif %}

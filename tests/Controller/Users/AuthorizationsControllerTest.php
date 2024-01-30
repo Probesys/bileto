@@ -69,10 +69,22 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Authorizations');
-        $this->assertSelectorTextContains('[data-test="authorization-item"]:nth-child(2)', 'Role A');
-        $this->assertSelectorTextContains('[data-test="authorization-item"]:nth-child(3)', 'Role B * global *');
-        $this->assertSelectorTextContains('[data-test="authorization-item"]:nth-child(4)', 'Role B Orga A');
-        $this->assertSelectorTextContains('[data-test="authorization-item"]:nth-child(5)', 'Role B Orga B');
+        $this->assertSelectorTextContains(
+            '[data-test="authorization-item"]:nth-child(2)',
+            'Role A'
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="authorization-item"]:nth-child(3)',
+            'Role B Operational * global *'
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="authorization-item"]:nth-child(4)',
+            'Role B Operational Orga A'
+        );
+        $this->assertSelectorTextContains(
+            '[data-test="authorization-item"]:nth-child(5)',
+            'Role B Operational Orga B'
+        );
     }
 
     public function testGetIndexFailsIfAccessIsForbidden(): void
@@ -291,7 +303,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains(
             '[data-test="alert-error"]',
-            'You cannot grant another orga role to this user in this organization'
+            'You cannot grant another role to this user in this organization'
         );
         $this->assertSame(2, AuthorizationFactory::count());
     }

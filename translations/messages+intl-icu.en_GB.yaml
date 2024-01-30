@@ -235,8 +235,9 @@ roles.permissions.uncheck_all: 'Uncheck all'
 roles.scope_global: '* global *'
 roles.super_admin: Super-admin
 roles.super_admin.description: 'A special role with an access to all the administration (cannot be modified).'
-roles.type.admin: 'Administrator role'
-roles.type.orga: 'Orga role'
+roles.type.admin: Administrator
+roles.type.operational: Operational
+roles.type.user: User
 settings.index.no_access: 'You don’t have access to the administration.'
 settings.index.no_access_advice: 'Your administrator role has probably no permissions. You should contact another administrator to fix this.'
 settings.index.title: Settings

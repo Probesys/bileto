@@ -69,7 +69,7 @@ class AuthorizationsController extends BaseController
             'organizations' => $organizations,
             'roles' => $roles,
             'user' => $holder,
-            'type' => 'orga',
+            'type' => 'user',
             'roleUid' => '',
             'organizationUid' => '',
         ]);
