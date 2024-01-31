@@ -15,13 +15,13 @@ use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TimeSpentRepository;
+use App\Security\Authorizer;
 use App\Service\ContractBilling;
 use App\Service\TicketTimeline;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,7 +43,7 @@ class MessagesController extends BaseController
         TimeSpentRepository $timeSpentRepository,
         ContractBilling $contractBilling,
         TicketTimeline $ticketTimeline,
-        Security $security,
+        Authorizer $authorizer,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer,
         TranslatorInterface $translator,
@@ -89,7 +89,7 @@ class MessagesController extends BaseController
             ]);
         }
 
-        if ($isConfidential && !$security->isGranted('orga:create:tickets:messages:confidential', $organization)) {
+        if ($isConfidential && !$authorizer->isGranted('orga:create:tickets:messages:confidential', $organization)) {
             // We don't want to force $isConfidential to false as we do for the
             // other parameters. If there is a bug in the frontend that shows
             // the "mark as confidential" checkbox without the correct
@@ -149,7 +149,7 @@ class MessagesController extends BaseController
             $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
         }
 
-        if ($minutesSpent > 0 && $security->isGranted('orga:create:tickets:time_spent', $organization)) {
+        if ($minutesSpent > 0 && $authorizer->isGranted('orga:create:tickets:time_spent', $organization)) {
             $contract = $ticket->getOngoingContract();
 
             if ($contract) {

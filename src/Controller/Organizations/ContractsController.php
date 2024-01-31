@@ -12,9 +12,9 @@ use App\Entity\Organization;
 use App\Form\Type\ContractType;
 use App\Repository\ContractRepository;
 use App\Repository\OrganizationRepository;
+use App\Security\Authorizer;
 use App\Service\Sorter\ContractSorter;
 use App\Utils;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +30,7 @@ class ContractsController extends BaseController
         ContractRepository $contractRepository,
         OrganizationRepository $organizationRepository,
         ContractSorter $contractSorter,
-        Security $security,
+        Authorizer $authorizer,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
 
@@ -46,7 +46,7 @@ class ContractsController extends BaseController
 
         $allowedOrganizations = [$organization];
         foreach ($parentOrganizations as $parentOrganization) {
-            if ($security->isGranted('orga:see:contracts', $parentOrganization)) {
+            if ($authorizer->isGranted('orga:see:contracts', $parentOrganization)) {
                 $allowedOrganizations[] = $parentOrganization;
             }
         }

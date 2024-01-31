@@ -19,7 +19,7 @@ use App\Repository\MessageRepository;
 use App\Repository\MessageDocumentRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
-use App\Security\Authentication\UserToken;
+use App\Security\Authorizer;
 use App\Security\Encryptor;
 use App\Service\MessageDocumentStorage;
 use App\Service\MessageDocumentStorageError;
@@ -32,7 +32,6 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Webklex\PHPIMAP;
 
 #[AsMessageHandler]
@@ -45,7 +44,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private MessageDocumentStorage $messageDocumentStorage,
         private TicketRepository $ticketRepository,
         private UserRepository $userRepository,
-        private AccessDecisionManagerInterface $accessDecisionManager,
+        private Authorizer $authorizer,
         private HtmlSanitizerInterface $appMessageSanitizer,
         private MessageBusInterface $bus,
         private LoggerInterface $logger,
@@ -83,14 +82,12 @@ class CreateTicketsFromMailboxEmailsHandler
 
             $this->activeUser->change($requester);
 
-            $token = new UserToken($requester);
-
             $ticket = $this->getAnsweredTicket($mailboxEmail);
 
             if ($ticket) {
-                $canAnswerTicket = $this->accessDecisionManager->decide(
-                    $token,
-                    ['orga:create:tickets:messages'],
+                $canAnswerTicket = $this->authorizer->isGrantedToUser(
+                    $requester,
+                    'orga:create:tickets:messages',
                     $ticket->getOrganization(),
                 );
 
@@ -102,9 +99,9 @@ class CreateTicketsFromMailboxEmailsHandler
             $isNewTicket = false;
 
             if (!$ticket) {
-                $canCreateTicket = $this->accessDecisionManager->decide(
-                    $token,
-                    ['orga:create:tickets'],
+                $canCreateTicket = $this->authorizer->isGrantedToUser(
+                    $requester,
+                    'orga:create:tickets',
                     $requesterOrganization,
                 );
 

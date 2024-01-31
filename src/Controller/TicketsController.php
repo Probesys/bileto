@@ -14,11 +14,11 @@ use App\Repository\UserRepository;
 use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\SearchEngine\Query;
+use App\Security\Authorizer;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\TicketTimeline;
 use App\Utils\Pagination;
 use App\Utils\Time;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -106,7 +106,7 @@ class TicketsController extends BaseController
         AuthorizationRepository $authorizationRepository,
         OrganizationRepository $organizationRepository,
         OrganizationSorter $organizationSorter,
-        Security $security,
+        Authorizer $authorizer,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -116,7 +116,7 @@ class TicketsController extends BaseController
         // If the user has a default organization and can create tickets in it,
         // just redirect to the "new ticket" form of this organization.
         $defaultOrganization = $user->getOrganization();
-        if ($defaultOrganization && $security->isGranted('orga:create:tickets', $defaultOrganization)) {
+        if ($defaultOrganization && $authorizer->isGranted('orga:create:tickets', $defaultOrganization)) {
             return $this->redirectToRoute('new organization ticket', [
                 'uid' => $defaultOrganization->getUid(),
             ]);
@@ -140,8 +140,8 @@ class TicketsController extends BaseController
         }
 
         // Keep only the organizations in which the user can create tickets
-        $organizations = array_filter($organizations, function ($organization) use ($security): bool {
-            return $security->isGranted('orga:create:tickets', $organization);
+        $organizations = array_filter($organizations, function ($organization) use ($authorizer): bool {
+            return $authorizer->isGranted('orga:create:tickets', $organization);
         });
         $organizations = array_values($organizations); // reset the keys of the array
 

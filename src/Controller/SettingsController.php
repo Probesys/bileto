@@ -6,14 +6,14 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Security\Authorizer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SettingsController extends BaseController
 {
     #[Route('/settings', name: 'settings', methods: ['GET', 'HEAD'])]
-    public function index(Security $security): Response
+    public function index(Authorizer $authorizer): Response
     {
         $this->denyAccessUnlessGranted('admin:see');
 
@@ -25,7 +25,7 @@ class SettingsController extends BaseController
         ];
 
         foreach ($permissionsToRoutes as $permission => $route) {
-            if ($security->isGranted($permission)) {
+            if ($authorizer->isGranted($permission)) {
                 return $this->redirectToRoute($route);
             }
         }

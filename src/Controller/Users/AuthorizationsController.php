@@ -12,10 +12,10 @@ use App\Entity\User;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\RoleRepository;
+use App\Security\Authorizer;
 use App\Service\Sorter\AuthorizationSorter;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\Sorter\RoleSorter;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -50,7 +50,7 @@ class AuthorizationsController extends BaseController
         RoleRepository $roleRepository,
         OrganizationSorter $organizationSorter,
         RoleSorter $roleSorter,
-        Security $security,
+        Authorizer $authorizer,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -59,7 +59,7 @@ class AuthorizationsController extends BaseController
         $roles = $roleRepository->findBy([
             'type' => ['user', 'operational', 'admin'],
         ]);
-        if ($security->isGranted('admin:*')) {
+        if ($authorizer->isGranted('admin:*')) {
             $superRole = $roleRepository->findOrCreateSuperRole();
             $roles[] = $superRole;
         }
@@ -85,7 +85,7 @@ class AuthorizationsController extends BaseController
         OrganizationSorter $organizationSorter,
         RoleSorter $roleSorter,
         ValidatorInterface $validator,
-        Security $security,
+        Authorizer $authorizer,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
@@ -96,7 +96,7 @@ class AuthorizationsController extends BaseController
         $roles = $roleRepository->findBy([
             'type' => ['user', 'operational', 'admin'],
         ]);
-        if ($security->isGranted('admin:*')) {
+        if ($authorizer->isGranted('admin:*')) {
             $superRole = $roleRepository->findOrCreateSuperRole();
             $roles[] = $superRole;
         }
@@ -143,7 +143,7 @@ class AuthorizationsController extends BaseController
             ]);
         }
 
-        if ($role->getType() === 'super' && !$security->isGranted('admin:*')) {
+        if ($role->getType() === 'super' && !$authorizer->isGranted('admin:*')) {
             return $this->renderBadRequest('users/authorizations/new.html.twig', [
                 'organizations' => $organizations,
                 'roles' => $roles,
@@ -197,7 +197,7 @@ class AuthorizationsController extends BaseController
         Authorization $authorization,
         Request $request,
         AuthorizationRepository $authorizationRepository,
-        Security $security,
+        Authorizer $authorizer,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
@@ -220,7 +220,7 @@ class AuthorizationsController extends BaseController
 
         if (
             $role->getType() === 'super' && (
-                !$security->isGranted('admin:*') ||
+                !$authorizer->isGranted('admin:*') ||
                 $user->getId() === $holder->getId()
             )
         ) {

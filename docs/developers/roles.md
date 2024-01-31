@@ -90,22 +90,38 @@ It loads the applicable user authorization and related role, then it checks that
 
 Documentation: [symfony.com](https://symfony.com/doc/current/security.html#access-control-authorization)
 
-In controllers:
+To block the access to a controller for the current user based on their permissions:
 
 ```php
 $this->denyAccessUnlessGranted('orga:see', $organization);
+```
 
-// or
+To execute code only if permissions are set:
 
-if ($this->security->isGranted('orga:see', $organization)) {
-    // do something
+```php
+use App\Security\Authorizer;
+
+// Check the permission of the current user
+if ($authorizer->isGranted('orga:see', $organization)) {
+    // …
+}
+
+// Or to check the permission of a specific user
+if ($authorizer->isGrantedToUser($a_user, 'orga:see', $organization)) {
+    // …
 }
 ```
 
 In templates:
 
 ```twig
+{# Check the permission of the current user #}
 {% if is_granted('orga:manage', organization) %}
+    <a href="...">Delete</a>
+{% endif %}
+
+{# Or to check the permission of a specific user #}
+{% if is_granted_to_user(a_user, 'orga:manage', organization) %}
     <a href="...">Delete</a>
 {% endif %}
 ```

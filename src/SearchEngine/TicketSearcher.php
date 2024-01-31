@@ -10,8 +10,8 @@ use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\Repository\TicketRepository;
+use App\Security\Authorizer;
 use App\Utils\Pagination;
-use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @phpstan-import-type PaginationOptions from Pagination
@@ -26,12 +26,12 @@ class TicketSearcher
 
     private Query $orgaQuery;
 
-    private Security $security;
+    private Authorizer $authorizer;
 
-    public function __construct(TicketRepository $ticketRepository, Security $security)
+    public function __construct(TicketRepository $ticketRepository, Authorizer $authorizer)
     {
         $this->ticketRepository = $ticketRepository;
-        $this->security = $security;
+        $this->authorizer = $authorizer;
 
         // The default query makes sure that the SearchEngine only returns
         // tickets related to the current user.
@@ -56,7 +56,7 @@ class TicketSearcher
         ];
 
         foreach ($organizations as $organization) {
-            if ($this->security->isGranted('orga:see:tickets:all', $organization)) {
+            if ($this->authorizer->isGranted('orga:see:tickets:all', $organization)) {
                 $permissions['all'][] = "#{$organization->getId()}";
             } else {
                 // Note that we don't check for the orga:see permission here.

@@ -18,13 +18,13 @@ use App\Repository\UserRepository;
 use App\SearchEngine\Query;
 use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
+use App\Security\Authorizer;
 use App\Service\ActorsLister;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Pagination;
 use App\Utils\Time;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -147,7 +147,7 @@ class TicketsController extends BaseController
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
         ActorsLister $actorsLister,
-        Security $security,
+        Authorizer $authorizer,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer,
         TranslatorInterface $translator,
@@ -165,14 +165,14 @@ class TicketsController extends BaseController
         $messageContent = $request->request->get('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
-        if ($security->isGranted('orga:update:tickets:type', $organization)) {
+        if ($authorizer->isGranted('orga:update:tickets:type', $organization)) {
             /** @var string $type */
             $type = $request->request->get('type', Ticket::DEFAULT_TYPE);
         } else {
             $type = Ticket::DEFAULT_TYPE;
         }
 
-        if ($security->isGranted('orga:update:tickets:actors', $organization)) {
+        if ($authorizer->isGranted('orga:update:tickets:actors', $organization)) {
             /** @var string $requesterUid */
             $requesterUid = $request->request->get('requesterUid', '');
 
@@ -183,7 +183,7 @@ class TicketsController extends BaseController
             $assigneeUid = '';
         }
 
-        if ($security->isGranted('orga:update:tickets:priority', $organization)) {
+        if ($authorizer->isGranted('orga:update:tickets:priority', $organization)) {
             /** @var string $urgency */
             $urgency = $request->request->get('urgency', Ticket::DEFAULT_WEIGHT);
 
@@ -198,7 +198,7 @@ class TicketsController extends BaseController
             $priority = Ticket::DEFAULT_WEIGHT;
         }
 
-        if ($security->isGranted('orga:update:tickets:status', $organization)) {
+        if ($authorizer->isGranted('orga:update:tickets:status', $organization)) {
             $isResolved = $request->request->getBoolean('isResolved', false);
         } else {
             $isResolved = false;
