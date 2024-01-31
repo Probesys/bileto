@@ -57,7 +57,7 @@ docker-build: ## Rebuild Docker containers
 
 .PHONY: docker-clean
 docker-clean: ## Clean the Docker stuff
-	$(DOCKER_COMPOSE) down
+	$(DOCKER_COMPOSE) --profile pgsql --profile mariadb --profile ldap down -v
 
 .PHONY: docker-image
 docker-image: ## Build the Docker image for production (take a VERSION argument)
