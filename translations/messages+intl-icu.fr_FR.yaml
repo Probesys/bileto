@@ -392,8 +392,8 @@ users.authorizations.index.revoke.confirm: "Êtes-vous sûr de vouloir révoquer
 users.authorizations.index.revoke.disabled: 'Vous ne pouvez pas révoquer cette autorisation.'
 users.authorizations.index.title: 'Autorisations ({name})'
 users.authorizations.new.global: Global
-users.authorizations.new.organization: 'Choisir une organisation'
 users.authorizations.new.organization_caption: 'L’autorisation peut être limitée à une organisation spécifique, ou appliquée globalement.'
+users.authorizations.new.organization_scope: 'Champ d’application organisationnelle'
 users.authorizations.new.role: 'Choisir un rôle'
 users.authorizations.new.submit: 'Créer l’autorisation'
 users.authorizations.new.title: 'Nouvelle autorisation'

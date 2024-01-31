@@ -392,8 +392,8 @@ users.authorizations.index.revoke.confirm: 'Are you sure that you want to revoke
 users.authorizations.index.revoke.disabled: 'You can’t revoke this authorization.'
 users.authorizations.index.title: 'Authorizations ({name})'
 users.authorizations.new.global: Global
-users.authorizations.new.organization: 'Choose an organization'
 users.authorizations.new.organization_caption: 'The authorization can be limited to a specific organization, or be applied globally.'
+users.authorizations.new.organization_scope: 'Organizational scope'
 users.authorizations.new.role: 'Choose a role'
 users.authorizations.new.submit: 'Create the authorization'
 users.authorizations.new.title: 'New authorization'
