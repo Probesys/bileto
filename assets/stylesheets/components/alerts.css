@@ -69,3 +69,7 @@
 .alert__message {
     margin-top: 0.5rem;
 }
+
+.alert__message a {
+    color: currentcolor;
+}

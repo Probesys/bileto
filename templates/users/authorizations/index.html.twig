@@ -22,6 +22,19 @@
         </div>
 
         <div class="wrapper wrapper--large flow">
+            {% if user.organization and not is_granted_to_user(user, 'orga:create:tickets', user.organization) %}
+                <div class="wrapper wrapper--text">
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'warning',
+                        title: 'common.warning' | trans,
+                        message: 'users.no_organization_authorization' | trans({
+                            path: path('new user authorization', { uid: user.uid, orga: user.organization.uid }),
+                        }),
+                        raw: true,
+                    }) }}
+                </div>
+            {% endif %}
+
             <div class="grid">
                 <a class="card card--action" href="{{ path('new user authorization', { uid: user.uid }) }}">
                     <span>

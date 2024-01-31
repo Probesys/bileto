@@ -47,6 +47,7 @@ advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incide
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: "Les valeurs possibles pour «\_type\_» sont\_: <code>incident</code> et <code>request</code>."
 advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
+common.warning: Attention
 contracts.alerts.edit.date_alert.after: 'jours de la fin du contrat.'
 contracts.alerts.edit.date_alert.before: 'Alerter à'
 contracts.alerts.edit.hours_alert.after: '% des heures seront consommées.'
@@ -421,6 +422,7 @@ users.new.leave_password_empty: '(laissez vide pour empêcher la connexion)'
 users.new.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
 users.new.submit: 'Créer l’utilisateur'
 users.new.title: 'Nouvel utilisateur'
+users.no_organization_authorization: 'Cet utilisateur ne peut pas créer de tickets dans son organisation par défaut. Pensez à lui <a href="{path}">donner une autorisation correspondante.</a>'
 users.no_organization: 'Aucune organisation'
 users.organization: Organisation
 users.password: 'Mot de passe'

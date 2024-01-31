@@ -46,6 +46,7 @@ class AuthorizationsController extends BaseController
     #[Route('/users/{uid}/authorizations/new', name: 'new user authorization', methods: ['GET', 'HEAD'])]
     public function new(
         User $holder,
+        Request $request,
         OrganizationRepository $organizationRepository,
         RoleRepository $roleRepository,
         OrganizationSorter $organizationSorter,
@@ -53,6 +54,9 @@ class AuthorizationsController extends BaseController
         Authorizer $authorizer,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
+
+        /** @var string $defaultOrganizationUid */
+        $defaultOrganizationUid = $request->query->get('orga', '');
 
         $organizations = $organizationRepository->findAll();
         $organizations = $organizationSorter->asTree($organizations);
@@ -71,7 +75,7 @@ class AuthorizationsController extends BaseController
             'user' => $holder,
             'type' => 'user',
             'roleUid' => '',
-            'organizationUid' => '',
+            'organizationUid' => $defaultOrganizationUid,
         ]);
     }
 

@@ -47,6 +47,7 @@ advanced_search_syntax.qualifiers.type.example1: 'Tickets of type “incident”
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: 'The possible values for “type“ are: <code>incident</code> and <code>request</code>.'
 advanced_search_syntax.title: 'Quick reference for the advanced syntax'
+common.warning: Warning
 contracts.alerts.edit.date_alert.after: 'days before the end of the contract.'
 contracts.alerts.edit.date_alert.before: Alert
 contracts.alerts.edit.hours_alert.after: '% of the hours have been consumed.'
@@ -421,6 +422,7 @@ users.new.leave_password_empty: '(leave empty to forbid login)'
 users.new.organization_caption: 'The tickets opened by email by this user will be attached to this organization.'
 users.new.submit: 'Create the user'
 users.new.title: 'New user'
+users.no_organization_authorization: 'This user cannot create tickets in their organisation by default. Remember to <a href="{path}">give this user the appropriate authorization.</a>'
 users.no_organization: 'No organization'
 users.organization: Organization
 users.password: Password
