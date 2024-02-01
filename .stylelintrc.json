@@ -3,11 +3,11 @@
 
     "plugins": [
         "stylelint-order",
-        "stylelint-stylistic"
+        "@stylistic/stylelint-plugin"
     ],
 
     "rules": {
-        "stylistic/indentation": 4,
+        "@stylistic/indentation": 4,
 
         "declaration-empty-line-before": [
             "always",
