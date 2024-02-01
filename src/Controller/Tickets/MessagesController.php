@@ -16,7 +16,7 @@ use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TimeSpentRepository;
 use App\Security\Authorizer;
-use App\Service\ContractBilling;
+use App\Service\ContractTimeAccounting;
 use App\Service\TicketTimeline;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
@@ -41,7 +41,7 @@ class MessagesController extends BaseController
         OrganizationRepository $organizationRepository,
         TicketRepository $ticketRepository,
         TimeSpentRepository $timeSpentRepository,
-        ContractBilling $contractBilling,
+        ContractTimeAccounting $contractTimeAccounting,
         TicketTimeline $ticketTimeline,
         Authorizer $authorizer,
         ValidatorInterface $validator,
@@ -153,18 +153,18 @@ class MessagesController extends BaseController
             $contract = $ticket->getOngoingContract();
 
             if ($contract) {
-                $timeSpent = $contractBilling->chargeTime($contract, $minutesSpent);
+                $timeSpent = $contractTimeAccounting->accountTime($contract, $minutesSpent);
                 $timeSpent->setTicket($ticket);
                 $timeSpentRepository->save($timeSpent, true);
 
-                // Calculate the remaining time that is not charged (e.g.
+                // Calculate the remaining time that is not accounted (i.e.
                 // because there wasn't enough time in the contract).
-                $remainingNotChargedTime = $minutesSpent - $timeSpent->getRealTime();
-                if ($remainingNotChargedTime > 0) {
+                $remainingUnaccountedTime = $minutesSpent - $timeSpent->getRealTime();
+                if ($remainingUnaccountedTime > 0) {
                     $timeSpent = new TimeSpent();
                     $timeSpent->setTicket($ticket);
-                    $timeSpent->setTime($remainingNotChargedTime);
-                    $timeSpent->setRealTime($remainingNotChargedTime);
+                    $timeSpent->setTime($remainingUnaccountedTime);
+                    $timeSpent->setRealTime($remainingUnaccountedTime);
                     $timeSpentRepository->save($timeSpent, true);
                 }
             } else {

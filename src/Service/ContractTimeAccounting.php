@@ -9,35 +9,35 @@ namespace App\Service;
 use App\Entity\Contract;
 use App\Entity\TimeSpent;
 
-class ContractBilling
+class ContractTimeAccounting
 {
     /**
      * Create a TimeSpent associated to the given contract.
      *
      * The resulting TimeSpent will not necessarily have the exact $time
      * amount. For instance, if $time is greater than the time available in the
-     * contract, the TimeSpent will only be charged with the available time
+     * contract, the TimeSpent will only be accounted for the available time
      * (i.e. an additional TimeSpent must be created outside of this method).
      *
      * The time is expressed in minutes.
      */
-    public function chargeTime(Contract $contract, int $time): TimeSpent
+    public function accountTime(Contract $contract, int $time): TimeSpent
     {
         $availableTime = $contract->getRemainingMinutes();
-        $billingInterval = $contract->getBillingInterval();
+        $timeAccountingUnit = $contract->getTimeAccountingUnit();
 
         // If there is more spent time than time available in the contract, we
-        // don't want to charge the entire time. So we just charge the
+        // don't want to account the entire time. So we just account the
         // available time. Then, the remaining time will be set in a separated
-        // uncharged TimeSpent.
+        // TimeSpent.
         if ($time > $availableTime) {
             $time = $availableTime;
         }
 
-        $timeCharged = $this->calculateChargedTime($time, $billingInterval, $availableTime);
+        $timeAccounted = $this->calculateAccountedTime($time, $timeAccountingUnit, $availableTime);
 
         $timeSpent = new TimeSpent();
-        $timeSpent->setTime($timeCharged);
+        $timeSpent->setTime($timeAccounted);
         $timeSpent->setRealTime($time);
         $timeSpent->setContract($contract);
 
@@ -53,40 +53,44 @@ class ContractBilling
      *
      * @param TimeSpent[] $timeSpents
      */
-    public function chargeTimeSpents(Contract $contract, array $timeSpents): void
+    public function accountTimeSpents(Contract $contract, array $timeSpents): void
     {
         $availableTime = $contract->getRemainingMinutes();
-        $billingInterval = $contract->getBillingInterval();
+        $timeAccountingUnit = $contract->getTimeAccountingUnit();
 
         foreach ($timeSpents as $timeSpent) {
             // If there is more spent time than time available in the contract,
-            // we consider that we can't charge more time so we stop here.
+            // we consider that we can't account more time so we stop here.
             if ($timeSpent->getRealTime() > $availableTime) {
                 break;
             }
 
-            $timeCharged = $this->calculateChargedTime($timeSpent->getRealTime(), $billingInterval, $availableTime);
+            $timeAccounted = $this->calculateAccountedTime(
+                $timeSpent->getRealTime(),
+                $timeAccountingUnit,
+                $availableTime
+            );
 
-            $timeSpent->setTime($timeCharged);
+            $timeSpent->setTime($timeAccounted);
             $timeSpent->setContract($contract);
 
-            $availableTime = $availableTime - $timeCharged;
+            $availableTime = $availableTime - $timeAccounted;
         }
     }
 
     /**
-     * Round up time to a multiplier of billing interval (in the limit of the
-     * available time).
+     * Round up time to a multiplier of the time accounting unit (in the limit
+     * of the available time).
      */
-    private function calculateChargedTime(int $time, int $billingInterval, int $availableTime): int
+    private function calculateAccountedTime(int $time, int $timeAccountingUnit, int $availableTime): int
     {
-        if ($billingInterval > 0) {
-            // If the billing interval is set, round up the time charged.
-            $timeCharged = intval(ceil($time / $billingInterval)) * $billingInterval;
+        if ($timeAccountingUnit > 0) {
+            // If the time accounting unit is set, round up the time charged.
+            $timeAccounted = intval(ceil($time / $timeAccountingUnit)) * $timeAccountingUnit;
             // But keep it lower than the available time in the contract.
             // Note: this could be debated as, contractually, more time should
             // be charged. But in our case, it's how we handle the case.
-            return min($timeCharged, $availableTime);
+            return min($timeAccounted, $availableTime);
         } else {
             return $time;
         }

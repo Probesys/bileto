@@ -465,7 +465,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     /**
      * @return Collection<int, TimeSpent>
      */
-    public function getTimeSpentsNotCharged(): Collection
+    public function getUnaccountedTimeSpents(): Collection
     {
         $criteria = Criteria::create();
         $expr = Criteria::expr()->isNull('contract');

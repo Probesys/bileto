@@ -165,7 +165,7 @@ class MessagesControllerTest extends WebTestCase
             'startAt' => Time::ago(1, 'week'),
             'endAt' => Time::fromNow(1, 'week'),
             'maxHours' => 10,
-            'billingInterval' => 30,
+            'timeAccountingUnit' => 30,
         ]);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,

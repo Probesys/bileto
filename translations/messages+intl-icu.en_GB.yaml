@@ -55,8 +55,8 @@ contracts.alerts.edit.hours_alert.before: 'Alert when'
 contracts.alerts.edit.title: 'Set up contract alerts'
 contracts.days_consumed: "<strong>{days}\_d consumed</strong>"
 contracts.edit.title: 'Edit a contract'
-contracts.form.billing_interval: 'Billing interval in minutes'
-contracts.form.billing_interval.caption: 'The time spent on tickets will be rounded up for billing purposes (e.g. for 15 minutes of time spent, 30 minutes will be deducted for a corresponding billing interval).'
+contracts.form.time_accounting_unit: 'Time accounting unit (minutes)'
+contracts.form.time_accounting_unit.caption: 'The time spent on tickets will be rounded up for contractual purposes. For example, if the time accounting unit is 30 minutes, and a technician spends 15 minutes on a ticket, 30 minutes will be accounted for in the contract.'
 contracts.form.end_at: 'End on'
 contracts.form.max_hours: 'Max number of hours'
 contracts.form.name: Name
@@ -74,7 +74,7 @@ contracts.new.title: 'New contract'
 contracts.notes: 'Private notes'
 contracts.show.actions: Actions
 contracts.show.alert: Alert
-contracts.show.billing_interval: 'Billing interval: {count, plural, one {1 minute} other {# minutes}}'
+contracts.show.time_accounting_unit: 'Time accounting unit: {count, plural, one {1 minute} other {# minutes}}'
 contracts.show.edit: 'Edit the contract'
 contracts.show.notes_confidential: confidential
 contracts.show.renew: Renew
@@ -245,7 +245,7 @@ settings.index.title: Settings
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee
-tickets.contracts.edit.bill_not_charged_time_spent: 'Bill on this contract any unbilled time spent'
+tickets.contracts.edit.include_unaccounted_time: 'Include unaccounted time in the contract'
 tickets.contracts.edit.title: 'Edit the contract'
 tickets.contracts.none: 'No contract'
 tickets.contracts.ongoing: 'Ongoing contract'
@@ -354,8 +354,8 @@ tickets.show.resolved: 'This ticket is resolved.'
 tickets.show.scroll_to_bottom: 'Scroll to bottom'
 tickets.show.show_history: 'Show history'
 tickets.show.time_spent: "{count, plural, one {1\_minute spent} other {#\_minutes spent}}"
-tickets.show.time_spent.charged: "({count, plural, one {1\_minute charged} other {#\_minutes charged}})"
-tickets.show.time_spent.not_charged: '(not charged)'
+tickets.show.time_spent.accounted: "({count, plural, one {1\_minute accounted} other {#\_minutes accounted}})"
+tickets.show.time_spent.unaccounted: (unaccounted)
 tickets.show.urgency: 'Urgency:'
 tickets.sidebar.title: 'Your views'
 tickets.sort.alphabetical: 'Alphabetical order'

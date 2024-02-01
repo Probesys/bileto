@@ -157,7 +157,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame($newContract->getId(), $changes['ongoingContract'][1]);
     }
 
-    public function testPostUpdateCanChargeNotChargedTimeSpent(): void
+    public function testPostUpdateCanIncludeUnaccountedTimeSpent(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -173,18 +173,18 @@ class ContractsControllerTest extends WebTestCase
             'organization' => $organization,
             'startAt' => Utils\Time::ago(1, 'week'),
             'endAt' => Utils\Time::fromNow(1, 'week'),
-            'billingInterval' => 30,
+            'timeAccountingUnit' => 30,
         ]);
         $ticket = TicketFactory::createOne([
             'organization' => $organization,
             'createdBy' => $user,
             'contracts' => [$oldContract],
         ]);
-        $timeSpentCharged = TimeSpentFactory::createOne([
+        $timeSpentAccounted = TimeSpentFactory::createOne([
             'ticket' => $ticket,
             'contract' => $oldContract,
         ]);
-        $timeSpentNotCharged = TimeSpentFactory::createOne([
+        $timeSpentNotAccounted = TimeSpentFactory::createOne([
             'ticket' => $ticket,
             'contract' => null,
             'time' => 15,
@@ -194,7 +194,7 @@ class ContractsControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/contracts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
             'ongoingContractUid' => $newContract->getUid(),
-            'chargeTimeSpent' => true,
+            'includeUnaccountedTime' => true,
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
@@ -202,12 +202,12 @@ class ContractsControllerTest extends WebTestCase
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame($newContract->getId(), $contracts[0]->getId());
-        $timeSpentCharged->refresh();
-        $this->assertSame($oldContract->getId(), $timeSpentCharged->getContract()->getId());
-        $timeSpentNotCharged->refresh();
-        $this->assertSame($newContract->getId(), $timeSpentNotCharged->getContract()->getId());
-        $this->assertSame(30, $timeSpentNotCharged->getTime());
-        $this->assertSame(15, $timeSpentNotCharged->getRealTime());
+        $timeSpentAccounted->refresh();
+        $this->assertSame($oldContract->getId(), $timeSpentAccounted->getContract()->getId());
+        $timeSpentNotAccounted->refresh();
+        $this->assertSame($newContract->getId(), $timeSpentNotAccounted->getContract()->getId());
+        $this->assertSame(30, $timeSpentNotAccounted->getTime());
+        $this->assertSame(15, $timeSpentNotAccounted->getRealTime());
     }
 
     public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void

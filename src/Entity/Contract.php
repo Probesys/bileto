@@ -105,7 +105,7 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
     private Collection $timeSpents;
 
     #[ORM\Column(options: ["default" => 0])]
-    private ?int $billingInterval = null;
+    private ?int $timeAccountingUnit = null;
 
     #[ORM\Column(options: ['default' => 0])]
     private ?int $hoursAlert = null;
@@ -121,7 +121,7 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
         $this->maxHours = 10;
         $this->startAt = Utils\Time::now();
         $this->endAt = Utils\Time::relative('last day of december');
-        $this->billingInterval = 0;
+        $this->timeAccountingUnit = 0;
         $this->notes = '';
         $this->hoursAlert = 0;
         $this->dateAlert = 0;
@@ -349,14 +349,14 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
         return $this;
     }
 
-    public function getBillingInterval(): ?int
+    public function getTimeAccountingUnit(): ?int
     {
-        return $this->billingInterval;
+        return $this->timeAccountingUnit;
     }
 
-    public function setBillingInterval(int $billingInterval): static
+    public function setTimeAccountingUnit(int $timeAccountingUnit): static
     {
-        $this->billingInterval = $billingInterval;
+        $this->timeAccountingUnit = $timeAccountingUnit;
 
         return $this;
     }
@@ -457,7 +457,7 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
         $contract->setStartAt($startAt);
         $endAt = $startAt->modify('last day of december');
         $contract->setEndAt($endAt);
-        $contract->setBillingInterval($this->getBillingInterval());
+        $contract->setTimeAccountingUnit($this->getTimeAccountingUnit());
         $contract->setNotes($this->getNotes());
         $contract->setHoursAlert($this->getHoursAlert());
         $contract->setDateAlert($this->getDateAlert());

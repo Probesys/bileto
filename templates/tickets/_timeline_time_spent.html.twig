@@ -10,11 +10,11 @@
 
         {% if timeSpent.contract is null %}
             <span class="text--secondary text--small">
-                {{ 'tickets.show.time_spent.not_charged' | trans }}
+                {{ 'tickets.show.time_spent.unaccounted' | trans }}
             </span>
         {% elseif timeSpent.realTime != timeSpent.time %}
             <span class="text--secondary text--small">
-                {{ 'tickets.show.time_spent.charged' | trans({ count: timeSpent.time }) }}
+                {{ 'tickets.show.time_spent.accounted' | trans({ count: timeSpent.time }) }}
             </span>
         {% endif %}
     </div>

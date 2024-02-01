@@ -104,32 +104,32 @@
     </div>
 
     <div class="flow flow--small">
-        <label for="{{ field_id(form.billingInterval) }}">
-            {{ 'contracts.form.billing_interval' | trans }}
+        <label for="{{ field_id(form.timeAccountingUnit) }}">
+            {{ 'contracts.form.time_accounting_unit' | trans }}
 
             <small class="text--secondary">
                 {{ 'forms.optional' | trans }}
             </small>
         </label>
 
-        <p class="form__caption" id="{{ field_id(form.billingInterval, 'caption') }}">
-            {{ 'contracts.form.billing_interval.caption' | trans }}
+        <p class="form__caption" id="{{ field_id(form.timeAccountingUnit, 'caption') }}">
+            {{ 'contracts.form.time_accounting_unit.caption' | trans }}
         </p>
 
-        {{ form_errors(form.billingInterval) }}
+        {{ form_errors(form.timeAccountingUnit) }}
 
         <input
             type="number"
-            id="{{ field_id(form.billingInterval) }}"
-            name="{{ field_name(form.billingInterval) }}"
-            value="{{ field_value(form.billingInterval) }}"
+            id="{{ field_id(form.timeAccountingUnit) }}"
+            name="{{ field_name(form.timeAccountingUnit) }}"
+            value="{{ field_value(form.timeAccountingUnit) }}"
             min="0"
             step="1"
             class="input--size3"
-            aria-describedby="{{ field_id(form.billingInterval, 'caption') }}"
-            {% if field_has_errors(form.billingInterval) %}
+            aria-describedby="{{ field_id(form.timeAccountingUnit, 'caption') }}"
+            {% if field_has_errors(form.timeAccountingUnit) %}
                 aria-invalid="true"
-                aria-errormessage="{{ field_id(form.billingInterval, 'error') }}"
+                aria-errormessage="{{ field_id(form.timeAccountingUnit, 'error') }}"
             {% endif %}
         />
     </div>

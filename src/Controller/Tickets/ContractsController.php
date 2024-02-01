@@ -14,7 +14,7 @@ use App\Repository\EntityEventRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TimeSpentRepository;
 use App\Service\Sorter\ContractSorter;
-use App\Service\ContractBilling;
+use App\Service\ContractTimeAccounting;
 use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +58,7 @@ class ContractsController extends BaseController
         EntityEventRepository $entityEventRepository,
         TicketRepository $ticketRepository,
         TimeSpentRepository $timeSpentRepository,
-        ContractBilling $contractBilling,
+        ContractTimeAccounting $contractTimeAccounting,
         ContractSorter $contractSorter,
         TranslatorInterface $translator,
     ): Response {
@@ -74,7 +74,7 @@ class ContractsController extends BaseController
 
         $ongoingContractUid = $request->request->getString('ongoingContractUid');
 
-        $chargeTimeSpent = $request->request->getBoolean('chargeTimeSpent');
+        $includeUnaccountedTime = $request->request->getBoolean('includeUnaccountedTime');
 
         $csrfToken = $request->request->getString('_csrf_token');
 
@@ -126,9 +126,9 @@ class ContractsController extends BaseController
             $entityEventRepository->save($entityEvent, true);
         }
 
-        if ($chargeTimeSpent && $newOngoingContract) {
-            $timeSpents = $ticket->getTimeSpentsNotCharged()->getValues();
-            $contractBilling->chargeTimeSpents($newOngoingContract, $timeSpents);
+        if ($includeUnaccountedTime && $newOngoingContract) {
+            $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
+            $contractTimeAccounting->accountTimeSpents($newOngoingContract, $timeSpents);
             $timeSpentRepository->saveBatch($timeSpents, true);
         }
 

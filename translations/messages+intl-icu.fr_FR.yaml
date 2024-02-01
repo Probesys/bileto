@@ -55,8 +55,8 @@ contracts.alerts.edit.hours_alert.before: 'Alerter lorsque'
 contracts.alerts.edit.title: 'Configurer les alertes du contrat'
 contracts.days_consumed: "<strong>{days, plural, =0 {0\_j consommé} one {1\_j consommé} other {#\_j consommés}}</strong>"
 contracts.edit.title: 'Modifier un contrat'
-contracts.form.billing_interval: 'Intervalle de facturation en minutes'
-contracts.form.billing_interval.caption: 'Le temps passé sur les tickets sera arrondi pour le décompte de la facturation (ex. pour 15 minutes de temps passés, 30 minutes seront décomptés pour un intervalle de facturation correspondant).'
+contracts.form.time_accounting_unit: 'Unité de comptabilisation du temps (minutes)'
+contracts.form.time_accounting_unit.caption: 'Le temps passé sur les tickets sera arrondi à l’unité supérieure à des fins contractuelles. Par exemple, si l’unité de comptabilisation du temps est de 30 minutes et qu’un technicien passe 15 minutes sur un ticket, 30 minutes seront comptabilisées dans le contrat.'
 contracts.form.end_at: 'Termine le'
 contracts.form.max_hours: 'Nombre max. d’heures'
 contracts.form.name: Nom
@@ -74,7 +74,7 @@ contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
 contracts.show.actions: Actions
 contracts.show.alert: Alerte
-contracts.show.billing_interval: "Intervalle de facturation\_: {count, plural, one {1 minute} other {# minutes}}"
+contracts.show.time_accounting_unit: "Unité de comptabilisation du temps\_: {count, plural, one {1 minute} other {# minutes}}"
 contracts.show.edit: 'Modifier le contrat'
 contracts.show.notes_confidential: confidentielles
 contracts.show.renew: Renouveler
@@ -245,7 +245,7 @@ settings.index.title: Gestion
 tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'
 tickets.assignee: 'Attribué à'
-tickets.contracts.edit.bill_not_charged_time_spent: 'Facturer sur ce contrat les temps passés non facturés'
+tickets.contracts.edit.include_unaccounted_time: 'Inclure le temps non comptabilisé dans le contrat'
 tickets.contracts.edit.title: 'Modifier le contrat'
 tickets.contracts.none: 'Aucun contrat'
 tickets.contracts.ongoing: 'Contrat en cours'
@@ -354,8 +354,8 @@ tickets.show.resolved: 'Ce ticket est résolu.'
 tickets.show.scroll_to_bottom: 'Défiler en bas'
 tickets.show.show_history: 'Afficher l’historique'
 tickets.show.time_spent: "{count, plural, one {1\_minute passée} other {#\_minutes passées}}"
-tickets.show.time_spent.charged: "({count, plural, one {1\_minute facturée} other {#\_minutes facturées}})"
-tickets.show.time_spent.not_charged: '(non facturées)'
+tickets.show.time_spent.accounted: "({count, plural, one {1\_minute comptabilisée} other {#\_minutes comptabilisées}})"
+tickets.show.time_spent.unaccounted: '(non comptabilisé)'
 tickets.show.urgency: "Urgence\_:"
 tickets.sidebar.title: 'Vos vues'
 tickets.sort.alphabetical: 'Ordre alphabétique'

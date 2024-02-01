@@ -6,7 +6,7 @@
 
 namespace App\Tests\Service;
 
-use App\Service\ContractBilling;
+use App\Service\ContractTimeAccounting;
 use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
@@ -14,12 +14,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
-class ContractBillingTest extends WebTestCase
+class ContractTimeAccountingTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
 
-    private ContractBilling $contractBilling;
+    private ContractTimeAccounting $contractTimeAccounting;
 
     /**
      * @before
@@ -28,64 +28,64 @@ class ContractBillingTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var ContractBilling */
-        $contractBilling = $container->get(ContractBilling::class);
-        $this->contractBilling = $contractBilling;
+        /** @var ContractTimeAccounting */
+        $contractTimeAccounting = $container->get(ContractTimeAccounting::class);
+        $this->contractTimeAccounting = $contractTimeAccounting;
 
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
     }
 
-    public function testChargeTime(): void
+    public function testAccountTime(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
-            'billingInterval' => 0,
+            'timeAccountingUnit' => 0,
         ])->object();
         $minutes = 20;
 
-        $timeSpent = $this->contractBilling->chargeTime($contract, $minutes);
+        $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
 
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
         $this->assertSame($minutes, $timeSpent->getTime());
         $this->assertSame($minutes, $timeSpent->getRealTime());
     }
 
-    public function testChargeTimeChargesMaximumOfAvailableTime(): void
+    public function testAccountTimeAccountsMaximumOfAvailableTime(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
-            'billingInterval' => 0,
+            'timeAccountingUnit' => 0,
         ])->object();
         $minutes = 70;
 
-        $timeSpent = $this->contractBilling->chargeTime($contract, $minutes);
+        $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
 
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
         $this->assertSame(60, $timeSpent->getTime());
         $this->assertSame(60, $timeSpent->getRealTime());
     }
 
-    public function testChargeTimeChargesConsideringBillingInterval(): void
+    public function testAccountTimeAccountsConsideringTimeAccountingUnit(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
-            'billingInterval' => 30,
+            'timeAccountingUnit' => 30,
         ])->object();
         $minutes = 20;
 
-        $timeSpent = $this->contractBilling->chargeTime($contract, $minutes);
+        $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
 
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
         $this->assertSame(30, $timeSpent->getTime());
         $this->assertSame($minutes, $timeSpent->getRealTime());
     }
 
-    public function testChargeTimeWithBillingIntervalDoesNotChargeMoreThanAvailableTime(): void
+    public function testAccountTimeWithTimeAccountingUnitDoesNotAccountMoreThanAvailableTime(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
-            'billingInterval' => 30,
+            'timeAccountingUnit' => 30,
         ])->object();
         TimeSpentFactory::createOne([
             'contract' => $contract,
@@ -93,18 +93,18 @@ class ContractBillingTest extends WebTestCase
         ]);
         $minutes = 5;
 
-        $timeSpent = $this->contractBilling->chargeTime($contract, $minutes);
+        $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
 
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
         $this->assertSame(15, $timeSpent->getTime());
         $this->assertSame($minutes, $timeSpent->getRealTime());
     }
 
-    public function testChargeTimeSpents(): void
+    public function testAccountTimeSpents(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
-            'billingInterval' => 0,
+            'timeAccountingUnit' => 0,
         ])->object();
         $minutes = 20;
         $timeSpent = TimeSpentFactory::createOne([
@@ -112,18 +112,18 @@ class ContractBillingTest extends WebTestCase
             'realTime' => $minutes,
         ])->object();
 
-        $this->contractBilling->chargeTimeSpents($contract, [$timeSpent]);
+        $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent]);
 
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
         $this->assertSame($minutes, $timeSpent->getTime());
         $this->assertSame($minutes, $timeSpent->getRealTime());
     }
 
-    public function testChargeTimeSpentsDoNotChargeMoreThanAvailableTime(): void
+    public function testAccountTimeSpentsDoNotAccountMoreThanAvailableTime(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
-            'billingInterval' => 0,
+            'timeAccountingUnit' => 0,
         ])->object();
         $timeSpent1 = TimeSpentFactory::createOne([
             'contract' => null,
@@ -138,23 +138,23 @@ class ContractBillingTest extends WebTestCase
             'realTime' => 20,
         ])->object();
 
-        $this->contractBilling->chargeTimeSpents($contract, [$timeSpent1, $timeSpent2, $timeSpent3]);
+        $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent1, $timeSpent2, $timeSpent3]);
 
         $this->assertSame($contract->getId(), $timeSpent1->getContract()->getId());
         $this->assertSame(20, $timeSpent1->getTime());
         $this->assertSame(20, $timeSpent1->getRealTime());
         $this->assertNull($timeSpent2->getContract());
         // Even if this TimeSpent could have been associated to the contract,
-        // the ContractBilling service stopped at the first TimeSpent
+        // the ContractTimeAccounting service stopped at the first TimeSpent
         // overflowing the available time.
         $this->assertNull($timeSpent3->getContract());
     }
 
-    public function testChargeTimeSpentsChargesConsideringBillingInterval(): void
+    public function testAccountTimeSpentsAccountsConsideringTimeAccountingUnit(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
-            'billingInterval' => 30,
+            'timeAccountingUnit' => 30,
         ])->object();
         $minutes = 20;
         $timeSpent = TimeSpentFactory::createOne([
@@ -162,7 +162,7 @@ class ContractBillingTest extends WebTestCase
             'realTime' => $minutes,
         ])->object();
 
-        $this->contractBilling->chargeTimeSpents($contract, [$timeSpent]);
+        $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent]);
 
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
         $this->assertSame(30, $timeSpent->getTime());

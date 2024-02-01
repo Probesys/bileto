@@ -34,7 +34,7 @@ class ContractType extends AbstractType
         $builder->add('maxHours', Type\IntegerType::class, [
             'empty_data' => '0',
         ]);
-        $builder->add('billingInterval', Type\IntegerType::class, [
+        $builder->add('timeAccountingUnit', Type\IntegerType::class, [
             'required' => false,
             'empty_data' => '0',
         ]);
