@@ -110,7 +110,10 @@ class UsersControllerTest extends WebTestCase
 
         $this->assertSame(2, UserFactory::count());
         $newUser = UserFactory::last();
-        $this->assertResponseRedirects("/users/{$newUser->getUid()}/authorizations/new", 302);
+        $this->assertResponseRedirects(
+            "/users/{$newUser->getUid()}/authorizations/new?orga={$organization->getUid()}",
+            302
+        );
         $this->assertSame($email, $newUser->getEmail());
         $this->assertSame($name, $newUser->getName());
         $this->assertSame($user->getLocale(), $newUser->getLocale());
