@@ -3,7 +3,7 @@
 The dependencies of Bileto are managed by:
 
 - [Composer](https://getcomposer.org/) for the backend (see [`composer.json`](/composer.json));
-- [npm](https://www.npmjs.com/) for the backend (see [`package.json`](/package.json)).
+- [npm](https://www.npmjs.com/) for the frontend (see [`package.json`](/package.json)).
 
 The general philosophy about the dependencies is to limit them as much as possible.
 We only add dependencies to relieve a pain.
@@ -25,8 +25,8 @@ Be careful with versions `0.x.y`, the minor number is often considered as major.
 
 - you should check the changelog of the dependencies that you are updating;
 - it should be fine to update the patch and minor versions in a batch;
-- when upgrading to major versions, **always upgrade one dependency at at time;**
-- always restart the Docker containers after an update and verify the application is not broken;
+- when upgrading to major versions, **always upgrade one dependency at a time;**
+- always restart the Docker containers after an update and verify the application is not broken.
 
 ## Upgrade the Composer dependencies
 
