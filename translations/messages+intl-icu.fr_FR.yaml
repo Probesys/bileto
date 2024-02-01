@@ -245,7 +245,6 @@ settings.index.title: Gestion
 tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'
 tickets.assignee: 'Attribué à'
-tickets.contract: Contrat
 tickets.contracts.edit.bill_not_charged_time_spent: 'Facturer sur ce contrat les temps passés non facturés'
 tickets.contracts.edit.title: 'Modifier le contrat'
 tickets.contracts.none: 'Aucun contrat'
