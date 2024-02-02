@@ -42,29 +42,47 @@ class HoursFormatterExtension extends AbstractExtension
     /**
      * Return the given minutes formatted as hours and minutes.
      */
-    public function formatMinutes(int $minutes): string
+    public function formatMinutes(int $minutes, bool $longFormat = true): string
     {
         $hours = intdiv($minutes, 60);
         $remainingMinutes = $minutes % 60;
 
-        return $this->format($hours, $remainingMinutes);
+        return $this->format($hours, $remainingMinutes, $longFormat);
     }
 
-    private function format(int $hours, int $minutes): string
+    private function format(int $hours, int $minutes, bool $longFormat = true): string
     {
-        if ($minutes === 0) {
-            return $this->translator->trans('hours_formatter.hours', [
-                'hours' => $hours,
-            ]);
-        } elseif ($hours === 0) {
-            return $this->translator->trans('hours_formatter.minutes', [
-                'minutes' => $minutes,
-            ]);
-        } else {
-            return $this->translator->trans('hours_formatter.hours_and_minutes', [
-                'hours' => $hours,
-                'minutes' => $minutes,
-            ]);
+        if ($longFormat === true) {
+            if ($minutes === 0) {
+                return $this->translator->trans('hours_formatter.hours.long', [
+                    'hours' => $hours,
+                ]);
+            } elseif ($hours === 0) {
+                return $this->translator->trans('hours_formatter.minutes.long', [
+                    'minutes' => $minutes,
+                ]);
+            } else {
+                return $this->translator->trans('hours_formatter.hours_and_minutes.long', [
+                    'hours' => $hours,
+                    'minutes' => $minutes,
+                ]);
+            }
+        } 
+        else {
+            if ($minutes === 0) {
+                return $this->translator->trans('hours_formatter.hours', [
+                    'hours' => $hours,
+                ]);
+            } elseif ($hours === 0) {
+                return $this->translator->trans('hours_formatter.minutes', [
+                    'minutes' => $minutes,
+                ]);
+            } else {
+                return $this->translator->trans('hours_formatter.hours_and_minutes', [
+                    'hours' => $hours,
+                    'minutes' => $minutes,
+                ]);
+            }
         }
     }
 }
