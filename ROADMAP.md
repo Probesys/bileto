@@ -12,8 +12,8 @@ Also, everything will not be in the version 1.0.
 - [x] login with LDAP;
 - [x] upload of images and attachments;
 - [x] contracts and time spent;
-- [ ] save search in “views” (planned for [0.7.0-alpha](https://github.com/Probesys/bileto/milestone/9));
-- [ ] business rules (planned for [0.8.0-alpha](https://github.com/Probesys/bileto/milestone/7));
+- [ ] business rules;
+- [ ] save search in “views”;
 - [ ] notification system;
 - [ ] <abbr>SLA</abbr>;
 - [ ] assets management;
@@ -21,3 +21,5 @@ Also, everything will not be in the version 1.0.
 - [ ] plugins;
 - [ ] statistics;
 - [ ] login with Azure.
+
+If you’re looking for what we’re working on right now, check out [the milestones](https://github.com/Probesys/bileto/milestones) and the [“ready” label](https://github.com/Probesys/bileto/issues?q=is%3Aissue+is%3Aopen+label%3A%22ready+%E2%9C%85%22) on GitHub.
