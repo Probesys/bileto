@@ -6,7 +6,7 @@
 
 <div class="timeline__time-spent" data-test="time-spent-item">
     <div class="timeline__time-spent-message">
-        {{ 'tickets.show.time_spent' | trans({ count: timeSpent.realTime }) }}
+        {{ 'tickets.show.time_spent' | trans({ count: timeSpent.realTime | formatMinutes('long') }) }}
 
         {% if timeSpent.contract is null %}
             <span class="text--secondary text--small">
@@ -14,7 +14,7 @@
             </span>
         {% elseif timeSpent.realTime != timeSpent.time %}
             <span class="text--secondary text--small">
-                {{ 'tickets.show.time_spent.accounted' | trans({ count: timeSpent.time }) }}
+                {{ 'tickets.show.time_spent.accounted' | trans({ count: timeSpent.time | formatMinutes('long')  }) }}
             </span>
         {% endif %}
     </div>

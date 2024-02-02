@@ -110,9 +110,12 @@ home.new_ticket: 'New ticket'
 home.no_tickets: 'No tickets'
 home.title: 'Welcome to Bileto'
 home.your_tickets: 'Your tickets'
-hours_formatter.hours: '{hours}h'
-hours_formatter.hours_and_minutes: "{hours}h\_{minutes}m"
-hours_formatter.minutes: '{minutes}m'
+hours_formatter.hours.long: "{ hours, plural, one {1\_hour} other {#\_hours} }"
+hours_formatter.hours.short: "{hours}\_h"
+hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_hour} other {#\_hours} }\_{ minutes, plural, one {1\_minute} other {#\_minutes} }"
+hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
+hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
+hours_formatter.minutes.short: "{minutes}\_m"
 layout.activate_javascript: 'You need to activate the JavaScript in order to use Bileto.'
 layout.home: Home
 layout.logout: Logout
@@ -390,8 +393,8 @@ tickets.show.refuse: Refuse
 tickets.show.resolved: 'This ticket is resolved.'
 tickets.show.scroll_to_bottom: 'Scroll to bottom'
 tickets.show.show_history: 'Show history'
-tickets.show.time_spent: "{count, plural, one {1\_minute spent} other {#\_minutes spent}}"
-tickets.show.time_spent.accounted: "({count, plural, one {1\_minute accounted} other {#\_minutes accounted}})"
+tickets.show.time_spent: '{count} spent'
+tickets.show.time_spent.accounted: '({ count } accounted)'
 tickets.show.time_spent.unaccounted: (unaccounted)
 tickets.show.urgency: 'Urgency:'
 tickets.sidebar.title: 'Your views'
