@@ -1,6 +1,6 @@
 # Changelog of Bileto
 
-## unreleased
+## 2024-02-02 - 0.7.0-alpha
 
 ### Migration notes
 
@@ -15,6 +15,86 @@ Unfortunately, the library doesn't decode email subjects and attachments correct
 It works a lot better with the module installed.
 
 PostgreSQL >= 12 is now required. If you’re still using PostgreSQL 11, you must upgrade to a newer version.
+
+Its no longer possible to create sub-organizations.
+In next releases, your existing sub-organizations will be transformed into first-level organizations (see [the issue #516](https://github.com/Probesys/bileto/issues/516)).
+
+The structure of the roles changed.
+“User” roles (as opposed to admin and operational roles) are now more restricted by default.
+You should review these roles and possibly change them to “operational” roles.
+
+### New
+
+- Allow to approve or refuse a solution ([288a17a](https://github.com/Probesys/bileto/commit/288a17a))
+- Allow to edit the contracts ([0b72c7c](https://github.com/Probesys/bileto/commit/0b72c7c))
+
+### Improvements
+
+- Disallow the creation of sub-organizations ([ee2cc44](https://github.com/Probesys/bileto/commit/ee2cc44))
+- Paginate the tickets lists ([d263301](https://github.com/Probesys/bileto/commit/d263301))
+- Improve the lifecycle of the tickets ([85fad0f](https://github.com/Probesys/bileto/commit/85fad0f))
+- Create "incident" tickets by default ([4de596a](https://github.com/Probesys/bileto/commit/4de596a))
+- Allow emails not to be deleted after collecting them ([4acac03](https://github.com/Probesys/bileto/commit/4acac03))
+- Make roles easier to understand ([6d5e2b6](https://github.com/Probesys/bileto/commit/6d5e2b6))
+- Reword "admin" to "administrator" ([272eec1](https://github.com/Probesys/bileto/commit/272eec1))
+- Warn if user has no permission in their default organization ([911afc4](https://github.com/Probesys/bileto/commit/911afc4))
+- Select the default organization when setting an authorization after creating a user ([8cf832e](https://github.com/Probesys/bileto/commit/8cf832e))
+- Change the label of the organization of authorization ([ed42e09](https://github.com/Probesys/bileto/commit/ed42e09))
+- Change time spent wording from billed/charged to accounted time ([ea707ae](https://github.com/Probesys/bileto/commit/ea707ae))
+- Redirect to the contract after its creation ([73700f6](https://github.com/Probesys/bileto/commit/73700f6))
+- Initialize default contract alerts on creation ([0fe0a91](https://github.com/Probesys/bileto/commit/0fe0a91))
+- Change the traduction of ticket's "Contract" to "Ongoing contract" ([77ab61f](https://github.com/Probesys/bileto/commit/77ab61f))
+- Improve the look and behaviour of disabled checkboxes ([8862664](https://github.com/Probesys/bileto/commit/8862664))
+- Improve the look of the progress bars ([1ffbe9f](https://github.com/Probesys/bileto/commit/1ffbe9f))
+- Improve the CSRF error message ([1595742](https://github.com/Probesys/bileto/commit/1595742))
+
+### Bug fixes
+
+- Display correctly the inline attachments in messages contents ([417a76d](https://github.com/Probesys/bileto/commit/417a76d))
+- Attach messageDocuments to notification emails ([164e45a](https://github.com/Probesys/bileto/commit/164e45a))
+- Ignore HTML errors when creating tickets from emails ([f0dc217](https://github.com/Probesys/bileto/commit/f0dc217))
+- Remove incorrect UTF-8 chars from attachments names ([8d59c95](https://github.com/Probesys/bileto/commit/8d59c95))
+- Handle emails with empty body ([31fdc13](https://github.com/Probesys/bileto/commit/31fdc13))
+- Fix encoding of the email body ([22ef430](https://github.com/Probesys/bileto/commit/22ef430))
+- Track changes to the tickets' ongoing contracts ([c4da224](https://github.com/Probesys/bileto/commit/c4da224))
+- Trim name and notes when creating a contract ([46723b4](https://github.com/Probesys/bileto/commit/46723b4))
+- Disallow to set contracts maxHours below their consumedHours ([32a5bbe](https://github.com/Probesys/bileto/commit/32a5bbe))
+- Use `strcmp` in LocaleSorter if comparison failed with the Collator ([db600db](https://github.com/Probesys/bileto/commit/db600db))
+- Wrap pre elements in messages contents ([6b9cdc4](https://github.com/Probesys/bileto/commit/6b9cdc4))
+- Remove the orphan parenthesis from the "incident updated on" label ([959ed9d](https://github.com/Probesys/bileto/commit/959ed9d))
+- Add a missing HTML closing tag in the header ([3bfbb04](https://github.com/Probesys/bileto/commit/3bfbb04))
+
+### Technical
+
+- Require PostgreSQL >= 12 ([b9917f0](https://github.com/Probesys/bileto/commit/b9917f0))
+- Require PHP >= 8.2 ([1dc250f](https://github.com/Probesys/bileto/commit/1dc250f))
+- Require the PHP imap module ([0f1699f](https://github.com/Probesys/bileto/commit/0f1699f))
+- Upgrade to Symfony 6.4 ([afe5eda](https://github.com/Probesys/bileto/commit/afe5eda))
+- Update the dependencies ([ebf01e7](https://github.com/Probesys/bileto/commit/ebf01e7), [af19f56](https://github.com/Probesys/bileto/commit/af19f56), [4dd097d](https://github.com/Probesys/bileto/commit/4dd097d), [df2e5f5](https://github.com/Probesys/bileto/commit/df2e5f5), [62bb824](https://github.com/Probesys/bileto/commit/62bb824))
+- Configure the `default_uri` in routing ([47a8fb9](https://github.com/Probesys/bileto/commit/47a8fb9))
+
+### Documentation
+
+- Improve the documentation about contributing to code ([17f5be0](https://github.com/Probesys/bileto/commit/17f5be0))
+- Update the roadmap with links to GitHub ([8379dfe](https://github.com/Probesys/bileto/commit/8379dfe))
+- Fix typos in the dependencies documentation ([5dcdc05](https://github.com/Probesys/bileto/commit/5dcdc05))
+
+### Developers
+
+- Provide a pagination component ([7d424db](https://github.com/Probesys/bileto/commit/7d424db))
+- Allow to check permissions of any user ([bfc7a5d](https://github.com/Probesys/bileto/commit/bfc7a5d))
+- Install the Symfony Form component ([e03b841](https://github.com/Probesys/bileto/commit/e03b841))
+- Refactor the contract form with the Form component ([184f273](https://github.com/Probesys/bileto/commit/184f273))
+- Refactor the monitoring of the activity of the entities ([d86759e](https://github.com/Probesys/bileto/commit/d86759e))
+- Add getEntityType to RecordableEntityInterface ([86692d3](https://github.com/Probesys/bileto/commit/86692d3))
+- Set the activeUser in CreateTicketsFromMailboxEmailsHandler ([f2db100](https://github.com/Probesys/bileto/commit/f2db100))
+- Make deprecations notices less verbose in tests ([4c9ea03](https://github.com/Probesys/bileto/commit/4c9ea03))
+- Configure Rector as a new linter ([2c86af0](https://github.com/Probesys/bileto/commit/2c86af0))
+- Provide a make db-rollback command ([ee4d7c2](https://github.com/Probesys/bileto/commit/ee4d7c2))
+- Clean all the Docker stuff on make docker-clean ([aea07f5](https://github.com/Probesys/bileto/commit/aea07f5))
+- Move some docker files under docker/development ([838e769](https://github.com/Probesys/bileto/commit/838e769))
+- Fix node bundler for uid != 1000 ([50f3c95](https://github.com/Probesys/bileto/commit/50f3c95))
+- Restore validators files when extracting translations ([985ed96](https://github.com/Probesys/bileto/commit/985ed96))
 
 ## 2023-11-23 - 0.6.0-alpha
 
