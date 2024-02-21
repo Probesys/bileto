@@ -28,7 +28,7 @@ class SettingsControllerTest extends WebTestCase
             'admin:see',
             'admin:manage:roles',
             'admin:manage:users',
-            'admin:manage:organizations',
+            'admin:create:organizations',
         ]);
 
         $client->request('GET', '/settings');
@@ -44,7 +44,7 @@ class SettingsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), [
             'admin:see',
             'admin:manage:users',
-            'admin:manage:organizations',
+            'admin:create:organizations',
         ]);
 
         $client->request('GET', '/settings');

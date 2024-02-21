@@ -40,7 +40,7 @@ class OrganizationsController extends BaseController
     #[Route('/organizations/new', name: 'new organization', methods: ['GET', 'HEAD'])]
     public function new(): Response
     {
-        $this->denyAccessUnlessGranted('admin:manage:organizations');
+        $this->denyAccessUnlessGranted('admin:create:organizations');
 
         return $this->render('organizations/new.html.twig', [
             'name' => '',
@@ -54,7 +54,7 @@ class OrganizationsController extends BaseController
         ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:organizations');
+        $this->denyAccessUnlessGranted('admin:create:organizations');
 
         /** @var string $name */
         $name = $request->request->get('name', '');

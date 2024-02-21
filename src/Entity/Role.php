@@ -37,8 +37,8 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
         ],
 
         'admin' => [
+            'admin:create:organizations',
             'admin:manage:mailboxes',
-            'admin:manage:organizations',
             'admin:manage:roles',
             'admin:manage:users',
             'admin:see',

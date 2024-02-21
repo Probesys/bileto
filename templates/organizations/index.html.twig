@@ -18,7 +18,7 @@
 
         <div class="flow">
             <div class="row row--center row--always flow">
-                {% if is_granted('admin:manage:organizations') %}
+                {% if is_granted('admin:create:organizations') %}
                     <a href="{{ path('new organization') }}" class="anchor--action">
                         {{ icon('plus') }}
                         {{ 'organizations.index.new_organization' | trans }}

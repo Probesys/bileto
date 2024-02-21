@@ -77,7 +77,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
 
         $client->request('GET', '/organizations/new');
 
@@ -102,7 +102,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = 'My organization';
 
         $client->request('GET', '/organizations/new');
@@ -121,7 +121,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = '';
 
         $client->request('POST', '/organizations/new', [
@@ -138,7 +138,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = str_repeat('a', 256);
 
         $client->request('POST', '/organizations/new', [
@@ -155,7 +155,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = 'My organization';
 
         $client->request('POST', '/organizations/new', [

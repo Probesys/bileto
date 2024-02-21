@@ -494,7 +494,7 @@ class RolesControllerTest extends WebTestCase
         $oldDescription = 'Description of the old role';
         $newDescription = 'Description of the new role';
         if ($type === 'admin') {
-            $oldPermissions = ['admin:manage:organizations'];
+            $oldPermissions = ['admin:create:organizations'];
             $newPermissions = ['admin:manage:roles'];
         } else {
             $oldPermissions = ['orga:create:tickets'];
@@ -537,7 +537,7 @@ class RolesControllerTest extends WebTestCase
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
         $newDescription = 'Description of the new role';
-        $oldPermissions = ['admin:manage:organizations'];
+        $oldPermissions = ['admin:create:organizations'];
         $newPermissions = ['admin:*'];
         $role = RoleFactory::createOne([
             'type' => $type,
@@ -572,7 +572,7 @@ class RolesControllerTest extends WebTestCase
         $oldDescription = 'Description of the old role';
         $newDescription = 'Description of the new role';
         if ($type === 'admin') {
-            $oldPermissions = ['admin:manage:organizations'];
+            $oldPermissions = ['admin:create:organizations'];
             $newPermissions = ['admin:manage:roles'];
         } else {
             $oldPermissions = ['orga:create:tickets'];
@@ -611,7 +611,7 @@ class RolesControllerTest extends WebTestCase
         $oldDescription = 'Description of the old role';
         $newDescription = 'Description of the new role';
         if ($type === 'admin') {
-            $oldPermissions = ['admin:manage:organizations'];
+            $oldPermissions = ['admin:create:organizations'];
             $newPermissions = ['admin:manage:roles'];
         } else {
             $oldPermissions = ['orga:create:tickets'];
@@ -682,7 +682,7 @@ class RolesControllerTest extends WebTestCase
         $oldDescription = 'Description of the old role';
         $newDescription = 'Description of the new role';
         if ($type === 'admin') {
-            $oldPermissions = ['admin:manage:organizations'];
+            $oldPermissions = ['admin:create:organizations'];
             $newPermissions = ['admin:manage:roles'];
         } else {
             $oldPermissions = ['orga:create:tickets'];
