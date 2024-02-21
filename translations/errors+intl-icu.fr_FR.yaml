@@ -27,6 +27,7 @@ message_document.mimetype.rejected: 'Vous ne pouvez pas téléverser ce type de 
 message_document.required: 'Sélectionnez un fichier.'
 message_document.server_error: 'Le fichier ne peut pas être téléversé, essayez à nouveau plus tard.'
 message_document.too_large: 'Le fichier est trop gros, essayez avec un plus petit.'
+organization.name.already_used: 'Saisissez un nom différent, une organisation porte déjà ce même nom.'
 organization.name.max_chars: 'Saisissez un nom de moins de {limit} caractères.'
 organization.name.required: 'Saisissez un nom.'
 role.description.max_chars: 'Saisissez une description de moins de {limit} caractères.'

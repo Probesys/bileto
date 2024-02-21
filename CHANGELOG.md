@@ -6,6 +6,7 @@
 
 Sub-organizations are no longer supported (see [the issue #516](https://github.com/Probesys/bileto/issues/516)).
 Your existing sub-organizations will be converted to first-level organizations during this update.
+**Important: make sure that all your organizations have different names before running the migrations.**
 
 ## 2024-02-02 - 0.7.0-alpha
 

@@ -16,10 +16,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
+#[UniqueEntity(
+    fields: 'name',
+    message: new TranslatableMessage('organization.name.already_used', [], 'errors'),
+)]
 class Organization implements MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
@@ -47,7 +52,7 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\ManyToOne]
     private ?User $updatedBy = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('organization.name.required', [], 'errors'),
     )]

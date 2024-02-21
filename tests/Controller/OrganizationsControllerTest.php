@@ -36,13 +36,10 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => 'foo',
         ]);
         OrganizationFactory::createOne([
-            'name' => 'Foo',
-        ]);
-        OrganizationFactory::createOne([
             'name' => 'bar',
         ]);
         OrganizationFactory::createOne([
-            'name' => 'Bar',
+            'name' => 'Baz',
         ]);
 
         $client->request('GET', '/organizations');
@@ -50,9 +47,8 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Organizations');
         $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(1)', 'bar');
-        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(2)', 'Bar');
+        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(2)', 'Baz');
         $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(3)', 'foo');
-        $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(4)', 'Foo');
     }
 
     public function testGetIndexFailsIfAccessIsForbidden(): void
