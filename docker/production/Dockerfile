@@ -14,6 +14,7 @@ RUN npm install && npm run build
 # Configure the application
 FROM php:8.2-apache
 
+WORKDIR /var/www/html
 ENV APP_ENV prod
 ENV COMPOSER_HOME /tmp
 ENV TZ Europe/Paris
@@ -69,16 +70,17 @@ RUN apt-get update \
     && printf '[PHP]\ndate.timezone = ${TZ}\n' > /usr/local/etc/php/conf.d/timezone.ini
 
 # Copy the code in the image
-COPY . /var/www/html/
-RUN rm -rf /var/www/html/public/assets
-COPY --from=assets /app/public/assets/ /var/www/html/public/assets/
-COPY --from=assets /app/public/manifest.json /var/www/html/public/
+COPY . .
+RUN rm -rf public/assets
+COPY --from=assets /app/public/assets/ public/assets/
+COPY --from=assets /app/public/manifest.json public/
 COPY docker/production/entrypoint.sh /entrypoint.sh
 
-# Install the Composer dependencies and set correct permissions
-RUN composer install --no-dev --optimize-autoloader --no-scripts \
-    && mkdir /var/www/html/var \
-    && mkdir /var/www/html/uploads \
-    && chown -R www-data:www-data /var/www/html/
+# Set correct permissions
+RUN chown -R www-data:www-data .
 
+# Install the dependencies as www-data
 USER www-data
+
+RUN mkdir var uploads
+RUN composer install --no-dev --optimize-autoloader --no-scripts
