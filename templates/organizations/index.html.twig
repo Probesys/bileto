@@ -35,7 +35,9 @@
                     <li class="flow flow--small" data-test="organization-item">
                         <div class="row">
                             <span class="row__item--extend">
-                                {{ organization.name }}
+                                <a href="{{ path('organization', { uid: organization.uid }) }}">
+                                    {{ organization.name }}
+                                </a>
                             </span>
 
                             {% if is_granted('orga:manage', organization) %}
