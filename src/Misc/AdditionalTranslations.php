@@ -22,6 +22,7 @@ new TranslatableMessage('roles.permissions.orga.create.tickets');
 new TranslatableMessage('roles.permissions.orga.create.tickets.messages');
 new TranslatableMessage('roles.permissions.orga.create.tickets.messages.confidential');
 new TranslatableMessage('roles.permissions.orga.create.tickets.time_spent');
+new TranslatableMessage('roles.permissions.orga.manage');
 new TranslatableMessage('roles.permissions.orga.manage.contracts');
 new TranslatableMessage('roles.permissions.orga.see.contracts');
 new TranslatableMessage('roles.permissions.orga.see.contracts.notes');

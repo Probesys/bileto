@@ -231,7 +231,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
         $client->request('GET', "/organizations/{$organization->getUid()}/edit");
@@ -258,7 +258,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = 'New name';
         $organization = OrganizationFactory::createOne([
@@ -280,7 +280,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = str_repeat('a', 256);
         $organization = OrganizationFactory::createOne([
@@ -302,7 +302,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = 'New name';
         $organization = OrganizationFactory::createOne([
@@ -344,7 +344,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
         $client->request('GET', "/organizations/{$organization->getUid()}/deletion");
@@ -371,7 +371,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
         $authorization = AuthorizationFactory::createOne([
             'organization' => $organization,
@@ -408,7 +408,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
         $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [

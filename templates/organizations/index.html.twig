@@ -38,7 +38,7 @@
                                 {{ organization.name }}
                             </span>
 
-                            {% if is_granted('admin:manage:organizations') %}
+                            {% if is_granted('orga:manage', organization) %}
                                 <div class="row__item--noshrink row row--always row--center flow flow--small">
                                     <a href="{{ path('edit organization', { uid: organization.uid }) }}">
                                         {{ 'organizations.index.edit' | trans }}

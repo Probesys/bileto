@@ -106,7 +106,7 @@ class OrganizationsController extends BaseController
     #[Route('/organizations/{uid}/edit', name: 'edit organization', methods: ['GET', 'HEAD'])]
     public function edit(Organization $organization): Response
     {
-        $this->denyAccessUnlessGranted('admin:manage:organizations');
+        $this->denyAccessUnlessGranted('orga:manage', $organization);
 
         return $this->render('organizations/edit.html.twig', [
             'organization' => $organization,
@@ -122,7 +122,7 @@ class OrganizationsController extends BaseController
         ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:organizations');
+        $this->denyAccessUnlessGranted('orga:manage', $organization);
 
         /** @var string $name */
         $name = $request->request->get('name', '');
@@ -157,7 +157,7 @@ class OrganizationsController extends BaseController
     #[Route('/organizations/{uid}/deletion', name: 'deletion organization', methods: ['GET', 'HEAD'])]
     public function deletion(Organization $organization): Response
     {
-        $this->denyAccessUnlessGranted('admin:manage:organizations');
+        $this->denyAccessUnlessGranted('orga:manage', $organization);
 
         return $this->render('organizations/deletion.html.twig', [
             'organization' => $organization,
@@ -171,7 +171,7 @@ class OrganizationsController extends BaseController
         OrganizationRepository $organizationRepository,
         TranslatorInterface $translator,
     ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:organizations');
+        $this->denyAccessUnlessGranted('orga:manage', $organization);
 
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
