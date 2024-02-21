@@ -58,7 +58,6 @@ final class OrganizationFactory extends ModelFactory
             'uid' => Random::hex(20),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'name' => self::faker()->words(3, true),
-            'parentsPath' => '/',
         ];
     }
 

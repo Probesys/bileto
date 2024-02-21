@@ -11,7 +11,6 @@ use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\OrganizationRepository;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
-use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -62,16 +61,6 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Ticket::class)]
     private Collection $tickets;
 
-    #[ORM\Column(length: 255, options: ['default' => '/'])]
-    #[AppAssert\TreeDepth(
-        message: new TranslatableMessage('organization.sub.too_deep', [], 'errors'),
-        max: self::MAX_DEPTH,
-    )]
-    private ?string $parentsPath = null;
-
-    /** @var Organization[] $subOrganizations */
-    private array $subOrganizations = [];
-
     /** @var Collection<int, Authorization> $authorizations */
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Authorization::class)]
     private Collection $authorizations;
@@ -79,7 +68,6 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
-        $this->parentsPath = '/';
         $this->authorizations = new ArrayCollection();
     }
 
@@ -101,74 +89,6 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
     public function getTickets(): Collection
     {
         return $this->tickets;
-    }
-
-    public function getParentsPath(): ?string
-    {
-        return $this->parentsPath;
-    }
-
-    public function setParentsPath(string $parentsPath): self
-    {
-        $this->parentsPath = $parentsPath;
-
-        return $this;
-    }
-
-    public function setParent(Organization $parentOrganization): self
-    {
-        $parentsPath = $parentOrganization->getParentsPath() . $parentOrganization->getId() . '/';
-        $this->setParentsPath($parentsPath);
-
-        return $this;
-    }
-
-    public function isRootOrganization(): bool
-    {
-        return $this->parentsPath === '/';
-    }
-
-    public function getParentOrganizationId(): int|null
-    {
-        $parentIds = $this->getParentOrganizationIds();
-        if (empty($parentIds)) {
-            return null;
-        }
-
-        return array_pop($parentIds);
-    }
-
-    /**
-     * @return int[]
-     */
-    public function getParentOrganizationIds(): array
-    {
-        if ($this->isRootOrganization()) {
-            return [];
-        }
-
-        $ids = explode('/', trim($this->parentsPath, '/'));
-        return array_map('intval', $ids);
-    }
-
-    public function getDepth(): int
-    {
-        return substr_count($this->parentsPath, '/');
-    }
-
-    public function addSubOrganization(Organization $subOrganization): self
-    {
-        $this->subOrganizations[] = $subOrganization;
-
-        return $this;
-    }
-
-    /**
-     * @return Organization[]
-     */
-    public function getSubOrganizations(): array
-    {
-        return $this->subOrganizations;
     }
 
     /**

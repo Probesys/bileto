@@ -81,37 +81,6 @@ class ActorsListerTest extends WebTestCase
         $this->assertContains($otherUser->getId(), $userIds);
     }
 
-    public function testFindAllListsUsersInSubOrganizations(): void
-    {
-        $otherUser = UserFactory::createOne();
-        $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
-        ]);
-        $organization = OrganizationFactory::createOne();
-        $subOrganization = OrganizationFactory::createOne([
-            'parentsPath' => "/{$organization->getId()}/",
-        ]);
-        $this->authRepository->grant(
-            $this->currentUser,
-            $role->object(),
-            $organization->object(),
-        );
-        // Both users are not in the same organization, but the $otherUser is
-        // in a sub-organization of the one of the current user.
-        $this->authRepository->grant(
-            $otherUser->object(),
-            $role->object(),
-            $subOrganization->object(),
-        );
-
-        $users = $this->actorsLister->findAll();
-
-        $this->assertSame(2, count($users));
-        $userIds = array_map(fn ($user): int => $user->getId(), $users);
-        $this->assertContains($this->currentUser->getId(), $userIds);
-        $this->assertContains($otherUser->getId(), $userIds);
-    }
-
     public function testFindAllDoesNotListUsersInNotAuthorizedOrganization(): void
     {
         $otherUser = UserFactory::createOne();
@@ -228,39 +197,6 @@ class ActorsListerTest extends WebTestCase
         $this->assertContains($otherUser->getId(), $userIds);
     }
 
-    public function testFindByOrganizationListsUsersInParentOrganizations(): void
-    {
-        $organization = OrganizationFactory::createOne();
-        $subOrganization = OrganizationFactory::createOne([
-            'parentsPath' => "/{$organization->getId()}/",
-        ]);
-        $otherUser = UserFactory::createOne();
-        $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
-        ]);
-        // $currentUser is in the parent organization
-        $this->authRepository->grant(
-            $this->currentUser,
-            $role->object(),
-            $organization->object(),
-        );
-        // $otherUser is in the sub-organization
-        $this->authRepository->grant(
-            $otherUser->object(),
-            $role->object(),
-            $subOrganization->object(),
-        );
-
-        // and we ask for the users of the sub-organization
-        $users = $this->actorsLister->findByOrganization($subOrganization->object());
-
-        // but both users are returned!
-        $this->assertSame(2, count($users));
-        $userIds = array_map(fn ($user): int => $user->getId(), $users);
-        $this->assertContains($this->currentUser->getId(), $userIds);
-        $this->assertContains($otherUser->getId(), $userIds);
-    }
-
     public function testFindByOrganizationDoesNotListUsersIfNotAuthorized(): void
     {
         $organization = OrganizationFactory::createOne();
@@ -283,39 +219,5 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findByOrganization($otherOrganization->object());
 
         $this->assertSame(0, count($users));
-    }
-
-    public function testFindByOrganizationDoesNotListUsersInParentOrganizationsIfNotAuthorized(): void
-    {
-        $organization = OrganizationFactory::createOne();
-        $subOrganization = OrganizationFactory::createOne([
-            'parentsPath' => "/{$organization->getId()}/",
-        ]);
-        $otherUser = UserFactory::createOne();
-        $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['operational', 'user']),
-        ]);
-        // This time, $currentUser is in the sub-organization
-        $this->authRepository->grant(
-            $this->currentUser,
-            $role->object(),
-            $subOrganization->object(),
-        );
-        // While $otherUser is in the parent organization
-        $this->authRepository->grant(
-            $otherUser->object(),
-            $role->object(),
-            $organization->object(),
-        );
-
-        // And we ask for the users of the sub-organization
-        $users = $this->actorsLister->findByOrganization($subOrganization->object());
-
-        // Only the user from the sub-organization is returned as current user
-        // isn't authorized in the parent organization
-        $this->assertSame(1, count($users));
-        $userIds = array_map(fn ($user): int => $user->getId(), $users);
-        $this->assertContains($this->currentUser->getId(), $userIds);
-        $this->assertNotContains($otherUser->getId(), $userIds);
     }
 }

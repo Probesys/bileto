@@ -192,14 +192,11 @@
                         {{ 'users.no_organization' | trans }}
                     </option>
 
-                    {{ include(
-                        'organizations/_organizations_as_options.html.twig',
-                        {
-                            organizations: organizations,
-                            selected: organizationUid,
-                        },
-                        with_context = false
-                    ) }}
+                    {% for organization in organizations %}
+                        <option value="{{ organization.uid }}" {{ organization.uid == organizationUid ? 'selected' }}>
+                            {{ organization.name }}
+                        </option>
+                    {% endfor %}
                 </select>
 
                 {% if user.organization and not is_granted_to_user(user, 'orga:create:tickets', user.organization) %}

@@ -81,41 +81,31 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
         $entityManager = $this->getEntityManager();
 
         if ($organization) {
-            // Build an array of organizations ids sorted by the most to the less
-            // specific organizations (i.e. sub-orga first, root orga last)
-            $orgaIds = $organization->getParentOrganizationIds();
-            $orgaIds[] = $organization->getId();
-            $orgaIds = array_reverse($orgaIds);
-
             $query = $entityManager->createQuery(<<<SQL
                 SELECT a, r
                 FROM App\Entity\Authorization a
                 INDEX BY a.organization
                 JOIN a.role r
                 WHERE a.holder = :user
-                AND (a.organization IN (:orgaIds) OR a.organization IS NULL)
+                AND (a.organization = :organization OR a.organization IS NULL)
                 AND (r.type = 'user' OR r.type = 'operational')
             SQL);
             $query->setParameter('user', $user);
-            $query->setParameter('orgaIds', $orgaIds);
+            $query->setParameter('organization', $organization);
 
             $authorizationsIndexByOrgaIds = $query->getResult();
-            if (empty($authorizationsIndexByOrgaIds)) {
+            if (count($authorizationsIndexByOrgaIds) === 0) {
                 // no authorization? too bad
                 return null;
+            } elseif (count($authorizationsIndexByOrgaIds) === 1) {
+                // There is only one authorization given for this organization.
+                return array_pop($authorizationsIndexByOrgaIds);
+            } else {
+                // There are several authorizations given (i.e. a global and a
+                // scoped), return only the scoped one as it's more specific.
+                unset($authorizationsIndexByOrgaIds[null]);
+                return array_pop($authorizationsIndexByOrgaIds);
             }
-
-            // Make sure to return the most specific authorization (remember that
-            // orgaIds is already sorted from the most to the less specific).
-            foreach ($orgaIds as $orgaId) {
-                if (isset($authorizationsIndexByOrgaIds[$orgaId])) {
-                    return $authorizationsIndexByOrgaIds[$orgaId];
-                }
-            }
-
-            // The only possible remaining authorization is the global one (i.e.
-            // not associated to a specific organization).
-            return array_pop($authorizationsIndexByOrgaIds);
         } else {
             $query = $entityManager->createQuery(<<<SQL
                 SELECT a, r

@@ -57,8 +57,6 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
         $entityManager = $this->getEntityManager();
 
         $now = Utils\Time::now();
-        $orgaIds = $organization->getParentOrganizationIds();
-        $orgaIds[] = $organization->getId();
 
         $query = $entityManager->createQuery(<<<SQL
             SELECT c
@@ -67,14 +65,14 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
 
             WHERE c.startAt <= :now
             AND :now < c.endAt
-            AND c.organization IN (:orgaIds)
+            AND c.organization = :organization
 
             GROUP BY c.id
             HAVING c.maxHours > (COALESCE(SUM(ts.time), 0) / 60.0)
         SQL);
 
         $query->setParameter('now', $now);
-        $query->setParameter('orgaIds', $orgaIds);
+        $query->setParameter('organization', $organization);
 
         return $query->getResult();
     }

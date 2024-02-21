@@ -21,7 +21,7 @@
             <h1>{{ 'organizations.new.title' | trans }}</h1>
         </div>
 
-        <form action="{{ path('create organization', { parent: parentOrganization.uid ?? null }) }}" method="post" class="wrapper wrapper--small flow">
+        <form action="{{ path('create organization') }}" method="post" class="wrapper wrapper--small flow">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization') }}">
 
             {% if error %}
@@ -57,41 +57,6 @@
                     {% endif %}
                 />
             </div>
-
-            {% if parentOrganization %}
-                <div class="flow flow--small" data-test="form-group-parent-organization">
-                    <label for="parent">
-                        {{ 'organizations.parent_orga' | trans }}
-                    </label>
-
-                    {% if errors.parentsPath is defined %}
-                        <p class="form__error" role="alert" id="parent-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.parentsPath }}
-                        </p>
-                    {% endif %}
-
-                    <select
-                        id="parent"
-                        name="selectedParent"
-                        required
-                        {% if errors.parentsPath is defined %}
-                            autofocus
-                            aria-invalid="true"
-                            aria-errormessage="parent-error"
-                        {% endif %}
-                    >
-                        {{ include(
-                            'organizations/_organizations_as_options.html.twig',
-                            {
-                                organizations: organizations,
-                                selected: selectedParentUid,
-                            },
-                            with_context = false
-                        ) }}
-                    </select>
-                </div>
-            {% endif %}
 
             <div class="form__actions">
                 <button id="form-create-organization-submit" class="button--primary" type="submit">

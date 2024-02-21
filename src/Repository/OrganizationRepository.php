@@ -52,27 +52,6 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
     }
 
     /**
-     * @param Organization[] $organizations
-     */
-    public function removeInBatch(array $organizations): void
-    {
-        $entityManager = $this->getEntityManager();
-
-        $organizationIds = array_map(function (Organization $organization): int {
-            return $organization->getId();
-        }, $organizations);
-
-        $query = $entityManager->createQuery(<<<SQL
-            DELETE FROM App\Entity\Organization o
-            WHERE o.id IN (:ids)
-        SQL);
-
-        $query->setParameter('ids', $organizationIds);
-
-        $query->execute();
-    }
-
-    /**
      * @return Organization[]
      */
     public function findLike(string $value): array
@@ -92,62 +71,11 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
     }
 
     /**
-     * @param int[] $organizationIds
-     *
-     * @return Organization[]
-     */
-    public function findWithSubOrganizations(array $organizationIds): array
-    {
-        $entityManager = $this->getEntityManager();
-        $queryBuilder = $entityManager->createQueryBuilder();
-
-        $queryBuilder->select('o');
-        $queryBuilder->from('\App\Entity\Organization', 'o');
-        $queryBuilder->where('o.id IN (:ids)');
-        $queryBuilder->setParameter('ids', $organizationIds);
-
-        foreach ($organizationIds as $key => $organizationId) {
-            $expr = $queryBuilder->expr()->like(
-                'o.parentsPath',
-                "CONCAT('%/', :id{$key}, '/%')"
-            );
-            $queryBuilder->orWhere($expr);
-            $queryBuilder->setParameter("id{$key}", $organizationId);
-        }
-
-        $query = $queryBuilder->getQuery();
-        return $query->getResult();
-    }
-
-    /**
-     * @return Organization[]
-     */
-    public function findSubOrganizations(Organization $organization): array
-    {
-        $entityManager = $this->getEntityManager();
-        $queryBuilder = $entityManager->createQueryBuilder();
-
-        $queryBuilder->select('o');
-        $queryBuilder->from('\App\Entity\Organization', 'o');
-
-        $expr = $queryBuilder->expr()->like(
-            'o.parentsPath',
-            "CONCAT('%/', :id, '/%')"
-        );
-        $queryBuilder->where($expr);
-        $queryBuilder->setParameter('id', $organization->getId());
-
-        $query = $queryBuilder->getQuery();
-        return $query->getResult();
-    }
-
-    /**
      * @return Organization[]
      */
     public function findAuthorizedOrganizations(User $user): array
     {
         $entityManager = $this->getEntityManager();
-        $queryBuilder = $entityManager->createQueryBuilder();
 
         $query = $entityManager->createQuery(<<<SQL
             SELECT IDENTITY(a.organization)
@@ -164,7 +92,9 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
             // If "null" is returned, it means that an authorization is applied globally.
             return $this->findAll();
         } else {
-            return $this->findWithSubOrganizations($authorizedOrgaIds);
+            return $this->findBy([
+                'id' => $authorizedOrgaIds,
+            ]);
         }
     }
 }

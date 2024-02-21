@@ -158,7 +158,7 @@ class TicketsController extends BaseController
 
         // Finally, let the user choose in which organization they want to
         // create a ticket.
-        $organizations = $organizationSorter->asTree($organizations);
+        $organizationSorter->sort($organizations);
 
         return $this->render('tickets/new.html.twig', [
             'organizations' => $organizations,

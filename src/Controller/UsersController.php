@@ -44,7 +44,7 @@ class UsersController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         $organizations = $organizationRepository->findAll();
-        $organizations = $organizationSorter->asTree($organizations);
+        $organizationSorter->sort($organizations);
 
         return $this->render('users/new.html.twig', [
             'organizations' => $organizations,
@@ -85,7 +85,7 @@ class UsersController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         $organizations = $organizationRepository->findAll();
-        $organizations = $organizationSorter->asTree($organizations);
+        $organizationSorter->sort($organizations);
 
         if (!$this->isCsrfTokenValid('create user', $csrfToken)) {
             return $this->renderBadRequest('users/new.html.twig', [
@@ -146,7 +146,7 @@ class UsersController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         $organizations = $organizationRepository->findAll();
-        $organizations = $organizationSorter->asTree($organizations);
+        $organizationSorter->sort($organizations);
 
         $userOrganization = $user->getOrganization();
 
@@ -200,7 +200,7 @@ class UsersController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         $organizations = $organizationRepository->findAll();
-        $organizations = $organizationSorter->asTree($organizations);
+        $organizationSorter->sort($organizations);
 
         $managedByLdap = $ldapEnabled && $user->getAuthType() === 'ldap';
 

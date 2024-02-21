@@ -29,8 +29,6 @@ message_document.server_error: 'Le fichier ne peut pas être téléversé, essay
 message_document.too_large: 'Le fichier est trop gros, essayez avec un plus petit.'
 organization.name.max_chars: 'Saisissez un nom de moins de {limit} caractères.'
 organization.name.required: 'Saisissez un nom.'
-organization.sub.invalid: 'Sélectionnez une organisation de la liste.'
-organization.sub.too_deep: 'Sélectionnez une organisation différente, vous ne pouvez pas en créer sous celle-ci.'
 role.description.max_chars: 'Saisissez une description de moins de {limit} caractères.'
 role.description.required: 'Saisissez une description.'
 role.name.already_used: 'Saisissez un nom différent, un rôle porte déjà ce même nom.'

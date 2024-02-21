@@ -149,7 +149,6 @@ if (/* some condition */) {
 #### Find organizations authorized for a user
 
 Users are authorized to access an organization if they are associated with an “operational” or a “user” role.
-Granting access to an organization includes all its sub-organizations.
 To load all the organizations for which the user is authorized:
 
 ```php

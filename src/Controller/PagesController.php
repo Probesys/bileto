@@ -28,7 +28,7 @@ class PagesController extends BaseController
         $user = $this->getUser();
 
         $organizations = $orgaRepository->findAuthorizedOrganizations($user);
-        $organizations = $orgaSorter->asTree($organizations);
+        $orgaSorter->sort($organizations);
 
         $ticketsPagination = $ticketSearcher->getTickets(TicketSearcher::queryOwned(), 'updated-desc', [
             'page' => 1,

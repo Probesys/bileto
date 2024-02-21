@@ -55,41 +55,6 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(4)', 'Foo');
     }
 
-    public function testGetIndexListsSubOrganizations(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
-        $organization = OrganizationFactory::createOne([
-            'name' => 'My organization',
-        ]);
-        $subOrganization = OrganizationFactory::createOne([
-            'name' => 'My sub-organization',
-            'parentsPath' => "/{$organization->getId()}/",
-        ]);
-        $subSubOrganization = OrganizationFactory::createOne([
-            'name' => 'My sub-sub-organization',
-            'parentsPath' => "/{$organization->getId()}/{$subOrganization->getId()}/",
-        ]);
-
-        $client->request('GET', '/organizations');
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains(
-            '[data-test="organization-item"]',
-            'My organization',
-        );
-        $this->assertSelectorTextContains(
-            '[data-test="organization-item"] [data-test="organization-item"]:nth-child(1)',
-            'My sub-organization',
-        );
-        $this->assertSelectorTextContains(
-            '[data-test="organization-item"] [data-test="organization-item"]:nth-child(2)',
-            'My sub-sub-organization',
-        );
-    }
-
     public function testGetIndexFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
@@ -113,23 +78,6 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New organization');
-    }
-
-    public function testGetNewRendersParentNodeIfOrganizationUidIsGiven(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
-        $parentOrganization = OrganizationFactory::createOne();
-
-        $client->request('GET', "/organizations/new?parent={$parentOrganization->getUid()}");
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains(
-            '[data-test="form-group-parent-organization"]',
-            'Parent organization'
-        );
     }
 
     public function testGetNewFailsIfAccessIsForbidden(): void
@@ -161,26 +109,6 @@ class OrganizationsControllerTest extends WebTestCase
         $organization = OrganizationFactory::first();
         $this->assertSame($name, $organization->getName());
         $this->assertSame(20, strlen($organization->getUid()));
-    }
-
-    public function testPostCreateCanCreateASubOrganization(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
-        $parentOrganization = OrganizationFactory::createOne();
-        $name = 'My sub-organization';
-
-        $client->request('POST', "/organizations/new?parent={$parentOrganization->getUid()}", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
-            'name' => $name,
-            'selectedParent' => $parentOrganization->getUid(),
-        ]);
-
-        $this->assertResponseRedirects('/organizations', 302);
-        $organization = OrganizationFactory::last();
-        $this->assertSame("/{$parentOrganization->getId()}/", $organization->getParentsPath());
     }
 
     public function testPostCreateFailsIfNameIsEmpty(): void
@@ -215,53 +143,6 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 255 characters');
         $this->assertSame(0, OrganizationFactory::count());
-    }
-
-    public function testPostCreateFailsIfSelectedParentOrganizationDoesNotExist(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
-        $parentOrganization = OrganizationFactory::createOne();
-        $name = 'My sub-organization';
-
-        $client->request('POST', "/organizations/new?parent={$parentOrganization->getUid()}", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
-            'name' => $name,
-            'selectedParent' => 'not an uid',
-        ]);
-
-        $this->assertSelectorTextContains('#parent-error', 'Select an organization from the list');
-        $this->assertSame(1, OrganizationFactory::count());
-    }
-
-    public function testPostCreateFailsIfSelectedParentOrganizationIsTooDeep(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
-        $parentOrganization = OrganizationFactory::createOne([
-            // normally, these ids should exist, but hopefully there are no
-            // foreign key check so it should be good. If the test fails for
-            // strange reasons, it might be because you need to create real
-            // organizations ;)
-            'parentsPath' => '/1/2/',
-        ]);
-        $name = 'My sub-organization';
-
-        $client->request('POST', "/organizations/new?parent={$parentOrganization->getUid()}", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
-            'name' => $name,
-            'selectedParent' => $parentOrganization->getUid(),
-        ]);
-
-        $this->assertSelectorTextContains(
-            '#parent-error',
-            'Select a different organization, you cannot create one under this one'
-        );
-        $this->assertSame(1, OrganizationFactory::count());
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
@@ -487,9 +368,6 @@ class OrganizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:organizations']);
         $organization = OrganizationFactory::createOne();
-        $subOrganization = OrganizationFactory::createOne([
-            'parentsPath' => "/{$organization->getId()}/",
-        ]);
         $authorization = AuthorizationFactory::createOne([
             'organization' => $organization,
         ]);
@@ -500,13 +378,21 @@ class OrganizationsControllerTest extends WebTestCase
             'ticket' => $ticket,
         ]);
 
+        // We need to clear the entities or they will stay in memory. An option
+        // would be to set `cascade: ['remove']` on the Organization relations,
+        // but it would decrease the performance for no interest since we don't
+        // need it outside of the tests.
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
+        $doctrine = self::getContainer()->get('doctrine');
+        $entityManager = $doctrine->getManager();
+        $entityManager->clear();
+
         $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
         ]);
 
         $this->assertResponseRedirects('/organizations', 302);
         OrganizationFactory::assert()->notExists(['id' => $organization->getId()]);
-        OrganizationFactory::assert()->notExists(['id' => $subOrganization->getId()]);
         AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
         TicketFactory::assert()->notExists(['id' => $ticket->getId()]);
         MessageFactory::assert()->notExists(['id' => $message->getId()]);

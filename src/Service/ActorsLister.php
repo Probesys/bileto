@@ -36,12 +36,11 @@ class ActorsLister
         $authorizedOrgas = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
         $authorizedOrgaIds = array_map(fn ($orga): int => $orga->getId(), $authorizedOrgas);
 
-        $organizationIds = $organization->getParentOrganizationIds();
-        $organizationIds[] = $organization->getId();
+        if (!in_array($organization->getId(), $authorizedOrgaIds)) {
+            return [];
+        }
 
-        $organizationIds = array_intersect($authorizedOrgaIds, $organizationIds);
-
-        return $this->findByOrganizationIds($organizationIds, $roleType);
+        return $this->findByOrganizationIds([$organization->getId()], $roleType);
     }
 
     /**

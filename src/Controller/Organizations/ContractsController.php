@@ -37,22 +37,8 @@ class ContractsController extends BaseController
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        // We want to list the contracts from the parent organizations as well
-        // as they apply to this organization as well.
-        $parentOrganizationIds = $organization->getParentOrganizationIds();
-        $parentOrganizations = $organizationRepository->findBy([
-            'id' => $parentOrganizationIds,
-        ]);
-
-        $allowedOrganizations = [$organization];
-        foreach ($parentOrganizations as $parentOrganization) {
-            if ($authorizer->isGranted('orga:see:contracts', $parentOrganization)) {
-                $allowedOrganizations[] = $parentOrganization;
-            }
-        }
-
         $contracts = $contractRepository->findBy([
-            'organization' => $allowedOrganizations,
+            'organization' => $organization,
         ]);
         $contractSorter->sort($contracts);
 

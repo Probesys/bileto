@@ -50,27 +50,6 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(2)', 'My contract 2');
     }
 
-    public function testGetIndexListsContractsFromParentOrganizations(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $organization = OrganizationFactory::createOne();
-        $subOrganization = OrganizationFactory::createOne([
-            'parentsPath' => "/{$organization->getId()}/",
-        ]);
-        $this->grantOrga($user->object(), ['orga:see:contracts']);
-        $contract = ContractFactory::createOne([
-            'name' => 'My contract',
-            'organization' => $organization,
-        ]);
-
-        $client->request('GET', "/organizations/{$subOrganization->getUid()}/contracts");
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('[data-test="contract-item"]', 'My contract');
-    }
-
     public function testGetIndexFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);

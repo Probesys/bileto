@@ -59,7 +59,7 @@ class AuthorizationsController extends BaseController
         $defaultOrganizationUid = $request->query->get('orga', '');
 
         $organizations = $organizationRepository->findAll();
-        $organizations = $organizationSorter->asTree($organizations);
+        $organizationSorter->sort($organizations);
         $roles = $roleRepository->findBy([
             'type' => ['user', 'operational', 'admin'],
         ]);
@@ -95,7 +95,7 @@ class AuthorizationsController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         $organizations = $organizationRepository->findAll();
-        $organizations = $organizationSorter->asTree($organizations);
+        $organizationSorter->sort($organizations);
         $roles = $roleRepository->findAll();
         $roles = $roleRepository->findBy([
             'type' => ['user', 'operational', 'admin'],

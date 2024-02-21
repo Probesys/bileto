@@ -161,7 +161,7 @@ message_documents.remove: 'Retirer la pièce-jointe'
 notifications.saved: 'Vos changements ont été sauvegardés.'
 organizations.deletion.caution: "Attention\_!"
 organizations.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
-organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les sous-organisations, tickets et autorisations associées."
+organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et autorisations associées."
 organizations.deletion.submit: 'Supprimer l’organisation'
 organizations.deletion.title: 'Supprimer une organisation'
 organizations.edit.title: 'Modifier une organisation'
@@ -173,7 +173,6 @@ organizations.index.title: Organisations
 organizations.name: Nom
 organizations.new.submit: 'Créer l’organisation'
 organizations.new.title: 'Nouvelle organisation'
-organizations.parent_orga: 'Organisation parente'
 pagination.next: Suivant
 pagination.previous: Précédent
 preferences.title: Préférences

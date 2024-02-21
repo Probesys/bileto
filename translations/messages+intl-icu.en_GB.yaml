@@ -161,7 +161,7 @@ message_documents.remove: 'Remove attachment'
 notifications.saved: 'Your changes have been successfully saved.'
 organizations.deletion.caution: Caution!
 organizations.deletion.confirm: 'Are you sure that you want to delete this organization?'
-organizations.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated sub-organizations, tickets and authorizations.'
+organizations.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and authorizations.'
 organizations.deletion.submit: 'Delete the organization'
 organizations.deletion.title: 'Delete an organization'
 organizations.edit.title: 'Edit an organization'
@@ -173,7 +173,6 @@ organizations.index.title: Organizations
 organizations.name: Name
 organizations.new.submit: 'Create the organization'
 organizations.new.title: 'New organization'
-organizations.parent_orga: 'Parent organization'
 pagination.next: Next
 pagination.previous: Previous
 preferences.title: Preferences

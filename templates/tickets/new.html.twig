@@ -28,13 +28,11 @@
                     </label>
 
                     <select id="organization" name="organization">
-                        {{ include(
-                            'organizations/_organizations_as_options.html.twig',
-                            {
-                                organizations: organizations,
-                            },
-                            with_context = false
-                        ) }}
+                        {% for organization in organizations %}
+                            <option value="{{ organization.uid }}">
+                                {{ organization.name }}
+                            </option>
+                        {% endfor %}
                     </select>
                 </div>
 

@@ -30,10 +30,6 @@ class PagesControllerTest extends WebTestCase
         $organization2 = OrganizationFactory::createOne([
             'name' => 'Orga 2',
         ]);
-        $subOrganization = OrganizationFactory::createOne([
-            'name' => 'Sub-orga',
-            'parentsPath' => "/{$organization1->getId()}/",
-        ]);
         $this->grantOrga($user->object(), ['orga:see'], $organization1->object());
 
         $crawler = $client->request('GET', '/');
@@ -46,10 +42,6 @@ class PagesControllerTest extends WebTestCase
         );
         $this->assertSelectorNotExists(
             '[data-test="organization-item"]:nth-child(2)',
-        );
-        $this->assertSelectorTextContains(
-            '[data-test="organization-item"] [data-test="organization-item"]',
-            'Sub-orga',
         );
     }
 
@@ -64,10 +56,6 @@ class PagesControllerTest extends WebTestCase
         $organization2 = OrganizationFactory::createOne([
             'name' => 'Orga 2',
         ]);
-        $subOrganization = OrganizationFactory::createOne([
-            'name' => 'Sub-orga',
-            'parentsPath' => "/{$organization1->getId()}/",
-        ]);
         $this->grantOrga($user->object(), ['orga:see'], null);
 
         $crawler = $client->request('GET', '/');
@@ -80,10 +68,6 @@ class PagesControllerTest extends WebTestCase
         $this->assertSelectorTextContains(
             '[data-test="organization-item"]:nth-child(2)',
             'Orga 2',
-        );
-        $this->assertSelectorTextContains(
-            '[data-test="organization-item"] [data-test="organization-item"]',
-            'Sub-orga',
         );
     }
 
