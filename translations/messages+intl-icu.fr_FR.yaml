@@ -113,6 +113,7 @@ layout.modal.close: 'Fermer cette fenêtre'
 layout.notifications.close: 'Fermer la notification'
 layout.notifications.error: Erreur
 layout.notifications.success: Succès
+layout.organizations: Organisations
 layout.scroll_to_top: 'Défiler en haut'
 layout.skip_to_main_content: 'Accéder au contenu principal'
 layout.tickets: Tickets

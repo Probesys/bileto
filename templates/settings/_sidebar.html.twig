@@ -10,19 +10,6 @@
     </div>
 
     <ul class="sidebar flow flow--smaller">
-        {% if is_granted('admin:manage:organizations') %}
-            <li class="sidebar__item">
-                <a
-                    class="sidebar__anchor"
-                    href="{{ path('organizations') }}"
-                    {{ current == 'organizations' ? 'aria-current="page"' }}
-                >
-                    {{ icon('organization') }}
-                    {{ 'organizations.index.title' | trans }}
-                </a>
-            </li>
-        {% endif %}
-
         {% if is_granted('admin:manage:roles') %}
             <li class="sidebar__item">
                 <a

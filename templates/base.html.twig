@@ -138,6 +138,20 @@
                                     </a>
                                 </li>
 
+                                <li>
+                                    <a
+                                        class="layout__header-anchor"
+                                        href="{{ path('organizations') }}"
+                                        {{ currentPage == 'organizations' ? 'aria-current="page"' }}
+                                    >
+                                        {{ icon('organization') }}
+
+                                        <span class="no-mobile">
+                                            {{ 'layout.organizations' | trans }}
+                                        </span>
+                                    </a>
+                                </li>
+
                                 {% if is_granted('admin:see') %}
                                     <li>
                                         <a

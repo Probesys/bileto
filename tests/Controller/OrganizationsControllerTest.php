@@ -31,7 +31,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:see']);
         OrganizationFactory::createOne([
             'name' => 'foo',
         ]);
@@ -51,16 +51,25 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(3)', 'foo');
     }
 
-    public function testGetIndexFailsIfAccessIsForbidden(): void
+    public function testGetIndexDoesNotListNotAuthorizedOrganizations(): void
     {
-        $this->expectException(AccessDeniedException::class);
-
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $orga1 = OrganizationFactory::createOne([
+            'name' => 'foo',
+        ]);
+        $orga2 = OrganizationFactory::createOne([
+            'name' => 'bar',
+        ]);
+        $this->grantOrga($user->object(), ['orga:see'], $orga1->object());
 
-        $client->catchExceptions(false);
         $client->request('GET', '/organizations');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Organizations');
+        $this->assertSelectorTextContains('[data-test="organization-item"]', 'foo');
+        $this->assertSelectorNotExists('[data-test="organization-item"]:nth-child(2)');
     }
 
     public function testGetNewRendersCorrectly(): void

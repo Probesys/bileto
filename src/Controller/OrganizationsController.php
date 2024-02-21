@@ -26,9 +26,10 @@ class OrganizationsController extends BaseController
         OrganizationRepository $orgaRepository,
         OrganizationSorter $orgaSorter,
     ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:organizations');
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
 
-        $organizations = $orgaRepository->findAll();
+        $organizations = $orgaRepository->findAuthorizedOrganizations($user);
         $orgaSorter->sort($organizations);
 
         return $this->render('organizations/index.html.twig', [

@@ -6,26 +6,24 @@
 
 {% extends 'base.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentPage = 'organizations' %}
 
 {% block title %}{{ 'organizations.index.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'organizations' }, with_context = false) }}
-{% endblock %}
-
 {% block body %}
-    <main class="layout__body flow">
+    <main class="layout__body flow wrapper wrapper--large wrapper--center">
         <div class="layout__breadcrumb">
             <h1>{{ 'organizations.index.title' | trans }}</h1>
         </div>
 
-        <div class="wrapper wrapper--large flow">
+        <div class="flow">
             <div class="row row--center row--always flow">
-                <a href="{{ path('new organization') }}" class="anchor--action">
-                    {{ icon('plus') }}
-                    {{ 'organizations.index.new_organization' | trans }}
-                </a>
+                {% if is_granted('admin:manage:organizations') %}
+                    <a href="{{ path('new organization') }}" class="anchor--action">
+                        {{ icon('plus') }}
+                        {{ 'organizations.index.new_organization' | trans }}
+                    </a>
+                {% endif %}
 
                 <p class="text--secondary">
                     {{ 'organizations.index.number' | trans({ count: organizations|length }) }}
@@ -40,15 +38,17 @@
                                 {{ organization.name }}
                             </span>
 
-                            <div class="row__item--noshrink row row--always row--center flow flow--small">
-                                <a href="{{ path('edit organization', { uid: organization.uid }) }}">
-                                    {{ 'organizations.index.edit' | trans }}
-                                </a>
+                            {% if is_granted('admin:manage:organizations') %}
+                                <div class="row__item--noshrink row row--always row--center flow flow--small">
+                                    <a href="{{ path('edit organization', { uid: organization.uid }) }}">
+                                        {{ 'organizations.index.edit' | trans }}
+                                    </a>
 
-                                <a href="{{ path('deletion organization', { uid: organization.uid }) }}">
-                                    {{ 'organizations.index.delete' | trans }}
-                                </a>
-                            </div>
+                                    <a href="{{ path('deletion organization', { uid: organization.uid }) }}">
+                                        {{ 'organizations.index.delete' | trans }}
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
                     </li>
                 {% endfor %}
