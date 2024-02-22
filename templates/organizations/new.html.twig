@@ -6,16 +6,12 @@
 
 {% extends 'base.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentPage = 'organizations' %}
 
 {% block title %}{{ 'organizations.new.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'organizations' }, with_context = false) }}
-{% endblock %}
-
 {% block body %}
-    <main class="layout__body flow">
+    <main class="layout__body flow wrapper wrapper--large wrapper--center">
         <div class="layout__breadcrumb">
             <a href="{{ path('organizations') }}">{{ 'organizations.index.title' | trans }}</a>
             <h1>{{ 'organizations.new.title' | trans }}</h1>
