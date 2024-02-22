@@ -53,6 +53,19 @@ class Authorization implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Organization $organization = null;
 
+    #[ORM\ManyToOne(inversedBy: 'authorizations')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?TeamAuthorization $teamAuthorization = null;
+
+    public static function fromTeamAuthorization(TeamAuthorization $teamAuthorization): self
+    {
+        $authorization = new Authorization();
+        $authorization->setRole($teamAuthorization->getRole());
+        $authorization->setOrganization($teamAuthorization->getOrganization());
+        $authorization->setTeamAuthorization($teamAuthorization);
+        return $authorization;
+    }
+
     public function getRole(): ?Role
     {
         return $this->role;
@@ -85,6 +98,18 @@ class Authorization implements MonitorableEntityInterface, UidEntityInterface
     public function setOrganization(?Organization $organization): self
     {
         $this->organization = $organization;
+
+        return $this;
+    }
+
+    public function getTeamAuthorization(): ?TeamAuthorization
+    {
+        return $this->teamAuthorization;
+    }
+
+    public function setTeamAuthorization(?TeamAuthorization $teamAuthorization): static
+    {
+        $this->teamAuthorization = $teamAuthorization;
 
         return $this;
     }
