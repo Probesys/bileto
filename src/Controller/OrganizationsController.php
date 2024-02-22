@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -103,18 +104,18 @@ class OrganizationsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid}/edit', name: 'edit organization', methods: ['GET', 'HEAD'])]
-    public function edit(Organization $organization): Response
+    #[Route('/organizations/{uid}/settings', name: 'organization settings', methods: ['GET', 'HEAD'])]
+    public function settings(Organization $organization): Response
     {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
 
-        return $this->render('organizations/edit.html.twig', [
+        return $this->render('organizations/settings.html.twig', [
             'organization' => $organization,
             'name' => $organization->getName(),
         ]);
     }
 
-    #[Route('/organizations/{uid}/edit', name: 'update organization', methods: ['POST'])]
+    #[Route('/organizations/{uid}/settings', name: 'update organization', methods: ['POST'])]
     public function update(
         Organization $organization,
         Request $request,
@@ -131,7 +132,7 @@ class OrganizationsController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('update organization', $csrfToken)) {
-            return $this->renderBadRequest('organizations/edit.html.twig', [
+            return $this->renderBadRequest('organizations/settings.html.twig', [
                 'organization' => $organization,
                 'name' => $name,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
@@ -142,7 +143,7 @@ class OrganizationsController extends BaseController
 
         $errors = $validator->validate($organization);
         if (count($errors) > 0) {
-            return $this->renderBadRequest('organizations/edit.html.twig', [
+            return $this->renderBadRequest('organizations/settings.html.twig', [
                 'organization' => $organization,
                 'name' => $name,
                 'errors' => ConstraintErrorsFormatter::format($errors),
@@ -151,16 +152,10 @@ class OrganizationsController extends BaseController
 
         $orgaRepository->save($organization, true);
 
-        return $this->redirectToRoute('organizations');
-    }
+        $this->addFlash('success', new TranslatableMessage('notifications.saved'));
 
-    #[Route('/organizations/{uid}/deletion', name: 'deletion organization', methods: ['GET', 'HEAD'])]
-    public function deletion(Organization $organization): Response
-    {
-        $this->denyAccessUnlessGranted('orga:manage', $organization);
-
-        return $this->render('organizations/deletion.html.twig', [
-            'organization' => $organization,
+        return $this->redirectToRoute('organization settings', [
+            'uid' => $organization->getUid(),
         ]);
     }
 

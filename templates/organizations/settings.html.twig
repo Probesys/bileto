@@ -1,0 +1,95 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'organizations' %}
+
+{% block title %}{{ 'organizations.settings.title' | trans }}{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow flow--larger wrapper wrapper--large wrapper--center">
+        <div class="flow">
+            <div class="layout__breadcrumb">
+                <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
+                <h1>{{ 'organizations.settings.title' | trans }}</h1>
+            </div>
+
+            <form action="{{ path('update organization', { uid: organization.uid ?? null }) }}" method="post" class="wrapper wrapper--small flow">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update organization') }}">
+
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
+
+                <div class="flow flow--small">
+                    <label for="name">
+                        {{ 'organizations.name' | trans }}
+                        <small class="text--secondary">
+                            {{ 'forms.max_chars' | trans({ number: 255 }) }}
+                        </small>
+                    </label>
+
+                    {% if errors.name is defined %}
+                        <p class="form__error" role="alert" id="name-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.name }}
+                        </p>
+                    {% endif %}
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="{{ name }}"
+                        required
+                        autofocus
+                        maxlength="255"
+                        {% if errors.name is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="name-error"
+                        {% endif %}
+                    />
+                </div>
+
+                <div class="form__actions">
+                    <button id="form-update-organization-submit" class="button--primary" type="submit">
+                        {{ 'forms.save_changes' | trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="flow">
+            <h2>{{ 'organizations.settings.deletion.title' | trans }}</h2>
+
+            <form action="{{ path('delete organization', { uid: organization.uid }) }}" method="post" class="wrapper wrapper--small flow">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete organization') }}">
+
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'warning',
+                    title: 'organizations.settings.deletion.caution' | trans,
+                    message: 'organizations.settings.deletion.going_delete' | trans({ organization: organization.name }),
+                }, with_context = false) }}
+
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
+
+                <div class="form__actions">
+                    <button
+                        id="form-delete-organization-submit"
+                        class="button--primary"
+                        type="submit"
+                        data-turbo-confirm="{{ 'organizations.settings.deletion.confirm' | trans }}"
+                    >
+                        {{ 'organizations.settings.deletion.submit' | trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+{% endblock %}

@@ -32,6 +32,15 @@
                     </span>
                 </a>
             {% endif %}
+
+            {% if is_granted('orga:manage', organization) %}
+                <a class="card card--action" href="{{ path('organization settings', { uid: organization.uid }) }}">
+                    <span>
+                        {{ icon('wrench') }}
+                        {{ 'organizations.settings.title' | trans }}
+                    </span>
+                </a>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

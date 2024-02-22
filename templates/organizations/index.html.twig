@@ -33,25 +33,9 @@
             <ul class="list--padded list--border list--nostyle">
                 {% for organization in organizations %}
                     <li class="flow flow--small" data-test="organization-item">
-                        <div class="row">
-                            <span class="row__item--extend">
-                                <a href="{{ path('organization', { uid: organization.uid }) }}">
-                                    {{ organization.name }}
-                                </a>
-                            </span>
-
-                            {% if is_granted('orga:manage', organization) %}
-                                <div class="row__item--noshrink row row--always row--center flow flow--small">
-                                    <a href="{{ path('edit organization', { uid: organization.uid }) }}">
-                                        {{ 'organizations.index.edit' | trans }}
-                                    </a>
-
-                                    <a href="{{ path('deletion organization', { uid: organization.uid }) }}">
-                                        {{ 'organizations.index.delete' | trans }}
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </div>
+                        <a href="{{ path('organization', { uid: organization.uid }) }}">
+                            {{ organization.name }}
+                        </a>
                     </li>
                 {% endfor %}
             </div>

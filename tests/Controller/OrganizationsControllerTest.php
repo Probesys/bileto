@@ -226,7 +226,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client->request('GET', "/organizations/{$organization->getUid()}");
     }
 
-    public function testGetEditRendersCorrectly(): void
+    public function testGetSettingsRendersCorrectly(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -234,13 +234,13 @@ class OrganizationsControllerTest extends WebTestCase
         $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/edit");
+        $client->request('GET', "/organizations/{$organization->getUid()}/settings");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Edit an organization');
+        $this->assertSelectorTextContains('h1', 'Settings');
     }
 
-    public function testGetEditFailsIfAccessIsForbidden(): void
+    public function testGetSettingsFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
 
@@ -250,7 +250,7 @@ class OrganizationsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/edit");
+        $client->request('GET', "/organizations/{$organization->getUid()}/settings");
     }
 
     public function testPostUpdateSavesTheOrganizationAndRedirects(): void
@@ -265,12 +265,12 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
             'name' => $newName,
         ]);
 
-        $this->assertResponseRedirects('/organizations', 302);
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/settings", 302);
         $organization->refresh();
         $this->assertSame($newName, $organization->getName());
     }
@@ -287,7 +287,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
             'name' => $newName,
         ]);
@@ -309,7 +309,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
             '_csrf_token' => 'not a token',
             'name' => $newName,
         ]);
@@ -333,37 +333,10 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
             'name' => $newName,
         ]);
-    }
-
-    public function testGetDeletionRendersCorrectly(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage']);
-        $organization = OrganizationFactory::createOne();
-
-        $client->request('GET', "/organizations/{$organization->getUid()}/deletion");
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Delete an organization');
-    }
-
-    public function testGetDeletionFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $organization = OrganizationFactory::createOne();
-
-        $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/deletion");
     }
 
     public function testPostDeleteRemovesTheOrganizationAndRedirects(): void

@@ -160,20 +160,18 @@ message_documents.attachments: Attachments
 message_documents.attachments.attach: 'Attach a document'
 message_documents.remove: 'Remove attachment'
 notifications.saved: 'Your changes have been successfully saved.'
-organizations.deletion.caution: Caution!
-organizations.deletion.confirm: 'Are you sure that you want to delete this organization?'
-organizations.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and authorizations.'
-organizations.deletion.submit: 'Delete the organization'
-organizations.deletion.title: 'Delete an organization'
-organizations.edit.title: 'Edit an organization'
-organizations.index.delete: Delete
-organizations.index.edit: Edit
 organizations.index.new_organization: 'New organization'
 organizations.index.number: '{count, plural, =0 {No organizations} one {1 organization} other {# organizations}}'
 organizations.index.title: Organizations
 organizations.name: Name
 organizations.new.submit: 'Create the organization'
 organizations.new.title: 'New organization'
+organizations.settings.deletion.caution: Caution!
+organizations.settings.deletion.confirm: 'Are you sure that you want to delete this organization?'
+organizations.settings.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and authorizations.'
+organizations.settings.deletion.submit: 'Delete the organization'
+organizations.settings.deletion.title: 'Delete an organization'
+organizations.settings.title: Settings
 pagination.next: Next
 pagination.previous: Previous
 preferences.title: Preferences
