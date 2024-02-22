@@ -100,7 +100,6 @@ home.all_your_tickets: 'Voir tous vos tickets'
 home.new_ticket: 'Nouveau ticket'
 home.no_tickets: 'Aucun ticket'
 home.title: 'Bienvenue sur Bileto'
-home.your_organizations: '{count, plural, one {Votre organisation} other {Vos organisations}}'
 home.your_tickets: 'Vos tickets'
 hours_formatter.hours: '{hours}h'
 hours_formatter.hours_and_minutes: "{hours}h\_{minutes}m"
@@ -113,6 +112,7 @@ layout.modal.close: 'Fermer cette fenêtre'
 layout.notifications.close: 'Fermer la notification'
 layout.notifications.error: Erreur
 layout.notifications.success: Succès
+layout.organizations: Organisations
 layout.scroll_to_top: 'Défiler en haut'
 layout.skip_to_main_content: 'Accéder au contenu principal'
 layout.tickets: Tickets
@@ -159,20 +159,18 @@ message_documents.attachments: Pièces-jointes
 message_documents.attachments.attach: 'Ajouter une pièce-jointe'
 message_documents.remove: 'Retirer la pièce-jointe'
 notifications.saved: 'Vos changements ont été sauvegardés.'
-organizations.deletion.caution: "Attention\_!"
-organizations.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
-organizations.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et autorisations associées."
-organizations.deletion.submit: 'Supprimer l’organisation'
-organizations.deletion.title: 'Supprimer une organisation'
-organizations.edit.title: 'Modifier une organisation'
-organizations.index.delete: Supprimer
-organizations.index.edit: Modifier
 organizations.index.new_organization: 'Nouvelle organisation'
 organizations.index.number: '{count, plural, =0 {Aucune organisation} one {1 organisation} other {# organisations}}'
 organizations.index.title: Organisations
 organizations.name: Nom
 organizations.new.submit: 'Créer l’organisation'
 organizations.new.title: 'Nouvelle organisation'
+organizations.settings.deletion.caution: "Attention\_!"
+organizations.settings.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
+organizations.settings.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et autorisations associées."
+organizations.settings.deletion.submit: 'Supprimer l’organisation'
+organizations.settings.deletion.title: Suppression
+organizations.settings.title: Gestion
 pagination.next: Suivant
 pagination.previous: Précédent
 preferences.title: Préférences
@@ -208,8 +206,8 @@ roles.new.title.admin: 'Nouveau rôle administrateur'
 roles.new.title.operational: 'Nouveau rôle opérationnel'
 roles.new.title.user: 'Nouveau rôle utilisateur'
 roles.permissions: Permissions
+roles.permissions.admin.create.organizations: 'Créer les organisations'
 roles.permissions.admin.manage.mailboxes: 'Gérer les boites mails'
-roles.permissions.admin.manage.organizations: 'Gérer les organisations'
 roles.permissions.admin.manage.roles: 'Gérer les roles'
 roles.permissions.admin.manage.users: 'Gérer les utilisateurs'
 roles.permissions.be_assigned_to_tickets: 'Être attribué aux tickets'
@@ -218,6 +216,7 @@ roles.permissions.orga.create.tickets: 'Créer des tickets'
 roles.permissions.orga.create.tickets.messages: 'Répondre aux tickets'
 roles.permissions.orga.create.tickets.messages.confidential: 'Répondre confidentiellement aux tickets'
 roles.permissions.orga.create.tickets.time_spent: 'Saisir du temps passé'
+roles.permissions.orga.manage: 'Gérer l’organisation'
 roles.permissions.orga.manage.contracts: 'Gérer les contrats'
 roles.permissions.orga.see.contracts: 'Voir les contrats'
 roles.permissions.orga.see.contracts.notes: 'Voir les notes privées des contrats'

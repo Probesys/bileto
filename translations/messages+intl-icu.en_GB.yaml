@@ -100,7 +100,6 @@ home.all_your_tickets: 'See all your tickets'
 home.new_ticket: 'New ticket'
 home.no_tickets: 'No tickets'
 home.title: 'Welcome to Bileto'
-home.your_organizations: '{count, plural, one {Your organization} other {Your organizations}}'
 home.your_tickets: 'Your tickets'
 hours_formatter.hours: '{hours}h'
 hours_formatter.hours_and_minutes: "{hours}h\_{minutes}m"
@@ -113,6 +112,7 @@ layout.modal.close: 'Close this window'
 layout.notifications.close: 'Close the notification'
 layout.notifications.error: Error
 layout.notifications.success: Success
+layout.organizations: Organizations
 layout.scroll_to_top: 'Scroll to top'
 layout.skip_to_main_content: 'Skip to main content'
 layout.tickets: Tickets
@@ -159,20 +159,18 @@ message_documents.attachments: Attachments
 message_documents.attachments.attach: 'Attach a document'
 message_documents.remove: 'Remove attachment'
 notifications.saved: 'Your changes have been successfully saved.'
-organizations.deletion.caution: Caution!
-organizations.deletion.confirm: 'Are you sure that you want to delete this organization?'
-organizations.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and authorizations.'
-organizations.deletion.submit: 'Delete the organization'
-organizations.deletion.title: 'Delete an organization'
-organizations.edit.title: 'Edit an organization'
-organizations.index.delete: Delete
-organizations.index.edit: Edit
 organizations.index.new_organization: 'New organization'
 organizations.index.number: '{count, plural, =0 {No organizations} one {1 organization} other {# organizations}}'
 organizations.index.title: Organizations
 organizations.name: Name
 organizations.new.submit: 'Create the organization'
 organizations.new.title: 'New organization'
+organizations.settings.deletion.caution: Caution!
+organizations.settings.deletion.confirm: 'Are you sure that you want to delete this organization?'
+organizations.settings.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and authorizations.'
+organizations.settings.deletion.submit: 'Delete the organization'
+organizations.settings.deletion.title: 'Delete an organization'
+organizations.settings.title: Settings
 pagination.next: Next
 pagination.previous: Previous
 preferences.title: Preferences
@@ -208,8 +206,8 @@ roles.new.title.admin: 'New administrator role'
 roles.new.title.operational: 'New operational role'
 roles.new.title.user: 'New user role'
 roles.permissions: Permissions
+roles.permissions.admin.create.organizations: 'Create the organizations'
 roles.permissions.admin.manage.mailboxes: 'Manage the mailboxes'
-roles.permissions.admin.manage.organizations: 'Manage the organizations'
 roles.permissions.admin.manage.roles: 'Manage the roles'
 roles.permissions.admin.manage.users: 'Manage the users'
 roles.permissions.be_assigned_to_tickets: 'Be assigned to tickets'
@@ -218,6 +216,7 @@ roles.permissions.orga.create.tickets: 'Create tickets'
 roles.permissions.orga.create.tickets.messages: 'Answer to tickets'
 roles.permissions.orga.create.tickets.messages.confidential: 'Answer confidentially to tickets'
 roles.permissions.orga.create.tickets.time_spent: 'Record time spent'
+roles.permissions.orga.manage: 'Manage the organization'
 roles.permissions.orga.manage.contracts: 'Manage the contracts'
 roles.permissions.orga.see.contracts: 'See the contracts'
 roles.permissions.orga.see.contracts.notes: 'See the private notes of the contracts'

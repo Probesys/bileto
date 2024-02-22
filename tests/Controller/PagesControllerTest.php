@@ -24,51 +24,11 @@ class PagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $organization1 = OrganizationFactory::createOne([
-            'name' => 'Orga 1',
-        ]);
-        $organization2 = OrganizationFactory::createOne([
-            'name' => 'Orga 2',
-        ]);
-        $this->grantOrga($user->object(), ['orga:see'], $organization1->object());
 
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Welcome to Bileto');
-        $this->assertSelectorTextContains(
-            '[data-test="organization-item"]:nth-child(1)',
-            'Orga 1',
-        );
-        $this->assertSelectorNotExists(
-            '[data-test="organization-item"]:nth-child(2)',
-        );
-    }
-
-    public function testGetHomeListsAllOrganizationsIfGlobalAccess(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $organization1 = OrganizationFactory::createOne([
-            'name' => 'Orga 1',
-        ]);
-        $organization2 = OrganizationFactory::createOne([
-            'name' => 'Orga 2',
-        ]);
-        $this->grantOrga($user->object(), ['orga:see'], null);
-
-        $crawler = $client->request('GET', '/');
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains(
-            '[data-test="organization-item"]:nth-child(1)',
-            'Orga 1',
-        );
-        $this->assertSelectorTextContains(
-            '[data-test="organization-item"]:nth-child(2)',
-            'Orga 2',
-        );
     }
 
     public function testGetHomeRedirectsToLoginIfNotConnected(): void

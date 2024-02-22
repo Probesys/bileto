@@ -31,7 +31,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:see']);
         OrganizationFactory::createOne([
             'name' => 'foo',
         ]);
@@ -51,16 +51,25 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="organization-item"]:nth-child(3)', 'foo');
     }
 
-    public function testGetIndexFailsIfAccessIsForbidden(): void
+    public function testGetIndexDoesNotListNotAuthorizedOrganizations(): void
     {
-        $this->expectException(AccessDeniedException::class);
-
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
+        $orga1 = OrganizationFactory::createOne([
+            'name' => 'foo',
+        ]);
+        $orga2 = OrganizationFactory::createOne([
+            'name' => 'bar',
+        ]);
+        $this->grantOrga($user->object(), ['orga:see'], $orga1->object());
 
-        $client->catchExceptions(false);
         $client->request('GET', '/organizations');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Organizations');
+        $this->assertSelectorTextContains('[data-test="organization-item"]', 'foo');
+        $this->assertSelectorNotExists('[data-test="organization-item"]:nth-child(2)');
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -68,7 +77,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
 
         $client->request('GET', '/organizations/new');
 
@@ -93,7 +102,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = 'My organization';
 
         $client->request('GET', '/organizations/new');
@@ -112,7 +121,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = '';
 
         $client->request('POST', '/organizations/new', [
@@ -129,7 +138,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = str_repeat('a', 256);
 
         $client->request('POST', '/organizations/new', [
@@ -146,7 +155,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = 'My organization';
 
         $client->request('POST', '/organizations/new', [
@@ -217,21 +226,21 @@ class OrganizationsControllerTest extends WebTestCase
         $client->request('GET', "/organizations/{$organization->getUid()}");
     }
 
-    public function testGetEditRendersCorrectly(): void
+    public function testGetSettingsRendersCorrectly(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/edit");
+        $client->request('GET', "/organizations/{$organization->getUid()}/settings");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Edit an organization');
+        $this->assertSelectorTextContains('h1', 'Settings');
     }
 
-    public function testGetEditFailsIfAccessIsForbidden(): void
+    public function testGetSettingsFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
 
@@ -241,7 +250,7 @@ class OrganizationsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/edit");
+        $client->request('GET', "/organizations/{$organization->getUid()}/settings");
     }
 
     public function testPostUpdateSavesTheOrganizationAndRedirects(): void
@@ -249,19 +258,19 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = 'New name';
         $organization = OrganizationFactory::createOne([
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
             'name' => $newName,
         ]);
 
-        $this->assertResponseRedirects('/organizations', 302);
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/settings", 302);
         $organization->refresh();
         $this->assertSame($newName, $organization->getName());
     }
@@ -271,14 +280,14 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = str_repeat('a', 256);
         $organization = OrganizationFactory::createOne([
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
             'name' => $newName,
         ]);
@@ -293,14 +302,14 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = 'New name';
         $organization = OrganizationFactory::createOne([
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
             '_csrf_token' => 'not a token',
             'name' => $newName,
         ]);
@@ -324,37 +333,10 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/organizations/{$organization->getUid()}/edit", [
+        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
             'name' => $newName,
         ]);
-    }
-
-    public function testGetDeletionRendersCorrectly(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
-        $organization = OrganizationFactory::createOne();
-
-        $client->request('GET', "/organizations/{$organization->getUid()}/deletion");
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Delete an organization');
-    }
-
-    public function testGetDeletionFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $organization = OrganizationFactory::createOne();
-
-        $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/deletion");
     }
 
     public function testPostDeleteRemovesTheOrganizationAndRedirects(): void
@@ -362,7 +344,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
         $authorization = AuthorizationFactory::createOne([
             'organization' => $organization,
@@ -399,7 +381,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:organizations']);
+        $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
         $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [

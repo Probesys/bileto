@@ -11,7 +11,7 @@
 {% block title %}{{ 'home.title' | trans }}{% endblock %}
 
 {% block body %}
-    <main class="layout__body flow flow--larger organizations-index">
+    <main class="layout__body flow flow--larger">
         <h1>{{ 'home.title' | trans }}</h1>
 
         <div class="wrapper wrapper--large wrapper--center flow flow--larger">
@@ -50,22 +50,6 @@
                     </p>
                 {% endif %}
             </div>
-
-            {% if organizations %}
-                <div class="flow">
-                    <h2>{{ 'home.your_organizations' | trans({ count: organizations|length }) }}</h2>
-
-                    <div class="grid">
-                        {% for organization in organizations %}
-                            <div class="card flow" data-test="organization-item">
-                                <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">
-                                    {{ organization.name }}
-                                </a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
         </div>
     </main>
 {% endblock %}

@@ -19,7 +19,7 @@ class SettingsControllerTest extends WebTestCase
     use Factories;
     use ResetDatabase;
 
-    public function testGetIndexRedirectsToOrganizations(): void
+    public function testGetIndexRedirectsToRoles(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -28,28 +28,28 @@ class SettingsControllerTest extends WebTestCase
             'admin:see',
             'admin:manage:roles',
             'admin:manage:users',
-            'admin:manage:organizations',
-        ]);
-
-        $client->request('GET', '/settings');
-
-        $this->assertResponseRedirects('/organizations', 302);
-    }
-
-    public function testGetIndexRedirectsToRolesIfNoPermissionToOrganizations(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), [
-            'admin:see',
-            'admin:manage:roles',
-            'admin:manage:users',
+            'admin:create:organizations',
         ]);
 
         $client->request('GET', '/settings');
 
         $this->assertResponseRedirects('/roles', 302);
+    }
+
+    public function testGetIndexRedirectsToUsersIfNoPermissionToRoles(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), [
+            'admin:see',
+            'admin:manage:users',
+            'admin:create:organizations',
+        ]);
+
+        $client->request('GET', '/settings');
+
+        $this->assertResponseRedirects('/users', 302);
     }
 
     public function testGetIndexDisplaysAnErrorIfNoPermissionsAreGiven(): void

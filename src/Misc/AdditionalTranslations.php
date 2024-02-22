@@ -14,14 +14,15 @@ use Symfony\Component\Translation\TranslatableMessage;
 // command detects them, even if this file is never used in the application.
 
 // See App\Twig\RolePermissionExtension
+new TranslatableMessage('roles.permissions.admin.create.organizations');
 new TranslatableMessage('roles.permissions.admin.manage.mailboxes');
-new TranslatableMessage('roles.permissions.admin.manage.organizations');
 new TranslatableMessage('roles.permissions.admin.manage.roles');
 new TranslatableMessage('roles.permissions.admin.manage.users');
 new TranslatableMessage('roles.permissions.orga.create.tickets');
 new TranslatableMessage('roles.permissions.orga.create.tickets.messages');
 new TranslatableMessage('roles.permissions.orga.create.tickets.messages.confidential');
 new TranslatableMessage('roles.permissions.orga.create.tickets.time_spent');
+new TranslatableMessage('roles.permissions.orga.manage');
 new TranslatableMessage('roles.permissions.orga.manage.contracts');
 new TranslatableMessage('roles.permissions.orga.see.contracts');
 new TranslatableMessage('roles.permissions.orga.see.contracts.notes');

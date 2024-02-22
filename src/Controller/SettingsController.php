@@ -18,7 +18,6 @@ class SettingsController extends BaseController
         $this->denyAccessUnlessGranted('admin:see');
 
         $permissionsToRoutes = [
-            'admin:manage:organizations' => 'organizations',
             'admin:manage:roles' => 'roles',
             'admin:manage:users' => 'users',
             'admin:manage:mailboxes' => 'mailboxes',
