@@ -82,7 +82,7 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
             FROM App\Entity\Authorization a
             JOIN a.role r
             WHERE a.holder = :user
-            AND (r.type = 'user' OR r.type = 'operational')
+            AND (r.type = 'user' OR r.type = 'agent')
         SQL);
         $query->setParameter('user', $user);
 

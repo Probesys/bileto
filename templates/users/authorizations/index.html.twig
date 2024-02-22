@@ -55,10 +55,10 @@
                         </div>
 
                         <div class="card__body flow flow--small text--center">
-                            {% if authorization.role.type == 'operational' or authorization.role.type == 'user' %}
+                            {% if authorization.role.type == 'agent' or authorization.role.type == 'user' %}
                                 <div>
-                                    {% if authorization.role.type == 'operational' %}
-                                        {{ 'roles.type.operational' | trans }}
+                                    {% if authorization.role.type == 'agent' %}
+                                        {{ 'roles.type.agent' | trans }}
                                     {% else %}
                                         {{ 'roles.type.user' | trans }}
                                     {% endif %}

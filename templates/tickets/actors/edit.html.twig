@@ -85,7 +85,7 @@
                     {{ 'tickets.unassigned' | trans }}
                 </option>
 
-                {% for user in operationalUsers %}
+                {% for user in agents %}
                     <option value="{{ user.uid }}" {{ user.uid == assigneeUid ? 'selected' }}>
                         {{ user.displayName }}
 

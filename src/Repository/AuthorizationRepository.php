@@ -88,7 +88,7 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
                 JOIN a.role r
                 WHERE a.holder = :user
                 AND (a.organization = :organization OR a.organization IS NULL)
-                AND (r.type = 'user' OR r.type = 'operational')
+                AND (r.type = 'user' OR r.type = 'agent')
             SQL);
             $query->setParameter('user', $user);
             $query->setParameter('organization', $organization);
@@ -114,7 +114,7 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
                 JOIN a.role r
                 WHERE a.holder = :user
                 AND a.organization IS NULL
-                AND (r.type = 'user' OR r.type = 'operational')
+                AND (r.type = 'user' OR r.type = 'agent')
             SQL);
             $query->setParameter('user', $user);
 

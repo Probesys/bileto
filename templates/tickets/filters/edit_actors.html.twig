@@ -60,7 +60,7 @@
             {{ include(
                 'tickets/filters/_multiselect_actors.html.twig',
                 {
-                    users: operationalUsers,
+                    users: agents,
                     selected: ticketFilter.filter('assignee'),
                     id: "filter-assignee",
                     name: "filters[assignee][]",

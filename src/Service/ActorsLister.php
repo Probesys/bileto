@@ -24,7 +24,7 @@ class ActorsLister
     }
 
     /**
-     * @param 'any'|'user'|'operational' $roleType
+     * @param 'any'|'user'|'agent' $roleType
      *
      * @return User[]
      */
@@ -44,7 +44,7 @@ class ActorsLister
     }
 
     /**
-     * @param 'any'|'user'|'operational' $roleType
+     * @param 'any'|'user'|'agent' $roleType
      *
      * @return User[]
      */
@@ -61,7 +61,7 @@ class ActorsLister
 
     /**
      * @param int[] $organizationIds
-     * @param 'any'|'user'|'operational' $roleType
+     * @param 'any'|'user'|'agent' $roleType
      *
      * @return User[]
      */

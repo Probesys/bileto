@@ -33,7 +33,7 @@ class RolesController extends BaseController
         $rolesByTypes = [
             'super' => null,
             'admin' => [],
-            'operational' => [],
+            'agent' => [],
             'user' => [],
         ];
 
@@ -107,7 +107,7 @@ class RolesController extends BaseController
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
         } elseif (
-            ($type === 'user' || $type === 'operational') &&
+            ($type === 'user' || $type === 'agent') &&
             !in_array('orga:see', $permissions)
         ) {
             $permissions[] = 'orga:see';
@@ -200,7 +200,7 @@ class RolesController extends BaseController
         if ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
         } elseif (
-            ($type === 'user' || $type === 'operational') &&
+            ($type === 'user' || $type === 'agent') &&
             !in_array('orga:see', $permissions)
         ) {
             $permissions[] = 'orga:see';

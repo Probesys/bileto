@@ -38,7 +38,7 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
         $roleB = RoleFactory::createOne([
             'name' => 'Role B',
-            'type' => 'operational',
+            'type' => 'agent',
         ]);
         $orgaA = OrganizationFactory::createOne([
             'name' => 'Orga A',
@@ -75,15 +75,15 @@ class AuthorizationsControllerTest extends WebTestCase
         );
         $this->assertSelectorTextContains(
             '[data-test="authorization-item"]:nth-child(3)',
-            'Role B Operational * global *'
+            'Role B Agent * global *'
         );
         $this->assertSelectorTextContains(
             '[data-test="authorization-item"]:nth-child(4)',
-            'Role B Operational Orga A'
+            'Role B Agent Orga A'
         );
         $this->assertSelectorTextContains(
             '[data-test="authorization-item"]:nth-child(5)',
-            'Role B Operational Orga B'
+            'Role B Agent Orga B'
         );
     }
 
@@ -171,7 +171,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => 'operational',
+            'type' => 'agent',
         ]);
         $organization = OrganizationFactory::createOne();
 
@@ -290,7 +290,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $role = RoleFactory::createOne([
-            'type' => 'operational',
+            'type' => 'agent',
         ]);
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), ['orga:see'], $organization->object());

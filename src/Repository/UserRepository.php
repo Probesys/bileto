@@ -107,7 +107,7 @@ class UserRepository extends ServiceEntityRepository implements
 
     /**
      * @param int[] $orgaIds
-     * @param 'any'|'user'|'operational' $roleType
+     * @param 'any'|'user'|'agent' $roleType
      *
      * @return User[]
      */
@@ -125,7 +125,7 @@ class UserRepository extends ServiceEntityRepository implements
         SQL);
 
         if ($roleType === 'any') {
-            $types = ['user', 'operational'];
+            $types = ['user', 'agent'];
         } else {
             $types = [$roleType];
         }

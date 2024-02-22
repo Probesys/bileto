@@ -72,12 +72,12 @@ trait AuthorizationHelper
         /** @var \App\Repository\AuthorizationRepository $authorizationRepo */
         $authorizationRepo = $entityManager->getRepository(Authorization::class);
 
-        $permissions = Role::sanitizePermissions('operational', $permissions);
+        $permissions = Role::sanitizePermissions('agent', $permissions);
 
         $role = new Role();
         $role->setName(Random::hex(10));
         $role->setDescription('The role description');
-        $role->setType('operational');
+        $role->setType('agent');
         $role->setPermissions($permissions);
 
         $roleRepo->save($role);

@@ -52,19 +52,19 @@
             </div>
 
             <div class="flow">
-                <h2>{{ 'roles.index.operational_roles.title' | trans }}</h2>
+                <h2>{{ 'roles.index.agent_roles.title' | trans }}</h2>
 
-                <p class="text--secondary">{{ 'roles.index.operational_roles.desc' | trans }}</p>
+                <p class="text--secondary">{{ 'roles.index.agent_roles.desc' | trans }}</p>
 
                 <div class="grid">
-                    <a class="card card--action" href="{{ path('new role', { type: 'operational' }) }}">
+                    <a class="card card--action" href="{{ path('new role', { type: 'agent' }) }}">
                         <span>
                             {{ icon('plus') }}
-                            {{ 'roles.index.operational_roles.new' | trans }}
+                            {{ 'roles.index.agent_roles.new' | trans }}
                         </span>
                     </a>
 
-                    {% for role in rolesByTypes['operational'] %}
+                    {% for role in rolesByTypes['agent'] %}
                         {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
                     {% endfor %}
                 </div>

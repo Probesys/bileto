@@ -20,11 +20,11 @@ When creating a role, an administrator can select the permissions that will be a
 There are three (or four) types of roles:
 
 - Administrator (and Super): these roles give access to the administration of Bileto. There is one and only one “Super” role which cannot be removed.
-- Operational: these roles give access to the back office and allow users with operational roles to be assigned to tickets.
+- Agent: these roles give access to the back office and allow users with agent roles to be assigned to tickets.
 - User: these roles are intended to the end-users so they have access to the assistance tools.
 
 The type defines the kind of permissions that can be attached to a role.
-For instance, an Operational role can “Answer confidentially to tickets”, while User roles cannot.
+For instance, an Agent role can “Answer confidentially to tickets”, while User roles cannot.
 
 ## The authorizations
 
@@ -37,7 +37,7 @@ The organization defines the scope of the authorization.
 
 An authorization can be limited to a certain organization, or it can be applied globally.
 It's called the scope of the authorization.
-The scope is only relevant to the Operational and User roles.
+The scope is only relevant to the Agent and User roles.
 Indeed, the Administrator roles give permissions outside of the organizations.
 
 ## Authorizations conflicts
@@ -148,7 +148,7 @@ if (/* some condition */) {
 
 #### Find organizations authorized for a user
 
-Users are authorized to access an organization if they are associated with an “operational” or a “user” role.
+Users are authorized to access an organization if they are associated with an “agent” or a “user” role.
 To load all the organizations for which the user is authorized:
 
 ```php
@@ -167,7 +167,7 @@ To add new permissions to Bileto, you must add it to the `PERMISSIONS` constant 
 A permission is given for a specific type of role.
 
 The admin permissions are completely separated from the other.
-The permissions of the operational and user roles can overlap though.
+The permissions of the agent and user roles can overlap though.
 In this case, you must add the permission in both groups.
 
 Please see below to learn the syntax of the permissions.

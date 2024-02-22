@@ -29,7 +29,7 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
-    public const TYPES = ['super', 'admin', 'operational', 'user'];
+    public const TYPES = ['super', 'admin', 'agent', 'user'];
 
     public const PERMISSIONS = [
         'super' => [
@@ -44,7 +44,7 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
             'admin:see',
         ],
 
-        'operational' => [
+        'agent' => [
             'orga:create:tickets',
             'orga:create:tickets:messages',
             'orga:create:tickets:messages:confidential',

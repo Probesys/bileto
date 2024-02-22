@@ -50,15 +50,15 @@
                 <div>
                     <input
                         type="radio"
-                        id="type-operational"
+                        id="type-agent"
                         name="type"
-                        value="operational"
-                        {{ type == 'operational' ? 'checked' }}
+                        value="agent"
+                        {{ type == 'agent' ? 'checked' }}
                         data-action="form-new-authorization#refresh"
                     />
 
-                    <label for="type-operational">
-                        {{ 'roles.type.operational' | trans }}
+                    <label for="type-agent">
+                        {{ 'roles.type.agent' | trans }}
                     </label>
                 </div>
 

@@ -109,11 +109,11 @@
             </div>
         {% endfor %}
 
-        {% if type == 'operational' %}
-            {# This permission is inherent in the operational roles and cannot
+        {% if type == 'agent' %}
+            {# This permission is inherent in the agent roles and cannot
              # be unset. In fact, it doesn't even exist as a permission in the
              # code, it is only implied by the type of the role.
-             # This checkbox exists only to make it clear that operational
+             # This checkbox exists only to make it clear that agent
              # roles implies that these users can be assigned to tickets.
              #}
 
