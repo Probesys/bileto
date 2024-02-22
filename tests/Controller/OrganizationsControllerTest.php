@@ -105,9 +105,11 @@ class OrganizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = 'My organization';
 
-        $client->request('GET', '/organizations/new');
-        $crawler = $client->submitForm('form-create-organization-submit', [
-            'name' => $name,
+        $client->request('POST', '/organizations/new', [
+            'organization' => [
+                '_token' => $this->generateCsrfToken($client, 'organization'),
+                'name' => $name,
+            ],
         ]);
 
         $this->assertResponseRedirects('/organizations', 302);
@@ -125,11 +127,13 @@ class OrganizationsControllerTest extends WebTestCase
         $name = '';
 
         $client->request('POST', '/organizations/new', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
-            'name' => $name,
+            'organization' => [
+                '_token' => $this->generateCsrfToken($client, 'organization'),
+                'name' => $name,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'Enter a name');
+        $this->assertSelectorTextContains('#organization_name-error', 'Enter a name');
         $this->assertSame(0, OrganizationFactory::count());
     }
 
@@ -142,11 +146,13 @@ class OrganizationsControllerTest extends WebTestCase
         $name = str_repeat('a', 256);
 
         $client->request('POST', '/organizations/new', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
-            'name' => $name,
+            'organization' => [
+                '_token' => $this->generateCsrfToken($client, 'organization'),
+                'name' => $name,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 255 characters');
+        $this->assertSelectorTextContains('#organization_name-error', 'Enter a name of less than 255 characters');
         $this->assertSame(0, OrganizationFactory::count());
     }
 
@@ -159,11 +165,13 @@ class OrganizationsControllerTest extends WebTestCase
         $name = 'My organization';
 
         $client->request('POST', '/organizations/new', [
-            '_csrf_token' => 'not a token',
-            'name' => $name,
+            'organization' => [
+                '_token' => 'not a token',
+                'name' => $name,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->assertSelectorTextContains('#organization-error', 'The security token is invalid');
         $this->assertSame(0, OrganizationFactory::count());
     }
 
@@ -178,8 +186,10 @@ class OrganizationsControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request('POST', '/organizations/new', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization'),
-            'name' => $name,
+            'organization' => [
+                '_token' => $this->generateCsrfToken($client, 'organization'),
+                'name' => $name,
+            ],
         ]);
     }
 
@@ -266,8 +276,10 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
-            'name' => $newName,
+            'organization' => [
+                '_token' => $this->generateCsrfToken($client, 'organization'),
+                'name' => $newName,
+            ],
         ]);
 
         $this->assertResponseRedirects("/organizations/{$organization->getUid()}/settings", 302);
@@ -288,11 +300,13 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
-            'name' => $newName,
+            'organization' => [
+                '_token' => $this->generateCsrfToken($client, 'organization'),
+                'name' => $newName,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 255 characters');
+        $this->assertSelectorTextContains('#organization_name-error', 'Enter a name of less than 255 characters');
         $organization->refresh();
         $this->assertSame($oldName, $organization->getName());
     }
@@ -310,11 +324,13 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
-            '_csrf_token' => 'not a token',
-            'name' => $newName,
+            'organization' => [
+                '_token' => 'not a token',
+                'name' => $newName,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->assertSelectorTextContains('#organization-error', 'The security token is invalid');
         $organization->refresh();
         $this->assertSame($oldName, $organization->getName());
     }
@@ -334,8 +350,10 @@ class OrganizationsControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update organization'),
-            'name' => $newName,
+            'organization' => [
+                '_token' => $this->generateCsrfToken($client, 'organization'),
+                'name' => $newName,
+            ],
         ]);
     }
 

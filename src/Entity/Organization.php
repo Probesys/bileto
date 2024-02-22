@@ -72,6 +72,7 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
 
     public function __construct()
     {
+        $this->name = '';
         $this->tickets = new ArrayCollection();
         $this->authorizations = new ArrayCollection();
     }

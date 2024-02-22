@@ -7,6 +7,7 @@
 namespace App\Controller;
 
 use App\Entity\Organization;
+use App\Form\Type\OrganizationType;
 use App\Repository\OrganizationRepository;
 use App\Security\Authorizer;
 use App\Service\Sorter\OrganizationSorter;
@@ -43,8 +44,11 @@ class OrganizationsController extends BaseController
     {
         $this->denyAccessUnlessGranted('admin:create:organizations');
 
+        $organization = new Organization();
+        $form = $this->createForm(OrganizationType::class, $organization);
+
         return $this->render('organizations/new.html.twig', [
-            'name' => '',
+            'form' => $form,
         ]);
     }
 
@@ -57,30 +61,16 @@ class OrganizationsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:create:organizations');
 
-        /** @var string $name */
-        $name = $request->request->get('name', '');
+        $form = $this->createForm(OrganizationType::class);
+        $form->handleRequest($request);
 
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        if (!$this->isCsrfTokenValid('create organization', $csrfToken)) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->renderBadRequest('organizations/new.html.twig', [
-                'name' => $name,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'form' => $form,
             ]);
         }
 
-        $organization = new Organization();
-        $organization->setName($name);
-
-        $errors = $validator->validate($organization);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('organizations/new.html.twig', [
-                'name' => $name,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
+        $organization = $form->getData();
         $orgaRepository->save($organization, true);
 
         return $this->redirectToRoute('organizations');
@@ -109,9 +99,11 @@ class OrganizationsController extends BaseController
     {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
 
+        $form = $this->createForm(OrganizationType::class, $organization);
+
         return $this->render('organizations/settings.html.twig', [
             'organization' => $organization,
-            'name' => $organization->getName(),
+            'form' => $form,
         ]);
     }
 
@@ -125,31 +117,17 @@ class OrganizationsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
 
-        /** @var string $name */
-        $name = $request->request->get('name', '');
+        $form = $this->createForm(OrganizationType::class, $organization);
+        $form->handleRequest($request);
 
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        if (!$this->isCsrfTokenValid('update organization', $csrfToken)) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->renderBadRequest('organizations/settings.html.twig', [
                 'organization' => $organization,
-                'name' => $name,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'form' => $form,
             ]);
         }
 
-        $organization->setName($name);
-
-        $errors = $validator->validate($organization);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('organizations/settings.html.twig', [
-                'organization' => $organization,
-                'name' => $name,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
+        $organization = $form->getData();
         $orgaRepository->save($organization, true);
 
         $this->addFlash('success', new TranslatableMessage('notifications.saved'));

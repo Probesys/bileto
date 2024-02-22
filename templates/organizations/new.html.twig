@@ -17,48 +17,9 @@
             <h1>{{ 'organizations.new.title' | trans }}</h1>
         </div>
 
-        <form action="{{ path('create organization') }}" method="post" class="wrapper wrapper--small flow">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization') }}">
-
-            {% if error %}
-                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-            {% endif %}
-
-            <div class="flow flow--small">
-                <label for="name">
-                    {{ 'organizations.name' | trans }}
-                    <small class="text--secondary">
-                        {{ 'forms.max_chars' | trans({ number: 255 }) }}
-                    </small>
-                </label>
-
-                {% if errors.name is defined %}
-                    <p class="form__error" role="alert" id="name-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.name }}
-                    </p>
-                {% endif %}
-
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value="{{ name }}"
-                    required
-                    autofocus
-                    maxlength="255"
-                    {% if errors.name is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="name-error"
-                    {% endif %}
-                />
-            </div>
-
-            <div class="form__actions">
-                <button id="form-create-organization-submit" class="button--primary" type="submit">
-                    {{ 'organizations.new.submit' | trans }}
-                </button>
-            </div>
-        </form>
+        {{ include('organizations/_form.html.twig', {
+            'form': form,
+            'submit_label': 'organizations.new.submit' | trans,
+        }) }}
     </main>
 {% endblock %}
