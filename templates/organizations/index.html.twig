@@ -30,13 +30,13 @@
                 </p>
             </div>
 
-            <ul class="list--padded list--border list--nostyle">
+            <div class="grid">
                 {% for organization in organizations %}
-                    <li class="flow flow--small" data-test="organization-item">
-                        <a href="{{ path('organization', { uid: organization.uid }) }}">
+                    <div class="card flow" data-test="organization-item">
+                        <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">
                             {{ organization.name }}
                         </a>
-                    </li>
+                    </div>
                 {% endfor %}
             </div>
         </div>

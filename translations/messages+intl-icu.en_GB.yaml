@@ -100,7 +100,6 @@ home.all_your_tickets: 'See all your tickets'
 home.new_ticket: 'New ticket'
 home.no_tickets: 'No tickets'
 home.title: 'Welcome to Bileto'
-home.your_organizations: '{count, plural, one {Your organization} other {Your organizations}}'
 home.your_tickets: 'Your tickets'
 hours_formatter.hours: '{hours}h'
 hours_formatter.hours_and_minutes: "{hours}h\_{minutes}m"
