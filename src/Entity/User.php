@@ -110,10 +110,15 @@ class User implements
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $ldapIdentifier = null;
 
+    /** @var Collection<int, Team> */
+    #[ORM\ManyToMany(targetEntity: Team::class, mappedBy: 'agents')]
+    private Collection $teams;
+
     public function __construct()
     {
         $this->password = '';
         $this->authorizations = new ArrayCollection();
+        $this->teams = new ArrayCollection();
     }
 
     public function getEmail(): ?string
@@ -272,5 +277,13 @@ class User implements
         } else {
             return 'ldap';
         }
+    }
+
+    /**
+     * @return Collection<int, Team>
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
     }
 }
