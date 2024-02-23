@@ -1,0 +1,29 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'settings' %}
+
+{% block title %}{{ 'teams.new.title' | trans }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('settings/_sidebar.html.twig', { current: 'teams' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow">
+        <div class="layout__breadcrumb">
+            <a href="{{ path('teams') }}">{{ 'teams.index.title' | trans }}</a>
+            <h1>{{ 'teams.new.title' | trans }}</h1>
+        </div>
+
+        {{ include('teams/_form.html.twig', {
+            'form': form,
+            'submit_label': 'teams.new.submit' | trans,
+        }) }}
+    </main>
+{% endblock %}

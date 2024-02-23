@@ -1,0 +1,42 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{{ form_start(form, { attr: {
+    'class': 'wrapper wrapper--small flow',
+}}) }}
+    {{ form_errors(form) }}
+
+    <div class="flow flow--small">
+        <label for="{{ field_id(form.name) }}">
+            {{ 'teams.name' | trans }}
+
+            <small class="text--secondary">
+                {{ 'forms.max_chars' | trans({ number: 255 }) }}
+            </small>
+        </label>
+
+        {{ form_errors(form.name) }}
+
+        <input
+            type="text"
+            id="{{ field_id(form.name) }}"
+            name="{{ field_name(form.name) }}"
+            value="{{ field_value(form.name) }}"
+            required
+            maxlength="50"
+            {% if field_has_errors(form.name) %}
+                aria-invalid="true"
+                aria-errormessage="{{ field_id(form.name, 'error') }}"
+            {% endif %}
+        />
+    </div>
+
+    <div class="form__actions">
+        <button class="button--primary" type="submit">
+            {{ submit_label }}
+        </button>
+    </div>
+{{ form_end(form) }}

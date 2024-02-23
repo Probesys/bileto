@@ -244,6 +244,14 @@ roles.type.user: User
 settings.index.no_access: 'You don’t have access to the administration.'
 settings.index.no_access_advice: 'Your administrator role has probably no permissions. You should contact another administrator to fix this.'
 settings.index.title: Settings
+teams.index.agents: '{count, plural, =0 {No agents} one {1 agent} other {# agents}}'
+teams.index.authorizations: '{count, plural, =0 {No authorizations} one {1 authorization} other {# authorizations}}'
+teams.index.new_team: 'New team'
+teams.index.number: '{count, plural, =0 {No teams} one {1 team} other {# teams}}'
+teams.index.title: 'Teams & Agents'
+teams.name: Name
+teams.new.submit: 'Create the team'
+teams.new.title: 'New team'
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee

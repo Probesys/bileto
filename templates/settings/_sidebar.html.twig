@@ -23,6 +23,19 @@
             </li>
         {% endif %}
 
+        {% if is_granted('admin:manage:agents') %}
+            <li class="sidebar__item">
+                <a
+                    class="sidebar__anchor"
+                    href="{{ path('teams') }}"
+                    {{ current == 'teams' ? 'aria-current="page"' }}
+                >
+                    {{ icon('headset') }}
+                    {{ 'teams.index.title' | trans }}
+                </a>
+            </li>
+        {% endif %}
+
         {% if is_granted('admin:manage:users') %}
             <li class="sidebar__item">
                 <a
