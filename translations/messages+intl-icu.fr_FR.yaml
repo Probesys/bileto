@@ -47,6 +47,9 @@ advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incide
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: "Les valeurs possibles pour «\_type\_» sont\_: <code>incident</code> et <code>request</code>."
 advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
+authorizations.revoke: Révoquer
+authorizations.revoke.confirm: "Êtes-vous sûr de vouloir révoquer cette autorisation\_?"
+authorizations.revoke.disabled: 'Vous ne pouvez pas révoquer cette autorisation.'
 common.warning: Attention
 contracts.alerts.edit.date_alert.after: 'jours de la fin du contrat.'
 contracts.alerts.edit.date_alert.before: 'Alerter à'
@@ -385,9 +388,6 @@ tickets.urgency.high: Haute
 tickets.urgency.low: Basse
 tickets.urgency.medium: Moyenne
 users.authorizations.index.new_authorization: 'Donner une autorisation'
-users.authorizations.index.revoke: Révoquer
-users.authorizations.index.revoke.confirm: "Êtes-vous sûr de vouloir révoquer cette autorisation\_?"
-users.authorizations.index.revoke.disabled: 'Vous ne pouvez pas révoquer cette autorisation.'
 users.authorizations.index.title: 'Autorisations ({name})'
 users.authorizations.new.global: Global
 users.authorizations.new.organization_caption: 'L’autorisation peut être limitée à une organisation spécifique, ou appliquée globalement.'

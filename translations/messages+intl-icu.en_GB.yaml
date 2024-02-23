@@ -47,6 +47,9 @@ advanced_search_syntax.qualifiers.type.example1: 'Tickets of type “incident”
 advanced_search_syntax.qualifiers.type.title: Type
 advanced_search_syntax.qualifiers.type.values: 'The possible values for “type“ are: <code>incident</code> and <code>request</code>.'
 advanced_search_syntax.title: 'Quick reference for the advanced syntax'
+authorizations.revoke: Revoke
+authorizations.revoke.confirm: 'Are you sure that you want to revoke this authorization?'
+authorizations.revoke.disabled: 'You can’t revoke this authorization.'
 common.warning: Warning
 contracts.alerts.edit.date_alert.after: 'days before the end of the contract.'
 contracts.alerts.edit.date_alert.before: Alert
@@ -385,9 +388,6 @@ tickets.urgency.high: High
 tickets.urgency.low: Low
 tickets.urgency.medium: Medium
 users.authorizations.index.new_authorization: 'Give an authorization'
-users.authorizations.index.revoke: Revoke
-users.authorizations.index.revoke.confirm: 'Are you sure that you want to revoke this authorization?'
-users.authorizations.index.revoke.disabled: 'You can’t revoke this authorization.'
 users.authorizations.index.title: 'Authorizations ({name})'
 users.authorizations.new.global: Global
 users.authorizations.new.organization_caption: 'The authorization can be limited to a specific organization, or be applied globally.'

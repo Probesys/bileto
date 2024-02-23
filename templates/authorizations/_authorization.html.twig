@@ -1,0 +1,62 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div class="card flow" data-test="authorization-item">
+    <div class="card__title">
+        {% if authorization.role.type == 'super' %}
+            {{ icon('crown') }}
+            {{ 'roles.super_admin' | trans }}
+        {% else %}
+            {{ authorization.role.name }}
+        {% endif %}
+    </div>
+
+    <div class="card__body flow flow--small text--center">
+        {% if authorization.role.type == 'agent' or authorization.role.type == 'user' %}
+            <div>
+                {% if authorization.role.type == 'agent' %}
+                    {{ 'roles.type.agent' | trans }}
+                {% else %}
+                    {{ 'roles.type.user' | trans }}
+                {% endif %}
+            </div>
+
+            <div class="text--secondary">
+                {% if authorization.organization %}
+                    {{ authorization.organization.name }}
+                {% else %}
+                    {{ 'roles.scope_global' | trans }}
+                {% endif %}
+            </div>
+        {% else %}
+            <div>
+                {{ 'roles.type.admin' | trans }}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if (
+        authorization.role.type == 'super' and (
+            not is_granted('admin:*') or
+            app.user.id == authorization.holder.id
+        )
+    ) %}
+        <p class="text--secondary text--center text--small">
+            {{ 'authorizations.revoke.disabled' | trans }}
+        </p>
+    {% else %}
+        <form
+            class="text--center"
+            method="post"
+            action="{{ path('delete user authorization', { uid: authorization.uid }) }}"
+        >
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete user authorization') }}">
+            <button type="submit" data-turbo-confirm="{{ 'authorizations.revoke.confirm' | trans }}">
+                {{ 'authorizations.revoke' | trans }}
+            </button>
+        </form>
+    {% endif %}
+</div>
