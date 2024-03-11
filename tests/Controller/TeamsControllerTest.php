@@ -185,4 +185,35 @@ class TeamsControllerTest extends WebTestCase
             ],
         ]);
     }
+
+    public function testGetShowRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne([
+            'name' => 'foo',
+        ]);
+
+        $client->request('GET', "/teams/{$team->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', $team->getName());
+    }
+
+    public function testGetShowFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $team = TeamFactory::createOne([
+            'name' => 'foo',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/teams/{$team->getUid()}");
+    }
 }

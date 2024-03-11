@@ -1,0 +1,65 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'settings' %}
+
+{% block title %}{{ team.name }}{% endblock %}
+
+{% block sidebar %}
+    {{ include('settings/_sidebar.html.twig', { current: 'teams' }, with_context = false) }}
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body flow flow--larger">
+        <div class="layout__breadcrumb">
+            <a href="{{ path('teams') }}">{{ 'teams.index.title' | trans }}</a>
+            <h1>{{ team.name }}</h1>
+        </div>
+
+        <div class="wrapper wrapper--large flow">
+            <h2>{{ 'teams.show.agents.title' | trans }}</h2>
+
+            <div class="row row--center row--always flow">
+                <a href="{{ path('new team agent', { uid: team.uid }) }}" class="anchor--action">
+                    {{ icon('plus') }}
+                    {{ 'teams.show.agents.new' | trans }}
+                </a>
+
+                {% if agents|length > 0 %}
+                    <p class="text--secondary">
+                        {{ 'teams.show.agents.number' | trans({ count: agents|length }) }}
+                    </p>
+                {% endif %}
+            </div>
+
+            {% if agents|length > 0 %}
+                <ul class="list--padded list--border list--nostyle">
+                    {% for user in agents %}
+                        <li data-test="user-item">
+                            {{ user.displayName }}
+
+                            {% if user == app.user %}
+                                ({{ 'users.yourself' | trans }})
+                            {% endif %}
+
+                            {% if user.name %}
+                                <span class="text--secondary text--small">
+                                    {{ user.email }}
+                                </span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="placeholder">
+                    {{ 'teams.show.agents.none' | trans }}
+                </p>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

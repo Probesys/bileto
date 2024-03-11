@@ -39,7 +39,7 @@
                     {% for team in teams %}
                         <li class="row" data-test="team-item">
                             <span class="row__item--extend">
-                                <a href="#">
+                                <a href="{{ path('team', { uid: team.uid }) }}">
                                     {{ team.name }}
                                 </a>
                             </span>
