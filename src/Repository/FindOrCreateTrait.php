@@ -6,11 +6,16 @@
 
 namespace App\Repository;
 
+/**
+ * @template TEntity of object
+ */
 trait FindOrCreateTrait
 {
     /**
      * @param array<string,mixed> $criteria
      * @param array<string,mixed> $valuesToBuild
+     *
+     * @return TEntity
      */
     public function findOneOrBuildBy(array $criteria, array $valuesToBuild = []): object
     {
@@ -38,6 +43,8 @@ trait FindOrCreateTrait
     /**
      * @param array<string,mixed> $criteria
      * @param array<string,mixed> $valuesToCreate
+     *
+     * @return TEntity
      */
     public function findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false): object
     {

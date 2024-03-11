@@ -33,6 +33,7 @@ class UserRepository extends ServiceEntityRepository implements
     UserLoaderInterface
 {
     use UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<User> */
     use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)

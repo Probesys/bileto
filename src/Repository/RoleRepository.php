@@ -26,6 +26,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class RoleRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<Role> */
     use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)

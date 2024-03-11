@@ -32,6 +32,7 @@ use Doctrine\ORM\Query\Expr;
 class TicketRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<Ticket> */
     use FindOrCreateTrait;
 
     private SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder;

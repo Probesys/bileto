@@ -25,6 +25,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class MailboxRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<Mailbox> */
     use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)

@@ -26,6 +26,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class OrganizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<Organization> */
     use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)

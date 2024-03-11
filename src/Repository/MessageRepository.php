@@ -25,6 +25,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class MessageRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<Message> */
     use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)
