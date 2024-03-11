@@ -100,4 +100,39 @@ class AgentsController extends BaseController
             'uid' => $team->getUid(),
         ]);
     }
+
+    #[Route('/teams/{uid}/agents/deletion', name: 'remove team agent', methods: ['POST'])]
+    public function remove(
+        Team $team,
+        Request $request,
+        UserRepository $userRepository,
+        TeamRepository $teamRepository,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:agents');
+
+        /** @var string */
+        $agentUid = $request->request->get('agentUid', '');
+
+        /** @var string */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('remove team agent', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+
+            return $this->redirectToRoute('team', [
+                'uid' => $team->getUid(),
+            ]);
+        }
+
+        $agent = $userRepository->findOneBy(['uid' => $agentUid]);
+        if ($agent) {
+            $team->removeAgent($agent);
+            $teamRepository->save($team, true);
+        }
+
+        return $this->redirectToRoute('team', [
+            'uid' => $team->getUid(),
+        ]);
+    }
 }

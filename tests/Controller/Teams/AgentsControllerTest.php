@@ -164,4 +164,94 @@ class AgentsControllerTest extends WebTestCase
             'agentEmail' => $agent->getEmail(),
         ]);
     }
+
+    public function testPostDeleteRemovesTheAgentFromTheTeam(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $agent = UserFactory::createOne();
+        $team = TeamFactory::createOne();
+
+        $team->addAgent($agent->object());
+        /** @var \App\Repository\TeamRepository */
+        $teamRepository = TeamFactory::repository();
+        $teamRepository->save($team->object(), true);
+
+        $this->assertTrue($team->hasAgent($agent->object()));
+
+        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
+            'agentUid' => $agent->getUid(),
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+        $this->assertFalse($team->hasAgent($agent->object()));
+    }
+
+    public function testPostDeleteDoesNotFailIfAgentUidDoesNotExist(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne();
+
+        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
+            'agentUid' => 'not a uid',
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $agent = UserFactory::createOne();
+        $team = TeamFactory::createOne();
+
+        $team->addAgent($agent->object());
+        /** @var \App\Repository\TeamRepository */
+        $teamRepository = TeamFactory::repository();
+        $teamRepository->save($team->object(), true);
+
+        $this->assertTrue($team->hasAgent($agent->object()));
+
+        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+            '_csrf_token' => 'not a token',
+            'agentUid' => $agent->getUid(),
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        $this->assertTrue($team->hasAgent($agent->object()));
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $agent = UserFactory::createOne();
+        $team = TeamFactory::createOne();
+
+        $team->addAgent($agent->object());
+        /** @var \App\Repository\TeamRepository */
+        $teamRepository = TeamFactory::repository();
+        $teamRepository->save($team->object(), true);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
+            'agentUid' => $agent->getUid(),
+        ]);
+    }
 }

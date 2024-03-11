@@ -40,18 +40,35 @@
             {% if agents|length > 0 %}
                 <ul class="list--padded list--border list--nostyle">
                     {% for user in agents %}
-                        <li data-test="user-item">
-                            {{ user.displayName }}
+                        <li class="row" data-test="user-item">
+                            <span class="row__item--extend">
+                                {{ user.displayName }}
 
-                            {% if user == app.user %}
-                                ({{ 'users.yourself' | trans }})
-                            {% endif %}
+                                {% if user == app.user %}
+                                    ({{ 'users.yourself' | trans }})
+                                {% endif %}
 
-                            {% if user.name %}
-                                <span class="text--secondary text--small">
-                                    {{ user.email }}
-                                </span>
-                            {% endif %}
+                                {% if user.name %}
+                                    <span class="text--secondary text--small">
+                                        {{ user.email }}
+                                    </span>
+                                {% endif %}
+                            </span>
+
+                            <div class="row__item--noshrink row row--always row--center flow flow--small">
+                                <form method="post" action="{{ path('remove team agent', { uid: team.uid }) }}">
+                                    <input type="hidden" name="agentUid" value="{{ user.uid }}" />
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('remove team agent') }}">
+
+                                    <button
+                                        class="button--anchor"
+                                        type="submit"
+                                        data-turbo-confirm="{{ 'teams.show.agents.remove.confirm' | trans }}"
+                                    >
+                                        {{ 'teams.show.agents.remove' | trans }}
+                                    </button>
+                                </form>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
