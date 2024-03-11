@@ -10,16 +10,16 @@ trait FindOrCreateTrait
 {
     /**
      * @param array<string,mixed> $criteria
-     * @param array<string,mixed> $valuesToCreate
+     * @param array<string,mixed> $valuesToBuild
      */
-    public function findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false): object
+    public function findOneOrBuildBy(array $criteria, array $valuesToBuild = []): object
     {
         $entity = $this->findOneBy($criteria);
         if ($entity) {
             return $entity;
         }
 
-        $values = array_merge($criteria, $valuesToCreate);
+        $values = array_merge($criteria, $valuesToBuild);
 
         $entityClassName = $this->getClassName();
         $entity = new $entityClassName();
@@ -32,10 +32,25 @@ trait FindOrCreateTrait
             $entity->$setterMethod($value);
         }
 
-        $this->getEntityManager()->persist($entity);
+        return $entity;
+    }
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
+    /**
+     * @param array<string,mixed> $criteria
+     * @param array<string,mixed> $valuesToCreate
+     */
+    public function findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false): object
+    {
+        $entity = $this->findOneOrBuildBy($criteria, $valuesToCreate);
+
+        $entityManager = $this->getEntityManager();
+
+        if (!$entityManager->contains($entity)) {
+            $entityManager->persist($entity);
+
+            if ($flush) {
+                $this->getEntityManager()->flush();
+            }
         }
 
         return $entity;
