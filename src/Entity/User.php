@@ -112,6 +112,7 @@ class User implements
 
     public function __construct()
     {
+        $this->password = '';
         $this->authorizations = new ArrayCollection();
     }
 

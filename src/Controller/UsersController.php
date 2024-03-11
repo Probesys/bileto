@@ -103,7 +103,6 @@ class UsersController extends BaseController
         $newUser->setEmail($email);
         $newUser->setName($name);
         $newUser->setLocale($user->getLocale());
-        $newUser->setPassword('');
         $newUser->setOrganization($organization);
 
         if ($password !== '') {
