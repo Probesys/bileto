@@ -30,7 +30,6 @@ class AppVoter extends Voter
             (str_starts_with($attribute, 'admin:') && $subject === null) ||
             (str_starts_with($attribute, 'orga:') && (
                 $subject instanceof Organization ||
-                $subject === 'global' ||
                 $subject === 'any'
             ))
         );
@@ -46,35 +45,21 @@ class AppVoter extends Voter
         }
 
         if (str_starts_with($attribute, 'orga:') && $subject === 'any') {
-            $authorizations = $this->authorizationRepo->findBy([
-                'holder' => $user,
-            ]);
-
-            foreach ($authorizations as $authorization) {
-                if ($authorization->getRole()->hasPermission($attribute)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        if (str_starts_with($attribute, 'orga:') && $subject === 'global') {
-            $authorization = $this->authorizationRepo->getOrgaAuthorizationFor($user, null);
+            $authorizations = $this->authorizationRepo->findBy(['holder' => $user]);
         } elseif (str_starts_with($attribute, 'orga:') && $subject instanceof Organization) {
-            /** @var Organization $organization */
-            $organization = $subject;
-            $authorization = $this->authorizationRepo->getOrgaAuthorizationFor($user, $organization);
+            $authorizations = $this->authorizationRepo->getOrgaAuthorizationsFor($user, $subject);
         } elseif (str_starts_with($attribute, 'admin:')) {
-            $authorization = $this->authorizationRepo->getAdminAuthorizationFor($user);
+            $authorizations = $this->authorizationRepo->getAdminAuthorizationsFor($user);
         } else {
-            $authorization = null;
+            $authorizations = [];
         }
 
-        if (!$authorization) {
-            return false;
+        foreach ($authorizations as $authorization) {
+            if ($authorization->getRole()->hasPermission($attribute)) {
+                return true;
+            }
         }
 
-        return $authorization->getRole()->hasPermission($attribute);
+        return false;
     }
 }

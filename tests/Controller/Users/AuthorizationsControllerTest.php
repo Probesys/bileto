@@ -261,53 +261,6 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->assertSame(1, AuthorizationFactory::count());
     }
 
-    public function testPostCreateFailsIfUserHasAlreadyAnAdminRole(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
-        $role = RoleFactory::createOne([
-            'type' => 'admin',
-        ]);
-
-        $client->request('POST', "/users/{$user->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
-            'role' => $role->getUid(),
-        ]);
-
-        $this->assertSelectorTextContains(
-            '[data-test="alert-error"]',
-            'You cannot grant another admin role to this user',
-        );
-        $this->assertSame(1, AuthorizationFactory::count());
-    }
-
-    public function testPostCreateFailsIfUserHasAlreadyAnOrgaRoleOnTheGivenOrganization(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
-        $role = RoleFactory::createOne([
-            'type' => 'agent',
-        ]);
-        $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
-
-        $client->request('POST', "/users/{$user->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
-            'role' => $role->getUid(),
-            'organization' => $organization->getUid(),
-        ]);
-
-        $this->assertSelectorTextContains(
-            '[data-test="alert-error"]',
-            'You cannot grant another role to this user in this organization'
-        );
-        $this->assertSame(2, AuthorizationFactory::count());
-    }
-
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();

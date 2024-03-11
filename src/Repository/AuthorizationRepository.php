@@ -60,7 +60,10 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
         $this->save($authorization, true);
     }
 
-    public function getAdminAuthorizationFor(User $user): ?Authorization
+    /**
+     * @return Authorization[]
+     */
+    public function getAdminAuthorizationsFor(User $user): array
     {
         $entityManager = $this->getEntityManager();
 
@@ -73,52 +76,27 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
         SQL);
         $query->setParameter('user', $user);
 
-        return $query->getOneOrNullResult();
+        return $query->getResult();
     }
 
-    public function getOrgaAuthorizationFor(User $user, ?Organization $organization): ?Authorization
+    /**
+     * @return Authorization[]
+     */
+    public function getOrgaAuthorizationsFor(User $user, Organization $organization): array
     {
         $entityManager = $this->getEntityManager();
 
-        if ($organization) {
-            $query = $entityManager->createQuery(<<<SQL
-                SELECT a, r
-                FROM App\Entity\Authorization a
-                INDEX BY a.organization
-                JOIN a.role r
-                WHERE a.holder = :user
-                AND (a.organization = :organization OR a.organization IS NULL)
-                AND (r.type = 'user' OR r.type = 'agent')
-            SQL);
-            $query->setParameter('user', $user);
-            $query->setParameter('organization', $organization);
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT a, r
+            FROM App\Entity\Authorization a
+            JOIN a.role r
+            WHERE a.holder = :user
+            AND (a.organization = :organization OR a.organization IS NULL)
+            AND (r.type = 'user' OR r.type = 'agent')
+        SQL);
+        $query->setParameter('user', $user);
+        $query->setParameter('organization', $organization);
 
-            $authorizationsIndexByOrgaIds = $query->getResult();
-            if (count($authorizationsIndexByOrgaIds) === 0) {
-                // no authorization? too bad
-                return null;
-            } elseif (count($authorizationsIndexByOrgaIds) === 1) {
-                // There is only one authorization given for this organization.
-                return array_pop($authorizationsIndexByOrgaIds);
-            } else {
-                // There are several authorizations given (i.e. a global and a
-                // scoped), return only the scoped one as it's more specific.
-                unset($authorizationsIndexByOrgaIds[null]);
-                return array_pop($authorizationsIndexByOrgaIds);
-            }
-        } else {
-            $query = $entityManager->createQuery(<<<SQL
-                SELECT a, r
-                FROM App\Entity\Authorization a
-                INDEX BY a.organization
-                JOIN a.role r
-                WHERE a.holder = :user
-                AND a.organization IS NULL
-                AND (r.type = 'user' OR r.type = 'agent')
-            SQL);
-            $query->setParameter('user', $user);
-
-            return $query->getOneOrNullResult();
-        }
+        return $query->getResult();
     }
 }

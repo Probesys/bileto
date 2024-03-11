@@ -40,15 +40,10 @@ It's called the scope of the authorization.
 The scope is only relevant to the Agent and User roles.
 Indeed, the Administrator roles give permissions outside of the organizations.
 
-## Authorizations conflicts
+## Multiple authorizations
 
-A user cannot have two authorizations concerning the same scope.
-Bileto refuses to give two authorizations concerning the same organization to a user.
-
-However, two scopes can be in conflict (e.g. an authorization with a global scope, and another one associated to an organization).
-When the scope of two authorizations conflict with each other, it's the most specific one which applies (organization > global).
-
-Also, only one administrator role can be given to a user.
+A user can have more than one authorization concerning the same scope.
+In this case, Bileto combines the permissions given by the different authorizations.
 
 ## The “Super” role
 
@@ -84,7 +79,7 @@ Only the method `getRoles()` of the `User` entity returns a "Symfony role" becau
 Documentation: [symfony.com](https://symfony.com/doc/current/security/voters.html)
 
 Bileto has a unique Voter to check the permission of a user: [`AppVoter`](/src/Security/AppVoter.php).
-It loads the applicable user authorization and related role, then it checks that the role includes the current checked permission.
+It loads the applicable user authorizations and related roles, then it checks that at least one role includes the current checked permission.
 
 #### How to check the permissions
 
@@ -126,13 +121,7 @@ In templates:
 {% endif %}
 ```
 
-You can check that a permission is given by a global authorization:
-
-```php
-$this->denyAccessUnlessGranted('orga:see', 'global');
-```
-
-Or that a permission is given at least by one authorization:
+You can check that a permission is given at least by one authorization:
 
 ```php
 $this->denyAccessUnlessGranted('orga:see', 'any');

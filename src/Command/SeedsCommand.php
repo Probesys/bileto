@@ -162,19 +162,19 @@ class SeedsCommand extends Command
             // Make sure that the users exist for the grant() method.
             $this->entityManager->flush();
 
-            if (!$this->authorizationRepository->getAdminAuthorizationFor($userAlix)) {
+            if (empty($this->authorizationRepository->getAdminAuthorizationsFor($userAlix))) {
                 $this->authorizationRepository->grant($userAlix, $roleSuper);
             }
 
-            if (!$this->authorizationRepository->getOrgaAuthorizationFor($userAlix, null)) {
+            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userAlix, $orgaFriendlyCoorp))) {
                 $this->authorizationRepository->grant($userAlix, $roleTech, null);
             }
 
-            if (!$this->authorizationRepository->getOrgaAuthorizationFor($userBenedict, null)) {
+            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userBenedict, $orgaFriendlyCoorp))) {
                 $this->authorizationRepository->grant($userBenedict, $roleSalesman, null);
             }
 
-            if (!$this->authorizationRepository->getOrgaAuthorizationFor($userCharlie, $orgaFriendlyCoorp)) {
+            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userCharlie, $orgaFriendlyCoorp))) {
                 $this->authorizationRepository->grant($userCharlie, $roleUser, $orgaFriendlyCoorp);
             }
 

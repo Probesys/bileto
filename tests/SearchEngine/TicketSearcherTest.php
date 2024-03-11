@@ -186,30 +186,6 @@ class TicketSearcherTest extends WebTestCase
         $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
     }
 
-    public function testGetTicketsTakesCareOfSpecificPermissions(): void
-    {
-        $client = static::createClient();
-        $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $organization = OrganizationFactory::createOne();
-        // orga:see:tickets:all is applied globally (i.e. to all organizations)
-        $this->grantOrga($user->object(), ['orga:see:tickets:all']);
-        // but we re-specify a specific role without this permission for this
-        // specific organization
-        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
-        $ticket = TicketFactory::createOne([
-            'organization' => $organization,
-        ]);
-        $ticketSearcher->setOrganization($organization->object());
-
-        $ticketsPagination = $ticketSearcher->getTickets();
-
-        $this->assertSame(0, $ticketsPagination->count);
-    }
-
     public function testGetTicketsReturnsTicketMatchingAQuery(): void
     {
         $client = static::createClient();

@@ -1,8 +1,6 @@
 authorization.cannot_revoke: 'You are not allowed to revoke this super-admin authorization.'
 authorization.role.invalid: 'Select a role from the list.'
 authorization.super.unauthorized: 'You are not allowed to grant super-admin authorization.'
-authorization.user.already_admin: 'You cannot grant another admin role to this user.'
-authorization.user.already_orga: 'You cannot grant another role to this user in this organization.'
 contract.end_at.greater_than_start_at: 'Enter a date greater than the start date.'
 contract.end_at.required: 'Enter an end date.'
 contract.max_hours.greater_than_zero: 'Enter a number of hours greater than zero.'

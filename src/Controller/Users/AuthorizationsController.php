@@ -161,34 +161,6 @@ class AuthorizationsController extends BaseController
             ]);
         }
 
-        if ($role->getType() === 'admin' || $role->getType() === 'super') {
-            $existingRole = $authorizationRepository->getAdminAuthorizationFor($holder);
-            if ($existingRole) {
-                return $this->renderBadRequest('users/authorizations/new.html.twig', [
-                    'organizations' => $organizations,
-                    'roles' => $roles,
-                    'user' => $holder,
-                    'type' => $type,
-                    'roleUid' => $roleUid,
-                    'organizationUid' => $organizationUid,
-                    'error' => $translator->trans('authorization.user.already_admin', [], 'errors'),
-                ]);
-            }
-        } else {
-            $existingRole = $authorizationRepository->getOrgaAuthorizationFor($holder, $organization);
-            if ($existingRole && $existingRole->getOrganization() === $organization) {
-                return $this->renderBadRequest('users/authorizations/new.html.twig', [
-                    'organizations' => $organizations,
-                    'roles' => $roles,
-                    'user' => $holder,
-                    'type' => $type,
-                    'roleUid' => $roleUid,
-                    'organizationUid' => $organizationUid,
-                    'error' => $translator->trans('authorization.user.already_orga', [], 'errors'),
-                ]);
-            }
-        }
-
         $authorizationRepository->grant($holder, $role, $organization);
 
         return $this->redirectToRoute('user authorizations', [
