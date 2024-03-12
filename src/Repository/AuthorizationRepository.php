@@ -9,6 +9,7 @@ namespace App\Repository;
 use App\Entity\Authorization;
 use App\Entity\Organization;
 use App\Entity\Role;
+use App\Entity\Team;
 use App\Entity\User;
 use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
@@ -58,6 +59,39 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
         $authorization->setRole($role);
         $authorization->setOrganization($organization);
         $this->save($authorization, true);
+    }
+
+    public function grantToTeam(User $user, Team $team): void
+    {
+        // Make sure to remove existing team authorizations of this user
+        $this->ungrantFromTeam($user, $team);
+
+        // Copy the team authorizations to the user.
+        $teamAuthorizations = $team->getTeamAuthorizations();
+        foreach ($teamAuthorizations as $teamAuthorization) {
+            $authorization = Authorization::fromTeamAuthorization($teamAuthorization);
+            $authorization->setHolder($user);
+
+            $this->getEntityManager()->persist($authorization);
+        }
+
+        $this->getEntityManager()->flush();
+    }
+
+    public function ungrantFromTeam(User $user, Team $team): void
+    {
+        $teamAuthorizations = $team->getTeamAuthorizations();
+
+        $authorizations = $this->findBy([
+            'holder' => $user,
+            'teamAuthorization' => $teamAuthorizations->toArray(),
+        ]);
+
+        foreach ($authorizations as $authorization) {
+            $this->getEntityManager()->remove($authorization);
+        }
+
+        $this->getEntityManager()->flush();
     }
 
     /**
