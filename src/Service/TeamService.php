@@ -52,4 +52,9 @@ class TeamService
         $this->teamAuthorizationRepository->save($teamAuthorization, true);
         $this->authorizationRepository->grantTeamAuthorization($team, $teamAuthorization);
     }
+
+    public function removeAuthorization(TeamAuthorization $teamAuthorization): void
+    {
+        $this->teamAuthorizationRepository->remove($teamAuthorization, true);
+    }
 }

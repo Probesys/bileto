@@ -8,6 +8,7 @@ namespace App\Tests\Controller\Teams;
 
 use App\Tests\AuthorizationHelper;
 use App\Tests\SessionHelper;
+use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\TeamFactory;
@@ -208,6 +209,77 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->request('POST', "/teams/{$team->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
             'role' => $role->getUid(),
+        ]);
+    }
+
+    public function testPostDeleteDeletesTeamAuthorizationAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne();
+        $teamAuthorization = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'teamAuthorization' => $teamAuthorization,
+        ]);
+
+        // We need to clear the entities or they will stay in memory. An option
+        // would be to set `cascade: ['remove']` on the Organization relations,
+        // but it would decrease the performance for no interest since we don't
+        // need it outside of the tests.
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
+        $doctrine = self::getContainer()->get('doctrine');
+        $entityManager = $doctrine->getManager();
+        $entityManager->clear();
+
+        $client->request('POST', "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete team authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+        TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne();
+        $teamAuthorization = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+        ]);
+
+        $client->request('POST', "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+            '_csrf_token' => 'not a token',
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        TeamAuthorizationFactory::assert()->exists(['id' => $teamAuthorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $team = TeamFactory::createOne();
+        $teamAuthorization = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete team authorization'),
         ]);
     }
 }

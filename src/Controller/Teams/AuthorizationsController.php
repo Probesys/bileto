@@ -8,6 +8,7 @@ namespace App\Controller\Teams;
 
 use App\Controller\BaseController;
 use App\Entity\Team;
+use App\Entity\TeamAuthorization;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\RoleRepository;
@@ -101,6 +102,34 @@ class AuthorizationsController extends BaseController
         }
 
         $teamService->createAuthorization($team, $role, $organization);
+
+        return $this->redirectToRoute('team', [
+            'uid' => $team->getUid(),
+        ]);
+    }
+
+    #[Route('/team-authorizations/{uid}/deletion', name: 'delete team authorization', methods: ['POST'])]
+    public function delete(
+        TeamAuthorization $teamAuthorization,
+        Request $request,
+        TeamService $teamService,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:agents');
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        $team = $teamAuthorization->getTeam();
+
+        if (!$this->isCsrfTokenValid('delete team authorization', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            return $this->redirectToRoute('team', [
+                'uid' => $team->getUid(),
+            ]);
+        }
+
+        $teamService->removeAuthorization($teamAuthorization);
 
         return $this->redirectToRoute('team', [
             'uid' => $team->getUid(),
