@@ -10,6 +10,7 @@ use App\Entity\Authorization;
 use App\Entity\Organization;
 use App\Entity\Role;
 use App\Entity\Team;
+use App\Entity\TeamAuthorization;
 use App\Entity\User;
 use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
@@ -89,6 +90,23 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
 
         foreach ($authorizations as $authorization) {
             $this->getEntityManager()->remove($authorization);
+        }
+
+        $this->getEntityManager()->flush();
+    }
+
+    public function grantTeamAuthorization(Team $team, TeamAuthorization $teamAuthorization): void
+    {
+        if ($team->getId() !== $teamAuthorization->getTeam()->getId()) {
+            throw new \DomainException('Cannot grant this team authorization as it’s not attached to the given team.');
+        }
+
+        $users = $team->getAgents();
+        foreach ($users as $user) {
+            $authorization = Authorization::fromTeamAuthorization($teamAuthorization);
+            $authorization->setHolder($user);
+
+            $this->getEntityManager()->persist($authorization);
         }
 
         $this->getEntityManager()->flush();

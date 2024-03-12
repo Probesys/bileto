@@ -78,5 +78,25 @@
                 </p>
             {% endif %}
         </div>
+
+        <div class="wrapper wrapper--large flow">
+            <h2>{{ 'teams.show.authorizations.title' | trans }}</h2>
+
+            <div class="grid">
+                <a class="card card--action" href="{{ path('new team authorization', { uid: team.uid }) }}">
+                    <span>
+                        {{ icon('plus') }}
+                        {{ 'teams.show.authorizations.new' | trans }}
+                    </span>
+                </a>
+
+                {% for authorization in teamAuthorizations %}
+                    {{ include('authorizations/_authorization.html.twig', {
+                        authorization: authorization,
+                        mode: 'team',
+                    }, with_context = false) }}
+                {% endfor %}
+            </div>
+        </div>
     </main>
 {% endblock %}
