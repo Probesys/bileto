@@ -23,6 +23,7 @@ import ScrollToController from '@/controllers/scroll_to_controller.js';
 import SwitchController from '@/controllers/switch_controller.js';
 import TabsController from '@/controllers/tabs_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
+import UserSelectorController from '@/controllers/user_selector_controller.js';
 
 const application = Application.start();
 application.register('button-select', ButtonSelectController);
@@ -43,6 +44,7 @@ application.register('scroll-to', ScrollToController);
 application.register('switch', SwitchController);
 application.register('tabs', TabsController);
 application.register('tinymce', TinymceController);
+application.register('user-selector', UserSelectorController);
 
 // Make sure to visit the response when receiving the `turbo:frame-missing` event.
 // This happens most of the time on redirection after submitting a form in a modal.

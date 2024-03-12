@@ -210,6 +210,7 @@ roles.new.title.agent: 'New agent role'
 roles.new.title.user: 'New user role'
 roles.permissions: Permissions
 roles.permissions.admin.create.organizations: 'Create the organizations'
+roles.permissions.admin.manage.agents: 'Manage the agents'
 roles.permissions.admin.manage.mailboxes: 'Manage the mailboxes'
 roles.permissions.admin.manage.roles: 'Manage the roles'
 roles.permissions.admin.manage.users: 'Manage the users'
@@ -243,6 +244,27 @@ roles.type.user: User
 settings.index.no_access: 'You don’t have access to the administration.'
 settings.index.no_access_advice: 'Your administrator role has probably no permissions. You should contact another administrator to fix this.'
 settings.index.title: Settings
+teams.agents.new.add_agent: 'Add the agent'
+teams.agents.new.enter_agent_email: 'Enter the agent’s email'
+teams.agents.new.go_to_create_agent: 'Create a new agent instead'
+teams.agents.new.go_to_select_agent: 'Select an agent instead'
+teams.agents.new.select_agent: 'Select an agent'
+teams.agents.new.title: 'New agent'
+teams.index.agents: '{count, plural, =0 {No agents} one {1 agent} other {# agents}}'
+teams.index.authorizations: '{count, plural, =0 {No authorizations} one {1 authorization} other {# authorizations}}'
+teams.index.new_team: 'New team'
+teams.index.none: 'No teams'
+teams.index.number: '{count, plural, =0 {No teams} one {1 team} other {# teams}}'
+teams.index.title: 'Teams & Agents'
+teams.name: Name
+teams.new.submit: 'Create the team'
+teams.new.title: 'New team'
+teams.show.agents.new: 'New agent'
+teams.show.agents.none: 'No agents'
+teams.show.agents.number: '{count, plural, =0 {No agents} one {1 agent} other {# agents}}'
+teams.show.agents.remove: Remove
+teams.show.agents.remove.confirm: 'Are you sure that you want to remove this agent from the team?'
+teams.show.agents.title: Agents
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee

@@ -19,6 +19,7 @@ class SettingsController extends BaseController
 
         $permissionsToRoutes = [
             'admin:manage:roles' => 'roles',
+            'admin:manage:agents' => 'teams',
             'admin:manage:users' => 'users',
             'admin:manage:mailboxes' => 'mailboxes',
         ];
