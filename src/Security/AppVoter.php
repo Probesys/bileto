@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * @extends Voter<string, string|Organization|null>
+ * @extends Voter<string, 'any'|Organization|null>
  */
 class AppVoter extends Voter
 {
@@ -44,9 +44,7 @@ class AppVoter extends Voter
             return false;
         }
 
-        if (str_starts_with($attribute, 'orga:') && $subject === 'any') {
-            $authorizations = $this->authorizationRepo->findBy(['holder' => $user]);
-        } elseif (str_starts_with($attribute, 'orga:') && $subject instanceof Organization) {
+        if (str_starts_with($attribute, 'orga:') && $subject !== null) {
             $authorizations = $this->authorizationRepo->getOrgaAuthorizationsFor($user, $subject);
         } elseif (str_starts_with($attribute, 'admin:')) {
             $authorizations = $this->authorizationRepo->getAdminAuthorizationsFor($user);

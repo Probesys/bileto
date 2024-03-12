@@ -80,23 +80,28 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
     }
 
     /**
+     * @param Organization|'any' $scope
      * @return Authorization[]
      */
-    public function getOrgaAuthorizationsFor(User $user, Organization $organization): array
+    public function getOrgaAuthorizationsFor(User $user, mixed $scope): array
     {
         $entityManager = $this->getEntityManager();
 
-        $query = $entityManager->createQuery(<<<SQL
-            SELECT a, r
-            FROM App\Entity\Authorization a
-            JOIN a.role r
-            WHERE a.holder = :user
-            AND (a.organization = :organization OR a.organization IS NULL)
-            AND (r.type = 'user' OR r.type = 'agent')
-        SQL);
-        $query->setParameter('user', $user);
-        $query->setParameter('organization', $organization);
+        $queryBuilder = $entityManager->createQueryBuilder();
+        $queryBuilder->select(['a', 'r']);
+        $queryBuilder->from('App\Entity\Authorization', 'a');
+        $queryBuilder->join('a.role', 'r');
+        $queryBuilder->where('a.holder = :user');
+        $queryBuilder->andWhere("r.type = 'user' OR r.type = 'agent'");
 
+        $queryBuilder->setParameter('user', $user);
+
+        if ($scope instanceof Organization) {
+            $queryBuilder->andWhere('a.organization = :organization OR a.organization IS NULL');
+            $queryBuilder->setParameter('organization', $scope);
+        }
+
+        $query = $queryBuilder->getQuery();
         return $query->getResult();
     }
 }
