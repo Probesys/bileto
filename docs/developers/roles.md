@@ -80,6 +80,7 @@ Documentation: [symfony.com](https://symfony.com/doc/current/security/voters.htm
 
 Bileto has a unique Voter to check the permission of a user: [`AppVoter`](/src/Security/AppVoter.php).
 It loads the applicable user authorizations and related roles, then it checks that at least one role includes the current checked permission.
+To improve the performance, the authorizations are cached to avoid too many database calls.
 
 #### How to check the permissions
 
