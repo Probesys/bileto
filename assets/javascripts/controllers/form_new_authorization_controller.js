@@ -19,12 +19,14 @@ export default class extends Controller {
     }
 
     refresh () {
-        const selectedType = this.element.querySelector('input[name="type"]:checked').value;
+        const selectedTypeNode = this.element.querySelector('input[name="type"]:checked');
+        const selectedType = selectedTypeNode ? selectedTypeNode.value : '';
 
         let selectedRole = '';
 
         this.roleOptionTargets.forEach((roleOption) => {
             const displayRole = (
+                selectedType === '' ||
                 roleOption.dataset.type === selectedType ||
                 (roleOption.dataset.type === 'super' && selectedType === 'admin')
             );

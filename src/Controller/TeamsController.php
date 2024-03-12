@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\Entity\Team;
 use App\Form\Type\TeamType;
 use App\Repository\TeamRepository;
+use App\Service\Sorter\AuthorizationSorter;
 use App\Service\Sorter\TeamSorter;
 use App\Service\Sorter\UserSorter;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,16 +69,23 @@ class TeamsController extends BaseController
     }
 
     #[Route('/teams/{uid}', name: 'team', methods: ['GET', 'HEAD'])]
-    public function show(Team $team, UserSorter $userSorter): Response
-    {
+    public function show(
+        Team $team,
+        UserSorter $userSorter,
+        AuthorizationSorter $authorizationSorter,
+    ): Response {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         $agents = $team->getAgents()->toArray();
         $userSorter->sort($agents);
 
+        $teamAuthorizations = $team->getTeamAuthorizations()->toArray();
+        $authorizationSorter->sort($teamAuthorizations);
+
         return $this->render('teams/show.html.twig', [
             'team' => $team,
             'agents' => $agents,
+            'teamAuthorizations' => $teamAuthorizations,
         ]);
     }
 }

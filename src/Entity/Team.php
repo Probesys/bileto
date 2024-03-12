@@ -63,10 +63,15 @@ class Team implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'teams')]
     private Collection $agents;
 
+    /** @var Collection<int, TeamAuthorization> */
+    #[ORM\OneToMany(mappedBy: 'team', targetEntity: TeamAuthorization::class)]
+    private Collection $teamAuthorizations;
+
     public function __construct()
     {
         $this->name = '';
         $this->agents = new ArrayCollection();
+        $this->teamAuthorizations = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -108,5 +113,13 @@ class Team implements MonitorableEntityInterface, UidEntityInterface
         $this->agents->removeElement($agent);
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, TeamAuthorization>
+     */
+    public function getTeamAuthorizations(): Collection
+    {
+        return $this->teamAuthorizations;
     }
 }

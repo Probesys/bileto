@@ -200,7 +200,14 @@ class AuthorizationsController extends BaseController
                 $user->getId() === $holder->getId()
             )
         ) {
-            $this->addFlash('error', $translator->trans('authorization.cannot_revoke', [], 'errors'));
+            $this->addFlash('error', $translator->trans('authorization.cannot_revoke.super', [], 'errors'));
+            return $this->redirectToRoute('user authorizations', [
+                'uid' => $holder->getUid(),
+            ]);
+        }
+
+        if ($authorization->getTeamAuthorization() !== null) {
+            $this->addFlash('error', $translator->trans('authorization.cannot_revoke.managed_by_team', [], 'errors'));
             return $this->redirectToRoute('user authorizations', [
                 'uid' => $holder->getUid(),
             ]);

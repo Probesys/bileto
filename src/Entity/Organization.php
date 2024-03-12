@@ -70,11 +70,16 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Authorization::class)]
     private Collection $authorizations;
 
+    /** @var Collection<int, TeamAuthorization> */
+    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: TeamAuthorization::class)]
+    private Collection $teamAuthorizations;
+
     public function __construct()
     {
         $this->name = '';
         $this->tickets = new ArrayCollection();
         $this->authorizations = new ArrayCollection();
+        $this->teamAuthorizations = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -103,5 +108,13 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
     public function getAuthorizations(): Collection
     {
         return $this->authorizations;
+    }
+
+    /**
+     * @return Collection<int, TeamAuthorization>
+     */
+    public function getTeamAuthorizations(): Collection
+    {
+        return $this->teamAuthorizations;
     }
 }

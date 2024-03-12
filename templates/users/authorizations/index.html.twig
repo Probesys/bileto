@@ -46,6 +46,7 @@
                 {% for authorization in authorizations %}
                     {{ include('authorizations/_authorization.html.twig', {
                         authorization: authorization,
+                        mode: 'user',
                     }, with_context = false) }}
                 {% endfor %}
             </div>

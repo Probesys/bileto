@@ -1,4 +1,5 @@
-authorization.cannot_revoke: 'Vous n’êtes pas autorisé à révoquer cette autorisation super-admin.'
+authorization.cannot_revoke.managed_by_team: 'Vous n’êtes pas autorisé à révoquer une autorisation d’équipe.'
+authorization.cannot_revoke.super: 'Vous n’êtes pas autorisé à révoquer cette autorisation super-admin.'
 authorization.role.invalid: 'Sélectionnez un rôle de la liste.'
 authorization.super.unauthorized: 'Vous n’êtes pas autorisé à accorder cette autorisation super-admin.'
 contract.end_at.greater_than_start_at: 'Saisissez une date plus grande que la date de début.'

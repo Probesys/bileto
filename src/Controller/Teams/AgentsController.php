@@ -9,9 +9,9 @@ namespace App\Controller\Teams;
 use App\Controller\BaseController;
 use App\Entity\Team;
 use App\Entity\User;
-use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use App\Service\ActorsLister;
+use App\Service\TeamService;
 use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +45,7 @@ class AgentsController extends BaseController
         Team $team,
         Request $request,
         UserRepository $userRepository,
-        TeamRepository $teamRepository,
+        TeamService $teamService,
         ActorsLister $actorsLister,
         ValidatorInterface $validator,
         TranslatorInterface $translator,
@@ -93,8 +93,7 @@ class AgentsController extends BaseController
 
         $userRepository->save($agent, true);
 
-        $team->addAgent($agent);
-        $teamRepository->save($team, true);
+        $teamService->addAgent($team, $agent);
 
         return $this->redirectToRoute('team', [
             'uid' => $team->getUid(),
@@ -106,7 +105,7 @@ class AgentsController extends BaseController
         Team $team,
         Request $request,
         UserRepository $userRepository,
-        TeamRepository $teamRepository,
+        TeamService $teamService,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:agents');
@@ -127,8 +126,7 @@ class AgentsController extends BaseController
 
         $agent = $userRepository->findOneBy(['uid' => $agentUid]);
         if ($agent) {
-            $team->removeAgent($agent);
-            $teamRepository->save($team, true);
+            $teamService->removeAgent($team, $agent);
         }
 
         return $this->redirectToRoute('team', [

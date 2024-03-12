@@ -13,6 +13,7 @@ use App\Tests\SessionHelper;
 use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\RoleFactory;
+use App\Tests\Factory\TeamAuthorizationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -390,6 +391,36 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains(
             '#notifications',
             'You are not allowed to revoke this super-admin authorization',
+        );
+        AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
+    }
+
+    public function testPostDeleteFailsIfAuthorizationIsManagedByTeam(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $holder = UserFactory::createOne();
+        $role = RoleFactory::createOne([
+            'type' => 'admin',
+        ]);
+        $teamAuthorization = TeamAuthorizationFactory::createOne();
+        $authorization = AuthorizationFactory::createOne([
+            'holder' => $holder,
+            'role' => $role,
+            'teamAuthorization' => $teamAuthorization,
+        ]);
+
+        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains(
+            '#notifications',
+            'You are not allowed to revoke a team authorization',
         );
         AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);
     }

@@ -38,22 +38,46 @@
         {% endif %}
     </div>
 
-    {% if (
-        authorization.role.type == 'super' and (
-            not is_granted('admin:*') or
-            app.user.id == authorization.holder.id
-        )
-    ) %}
-        <p class="text--secondary text--center text--small">
-            {{ 'authorizations.revoke.disabled' | trans }}
-        </p>
-    {% else %}
+    {% if mode == 'user' %}
+        {% if (
+            authorization.role.type == 'super' and (
+                not is_granted('admin:*') or
+                app.user.id == authorization.holder.id
+            )
+        ) %}
+            <p class="text--secondary text--center text--small">
+                {{ 'authorizations.revoke.disabled' | trans }}
+            </p>
+        {% elseif authorization.teamAuthorization %}
+            {% set team = authorization.teamAuthorization.team %}
+            <p class="text--secondary text--center text--small">
+                {% if (is_granted('admin:manage:agents')) %}
+                    <a href="{{ path('team', { uid: team.uid }) }}">
+                        {{ team.name }}
+                    </a>
+                {% else %}
+                    {{ team.name }}
+                {% endif %}
+            </p>
+        {% else %}
+            <form
+                class="text--center"
+                method="post"
+                action="{{ path('delete user authorization', { uid: authorization.uid }) }}"
+            >
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete user authorization') }}">
+                <button type="submit" data-turbo-confirm="{{ 'authorizations.revoke.confirm' | trans }}">
+                    {{ 'authorizations.revoke' | trans }}
+                </button>
+            </form>
+        {% endif %}
+    {% elseif mode == 'team' %}
         <form
             class="text--center"
             method="post"
-            action="{{ path('delete user authorization', { uid: authorization.uid }) }}"
+            action="{{ path('delete team authorization', { uid: authorization.uid }) }}"
         >
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete user authorization') }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete team authorization') }}">
             <button type="submit" data-turbo-confirm="{{ 'authorizations.revoke.confirm' | trans }}">
                 {{ 'authorizations.revoke' | trans }}
             </button>

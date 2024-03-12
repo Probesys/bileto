@@ -7,8 +7,10 @@
 namespace App\Tests\Controller\Teams;
 
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\TeamFactory;
+use App\Tests\Factory\TeamAuthorizationFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -92,6 +94,29 @@ class AgentsControllerTest extends WebTestCase
         $this->assertTrue($team->hasAgent($agent->object()));
     }
 
+    public function testPostCreateGrantsTeamAuthorizationsToTheAgent(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $agent = UserFactory::createOne();
+        $team = TeamFactory::createOne();
+        $teamAuthorization = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+        ]);
+
+        $client->request('POST', "/teams/{$team->getUid()}/agents/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'add team agent'),
+            'agentEmail' => $agent->getEmail(),
+        ]);
+
+        $agent->refresh();
+        $authorizations = $agent->getAuthorizations();
+        $this->assertSame(1, count($authorizations));
+        $this->assertSame($teamAuthorization->getId(), $authorizations[0]->getTeamAuthorization()->getId());
+    }
+
     public function testPostCreateFailsIfEmailIsEmpty(): void
     {
         $client = static::createClient();
@@ -172,12 +197,9 @@ class AgentsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
-        $team = TeamFactory::createOne();
-
-        $team->addAgent($agent->object());
-        /** @var \App\Repository\TeamRepository */
-        $teamRepository = TeamFactory::repository();
-        $teamRepository->save($team->object(), true);
+        $team = TeamFactory::createOne([
+            'agents' => [$agent],
+        ]);
 
         $this->assertTrue($team->hasAgent($agent->object()));
 
@@ -188,6 +210,33 @@ class AgentsControllerTest extends WebTestCase
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
         $this->assertFalse($team->hasAgent($agent->object()));
+    }
+
+    public function testPostDeleteUngrantsTeamAuthorizationsFromTheAgent(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $agent = UserFactory::createOne();
+        $team = TeamFactory::createOne([
+            'agents' => [$agent],
+        ]);
+        $teamAuthorization = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'holder' => $agent,
+            'teamAuthorization' => $teamAuthorization,
+        ]);
+
+        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
+            'agentUid' => $agent->getUid(),
+        ]);
+
+        TeamAuthorizationFactory::assert()->exists(['id' => $teamAuthorization->getId()]);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
     }
 
     public function testPostDeleteDoesNotFailIfAgentUidDoesNotExist(): void
@@ -213,12 +262,9 @@ class AgentsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
-        $team = TeamFactory::createOne();
-
-        $team->addAgent($agent->object());
-        /** @var \App\Repository\TeamRepository */
-        $teamRepository = TeamFactory::repository();
-        $teamRepository->save($team->object(), true);
+        $team = TeamFactory::createOne([
+            'agents' => [$agent],
+        ]);
 
         $this->assertTrue($team->hasAgent($agent->object()));
 
@@ -241,12 +287,9 @@ class AgentsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $agent = UserFactory::createOne();
-        $team = TeamFactory::createOne();
-
-        $team->addAgent($agent->object());
-        /** @var \App\Repository\TeamRepository */
-        $teamRepository = TeamFactory::repository();
-        $teamRepository->save($team->object(), true);
+        $team = TeamFactory::createOne([
+            'agents' => [$agent],
+        ]);
 
         $client->catchExceptions(false);
         $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [

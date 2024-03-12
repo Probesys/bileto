@@ -52,6 +52,16 @@ It has the unique `admin:*` permission, which means it gives access to everythin
 It is especially useful to recover from a mistake.
 For instance, in the case you've removed the permissions to manage roles from all the other admin roles.
 
+## The teams authorizations
+
+Users can be grouped in team of agents.
+Authorizations can be granted to teams instead of individual users.
+This allows to manipulate the authorizations by groups.
+For instance, when a user is added to a team, it gets the authorizations declared at the team level.
+Note that teams are only available for agents.
+
+See below for the technical aspects of the teams authorizations.
+
 ## Technical aspects
 
 ### Granting roles to users
@@ -192,3 +202,16 @@ Several other terms can follow then:
 When you create a new permission, you must give it a translated label which appears in the "new/edit role" forms.
 As the translation keys are built dynamically, the Symfony `translation:extract` cannot extract them.
 This is why you need to put the translation key corresponding to the permission in a special file: [`Misc/AdditionalTranslations.php`](/src/Misc/AdditionalTranslations.php).
+
+### How Teams Authorizations work
+
+The teams authorizations are implemented with the [`TeamAuthorization`](/src/Entity/TeamAuthorization.php) entity.
+This entity acts as a template of [`Authorization`](/src/Entity/Authorization.php) for the agents of the team.
+Indeed, `TeamAuthorization` has the same relations as `Authorization`, except that it's linked to a Team instead of a User.
+
+When an agent is added to a team, the `TeamAuthorizations` of the team are copied to the agent as simple `Authorizations`.
+When a `TeamAuthorization` is created, it's copied as simple `Authorizations` to the agents of the team.
+
+This system allows to keep the implementation of the [`AppVoter`](/src/Security/AppVoter.php) as straigthforward as possible.
+
+In order to avoid problems, **always** use the [`TeamService`](/src/Service/TeamService.php) to add/remove agents or authorizations to/from a team.

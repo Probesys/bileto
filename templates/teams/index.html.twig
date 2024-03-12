@@ -50,7 +50,7 @@
                                 </span>
 
                                 <span class="badge badge--grey badge--small">
-                                    {{ 'teams.index.authorizations' | trans({ count: 0 }) }}
+                                    {{ 'teams.index.authorizations' | trans({ count: team.teamAuthorizations|length }) }}
                                 </span>
                             </span>
                         </li>

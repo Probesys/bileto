@@ -7,15 +7,18 @@
 namespace App\Service\Sorter;
 
 use App\Entity\Authorization;
+use App\Entity\TeamAuthorization;
 
 class AuthorizationSorter extends LocaleSorter
 {
     /**
-     * @param Authorization[] $authorizations
+     * @template T of Authorization|TeamAuthorization
+     *
+     * @param array<T> $authorizations
      */
     public function sort(array &$authorizations): void
     {
-        uasort($authorizations, function (Authorization $a1, Authorization $a2): int {
+        uasort($authorizations, function ($a1, $a2): int {
             $roleComparison = $this->localeCompare(
                 $a1->getRole()->getName(),
                 $a2->getRole()->getName(),
