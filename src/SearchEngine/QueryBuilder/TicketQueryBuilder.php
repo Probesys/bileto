@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\SearchEngine\Query;
+use Doctrine\ORM;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class TicketQueryBuilder
@@ -26,20 +27,50 @@ class TicketQueryBuilder
 
     private Security $security;
 
+    private ORM\EntityManagerInterface $entityManager;
+
     public function __construct(
         UserRepository $userRepository,
         OrganizationRepository $organizationRepository,
         Security $security,
+        ORM\EntityManagerInterface $entityManager,
     ) {
         $this->security = $security;
         $this->userRepository = $userRepository;
         $this->organizationRepository = $organizationRepository;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param Query[] $queries
+     */
+    public function create(array $queries): ORM\QueryBuilder
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder->select('t');
+        $queryBuilder->from('App\Entity\Ticket', 't');
+
+        if ($this->mustIncludeContracts($queries)) {
+            $queryBuilder->leftJoin('t.contracts', 'c');
+        }
+
+        foreach ($queries as $sequence => $query) {
+            list($whereQuery, $parameters) = $this->buildQuery($query, $sequence);
+
+            $queryBuilder->andWhere($whereQuery);
+
+            foreach ($parameters as $key => $value) {
+                $queryBuilder->setParameter($key, $value);
+            }
+        }
+
+        return $queryBuilder;
     }
 
     /**
      * @return array{string, array<string, mixed>}
      */
-    public function build(Query $query, int $querySequence = 0): array
+    public function buildQuery(Query $query, int $querySequence = 0): array
     {
         $this->parameters = [];
         $this->querySequence = $querySequence;
@@ -373,5 +404,21 @@ class TicketQueryBuilder
         $key = "q{$this->querySequence}p{$paramNumber}";
         $this->parameters[$key] = $value;
         return $key;
+    }
+
+    /**
+     * @param Query[] $queries
+     */
+    private function mustIncludeContracts(array $queries): bool
+    {
+        foreach ($queries as $query) {
+            foreach ($query->getConditions() as $condition) {
+                if ($condition->isQualifierCondition() && $condition->getQualifier() === 'contract') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

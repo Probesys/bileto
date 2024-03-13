@@ -42,31 +42,25 @@ If the textual query matches the grammar, the Parser will return a Query.
 
 ## The Ticket Query Builder
 
-The [Ticket Query Builder](/src/SearchEngine/QueryBuilder/TicketQueryBuilder.php) transforms a Query into a Doctrine DQL `WHERE` statement.
+The [Ticket Query Builder](/src/SearchEngine/QueryBuilder/TicketQueryBuilder.php) transforms a list of Queries into a Doctrine QueryBuilder.
 It is implemented as a service as it may need to access the database, or the current logged user.
 
-To call the Query Builder, you have to inject it in some controller or service, and call its `build()` method:
+To call the Ticket Query Builder, you have to inject it in some controller or service, and call its `create()` method:
 
 ```php
 use App\SearchEngine;
 
 $query = SearchEngine\Query::fromString('status:new');
-list($whereStatement, $parameters) = $ticketQueryBuilder->build($query);
+$queryBuilder = $ticketQueryBuilder->create([$query]);
 ```
 
-**It returns two elements: the DQL statement as a string, and an array of parameters indexed by the parameters names.**
-They are directly usable by a Doctrine Query Builder:
-
-```php
-$qb = $this->createQueryBuilder('t');
-$qb->andWhere($whereStatement);
-foreach ($parameters as $key => $value) {
-    $qb->setParameter($key, $value);
-}
-```
+The Doctrine Query Builder can be then used to fetch tickets from the database.
 
 Internally, its functioning is quite simple.
-It iterates over the conditions of the given query.
+It first create a Doctrine Query Builder for the ticket table.
+If necessary, it joins additional tables based on the conditions of the queries.
+
+Then, it iterates over the queries and their conditions.
 For each condition, it returns the DQL expression corresponding to the condition.
 Each DQL expression is appended to the final string with an `AND` or `OR` keyword, depending on the condition operator.
 
@@ -77,19 +71,6 @@ It also can search for elements in the database (such as organizations or users)
 When an expression requiring a parameter is generated, the Query Builder register the parameter in a global list.
 The name of the parameter is automatically generated.
 For instance: `q0p0` where `q0` represents the first query and `p0` represents the first parameter.
-
-It is possible to use multiple queries for a single Doctrine Query Builder.
-In this case, pass the `$sequence` parameter to the `build()` method:
-
-```php
-$query1 = SearchEngine\Query::fromString('org:Probesys AND involves:@me');
-list($whereStatement1, $parameters1) = $ticketQueryBuilder->build($query1, 1);
-
-$query2 = SearchEngine\Query::fromString('status:new');
-list($whereStatement2, $parameters2) = $ticketQueryBuilder->build($query2, 2);
-```
-
-In this example, the parameters names will start respectively by `q1` and `q2`.
 
 ## The Ticket Searcher
 
@@ -107,7 +88,7 @@ try {
 }
 ```
 
-**It takes a Query as an entry, and it returns either a list of tickets, or the number of tickets depending on the called method.**
+**It takes a Query as an entry, and it returns either a (paginated) list of tickets, or the number of tickets depending on the called method.**
 
 It also makes sure that the current user only accesses the tickets that he has the permissions for.
 For that, it limits the tickets with an internal query `involves:@me`.
@@ -125,7 +106,7 @@ In this case, the Searcher will check the permissions of the user for each organ
 The [Ticket Filter](/src/SearchEngine/TicketFilter.php) is an additionnal layer to manage the “quick search” mode.
 
 **It extracts a list of simple conditions from a Query.**
-Once the Ticket Filter is initialized, you can manually change the filters.
+Once the Ticket Filter is initialized, you can programmatically change the filters.
 Then, you can print the new textual query so it can be passed in an URL for instance.
 This allows the filter system to manipulate a Query easily.
 

@@ -40,11 +40,31 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->ticketQueryBuilder = $ticketQueryBuilder;
     }
 
-    public function testBuildWithText(): void
+    public function testCreate(): void
     {
         $query = SearchEngine\Query::fromString('Foo');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        $queryBuilder = $this->ticketQueryBuilder->create([$query]);
+
+        $dql = $queryBuilder->getDQL();
+        $this->assertStringNotContainsString('LEFT JOIN t.contracts', $dql);
+    }
+
+    public function testCreateWithContract(): void
+    {
+        $query = SearchEngine\Query::fromString('contract:#1');
+
+        $queryBuilder = $this->ticketQueryBuilder->create([$query]);
+
+        $dql = $queryBuilder->getDQL();
+        $this->assertStringContainsString('LEFT JOIN t.contracts', $dql);
+    }
+
+    public function testBuildQueryWithText(): void
+    {
+        $query = SearchEngine\Query::fromString('Foo');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             LOWER(t.title) LIKE :q0p0
@@ -52,11 +72,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('%foo%', $parameters['q0p0']);
     }
 
-    public function testBuildWithTextAndNot(): void
+    public function testBuildQueryWithTextAndNot(): void
     {
         $query = SearchEngine\Query::fromString('NOT Foo');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             LOWER(t.title) NOT LIKE :q0p0
@@ -64,11 +84,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('%foo%', $parameters['q0p0']);
     }
 
-    public function testBuildWithArrayOfTexts(): void
+    public function testBuildQueryWithArrayOfTexts(): void
     {
         $query = SearchEngine\Query::fromString('Foo, BAR');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             (LOWER(t.title) LIKE :q0p0 OR LOWER(t.title) LIKE :q0p1)
@@ -77,11 +97,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('%bar%', $parameters['q0p1']);
     }
 
-    public function testBuildWithArrayOfTextsAndNot(): void
+    public function testBuildQueryWithArrayOfTextsAndNot(): void
     {
         $query = SearchEngine\Query::fromString('NOT Foo, BAR');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             NOT (LOWER(t.title) LIKE :q0p0 OR LOWER(t.title) LIKE :q0p1)
@@ -90,11 +110,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('%bar%', $parameters['q0p1']);
     }
 
-    public function testBuildWithTextAsId(): void
+    public function testBuildQueryWithTextAsId(): void
     {
         $query = SearchEngine\Query::fromString('#42');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.id = :q0p0
@@ -102,11 +122,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(42, $parameters['q0p0']);
     }
 
-    public function testBuildWithTextAsIdAndNot(): void
+    public function testBuildQueryWithTextAsIdAndNot(): void
     {
         $query = SearchEngine\Query::fromString('NOT #42');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.id != :q0p0
@@ -114,11 +134,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(42, $parameters['q0p0']);
     }
 
-    public function testBuildWithTextAsArrayAndId(): void
+    public function testBuildQueryWithTextAsArrayAndId(): void
     {
         $query = SearchEngine\Query::fromString('foo, #42');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             (LOWER(t.title) LIKE :q0p0 OR t.id = :q0p1)
@@ -127,11 +147,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(42, $parameters['q0p1']);
     }
 
-    public function testBuildWithSubQuery(): void
+    public function testBuildQueryWithSubQuery(): void
     {
         $query = SearchEngine\Query::fromString('foo (bar OR baz)');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             LOWER(t.title) LIKE :q0p0 AND (LOWER(t.title) LIKE :q0p1 OR LOWER(t.title) LIKE :q0p2)
@@ -141,11 +161,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('%baz%', $parameters['q0p2']);
     }
 
-    public function testBuildWithSubQueryAndNot(): void
+    public function testBuildQueryWithSubQueryAndNot(): void
     {
         $query = SearchEngine\Query::fromString('foo NOT (bar OR baz)');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             LOWER(t.title) LIKE :q0p0 AND NOT (LOWER(t.title) LIKE :q0p1 OR LOWER(t.title) LIKE :q0p2)
@@ -155,11 +175,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('%baz%', $parameters['q0p2']);
     }
 
-    public function testBuildWithQualifierStatus(): void
+    public function testBuildQueryWithQualifierStatus(): void
     {
         $query = SearchEngine\Query::fromString('status:new');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.status = :q0p0
@@ -167,11 +187,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('new', $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierStatusAsArray(): void
+    public function testBuildQueryWithQualifierStatusAsArray(): void
     {
         $query = SearchEngine\Query::fromString('status:new,in_progress');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.status IN (:q0p0)
@@ -179,11 +199,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(['new', 'in_progress'], $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierStatusAsArrayAndNot(): void
+    public function testBuildQueryWithQualifierStatusAsArrayAndNot(): void
     {
         $query = SearchEngine\Query::fromString('-status:new,in_progress');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.status NOT IN (:q0p0)
@@ -191,11 +211,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(['new', 'in_progress'], $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierStatusOpen(): void
+    public function testBuildQueryWithQualifierStatusOpen(): void
     {
         $query = SearchEngine\Query::fromString('status:open');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.status IN (:q0p0)
@@ -203,11 +223,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(Ticket::OPEN_STATUSES, $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierStatusFinished(): void
+    public function testBuildQueryWithQualifierStatusFinished(): void
     {
         $query = SearchEngine\Query::fromString('status:finished');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.status IN (:q0p0)
@@ -215,14 +235,14 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(Ticket::FINISHED_STATUSES, $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierAssignee(): void
+    public function testBuildQueryWithQualifierAssignee(): void
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->object();
         $query = SearchEngine\Query::fromString('assignee:alix');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.assignee = :q0p0
@@ -230,14 +250,14 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($alix->getId(), $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierAssigneeAsId(): void
+    public function testBuildQueryWithQualifierAssigneeAsId(): void
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->object();
         $query = SearchEngine\Query::fromString("assignee:#{$alix->getId()}");
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.assignee = :q0p0
@@ -245,11 +265,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($alix->getId(), $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierAssigneeAsMe(): void
+    public function testBuildQueryWithQualifierAssigneeAsMe(): void
     {
         $query = SearchEngine\Query::fromString('assignee:@me');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.assignee = :q0p0
@@ -257,14 +277,14 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($this->currentUser->getId(), $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierAssigneeAsArray(): void
+    public function testBuildQueryWithQualifierAssigneeAsArray(): void
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->object();
         $query = SearchEngine\Query::fromString('assignee:alix,@me');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.assignee IN (:q0p0)
@@ -275,11 +295,11 @@ class TicketQueryBuilderTest extends WebTestCase
         );
     }
 
-    public function testBuildWithQualifierAssigneeAndUnknownEmail(): void
+    public function testBuildQueryWithQualifierAssigneeAndUnknownEmail(): void
     {
         $query = SearchEngine\Query::fromString('assignee:alix');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.assignee = :q0p0
@@ -287,14 +307,14 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(-1, $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierRequester(): void
+    public function testBuildQueryWithQualifierRequester(): void
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->object();
         $query = SearchEngine\Query::fromString('requester:alix');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.requester = :q0p0
@@ -302,14 +322,14 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($alix->getId(), $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierInvolves(): void
+    public function testBuildQueryWithQualifierInvolves(): void
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->object();
         $query = SearchEngine\Query::fromString('involves:alix');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             (t.assignee = :q0p0 OR t.requester = :q0p1)
@@ -318,14 +338,14 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($alix->getId(), $parameters['q0p1']);
     }
 
-    public function testBuildWithQualifierInvolvesAndNot(): void
+    public function testBuildQueryWithQualifierInvolvesAndNot(): void
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->object();
         $query = SearchEngine\Query::fromString('-involves:alix');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             NOT (t.assignee = :q0p0 OR t.requester = :q0p1)
@@ -334,14 +354,14 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($alix->getId(), $parameters['q0p1']);
     }
 
-    public function testBuildWithQualifierOrg(): void
+    public function testBuildQueryWithQualifierOrg(): void
     {
         $probesys = OrganizationFactory::createOne([
             'name' => 'Probesys',
         ])->object();
         $query = SearchEngine\Query::fromString('org:probesys');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.organization = :q0p0
@@ -349,14 +369,14 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($probesys->getId(), $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierOrgAsId(): void
+    public function testBuildQueryWithQualifierOrgAsId(): void
     {
         $probesys = OrganizationFactory::createOne([
             'name' => 'Probesys',
         ])->object();
         $query = SearchEngine\Query::fromString("org:#{$probesys->getId()}");
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.organization = :q0p0
@@ -364,7 +384,7 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($probesys->getId(), $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierOrgAsArray(): void
+    public function testBuildQueryWithQualifierOrgAsArray(): void
     {
         $probesys = OrganizationFactory::createOne([
             'name' => 'Probesys',
@@ -374,7 +394,7 @@ class TicketQueryBuilderTest extends WebTestCase
         ])->object();
         $query = SearchEngine\Query::fromString('org:Probesys,coorp');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.organization IN (:q0p0)
@@ -385,7 +405,7 @@ class TicketQueryBuilderTest extends WebTestCase
         );
     }
 
-    public function testBuildWithQualifierOrgAsIdAndArray(): void
+    public function testBuildQueryWithQualifierOrgAsIdAndArray(): void
     {
         $probesys = OrganizationFactory::createOne([
             'name' => 'Probesys',
@@ -395,7 +415,7 @@ class TicketQueryBuilderTest extends WebTestCase
         ])->object();
         $query = SearchEngine\Query::fromString("org:#{$probesys->getId()},coorp");
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.organization IN (:q0p0)
@@ -406,11 +426,11 @@ class TicketQueryBuilderTest extends WebTestCase
         );
     }
 
-    public function testBuildWithQualifierOrgAndUnknownName(): void
+    public function testBuildQueryWithQualifierOrgAndUnknownName(): void
     {
         $query = SearchEngine\Query::fromString('org:Probesys');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.organization = :q0p0
@@ -418,11 +438,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(-1, $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierContract(): void
+    public function testBuildQueryWithQualifierContract(): void
     {
         $query = SearchEngine\Query::fromString('contract:#1');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             c.id = :q0p0
@@ -430,11 +450,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(1, $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierUid(): void
+    public function testBuildQueryWithQualifierUid(): void
     {
         $query = SearchEngine\Query::fromString('uid:abcde');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.uid = :q0p0
@@ -442,11 +462,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('abcde', $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierType(): void
+    public function testBuildQueryWithQualifierType(): void
     {
         $query = SearchEngine\Query::fromString('type:incident');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.type = :q0p0
@@ -454,11 +474,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('incident', $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierUrgency(): void
+    public function testBuildQueryWithQualifierUrgency(): void
     {
         $query = SearchEngine\Query::fromString('urgency:low');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.urgency = :q0p0
@@ -466,11 +486,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('low', $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierImpact(): void
+    public function testBuildQueryWithQualifierImpact(): void
     {
         $query = SearchEngine\Query::fromString('impact:medium');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.impact = :q0p0
@@ -478,11 +498,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('medium', $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierPriority(): void
+    public function testBuildQueryWithQualifierPriority(): void
     {
         $query = SearchEngine\Query::fromString('priority:high');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.priority = :q0p0
@@ -490,11 +510,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame('high', $parameters['q0p0']);
     }
 
-    public function testBuildWithQualifierNoAssignee(): void
+    public function testBuildQueryWithQualifierNoAssignee(): void
     {
         $query = SearchEngine\Query::fromString('no:assignee');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.assignee IS NULL
@@ -502,11 +522,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertTrue(empty($parameters));
     }
 
-    public function testBuildWithQualifierNoSolution(): void
+    public function testBuildQueryWithQualifierNoSolution(): void
     {
         $query = SearchEngine\Query::fromString('no:solution');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.solution IS NULL
@@ -514,11 +534,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertTrue(empty($parameters));
     }
 
-    public function testBuildWithQualifierHasAssignee(): void
+    public function testBuildQueryWithQualifierHasAssignee(): void
     {
         $query = SearchEngine\Query::fromString('has:assignee');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.assignee IS NOT NULL
@@ -526,11 +546,11 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertTrue(empty($parameters));
     }
 
-    public function testBuildWithQualifierHasSolution(): void
+    public function testBuildQueryWithQualifierHasSolution(): void
     {
         $query = SearchEngine\Query::fromString('has:solution');
 
-        list($dql, $parameters) = $this->ticketQueryBuilder->build($query);
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
             t.solution IS NOT NULL
@@ -538,13 +558,13 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertTrue(empty($parameters));
     }
 
-    public function testBuildFailsWithQualifierUnknown(): void
+    public function testBuildQueryFailsWithQualifierUnknown(): void
     {
         $query = SearchEngine\Query::fromString('foo:bar,baz');
 
         $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage('Unexpected "foo" qualifier with value "bar,baz"');
 
-        $this->ticketQueryBuilder->build($query);
+        $this->ticketQueryBuilder->buildQuery($query);
     }
 }

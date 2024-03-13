@@ -8,8 +8,7 @@ namespace App\SearchEngine;
 
 use App\Entity\Organization;
 use App\Entity\Ticket;
-use App\Entity\User;
-use App\Repository\TicketRepository;
+use App\SearchEngine\QueryBuilder\TicketQueryBuilder;
 use App\Security\Authorizer;
 use App\Utils\Pagination;
 
@@ -22,15 +21,15 @@ class TicketSearcher
     public const QUERY_UNASSIGNED = 'status:open no:assignee';
     public const QUERY_OWNED = 'status:open involves:@me';
 
-    private TicketRepository $ticketRepository;
+    private TicketQueryBuilder $ticketQueryBuilder;
 
     private Query $orgaQuery;
 
     private Authorizer $authorizer;
 
-    public function __construct(TicketRepository $ticketRepository, Authorizer $authorizer)
+    public function __construct(TicketQueryBuilder $ticketQueryBuilder, Authorizer $authorizer)
     {
-        $this->ticketRepository = $ticketRepository;
+        $this->ticketQueryBuilder = $ticketQueryBuilder;
         $this->authorizer = $authorizer;
 
         // The default query makes sure that the SearchEngine only returns
@@ -107,7 +106,13 @@ class TicketSearcher
             $queries[] = $query;
         }
 
-        return $this->ticketRepository->findByQueries($queries, $sort, $paginationOptions);
+        $queryBuilder = $this->ticketQueryBuilder->create($queries);
+        $queryBuilder->orderBy("t.{$sort[0]}", $sort[1]);
+
+        /** @var Pagination<Ticket> */
+        $pagination = Pagination::paginate($queryBuilder->getQuery(), $paginationOptions);
+
+        return $pagination;
     }
 
     public function countTickets(?Query $query = null): int
@@ -118,7 +123,9 @@ class TicketSearcher
             $queries[] = $query;
         }
 
-        return $this->ticketRepository->countByQueries($queries);
+        $queryBuilder = $this->ticketQueryBuilder->create($queries);
+        $queryBuilder->select($queryBuilder->expr()->count('t.id'));
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
     public static function queryUnassigned(): Query
