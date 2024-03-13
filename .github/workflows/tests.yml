@@ -30,6 +30,7 @@ jobs:
                 env:
                     POSTGRES_USER: postgres
                     POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: bileto_test
                 ports:
                     - 5432:5432
                 options: >-
@@ -81,6 +82,7 @@ jobs:
                     - 3306:3306
                 env:
                     MARIADB_ROOT_PASSWORD: mariadb
+                    MARIADB_DATABASE: bileto_test
                 options: >-
                     --health-cmd="mysqladmin ping"
                     --health-interval=10s
