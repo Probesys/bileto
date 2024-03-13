@@ -126,6 +126,7 @@ icons: ## Build the icons asset
 test: ## Run the test suite
 	$(PHP) ./bin/phpunit \
 		-c .phpunit.xml.dist \
+		--testdox \
 		$(COVERAGE) \
 		$(PHPUNIT_FILTER) \
 		$(PHPUNIT_FILE)
