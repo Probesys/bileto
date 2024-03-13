@@ -65,6 +65,7 @@ class SeedsCommand extends Command
                 'orga:create:tickets:messages',
                 'orga:create:tickets:messages:confidential',
                 'orga:create:tickets:time_spent',
+                'orga:manage',
                 'orga:see',
                 'orga:see:tickets:all',
                 'orga:see:tickets:contracts',
