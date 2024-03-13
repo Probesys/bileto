@@ -33,7 +33,7 @@ class TeamAuthorization implements MonitorableEntityInterface, UidEntityInterfac
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'teams')]
+    #[ORM\ManyToOne]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
@@ -43,13 +43,11 @@ class TeamAuthorization implements MonitorableEntityInterface, UidEntityInterfac
     private ?User $updatedBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamAuthorizations')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Team $team = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Role $role = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamAuthorizations')]
