@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Organization;
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
@@ -23,6 +24,7 @@ class OrganizationsControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -374,14 +376,7 @@ class OrganizationsControllerTest extends WebTestCase
             'ticket' => $ticket,
         ]);
 
-        // We need to clear the entities or they will stay in memory. An option
-        // would be to set `cascade: ['remove']` on the Organization relations,
-        // but it would decrease the performance for no interest since we don't
-        // need it outside of the tests.
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
-        $doctrine = self::getContainer()->get('doctrine');
-        $entityManager = $doctrine->getManager();
-        $entityManager->clear();
+        $this->clearEntityManager();
 
         $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),

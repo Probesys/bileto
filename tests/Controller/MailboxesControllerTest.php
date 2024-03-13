@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Security\Encryptor;
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\MailboxFactory;
 use App\Tests\Factory\MailboxEmailFactory;
 use App\Tests\Factory\UserFactory;
@@ -21,6 +22,7 @@ class MailboxesControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -408,14 +410,7 @@ class MailboxesControllerTest extends WebTestCase
             'mailbox' => $mailbox,
         ]);
 
-        // We need to clear the entities or the MailboxEmail will stay in
-        // memory. An option would be to set `cascade: ['remove']` on
-        // Mailbox->mailboxEmails, but it would decrease the performance for no
-        // interest since we don't need it outside of the tests.
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
-        $doctrine = self::getContainer()->get('doctrine');
-        $entityManager = $doctrine->getManager();
-        $entityManager->clear();
+        $this->clearEntityManager();
 
         $client->request('POST', "/mailboxes/{$mailbox->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete mailbox'),
