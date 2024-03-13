@@ -6,6 +6,7 @@
 
 namespace App\Tests;
 
+use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -14,6 +15,19 @@ class MigrationsTest extends KernelTestCase
 {
     use CommandTestsHelper;
     use ResetDatabase;
+
+    public static function setUpBeforeClass(): void
+    {
+        // We need to disable DoctrineTestBundle for this test, or it fails
+        // when using MariaDB, with "Exception in third-party event subscriber:
+        // There is no active transaction".
+        StaticDriver::setKeepStaticConnections(false);
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        StaticDriver::setKeepStaticConnections(true);
+    }
 
     public function testMigrationsUpWork(): void
     {
