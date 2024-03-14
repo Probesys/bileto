@@ -22,6 +22,7 @@ use App\Security\Authorizer;
 use App\Service\ActorsLister;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
+use App\Utils\ArrayHelper;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Pagination;
 use App\Utils\Time;
@@ -228,7 +229,10 @@ class TicketsController extends BaseController
             ]);
         }
 
-        $requester = $userRepository->findOneBy(['uid' => $requesterUid]);
+        $requester = ArrayHelper::find($allUsers, function ($user) use ($requesterUid): bool {
+            return $user->getUid() === $requesterUid;
+        });
+
         if (!$requester) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                 'organization' => $organization,
@@ -249,29 +253,11 @@ class TicketsController extends BaseController
             ]);
         }
 
+        $assignee = null;
         if ($assigneeUid) {
-            $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
-            if (!$assignee) {
-                return $this->renderBadRequest('organizations/tickets/new.html.twig', [
-                    'organization' => $organization,
-                    'title' => $title,
-                    'message' => $messageContent,
-                    'type' => $type,
-                    'requesterUid' => $requesterUid,
-                    'assigneeUid' => $assigneeUid,
-                    'isResolved' => $isResolved,
-                    'urgency' => $urgency,
-                    'impact' => $impact,
-                    'priority' => $priority,
-                    'allUsers' => $allUsers,
-                    'agents' => $agents,
-                    'errors' => [
-                        'assignee' => $translator->trans('ticket.assignee.invalid', [], 'errors'),
-                    ],
-                ]);
-            }
-        } else {
-            $assignee = null;
+            $assignee = ArrayHelper::find($agents, function ($agent) use ($assigneeUid): bool {
+                return $agent->getUid() === $assigneeUid;
+            });
         }
 
         $ticket = new Ticket();

@@ -195,7 +195,7 @@ class TicketsControllerTest extends WebTestCase
         list(
             $user,
             $requester,
-        ) = UserFactory::createMany(3);
+        ) = UserFactory::createMany(2);
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
@@ -204,6 +204,9 @@ class TicketsControllerTest extends WebTestCase
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
+        ], $organization->object());
+        $this->grantOrga($requester->object(), [
+            'orga:create:tickets',
         ], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
@@ -351,15 +354,14 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
     }
 
-    public function testPostCreateCanAssignsAUser(): void
+    public function testPostCreateCanAssignAUser(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
         $client = static::createClient();
         list(
             $user,
-            $requester,
             $assignee
-        ) = UserFactory::createMany(3);
+        ) = UserFactory::createMany(2);
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
@@ -368,6 +370,9 @@ class TicketsControllerTest extends WebTestCase
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
+        ], $organization->object());
+        $this->grantOrga($assignee->object(), [
+            'orga:create:tickets',
         ], $organization->object());
         $title = 'My ticket';
         $messageContent = 'My message';
@@ -378,7 +383,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterUid' => $requester->getUid(),
+            'requesterUid' => $user->getUid(),
             'assigneeUid' => $assignee->getUid(),
             'type' => 'incident',
             'urgency' => 'high',
@@ -399,10 +404,7 @@ class TicketsControllerTest extends WebTestCase
     public function testPostCreateCanMarkATicketAsResolved(): void
     {
         $client = static::createClient();
-        list(
-            $user,
-            $requester
-        ) = UserFactory::createMany(2);
+        $user = UserFactory::createOne();
         $client->loginUser($user->object());
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), [
@@ -418,7 +420,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
-            'requesterUid' => $requester->getUid(),
+            'requesterUid' => $user->getUid(),
             'message' => $messageContent,
             'isResolved' => true,
         ]);
@@ -470,6 +472,82 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('webapp', $message->getVia());
+    }
+
+    public function testPostCreateDoesNotAssignIfUserIsNotAgent(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        $client = static::createClient();
+        list(
+            $user,
+            $assignee
+        ) = UserFactory::createMany(2);
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:status',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
+        $this->grantOrga($assignee->object(), [
+            'orga:create:tickets',
+        ], $organization->object(), 'user');
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterUid' => $user->getUid(),
+            'assigneeUid' => $assignee->getUid(),
+            'type' => 'incident',
+            'urgency' => 'high',
+            'impact' => 'high',
+            'priority' => 'high',
+            'message' => $messageContent,
+        ]);
+
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $this->assertSame('new', $ticket->getStatus());
+        $this->assertNull($ticket->getAssignee());
+    }
+
+    public function testPostCreateFailsIfRequesterIsNotInOrganization(): void
+    {
+        $now = new \DateTimeImmutable('2022-11-02');
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+        ) = UserFactory::createMany(2);
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets',
+            'orga:update:tickets:status',
+            'orga:update:tickets:type',
+            'orga:update:tickets:actors',
+            'orga:update:tickets:priority',
+        ], $organization->object());
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'requesterUid' => $requester->getUid(),
+            'message' => $messageContent,
+        ]);
+
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
     }
 
     public function testPostCreateFailsIfTitleIsEmpty(): void
@@ -602,40 +680,6 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
-    }
-
-    public function testPostCreateFailsIfAssigneeIsInvalid(): void
-    {
-        $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
-            'orga:create:tickets',
-            'orga:update:tickets:status',
-            'orga:update:tickets:type',
-            'orga:update:tickets:actors',
-            'orga:update:tickets:priority',
-        ], $organization->object());
-        $title = 'My ticket';
-        $messageContent = 'My message';
-
-        $this->assertSame(0, TicketFactory::count());
-
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
-            'title' => $title,
-            'requesterUid' => $user->getUid(),
-            'assigneeUid' => 'not an uid',
-            'message' => $messageContent,
-        ]);
-
-        Time::unfreeze();
-        $this->assertSame(0, TicketFactory::count());
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#assignee-error', 'Select a user from the list');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void

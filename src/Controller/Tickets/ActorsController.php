@@ -12,6 +12,7 @@ use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Service\ActorsLister;
 use App\TicketActivity\TicketEvent;
+use App\Utils\ArrayHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -95,7 +96,10 @@ class ActorsController extends BaseController
             ]);
         }
 
-        $requester = $userRepository->findOneBy(['uid' => $requesterUid]);
+        $requester = ArrayHelper::find($allUsers, function ($user) use ($requesterUid): bool {
+            return $user->getUid() === $requesterUid;
+        });
+
         if (!$requester) {
             return $this->renderBadRequest('tickets/actors/edit.html.twig', [
                 'ticket' => $ticket,
@@ -109,22 +113,11 @@ class ActorsController extends BaseController
             ]);
         }
 
+        $assignee = null;
         if ($assigneeUid) {
-            $assignee = $userRepository->findOneBy(['uid' => $assigneeUid]);
-            if (!$assignee) {
-                return $this->renderBadRequest('tickets/actors/edit.html.twig', [
-                    'ticket' => $ticket,
-                    'requesterUid' => $requesterUid,
-                    'assigneeUid' => $assigneeUid,
-                    'allUsers' => $allUsers,
-                    'agents' => $agents,
-                    'errors' => [
-                        'assignee' => $translator->trans('ticket.assignee.invalid', [], 'errors'),
-                    ],
-                ]);
-            }
-        } else {
-            $assignee = null;
+            $assignee = ArrayHelper::find($agents, function ($agent) use ($assigneeUid): bool {
+                return $agent->getUid() === $assigneeUid;
+            });
         }
 
         $previousAssignee = $ticket->getAssignee();

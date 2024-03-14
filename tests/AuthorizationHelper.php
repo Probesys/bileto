@@ -55,9 +55,14 @@ trait AuthorizationHelper
 
     /**
      * @param string[] $permissions
+     * @param 'user'|'agent' $type
      */
-    public function grantOrga(User $user, array $permissions, ?Organization $organization = null): void
-    {
+    public function grantOrga(
+        User $user,
+        array $permissions,
+        ?Organization $organization = null,
+        string $type = 'agent',
+    ): void {
         if (empty($permissions)) {
             return;
         }
@@ -72,12 +77,12 @@ trait AuthorizationHelper
         /** @var \App\Repository\AuthorizationRepository $authorizationRepo */
         $authorizationRepo = $entityManager->getRepository(Authorization::class);
 
-        $permissions = Role::sanitizePermissions('agent', $permissions);
+        $permissions = Role::sanitizePermissions($type, $permissions);
 
         $role = new Role();
         $role->setName(Random::hex(10));
         $role->setDescription('The role description');
-        $role->setType('agent');
+        $role->setType($type);
         $role->setPermissions($permissions);
 
         $roleRepo->save($role);
