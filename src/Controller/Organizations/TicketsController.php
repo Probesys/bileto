@@ -233,26 +233,6 @@ class TicketsController extends BaseController
             return $user->getUid() === $requesterUid;
         });
 
-        if (!$requester) {
-            return $this->renderBadRequest('organizations/tickets/new.html.twig', [
-                'organization' => $organization,
-                'title' => $title,
-                'message' => $messageContent,
-                'type' => $type,
-                'requesterUid' => $requesterUid,
-                'assigneeUid' => $assigneeUid,
-                'isResolved' => $isResolved,
-                'urgency' => $urgency,
-                'impact' => $impact,
-                'priority' => $priority,
-                'allUsers' => $allUsers,
-                'agents' => $agents,
-                'errors' => [
-                    'requester' => $translator->trans('ticket.requester.invalid', [], 'errors'),
-                ],
-            ]);
-        }
-
         $assignee = null;
         if ($assigneeUid) {
             $assignee = ArrayHelper::find($agents, function ($agent) use ($assigneeUid): bool {

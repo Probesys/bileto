@@ -104,6 +104,9 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     private ?string $priority = self::DEFAULT_WEIGHT;
 
     #[ORM\ManyToOne]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('ticket.requester.invalid', [], 'errors'),
+    )]
     private ?User $requester = null;
 
     #[ORM\ManyToOne]

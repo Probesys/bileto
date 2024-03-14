@@ -13,10 +13,12 @@ use App\Repository\UserRepository;
 use App\Service\ActorsLister;
 use App\TicketActivity\TicketEvent;
 use App\Utils\ArrayHelper;
+use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ActorsController extends BaseController
@@ -57,6 +59,7 @@ class ActorsController extends BaseController
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
         ActorsLister $actorsLister,
+        ValidatorInterface $validator,
         TranslatorInterface $translator,
         EventDispatcherInterface $eventDispatcher,
     ): Response {
@@ -100,19 +103,6 @@ class ActorsController extends BaseController
             return $user->getUid() === $requesterUid;
         });
 
-        if (!$requester) {
-            return $this->renderBadRequest('tickets/actors/edit.html.twig', [
-                'ticket' => $ticket,
-                'requesterUid' => $requesterUid,
-                'assigneeUid' => $assigneeUid,
-                'allUsers' => $allUsers,
-                'agents' => $agents,
-                'errors' => [
-                    'requester' => $translator->trans('ticket.requester.invalid', [], 'errors'),
-                ],
-            ]);
-        }
-
         $assignee = null;
         if ($assigneeUid) {
             $assignee = ArrayHelper::find($agents, function ($agent) use ($assigneeUid): bool {
@@ -124,6 +114,18 @@ class ActorsController extends BaseController
 
         $ticket->setRequester($requester);
         $ticket->setAssignee($assignee);
+
+        $errors = $validator->validate($ticket);
+        if (count($errors) > 0) {
+            return $this->renderBadRequest('tickets/actors/edit.html.twig', [
+                'ticket' => $ticket,
+                'requesterUid' => $requesterUid,
+                'assigneeUid' => $assigneeUid,
+                'allUsers' => $allUsers,
+                'agents' => $agents,
+                'errors' => ConstraintErrorsFormatter::format($errors),
+            ]);
+        }
 
         $ticketRepository->save($ticket, true);
 
