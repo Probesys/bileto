@@ -6,6 +6,7 @@
 
 namespace App\Security;
 
+use App\Repository\AuthorizationRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,10 +16,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * For more consistency within the application, please use this class instead
  * of Security to call `isGranted()`.
+ *
+ * @phpstan-import-type Scope from AuthorizationRepository
  */
 class Authorizer
 {
     public function __construct(
+        private AuthorizationRepository $authorizationRepository,
         private Security $security,
         private AccessDecisionManagerInterface $accessDecisionManager,
     ) {
@@ -41,5 +45,27 @@ class Authorizer
     {
         $token = new Authentication\UserToken($user);
         return $this->accessDecisionManager->decide($token, [$attribute], $subject);
+    }
+
+    /**
+     * @param Scope $scope
+     */
+    public function isAgent(mixed $scope): bool
+    {
+        /** @var ?\App\Entity\User */
+        $user = $this->security->getUser();
+        if (!$user) {
+            return false;
+        }
+
+        $authorizations = $this->authorizationRepository->getAuthorizations('orga', $user, $scope);
+
+        foreach ($authorizations as $authorization) {
+            if ($authorization->getRole()->getType() === 'agent') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
