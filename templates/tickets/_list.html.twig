@@ -90,11 +90,15 @@
                     <span class="list-tickets__assignee" title="{{ 'tickets.assignee' | trans }}">
                         {{ icon('headset') }}
 
-                        {% if ticket.assignee %}
-                            <span class="sr-only">
-                                {{ 'tickets.assignee' | trans }}
-                            </span>
+                        <span class="sr-only">
+                            {{ 'tickets.assignee' | trans }}
+                        </span>
 
+                        {% if ticket.team %}
+                            {{ ticket.team.name }} /
+                        {% endif %}
+
+                        {% if ticket.assignee %}
                             {{ ticket.assignee.displayName }}
                         {% else %}
                             <strong>

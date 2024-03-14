@@ -429,6 +429,10 @@
                         </div>
 
                         <div>
+                            {% if ticket.team %}
+                                {{ ticket.team.name }} /
+                            {% endif %}
+
                             {% if ticket.assignee %}
                                 {{ ticket.assignee.displayName }}
                             {% elseif is_granted('orga:update:tickets:actors', organization) %}
