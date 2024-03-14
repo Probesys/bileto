@@ -14,6 +14,7 @@
         method="post"
         class="wrapper wrapper--center flow"
         data-turbo-preserve-scroll
+        data-controller="form-ticket-actors"
     >
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
 
@@ -80,13 +81,18 @@
                         aria-invalid="true"
                         aria-errormessage="team-error"
                     {% endif %}
+                    data-form-ticket-actors-target="teams"
+                    data-action="form-ticket-actors#refreshAssignees"
                 >
                     <option value="">
                         {{ 'tickets.team.none' | trans }}
                     </option>
 
                     {% for team in teams %}
-                        <option value="{{ team.uid }}" {{ team.uid == teamUid ? 'selected' }}>
+                        <option
+                            value="{{ team.uid }}" {{ team.uid == teamUid ? 'selected' }}
+                            data-agents-uids="{{ team.agentsUids | json_encode }}"
+                        >
                             {{ team.name }}
                         </option>
                     {% endfor %}
@@ -118,6 +124,7 @@
                     aria-invalid="true"
                     aria-errormessage="assignee-error"
                 {% endif %}
+                data-form-ticket-actors-target="assignees"
             >
                 <option value="">
                     {{ 'tickets.unassigned' | trans }}
