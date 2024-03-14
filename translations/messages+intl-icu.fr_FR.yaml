@@ -296,6 +296,9 @@ tickets.events.solution.changed: '<strong>{username}</strong> a changé la solut
 tickets.events.solution.new: '<strong>{username}</strong> a ajouté une solution'
 tickets.events.solution.removed: '<strong>{username}</strong> a supprimé la solution'
 tickets.events.status: '<strong>{username}</strong> a changé le statut de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.team.changed: '<strong>{username}</strong> a changé l’équipe de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.events.team.set: '<strong>{username}</strong> a affecté le ticket à l’équipe <i>{newValue}</i>'
+tickets.events.team.unset: '<strong>{username}</strong> a supprimé l’affectation de l’équipe <i>{oldValue}</i>'
 tickets.events.title: "<strong>{username}</strong> a renommé le ticket de «\_<i>{oldValue}</i>\_» à «\_<i>{newValue}</i>\_»"
 tickets.events.type.to_incident: '<strong>{username}</strong> a changé le ticket en incident'
 tickets.events.type.to_request: '<strong>{username}</strong> a changé le ticket en demande'
