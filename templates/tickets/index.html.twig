@@ -19,7 +19,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block sidebar %}
-    {% if is_granted('orga:see:tickets:all', 'any') %}
+    {% if is_agent('any') %}
         {{ include('tickets/_sidebar.html.twig', {
             current: view,
             countOwned: countOwned,
@@ -30,7 +30,7 @@
 
 {% block body %}
     <main class="layout__body">
-        <div class="flow wrapper wrapper--large {{ not is_granted('orga:see:tickets:all', 'any') ? 'wrapper--center' }}">
+        <div class="flow wrapper wrapper--large {{ not is_agent('any') ? 'wrapper--center' }}">
             <div class="layout__breadcrumb">
                 <h1>{{ title }}</h1>
             </div>

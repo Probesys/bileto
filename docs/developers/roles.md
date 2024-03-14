@@ -116,6 +116,11 @@ if ($authorizer->isGranted('orga:see', $organization)) {
 if ($authorizer->isGrantedToUser($a_user, 'orga:see', $organization)) {
     // …
 }
+
+// Check if the current user is an agent
+if ($authorizer->isAgent($organization)) {
+    // …
+}
 ```
 
 In templates:
@@ -130,9 +135,14 @@ In templates:
 {% if is_granted_to_user(a_user, 'orga:manage', organization) %}
     <a href="...">Delete</a>
 {% endif %}
+
+{# Check if the current user is an agent #}
+{% if is_agent(organization) %}
+    <a href="...">Delete</a>
+{% endif %}
 ```
 
-You can check that a permission is given at least by one authorization:
+You can check that a permission is given at least by one authorization by passing `any` instead of an organization:
 
 ```php
 $this->denyAccessUnlessGranted('orga:see', 'any');
