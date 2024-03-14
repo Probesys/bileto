@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\SearchEngine\Query;
+use App\Utils\ArrayHelper;
 use Doctrine\ORM;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -411,28 +412,18 @@ class TicketQueryBuilder
      */
     private function mustIncludeContracts(array $queries): bool
     {
-        foreach ($queries as $query) {
-            if ($this->includesQualifier($query, 'contract')) {
-                return true;
-            }
-        }
-
-        return false;
+        return ArrayHelper::any($queries, function ($query): bool {
+            return $this->includesQualifier($query, 'contract');
+        });
     }
 
     private function includesQualifier(Query $query, string $qualifier): bool
     {
-        foreach ($query->getConditions() as $condition) {
-            if ($condition->isQualifierCondition() && $condition->getQualifier() === $qualifier) {
-                return true;
-            } elseif (
-                $condition->isQueryCondition() &&
-                $this->includesQualifier($condition->getQuery(), $qualifier)
-            ) {
-                return true;
-            }
-        }
-
-        return false;
+        return ArrayHelper::any($query->getConditions(), function ($condition) use ($qualifier): bool {
+            return (
+                ($condition->isQualifierCondition() && $condition->getQualifier() === $qualifier) ||
+                ($condition->isQueryCondition() && $this->includesQualifier($condition->getQuery(), $qualifier))
+            );
+        });
     }
 }
