@@ -412,10 +412,24 @@ class TicketQueryBuilder
     private function mustIncludeContracts(array $queries): bool
     {
         foreach ($queries as $query) {
-            foreach ($query->getConditions() as $condition) {
-                if ($condition->isQualifierCondition() && $condition->getQualifier() === 'contract') {
-                    return true;
-                }
+            if ($this->includesQualifier($query, 'contract')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function includesQualifier(Query $query, string $qualifier): bool
+    {
+        foreach ($query->getConditions() as $condition) {
+            if ($condition->isQualifierCondition() && $condition->getQualifier() === $qualifier) {
+                return true;
+            } elseif (
+                $condition->isQueryCondition() &&
+                $this->includesQualifier($condition->getQuery(), $qualifier)
+            ) {
+                return true;
             }
         }
 

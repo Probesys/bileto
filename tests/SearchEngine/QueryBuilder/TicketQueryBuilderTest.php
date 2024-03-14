@@ -52,7 +52,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testCreateWithContract(): void
     {
-        $query = SearchEngine\Query::fromString('contract:#1');
+        $query = SearchEngine\Query::fromString('(contract:#1)');
 
         $queryBuilder = $this->ticketQueryBuilder->create([$query]);
 
