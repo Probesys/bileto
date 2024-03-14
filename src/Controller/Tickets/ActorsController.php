@@ -8,9 +8,11 @@ namespace App\Controller\Tickets;
 
 use App\Controller\BaseController;
 use App\Entity\Ticket;
+use App\Repository\TeamRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Service\ActorsLister;
+use App\Service\Sorter\TeamSorter;
 use App\TicketActivity\TicketEvent;
 use App\Utils\ArrayHelper;
 use App\Utils\ConstraintErrorsFormatter;
@@ -27,6 +29,8 @@ class ActorsController extends BaseController
     public function edit(
         Ticket $ticket,
         ActorsLister $actorsLister,
+        TeamSorter $teamSorter,
+        TeamRepository $teamRepository,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
@@ -40,14 +44,20 @@ class ActorsController extends BaseController
 
         $allUsers = $actorsLister->findByOrganization($organization);
         $agents = $actorsLister->findByOrganization($organization, roleType: 'agent');
+        $teams = $teamRepository->findByOrganization($organization);
+        $teamSorter->sort($teams);
+
         $requester = $ticket->getRequester();
+        $team = $ticket->getTeam();
         $assignee = $ticket->getAssignee();
 
         return $this->render('tickets/actors/edit.html.twig', [
             'ticket' => $ticket,
             'requesterUid' => $requester ? $requester->getUid() : '',
+            'teamUid' => $team ? $team->getUid() : '',
             'assigneeUid' => $assignee ? $assignee->getUid() : '',
             'allUsers' => $allUsers,
+            'teams' => $teams,
             'agents' => $agents,
         ]);
     }
@@ -56,9 +66,11 @@ class ActorsController extends BaseController
     public function update(
         Ticket $ticket,
         Request $request,
+        TeamRepository $teamRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
         ActorsLister $actorsLister,
+        TeamSorter $teamSorter,
         ValidatorInterface $validator,
         TranslatorInterface $translator,
         EventDispatcherInterface $eventDispatcher,
@@ -74,10 +86,14 @@ class ActorsController extends BaseController
         }
 
         $initialRequester = $ticket->getRequester();
+        $initialTeam = $ticket->getTeam();
         $initialAssignee = $ticket->getAssignee();
 
         /** @var string $requesterUid */
         $requesterUid = $request->request->get('requesterUid', $initialRequester ? $initialRequester->getUid() : '');
+
+        /** @var string $teamUid */
+        $teamUid = $request->request->get('teamUid', $initialTeam ? $initialTeam->getUid() : '');
 
         /** @var string $assigneeUid */
         $assigneeUid = $request->request->get('assigneeUid', $initialAssignee ? $initialAssignee->getUid() : '');
@@ -87,13 +103,17 @@ class ActorsController extends BaseController
 
         $allUsers = $actorsLister->findByOrganization($organization);
         $agents = $actorsLister->findByOrganization($organization, roleType: 'agent');
+        $teams = $teamRepository->findByOrganization($organization);
+        $teamSorter->sort($teams);
 
         if (!$this->isCsrfTokenValid('update ticket actors', $csrfToken)) {
             return $this->renderBadRequest('tickets/actors/edit.html.twig', [
                 'ticket' => $ticket,
                 'requesterUid' => $requesterUid,
+                'teamUid' => $teamUid,
                 'assigneeUid' => $assigneeUid,
                 'allUsers' => $allUsers,
+                'teams' => $teams,
                 'agents' => $agents,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
@@ -103,9 +123,17 @@ class ActorsController extends BaseController
             return $user->getUid() === $requesterUid;
         });
 
+        $team = null;
+        if ($teamUid) {
+            $team = ArrayHelper::find($teams, function ($team) use ($teamUid): bool {
+                return $team->getUid() === $teamUid;
+            });
+        }
+
         $assignee = null;
         if ($assigneeUid) {
-            $assignee = ArrayHelper::find($agents, function ($agent) use ($assigneeUid): bool {
+            $availableAgents = $team ? $team->getAgents()->toArray() : $agents;
+            $assignee = ArrayHelper::find($availableAgents, function ($agent) use ($assigneeUid): bool {
                 return $agent->getUid() === $assigneeUid;
             });
         }
@@ -113,6 +141,7 @@ class ActorsController extends BaseController
         $previousAssignee = $ticket->getAssignee();
 
         $ticket->setRequester($requester);
+        $ticket->setTeam($team);
         $ticket->setAssignee($assignee);
 
         $errors = $validator->validate($ticket);
@@ -120,8 +149,10 @@ class ActorsController extends BaseController
             return $this->renderBadRequest('tickets/actors/edit.html.twig', [
                 'ticket' => $ticket,
                 'requesterUid' => $requesterUid,
+                'teamUid' => $teamUid,
                 'assigneeUid' => $assigneeUid,
                 'allUsers' => $allUsers,
+                'teams' => $teams,
                 'agents' => $agents,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);

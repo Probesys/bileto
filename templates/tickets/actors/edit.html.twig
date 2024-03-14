@@ -56,6 +56,44 @@
             </select>
         </div>
 
+        {% if teams %}
+            <div class="flow flow--small">
+                <label for="team">
+                    {{ 'tickets.team' | trans }}
+                    <small class="text--secondary">
+                        {{ 'forms.optional' | trans }}
+                    </small>
+                </label>
+
+                {% if errors.team is defined %}
+                    <p class="form__error" role="alert" id="team-error">
+                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                        {{ errors.team }}
+                    </p>
+                {% endif %}
+
+                <select
+                    id="team"
+                    name="teamUid"
+                    {% if errors.team is defined %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-errormessage="team-error"
+                    {% endif %}
+                >
+                    <option value="">
+                        {{ 'tickets.team.none' | trans }}
+                    </option>
+
+                    {% for team in teams %}
+                        <option value="{{ team.uid }}" {{ team.uid == teamUid ? 'selected' }}>
+                            {{ team.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+
         <div class="flow flow--small">
             <label for="assignee">
                 {{ icon('headset') }}

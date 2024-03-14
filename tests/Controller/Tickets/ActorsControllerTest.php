@@ -7,6 +7,7 @@
 namespace App\Tests\Controller\Tickets;
 
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
@@ -95,24 +96,30 @@ class ActorsControllerTest extends WebTestCase
             $assignee,
         ) = UserFactory::createMany(3);
         $client->loginUser($user->object());
+        $team = TeamFactory::createOne([
+            'agents' => [$assignee],
+        ]);
         $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
         $this->grantOrga($requester->object(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->object(), ['orga:create:tickets']);
+        $this->grantTeam($team->object(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
+            'team' => null,
             'assignee' => null,
         ]);
 
         $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
+            'teamUid' => $team->getUid(),
             'assigneeUid' => $assignee->getUid(),
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticket->refresh();
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
+        $this->assertSame($team->getUid(), $ticket->getTeam()->getUid());
         $this->assertSame($assignee->getUid(), $ticket->getAssignee()->getUid());
     }
 
@@ -171,6 +178,80 @@ class ActorsControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticket->refresh();
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
+        $this->assertNull($ticket->getAssignee());
+    }
+
+    public function testPostUpdateSetsNullIfTeamNotAuthorizedInOrga(): void
+    {
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->object());
+        $initialTeam = TeamFactory::createOne([
+            'agents' => [$assignee],
+        ]);
+        $newTeam = TeamFactory::createOne([
+            'agents' => [$assignee],
+        ]);
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->object(), ['orga:create:tickets']);
+        $this->grantTeam($initialTeam->object(), ['orga:create:tickets']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => null,
+            'team' => $initialTeam,
+            'assignee' => null,
+        ]);
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
+            'requesterUid' => $requester->getUid(),
+            'teamUid' => $newTeam->getUid(),
+            'assigneeUid' => $assignee->getUid(),
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->refresh();
+        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
+        $this->assertNull($ticket->getTeam());
+        $this->assertSame($assignee->getUid(), $ticket->getAssignee()->getUid());
+    }
+
+    public function testPostUpdateSetsNullIfAgentIsNotInTeam(): void
+    {
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->object());
+        $team = TeamFactory::createOne();
+        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->object(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->object(), ['orga:create:tickets']);
+        $this->grantTeam($team->object(), ['orga:create:tickets']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => null,
+            'team' => null,
+            'assignee' => null,
+        ]);
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
+            'requesterUid' => $requester->getUid(),
+            'teamUid' => $team->getUid(),
+            'assigneeUid' => $assignee->getUid(),
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->refresh();
+        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
+        $this->assertSame($team->getUid(), $ticket->getTeam()->getUid());
         $this->assertNull($ticket->getAssignee());
     }
 
