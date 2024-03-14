@@ -12,6 +12,7 @@ use App\SearchEngine\TicketSearcher;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\OrganizationFactory;
+use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -58,6 +59,64 @@ class TicketSearcherTest extends WebTestCase
 
         $this->assertSame(1, $ticketsPagination->count);
         $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsReturnsTicketAssignedToUserTeam(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $team = TeamFactory::createOne([
+            'agents' => [$user],
+        ]);
+        $ticket = TicketFactory::createOne([
+            'team' => $team,
+        ]);
+
+        $ticketsPagination = $ticketSearcher->getTickets();
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsReturnsTicketWithDistinct(): void
+    {
+        // In the case of a ticket assigned to a team AND an agent of this
+        // team, AND that the team has several agents, AND that there are at
+        // least as many tickets as the maxResults option, some tickets may be
+        // missing without the SQL "distinct" clause.
+
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        list($user, $otherUser) = UserFactory::createMany(2);
+        $client->loginUser($user->object());
+        $team = TeamFactory::createOne([
+            'agents' => [$user, $otherUser],
+        ]);
+        $organization = OrganizationFactory::createOne();
+        $this->grantTeam($team->object(), ['orga:see'], $organization->object());
+        TicketFactory::createOne([
+            'organization' => $organization,
+            'team' => $team,
+            'assignee' => $user,
+        ]);
+        TicketFactory::createOne([
+            'organization' => $organization,
+            'team' => $team,
+            'assignee' => $user,
+        ]);
+
+        $ticketsPagination = $ticketSearcher->getTickets(paginationOptions: [
+            'page' => 0,
+            'maxResults' => 2,
+        ]);
+
+        $this->assertSame(2, $ticketsPagination->count);
     }
 
     public function testGetTicketsDoesNotReturnTicketNotInvolvingUser(): void
@@ -246,6 +305,34 @@ class TicketSearcherTest extends WebTestCase
 
         $query = Query::fromString('status:new');
         $count = $ticketSearcher->countTickets($query);
+
+        $this->assertSame(1, $count);
+    }
+
+    public function testCountTicketsReturnsNumberOfTicketsWithDistinct(): void
+    {
+        // In the case of a ticket assigned to a team AND an agent of this
+        // team, AND that the team has several agents, the count may be wrong
+        // without the SQL "distinct" clause.
+
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        list($user, $otherUser) = UserFactory::createMany(2);
+        $client->loginUser($user->object());
+        $team = TeamFactory::createOne([
+            'agents' => [$user, $otherUser],
+        ]);
+        $organization = OrganizationFactory::createOne();
+        $this->grantTeam($team->object(), ['orga:see'], $organization->object());
+        TicketFactory::createOne([
+            'organization' => $organization,
+            'team' => $team,
+            'assignee' => $user,
+        ]);
+
+        $count = $ticketSearcher->countTickets();
 
         $this->assertSame(1, $count);
     }

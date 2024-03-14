@@ -338,7 +338,8 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         return (
             $this->createdBy->getId() === $userId ||
             ($this->requester && $this->requester->getId() === $userId) ||
-            ($this->assignee && $this->assignee->getId() === $userId)
+            ($this->assignee && $this->assignee->getId() === $userId) ||
+            ($this->team && $this->team->hasAgent($user))
         );
     }
 

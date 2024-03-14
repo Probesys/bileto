@@ -48,6 +48,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
         $dql = $queryBuilder->getDQL();
         $this->assertStringNotContainsString('LEFT JOIN t.contracts', $dql);
+        $this->assertStringNotContainsString('LEFT JOIN t.team', $dql);
     }
 
     public function testCreateWithContract(): void
@@ -58,6 +59,17 @@ class TicketQueryBuilderTest extends WebTestCase
 
         $dql = $queryBuilder->getDQL();
         $this->assertStringContainsString('LEFT JOIN t.contracts', $dql);
+    }
+
+    public function testCreateWithInvolves(): void
+    {
+        $query = SearchEngine\Query::fromString('involves:@me');
+
+        $queryBuilder = $this->ticketQueryBuilder->create([$query]);
+
+        $dql = $queryBuilder->getDQL();
+        $this->assertStringContainsString('LEFT JOIN t.team', $dql);
+        $this->assertStringContainsString('LEFT JOIN tea.agents', $dql);
     }
 
     public function testBuildQueryWithText(): void
@@ -332,7 +344,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            (t.assignee = :q0p0 OR t.requester = :q0p1)
+            (t.assignee = :q0p0 OR tag.id = :q0p1 OR t.requester = :q0p2)
             SQL, $dql);
         $this->assertSame($alix->getId(), $parameters['q0p0']);
         $this->assertSame($alix->getId(), $parameters['q0p1']);
@@ -348,7 +360,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            NOT (t.assignee = :q0p0 OR t.requester = :q0p1)
+            NOT (t.assignee = :q0p0 OR tag.id = :q0p1 OR t.requester = :q0p2)
             SQL, $dql);
         $this->assertSame($alix->getId(), $parameters['q0p0']);
         $this->assertSame($alix->getId(), $parameters['q0p1']);
