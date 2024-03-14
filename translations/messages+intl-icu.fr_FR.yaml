@@ -406,6 +406,8 @@ tickets.status.open: Ouvert
 tickets.status.pending: 'En attente'
 tickets.status.planned: Planifié
 tickets.status.resolved: Résolu
+tickets.team: 'Équipe responsable'
+tickets.team.none: 'Aucune équipe'
 tickets.time_spent: 'Temps passé'
 tickets.timeline.diff_days: '{days} jours plus tard'
 tickets.timeline.today: (aujourd’hui)
