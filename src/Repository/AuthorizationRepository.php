@@ -19,6 +19,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @phpstan-type AuthorizationType 'orga'|'admin'
+ * @phpstan-type Scope 'any'|Organization
+ *
  * @extends ServiceEntityRepository<Authorization>
  *
  * @method Authorization|null find($id, $lockMode = null, $lockVersion = null)
@@ -29,6 +32,9 @@ use Doctrine\Persistence\ManagerRegistry;
 class AuthorizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     use UidGeneratorTrait;
+
+    /** @var array<string, Authorization[]> */
+    private array $cacheAuthorizations = [];
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -113,6 +119,32 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
     }
 
     /**
+     * @param AuthorizationType $authorizationType
+     * @param ?Scope $scope
+     *
+     * @return Authorization[]
+     */
+    public function getAuthorizations(string $authorizationType, User $user, mixed $scope): array
+    {
+        $cacheKey = self::getCacheKey($authorizationType, $user, $scope);
+        if (isset($this->cacheAuthorizations[$cacheKey])) {
+            return $this->cacheAuthorizations[$cacheKey];
+        }
+
+        if ($authorizationType === 'orga' && $scope !== null) {
+            $authorizations = $this->getOrgaAuthorizationsFor($user, $scope);
+            $this->cacheAuthorizations[$cacheKey] = $authorizations;
+        } elseif ($authorizationType === 'admin' && $scope === null) {
+            $authorizations = $this->getAdminAuthorizationsFor($user);
+            $this->cacheAuthorizations[$cacheKey] = $authorizations;
+        } else {
+            throw new \DomainException('Given authorization type and scope are not supported together');
+        }
+
+        return $authorizations;
+    }
+
+    /**
      * @return Authorization[]
      */
     public function getAdminAuthorizationsFor(User $user): array
@@ -155,5 +187,26 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
 
         $query = $queryBuilder->getQuery();
         return $query->getResult();
+    }
+
+    /**
+     * @param AuthorizationType $authorizationType
+     * @param ?Scope $scope
+     */
+    private static function getCacheKey(string $authorizationType, User $user, mixed $scope): string
+    {
+        $baseKey = "{$authorizationType}.{$user->getId()}";
+
+        if ($scope === 'any') {
+            $baseKey .= '.any';
+        } elseif ($scope instanceof Organization) {
+            $baseKey .= ".{$scope->getId()}";
+        } elseif ($scope === null) {
+            $baseKey .= '.null';
+        } else {
+            throw new \DomainException('The given scope is not supported');
+        }
+
+        return hash('sha256', $baseKey);
     }
 }
