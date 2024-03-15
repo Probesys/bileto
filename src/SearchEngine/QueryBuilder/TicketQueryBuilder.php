@@ -50,9 +50,15 @@ class TicketQueryBuilder
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder->select('t');
         $queryBuilder->from('App\Entity\Ticket', 't');
+        $queryBuilder->distinct();
 
         if ($this->mustIncludeContracts($queries)) {
             $queryBuilder->leftJoin('t.contracts', 'c');
+        }
+
+        if ($this->mustIncludeTeamAgents($queries)) {
+            $queryBuilder->leftJoin('t.team', 'tea'); // "tea" for TEAm
+            $queryBuilder->leftJoin('tea.agents', 'tag'); // "tag" for Team AGents
         }
 
         foreach ($queries as $sequence => $query) {
@@ -166,8 +172,9 @@ class TicketQueryBuilder
         } elseif ($qualifier === 'involves') {
             $value = $this->processActorQualifier($value);
             $assigneeWhere = $this->buildExpr('t.assignee', $value, false);
+            $teamWhere = $this->buildExpr('tag.id', $value, false);
             $requesterWhere = $this->buildExpr('t.requester', $value, false);
-            $where = "{$assigneeWhere} OR {$requesterWhere}";
+            $where = "{$assigneeWhere} OR {$teamWhere} OR {$requesterWhere}";
             if ($condition->not()) {
                 return "NOT ({$where})";
             } else {
@@ -414,6 +421,16 @@ class TicketQueryBuilder
     {
         return ArrayHelper::any($queries, function ($query): bool {
             return $this->includesQualifier($query, 'contract');
+        });
+    }
+
+    /**
+     * @param Query[] $queries
+     */
+    private function mustIncludeTeamAgents(array $queries): bool
+    {
+        return ArrayHelper::any($queries, function ($query): bool {
+            return $this->includesQualifier($query, 'involves');
         });
     }
 

@@ -6,6 +6,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Organization;
 use App\Entity\Team;
 use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
@@ -45,5 +46,24 @@ class TeamRepository extends ServiceEntityRepository implements UidGeneratorInte
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @return Team[]
+     */
+    public function findByOrganization(Organization $organization): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT t
+            FROM App\Entity\Team t
+            JOIN t.teamAuthorizations ta
+            WHERE (ta.organization = :organization OR ta.organization IS NULL)
+        SQL);
+
+        $query->setParameter('organization', $organization);
+
+        return $query->getResult();
     }
 }

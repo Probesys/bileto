@@ -9,6 +9,7 @@ namespace App\Twig;
 use App\Entity\EntityEvent;
 use App\Entity\User;
 use App\Repository\ContractRepository;
+use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
@@ -18,6 +19,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
 {
     public function __construct(
         private ContractRepository $contractRepository,
+        private TeamRepository $teamRepository,
         private UserRepository $userRepository,
         private TranslatorInterface $translator,
     ) {
@@ -53,6 +55,8 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             return $this->formatAssigneeChanges($user, $fieldChanges);
         } elseif ($field === 'requester') {
             return $this->formatRequesterChanges($user, $fieldChanges);
+        } elseif ($field === 'team') {
+            return $this->formatTeamChanges($user, $fieldChanges);
         } elseif ($field === 'solution') {
             return $this->formatSolutionChanges($user, $fieldChanges);
         } elseif ($field === 'ongoingContract') {
@@ -206,6 +210,49 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
                 'oldValue' => $oldRequesterUsername,
             ]
         );
+    }
+
+    /**
+     * @param array<?int> $changes
+     */
+    private function formatTeamChanges(User $user, array $changes): string
+    {
+        $username = $this->escape($user->getDisplayName());
+
+        if ($changes[0] === null) {
+            $newTeam = $this->teamRepository->find($changes[1]);
+            $newTeamName = $this->escape($newTeam->getName());
+            return $this->translator->trans(
+                'tickets.events.team.set',
+                [
+                    'username' => $username,
+                    'newValue' => $newTeamName,
+                ]
+            );
+        } elseif ($changes[1] === null) {
+            $oldTeam = $this->teamRepository->find($changes[0]);
+            $oldTeamName = $this->escape($oldTeam->getName());
+            return $this->translator->trans(
+                'tickets.events.team.unset',
+                [
+                    'username' => $username,
+                    'oldValue' => $oldTeamName,
+                ]
+            );
+        } else {
+            $oldTeam = $this->teamRepository->find($changes[0]);
+            $oldTeamName = $this->escape($oldTeam->getName());
+            $newTeam = $this->teamRepository->find($changes[1]);
+            $newTeamName = $this->escape($newTeam->getName());
+            return $this->translator->trans(
+                'tickets.events.team.changed',
+                [
+                    'username' => $username,
+                    'newValue' => $newTeamName,
+                    'oldValue' => $oldTeamName,
+                ]
+            );
+        }
     }
 
     /**

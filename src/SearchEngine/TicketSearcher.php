@@ -124,7 +124,7 @@ class TicketSearcher
         }
 
         $queryBuilder = $this->ticketQueryBuilder->create($queries);
-        $queryBuilder->select($queryBuilder->expr()->count('t.id'));
+        $queryBuilder->select($queryBuilder->expr()->countDistinct('t.id'));
         return (int) $queryBuilder->getQuery()->getSingleScalarResult();
     }
 

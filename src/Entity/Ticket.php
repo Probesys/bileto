@@ -112,6 +112,9 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\ManyToOne]
     private ?User $assignee = null;
 
+    #[ORM\ManyToOne]
+    private ?Team $team = null;
+
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Organization $organization = null;
@@ -317,13 +320,26 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         return $this;
     }
 
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
     public function hasActor(User $user): bool
     {
         $userId = $user->getId();
         return (
             $this->createdBy->getId() === $userId ||
             ($this->requester && $this->requester->getId() === $userId) ||
-            ($this->assignee && $this->assignee->getId() === $userId)
+            ($this->assignee && $this->assignee->getId() === $userId) ||
+            ($this->team && $this->team->hasAgent($user))
         );
     }
 

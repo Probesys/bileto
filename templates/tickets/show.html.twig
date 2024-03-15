@@ -429,6 +429,10 @@
                         </div>
 
                         <div>
+                            {% if ticket.team %}
+                                {{ ticket.team.name }} /
+                            {% endif %}
+
                             {% if ticket.assignee %}
                                 {{ ticket.assignee.displayName }}
                             {% elseif is_granted('orga:update:tickets:actors', organization) %}
@@ -441,20 +445,22 @@
                                     <strong>{{ 'tickets.unassigned' | trans }}</strong>
                                 </button>
 
-                                <form
-                                    action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
-                                    method="post"
-                                    class="form--inline"
-                                    data-turbo-preserve-scroll
-                                >
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
-                                    <input type="hidden" name="assigneeUid" value="{{ app.user.uid }}">
+                                {% if is_agent(organization) and (not ticket.team or ticket.team.hasAgent(app.user)) %}
+                                    <form
+                                        action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
+                                        method="post"
+                                        class="form--inline"
+                                        data-turbo-preserve-scroll
+                                    >
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
+                                        <input type="hidden" name="assigneeUid" value="{{ app.user.uid }}">
 
-                                    →
-                                    <button id="form-self-assign-submit" class="button--anchor" type="submit">
-                                        {{ 'tickets.show.assign_yourself' | trans }}
-                                    </button>
-                                </form>
+                                        →
+                                        <button id="form-self-assign-submit" class="button--anchor" type="submit">
+                                            {{ 'tickets.show.assign_yourself' | trans }}
+                                        </button>
+                                    </form>
+                                {% endif %}
                             {% else %}
                                 <strong>{{ 'tickets.unassigned' | trans }}</strong>
                             {% endif %}

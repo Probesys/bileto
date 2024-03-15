@@ -13,6 +13,7 @@ use App\Entity\Ticket;
 use App\Repository\ContractRepository;
 use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
+use App\Repository\TeamRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\SearchEngine\Query;
@@ -20,6 +21,7 @@ use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\Security\Authorizer;
 use App\Service\ActorsLister;
+use App\Service\Sorter\TeamSorter;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
 use App\Utils\ArrayHelper;
@@ -116,11 +118,15 @@ class TicketsController extends BaseController
         Organization $organization,
         ActorsLister $actorsLister,
         OrganizationRepository $organizationRepository,
+        TeamRepository $teamRepository,
+        TeamSorter $teamSorter,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
 
         $allUsers = $actorsLister->findByOrganization($organization);
         $agents = $actorsLister->findByOrganization($organization, roleType: 'agent');
+        $teams = $teamRepository->findByOrganization($organization);
+        $teamSorter->sort($teams);
 
         return $this->render('organizations/tickets/new.html.twig', [
             'organization' => $organization,
@@ -128,12 +134,14 @@ class TicketsController extends BaseController
             'message' => '',
             'type' => Ticket::DEFAULT_TYPE,
             'requesterUid' => '',
+            'teamUid' => '',
             'assigneeUid' => '',
             'isResolved' => false,
             'urgency' => Ticket::DEFAULT_WEIGHT,
             'impact' => Ticket::DEFAULT_WEIGHT,
             'priority' => Ticket::DEFAULT_WEIGHT,
             'allUsers' => $allUsers,
+            'teams' => $teams,
             'agents' => $agents,
         ]);
     }
@@ -145,9 +153,11 @@ class TicketsController extends BaseController
         ContractRepository $contractRepository,
         MessageRepository $messageRepository,
         OrganizationRepository $organizationRepository,
+        TeamRepository $teamRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
         ActorsLister $actorsLister,
+        TeamSorter $teamSorter,
         Authorizer $authorizer,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer,
@@ -177,11 +187,15 @@ class TicketsController extends BaseController
             /** @var string $requesterUid */
             $requesterUid = $request->request->get('requesterUid', '');
 
+            /** @var string $teamUid */
+            $teamUid = $request->request->get('teamUid', '');
+
             /** @var string $assigneeUid */
             $assigneeUid = $request->request->get('assigneeUid', '');
         } else {
             $requesterUid = $user->getUid();
             $assigneeUid = '';
+            $teamUid = '';
         }
 
         if ($authorizer->isGranted('orga:update:tickets:priority', $organization)) {
@@ -210,6 +224,27 @@ class TicketsController extends BaseController
 
         $allUsers = $actorsLister->findByOrganization($organization);
         $agents = $actorsLister->findByOrganization($organization, roleType: 'agent');
+        $teams = $teamRepository->findByOrganization($organization);
+        $teamSorter->sort($teams);
+
+        $requester = ArrayHelper::find($allUsers, function ($user) use ($requesterUid): bool {
+            return $user->getUid() === $requesterUid;
+        });
+
+        $team = null;
+        if ($teamUid) {
+            $team = ArrayHelper::find($teams, function ($team) use ($teamUid): bool {
+                return $team->getUid() === $teamUid;
+            });
+        }
+
+        $assignee = null;
+        if ($assigneeUid) {
+            $availableAgents = $team ? $team->getAgents()->toArray() : $agents;
+            $assignee = ArrayHelper::find($availableAgents, function ($agent) use ($assigneeUid): bool {
+                return $agent->getUid() === $assigneeUid;
+            });
+        }
 
         if (!$this->isCsrfTokenValid('create organization ticket', $csrfToken)) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
@@ -218,26 +253,17 @@ class TicketsController extends BaseController
                 'message' => $messageContent,
                 'type' => $type,
                 'requesterUid' => $requesterUid,
+                'teamUid' => $teamUid,
                 'assigneeUid' => $assigneeUid,
                 'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
                 'allUsers' => $allUsers,
+                'teams' => $teams,
                 'agents' => $agents,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
-        }
-
-        $requester = ArrayHelper::find($allUsers, function ($user) use ($requesterUid): bool {
-            return $user->getUid() === $requesterUid;
-        });
-
-        $assignee = null;
-        if ($assigneeUid) {
-            $assignee = ArrayHelper::find($agents, function ($agent) use ($assigneeUid): bool {
-                return $agent->getUid() === $assigneeUid;
-            });
         }
 
         $ticket = new Ticket();
@@ -248,6 +274,7 @@ class TicketsController extends BaseController
         $ticket->setPriority($priority);
         $ticket->setOrganization($organization);
         $ticket->setRequester($requester);
+        $ticket->setTeam($team);
 
         $errors = $validator->validate($ticket);
         if (count($errors) > 0) {
@@ -257,12 +284,14 @@ class TicketsController extends BaseController
                 'message' => $messageContent,
                 'type' => $type,
                 'requesterUid' => $requesterUid,
+                'teamUid' => $teamUid,
                 'assigneeUid' => $assigneeUid,
                 'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
                 'allUsers' => $allUsers,
+                'teams' => $teams,
                 'agents' => $agents,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
@@ -282,12 +311,14 @@ class TicketsController extends BaseController
                 'message' => $messageContent,
                 'type' => $type,
                 'requesterUid' => $requesterUid,
+                'teamUid' => $teamUid,
                 'assigneeUid' => $assigneeUid,
                 'isResolved' => $isResolved,
                 'urgency' => $urgency,
                 'impact' => $impact,
                 'priority' => $priority,
                 'allUsers' => $allUsers,
+                'teams' => $teams,
                 'agents' => $agents,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);

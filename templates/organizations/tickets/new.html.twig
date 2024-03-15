@@ -26,7 +26,7 @@
             action="{{ path('create organization ticket', {'uid': organization.uid}) }}"
             method="post"
             class="wrapper wrapper--center flow"
-            data-controller="form-priority"
+            data-controller="form-priority form-ticket-actors"
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create organization ticket') }}">
 
@@ -155,82 +155,124 @@
             {% endif %}
 
             {% if is_granted('orga:update:tickets:actors', organization) %}
-                <div class="row flow">
-                    <div class="row__item--extend flow flow--small">
-                        <label for="requester">
-                            {{ icon('user') }}
-                            {{ 'tickets.requester' | trans }}
-                        </label>
+                <div class="flow flow--small wrapper wrapper--small">
+                    <label for="requester">
+                        {{ icon('user') }}
+                        {{ 'tickets.requester' | trans }}
+                    </label>
 
+                    {% if errors.requester is defined %}
+                        <p class="form__error" role="alert" id="requester-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.requester }}
+                        </p>
+                    {% endif %}
+
+                    <select
+                        id="requester"
+                        name="requesterUid"
+                        required
                         {% if errors.requester is defined %}
-                            <p class="form__error" role="alert" id="requester-error">
-                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                {{ errors.requester }}
-                            </p>
+                            autofocus
+                            aria-invalid="true"
+                            aria-errormessage="requester-error"
                         {% endif %}
+                    >
+                        {% for user in allUsers %}
+                            <option value="{{ user.uid }}" {{ user.uid == requesterUid ? 'selected' }}>
+                                {{ user.displayName }}
 
-                        <select
-                            id="requester"
-                            name="requesterUid"
-                            required
-                            {% if errors.requester is defined %}
-                                autofocus
-                                aria-invalid="true"
-                                aria-errormessage="requester-error"
-                            {% endif %}
-                        >
-                            {% for user in allUsers %}
-                                <option value="{{ user.uid }}" {{ user.uid == requesterUid ? 'selected' }}>
-                                    {{ user.displayName }}
+                                {% if user.id == app.user.id %}
+                                    ({{ 'users.yourself' | trans }})
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                                    {% if user.id == app.user.id %}
-                                        ({{ 'users.yourself' | trans }})
-                                    {% endif %}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="row__item--extend flow flow--small">
-                        <label for="assignee">
-                            {{ icon('headset') }}
-                            {{ 'tickets.assignee' | trans }}
+                {% if teams %}
+                    <div class="flow flow--small wrapper wrapper--small">
+                        <label for="team">
+                            {{ 'tickets.team' | trans }}
                             <small class="text--secondary">
                                 {{ 'forms.optional' | trans }}
                             </small>
                         </label>
 
-                        {% if errors.assignee is defined %}
-                            <p class="form__error" role="alert" id="assignee-error">
+                        {% if errors.team is defined %}
+                            <p class="form__error" role="alert" id="team-error">
                                 <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                {{ errors.assignee }}
+                                {{ errors.team }}
                             </p>
                         {% endif %}
 
                         <select
-                            id="assignee"
-                            name="assigneeUid"
-                            {% if errors.assignee is defined %}
+                            id="team"
+                            name="teamUid"
+                            {% if errors.team is defined %}
                                 autofocus
                                 aria-invalid="true"
-                                aria-errormessage="assignee-error"
+                                aria-errormessage="team-error"
                             {% endif %}
+                            data-form-ticket-actors-target="teams"
+                            data-action="form-ticket-actors#refreshAssignees"
                         >
                             <option value="">
-                                {{ 'tickets.unassigned' | trans }}
+                                {{ 'tickets.team.none' | trans }}
                             </option>
 
-                            {% for user in agents %}
-                                <option value="{{ user.uid }}" {{ user.uid == assigneeUid ? 'selected' }}>
-                                    {{ user.displayName }}
-
-                                    {% if user.id == app.user.id %}
-                                        ({{ 'users.yourself' | trans }})
-                                    {% endif %}
+                            {% for team in teams %}
+                                <option
+                                    value="{{ team.uid }}" {{ team.uid == teamUid ? 'selected' }}
+                                    data-agents-uids="{{ team.agentsUids | json_encode }}"
+                                >
+                                    {{ team.name }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
+                {% endif %}
+
+                <div class="flow flow--small wrapper wrapper--small">
+                    <label for="assignee">
+                        {{ icon('headset') }}
+                        {{ 'tickets.assignee' | trans }}
+                        <small class="text--secondary">
+                            {{ 'forms.optional' | trans }}
+                        </small>
+                    </label>
+
+                    {% if errors.assignee is defined %}
+                        <p class="form__error" role="alert" id="assignee-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.assignee }}
+                        </p>
+                    {% endif %}
+
+                    <select
+                        id="assignee"
+                        name="assigneeUid"
+                        {% if errors.assignee is defined %}
+                            autofocus
+                            aria-invalid="true"
+                            aria-errormessage="assignee-error"
+                        {% endif %}
+                        data-form-ticket-actors-target="assignees"
+                    >
+                        <option value="">
+                            {{ 'tickets.unassigned' | trans }}
+                        </option>
+
+                        {% for user in agents %}
+                            <option value="{{ user.uid }}" {{ user.uid == assigneeUid ? 'selected' }}>
+                                {{ user.displayName }}
+
+                                {% if user.id == app.user.id %}
+                                    ({{ 'users.yourself' | trans }})
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
             {% endif %}
 
