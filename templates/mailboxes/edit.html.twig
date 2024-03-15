@@ -302,7 +302,7 @@
 
                     {{ include('alerts/_alert.html.twig', {
                         type: 'warning',
-                        title: 'mailboxes.deletion.caution' | trans,
+                        title: 'common.caution' | trans,
                         message: 'mailboxes.deletion.going_delete' | trans({ mailbox: mailbox.name }),
                     }, with_context = false) }}
 

@@ -32,7 +32,7 @@
 
                 {{ include('alerts/_alert.html.twig', {
                     type: 'warning',
-                    title: 'organizations.settings.deletion.caution' | trans,
+                    title: 'common.caution' | trans,
                     message: 'organizations.settings.deletion.going_delete' | trans({ organization: organization.name }),
                 }, with_context = false) }}
 

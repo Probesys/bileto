@@ -26,7 +26,7 @@
                 <div class="wrapper wrapper--text">
                     {{ include('alerts/_alert.html.twig', {
                         type: 'warning',
-                        title: 'common.warning' | trans,
+                        title: 'common.caution' | trans,
                         message: 'users.no_organization_authorization' | trans({
                             path: path('new user authorization', { uid: user.uid, orga: user.organization.uid }),
                         }),

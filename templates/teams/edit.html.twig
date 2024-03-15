@@ -35,7 +35,7 @@
 
                 {{ include('alerts/_alert.html.twig', {
                     type: 'warning',
-                    title: 'teams.deletion.caution' | trans,
+                    title: 'common.caution' | trans,
                     message: 'teams.deletion.going_delete' | trans({ team: team.name }),
                 }, with_context = false) }}
 

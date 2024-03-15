@@ -56,7 +56,8 @@ authorizations.new.title: 'New authorization'
 authorizations.revoke: Revoke
 authorizations.revoke.confirm: 'Are you sure that you want to revoke this authorization?'
 authorizations.revoke.disabled: 'You can’t revoke this authorization.'
-common.warning: Warning
+common.actions: Actions
+common.caution: Caution!
 contracts.alerts.edit.date_alert.after: 'days before the end of the contract.'
 contracts.alerts.edit.date_alert.before: Alert
 contracts.alerts.edit.hours_alert.after: '% of the hours have been consumed.'
@@ -81,7 +82,6 @@ contracts.index.tickets: '{count, plural, =0 {No tickets} one {1 ticket} other {
 contracts.index.title: Contracts
 contracts.new.title: 'New contract'
 contracts.notes: 'Private notes'
-contracts.show.actions: Actions
 contracts.show.alert: Alert
 contracts.show.time_accounting_unit: 'Time accounting unit: {count, plural, one {1 minute} other {# minutes}}'
 contracts.show.edit: 'Edit the contract'
@@ -129,7 +129,6 @@ layout.user_menu_title: 'Menu of {name}'
 login.remember_me: 'Remember me'
 login.submit: Login
 login.title: 'Log in'
-mailboxes.deletion.caution: Caution!
 mailboxes.deletion.confirm: 'Are you sure that you want to delete this mailbox?'
 mailboxes.deletion.going_delete: 'You’re going to delete the “{mailbox}” mailbox. Emails from this mailbox will no longer be fetched.'
 mailboxes.deletion.submit: 'Delete the mailbox'
@@ -174,7 +173,6 @@ organizations.index.title: Organizations
 organizations.name: Name
 organizations.new.submit: 'Create the organization'
 organizations.new.title: 'New organization'
-organizations.settings.deletion.caution: Caution!
 organizations.settings.deletion.confirm: 'Are you sure that you want to delete this organization?'
 organizations.settings.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and authorizations.'
 organizations.settings.deletion.submit: 'Delete the organization'
@@ -190,7 +188,6 @@ profile.leave_password: 'Leave these fields blank to keep your current password.
 profile.new_password: 'New password'
 profile.note: 'Note: the information of your profile can be visible to the other users.'
 profile.title: Profile
-roles.deletion.caution: Caution!
 roles.deletion.confirm: 'Are you sure that you want to delete this role?'
 roles.deletion.going_delete: 'You’re going to delete the “{role}” role. This will also delete the associated authorizations.'
 roles.deletion.submit: 'Delete the role'
@@ -256,7 +253,6 @@ teams.agents.new.go_to_create_agent: 'Create a new agent instead'
 teams.agents.new.go_to_select_agent: 'Select an agent instead'
 teams.agents.new.select_agent: 'Select an agent'
 teams.agents.new.title: 'New agent'
-teams.deletion.caution: Caution!
 teams.deletion.confirm: 'Are you sure that you want to delete this team?'
 teams.deletion.going_delete: 'You’re going to delete the “{team}” team. This will also delete the associated authorizations. Tickets for which this team is responsible will no longer be assigned to it.'
 teams.deletion.submit: 'Delete the team'
@@ -271,7 +267,6 @@ teams.index.title: 'Teams & Agents'
 teams.name: Name
 teams.new.submit: 'Create the team'
 teams.new.title: 'New team'
-teams.show.actions: Actions
 teams.show.agents.new: 'New agent'
 teams.show.agents.none: 'No agents'
 teams.show.agents.number: '{count, plural, =0 {No agents} one {1 agent} other {# agents}}'
@@ -370,7 +365,6 @@ tickets.search.label: 'Search using keywords or by using the advanced syntax'
 tickets.search.quick_search: 'Quick search'
 tickets.search.submit: Search
 tickets.search.tablist: 'Search modes'
-tickets.show.actions: Actions
 tickets.show.actions.rename: 'Rename the ticket'
 tickets.show.actions.turn_into_incident: 'Turn into an incident'
 tickets.show.actions.turn_into_request: 'Turn into a request'

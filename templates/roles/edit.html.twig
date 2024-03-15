@@ -42,7 +42,7 @@
 
                 {{ include('alerts/_alert.html.twig', {
                     type: 'warning',
-                    title: 'roles.deletion.caution' | trans,
+                    title: 'common.caution' | trans,
                     message: 'roles.deletion.going_delete' | trans({ role: role.name }),
                 }, with_context = false) }}
 
