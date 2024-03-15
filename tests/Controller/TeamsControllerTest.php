@@ -103,9 +103,9 @@ class TeamsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertResponseRedirects('/teams', 302);
         $this->assertSame(1, TeamFactory::count());
         $team = TeamFactory::last();
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
         $this->assertSame($name, $team->getName());
         $this->assertSame(20, strlen($team->getUid()));
     }

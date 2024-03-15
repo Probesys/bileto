@@ -66,7 +66,9 @@ class TeamsController extends BaseController
         $team = $form->getData();
         $teamRepository->save($team, true);
 
-        return $this->redirectToRoute('teams');
+        return $this->redirectToRoute('team', [
+            'uid' => $team->getUid(),
+        ]);
     }
 
     #[Route('/teams/{uid}', name: 'team', methods: ['GET', 'HEAD'])]
