@@ -8,8 +8,12 @@ namespace App\Tests\Controller;
 
 use App\Entity\Team;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\TeamFactory;
+use App\Tests\Factory\TeamAuthorizationFactory;
+use App\Tests\FactoriesHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -20,6 +24,7 @@ class TeamsControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -341,6 +346,90 @@ class TeamsControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'team'),
                 'name' => $newName,
             ],
+        ]);
+    }
+
+    public function testPostDeleteRemovesTheTeamAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $agent = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne([
+            'agents' => [$agent],
+        ]);
+        $this->grantTeam($team->object(), ['orga:see']);
+        $ticket = TicketFactory::createOne([
+            'team' => $team,
+        ]);
+
+        $this->clearEntityManager();
+
+        $client->request('POST', "/teams/{$team->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete team'),
+        ]);
+
+        $this->assertResponseRedirects('/teams', 302);
+        TeamFactory::assert()->notExists(['id' => $team->getId()]);
+        TeamAuthorizationFactory::assert()->count(0);
+        AuthorizationFactory::assert()->count(1);
+        $ticket->refresh();
+        $this->assertNull($ticket->getTeam());
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $agent = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne([
+            'agents' => [$agent],
+        ]);
+        $this->grantTeam($team->object(), ['orga:see']);
+        $ticket = TicketFactory::createOne([
+            'team' => $team,
+        ]);
+
+        $this->clearEntityManager();
+
+        $client->request('POST', "/teams/{$team->getUid()}/deletion", [
+            '_csrf_token' => 'not a token',
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}/edit", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        TeamFactory::assert()->exists(['id' => $team->getId()]);
+        TeamAuthorizationFactory::assert()->count(1);
+        AuthorizationFactory::assert()->count(2);
+        $ticket->refresh();
+        $this->assertNotNull($ticket->getTeam());
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $agent = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $team = TeamFactory::createOne([
+            'agents' => [$agent],
+        ]);
+        $this->grantTeam($team->object(), ['orga:see']);
+        $ticket = TicketFactory::createOne([
+            'team' => $team,
+        ]);
+
+        $this->clearEntityManager();
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/teams/{$team->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete team'),
         ]);
     }
 }

@@ -26,5 +26,33 @@
             'form': form,
             'submit_label': 'forms.save_changes' | trans,
         }) }}
+
+        <div class="flow">
+            <h2>{{ 'teams.deletion.title' | trans }}</h2>
+
+            <form action="{{ path('delete team', { uid: team.uid }) }}" method="post" class="wrapper wrapper--small flow">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete team') }}">
+
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'warning',
+                    title: 'teams.deletion.caution' | trans,
+                    message: 'teams.deletion.going_delete' | trans({ team: team.name }),
+                }, with_context = false) }}
+
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
+
+                <div class="form__actions">
+                    <button
+                        class="button--primary"
+                        type="submit"
+                        data-turbo-confirm="{{ 'teams.deletion.confirm' | trans }}"
+                    >
+                        {{ 'teams.deletion.submit' | trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
     </main>
 {% endblock %}

@@ -221,7 +221,12 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
 
         if ($changes[0] === null) {
             $newTeam = $this->teamRepository->find($changes[1]);
-            $newTeamName = $this->escape($newTeam->getName());
+            if ($newTeam) {
+                $newTeamName = $this->escape($newTeam->getName());
+            } else {
+                $newTeamName = $this->translator->trans('tickets.events.team.deleted');
+            }
+
             return $this->translator->trans(
                 'tickets.events.team.set',
                 [
@@ -231,7 +236,12 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             );
         } elseif ($changes[1] === null) {
             $oldTeam = $this->teamRepository->find($changes[0]);
-            $oldTeamName = $this->escape($oldTeam->getName());
+            if ($oldTeam) {
+                $oldTeamName = $this->escape($oldTeam->getName());
+            } else {
+                $oldTeamName = $this->translator->trans('tickets.events.team.deleted');
+            }
+
             return $this->translator->trans(
                 'tickets.events.team.unset',
                 [
@@ -241,9 +251,19 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             );
         } else {
             $oldTeam = $this->teamRepository->find($changes[0]);
-            $oldTeamName = $this->escape($oldTeam->getName());
+            if ($oldTeam) {
+                $oldTeamName = $this->escape($oldTeam->getName());
+            } else {
+                $oldTeamName = $this->translator->trans('tickets.events.team.deleted');
+            }
+
             $newTeam = $this->teamRepository->find($changes[1]);
-            $newTeamName = $this->escape($newTeam->getName());
+            if ($newTeam) {
+                $newTeamName = $this->escape($newTeam->getName());
+            } else {
+                $newTeamName = $this->translator->trans('tickets.events.team.deleted');
+            }
+
             return $this->translator->trans(
                 'tickets.events.team.changed',
                 [

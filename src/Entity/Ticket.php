@@ -113,6 +113,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     private ?User $assignee = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Team $team = null;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]

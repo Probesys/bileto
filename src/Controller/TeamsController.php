@@ -15,6 +15,7 @@ use App\Service\Sorter\UserSorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TeamsController extends BaseController
 {
@@ -126,5 +127,27 @@ class TeamsController extends BaseController
         return $this->redirectToRoute('team', [
             'uid' => $team->getUid(),
         ]);
+    }
+
+    #[Route('/teams/{uid}/deletion', name: 'delete team', methods: ['POST'])]
+    public function delete(
+        Team $team,
+        Request $request,
+        TeamRepository $teamRepository,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:agents');
+
+        /** @var string */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('delete team', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            return $this->redirectToRoute('edit team', ['uid' => $team->getUid()]);
+        }
+
+        $teamRepository->remove($team, true);
+
+        return $this->redirectToRoute('teams');
     }
 }
