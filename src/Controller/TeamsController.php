@@ -88,4 +88,43 @@ class TeamsController extends BaseController
             'teamAuthorizations' => $teamAuthorizations,
         ]);
     }
+
+    #[Route('/teams/{uid}/edit', name: 'edit team', methods: ['GET', 'HEAD'])]
+    public function edit(Team $team): Response
+    {
+        $this->denyAccessUnlessGranted('admin:manage:agents');
+
+        $form = $this->createForm(TeamType::class, $team);
+
+        return $this->render('teams/edit.html.twig', [
+            'team' => $team,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/teams/{uid}/edit', name: 'update team', methods: ['POST'])]
+    public function update(
+        Team $team,
+        Request $request,
+        TeamRepository $teamRepository,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:agents');
+
+        $form = $this->createForm(TeamType::class, $team);
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->renderBadRequest('teams/edit.html.twig', [
+                'team' => $team,
+                'form' => $form,
+            ]);
+        }
+
+        $team = $form->getData();
+        $teamRepository->save($team, true);
+
+        return $this->redirectToRoute('team', [
+            'uid' => $team->getUid(),
+        ]);
+    }
 }

@@ -21,6 +21,26 @@
             <h1>{{ team.name }}</h1>
         </div>
 
+        <div class="wrapper wrapper--large text--right">
+            <details
+                class="popup"
+                data-controller="popup"
+                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+            >
+                <summary class="popup__opener">
+                    <span class="button button--caret">
+                        {{ 'teams.show.actions' | trans }}
+                    </span>
+                </summary>
+
+                <nav class="popup__container popup__container--right">
+                    <a class="popup__item" href="{{ path('edit team', { uid: team.uid }) }}">
+                        {{ 'teams.show.edit' | trans }}
+                    </a>
+                </nav>
+            </details>
+        </div>
+
         <div class="wrapper wrapper--large flow">
             <h2>{{ 'teams.show.agents.title' | trans }}</h2>
 

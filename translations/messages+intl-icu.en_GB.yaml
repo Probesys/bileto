@@ -256,6 +256,7 @@ teams.agents.new.go_to_create_agent: 'Create a new agent instead'
 teams.agents.new.go_to_select_agent: 'Select an agent instead'
 teams.agents.new.select_agent: 'Select an agent'
 teams.agents.new.title: 'New agent'
+teams.edit.title: 'Edit a team'
 teams.index.agents: '{count, plural, =0 {No agents} one {1 agent} other {# agents}}'
 teams.index.authorizations: '{count, plural, =0 {No authorizations} one {1 authorization} other {# authorizations}}'
 teams.index.new_team: 'New team'
@@ -265,6 +266,7 @@ teams.index.title: 'Teams & Agents'
 teams.name: Name
 teams.new.submit: 'Create the team'
 teams.new.title: 'New team'
+teams.show.actions: Actions
 teams.show.agents.new: 'New agent'
 teams.show.agents.none: 'No agents'
 teams.show.agents.number: '{count, plural, =0 {No agents} one {1 agent} other {# agents}}'
@@ -273,6 +275,7 @@ teams.show.agents.remove.confirm: 'Are you sure that you want to remove this age
 teams.show.agents.title: Agents
 teams.show.authorizations.new: 'Give an authorization'
 teams.show.authorizations.title: Authorizations
+teams.show.edit: 'Edit the team'
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee

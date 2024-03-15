@@ -256,6 +256,7 @@ teams.agents.new.go_to_create_agent: 'Créer plutôt un agent'
 teams.agents.new.go_to_select_agent: 'Sélectionner plutôt un agent'
 teams.agents.new.select_agent: 'Sélectionner un agent'
 teams.agents.new.title: 'Nouvel agent'
+teams.edit.title: 'Modifier une équipe'
 teams.index.agents: '{count, plural, =0 {Aucun agent} one {1 agent} other {# agents}}'
 teams.index.authorizations: '{count, plural, =0 {Aucune autorisation} one {1 autorisation} other {# autorisations}}'
 teams.index.new_team: 'Nouvelle équipe'
@@ -265,6 +266,7 @@ teams.index.title: 'Équipes & Agents'
 teams.name: Nom
 teams.new.submit: 'Créer l’équipe'
 teams.new.title: 'Nouvelle équipe'
+teams.show.actions: Actions
 teams.show.agents.new: 'Nouvel agent'
 teams.show.agents.none: 'Aucun agent'
 teams.show.agents.number: '{count, plural, =0 {Aucun agent} one {1 agent} other {# agents}}'
@@ -273,6 +275,7 @@ teams.show.agents.remove.confirm: "Êtes-vous sûr de vouloir retirer cet agent 
 teams.show.agents.title: Agents
 teams.show.authorizations.new: 'Donner une autorisation'
 teams.show.authorizations.title: Autorisations
+teams.show.edit: 'Modifier l’équipe'
 tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'
 tickets.assignee: 'Attribué à'

@@ -216,4 +216,131 @@ class TeamsControllerTest extends WebTestCase
         $client->catchExceptions(false);
         $client->request('GET', "/teams/{$team->getUid()}");
     }
+
+    public function testGetEditRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne();
+
+        $client->request('GET', "/teams/{$team->getUid()}/edit");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Edit a team');
+    }
+
+    public function testGetEditFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $team = TeamFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/teams/{$team->getUid()}/edit");
+    }
+
+    public function testPostUpdateSavesTheTeamAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $initialName = 'team';
+        $newName = 'My team';
+        $team = TeamFactory::createOne([
+            'name' => $initialName,
+        ]);
+
+        $client->request('POST', "/teams/{$team->getUid()}/edit", [
+            'team' => [
+                '_token' => $this->generateCsrfToken($client, 'team'),
+                'name' => $newName,
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+        $team->refresh();
+        $this->assertSame($newName, $team->getName());
+    }
+
+    public function testPostUpdateFailsIfNameIsAlreadyUsed(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $initialName = 'team';
+        $newName = 'My team';
+        $team = TeamFactory::createOne([
+            'name' => $initialName,
+        ]);
+        TeamFactory::createOne([
+            'name' => $newName,
+        ]);
+
+        $client->request('POST', "/teams/{$team->getUid()}/edit", [
+            'team' => [
+                '_token' => $this->generateCsrfToken($client, 'team'),
+                'name' => $newName,
+            ],
+        ]);
+
+        $this->assertSelectorTextContains(
+            '#team_name-error',
+            'Enter a different name, a team already has this name',
+        );
+        $team->refresh();
+        $this->assertSame($initialName, $team->getName());
+    }
+
+    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $initialName = 'team';
+        $newName = 'My team';
+        $team = TeamFactory::createOne([
+            'name' => $initialName,
+        ]);
+
+        $client->request('POST', "/teams/{$team->getUid()}/edit", [
+            'team' => [
+                '_token' => 'not a token',
+                'name' => $newName,
+            ],
+        ]);
+
+        $this->assertSelectorTextContains('#team-error', 'The security token is invalid');
+        $team->refresh();
+        $this->assertSame($initialName, $team->getName());
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $initialName = 'team';
+        $newName = 'My team';
+        $team = TeamFactory::createOne([
+            'name' => $initialName,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('POST', "/teams/{$team->getUid()}/edit", [
+            'team' => [
+                '_token' => $this->generateCsrfToken($client, 'team'),
+                'name' => $newName,
+            ],
+        ]);
+    }
 }
