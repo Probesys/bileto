@@ -50,7 +50,7 @@ class HoursFormatterExtension extends AbstractExtension
         return $this->format($hours, $remainingMinutes, $longFormat);
     }
 
-    private function format(int $hours, int $minutes, bool $longFormat = true): string
+    private function format(int $hours, int $minutes, bool $longFormat = false): string
     {
         if ($longFormat) {
             if ($minutes === 0) {
