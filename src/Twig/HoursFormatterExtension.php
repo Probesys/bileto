@@ -42,7 +42,7 @@ class HoursFormatterExtension extends AbstractExtension
     /**
      * Return the given minutes formatted as hours and minutes.
      */
-    public function formatMinutes(int $minutes, bool $longFormat = true): string
+    public function formatMinutes(int $minutes, bool $longFormat = false): string
     {
         $hours = intdiv($minutes, 60);
         $remainingMinutes = $minutes % 60;
