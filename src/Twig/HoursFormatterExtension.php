@@ -31,12 +31,12 @@ class HoursFormatterExtension extends AbstractExtension
      * Hours can be given as float. The decimal part of the number is
      * transformed to minutes. For instance, 2.5 will return "2h 30m".
      */
-    public function formatHours(int|float $hours): string
+    public function formatHours(int|float $hours, bool $longFormat = false): string
     {
         $hoursOnly = intval(floor($hours));
         $minutes = intval(($hours - $hoursOnly) * 60);
 
-        return $this->format($hoursOnly, $minutes);
+        return $this->format($hoursOnly, $minutes, $longFormat);
     }
 
     /**
