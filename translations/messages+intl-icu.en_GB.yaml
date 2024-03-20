@@ -102,9 +102,9 @@ home.no_tickets: 'No tickets'
 home.title: 'Welcome to Bileto'
 home.your_organizations: '{count, plural, one {Your organization} other {Your organizations}}'
 home.your_tickets: 'Your tickets'
-hours_formatter.hours: '{hours} h'
+hours_formatter.hours.short: '{hours}h'
 hours_formatter.hours_and_minutes: "{hours} h\_{minutes} m"
-hours_formatter.minutes: '{minutes} m'
+hours_formatter.minutes: '{minutes}m'
 hours_formatter.hours.long: '{hours} hour'
 hours_formatter.hours_and_minutes.long: "{hours} hour\_{minutes} minute"
 hours_formatter.minutes.long: '{minutes} minute'
