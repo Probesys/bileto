@@ -69,7 +69,7 @@ class HoursFormatterExtension extends AbstractExtension
             }
         } else {
             if ($minutes === 0) {
-                return $this->translator->trans('hours_formatter.hours', [
+                return $this->translator->trans('hours_formatter.hours.short', [
                     'hours' => $hours,
                 ]);
             } elseif ($hours === 0) {
