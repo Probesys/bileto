@@ -110,9 +110,12 @@ home.new_ticket: 'Nouveau ticket'
 home.no_tickets: 'Aucun ticket'
 home.title: 'Bienvenue sur Bileto'
 home.your_tickets: 'Vos tickets'
-hours_formatter.hours: '{hours}h'
+hours_formatter.hours.short: '{hours}h'
 hours_formatter.hours_and_minutes: "{hours}h\_{minutes}m"
 hours_formatter.minutes: '{minutes}m'
+hours_formatter.hours.long: '{hours} heure'
+hours_formatter.minutes.long: '{minutes} minutes'
+hours_formatter.hours_and_minutes.long: "{hours} heure\_{minutes} minutes"
 layout.activate_javascript: 'Vous devez activer le JavaScript pour utiliser Bileto.'
 layout.home: Accueil
 layout.logout: 'Se déconnecter'
@@ -390,8 +393,7 @@ tickets.show.refuse: Refuser
 tickets.show.resolved: 'Ce ticket est résolu.'
 tickets.show.scroll_to_bottom: 'Défiler en bas'
 tickets.show.show_history: 'Afficher l’historique'
-tickets.show.time_spent: "{count, plural, one {1\_minute passée} other {#\_minutes passées}}"
-tickets.show.time_spent.accounted: "({count, plural, one {1\_minute comptabilisée} other {#\_minutes comptabilisées}})"
+tickets.show.time_spent.accounted: "({ count } comptabilisée(s))"
 tickets.show.time_spent.unaccounted: '(non comptabilisé)'
 tickets.show.urgency: "Urgence\_:"
 tickets.sidebar.title: 'Vos vues'

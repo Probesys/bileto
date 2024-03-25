@@ -31,40 +31,57 @@ class HoursFormatterExtension extends AbstractExtension
      * Hours can be given as float. The decimal part of the number is
      * transformed to minutes. For instance, 2.5 will return "2h 30m".
      */
-    public function formatHours(int|float $hours): string
+    public function formatHours(int|float $hours, bool $longFormat = false): string
     {
         $hoursOnly = intval(floor($hours));
         $minutes = intval(($hours - $hoursOnly) * 60);
 
-        return $this->format($hoursOnly, $minutes);
+        return $this->format($hoursOnly, $minutes, $longFormat);
     }
 
     /**
      * Return the given minutes formatted as hours and minutes.
      */
-    public function formatMinutes(int $minutes): string
+    public function formatMinutes(int $minutes, bool $longFormat = false): string
     {
         $hours = intdiv($minutes, 60);
         $remainingMinutes = $minutes % 60;
 
-        return $this->format($hours, $remainingMinutes);
+        return $this->format($hours, $remainingMinutes, $longFormat);
     }
 
-    private function format(int $hours, int $minutes): string
+    private function format(int $hours, int $minutes, bool $longFormat = false): string
     {
-        if ($minutes === 0) {
-            return $this->translator->trans('hours_formatter.hours', [
-                'hours' => $hours,
-            ]);
-        } elseif ($hours === 0) {
-            return $this->translator->trans('hours_formatter.minutes', [
-                'minutes' => $minutes,
-            ]);
+        if ($longFormat) {
+            if ($minutes === 0) {
+                return $this->translator->trans('hours_formatter.hours.long', [
+                    'hours' => $hours,
+                ]);
+            } elseif ($hours === 0) {
+                return $this->translator->trans('hours_formatter.minutes.long', [
+                    'minutes' => $minutes,
+                ]);
+            } else {
+                return $this->translator->trans('hours_formatter.hours_and_minutes.long', [
+                    'hours' => $hours,
+                    'minutes' => $minutes,
+                ]);
+            }
         } else {
-            return $this->translator->trans('hours_formatter.hours_and_minutes', [
-                'hours' => $hours,
-                'minutes' => $minutes,
-            ]);
+            if ($minutes === 0) {
+                return $this->translator->trans('hours_formatter.hours.short', [
+                    'hours' => $hours,
+                ]);
+            } elseif ($hours === 0) {
+                return $this->translator->trans('hours_formatter.minutes.short', [
+                    'minutes' => $minutes,
+                ]);
+            } else {
+                return $this->translator->trans('hours_formatter.hours_and_minutes.short', [
+                    'hours' => $hours,
+                    'minutes' => $minutes,
+                ]);
+            }
         }
     }
 }
