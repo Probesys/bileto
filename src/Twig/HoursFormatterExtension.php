@@ -77,7 +77,7 @@ class HoursFormatterExtension extends AbstractExtension
                     'minutes' => $minutes,
                 ]);
             } else {
-                return $this->translator->trans('hours_formatter.hours_and_minutes', [
+                return $this->translator->trans('hours_formatter.hours_and_minutes.short', [
                     'hours' => $hours,
                     'minutes' => $minutes,
                 ]);
