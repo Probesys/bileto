@@ -356,7 +356,7 @@ tickets.show.refuse: Refuser
 tickets.show.resolved: 'Ce ticket est résolu.'
 tickets.show.scroll_to_bottom: 'Défiler en bas'
 tickets.show.show_history: 'Afficher l’historique'
-tickets.show.time_spent.accounted: "({ count } comptabilisé)"
+tickets.show.time_spent.accounted: "({ count } comptabilisée(s))"
 tickets.show.time_spent.unaccounted: '(non comptabilisé)'
 tickets.show.urgency: "Urgence\_:"
 tickets.sidebar.title: 'Vos vues'
