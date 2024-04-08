@@ -54,8 +54,6 @@ Add the following YAML in your `docker-compose.yml`.
 You'll need to adapt its content.
 
 ```yml
-version: '3'
-
 services:
     bileto:
         image: ghcr.io/probesys/bileto:0.5.0-alpha
