@@ -45,7 +45,6 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
     private ?User $updatedBy = null;
 
     #[ORM\Column(length: 255)]
