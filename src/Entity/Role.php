@@ -193,7 +193,7 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
      */
     public function setPermissions(array $permissions): self
     {
-        $this->permissions = $permissions;
+        $this->permissions = self::sanitizePermissions($this->type, $permissions);
 
         return $this;
     }

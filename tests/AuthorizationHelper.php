@@ -42,8 +42,6 @@ trait AuthorizationHelper
             $role = $roleRepo->findOrCreateSuperRole();
             $authorizationRepo->grant($user, $role);
         } else {
-            $permissions = Role::sanitizePermissions('admin', $permissions);
-
             $role = new Role();
             $role->setName(Random::hex(10));
             $role->setDescription('The role description');
@@ -79,8 +77,6 @@ trait AuthorizationHelper
         /** @var \App\Repository\AuthorizationRepository $authorizationRepo */
         $authorizationRepo = $entityManager->getRepository(Authorization::class);
 
-        $permissions = Role::sanitizePermissions($type, $permissions);
-
         $role = new Role();
         $role->setName(Random::hex(10));
         $role->setDescription('The role description');
@@ -112,8 +108,6 @@ trait AuthorizationHelper
         $roleRepo = $entityManager->getRepository(Role::class);
         /** @var TeamService */
         $teamService = $container->get(TeamService::class);
-
-        $permissions = Role::sanitizePermissions('agent', $permissions);
 
         $role = new Role();
         $role->setName(Random::hex(10));

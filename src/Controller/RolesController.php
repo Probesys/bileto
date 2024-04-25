@@ -113,8 +113,6 @@ class RolesController extends BaseController
             $permissions[] = 'orga:see';
         }
 
-        $permissions = Role::sanitizePermissions($type, $permissions);
-
         if (!$this->isCsrfTokenValid('create role', $csrfToken)) {
             return $this->renderBadRequest('roles/new.html.twig', [
                 'type' => $type,
@@ -205,8 +203,6 @@ class RolesController extends BaseController
         ) {
             $permissions[] = 'orga:see';
         }
-
-        $permissions = Role::sanitizePermissions($type, $permissions);
 
         if (!$this->isCsrfTokenValid('update role', $csrfToken)) {
             return $this->renderBadRequest('roles/edit.html.twig', [
