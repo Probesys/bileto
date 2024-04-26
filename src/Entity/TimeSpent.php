@@ -13,6 +13,8 @@ use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TimeSpentRepository::class)]
 class TimeSpent implements MonitorableEntityInterface, UidEntityInterface
@@ -47,9 +49,23 @@ class TimeSpent implements MonitorableEntityInterface, UidEntityInterface
     private ?Ticket $ticket = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('time_spent.time.required', [], 'errors'),
+    )]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: new TranslatableMessage('time_spent.time.greater_than_zero', [], 'errors'),
+    )]
     private ?int $time = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(
+        message: new TranslatableMessage('time_spent.time.required', [], 'errors'),
+    )]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: new TranslatableMessage('time_spent.time.greater_than_zero', [], 'errors'),
+    )]
     private ?int $realTime = null;
 
     #[ORM\ManyToOne(inversedBy: 'timeSpents')]
