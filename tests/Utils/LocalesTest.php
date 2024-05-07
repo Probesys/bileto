@@ -7,15 +7,15 @@
 namespace App\Tests\Utils;
 
 use App\Utils\Locales;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class LocalesTest extends TestCase
 {
     /**
-     * @dataProvider englishRequestedLocale
-     *
      * @param string[] $requestedLocales
      */
+    #[DataProvider('englishRequestedLocale')]
     public function testGetBestWithEnglish(array $requestedLocales): void
     {
         $locale = Locales::getBest($requestedLocales);
@@ -24,10 +24,9 @@ class LocalesTest extends TestCase
     }
 
     /**
-     * @dataProvider frenchRequestedLocale
-     *
      * @param string[] $requestedLocales
      */
+    #[DataProvider('frenchRequestedLocale')]
     public function testGetBestWithFrench(array $requestedLocales): void
     {
         $locale = Locales::getBest($requestedLocales);

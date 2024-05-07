@@ -15,6 +15,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Twig\TicketEventChangesFormatterExtension;
+use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Proxy;
@@ -34,9 +35,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
 
     private TicketEventChangesFormatterExtension $formatter;
 
-    /**
-     * @before
-     */
+    #[Before]
     public function setUpTest(): void
     {
         $this->client = static::createClient();

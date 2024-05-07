@@ -105,7 +105,7 @@
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.0",
         "phpstan/phpstan": "^1.8",
-        "phpunit/phpunit": "^10.5",
+        "phpunit/phpunit": "^11.1",
         "rector/rector": "^1.0.4",
         "squizlabs/php_codesniffer": "*",
         "symfony/browser-kit": "6.4.*",

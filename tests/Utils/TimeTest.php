@@ -7,22 +7,20 @@
 namespace App\Tests\Utils;
 
 use App\Utils\Time;
+use PHPUnit\Framework\Attributes\AfterClass;
+use PHPUnit\Framework\Attributes\BeforeClass;
 use PHPUnit\Framework\TestCase;
 
 class TimeTest extends TestCase
 {
-    /**
-     * @beforeClass
-     */
+    #[BeforeClass]
     public static function freezeTime(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
         Time::freeze($now);
     }
 
-    /**
-     * @afterClass
-     */
+    #[AfterClass]
     public static function unfreezeTime(): void
     {
         Time::unfreeze();

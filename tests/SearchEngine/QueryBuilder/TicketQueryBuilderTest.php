@@ -12,6 +12,7 @@ use App\SearchEngine;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
+use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -26,9 +27,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     private User $currentUser;
 
-    /**
-     * @before
-     */
+    #[Before]
     public function setUpQueryBuilder(): void
     {
         $client = static::createClient();

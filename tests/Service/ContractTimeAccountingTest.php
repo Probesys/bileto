@@ -10,6 +10,7 @@ use App\Service\ContractTimeAccounting;
 use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
+use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -21,9 +22,7 @@ class ContractTimeAccountingTest extends WebTestCase
 
     private ContractTimeAccounting $contractTimeAccounting;
 
-    /**
-     * @before
-     */
+    #[Before]
     public function setupTest(): void
     {
         $client = static::createClient();

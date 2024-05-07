@@ -9,6 +9,7 @@ namespace App\Tests\SearchEngine\Query;
 use App\SearchEngine\Query\TokenType;
 use App\SearchEngine\Query\Tokenizer;
 use App\SearchEngine\Query\SyntaxError;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,10 +18,9 @@ use PHPUnit\Framework\TestCase;
 class TokenizerTest extends TestCase
 {
     /**
-     * @dataProvider tokensProvider
-     *
      * @param Token[] $expectedTokens
      */
+    #[DataProvider('tokensProvider')]
     public function testTokenize(string $query, array $expectedTokens): void
     {
         $tokenizer = new Tokenizer();

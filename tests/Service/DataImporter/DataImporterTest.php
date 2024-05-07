@@ -15,6 +15,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
+use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -26,9 +27,7 @@ class DataImporterTest extends WebTestCase
 
     private DataImporter $dataImporter;
 
-    /**
-     * @before
-     */
+    #[Before]
     public function setupTest(): void
     {
         $client = static::createClient();

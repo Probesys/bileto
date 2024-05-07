@@ -6,6 +6,7 @@
 
 namespace App\Tests;
 
+use PHPUnit\Framework\Attributes\BeforeClass;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -16,9 +17,7 @@ trait CommandTestsHelper
      */
     protected static $application;
 
-    /**
-     * @beforeClass
-     */
+    #[BeforeClass]
     public static function setUpConsoleTestsHelper(): void
     {
         self::bootKernel();
