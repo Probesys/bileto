@@ -97,7 +97,12 @@ class User implements
     private ?string $name = null;
 
     /** @var Collection<int, Authorization> $authorizations */
-    #[ORM\OneToMany(mappedBy: 'holder', targetEntity: Authorization::class, orphanRemoval: true)]
+    #[ORM\OneToMany(
+        mappedBy: 'holder',
+        targetEntity: Authorization::class,
+        orphanRemoval: true,
+        cascade: ['persist'],
+    )]
     private Collection $authorizations;
 
     #[ORM\Column]
@@ -229,6 +234,16 @@ class User implements
     public function getAuthorizations(): Collection
     {
         return $this->authorizations;
+    }
+
+    public function addAuthorization(Authorization $authorization): static
+    {
+        if (!$this->authorizations->contains($authorization)) {
+            $this->authorizations->add($authorization);
+            $authorization->setHolder($this);
+        }
+
+        return $this;
     }
 
     public function areEventsHidden(): ?bool

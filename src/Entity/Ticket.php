@@ -121,7 +121,12 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     private ?Organization $organization = null;
 
     /** @var Collection<int, Message> $messages */
-    #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: Message::class, orphanRemoval: true)]
+    #[ORM\OneToMany(
+        mappedBy: 'ticket',
+        targetEntity: Message::class,
+        orphanRemoval: true,
+        cascade: ['persist'],
+    )]
     private Collection $messages;
 
     #[ORM\OneToOne(cascade: ['persist'])]
@@ -132,7 +137,11 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     private Collection $contracts;
 
     /** @var Collection<int, TimeSpent> $timeSpents */
-    #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: TimeSpent::class)]
+    #[ORM\OneToMany(
+        mappedBy: 'ticket',
+        targetEntity: TimeSpent::class,
+        cascade: ['persist'],
+    )]
     private Collection $timeSpents;
 
     public function __construct()
@@ -420,6 +429,16 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         return $messages->matching($criteria);
     }
 
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setTicket($this);
+        }
+
+        return $this;
+    }
+
     public function getSolution(): ?Message
     {
         return $this->solution;
@@ -518,5 +537,20 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         }
 
         return $this;
+    }
+
+    public function getUniqueKey(): string
+    {
+        $createdAt = '';
+        if ($this->createdAt) {
+            $createdAt = $this->createdAt->getTimestamp();
+        }
+
+        $organization = '';
+        if ($this->organization) {
+            $organization = $this->organization->getName();
+        }
+
+        return md5("{$this->title}-{$organization}-{$createdAt}");
     }
 }

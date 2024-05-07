@@ -463,4 +463,24 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
 
         return $contract;
     }
+
+    public function getUniqueKey(): string
+    {
+        $startAt = '';
+        if ($this->startAt) {
+            $startAt = $this->startAt->getTimestamp();
+        }
+
+        $endAt = '';
+        if ($this->endAt) {
+            $endAt = $this->endAt->getTimestamp();
+        }
+
+        $organization = '';
+        if ($this->organization) {
+            $organization = $this->organization->getName();
+        }
+
+        return md5("{$this->name}-{$organization}-{$startAt}-{$endAt}");
+    }
 }
