@@ -12,6 +12,7 @@ Dedicated to the backend:
 - [Sorting the entities](/docs/developers/sorters.md)
 - [How to paginate the entities](/docs/developers/pagination.md)
 - [Working with the tickets' events](/docs/developers/tickets-events.md)
+- [Importing data](/docs/developers/import-data.md)
 
 Dedicated to the frontend:
 
