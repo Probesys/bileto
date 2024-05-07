@@ -1,12 +1,69 @@
 # Changelog of Bileto
 
-## unreleased
+## 2024-05-07 - 0.8.0-alpha
 
 ### Migration notes
 
 Sub-organizations are no longer supported (see [the issue #516](https://github.com/Probesys/bileto/issues/516)).
 Your existing sub-organizations will be converted to first-level organizations during this update.
 **Important: make sure that all your organizations have different names before running the migrations.**
+
+### New
+
+- Provide teams and agents ([d895133](https://github.com/Probesys/bileto/commit/d895133), [9107ac2](https://github.com/Probesys/bileto/commit/9107ac2), [783e7c0](https://github.com/Probesys/bileto/commit/783e7c0), [5c07222](https://github.com/Probesys/bileto/commit/5c07222), [969b1d7](https://github.com/Probesys/bileto/commit/969b1d7), [33219f4](https://github.com/Probesys/bileto/commit/33219f4), [0976e68](https://github.com/Probesys/bileto/commit/0976e68))
+- Allow to import data from a ZIP archive ([f9992ef](https://github.com/Probesys/bileto/commit/f9992ef))
+
+### Improvements
+
+- Allow to combine multiple authorizations on the same organization ([cbd6ca0](https://github.com/Probesys/bileto/commit/cbd6ca0))
+- Add navigation to the organizations to the main menu ([6677352](https://github.com/Probesys/bileto/commit/6677352))
+- Display spent times hours/minutes in a long format ([b61636e](https://github.com/Probesys/bileto/commit/b61636e))
+- Display the contract date alert as a number of days ([bb055b4](https://github.com/Probesys/bileto/commit/bb055b4))
+- Display contract hours consumed as a percentage ([73de316](https://github.com/Probesys/bileto/commit/73de316))
+- Add a unique constraint on organization names ([eb0a6dc](https://github.com/Probesys/bileto/commit/eb0a6dc))
+- Rename "operational users" to "agents" ([f98d663](https://github.com/Probesys/bileto/commit/f98d663))
+- Display tickets views if user is an agent ([1c83b30](https://github.com/Probesys/bileto/commit/1c83b30))
+
+### Bug fixes
+
+- Force requester and assignee to be part of the lists ([15faa7e](https://github.com/Probesys/bileto/commit/15faa7e))
+- Fix searching tickets by contract if using a subquery ([b30603e](https://github.com/Probesys/bileto/commit/b30603e))
+- Assert TimeSpent times are required and > 0 ([0bb8a0f](https://github.com/Probesys/bileto/commit/0bb8a0f))
+
+### Technical
+
+- Remove the concept of sub-organizations ([86dd9ac](https://github.com/Probesys/bileto/commit/86dd9ac))
+- Fix installation of dependencies in the Docker image ([777ee4c](https://github.com/Probesys/bileto/commit/777ee4c))
+- Update the dependencies ([af602f5](https://github.com/Probesys/bileto/commit/af602f5), [b1b90bf](https://github.com/Probesys/bileto/commit/b1b90bf))
+
+### Developers
+
+- Upgrade to Turbo 8 ([c72c313](https://github.com/Probesys/bileto/commit/c72c313))
+- Upgrade to PHPUnit 11 ([989b7f9](https://github.com/Probesys/bileto/commit/989b7f9))
+- Upgrade to Rector 1.0 ([bb0dd46](https://github.com/Probesys/bileto/commit/bb0dd46))
+- Upgrade to eslint 9 ([4caf4ab](https://github.com/Probesys/bileto/commit/4caf4ab))
+- Cache authorizations in the AppVoter ([beccdd0](https://github.com/Probesys/bileto/commit/beccdd0))
+- Provide the class FSHelper ([d412967](https://github.com/Probesys/bileto/commit/d412967))
+- Refactor repositories save, saveBatch and remove ([e807452](https://github.com/Probesys/bileto/commit/e807452))
+- Set updatedBy only if there is an active user ([96ca111](https://github.com/Probesys/bileto/commit/96ca111))
+- Allow contract.createdBy and contract.updatedBy to be null ([cf8b116](https://github.com/Probesys/bileto/commit/cf8b116), [fb06f3e](https://github.com/Probesys/bileto/commit/fb06f3e))
+- Extract common translations keys ([59281b9](https://github.com/Probesys/bileto/commit/59281b9))
+- Load only "orga" authorizations when checking for "any" ([14e96b1](https://github.com/Probesys/bileto/commit/14e96b1))
+- Add a findOneOrBuildBy method ([812ceb1](https://github.com/Probesys/bileto/commit/812ceb1))
+- Set default empty password on User initialization ([9f0be2c](https://github.com/Probesys/bileto/commit/9f0be2c))
+- Set `FindOrCreateTrait` with a generic class ([2a65a93](https://github.com/Probesys/bileto/commit/2a65a93))
+- Add the `orga:manage` permission to the default Technician role ([757e96b](https://github.com/Probesys/bileto/commit/757e96b))
+- Provide a `AuthorizationHelper::grantTeam` method ([d465d4b](https://github.com/Probesys/bileto/commit/d465d4b))
+- Provide an `ArrayHelper` class ([3e1fffb](https://github.com/Probesys/bileto/commit/3e1fffb))
+- Provide a `is_agent` Twig function ([f8f477d](https://github.com/Probesys/bileto/commit/f8f477d))
+- Move getAuthorizations from AppVoter to AuthorizationRepository ([fec907a](https://github.com/Probesys/bileto/commit/fec907a))
+- Move TicketRepository methods related to TicketSearcher ([93a2bb5](https://github.com/Probesys/bileto/commit/93a2bb5))
+- Increase PHP memory in the dev environment ([594b5fc](https://github.com/Probesys/bileto/commit/594b5fc))
+- Enable DAMA DoctrineTestBundle in tests ([15eca8a](https://github.com/Probesys/bileto/commit/15eca8a))
+- Make sure database is initialized on the CI ([f8036d9](https://github.com/Probesys/bileto/commit/f8036d9))
+- Output PHPUnit results with TestDox format ([2890d74](https://github.com/Probesys/bileto/commit/2890d74))
+- Refactor the clearing of entity manager in tests ([568c3b7](https://github.com/Probesys/bileto/commit/568c3b7))
+- Remove the warning about docker-compose.yml version ([c68c0cf](https://github.com/Probesys/bileto/commit/c68c0cf))
 
 ## 2024-02-02 - 0.7.0-alpha
 

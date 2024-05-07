@@ -1,44 +1,45 @@
 {
   "assets/fonts/atkinson-hyperlegible-400-italic-latin-ext.woff2": {
-    "file": "assets/atkinson-hyperlegible-400-italic-latin-ext-F8vF4Wdt.woff2",
+    "file": "assets/atkinson-hyperlegible-400-italic-latin-ext-Xy8XhZ21.woff2",
     "src": "assets/fonts/atkinson-hyperlegible-400-italic-latin-ext.woff2"
   },
   "assets/fonts/atkinson-hyperlegible-400-italic-latin.woff2": {
-    "file": "assets/atkinson-hyperlegible-400-italic-latin-NhNB2np4.woff2",
+    "file": "assets/atkinson-hyperlegible-400-italic-latin-2E0Haenj.woff2",
     "src": "assets/fonts/atkinson-hyperlegible-400-italic-latin.woff2"
   },
   "assets/fonts/atkinson-hyperlegible-400-normal-latin-ext.woff2": {
-    "file": "assets/atkinson-hyperlegible-400-normal-latin-ext-h_zsaZms.woff2",
+    "file": "assets/atkinson-hyperlegible-400-normal-latin-ext-CH_Oxpma.woff2",
     "src": "assets/fonts/atkinson-hyperlegible-400-normal-latin-ext.woff2"
   },
   "assets/fonts/atkinson-hyperlegible-400-normal-latin.woff2": {
-    "file": "assets/atkinson-hyperlegible-400-normal-latin-s17VRVKp.woff2",
+    "file": "assets/atkinson-hyperlegible-400-normal-latin-CzXtVFUq.woff2",
     "src": "assets/fonts/atkinson-hyperlegible-400-normal-latin.woff2"
   },
   "assets/fonts/atkinson-hyperlegible-700-italic-latin-ext.woff2": {
-    "file": "assets/atkinson-hyperlegible-700-italic-latin-ext-qisSKbpU.woff2",
+    "file": "assets/atkinson-hyperlegible-700-italic-latin-ext-CqKxIpul.woff2",
     "src": "assets/fonts/atkinson-hyperlegible-700-italic-latin-ext.woff2"
   },
   "assets/fonts/atkinson-hyperlegible-700-italic-latin.woff2": {
-    "file": "assets/atkinson-hyperlegible-700-italic-latin-yjrNtZ7y.woff2",
+    "file": "assets/atkinson-hyperlegible-700-italic-latin-DKOs21nv.woff2",
     "src": "assets/fonts/atkinson-hyperlegible-700-italic-latin.woff2"
   },
   "assets/fonts/atkinson-hyperlegible-700-normal-latin-ext.woff2": {
-    "file": "assets/atkinson-hyperlegible-700-normal-latin-ext-jLOIVgAo.woff2",
+    "file": "assets/atkinson-hyperlegible-700-normal-latin-ext-CMs4hWAC.woff2",
     "src": "assets/fonts/atkinson-hyperlegible-700-normal-latin-ext.woff2"
   },
   "assets/fonts/atkinson-hyperlegible-700-normal-latin.woff2": {
-    "file": "assets/atkinson-hyperlegible-700-normal-latin-61z-i-tS.woff2",
+    "file": "assets/atkinson-hyperlegible-700-normal-latin-DrXP6L61.woff2",
     "src": "assets/fonts/atkinson-hyperlegible-700-normal-latin.woff2"
   },
   "assets/javascripts/application.js": {
-    "file": "assets/application-oCLmm5Qt.js",
-    "isEntry": true,
-    "src": "assets/javascripts/application.js"
+    "file": "assets/application-OcU0FdRU.js",
+    "name": "application",
+    "src": "assets/javascripts/application.js",
+    "isEntry": true
   },
   "assets/stylesheets/application.css": {
-    "file": "assets/application-2ncoeD6E.css",
-    "isEntry": true,
-    "src": "assets/stylesheets/application.css"
+    "file": "assets/application-DokY1NTj.css",
+    "src": "assets/stylesheets/application.css",
+    "isEntry": true
   }
 }
