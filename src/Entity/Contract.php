@@ -200,6 +200,13 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
         return $this->getConsumedMinutes() / 60;
     }
 
+    public function getConsumedPercentage(): float
+    {
+        $consumedHours = $this->getConsumedHours();
+        $maxHours = $this->getMaxHours();
+        return $consumedHours / $maxHours;
+    }
+
     public function getRemainingMinutes(): int
     {
         return ($this->getMaxHours() * 60) - $this->getConsumedMinutes();

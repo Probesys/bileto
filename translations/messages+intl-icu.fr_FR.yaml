@@ -73,7 +73,7 @@ contracts.form.name: Nom
 contracts.form.new: 'Créer le contrat'
 contracts.form.notes: 'Notes privées'
 contracts.form.start_at: 'Démarre le'
-contracts.hours_consumed: "<strong>{hours} consommée(s)</strong> sur {maxHours}\_h"
+contracts.hours_consumed: "<strong>{hours} consommée(s)</strong> sur {maxHours}\_h ({percentage, number, percent})"
 contracts.index.alert: Alerte
 contracts.index.new_contract: 'Nouveau contrat'
 contracts.index.no_contracts: 'Aucun contrat'

@@ -546,7 +546,11 @@
 
                             <div>
                                 <span class="text--small" id="contract-hours-consumed">
-                                    {{ 'contracts.hours_consumed' | trans({ 'hours': ongoingContract.consumedMinutes | formatMinutes, 'maxHours': ongoingContract.maxHours }) | raw }}
+                                    {{ 'contracts.hours_consumed' | trans({
+                                        'hours': ongoingContract.consumedMinutes | formatMinutes,
+                                        'maxHours': ongoingContract.maxHours,
+                                        'percentage': ongoingContract.consumedPercentage,
+                                    }) | raw }}
                                 </span>
 
                                 <progress value="{{ ongoingContract.consumedHours }}" max="{{ ongoingContract.maxHours }}" aria-labelledby="contract-hours-consumed">

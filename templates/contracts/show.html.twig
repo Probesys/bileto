@@ -85,7 +85,11 @@
                         </span>
                     {% endif %}
 
-                    {{ 'contracts.hours_consumed' | trans({ 'hours': contract.consumedMinutes | formatMinutes, 'maxHours': contract.maxHours }) | raw }}
+                    {{ 'contracts.hours_consumed' | trans({
+                        'hours': contract.consumedMinutes | formatMinutes,
+                        'maxHours': contract.maxHours,
+                        'percentage': contract.consumedPercentage,
+                    }) | raw }}
                 </div>
 
                 <div class="progress-with-marker">
