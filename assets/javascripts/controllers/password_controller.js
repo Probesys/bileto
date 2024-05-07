@@ -21,7 +21,7 @@ export default class extends Controller {
         }
     }
 
-    toggle (e) {
+    toggle () {
         if (this.inputTarget.type === 'password') {
             this.inputTarget.type = 'text';
         } else {

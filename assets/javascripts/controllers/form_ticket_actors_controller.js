@@ -13,7 +13,7 @@ export default class extends Controller {
         this.refreshAssignees();
     }
 
-    refreshAssignees (event) {
+    refreshAssignees () {
         if (!this.hasTeamsTarget) {
             return;
         }

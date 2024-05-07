@@ -2,7 +2,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import * as Turbo from '@hotwired/turbo'; // eslint-disable-line no-unused-vars
+import * as Turbo from '@hotwired/turbo';
 import { Application } from '@hotwired/stimulus';
 
 import ButtonSelectController from '@/controllers/button_select_controller.js';
@@ -67,7 +67,7 @@ document.addEventListener('turbo:submit-start', (event) => {
     }
 });
 
-document.addEventListener('turbo:before-render', (event) => {
+document.addEventListener('turbo:before-render', () => {
     if (disableScroll && Turbo.navigator.currentVisit) {
         // As explained on GitHub, `Turbo.navigator.currentVisit.scrolled`
         // is internal and private attribute: we should NOT access it.

@@ -13,7 +13,7 @@ export default class extends Controller {
         this.refreshControls();
     }
 
-    checkAll (event) {
+    checkAll () {
         const checkboxes = this.element.querySelectorAll('input[type="checkbox"]:not([disabled])');
 
         checkboxes.forEach((checkbox) => {
@@ -23,7 +23,7 @@ export default class extends Controller {
         this.refreshControls();
     }
 
-    uncheckAll (event) {
+    uncheckAll () {
         const checkboxes = this.element.querySelectorAll('input[type="checkbox"]:not([disabled])');
 
         checkboxes.forEach((checkbox) => {

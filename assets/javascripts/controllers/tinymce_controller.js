@@ -78,7 +78,6 @@ export default class extends Controller {
 
             xhr.onload = () => {
                 if (xhr.status === 401) {
-                    // eslint-disable-next-line prefer-promise-reject-errors
                     reject({ message: 'You are not authorized to upload files.', remove: true });
                     return;
                 }
@@ -86,10 +85,9 @@ export default class extends Controller {
                 let json;
                 try {
                     json = JSON.parse(xhr.responseText);
-                } catch (e) {
+                } catch {
                     console.error('Bad JSON from server: ' + xhr.responseText);
 
-                    // eslint-disable-next-line prefer-promise-reject-errors
                     reject({ message: 'Bad response from the server.', remove: true });
                     return;
                 }
@@ -101,7 +99,6 @@ export default class extends Controller {
                 ) {
                     console.error('Bad JSON from server: ' + xhr.responseText);
 
-                    // eslint-disable-next-line prefer-promise-reject-errors
                     reject({ message: 'Bad response from the server.', remove: true });
                     return;
                 }
@@ -111,7 +108,6 @@ export default class extends Controller {
                         console.error('Unexpected error from server: ' + json.description);
                     }
 
-                    // eslint-disable-next-line prefer-promise-reject-errors
                     reject({ message: json.error, remove: true });
                     return;
                 }
@@ -125,7 +121,6 @@ export default class extends Controller {
             xhr.onerror = () => {
                 console.error('Unexpected error from server: error code ' + xhr.status);
 
-                // eslint-disable-next-line prefer-promise-reject-errors
                 reject({ message: 'Bad response from the server.', remove: true });
             };
 

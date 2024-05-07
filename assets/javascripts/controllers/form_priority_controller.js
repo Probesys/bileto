@@ -27,7 +27,7 @@ export default class extends Controller {
         return ['urgency', 'impact', 'priority'];
     }
 
-    updatePriority (event) {
+    updatePriority () {
         const urgency = this.urgencyTarget.value;
         const impact = this.impactTarget.value;
 

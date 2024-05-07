@@ -30,7 +30,7 @@ export default class extends Controller {
     /**
      * Update the aria-expanded attribute on toggle.
      */
-    update (event) {
+    update () {
         const openerElement = this.element.querySelector('.popup__opener');
         if (openerElement) {
             openerElement.setAttribute('aria-expanded', this.element.open);
@@ -40,7 +40,7 @@ export default class extends Controller {
     /**
      * Close the menu.
      */
-    close (event) {
+    close () {
         if (!this.element.open) {
             return;
         }
