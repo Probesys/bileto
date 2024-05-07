@@ -59,7 +59,10 @@ class TrackableEntitiesSubscriber
         }
 
         $entity->setUpdatedAt($now);
-        $entity->setUpdatedBy($activeUser);
+
+        if ($activeUser !== null) {
+            $entity->setUpdatedBy($activeUser);
+        }
     }
 
     /**
@@ -82,6 +85,9 @@ class TrackableEntitiesSubscriber
         $now = Time::now();
 
         $entity->setUpdatedAt($now);
-        $entity->setUpdatedBy($activeUser);
+
+        if ($activeUser !== null) {
+            $entity->setUpdatedBy($activeUser);
+        }
     }
 }
