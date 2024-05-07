@@ -231,7 +231,7 @@ class TicketFilter
      */
     private function processActorValues(array $values): array
     {
-        return array_map(function (?string $value) {
+        return array_map(function (?string $value): string|int|null {
             if ($value === null) {
                 return null;
             } elseif (preg_match('/^#[\d]+$/', $value)) {

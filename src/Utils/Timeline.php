@@ -45,7 +45,7 @@ class Timeline
     {
         $items = $this->getItems($type);
 
-        uasort($items, function ($i1, $i2) {
+        uasort($items, function ($i1, $i2): int {
             $createdAt1 = $i1->getCreatedAt();
             $createdAt2 = $i2->getCreatedAt();
 
