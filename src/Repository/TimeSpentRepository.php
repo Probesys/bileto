@@ -22,42 +22,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TimeSpentRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
+    /** @phpstan-use CommonTrait<TimeSpent> */
+    use CommonTrait;
     use UidGeneratorTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, TimeSpent::class);
-    }
-
-    public function save(TimeSpent $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    /**
-     * @param TimeSpent[] $entities
-     */
-    public function saveBatch(array $entities, bool $flush = false): void
-    {
-        foreach ($entities as $entity) {
-            $this->save($entity, false);
-        }
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(TimeSpent $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 }

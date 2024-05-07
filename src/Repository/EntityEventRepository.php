@@ -22,28 +22,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EntityEventRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
+    /** @phpstan-use CommonTrait<EntityEvent> */
+    use CommonTrait;
     use UidGeneratorTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, EntityEvent::class);
-    }
-
-    public function save(EntityEvent $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(EntityEvent $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 }

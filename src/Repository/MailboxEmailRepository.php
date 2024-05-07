@@ -22,29 +22,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MailboxEmailRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
+    /** @phpstan-use CommonTrait<MailboxEmail> */
+    use CommonTrait;
     use UidGeneratorTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, MailboxEmail::class);
-    }
-
-    public function save(MailboxEmail $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(MailboxEmail $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
     /**

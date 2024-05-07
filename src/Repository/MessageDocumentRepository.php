@@ -22,43 +22,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MessageDocumentRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
+    /** @phpstan-use CommonTrait<MessageDocument> */
+    use CommonTrait;
     use UidGeneratorTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, MessageDocument::class);
-    }
-
-    public function save(MessageDocument $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    /**
-     * @param MessageDocument[] $entities
-     */
-    public function saveBatch(array $entities, bool $flush = false): void
-    {
-        foreach ($entities as $entity) {
-            $this->save($entity, false);
-        }
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(MessageDocument $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
     public function countByHash(string $hash): int

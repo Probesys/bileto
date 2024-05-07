@@ -43,6 +43,6 @@ class MessageDocumentsSubscriber implements EventSubscriberInterface
             $messageDocument->setMessage($message);
         }
 
-        $this->messageDocumentRepository->saveBatch($messageDocuments, true);
+        $this->messageDocumentRepository->save($messageDocuments, true);
     }
 }

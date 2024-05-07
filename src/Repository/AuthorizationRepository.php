@@ -31,6 +31,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AuthorizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
+    /** @phpstan-use CommonTrait<Authorization> */
+    use CommonTrait;
     use UidGeneratorTrait;
 
     /** @var array<string, Authorization[]> */
@@ -39,24 +41,6 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Authorization::class);
-    }
-
-    public function save(Authorization $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Authorization $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
     public function grant(User $user, Role $role, ?Organization $organization = null): void

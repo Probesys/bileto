@@ -25,6 +25,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class RoleRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
+    /** @phpstan-use CommonTrait<Role> */
+    use CommonTrait;
     use UidGeneratorTrait;
     /** @phpstan-use FindOrCreateTrait<Role> */
     use FindOrCreateTrait;
@@ -32,24 +34,6 @@ class RoleRepository extends ServiceEntityRepository implements UidGeneratorInte
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Role::class);
-    }
-
-    public function save(Role $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Role $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
     public function findOrCreateSuperRole(): Role

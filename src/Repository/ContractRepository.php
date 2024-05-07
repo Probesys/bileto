@@ -24,29 +24,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ContractRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
+    /** @phpstan-use CommonTrait<Contract> */
+    use CommonTrait;
     use UidGeneratorTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Contract::class);
-    }
-
-    public function save(Contract $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Contract $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
     /**

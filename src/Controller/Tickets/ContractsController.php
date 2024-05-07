@@ -129,7 +129,7 @@ class ContractsController extends BaseController
         if ($includeUnaccountedTime && $newOngoingContract) {
             $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
             $contractTimeAccounting->accountTimeSpents($newOngoingContract, $timeSpents);
-            $timeSpentRepository->saveBatch($timeSpents, true);
+            $timeSpentRepository->save($timeSpents, true);
         }
 
         return $this->redirectToRoute('ticket', [

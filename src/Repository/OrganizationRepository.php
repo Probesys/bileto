@@ -25,6 +25,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class OrganizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
+    /** @phpstan-use CommonTrait<Organization> */
+    use CommonTrait;
     use UidGeneratorTrait;
     /** @phpstan-use FindOrCreateTrait<Organization> */
     use FindOrCreateTrait;
@@ -32,24 +34,6 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Organization::class);
-    }
-
-    public function save(Organization $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Organization $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
     /**

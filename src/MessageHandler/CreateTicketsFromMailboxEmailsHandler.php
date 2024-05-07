@@ -123,7 +123,7 @@ class CreateTicketsFromMailboxEmailsHandler
             }
 
             $messageDocuments = $this->storeAttachments($mailboxEmail);
-            $this->messageDocumentRepository->saveBatch($messageDocuments, true);
+            $this->messageDocumentRepository->save($messageDocuments, true);
 
             $messageContent = $mailboxEmail->getBody();
             // Inline attachments (i.e. <img>) have URLs of type: `cid:<id>`.
