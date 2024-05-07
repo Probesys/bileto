@@ -156,8 +156,8 @@
                                 {{ 'contracts.show.alert' | trans }}
                             </span>
 
-                            <time datetime="{{ contract.dateOfAlert | dateIso }}">
-                                {{ contract.dateOfAlert | dateTrans('dd MMM') }}
+                            <time datetime="{{ contract.dateOfAlert | dateIso }}" title="{{ contract.dateOfAlert | dateTrans('dd MMM yyyy') }}">
+                                {{ 'contracts.show.alert.before_end' | trans({ days: contract.dateAlert }) | raw }}
                             </time>
                         </div>
                     {% endif %}

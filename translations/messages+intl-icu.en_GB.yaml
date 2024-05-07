@@ -83,6 +83,7 @@ contracts.index.title: Contracts
 contracts.new.title: 'New contract'
 contracts.notes: 'Private notes'
 contracts.show.alert: Alert
+contracts.show.alert.before_end: '{days} days<br>before end'
 contracts.show.time_accounting_unit: 'Time accounting unit: {count, plural, one {1 minute} other {# minutes}}'
 contracts.show.edit: 'Edit the contract'
 contracts.show.notes_confidential: confidential
