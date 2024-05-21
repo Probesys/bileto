@@ -41,7 +41,6 @@ class LocaleSorter
     {
         $collator = $this->getCollator();
 
-        /** @var int|false */
         $fieldsComparison = $collator->compare($field1, $field2);
 
         if ($fieldsComparison === false) {
