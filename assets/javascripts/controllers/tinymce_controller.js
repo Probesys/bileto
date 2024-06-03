@@ -46,6 +46,17 @@ export default class extends Controller {
             images_upload_handler: this.imagesUploader.bind(this),
             relative_urls: false,
             remove_script_host: false,
+            highlight_on_focus: false,
+
+            setup: (editor) => {
+                editor.on('focus', () => {
+                    this.element.dataset.hasFocus = true;
+                });
+
+                editor.on('blur', () => {
+                    this.element.dataset.hasFocus = false;
+                });
+            },
         };
 
         window.tinymce.init(configuration);

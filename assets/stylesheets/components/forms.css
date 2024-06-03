@@ -316,6 +316,11 @@ legend {
     border-radius: var(--form-border-radius) var(--form-border-radius) 0 0;
 }
 
+.editor:has([data-has-focus="true"]) {
+    outline: var(--outline-width) solid var(--outline-color);
+    outline-offset: var(--outline-offset);
+}
+
 .form__caption {
     color: var(--color-grey11);
     font-size: var(--font-size-small);
