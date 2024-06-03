@@ -50,7 +50,7 @@
     }
 
     .extramenu__anchor {
-        display: block;
+        display: flex;
         padding-top: var(--space-small);
         padding-bottom: var(--space-small);
 
