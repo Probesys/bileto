@@ -132,6 +132,10 @@
         background-size: 60%;
         border-radius: 50%;
     }
+
+    [data-color-scheme="dark"] .timeline__time-spent::before {
+        background-image: url('../../icons/clock.svg');
+    }
 }
 
 .timeline__time-spent + .timeline__time-spent {
