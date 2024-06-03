@@ -52,9 +52,9 @@
                 {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
             {% endif %}
 
-            <div class="{{ agentLayout ? 'row flow flow--larger' }}">
+            <div class="{{ agentLayout ? 'cols flow flow--larger' }}">
                 {% if agentLayout %}
-                    <div class="ticket__info text--small row__item--size3">
+                    <div class="ticket__info text--small col--size3">
                         <div class="panel flow flow--large">
                             {% if canUpdateActors %}
                                 <div class="flow">
@@ -192,8 +192,8 @@
                                         {{ 'tickets.priority' | trans }}
                                     </h2>
 
-                                    <div class="row flow">
-                                        <div class="row__item--extend flow flow--small">
+                                    <div class="cols flow">
+                                        <div class="col--extend flow flow--small">
                                             <label for="urgency">
                                                 {{ 'tickets.urgency' | trans }}
                                             </label>
@@ -229,7 +229,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="row__item--extend flow flow--small">
+                                        <div class="col--extend flow flow--small">
                                             <label for="impact">
                                                 {{ 'tickets.impact' | trans }}
                                             </label>
@@ -306,7 +306,7 @@
                     </div>
                 {% endif %}
 
-                <div class="panel row__item--size9">
+                <div class="panel col--size9">
                     <div class="wrapper {{ not agentLayout ? 'wrapper--center' }} flow flow--larger">
                         {% if is_granted('orga:update:tickets:type', organization) %}
                             <div>
@@ -314,7 +314,7 @@
                                     {{ 'tickets.type' | trans }}
                                 </label>
 
-                                <div class="row row--always flow">
+                                <div class="cols cols--always flow">
                                     <div class="enclosure enclosure--primary">
                                         <input
                                             type="radio"

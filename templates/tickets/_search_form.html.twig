@@ -11,8 +11,8 @@
         {{ searchMode != 'quick' ? 'hidden' }}
         class="flow flow--large"
     >
-        <div class="row row--always row--center">
-            <h2 class="row__item--extend">
+        <div class="cols cols--always cols--center">
+            <h2 class="col--extend">
                 {{ 'tickets.search.quick_search' | trans }}
             </h2>
 
@@ -53,8 +53,8 @@
         </form>
 
         <div class="flow">
-            <div class="row row--center row--always flow">
-                <p class="row__item--extend text--secondary">
+            <div class="cols cols--center cols--always flow">
+                <p class="col--extend text--secondary">
                     {{ 'tickets.search.filters.used' | trans }}
                 </p>
 
@@ -114,7 +114,7 @@
                 </details>
             </div>
 
-            <div class="row row--wrap flow flow--small">
+            <div class="flow flow--small">
                 {% for filter, values in ticketFilter.filters %}
                     <button
                         class="text--left button--discreet"
@@ -150,8 +150,8 @@
         {{ searchMode != 'advanced' ? 'hidden' }}
         class="flow flow--large"
     >
-        <div class="row row--always row--center">
-            <h2 class="row__item--extend">
+        <div class="cols cols--always cols--center">
+            <h2 class="col--extend">
                 {{ 'tickets.search.advanced_search' | trans }}
             </h2>
 

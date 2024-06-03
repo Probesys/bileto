@@ -1,0 +1,107 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2024 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.cols {
+    display: flex;
+
+    align-items: stretch;
+}
+
+@media (max-width: 799px) {
+    .cols:not(.cols--always) {
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 800px) {
+    .cols--center {
+        align-items: center;
+    }
+
+    .cols--baseline {
+        align-items: baseline;
+    }
+}
+
+.cols.text--center {
+    justify-content: center;
+}
+
+.cols.flow {
+    --cols-gap: var(--space-medium);
+
+    gap: var(--cols-gap);
+}
+
+.cols.flow--smaller {
+    --cols-gap: var(--space-smaller);
+}
+
+.cols.flow--small {
+    --cols-gap: var(--space-small);
+}
+
+.cols.flow--large {
+    --cols-gap: var(--space-large);
+}
+
+.cols.flow--larger {
+    --cols-gap: var(--space-larger);
+}
+
+.cols.flow > * + * {
+    margin-top: 0;
+}
+
+.col--extend {
+    flex: 1;
+}
+
+.col--noshrink {
+    flex-shrink: 0;
+}
+
+.col--size1 {
+    flex-basis: calc(1 * 100% / 12);
+}
+
+.col--size2 {
+    flex-basis: calc(2 * 100% / 12);
+}
+
+.col--size3 {
+    flex-basis: calc(3 * 100% / 12);
+}
+
+.col--size4 {
+    flex-basis: calc(4 * 100% / 12);
+}
+
+.col--size5 {
+    flex-basis: calc(5 * 100% / 12);
+}
+
+.col--size6 {
+    flex-basis: calc(6 * 100% / 12);
+}
+
+.col--size7 {
+    flex-basis: calc(7 * 100% / 12);
+}
+
+.col--size8 {
+    flex-basis: calc(8 * 100% / 12);
+}
+
+.col--size9 {
+    flex-basis: calc(9 * 100% / 12);
+}
+
+.col--size10 {
+    flex-basis: calc(10 * 100% / 12);
+}
+
+.col--size11 {
+    flex-basis: calc(11 * 100% / 12);
+}

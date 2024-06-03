@@ -31,8 +31,8 @@
         <h1>{{ 'mailboxes.index.title' | trans }}</h1>
 
         <div class="flow">
-            <div class="row flow">
-                <div class="row__item--extend row row--center row--always flow">
+            <div class="cols flow">
+                <div class="col--extend cols cols--center flow">
                     <a href="{{ path('new mailbox') }}" class="button button--primary button--uppercase">
                         {{ icon('plus') }}
                         {{ 'mailboxes.index.new_mailbox' | trans }}
@@ -54,8 +54,8 @@
             <ul class="list--padded list--border list--nostyle">
                 {% for mailbox in mailboxes %}
                     <li class="flow flow--small" data-test="mailbox-item">
-                        <div class="row">
-                            <span class="row__item--extend">
+                        <div class="cols">
+                            <span class="col--extend">
                                 {% if mailbox.lastError %}
                                     <span class="text--error">
                                         {{ icon('circle-exclamation-error') }}
@@ -85,8 +85,8 @@
                 <ul class="list--padded list--border list--nostyle">
                     {% for mailboxEmail in errorMailboxEmails %}
                         <li class="flow" data-test="mailbox-email-item">
-                            <div class="row flow">
-                                <span class="row__item--extend">
+                            <div class="cols flow">
+                                <span class="col--extend">
                                     {{ mailboxEmail.subject }}
                                 </span>
 
@@ -101,8 +101,8 @@
                                 </span>
                             </div>
 
-                            <div class="row flow">
-                                <p class="row__item--extend text--error">
+                            <div class="cols flow">
+                                <p class="col--extend text--error">
                                     {{ 'mailboxes.index.emails.error' | trans }}
                                     {{ mailboxEmail.lastError }}
                                 </p>

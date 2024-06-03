@@ -31,7 +31,7 @@
         <h1>{{ 'teams.index.title' | trans }}</h1>
 
         <div class="flow">
-            <div class="row row--center row--always flow">
+            <div class="cols cols--center flow">
                 <a href="{{ path('new team') }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'teams.index.new_team' | trans }}
@@ -47,14 +47,14 @@
             {% if teams|length > 0 %}
                 <ul class="list--padded list--border list--nostyle">
                     {% for team in teams %}
-                        <li class="row" data-test="team-item">
-                            <span class="row__item--extend list__item-title">
+                        <li class="cols cols--center flow flow--small" data-test="team-item">
+                            <span class="col--extend list__item-title">
                                 <a href="{{ path('team', { uid: team.uid }) }}">
                                     {{ team.name }}
                                 </a>
                             </span>
 
-                            <span class="row__item--noshrink">
+                            <span class="col--noshrink">
                                 <span class="badge badge--grey">
                                     {{ 'teams.index.agents' | trans({ count: team.agents|length }) }}
                                 </span>

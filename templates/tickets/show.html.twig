@@ -37,7 +37,7 @@
 {% block body %}
     <main class="layout__body layout__body--extend tickets-show">
         <div class="flow flow--small text--center">
-            <div class="row row--center row--middle flow flow--small">
+            <div class="cols cols--center text--center flow flow--small">
                 <h1>
                     #{{ ticket.id }} {{ ticket.title }}
                 </h1>
@@ -152,12 +152,12 @@
             </div>
         </div>
 
-        <div class="row flow flow--larger">
-            <div class="ticket__info text--small row__item--size3">
+        <div class="cols flow flow--larger">
+            <div class="ticket__info text--small col--size3">
                 <div class="panel flow flow--large">
                     <div class="flow">
-                        <div class="row row--center row--always flow">
-                            <h2 class="row__item--extend">
+                        <div class="cols cols--center cols--always flow">
+                            <h2 class="col--extend">
                                 {{ 'tickets.actors' | trans }}
                             </h2>
 
@@ -234,8 +234,8 @@
                     <div class="ticket__info-separator"></div>
 
                     <div class="flow">
-                        <div class="row row--center row--always flow">
-                            <h2 class="row__item--extend">
+                        <div class="cols cols--center cols--always flow">
+                            <h2 class="col--extend">
                                 {{ 'tickets.priority' | trans }}
                             </h2>
 
@@ -283,8 +283,8 @@
 
                     {% if is_granted('orga:see:tickets:contracts', organization) %}
                         <div class="flow">
-                            <div class="row row--center row--always flow">
-                                <h2 class="row__item--extend">
+                            <div class="cols cols--center cols--always flow">
+                                <h2 class="col--extend">
                                     {{ 'tickets.contracts.ongoing' | trans }}
                                 </h2>
 
@@ -337,7 +337,7 @@
                 </div>
             </div>
 
-            <div class="ticket__timeline panel row__item--size9 flow flow--larger">
+            <div class="ticket__timeline panel col--size9 flow flow--larger">
                 <div class="flow flow--larger timeline wrapper" data-controller="timeline">
                     {% set timelineDate = null %}
                     {% for timelineItem in timeline.sortedItems %}
@@ -440,8 +440,8 @@
                                 </div>
 
                                 <div class="flow flow--smaller">
-                                    <div class="row row--always row--center">
-                                        <div class="row__item--extend">
+                                    <div class="cols cols--always cols--center">
+                                        <div class="col--extend">
                                             {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
                                                 <input
                                                     type="checkbox"
@@ -505,7 +505,7 @@
 
                                 <div class="text--right">
                                     {% if ticket.status == 'resolved' and ticket.requester == app.user %}
-                                        <div class="answer-button row row--always flow flow--small">
+                                        <div class="answer-button cols cols--always flow flow--small">
                                             <button
                                                 type="submit"
                                                 name="answerAction"

@@ -216,7 +216,7 @@ select {
         border-color 0.2s ease-in-out;
 }
 
-.row > select {
+.cols > select {
     width: auto;
 }
 

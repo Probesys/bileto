@@ -9,12 +9,12 @@
 {% endif %}
 
 <li
-    class="documents__item row row--always row--center text--small"
+    class="documents__item cols cols--always cols--center flow flow--smaller text--small"
     data-type="{{ messageDocument.type }}"
     data-target="document-item"
 >
     <a
-        class="documents__link row__item--extend row row--always row--center flow flow--smaller"
+        class="documents__link col--extend cols cols--always cols--center flow flow--smaller"
         target="_blank"
         href="{{ path('message document', { uid: messageDocument.uid, extension: messageDocument.extension }) }}"
     >

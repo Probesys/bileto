@@ -72,7 +72,7 @@
                         {% endif %}
                         data-notifications-target="item"
                     >
-                        <span class="row__item--extend">
+                        <span class="col--extend">
                             <span class="sr-only">
                                 {% if label == "error" %}
                                     {{ 'layout.notifications.error' | trans }}
@@ -111,7 +111,7 @@
 
             {% block header %}
                 <header class="layout__header">
-                    <div class="row row--always row--center">
+                    <div class="cols cols--always cols--center">
                         <nav data-controller="navigation" aria-label="{{ 'layout.main_navigation' | trans }}">
                             {% if app.user %}
                                 <button
@@ -176,7 +176,7 @@
                             </ul>
                         </nav>
 
-                        <div class="row__item--extend text--center">
+                        <div class="col--extend text--center">
                             <a
                                 class="layout__header-home only-mobile"
                                 href="{{ path('home') }}"
@@ -188,12 +188,12 @@
 
                         {% if app.user %}
                             <details
-                                class="row__item--noshrink popup"
+                                class="col--noshrink popup"
                                 data-controller="popup"
                                 data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
                             >
                                 <summary class="popup__opener">
-                                    <div class="layout__header-account row row--center row--always">
+                                    <div class="layout__header-account cols cols--center cols--always">
                                         {{ icon('circle-user') }}
 
                                         <span class="sr-mobile">

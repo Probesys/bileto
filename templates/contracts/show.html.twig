@@ -37,7 +37,7 @@
 {% block body %}
     <main class="layout__body">
         <div class="flow flow--smaller">
-            <div class="row row--center row--middle flow flow--small">
+            <div class="cols cols--center text--center flow flow--small">
                 <h1>
                     {{ contract.name }}
                 </h1>
@@ -136,8 +136,8 @@
                 </div>
 
                 <div class="flow flow--small">
-                    <div class="row row--center row--always flow text--small">
-                        <div class="row__item--extend" id="contract-days-consumed">
+                    <div class="cols cols--center cols--always flow text--small">
+                        <div class="col--extend" id="contract-days-consumed">
                             {% if contract.dateAlertActivated %}
                                 <span>
                                     {{ icon('triangle-exclamation-warning') }}

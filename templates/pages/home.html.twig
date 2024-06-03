@@ -15,8 +15,8 @@
         <h1>{{ 'home.title' | trans }}</h1>
 
         <div class="flow">
-            <div class="row row--center row--always flow">
-                <h2 class="row__item--extend">{{ 'home.your_tickets' | trans }}</h2>
+            <div class="cols cols--center flow">
+                <h2 class="col--extend">{{ 'home.your_tickets' | trans }}</h2>
 
                 {% if is_granted('orga:create:tickets', 'any') %}
                     <a class="button button--primary button--uppercase" href="{{ path('new ticket') }}">

@@ -21,7 +21,7 @@ Dedicated to the frontend:
 - [Working with the modals](/docs/developers/modals.md)
 - [Working with the popups](/docs/developers/popups.md)
 - [Working with the notifications](/docs/developers/notifications.md)
-- [Working with rows and grids](/docs/developers/rows-and-grids.md)
+- [Working with columns and grids](/docs/developers/columns-and-grids.md)
 
 Dedicated to the maintainers:
 

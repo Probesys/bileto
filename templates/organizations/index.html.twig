@@ -27,7 +27,7 @@
         <h1>{{ 'organizations.index.title' | trans }}</h1>
 
         <div class="flow">
-            <div class="row row--center row--always flow">
+            <div class="cols cols--center flow">
                 {% if is_granted('admin:create:organizations') %}
                     <a href="{{ path('new organization') }}" class="button button--primary button--uppercase">
                         {{ icon('plus') }}
@@ -42,7 +42,7 @@
 
             <ul class="list--padded list--border list--nostyle">
                 {% for organization in organizations %}
-                    <li class="row" data-test="organization-item">
+                    <li class="cols" data-test="organization-item">
                         <div class="list__item-title">
                             <a href="{{ path('organization', { uid: organization.uid }) }}">
                                 {{ organization.name }}

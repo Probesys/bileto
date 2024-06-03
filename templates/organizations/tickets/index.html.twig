@@ -42,8 +42,8 @@
     <main class="layout__body layout__body--extend">
         <h1>{{ title }}</h1>
 
-        <div class="row flow flow--larger">
-            <div class="row__item--size3">
+        <div class="cols flow flow--larger">
+            <div class="col--size3">
                 {{ include(
                     'tickets/_search_form.html.twig',
                     {
@@ -57,13 +57,13 @@
                 ) }}
             </div>
 
-            <div class="row__item--size9 flow">
+            <div class="col--size9 flow">
                 <h2 class="sr-only">
                     {{ 'tickets.index.tickets' | trans }}
                 </h2>
 
-                <div class="row flow">
-                    <div class="row__item--extend row row--center row--always flow">
+                <div class="cols flow">
+                    <div class="col--extend cols cols--center flow">
                         {% if is_granted('orga:create:tickets', organization) %}
                             <a class="button button--primary button--uppercase" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
                                 {{ icon('plus') }}

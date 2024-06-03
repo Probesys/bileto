@@ -35,7 +35,7 @@
         <h1>{{ 'contracts.index.title' | trans }}</h1>
 
         <div class="flow">
-            <div class="row row--center row--always flow">
+            <div class="cols cols--center flow">
                 {% if is_granted('orga:manage:contracts', organization) %}
                     <a class="button button--primary button--uppercase" href="{{ path('new organization contract', { uid: organization.uid }) }}">
                         {{ icon('plus') }}
@@ -53,8 +53,8 @@
             {% if contracts %}
                 <ul class="list--padded list--border list--nostyle">
                     {% for contract in contracts %}
-                        <li class="row flow flow--larger" data-test="contract-item">
-                            <div class="row__item--size6 flow flow--small">
+                        <li class="cols flow flow--larger" data-test="contract-item">
+                            <div class="col--size6 flow flow--small">
                                 <h2 class="list__item-title">
                                     <a href="{{ path('contract', {'uid': contract.uid }) }}">
                                         {{ contract.name }}
@@ -74,7 +74,7 @@
                                 </p>
                             </div>
 
-                            <div class="row__item--size4 flow flow--small text--primary-dark">
+                            <div class="col--size4 flow flow--small text--primary-dark">
                                 <p>
                                     <a href="{{ path('organization tickets', { uid: contract.organization.uid, q: 'contract:#' ~ contract.id }) }}">
                                         {{ 'contracts.index.tickets' | trans({ count: contract.tickets.count }) }}
@@ -90,7 +90,7 @@
                                 </p>
                             </div>
 
-                            <div class="row__item--size2 flow flow--small">
+                            <div class="col--size2 flow flow--small">
                                 <div class="badge badge--block badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
                                     <span class="sr-only">
                                         {{ 'contracts.status' | trans }}

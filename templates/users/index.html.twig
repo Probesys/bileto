@@ -31,7 +31,7 @@
         <h1>{{ 'users.index.title' | trans }}</h1>
 
         <div class="flow">
-            <div class="row row--center row--always flow">
+            <div class="cols cols--center flow">
                 <a href="{{ path('new user') }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'users.index.new_user' | trans }}
@@ -44,8 +44,8 @@
 
             <ul class="list--padded list--border list--nostyle">
                 {% for user in users %}
-                    <li class="row" data-test="user-item">
-                        <span class="row__item--extend">
+                    <li class="cols cols--center flow flow--small" data-test="user-item">
+                        <span class="col--extend">
                             <span class="list__item-title">
                                 {{ user.displayName }}
 
@@ -61,7 +61,7 @@
                             {% endif %}
                         </span>
 
-                        <div class="row__item--noshrink row row--always row--center flow flow--small">
+                        <div class="col--noshrink cols cols--always cols--center flow flow--small">
                             <a href="{{ path('edit user', { uid: user.uid }) }}">
                                 {{ 'users.index.edit' | trans }}
                             </a>

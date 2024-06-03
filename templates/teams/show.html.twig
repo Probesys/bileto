@@ -60,7 +60,7 @@
         <div class="flow">
             <h2 class="sr-only">{{ 'teams.show.agents.title' | trans }}</h2>
 
-            <div class="row row--center row--always flow">
+            <div class="cols cols--center flow">
                 <a href="{{ path('new team agent', { uid: team.uid }) }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'teams.show.agents.new' | trans }}
@@ -76,8 +76,8 @@
             {% if agents|length > 0 %}
                 <ul class="list--padded list--border list--nostyle">
                     {% for user in agents %}
-                        <li class="row" data-test="user-item">
-                            <span class="row__item--extend">
+                        <li class="cols cols--center flow flow--small" data-test="user-item">
+                            <span class="col--extend">
                                 <span class="list__item-title">
                                     {{ user.displayName }}
 
@@ -93,7 +93,7 @@
                                 {% endif %}
                             </span>
 
-                            <div class="row__item--noshrink row row--always row--center flow flow--small">
+                            <div class="col--noshrink cols cols--always cols--center flow flow--small">
                                 <form method="post" action="{{ path('remove team agent', { uid: team.uid }) }}">
                                     <input type="hidden" name="agentUid" value="{{ user.uid }}" />
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('remove team agent') }}">
@@ -118,8 +118,8 @@
         </div>
 
         <div class="panel flow">
-            <div class="row row--baseline flow">
-                <h2 class="row__item--extend">{{ 'teams.show.authorizations.title' | trans }}</h2>
+            <div class="cols cols--center flow">
+                <h2 class="col--extend">{{ 'teams.show.authorizations.title' | trans }}</h2>
 
                 <a class="button button--primary button--uppercase" href="{{ path('new team authorization', { uid: team.uid }) }}">
                     {{ icon('plus') }}

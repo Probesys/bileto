@@ -9,10 +9,10 @@
 @import "./variables/colors.light.css";
 @import "./variables/sizes.css";
 @import "./utils/accessibility.css";
+@import "./utils/cols.css";
 @import "./utils/flow.css";
 @import "./utils/grids.css";
 @import "./utils/indent.css";
-@import "./utils/rows.css";
 @import "./utils/text.css";
 @import "./utils/wrapper.css";
 @import "./components/alerts.css";
