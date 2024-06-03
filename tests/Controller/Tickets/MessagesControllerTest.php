@@ -71,6 +71,40 @@ class MessagesControllerTest extends WebTestCase
         $this->assertEmailHtmlBodyContains($email, $messageContent);
     }
 
+    public function testPostCreateCanCreateConfidentialMessage(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), [
+            'orga:create:tickets:messages',
+            'orga:create:tickets:messages:confidential',
+        ]);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'pending',
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+            'answerType' => 'confidential',
+        ]);
+
+        $this->assertSame(1, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $message = MessageFactory::first();
+        $this->assertSame($messageContent, $message->getContent());
+        $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
+        $this->assertSame($ticket->getId(), $message->getTicket()->getId());
+        $this->assertTrue($message->isConfidential());
+        $this->assertSame('pending', $ticket->getStatus());
+    }
+
     public function testPostCreateSanitizesTheMessageContent(): void
     {
         $client = static::createClient();
@@ -294,7 +328,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'answerAction' => 'new solution',
+            'answerType' => 'solution',
         ]);
 
         $this->assertSame(1, MessageFactory::count());
@@ -306,39 +340,6 @@ class MessagesControllerTest extends WebTestCase
         $this->assertNotNull($ticket->getSolution());
         $this->assertSame($message->getId(), $ticket->getSolution()->getId());
         $this->assertSame('resolved', $ticket->getStatus());
-    }
-
-    public function testPostCreateDoesNotSetSolutionIfIsConfidentialIsTrue(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), [
-            'orga:create:tickets:messages',
-            'orga:create:tickets:messages:confidential',
-        ]);
-        $ticket = TicketFactory::createOne([
-            'createdBy' => $user,
-            'assignee' => $user,
-        ]);
-        $messageContent = 'My message';
-
-        $this->assertSame(0, MessageFactory::count());
-
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerAction' => 'new solution',
-            'isConfidential' => true,
-        ]);
-
-        $this->assertSame(1, MessageFactory::count());
-
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $message = MessageFactory::first();
-        $this->assertTrue($message->isConfidential());
-        $ticket->refresh();
-        $this->assertNull($ticket->getSolution());
     }
 
     public function testPostCreateDoesNotChangeSolutionIfAlreadyExists(): void
@@ -363,7 +364,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'answerAction' => 'new solution',
+            'answerType' => 'solution',
         ]);
 
         $this->assertSame(2, MessageFactory::count());
@@ -396,7 +397,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'answerAction' => 'new solution',
+            'answerType' => 'solution',
         ]);
 
         $ticket->refresh();
@@ -422,7 +423,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'answerAction' => 'new solution',
+            'answerType' => 'solution',
         ]);
 
         $this->assertSame(1, MessageFactory::count());
@@ -453,7 +454,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'answerAction' => 'refuse solution',
+            'answerType' => 'solution refusal',
         ]);
 
         $this->assertSame(2, MessageFactory::count());
@@ -485,7 +486,7 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'answerAction' => 'approve solution',
+            'answerType' => 'solution approval',
         ]);
 
         $this->assertSame(2, MessageFactory::count());
@@ -533,11 +534,14 @@ class MessagesControllerTest extends WebTestCase
         $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
-            'isConfidential' => true,
+            'answerType' => 'confidential',
         ]);
 
         $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#is-confidential-error', 'You are not authorized to answer confidentially.');
+        $this->assertSelectorTextContains(
+            '#answer-type-error',
+            'You are not authorized to answer confidentially.'
+        );
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void

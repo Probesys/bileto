@@ -63,14 +63,12 @@ class MessagesController extends BaseController
         $messageContent = $request->request->getString('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);
 
-        $isConfidential = $request->request->getBoolean('isConfidential', false);
-
         $minutesSpent = $request->request->getInt('timeSpent', 0);
         if ($minutesSpent < 0) {
             $minutesSpent = 0;
         }
 
-        $answerAction = $request->request->getString('answerAction', 'none');
+        $answerType = $request->request->getString('answerType', 'normal');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
@@ -83,29 +81,24 @@ class MessagesController extends BaseController
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
                 'minutesSpent' => $minutesSpent,
-                'isConfidential' => $isConfidential,
-                'answerAction' => $answerAction,
+                'answerType' => $answerType,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
-        if ($isConfidential && !$authorizer->isGranted('orga:create:tickets:messages:confidential', $organization)) {
-            // We don't want to force $isConfidential to false as we do for the
-            // other parameters. If there is a bug in the frontend that shows
-            // the "mark as confidential" checkbox without the correct
-            // permission, the user will expect its message to be confidential.
-            // This can cause a privacy issue.
+        $isConfidential = $answerType === 'confidential';
+        $canPostConfidential = $authorizer->isGranted('orga:create:tickets:messages:confidential', $organization);
+        if ($isConfidential && !$canPostConfidential) {
             return $this->renderBadRequest('tickets/show.html.twig', [
                 'ticket' => $ticket,
                 'timeline' => $ticketTimeline->build($ticket),
                 'organization' => $organization,
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
-                'answerAction' => $answerAction,
+                'answerType' => $answerType,
                 'minutesSpent' => $minutesSpent,
-                'isConfidential' => $isConfidential,
                 'errors' => [
-                    'isConfidential' => $translator->trans('message.cannot_confidential', [], 'errors'),
+                    'answerType' => $translator->trans('message.cannot_confidential', [], 'errors'),
                 ],
             ]);
         }
@@ -124,9 +117,8 @@ class MessagesController extends BaseController
                 'organization' => $organization,
                 'today' => Time::relative('today'),
                 'message' => $messageContent,
-                'answerAction' => $answerAction,
+                'answerType' => $answerType,
                 'minutesSpent' => $minutesSpent,
-                'isConfidential' => $isConfidential,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
@@ -139,11 +131,11 @@ class MessagesController extends BaseController
 
         $messageEvent = new MessageEvent($message);
 
-        if ($user == $ticket->getAssignee() && $answerAction === 'new solution') {
+        if ($user == $ticket->getAssignee() && $answerType === 'solution') {
             $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_SOLUTION);
-        } elseif ($user == $ticket->getRequester() && $answerAction === 'approve solution') {
+        } elseif ($user == $ticket->getRequester() && $answerType === 'solution approval') {
             $eventDispatcher->dispatch($messageEvent, MessageEvent::APPROVED_SOLUTION);
-        } elseif ($user == $ticket->getRequester() && $answerAction === 'refuse solution') {
+        } elseif ($user == $ticket->getRequester() && $answerType === 'solution refusal') {
             $eventDispatcher->dispatch($messageEvent, MessageEvent::REFUSED_SOLUTION);
         } else {
             $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);

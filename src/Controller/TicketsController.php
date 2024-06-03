@@ -189,9 +189,8 @@ class TicketsController extends BaseController
             'organization' => $organization,
             'today' => Time::relative('today'),
             'message' => '',
-            'answerAction' => 'none',
+            'answerType' => 'normal',
             'minutesSpent' => 0,
-            'isConfidential' => false,
         ]);
     }
 }

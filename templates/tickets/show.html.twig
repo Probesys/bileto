@@ -390,6 +390,13 @@
                                     {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
                                 {% endif %}
 
+                                {% if errors.answerType is defined %}
+                                    <p class="form__error" role="alert" id="answer-type-error">
+                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                        {{ errors.answerType }}
+                                    </p>
+                                {% endif %}
+
                                 {% if ticket.status == 'resolved' %}
                                     <p class="text--center text--success">
                                         {{ icon('check') }}
@@ -400,6 +407,79 @@
                                         {{ icon('close') }}
                                         {{ 'tickets.show.closed' | trans }}
                                     </p>
+                                {% endif %}
+
+                                {% set canPostSolutionApprovement = ticket.status == 'resolved' and ticket.requester == app.user %}
+                                {% set canSeeAgentMenu = not canPostSolutionApprovement and ticket.assignee == app.user %}
+
+                                {% if canSeeAgentMenu %}
+                                    {% set canPostSolution = not ticket.isFinished and not ticket.hasSolution %}
+                                    {% set canPostTimeSpent = not ticket.isFinished and is_granted('orga:create:tickets:time_spent', organization) %}
+
+                                    <div class="cols flow">
+                                        <div class="col--extend">
+                                            <select
+                                                name="answerType"
+                                                class="answer__select-answer-type"
+                                                required
+                                                aria-label="{{ 'tickets.show.answer_type' | trans }}"
+                                                {% if errors.answerType is defined %}
+                                                    aria-invalid="true"
+                                                    aria-errormessage="answer-type-error"
+                                                {% endif %}
+                                            >
+                                                    <option value="normal" {{ answerType == 'normal' ? 'selected' }}>
+                                                        {{ 'tickets.show.answer_type.normal' | trans }}
+                                                    </option>
+
+                                                    {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
+                                                        <option value="confidential" {{ answerType == 'confidential' ? 'selected' }}>
+                                                            {{ 'tickets.show.answer_type.confidential' | trans }}
+                                                        </option>
+                                                    {% endif %}
+
+                                                    {% if canPostSolution %}
+                                                        <option value="solution" {{ answerType == 'solution' ? 'selected' }}>
+                                                            {{ 'tickets.show.answer_type.solution' | trans }}
+                                                        </option>
+                                                    {% endif %}
+                                            </select>
+                                        </div>
+
+                                        {% if canPostTimeSpent %}
+                                            <div
+                                                data-controller="switch"
+                                                data-action="keydown.esc->switch#change"
+                                                data-switch-for-param="time-spent-button"
+                                            >
+                                                <div data-switch-target="panel" id="time-spent-button" {{ minutesSpent > 0 ? 'hidden' }}>
+                                                    <button
+                                                        class="button--discreet text--small"
+                                                        type="button"
+                                                        data-action="switch#change"
+                                                        data-switch-for-param="time-spent-input"
+                                                    >
+                                                        {{ icon('clock') }}
+                                                        {{ 'tickets.time_spent' | trans }}
+                                                    </button>
+                                                </div>
+
+                                                <div data-switch-target="panel" id="time-spent-input" {{ minutesSpent == 0 ? 'hidden' }}>
+                                                    <label>
+                                                        <input
+                                                            class="answer__input-time-spent"
+                                                            name="timeSpent"
+                                                            type="number"
+                                                            value="{{ minutesSpent }}"
+                                                            min="0"
+                                                        />
+
+                                                        {{ 'tickets.show.minutes' | trans }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 {% endif %}
 
                                 <div class="flow flow--small">
@@ -439,148 +519,39 @@
                                     </div>
                                 </div>
 
-                                <div class="flow flow--smaller">
-                                    <div class="cols cols--always cols--center">
-                                        <div class="col--extend">
-                                            {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
-                                                <input
-                                                    type="checkbox"
-                                                    id="is-confidential"
-                                                    name="isConfidential"
-                                                    {{ isConfidential ? 'checked' }}
-                                                    {% if errors.isConfidential is defined %}
-                                                        aria-invalid="true"
-                                                        aria-errormessage="is-confidential-error"
-                                                    {% endif %}
-                                                />
-
-                                                <label for="is-confidential">
-                                                    {{ 'tickets.show.confidential_answer' | trans }}
-                                                </label>
-                                            {% endif %}
-                                        </div>
-
-                                        {% if is_granted('orga:create:tickets:time_spent', organization) %}
-                                            <div
-                                                data-controller="switch"
-                                                data-action="keydown.esc->switch#change"
-                                                data-switch-for-param="time-spent-button"
-                                            >
-                                                <div data-switch-target="panel" id="time-spent-button" {{ minutesSpent > 0 ? 'hidden' }}>
-                                                    <button
-                                                        class="button--discreet text--small"
-                                                        type="button"
-                                                        data-action="switch#change"
-                                                        data-switch-for-param="time-spent-input"
-                                                    >
-                                                        {{ icon('clock') }}
-                                                        {{ 'tickets.time_spent' | trans }}
-                                                    </button>
-                                                </div>
-
-                                                <div data-switch-target="panel" id="time-spent-input" {{ minutesSpent == 0 ? 'hidden' }}>
-                                                    <label>
-                                                        <input
-                                                            class="input--size2"
-                                                            name="timeSpent"
-                                                            type="number"
-                                                            value="{{ minutesSpent }}"
-                                                            min="0"
-                                                        />
-
-                                                        {{ 'tickets.show.minutes' | trans }}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-
-                                    {% if errors.isConfidential is defined %}
-                                        <p class="form__error" role="alert" id="is-confidential-error">
-                                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                            {{ errors.isConfidential }}
-                                        </p>
-                                    {% endif %}
-                                </div>
-
-                                <div class="text--right">
-                                    {% if ticket.status == 'resolved' and ticket.requester == app.user %}
-                                        <div class="answer-button cols cols--always flow flow--small">
+                                <div class="text--center">
+                                    {% if canPostSolutionApprovement %}
+                                        <div class="cols cols--always flow flow--small text--center">
                                             <button
                                                 type="submit"
-                                                name="answerAction"
-                                                value="refuse solution"
+                                                name="answerType"
+                                                value="solution refusal"
                                             >
+                                                {{ icon('close') }}
+
                                                 {{ 'tickets.show.refuse' | trans }}
                                             </button>
 
                                             <button
                                                 class="button--primary"
                                                 type="submit"
-                                                name="answerAction"
-                                                value="approve solution"
+                                                name="answerType"
+                                                value="solution approval"
                                             >
+                                                {{ icon('check') }}
+
                                                 {{ 'tickets.show.approve' | trans }}
                                             </button>
                                         </div>
                                     {% else %}
-                                        <div class="answer-button button-group" data-controller="button-select">
-                                            <button
-                                                id="form-create-message-submit"
-                                                class="button--primary button-group__item"
-                                                type="submit"
-                                                data-button-select-target="button"
-                                            >
-                                                {{ 'tickets.show.answer' | trans }}
-                                            </button>
-
-                                            {% if not ticket.isFinished and ticket.assignee == app.user %}
-                                                <details
-                                                    class="popup"
-                                                    data-controller="popup"
-                                                    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                                                >
-                                                    <summary class="popup__opener">
-                                                        <span class="button button--primary button-group__item">
-                                                            {{ icon('angle-down') }}
-                                                            <span class="sr-only">
-                                                                {{ 'tickets.show.answer.select_method' | trans }}
-                                                            </span>
-                                                        </span>
-                                                    </summary>
-
-                                                    <nav class="popup__container popup__container--right popup__container--top">
-                                                        <div>
-                                                            <input
-                                                                id="answer-action-none"
-                                                                type="radio"
-                                                                name="answerAction"
-                                                                value="none"
-                                                                data-action="button-select#update click->popup#close"
-                                                                {{ answerAction == 'none' ? 'checked' }}
-                                                            />
-                                                            <label class="popup__item" for="answer-action-none">
-                                                                {{ 'tickets.show.answer' | trans }}
-                                                            </label>
-                                                        </div>
-
-                                                        <div>
-                                                            <input
-                                                                id="answer-action-new-solution"
-                                                                type="radio"
-                                                                name="answerAction"
-                                                                value="new solution"
-                                                                data-action="button-select#update click->popup#close"
-                                                                {{ answerAction == 'new solution' ? 'checked' }}
-                                                            />
-                                                            <label class="popup__item" for="answer-action-new-solution">
-                                                                {{ 'tickets.show.answer.with_solution' | trans }}
-                                                            </label>
-                                                        </div>
-                                                    </nav>
-                                                </details>
-                                            {% endif %}
-                                        </div>
+                                        <button
+                                            id="form-create-message-submit"
+                                            class="button--primary button--animated-icon"
+                                            type="submit"
+                                        >
+                                            {{ 'tickets.show.answer' | trans }}
+                                            {{ icon('arrow-right') }}
+                                        </button>
                                     {% endif %}
                                 </div>
                             </form>

@@ -381,13 +381,14 @@ tickets.show.actions.turn_into_incident: 'Changer en incident'
 tickets.show.actions.turn_into_request: 'Changer en demande'
 tickets.show.actions.update_status: 'Modifier le statut'
 tickets.show.answer: Répondre
-tickets.show.answer.select_method: 'Sélectionner une autre méthode pour répondre.'
-tickets.show.answer.with_solution: 'Répondre avec une solution'
+tickets.show.answer_type: 'Type de réponse'
+tickets.show.answer_type.normal: Réponse
+tickets.show.answer_type.confidential: 'Réponse confidentielle'
+tickets.show.answer_type.solution: Solution
 tickets.show.approve: Approuver
 tickets.show.assign_yourself: 'vous attribuer le ticket'
 tickets.show.assignee: "Attribué à\_:"
 tickets.show.closed: 'Ce ticket est clos.'
-tickets.show.confidential_answer: 'Réponse confidentielle'
 tickets.show.hide_history: 'Masquer l’historique des changements'
 tickets.show.impact: "Impact\_:"
 tickets.show.message.confidential: Confidentiel
