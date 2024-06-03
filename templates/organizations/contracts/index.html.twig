@@ -4,104 +4,117 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'organization.html.twig' %}
 
-{% set currentPage = 'contracts' %}
+{% set currentMenu = 'contracts' %}
 
 {% block title %}{{ 'contracts.index.title' | trans }} – {{ organization.name }}{% endblock %}
 
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('organizations') }}">
+            {{ 'organizations.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('organization', { uid: organization.uid }) }}">
+            {{ organization.name }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'contracts.index.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
 {% block body %}
     <main class="layout__body">
-        <div class="flow wrapper wrapper--large wrapper--center">
-            <div class="layout__breadcrumb">
-                <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
-                <h1>{{ 'contracts.index.title' | trans }}</h1>
-            </div>
+        <h1>{{ 'contracts.index.title' | trans }}</h1>
 
-            <div class="flow">
-                <div class="row row--center row--always flow">
-                    {% if is_granted('orga:manage:contracts', organization) %}
-                        <a class="anchor--action" href="{{ path('new organization contract', { uid: organization.uid }) }}">
-                            {{ icon('plus') }}
-                            {{ 'contracts.index.new_contract' | trans }}
-                        </a>
-                    {% endif %}
-
-                    {% if contracts %}
-                        <p class="text--secondary">
-                            {{ 'contracts.index.number' | trans({ count: contracts|length }) }}
-                        </p>
-                    {% endif %}
-                </div>
+        <div class="flow">
+            <div class="row row--center row--always flow">
+                {% if is_granted('orga:manage:contracts', organization) %}
+                    <a class="button button--primary button--uppercase" href="{{ path('new organization contract', { uid: organization.uid }) }}">
+                        {{ icon('plus') }}
+                        {{ 'contracts.index.new_contract' | trans }}
+                    </a>
+                {% endif %}
 
                 {% if contracts %}
-                    <ul class="list--padded list--border list--nostyle">
-                        {% for contract in contracts %}
-                            <li class="flow flow--smaller" data-test="contract-item">
-                                <div class="row row--always flow flow--smaller">
-                                    <div class="row__item--extend">
-                                        <h2 class="text--normal">
-                                            <a href="{{ path('contract', {'uid': contract.uid }) }}">
-                                                {{ contract.name }}
-                                            </a>
-                                        </h2>
-                                    </div>
-
-                                    <div>
-                                        {% if contract.alertActivated %}
-                                            <span class="badge badge--small badge--orange">
-                                                {{ icon('triangle-exclamation-warning') }}
-                                                {{ 'contracts.index.alert' | trans }}
-                                            </span>
-                                        {% endif %}
-
-                                        <span class="badge badge--small badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
-                                            <span class="sr-only">
-                                                {{ 'contracts.status' | trans }}
-                                            </span>
-
-                                            {{ contract.statusLabel | trans }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="row row--baseline flow flow--smaller text--small">
-                                    <div class="row__item--extend">
-                                        {{ 'contracts.hours_consumed' | trans({
-                                            'hours': contract.consumedMinutes | formatMinutes,
-                                            'maxHours': contract.maxHours,
-                                            'percentage': contract.consumedPercentage,
-                                        }) | raw }}
-
-                                        ⋅
-
-                                        <a href="{{ path('organization tickets', { uid: contract.organization.uid, q: 'contract:#' ~ contract.id }) }}">
-                                            {{ 'contracts.index.tickets' | trans({ count: contract.tickets.count }) }}
-                                        </a>
-                                    </div>
-
-                                    <div>
-                                        <time datetime="{{ contract.startAt | dateIso }}">
-                                            {{ contract.startAt | dateTrans('dd MMM yyyy') }}
-                                        </time>
-
-                                        —
-
-                                        <time datetime="{{ contract.endAt | dateIso }}">
-                                            {{ contract.endAt | dateTrans('dd MMM yyyy') }}
-                                        </time>
-                                    </div>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="placeholder">
-                        {{ icon('contract') }}
-                        {{ 'contracts.index.no_contracts' | trans }}
+                    <p class="text--secondary">
+                        {{ 'contracts.index.number' | trans({ count: contracts|length }) }}
                     </p>
                 {% endif %}
             </div>
+
+            {% if contracts %}
+                <ul class="list--padded list--border list--nostyle">
+                    {% for contract in contracts %}
+                        <li class="row flow flow--larger" data-test="contract-item">
+                            <div class="row__item--size6 flow flow--small">
+                                <h2 class="list__item-title">
+                                    <a href="{{ path('contract', {'uid': contract.uid }) }}">
+                                        {{ contract.name }}
+                                    </a>
+                                </h2>
+
+                                <p class="text--small">
+                                    <time datetime="{{ contract.startAt | dateIso }}">
+                                        {{ contract.startAt | dateTrans('dd MMM yyyy') }}
+                                    </time>
+
+                                    —
+
+                                    <time datetime="{{ contract.endAt | dateIso }}">
+                                        {{ contract.endAt | dateTrans('dd MMM yyyy') }}
+                                    </time>
+                                </p>
+                            </div>
+
+                            <div class="row__item--size4 flow flow--small text--primary-dark">
+                                <p>
+                                    <a href="{{ path('organization tickets', { uid: contract.organization.uid, q: 'contract:#' ~ contract.id }) }}">
+                                        {{ 'contracts.index.tickets' | trans({ count: contract.tickets.count }) }}
+                                    </a>
+                                </p>
+
+                                <p>
+                                    {{ 'contracts.hours_consumed' | trans({
+                                        'hours': contract.consumedMinutes | formatMinutes,
+                                        'maxHours': contract.maxHours,
+                                        'percentage': contract.consumedPercentage,
+                                    }) | raw }}
+                                </p>
+                            </div>
+
+                            <div class="row__item--size2 flow flow--small">
+                                <div class="badge badge--block badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
+                                    <span class="sr-only">
+                                        {{ 'contracts.status' | trans }}
+                                    </span>
+
+                                    {{ contract.statusLabel | trans }}
+                                </div>
+
+                                {% if contract.alertActivated %}
+                                    <div class="badge badge--block badge--orange">
+                                        {{ icon('triangle-exclamation-warning') }}
+                                        {{ 'contracts.index.alert' | trans }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="placeholder">
+                    {{ icon('contract') }}
+                    {{ 'contracts.index.no_contracts' | trans }}
+                </p>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

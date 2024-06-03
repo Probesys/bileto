@@ -4,9 +4,9 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'roles' %}
 
 {% if type == 'admin' %}
     {% set pageTitle = 'roles.new.title.admin' | trans %}
@@ -18,17 +18,32 @@
 
 {% block title %}{{ pageTitle }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'roles' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('roles') }}">
+            {{ 'roles.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ pageTitle }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('roles') }}">{{ 'roles.index.title' | trans }}</a>
-            <h1>{{ pageTitle }}</h1>
-        </div>
+    <main class="layout__body">
+        <h1>{{ pageTitle }}</h1>
 
-        {{ include('roles/_role_form.html.twig', { mode: 'new' }) }}
+        <div class="panel">
+            {{ include('roles/_role_form.html.twig', { mode: 'new' }) }}
+        </div>
     </main>
 {% endblock %}

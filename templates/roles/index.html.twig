@@ -4,89 +4,103 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'roles' %}
 
 {% block title %}{{ 'roles.index.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'roles' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'roles.index.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow roles-index">
-        <div class="layout__breadcrumb">
-            <h1>{{ 'roles.index.title' | trans }}</h1>
-        </div>
+    <main class="layout__body roles-index">
+        <h1>{{ 'roles.index.title' | trans }}</h1>
 
-        <div class="wrapper wrapper--large flow flow--larger">
-            <div class="flow">
-                <h2>{{ 'roles.index.admin_roles.title' | trans }}</h2>
+        <div class="panel flow flow--large">
+            <div class="flow flow--small">
+                <div class="row row--baseline flow">
+                    <h2 class="row__item--extend">{{ 'roles.index.admin_roles.title' | trans }}</h2>
+
+                    <a class="button button--primary button--uppercase" href="{{ path('new role', { type: 'admin' }) }}">
+                        {{ icon('plus') }}
+                        {{ 'roles.index.admin_roles.new' | trans }}
+                    </a>
+                </div>
 
                 <p class="text--secondary">{{ 'roles.index.admin_roles.desc' | trans }}</p>
+            </div>
 
-                <div class="grid">
-                    <a class="card card--action" href="{{ path('new role', { type: 'admin' }) }}">
-                        <span>
-                            {{ icon('plus') }}
-                            {{ 'roles.index.admin_roles.new' | trans }}
-                        </span>
-                    </a>
-
-                    <div class="card" data-test="role-super-item">
-                        <div class="card__title">
-                            {{ icon('crown') }}
-                            {{ 'roles.super_admin' | trans }}
-                        </div>
-
-                        <p class="card__body text--secondary text--small text--center">
-                            {{ 'roles.super_admin.description' | trans }}
-                        </p>
+            <div class="grid">
+                <div class="card card--primary" data-test="role-super-item">
+                    <div class="card__title">
+                        {{ icon('crown') }}
+                        {{ 'roles.super_admin' | trans }}
                     </div>
 
-                    {% for role in rolesByTypes['admin'] %}
-                        {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
-                    {% endfor %}
+                    <p class="card__body text--secondary text--small text--center">
+                        {{ 'roles.super_admin.description' | trans }}
+                    </p>
                 </div>
-            </div>
 
-            <div class="flow">
-                <h2>{{ 'roles.index.agent_roles.title' | trans }}</h2>
+                {% for role in rolesByTypes['admin'] %}
+                    {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel flow flow--large">
+            <div class="flow flow--small">
+                <div class="row row--baseline flow">
+                    <h2 class="row__item--extend">{{ 'roles.index.agent_roles.title' | trans }}</h2>
+
+                    <a class="button button--primary button--uppercase" href="{{ path('new role', { type: 'agent' }) }}">
+                        {{ icon('plus') }}
+                        {{ 'roles.index.agent_roles.new' | trans }}
+                    </a>
+                </div>
 
                 <p class="text--secondary">{{ 'roles.index.agent_roles.desc' | trans }}</p>
-
-                <div class="grid">
-                    <a class="card card--action" href="{{ path('new role', { type: 'agent' }) }}">
-                        <span>
-                            {{ icon('plus') }}
-                            {{ 'roles.index.agent_roles.new' | trans }}
-                        </span>
-                    </a>
-
-                    {% for role in rolesByTypes['agent'] %}
-                        {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
-                    {% endfor %}
-                </div>
             </div>
 
-            <div class="flow">
-                <h2>{{ 'roles.index.user_roles.title' | trans }}</h2>
+            <div class="grid">
+                {% for role in rolesByTypes['agent'] %}
+                    {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel flow flow--large">
+            <div class="flow flow--small">
+                <div class="row row--baseline flow">
+                    <h2 class="row__item--extend ">{{ 'roles.index.user_roles.title' | trans }}</h2>
+
+                    <a class="button button--primary button--uppercase" href="{{ path('new role', { type: 'user' }) }}">
+                        {{ icon('plus') }}
+                        {{ 'roles.index.user_roles.new' | trans }}
+                    </a>
+                </div>
 
                 <p class="text--secondary">{{ 'roles.index.user_roles.desc' | trans }}</p>
+            </div>
 
-                <div class="grid">
-                    <a class="card card--action" href="{{ path('new role', { type: 'user' }) }}">
-                        <span>
-                            {{ icon('plus') }}
-                            {{ 'roles.index.user_roles.new' | trans }}
-                        </span>
-                    </a>
-
-                    {% for role in rolesByTypes['user'] %}
-                        {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
-                    {% endfor %}
-                </div>
+            <div class="grid">
+                {% for role in rolesByTypes['user'] %}
+                    {{ include('roles/_role.html.twig', { role: role }, with_context = false) }}
+                {% endfor %}
             </div>
         </div>
     </main>

@@ -4,34 +4,50 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'teams' %}
 
 {% block title %}{{ 'teams.edit.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'teams' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('teams') }}">
+            {{ 'teams.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('team', { uid: team.uid }) }}">
+            {{ team.name }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'teams.edit.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('teams') }}">{{ 'teams.index.title' | trans }}</a>
-            <a href="{{ path('team', { uid: team.uid }) }}">{{ team.name }}</a>
-            <h1>{{ 'teams.edit.title' | trans }}</h1>
+    <main class="layout__body">
+        <h1>{{ 'teams.edit.title' | trans }}</h1>
+
+        <div class="panel">
+            {{ include('teams/_form.html.twig', {
+                'form': form,
+                'submit_label': 'forms.save_changes' | trans,
+            }) }}
         </div>
 
-        {{ include('teams/_form.html.twig', {
-            'form': form,
-            'submit_label': 'forms.save_changes' | trans,
-        }) }}
-
-        <div class="flow">
-            <h2>{{ 'teams.deletion.title' | trans }}</h2>
-
-            <form action="{{ path('delete team', { uid: team.uid }) }}" method="post" class="wrapper wrapper--small flow">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete team') }}">
+        <div class="panel">
+            <form action="{{ path('delete team', { uid: team.uid }) }}" method="post" class="form--standard">
+                <h2>{{ 'teams.deletion.title' | trans }}</h2>
 
                 {{ include('alerts/_alert.html.twig', {
                     type: 'warning',
@@ -52,6 +68,8 @@
                         {{ 'teams.deletion.submit' | trans }}
                     </button>
                 </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete team') }}">
             </form>
         </div>
     </main>

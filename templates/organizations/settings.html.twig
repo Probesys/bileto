@@ -4,31 +4,46 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'organization.html.twig' %}
 
-{% set currentPage = 'organizations' %}
+{% set currentMenu = 'settings' %}
 
 {% block title %}{{ 'organizations.settings.title' | trans }}{% endblock %}
 
-{% block body %}
-    <main class="layout__body flow flow--larger wrapper wrapper--large wrapper--center">
-        <div class="flow">
-            <div class="layout__breadcrumb">
-                <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
-                <h1>{{ 'organizations.settings.title' | trans }}</h1>
-            </div>
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
 
+        <a href="{{ path('organizations') }}">
+            {{ 'organizations.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('organization', { uid: organization.uid }) }}">
+            {{ organization.name }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'organizations.settings.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'organizations.settings.title' | trans }}</h1>
+
+        <div class="panel">
             {{ include('organizations/_form.html.twig', {
                 'form': form,
                 'submit_label': 'forms.save_changes' | trans,
             }) }}
         </div>
 
-        <div class="flow">
-            <h2>{{ 'organizations.settings.deletion.title' | trans }}</h2>
-
-            <form action="{{ path('delete organization', { uid: organization.uid }) }}" method="post" class="wrapper wrapper--small flow">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete organization') }}">
+        <div class="panel">
+            <form action="{{ path('delete organization', { uid: organization.uid }) }}" method="post" class="form--standard">
+                <h2>{{ 'organizations.settings.deletion.title' | trans }}</h2>
 
                 {{ include('alerts/_alert.html.twig', {
                     type: 'warning',
@@ -50,6 +65,8 @@
                         {{ 'organizations.settings.deletion.submit' | trans }}
                     </button>
                 </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete organization') }}">
             </form>
         </div>
     </main>

@@ -3,23 +3,23 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 .flow > * {
-    --flow-size: 2rem;
+    --flow-size: var(--space-medium);
 }
 
 .flow--smaller > * {
-    --flow-size: 0.5rem;
+    --flow-size: var(--space-smaller);
 }
 
 .flow--small > * {
-    --flow-size: 1rem;
+    --flow-size: var(--space-small);
 }
 
 .flow--large > * {
-    --flow-size: 3rem;
+    --flow-size: var(--space-large);
 }
 
 .flow--larger > * {
-    --flow-size: 4rem;
+    --flow-size: var(--space-larger);
 }
 
 .flow > * + * {

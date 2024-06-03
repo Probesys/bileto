@@ -11,45 +11,46 @@
 {% block title %}{{ 'home.title' | trans }}{% endblock %}
 
 {% block body %}
-    <main class="layout__body flow flow--larger">
+    <main class="layout__body">
         <h1>{{ 'home.title' | trans }}</h1>
 
-        <div class="wrapper wrapper--large wrapper--center flow flow--larger">
-            <div class="flow">
-                <div class="row row--center row--always flow">
-                    <h2 class="row__item--extend">{{ 'home.your_tickets' | trans }}</h2>
+        <div class="flow">
+            <div class="row row--center row--always flow">
+                <h2 class="row__item--extend">{{ 'home.your_tickets' | trans }}</h2>
 
-                    {% if is_granted('orga:create:tickets', 'any') %}
-                        <a class="anchor--action" href="{{ path('new ticket') }}">
-                            {{ icon('plus') }}
-                            {{ 'home.new_ticket' | trans }}
-                        </a>
-                    {% endif %}
-                </div>
-
-                {% if ticketsPagination.count > 0 %}
-                    <div class="flow flow--small">
-                        {{ include(
-                            'tickets/_list.html.twig',
-                            { tickets: ticketsPagination.items },
-                            with_context = false
-                        ) }}
-
-                        {% if ticketsPagination.mustPaginate %}
-                            <div>
-                                <a href="{{ path('tickets', { 'view': 'owned' }) }}">
-                                    {{ 'home.all_your_tickets' | trans }}
-                                </a>
-                            </div>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <p class="placeholder">
-                        {{ icon('ticket') }}
-                        {{ 'home.no_tickets' | trans }}
-                    </p>
+                {% if is_granted('orga:create:tickets', 'any') %}
+                    <a class="button button--primary button--uppercase" href="{{ path('new ticket') }}">
+                        {{ icon('plus') }}
+                        {{ 'home.new_ticket' | trans }}
+                    </a>
                 {% endif %}
             </div>
+
+            {% if ticketsPagination.count > 0 %}
+                <div class="flow flow--small">
+                    {{ include(
+                        'tickets/_list.html.twig',
+                        { tickets: ticketsPagination.items },
+                        with_context = false
+                    ) }}
+
+                    {% if ticketsPagination.mustPaginate %}
+                        <div>
+                            <a href="{{ path('tickets', { 'view': 'owned' }) }}">
+                                {{ 'home.all_your_tickets' | trans }}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'home.no_tickets' | trans }}
+                    </p>
+                </div>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

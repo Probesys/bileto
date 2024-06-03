@@ -4,24 +4,37 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'users' %}
 
 {% block title %}{{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'users' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('users') }}">
+            {{ 'users.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow roles-index">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('users') }}">{{ 'users.index.title' | trans }}</a>
-            <h1>{{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}</h1>
-        </div>
+    <main class="layout__body">
+        <h1>{{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}</h1>
 
-        <div class="wrapper wrapper--large flow">
+        <div class="panel flow">
             {% if user.organization and not is_granted_to_user(user, 'orga:create:tickets', user.organization) %}
                 <div class="wrapper wrapper--text">
                     {{ include('alerts/_alert.html.twig', {
@@ -35,14 +48,12 @@
                 </div>
             {% endif %}
 
-            <div class="grid">
-                <a class="card card--action" href="{{ path('new user authorization', { uid: user.uid }) }}">
-                    <span>
-                        {{ icon('plus') }}
-                        {{ 'users.authorizations.index.new_authorization' | trans }}
-                    </span>
-                </a>
+            <a class="button button--primary button--uppercase" href="{{ path('new user authorization', { uid: user.uid }) }}">
+                {{ icon('plus') }}
+                {{ 'users.authorizations.index.new_authorization' | trans }}
+            </a>
 
+            <div class="grid">
                 {% for authorization in authorizations %}
                     {{ include('authorizations/_authorization.html.twig', {
                         authorization: authorization,

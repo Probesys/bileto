@@ -4,40 +4,60 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<details
-    class="popup"
-    data-controller="popup"
-    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
->
-    <summary class="popup__opener">
-        <span class="button button--caret">
-            {{ 'tickets.sort.label' | trans }}
-        </span>
-    </summary>
+ <div class="row row--center row--always flow flow--small">
+     <p class="text--secondary">
+         {{ 'tickets.sort.label' | trans }}
+     </p>
 
-    <nav class="popup__container popup__container--right">
-        <a class="popup__item" href="{{ currentPath }}&amp;sort=created-desc">
-            {{ 'tickets.sort.newest' | trans }}
-        </a>
+    <details
+        class="popup"
+        data-controller="popup"
+        data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+    >
+        <summary class="popup__opener">
+            <span class="button button--discreet">
+                {% if currentSort == 'created-desc' %}
+                    {{ 'tickets.sort.newest' | trans }}
+                {% elseif currentSort == 'created-asc' %}
+                    {{ 'tickets.sort.oldest' | trans }}
+                {% elseif currentSort == 'updated-desc' %}
+                    {{ 'tickets.sort.recent_activity' | trans }}
+                {% elseif currentSort == 'updated-asc' %}
+                    {{ 'tickets.sort.oldest_activity' | trans }}
+                {% elseif currentSort == 'title-asc' %}
+                    {{ 'tickets.sort.alphabetical' | trans }}
+                {% elseif currentSort == 'title-desc' %}
+                    {{ 'tickets.sort.reverse_alphabetical' | trans }}
+                {% endif %}
 
-        <a class="popup__item" href="{{ currentPath }}&amp;sort=created-asc">
-            {{ 'tickets.sort.oldest' | trans }}
-        </a>
+                {{ icon('angle-down') }}
+            </span>
+        </summary>
 
-        <a class="popup__item" href="{{ currentPath }}&amp;sort=updated-desc">
-            {{ 'tickets.sort.recent_activity' | trans }}
-        </a>
+        <nav class="popup__container popup__container--right">
+            <a class="popup__item" href="{{ currentPath }}&amp;sort=created-desc">
+                {{ 'tickets.sort.newest' | trans }}
+            </a>
 
-        <a class="popup__item" href="{{ currentPath }}&amp;sort=updated-asc">
-            {{ 'tickets.sort.oldest_activity' | trans }}
-        </a>
+            <a class="popup__item" href="{{ currentPath }}&amp;sort=created-asc">
+                {{ 'tickets.sort.oldest' | trans }}
+            </a>
 
-        <a class="popup__item" href="{{ currentPath }}&amp;sort=title-asc">
-            {{ 'tickets.sort.alphabetical' | trans }}
-        </a>
+            <a class="popup__item" href="{{ currentPath }}&amp;sort=updated-desc">
+                {{ 'tickets.sort.recent_activity' | trans }}
+            </a>
 
-        <a class="popup__item" href="{{ currentPath }}&amp;sort=title-desc">
-            {{ 'tickets.sort.reverse_alphabetical' | trans }}
-        </a>
-    </nav>
-</details>
+            <a class="popup__item" href="{{ currentPath }}&amp;sort=updated-asc">
+                {{ 'tickets.sort.oldest_activity' | trans }}
+            </a>
+
+            <a class="popup__item" href="{{ currentPath }}&amp;sort=title-asc">
+                {{ 'tickets.sort.alphabetical' | trans }}
+            </a>
+
+            <a class="popup__item" href="{{ currentPath }}&amp;sort=title-desc">
+                {{ 'tickets.sort.reverse_alphabetical' | trans }}
+            </a>
+        </nav>
+    </details>
+ </div>

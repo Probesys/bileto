@@ -4,9 +4,10 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'roles' %}
+
 {% set type = role.type %}
 
 {% if type == 'admin' %}
@@ -19,26 +20,37 @@
 
 {% block title %}{{ pageTitle }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'roles' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('roles') }}">
+            {{ 'roles.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ pageTitle }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow flow--larger">
-        <div class="flow">
-            <div class="layout__breadcrumb">
-                <a href="{{ path('roles') }}">{{ 'roles.index.title' | trans }}</a>
-                <h1>{{ pageTitle }}</h1>
-            </div>
+    <main class="layout__body">
+        <h1>{{ pageTitle }}</h1>
 
+        <div class="panel">
             {{ include('roles/_role_form.html.twig', { mode: 'edit' }) }}
         </div>
 
-        <div class="flow">
-            <h2>{{ 'roles.deletion.title' | trans }}</h2>
-
-            <form action="{{ path('delete role', { uid: role.uid }) }}" method="post" class="wrapper wrapper--small flow">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete role') }}">
+        <div class="panel">
+            <form action="{{ path('delete role', { uid: role.uid }) }}" method="post" class="form--standard">
+                <h2>{{ 'roles.deletion.title' | trans }}</h2>
 
                 {{ include('alerts/_alert.html.twig', {
                     type: 'warning',
@@ -59,6 +71,8 @@
                         {{ 'roles.deletion.submit' | trans }}
                     </button>
                 </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete role') }}">
             </form>
         </div>
     </main>

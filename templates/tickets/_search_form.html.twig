@@ -4,52 +4,46 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<div data-controller="tabs">
-    <div class="tabs" data-tabs-target="tablist" aria-label="{{ 'tickets.search.tablist' | trans }}">
-        <button
-            id="search-quick-tab"
-            class="tabs__button"
-            data-tabs-target="tab"
-            data-action="tabs#go"
-            aria-controls="search-quick-panel"
-            aria-selected="{{ searchMode == 'quick' ? 'true' : 'false' }}"
-        >
-            {{ 'tickets.search.quick_search' | trans }}
-        </button>
-
-        <button
-            id="search-advanced-tab"
-            class="tabs__button"
-            data-tabs-target="tab"
-            data-action="tabs#go"
-            aria-controls="search-advanced-panel"
-            aria-selected="{{ searchMode == 'advanced' ? 'true' : 'false' }}"
-        >
-            {{ 'tickets.search.advanced_search' | trans }}
-        </button>
-    </div>
-
+<div data-controller="switch" class="panel">
     <div
+        data-switch-target="panel"
         id="search-quick-panel"
-        data-tabs-target="tabpanel"
-        aria-labelledby="search-quick-tab"
-        class="tabs__panel flow flow--smaller"
+        {{ searchMode != 'quick' ? 'hidden' }}
+        class="flow flow--large"
     >
-        <form method="post" action="{{ path('combine filters') }}" class="flow flow--small">
-            <div class="input-container">
-                <input
-                    type="text"
-                    name="text"
-                    value="{{ ticketFilter.text }}"
-                    autocomplete="off"
-                    aria-label="{{ 'tickets.search.label' | trans }}"
-                />
+        <div class="row row--always row--center">
+            <h2 class="row__item--extend">
+                {{ 'tickets.search.quick_search' | trans }}
+            </h2>
 
-                <button type="submit">
-                    {{ icon('search') }}
-                    <span class="sr-only">
-                        {{ 'tickets.search.submit' | trans }}
-                    </span>
+            <button
+                class="button--discreet button--icon"
+                data-action="switch#change"
+                data-switch-for-param="search-advanced-panel"
+                title="{{ 'tickets.search.advanced_search' | trans }}"
+            >
+                {{ icon('dna') }}
+
+                <span class="sr-only">
+                    {{ 'tickets.search.advanced_search' | trans }}
+                </span>
+            </button>
+        </div>
+
+        <form method="post" action="{{ path('combine filters') }}" class="flow flow--small">
+            <input
+                type="text"
+                name="text"
+                value="{{ ticketFilter.text }}"
+                autocomplete="off"
+                aria-label="{{ 'tickets.search.label' | trans }}"
+                placeholder="{{ 'tickets.search.placeholder' | trans }}"
+            />
+
+            <div class="text--right">
+                <button class="button--animated-icon" type="submit">
+                    {{ 'tickets.search.submit' | trans }}
+                    {{ icon('arrow-right') }}
                 </button>
             </div>
 
@@ -58,101 +52,123 @@
             <input type="hidden" name="query" value="{{ query }}">
         </form>
 
-        <div class="row row--center row--always flow">
-            <p class="text--secondary">
-                {{ 'tickets.search.filters.used' | trans }}
-            </p>
+        <div class="flow">
+            <div class="row row--center row--always flow">
+                <p class="row__item--extend text--secondary">
+                    {{ 'tickets.search.filters.used' | trans }}
+                </p>
 
-            <details
-                class="popup"
-                data-controller="popup"
-                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-            >
-                <summary class="popup__opener">
-                    <span class="button button--discreet button--caret">
-                        {{ 'tickets.search.filters.new' | trans }}
-                    </span>
-                </summary>
-
-                <nav class="popup__container popup__container--left">
-                    <button
-                        class="popup__item"
-                        type="button"
-                        data-controller="modal-opener"
-                        data-action="modal-opener#fetch"
-                        data-modal-opener-href-value="{{ path('edit filter', { filter: 'actors', query: query, from: from }) }}"
-                    >
-                        {{ 'tickets.search.filters.actors' | trans }}
-                    </button>
-
-                    <button
-                        class="popup__item"
-                        type="button"
-                        data-controller="modal-opener"
-                        data-action="modal-opener#fetch"
-                        data-modal-opener-href-value="{{ path('edit filter', { filter: 'priority', query: query, from: from }) }}"
-                    >
-                        {{ 'tickets.search.filters.priority' | trans }}
-                    </button>
-
-                    <button
-                        class="popup__item"
-                        type="button"
-                        data-controller="modal-opener"
-                        data-action="modal-opener#fetch"
-                        data-modal-opener-href-value="{{ path('edit filter', { filter: 'status', query: query, from: from }) }}"
-                    >
-                        {{ 'tickets.search.filters.status' | trans }}
-                    </button>
-
-                    <button
-                        class="popup__item"
-                        type="button"
-                        data-controller="modal-opener"
-                        data-action="modal-opener#fetch"
-                        data-modal-opener-href-value="{{ path('edit filter', { filter: 'type', query: query, from: from }) }}"
-                    >
-                        {{ 'tickets.search.filters.type' | trans }}
-                    </button>
-                </nav>
-            </details>
-        </div>
-
-        <div class="row row--wrap flow flow--small">
-            {% for filter, values in ticketFilter.filters %}
-                <button
-                    class="text--left button--discreet"
-                    type="button"
-                    data-controller="modal-opener"
-                    data-action="modal-opener#fetch"
-                    data-modal-opener-href-value="{{ path('edit filter', { filter: filter, query: query, from: from }) }}"
+                <details
+                    class="popup"
+                    data-controller="popup"
+                    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
                 >
-                    <span class="button__caption">
-                        {% if filter == 'status' %}
-                            {{ icon('status') }}
-                        {% elseif filter == 'priority' %}
-                            {{ icon('priority') }}
-                        {% elseif filter == 'assignee' %}
-                            {{ icon('headset') }}
-                        {% elseif filter == 'requester' %}
-                            {{ icon('user') }}
-                        {% endif %}
+                    <summary class="popup__opener">
+                        <span class="button button--discreet">
+                            {{ 'tickets.search.filters.new' | trans }}
+                            {{ icon('angle-down') }}
+                        </span>
+                    </summary>
 
-                        {{ ('tickets.' ~ filter) | trans }}
-                    </span>
+                    <nav class="popup__container popup__container--right">
+                        <button
+                            class="popup__item"
+                            type="button"
+                            data-controller="modal-opener"
+                            data-action="modal-opener#fetch"
+                            data-modal-opener-href-value="{{ path('edit filter', { filter: 'actors', query: query, from: from }) }}"
+                        >
+                            {{ 'tickets.search.filters.actors' | trans }}
+                        </button>
 
-                    {{ values | transFilter(filter) | join(', ', 'tickets.search.filters.or' | trans) }}
-                </button>
-            {% endfor %}
+                        <button
+                            class="popup__item"
+                            type="button"
+                            data-controller="modal-opener"
+                            data-action="modal-opener#fetch"
+                            data-modal-opener-href-value="{{ path('edit filter', { filter: 'priority', query: query, from: from }) }}"
+                        >
+                            {{ 'tickets.search.filters.priority' | trans }}
+                        </button>
+
+                        <button
+                            class="popup__item"
+                            type="button"
+                            data-controller="modal-opener"
+                            data-action="modal-opener#fetch"
+                            data-modal-opener-href-value="{{ path('edit filter', { filter: 'status', query: query, from: from }) }}"
+                        >
+                            {{ 'tickets.search.filters.status' | trans }}
+                        </button>
+
+                        <button
+                            class="popup__item"
+                            type="button"
+                            data-controller="modal-opener"
+                            data-action="modal-opener#fetch"
+                            data-modal-opener-href-value="{{ path('edit filter', { filter: 'type', query: query, from: from }) }}"
+                        >
+                            {{ 'tickets.search.filters.type' | trans }}
+                        </button>
+                    </nav>
+                </details>
+            </div>
+
+            <div class="row row--wrap flow flow--small">
+                {% for filter, values in ticketFilter.filters %}
+                    <button
+                        class="text--left button--discreet"
+                        type="button"
+                        data-controller="modal-opener"
+                        data-action="modal-opener#fetch"
+                        data-modal-opener-href-value="{{ path('edit filter', { filter: filter, query: query, from: from }) }}"
+                    >
+                        <span class="button__caption">
+                            {% if filter == 'status' %}
+                                {{ icon('status') }}
+                            {% elseif filter == 'priority' %}
+                                {{ icon('priority') }}
+                            {% elseif filter == 'assignee' %}
+                                {{ icon('headset') }}
+                            {% elseif filter == 'requester' %}
+                                {{ icon('user') }}
+                            {% endif %}
+
+                            {{ ('tickets.' ~ filter) | trans }}
+                        </span>
+
+                        {{ values | transFilter(filter) | join(', ', 'tickets.search.filters.or' | trans) }}
+                    </button>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
     <div
+        data-switch-target="panel"
         id="search-advanced-panel"
-        data-tabs-target="tabpanel"
-        aria-labelledby="search-advanced-tab"
-        class="tabs__panel"
+        {{ searchMode != 'advanced' ? 'hidden' }}
+        class="flow flow--large"
     >
+        <div class="row row--always row--center">
+            <h2 class="row__item--extend">
+                {{ 'tickets.search.advanced_search' | trans }}
+            </h2>
+
+            <button
+                class="button--discreet button--icon"
+                data-action="switch#change"
+                data-switch-for-param="search-quick-panel"
+                title="{{ 'tickets.search.quick_search' | trans }}"
+            >
+                {{ icon('search') }}
+
+                <span class="sr-only">
+                    {{ 'tickets.search.quick_search' | trans }}"
+                </span>
+            </button>
+        </div>
+
         <form method="get" action="" class="flow flow--small">
             {% if error %}
                 <p class="form__error" role="alert" id="search-error">
@@ -161,37 +177,32 @@
                 </p>
             {% endif %}
 
-            <div class="input-container">
-                <input
-                    type="text"
-                    name="q"
-                    value="{{ query }}"
-                    autocomplete="off"
-                    aria-label="{{ 'tickets.search.label' | trans }}"
-                    {% if error %}
-                        aria-invalid="true"
-                        aria-errormessage="search-error"
-                    {% endif %}
-                />
+            <textarea
+                type="text"
+                name="q"
+                autocomplete="off"
+                aria-label="{{ 'tickets.search.label' | trans }}"
+                {% if error %}
+                    aria-invalid="true"
+                    aria-errormessage="search-error"
+                {% endif %}
+            >{{ query }}</textarea>
 
-                <button type="submit">
-                    {{ icon('search') }}
-                    <span class="sr-only">
-                        {{ 'tickets.search.submit' | trans }}
-                    </span>
+            <button
+                class="button--anchor text--small"
+                data-controller="modal-opener"
+                data-action="modal-opener#fetch"
+                data-modal-opener-href-value="{{ path('advanced search syntax') }}"
+            >
+                {{ 'tickets.search.help' | trans }}
+            </button>
+
+            <div class="text--right">
+                <button class="button--animated-icon" type="submit">
+                    {{ 'tickets.search.submit' | trans }}
+                    {{ icon('arrow-right') }}
                 </button>
             </div>
-
-            <p class="text--right text--small">
-                <button
-                    class="button--anchor"
-                    data-controller="modal-opener"
-                    data-action="modal-opener#fetch"
-                    data-modal-opener-href-value="{{ path('advanced search syntax') }}"
-                >
-                    {{ 'tickets.search.help' | trans }}
-                </button>
-            </p>
 
             <input type="hidden" name="mode" value="advanced">
         </form>

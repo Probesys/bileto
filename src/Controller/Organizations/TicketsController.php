@@ -107,6 +107,7 @@ class TicketsController extends BaseController
             'countOwned' => $ticketSearcher->countTickets(TicketSearcher::queryOwned()),
             'view' => $view,
             'query' => $queryString,
+            'sort' => $sort,
             'ticketFilter' => $ticketFilter,
             'searchMode' => $searchMode,
             'errors' => $errors,

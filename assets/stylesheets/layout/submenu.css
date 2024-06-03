@@ -1,0 +1,104 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2024 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.submenu__menu {
+    display: flex;
+
+    align-items: center;
+}
+
+.submenu__menu > * + * {
+    margin-left: var(--space-medium);
+}
+
+@media(max-width: 800px) {
+    .layout__submenu {
+        margin: var(--space-medium);
+    }
+
+    .submenu__title {
+        color: var(--color-primary12);
+        font-size: var(--font-size-big);
+        text-transform: uppercase;
+    }
+
+    .submenu__scroller button {
+        color: var(--color-primary12);
+
+        border: none;
+    }
+
+    .submenu__scroller button[disabled] {
+        color: var(--color-grey10);
+    }
+
+    .submenu__menu {
+        overflow-x: auto;
+
+        margin-right: calc(var(--space-medium) * -1);
+        margin-left: calc(var(--space-medium) * -1);
+        padding: var(--space-small) var(--space-medium);
+
+        font-size: var(--font-size-small);
+    }
+
+    .submenu__anchor {
+        display: inline-block;
+        padding: 0.1rem var(--space-small);
+
+        color: var(--color-primary9);
+        text-decoration: none;
+        white-space: nowrap;
+
+        border: var(--border-width) solid currentcolor;
+        border-radius: var(--border-radius);
+
+        scroll-margin: var(--space-medium);
+    }
+
+    .submenu__anchor[aria-current="page"] {
+        color: var(--color-primary1);
+
+        background-color: var(--color-primary9);
+        border-color: var(--color-primary9);
+    }
+}
+
+@media(min-width: 800px) {
+    .layout__submenu {
+        display: flex;
+        padding: var(--space-medium);
+
+        align-items: center;
+
+        color: var(--color-teal1);
+
+        background-color: var(--color-teal12);
+    }
+
+    .layout__submenu > * + * {
+        margin-left: var(--space-medium);
+    }
+
+    .submenu__title {
+        width: 13.5rem;
+
+        text-transform: uppercase;
+    }
+
+    .submenu__anchor {
+        display: block;
+        padding: var(--space-small) var(--space-medium);
+
+        color: currentcolor;
+        text-decoration: none;
+
+        border-radius: var(--border-radius);
+    }
+
+    .submenu__anchor[aria-current="page"] {
+        color: var(--color-teal8);
+        font-weight: bold;
+    }
+}

@@ -2,6 +2,14 @@
 /* Copyright 2022-2024 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
+.text--primary {
+    color: var(--color-primary11);
+}
+
+.text--primary-dark {
+    color: var(--color-primary12);
+}
+
 .text--secondary {
     color: var(--color-grey11);
 }
@@ -56,6 +64,10 @@
 
 .text--bigger {
     font-size: var(--font-size-bigger);
+}
+
+.text--inline {
+    display: inline;
 }
 
 code {

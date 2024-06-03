@@ -4,218 +4,234 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'users' %}
 
 {% block title %}{{ 'users.edit.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'users' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('users') }}">
+            {{ 'users.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'users.edit.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('users') }}">{{ 'users.index.title' | trans }}</a>
-            <h1>{{ 'users.edit.title' | trans }}</h1>
-        </div>
+    <main class="layout__body">
+        <h1>{{ 'users.edit.title' | trans }}</h1>
 
-        <form action="{{ path('update user', { uid: user.uid }) }}" method="post" class="wrapper wrapper--small flow">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('update user') }}">
-
-            {% if error %}
-                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-            {% endif %}
-
-            {% if managedByLdap %}
-                {{ include('alerts/_alert.html.twig', {
-                    type: 'info',
-                    title: 'users.edit.ldap.information' | trans,
-                    message: 'users.edit.ldap.managed' | trans,
-                }, with_context = false) }}
-            {% endif %}
-
-            <div class="flow flow--small">
-                <label for="email">
-                    {{ 'users.email' | trans }}
-                </label>
-
-                {% if errors.email is defined %}
-                    <p class="form__error" role="alert" id="email-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.email }}
-                    </p>
+        <div class="panel">
+            <form action="{{ path('update user', { uid: user.uid }) }}" method="post" class="form--standard">
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
                 {% endif %}
 
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value="{{ email }}"
-                    required
-                    autofocus
-                    {% if errors.email is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="email-error"
-                    {% endif %}
-                    {{ managedByLdap ? 'disabled' }}
-                />
-            </div>
-
-            <div class="flow flow--small">
-                <label for="name">
-                    {{ 'users.name' | trans }}
-
-                    {% if not managedByLdap %}
-                        <span class="text--secondary">
-                            {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
-                        </span>
-                    {% endif %}
-                </label>
-
-                {% if errors.name is defined %}
-                    <p class="form__error" role="alert" id="name-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.name }}
-                    </p>
+                {% if managedByLdap %}
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'info',
+                        title: 'users.edit.ldap.information' | trans,
+                        message: 'users.edit.ldap.managed' | trans,
+                    }, with_context = false) }}
                 {% endif %}
 
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value="{{ name }}"
-                    maxlength="100"
-                    autocomplete="name"
-                    {% if errors.name is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="name-error"
-                    {% endif %}
-                    {{ managedByLdap ? 'disabled' }}
-                />
-            </div>
-
-            {% if ldapEnabled %}
-                <label for="ldap-identifier">
-                    {{ 'users.ldap_identifier' | trans }}
-
-                    <span class="text--secondary">
-                        {{ 'forms.optional' | trans }}
-                    </span>
-                </label>
-
-                {% if errors.ldapIdentifier is defined %}
-                    <p class="form__error" role="alert" id="ldap-identifier-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.ldapIdentifier }}
-                    </p>
-                {% endif %}
-
-                <input
-                    type="text"
-                    id="ldap-identifier"
-                    name="ldapIdentifier"
-                    value="{{ ldapIdentifier }}"
-                    {% if errors.ldapIdentifier is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="ldap-identifier-error"
-                    {% endif %}
-                />
-            {% endif %}
-
-            {% if not managedByLdap %}
                 <div class="flow flow--small">
-                    <label for="password">
-                        {{ 'users.password' | trans }}
+                    <label for="email">
+                        {{ 'users.email' | trans }}
+                    </label>
+
+                    {% if errors.email is defined %}
+                        <p class="form__error" role="alert" id="email-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.email }}
+                        </p>
+                    {% endif %}
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ email }}"
+                        required
+                        autofocus
+                        {% if errors.email is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="email-error"
+                        {% endif %}
+                        {{ managedByLdap ? 'disabled' }}
+                    />
+                </div>
+
+                <div class="flow flow--small">
+                    <label for="name">
+                        {{ 'users.name' | trans }}
+
+                        {% if not managedByLdap %}
+                            <span class="text--secondary">
+                                {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
+                            </span>
+                        {% endif %}
+                    </label>
+
+                    {% if errors.name is defined %}
+                        <p class="form__error" role="alert" id="name-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.name }}
+                        </p>
+                    {% endif %}
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="{{ name }}"
+                        maxlength="100"
+                        autocomplete="name"
+                        {% if errors.name is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="name-error"
+                        {% endif %}
+                        {{ managedByLdap ? 'disabled' }}
+                    />
+                </div>
+
+                {% if ldapEnabled %}
+                    <label for="ldap-identifier">
+                        {{ 'users.ldap_identifier' | trans }}
+
                         <span class="text--secondary">
                             {{ 'forms.optional' | trans }}
                         </span>
                     </label>
 
-                    <p class="form__caption" id="password-caption">
-                        {{ 'users.edit.leave_password_empty' | trans }}
-                    </p>
-
-                    <div class="input-container" data-controller="password">
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            autocomplete="new-password"
-                            data-password-target="input"
-                            aria-describedby="password-caption"
-                        />
-
-                        <button
-                            type="button"
-                            role="switch"
-                            data-action="password#toggle"
-                            data-password-target="button"
-                        >
-                            {{ icon('eye') }}
-                            {{ icon('eye-slash') }}
-                            <span class="sr-only">
-                                {{ 'forms.show_password' | trans }}
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            {% endif %}
-
-            <div class="flow flow--small">
-                <label for="organization">
-                    {{ 'users.organization' | trans }}
-                </label>
-
-                <p class="form__caption" id="organization-caption">
-                    {{ 'users.edit.organization_caption' | trans }}
-                </p>
-
-                {% if errors.organization is defined %}
-                    <p class="form__error" role="alert" id="organization-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.organization }}
-                    </p>
-                {% endif %}
-
-                <select
-                    id="organization"
-                    name="organization"
-                    aria-describedby="organization-caption"
-                    {% if errors.organization is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="organization-error"
+                    {% if errors.ldapIdentifier is defined %}
+                        <p class="form__error" role="alert" id="ldap-identifier-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.ldapIdentifier }}
+                        </p>
                     {% endif %}
-                >
-                    <option value="">
-                        {{ 'users.no_organization' | trans }}
-                    </option>
 
-                    {% for organization in organizations %}
-                        <option value="{{ organization.uid }}" {{ organization.uid == organizationUid ? 'selected' }}>
-                            {{ organization.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                {% if user.organization and not is_granted_to_user(user, 'orga:create:tickets', user.organization) %}
-                    {{ include('alerts/_alert.html.twig', {
-                        type: 'warning',
-                        title: 'common.caution' | trans,
-                        message: 'users.no_organization_authorization' | trans({
-                            path: path('new user authorization', { uid: user.uid, orga: user.organization.uid }),
-                        }),
-                        raw: true,
-                    }) }}
+                    <input
+                        type="text"
+                        id="ldap-identifier"
+                        name="ldapIdentifier"
+                        value="{{ ldapIdentifier }}"
+                        {% if errors.ldapIdentifier is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="ldap-identifier-error"
+                        {% endif %}
+                    />
                 {% endif %}
-            </div>
 
-            <div class="form__actions">
-                <button class="button--primary" type="submit">
-                    {{ 'forms.save_changes' | trans }}
-                </button>
-            </div>
-        </form>
+                {% if not managedByLdap %}
+                    <div class="flow flow--small">
+                        <label for="password">
+                            {{ 'users.password' | trans }}
+                            <span class="text--secondary">
+                                {{ 'forms.optional' | trans }}
+                            </span>
+                        </label>
+
+                        <p class="form__caption" id="password-caption">
+                            {{ 'users.edit.leave_password_empty' | trans }}
+                        </p>
+
+                        <div class="input-container" data-controller="password">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                autocomplete="new-password"
+                                data-password-target="input"
+                                aria-describedby="password-caption"
+                            />
+
+                            <button
+                                class="button--icon"
+                                type="button"
+                                role="switch"
+                                data-action="password#toggle"
+                                data-password-target="button"
+                            >
+                                {{ icon('eye') }}
+                                {{ icon('eye-slash') }}
+                                <span class="sr-only">
+                                    {{ 'forms.show_password' | trans }}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="flow flow--small">
+                    <label for="organization">
+                        {{ 'users.organization' | trans }}
+                    </label>
+
+                    <p class="form__caption" id="organization-caption">
+                        {{ 'users.edit.organization_caption' | trans }}
+                    </p>
+
+                    {% if errors.organization is defined %}
+                        <p class="form__error" role="alert" id="organization-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.organization }}
+                        </p>
+                    {% endif %}
+
+                    <select
+                        id="organization"
+                        name="organization"
+                        aria-describedby="organization-caption"
+                        {% if errors.organization is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="organization-error"
+                        {% endif %}
+                    >
+                        <option value="">
+                            {{ 'users.no_organization' | trans }}
+                        </option>
+
+                        {% for organization in organizations %}
+                            <option value="{{ organization.uid }}" {{ organization.uid == organizationUid ? 'selected' }}>
+                                {{ organization.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    {% if user.organization and not is_granted_to_user(user, 'orga:create:tickets', user.organization) %}
+                        {{ include('alerts/_alert.html.twig', {
+                            type: 'warning',
+                            title: 'common.caution' | trans,
+                            message: 'users.no_organization_authorization' | trans({
+                                path: path('new user authorization', { uid: user.uid, orga: user.organization.uid }),
+                            }),
+                            raw: true,
+                        }) }}
+                    {% endif %}
+                </div>
+
+                <div class="form__actions">
+                    <button class="button--primary" type="submit">
+                        {{ 'forms.save_changes' | trans }}
+                    </button>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update user') }}">
+            </form>
+        </div>
     </main>
 {% endblock %}

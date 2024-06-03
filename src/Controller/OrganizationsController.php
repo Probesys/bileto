@@ -83,14 +83,8 @@ class OrganizationsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('orga:see', $organization);
 
-        if (!$authorizer->isGranted('orga:see:contracts', $organization)) {
-            return $this->redirectToRoute('organization tickets', [
-                'uid' => $organization->getUid(),
-            ]);
-        }
-
-        return $this->render('organizations/show.html.twig', [
-            'organization' => $organization,
+        return $this->redirectToRoute('organization tickets', [
+            'uid' => $organization->getUid(),
         ]);
     }
 

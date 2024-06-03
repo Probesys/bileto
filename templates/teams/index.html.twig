@@ -4,25 +4,35 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'teams' %}
 
 {% block title %}{{ 'teams.index.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'teams' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'teams.index.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow roles-index">
-        <div class="layout__breadcrumb">
-            <h1>{{ 'teams.index.title' | trans }}</h1>
-        </div>
+    <main class="layout__body teams-index">
+        <h1>{{ 'teams.index.title' | trans }}</h1>
 
-        <div class="wrapper wrapper--large flow">
+        <div class="flow">
             <div class="row row--center row--always flow">
-                <a href="{{ path('new team') }}" class="anchor--action">
+                <a href="{{ path('new team') }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'teams.index.new_team' | trans }}
                 </a>
@@ -38,18 +48,18 @@
                 <ul class="list--padded list--border list--nostyle">
                     {% for team in teams %}
                         <li class="row" data-test="team-item">
-                            <span class="row__item--extend">
+                            <span class="row__item--extend list__item-title">
                                 <a href="{{ path('team', { uid: team.uid }) }}">
                                     {{ team.name }}
                                 </a>
                             </span>
 
                             <span class="row__item--noshrink">
-                                <span class="badge badge--grey badge--small">
+                                <span class="badge badge--grey">
                                     {{ 'teams.index.agents' | trans({ count: team.agents|length }) }}
                                 </span>
 
-                                <span class="badge badge--grey badge--small">
+                                <span class="badge badge--grey">
                                     {{ 'teams.index.authorizations' | trans({ count: team.teamAuthorizations|length }) }}
                                 </span>
                             </span>

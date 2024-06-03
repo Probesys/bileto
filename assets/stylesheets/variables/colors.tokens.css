@@ -1,0 +1,177 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2024 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+/**
+ * These colors come from https://www.radix-ui.com/colors
+ *
+ * The tokens are not meant to be used directly in the CSS. Take a look to
+ * colors.light.css and colors.dark.css to get the list of colors to be used.
+ * The tokens can be used directly only for the parts which look the same in
+ * light and dark modes (e.g. the main header).
+ */
+:root {
+    --color-black: #121212;
+    --color-white: #fff;
+
+    --color-red1: #fffcfc;
+    --color-red2: #fff7f7;
+    --color-red3: #feebec;
+    --color-red4: #ffdbdc;
+    --color-red5: #ffcdce;
+    --color-red6: #fdbdbe;
+    --color-red7: #f4a9aa;
+    --color-red8: #eb8e90;
+    --color-red9: #e5484d;
+    --color-red10: #dc3e42;
+    --color-red11: #ce2c31;
+    --color-red12: #641723;
+
+    --color-red-dark1: #191111;
+    --color-red-dark2: #201314;
+    --color-red-dark3: #3b1219;
+    --color-red-dark4: #500f1c;
+    --color-red-dark5: #611623;
+    --color-red-dark6: #72232d;
+    --color-red-dark7: #8c333a;
+    --color-red-dark8: #b54548;
+    --color-red-dark9: #e5484d;
+    --color-red-dark10: #ec5d5e;
+    --color-red-dark11: #ff9592;
+    --color-red-dark12: #ffd1d9;
+
+    --color-slate1: #fcfcfd;
+    --color-slate2: #f9f9fb;
+    --color-slate3: #f0f0f3;
+    --color-slate4: #e8e8ec;
+    --color-slate5: #e0e1e6;
+    --color-slate6: #d9d9e0;
+    --color-slate7: #cdced6;
+    --color-slate8: #b9bbc6;
+    --color-slate9: #8b8d98;
+    --color-slate10: #80838d;
+    --color-slate11: #60646c;
+    --color-slate12: #1c2024;
+
+    --color-slate-dark1: #111113;
+    --color-slate-dark2: #18191b;
+    --color-slate-dark3: #212225;
+    --color-slate-dark4: #272a2d;
+    --color-slate-dark5: #2e3135;
+    --color-slate-dark6: #363a3f;
+    --color-slate-dark7: #43484e;
+    --color-slate-dark8: #5a6169;
+    --color-slate-dark9: #696e77;
+    --color-slate-dark10: #777b84;
+    --color-slate-dark11: #b0b4ba;
+    --color-slate-dark12: #edeef0;
+
+    --color-blue1: #fbfdff;
+    --color-blue2: #f4faff;
+    --color-blue3: #e6f4fe;
+    --color-blue4: #d5efff;
+    --color-blue5: #c2e5ff;
+    --color-blue6: #acd8fc;
+    --color-blue7: #8ec8f6;
+    --color-blue8: #5eb1ef;
+    --color-blue9: #0090ff;
+    --color-blue10: #0588f0;
+    --color-blue11: #0d74ce;
+    --color-blue12: #113264;
+
+    --color-blue-dark1: #0d1520;
+    --color-blue-dark2: #111927;
+    --color-blue-dark3: #0d2847;
+    --color-blue-dark4: #003362;
+    --color-blue-dark5: #004074;
+    --color-blue-dark6: #104d87;
+    --color-blue-dark7: #205d9e;
+    --color-blue-dark8: #2870bd;
+    --color-blue-dark9: #0090ff;
+    --color-blue-dark10: #3b9eff;
+    --color-blue-dark11: #70b8ff;
+    --color-blue-dark12: #c2e6ff;
+
+    --color-teal1: #fafefd;
+    --color-teal2: #f3fbf9;
+    --color-teal3: #e0f8f3;
+    --color-teal4: #ccf3ea;
+    --color-teal5: #b8eae0;
+    --color-teal6: #a1ded2;
+    --color-teal7: #83cdc1;
+    --color-teal8: #53b9ab;
+    --color-teal9: #12a594;
+    --color-teal10: #0d9b8a;
+    --color-teal11: #008573;
+    /**
+     * Note that teal12 corresponds to cyan12 in Radix Colors. It looks better
+     * with this color. But in order to not introduce yet another palette, we
+     * just switched the color here.
+     */
+    --color-teal12: #0d3c48;
+
+    --color-teal-dark1: #0d1514;
+    --color-teal-dark2: #111c1b;
+    --color-teal-dark3: #0d2d2a;
+    --color-teal-dark4: #023b37;
+    --color-teal-dark5: #084843;
+    --color-teal-dark6: #145750;
+    --color-teal-dark7: #1c6961;
+    --color-teal-dark8: #207e73;
+    --color-teal-dark9: #12a594;
+    --color-teal-dark10: #0eb39e;
+    --color-teal-dark11: #0bd8b6;
+    --color-teal-dark12: #adf0dd;
+
+    --color-green1: #fbfefc;
+    --color-green2: #f4fbf6;
+    --color-green3: #e6f6eb;
+    --color-green4: #d6f1df;
+    --color-green5: #c4e8d1;
+    --color-green6: #adddc0;
+    --color-green7: #8eceaa;
+    --color-green8: #5bb98b;
+    --color-green9: #30a46c;
+    --color-green10: #2b9a66;
+    --color-green11: #218358;
+    --color-green12: #193b2d;
+
+    --color-green-dark1: #0e1512;
+    --color-green-dark2: #121b17;
+    --color-green-dark3: #132d21;
+    --color-green-dark4: #113b29;
+    --color-green-dark5: #174933;
+    --color-green-dark6: #20573e;
+    --color-green-dark7: #28684a;
+    --color-green-dark8: #2f7c57;
+    --color-green-dark9: #30a46c;
+    --color-green-dark10: #33b074;
+    --color-green-dark11: #3dd68c;
+    --color-green-dark12: #b1f1cb;
+
+    --color-amber1: #fefdfb;
+    --color-amber2: #fefbe9;
+    --color-amber3: #fff7c2;
+    --color-amber4: #ffee9c;
+    --color-amber5: #fbe577;
+    --color-amber6: #f3d673;
+    --color-amber7: #e9c162;
+    --color-amber8: #e2a336;
+    --color-amber9: #ffc53d;
+    --color-amber10: #ffba18;
+    --color-amber11: #ab6400;
+    --color-amber12: #4f3422;
+
+    --color-amber-dark1: #16120c;
+    --color-amber-dark2: #1d180f;
+    --color-amber-dark3: #302008;
+    --color-amber-dark4: #3f2700;
+    --color-amber-dark5: #4d3000;
+    --color-amber-dark6: #5c3d05;
+    --color-amber-dark7: #714f19;
+    --color-amber-dark8: #8f6424;
+    --color-amber-dark9: #ffc53d;
+    --color-amber-dark10: #ffd60a;
+    --color-amber-dark11: #ffca16;
+    --color-amber-dark12: #ffe7b3;
+}

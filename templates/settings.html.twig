@@ -1,0 +1,95 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'settings' %}
+
+{% block submenu %}
+    <nav class="layout__submenu submenu" data-controller="submenu" aria-labelledby="submenu-title">
+        <div class="row row--always row--center">
+            <div class="submenu__title row__item--extend" id="submenu-title">
+                {{ 'settings.index.title' | trans }}
+            </div>
+
+            <div class="submenu__scroller only-mobile">
+                <button
+                    class="button--icon button--discreet"
+                    data-submenu-target="buttonLeft"
+                    data-action="submenu#scrollLeft"
+                >
+                    {{ icon('angle-down', 'icon--rotate90') }}
+
+                    <span class="sr-only">
+                        {{ 'submenu.scroller.scroll_to_left' | trans }}
+                    </span>
+                </button>
+
+                <button
+                    class="button--icon button--discreet"
+                    data-submenu-target="buttonRight"
+                    data-action="submenu#scrollRight"
+                >
+                    {{ icon('angle-down', 'icon--rotate270') }}
+
+                    <span class="sr-only">
+                        {{ 'submenu.scroller.scroll_to_right' | trans }}
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <ul class="submenu__menu list--nostyle" data-submenu-target="menu">
+            {% if is_granted('admin:manage:roles') %}
+                <li class="submenu__item">
+                    <a
+                        class="submenu__anchor"
+                        href="{{ path('roles') }}"
+                        {{ currentMenu == 'roles' ? 'aria-current="page"' }}
+                    >
+                        {{ 'roles.index.title' | trans }}
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if is_granted('admin:manage:agents') %}
+                <li class="submenu__item">
+                    <a
+                        class="submenu__anchor"
+                        href="{{ path('teams') }}"
+                        {{ currentMenu == 'teams' ? 'aria-current="page"' }}
+                    >
+                        {{ 'teams.index.title' | trans }}
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if is_granted('admin:manage:users') %}
+                <li class="submenu__item">
+                    <a
+                        class="submenu__anchor"
+                        href="{{ path('users') }}"
+                        {{ currentMenu == 'users' ? 'aria-current="page"' }}
+                    >
+                        {{ 'users.index.title' | trans }}
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if is_granted('admin:manage:mailboxes') %}
+                <li class="submenu__item">
+                    <a
+                        class="submenu__anchor"
+                        href="{{ path('mailboxes') }}"
+                        {{ currentMenu == 'mailboxes' ? 'aria-current="page"' }}
+                    >
+                        {{ 'mailboxes.index.title' | trans }}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endblock %}

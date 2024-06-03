@@ -33,11 +33,20 @@ class IconExtension extends AbstractExtension
         ];
     }
 
-    public function icon(string $iconName): string
+    public function icon(string $iconName, string $additionalClassNames = ''): string
     {
+        $iconName = htmlspecialchars($iconName);
+        $additionalClassNames = htmlspecialchars($additionalClassNames);
+
         $modificationTime = @filemtime($this->pathToIcons);
         $iconsUrl = $this->assetPackages->getUrl('icons.svg');
-        $svg = "<svg class=\"icon icon--{$iconName}\" aria-hidden=\"true\" width=\"24\" height=\"24\">";
+
+        $classNames = "icon icon--{$iconName}";
+        if ($additionalClassNames) {
+            $classNames .= " {$additionalClassNames}";
+        }
+
+        $svg = "<svg class=\"{$classNames}\" aria-hidden=\"true\" width=\"24\" height=\"24\">";
         $svg .= "<use xlink:href=\"{$iconsUrl}?{$modificationTime}#{$iconName}\"/>";
         $svg .= '</svg>';
         return $svg;

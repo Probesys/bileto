@@ -10,90 +10,104 @@
 
 {% block title %}{{ 'preferences.title' | trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'preferences.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <main class="layout__body flow">
+    <main class="layout__body">
         <h1>{{ 'preferences.title' | trans }}</h1>
 
-        <form
-            action="{{ path('update preferences') }}"
-            method="post"
-            class="wrapper wrapper--small wrapper--center flow"
-            data-turbo="false" {# The form can change attributes of the <html> tag, so we need to force the refresh of the page. #}
-        >
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('update preferences') }}">
+        <div class="panel">
+            <form
+                action="{{ path('update preferences') }}"
+                method="post"
+                class="form--standard"
+                data-turbo="false" {# The form can change attributes of the <html> tag, so we need to force the refresh of the page. #}
+            >
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update preferences') }}">
 
-            {% if error %}
-                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-            {% endif %}
-
-            <div class="flow flow--small">
-                <label for="locale">
-                    {{ icon('language') }}
-                    {{ 'users.language' | trans }}
-                </label>
-
-                {% if errors.locale is defined %}
-                    <p class="form__error" role="alert" id="locale-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.locale }}
-                    </p>
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
                 {% endif %}
 
-                <select
-                    id="locale"
-                    name="locale"
+                <div class="flow flow--small">
+                    <label for="locale">
+                        {{ icon('language') }}
+                        {{ 'users.language' | trans }}
+                    </label>
+
                     {% if errors.locale is defined %}
-                        autofocus
-                        aria-invalid="true"
-                        aria-errormessage="locale-error"
+                        <p class="form__error" role="alert" id="locale-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.locale }}
+                        </p>
                     {% endif %}
-                >
-                    {% for locale_, language in availableLanguages %}
-                        <option value="{{ locale_ }}" {{ locale == locale_ ? 'selected' }}>
-                            {{ language }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
 
-            <div class="flow flow--small">
-                <label for="color-scheme">
-                    {{ 'users.color_scheme' | trans }}
-                </label>
+                    <select
+                        id="locale"
+                        name="locale"
+                        {% if errors.locale is defined %}
+                            autofocus
+                            aria-invalid="true"
+                            aria-errormessage="locale-error"
+                        {% endif %}
+                    >
+                        {% for locale_, language in availableLanguages %}
+                            <option value="{{ locale_ }}" {{ locale == locale_ ? 'selected' }}>
+                                {{ language }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                {% if errors.colorScheme is defined %}
-                    <p class="form__error" role="alert" id="color-scheme-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.colorScheme }}
-                    </p>
-                {% endif %}
+                <div class="flow flow--small">
+                    <label for="color-scheme">
+                        {{ 'users.color_scheme' | trans }}
+                    </label>
 
-                <select
-                    id="color-scheme"
-                    name="colorScheme"
                     {% if errors.colorScheme is defined %}
-                        autofocus
-                        aria-invalid="true"
-                        aria-errormessage="color-scheme-error"
+                        <p class="form__error" role="alert" id="color-scheme-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.colorScheme }}
+                        </p>
                     {% endif %}
-                >
-                    <option value="auto" {{ colorScheme == 'auto' ? 'selected' }}>
-                        {{ 'users.color_scheme.auto' | trans }}
-                    </option>
-                    <option value="light" {{ colorScheme == 'light' ? 'selected' }}>
-                        {{ 'users.color_scheme.light' | trans }}
-                    </option>
-                    <option value="dark" {{ colorScheme == 'dark' ? 'selected' }}>
-                        {{ 'users.color_scheme.dark' | trans }}
-                    </option>
-                </select>
-            </div>
 
-            <div class="form__actions">
-                <button id="form-update-preferences-submit" class="button--primary" type="submit">
-                    {{ 'forms.save_changes' | trans }}
-                </button>
-            </div>
-        </form>
+                    <select
+                        id="color-scheme"
+                        name="colorScheme"
+                        {% if errors.colorScheme is defined %}
+                            autofocus
+                            aria-invalid="true"
+                            aria-errormessage="color-scheme-error"
+                        {% endif %}
+                    >
+                        <option value="auto" {{ colorScheme == 'auto' ? 'selected' }}>
+                            {{ 'users.color_scheme.auto' | trans }}
+                        </option>
+                        <option value="light" {{ colorScheme == 'light' ? 'selected' }}>
+                            {{ 'users.color_scheme.light' | trans }}
+                        </option>
+                        <option value="dark" {{ colorScheme == 'dark' ? 'selected' }}>
+                            {{ 'users.color_scheme.dark' | trans }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form__actions">
+                    <button id="form-update-preferences-submit" class="button--primary" type="submit">
+                        {{ 'forms.save_changes' | trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
     </main>
 {% endblock %}

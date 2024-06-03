@@ -3,7 +3,9 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 /**
- * These colors come from https://www.radix-ui.com/colors
+ * Use these colors in your CSS.
+ * The real colors (tokens) are defined in colors.tokens.css.
+ *
  * Understanding the scale: https://www.radix-ui.com/docs/colors/palette-composition/understanding-the-scale
  *
  * In short:
@@ -18,89 +20,85 @@
 [data-color-scheme="dark"] {
     color-scheme: dark;
 
-    /* Tomato */
-    --color-error1: #1d1412;
-    --color-error2: #2a1410;
-    --color-error3: #3b1813;
-    --color-error4: #481a14;
-    --color-error5: #541c15;
-    --color-error6: #652016;
-    --color-error7: #7f2315;
-    --color-error8: #a42a12;
-    --color-error9: #e54d2e;
-    --color-error10: #ec5e41;
-    --color-error11: #f16a50;
-    --color-error12: #feefec;
-
-    /* Slate */
-    --color-grey1: #151718;
-    --color-grey2: #1a1d1e;
-    --color-grey3: #202425;
-    --color-grey4: #26292b;
-    --color-grey5: #2b2f31;
-    --color-grey6: #313538;
-    --color-grey7: #3a3f42;
-    --color-grey8: #4c5155;
-    --color-grey9: #697177;
-    --color-grey10: #787f85;
-    --color-grey11: #9ba1a6;
-    --color-grey12: #ecedee;
-
-    /* Sky */
-    --color-info1: #0c1820;
-    --color-info2: #071d2a;
-    --color-info3: #082636;
-    --color-info4: #082d41;
-    --color-info5: #08354c;
-    --color-info6: #083e59;
-    --color-info7: #064b6b;
-    --color-info8: #005d85;
-    --color-info9: #68ddfd;
-    --color-info10: #8ae8ff;
-    --color-info11: #2ec8ee;
-    --color-info12: #eaf8ff;
-
-    /* Teal */
-    --color-primary1: #091915;
-    --color-primary2: #04201b;
-    --color-primary3: #062923;
-    --color-primary4: #07312b;
-    --color-primary5: #083932;
-    --color-primary6: #09443c;
-    --color-primary7: #0b544a;
-    --color-primary8: #0c6d62;
-    --color-primary9: #12a594;
-    --color-primary10: #10b3a3;
-    --color-primary11: #0ac5b3;
-    --color-primary12: #e1faf4;
-
-    /* Green */
-    --color-success1: #0d1912;
-    --color-success2: #0c1f17;
-    --color-success3: #0f291e;
-    --color-success4: #113123;
-    --color-success5: #133929;
-    --color-success6: #164430;
-    --color-success7: #1b543a;
-    --color-success8: #236e4a;
-    --color-success9: #30a46c;
-    --color-success10: #3cb179;
-    --color-success11: #4cc38a;
-    --color-success12: #e5fbeb;
-
-    /* Amber */
-    --color-warning1: #1f1300;
-    --color-warning2: #271700;
-    --color-warning3: #341c00;
-    --color-warning4: #3f2200;
-    --color-warning5: #4a2900;
-    --color-warning6: #573300;
-    --color-warning7: #693f05;
-    --color-warning8: #824e00;
-    --color-warning9: #ffb224;
-    --color-warning10: #ffcb47;
-    --color-warning11: #f1a10d;
-    --color-warning12: #fef3dd;
+    --color-main-background: var(--color-black);
 
     --color-box-shadow: rgb(0 0 0 / 50%);
+
+    --color-error1: var(--color-red-dark1);
+    --color-error2: var(--color-red-dark2);
+    --color-error3: var(--color-red-dark3);
+    --color-error4: var(--color-red-dark4);
+    --color-error5: var(--color-red-dark5);
+    --color-error6: var(--color-red-dark6);
+    --color-error7: var(--color-red-dark7);
+    --color-error8: var(--color-red-dark8);
+    --color-error9: var(--color-red-dark9);
+    --color-error10: var(--color-red-dark10);
+    --color-error11: var(--color-red-dark11);
+    --color-error12: var(--color-red-dark12);
+
+    --color-grey1: var(--color-slate-dark1);
+    --color-grey2: var(--color-slate-dark2);
+    --color-grey3: var(--color-slate-dark3);
+    --color-grey4: var(--color-slate-dark4);
+    --color-grey5: var(--color-slate-dark5);
+    --color-grey6: var(--color-slate-dark6);
+    --color-grey7: var(--color-slate-dark7);
+    --color-grey8: var(--color-slate-dark8);
+    --color-grey9: var(--color-slate-dark9);
+    --color-grey10: var(--color-slate-dark10);
+    --color-grey11: var(--color-slate-dark11);
+    --color-grey12: var(--color-slate-dark12);
+
+    --color-info1: var(--color-blue-dark1);
+    --color-info2: var(--color-blue-dark2);
+    --color-info3: var(--color-blue-dark3);
+    --color-info4: var(--color-blue-dark4);
+    --color-info5: var(--color-blue-dark5);
+    --color-info6: var(--color-blue-dark6);
+    --color-info7: var(--color-blue-dark7);
+    --color-info8: var(--color-blue-dark8);
+    --color-info9: var(--color-blue-dark9);
+    --color-info10: var(--color-blue-dark10);
+    --color-info11: var(--color-blue-dark11);
+    --color-info12: var(--color-blue-dark12);
+
+    --color-primary1: var(--color-teal-dark1);
+    --color-primary2: var(--color-teal-dark2);
+    --color-primary3: var(--color-teal-dark3);
+    --color-primary4: var(--color-teal-dark4);
+    --color-primary5: var(--color-teal-dark5);
+    --color-primary6: var(--color-teal-dark6);
+    --color-primary7: var(--color-teal-dark7);
+    --color-primary8: var(--color-teal-dark8);
+    --color-primary9: var(--color-teal-dark9);
+    --color-primary10: var(--color-teal-dark10);
+    --color-primary11: var(--color-teal-dark11);
+    --color-primary12: var(--color-teal-dark12);
+
+    --color-success1: var(--color-green-dark1);
+    --color-success2: var(--color-green-dark2);
+    --color-success3: var(--color-green-dark3);
+    --color-success4: var(--color-green-dark4);
+    --color-success5: var(--color-green-dark5);
+    --color-success6: var(--color-green-dark6);
+    --color-success7: var(--color-green-dark7);
+    --color-success8: var(--color-green-dark8);
+    --color-success9: var(--color-green-dark9);
+    --color-success10: var(--color-green-dark10);
+    --color-success11: var(--color-green-dark11);
+    --color-success12: var(--color-green-dark12);
+
+    --color-warning1: var(--color-amber-dark1);
+    --color-warning2: var(--color-amber-dark2);
+    --color-warning3: var(--color-amber-dark3);
+    --color-warning4: var(--color-amber-dark4);
+    --color-warning5: var(--color-amber-dark5);
+    --color-warning6: var(--color-amber-dark6);
+    --color-warning7: var(--color-amber-dark7);
+    --color-warning8: var(--color-amber-dark8);
+    --color-warning9: var(--color-amber-dark9);
+    --color-warning10: var(--color-amber-dark10);
+    --color-warning11: var(--color-amber-dark11);
+    --color-warning12: var(--color-amber-dark12);
 }

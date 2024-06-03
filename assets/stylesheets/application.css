@@ -4,9 +4,11 @@
 
 @import "./_reset.css";
 @import "./_fonts.css";
+@import "./variables/colors.tokens.css";
 @import "./variables/colors.dark.css";
 @import "./variables/colors.light.css";
 @import "./variables/sizes.css";
+@import "./utils/accessibility.css";
 @import "./utils/flow.css";
 @import "./utils/grids.css";
 @import "./utils/indent.css";
@@ -19,15 +21,16 @@
 @import "./components/buttons.css";
 @import "./components/cards.css";
 @import "./components/documents.css";
+@import "./components/enclosures.css";
 @import "./components/forms.css";
 @import "./components/icons.css";
 @import "./components/images.css";
-@import "./components/layout.css";
 @import "./components/lists.css";
 @import "./components/messages.css";
 @import "./components/modal.css";
 @import "./components/notifications.css";
 @import "./components/pagination.css";
+@import "./components/panel.css";
 @import "./components/placeholders.css";
 @import "./components/popups.css";
 @import "./components/progress.css";
@@ -35,11 +38,16 @@
 @import "./components/sidebar.css";
 @import "./components/spinners.css";
 @import "./components/tables.css";
-@import "./components/tabs.css";
 @import "./components/tickets.css";
 @import "./components/timelines.css";
-@import "./custom/login-new.css";
+@import "./custom/login.css";
 @import "./custom/tickets-show.css";
+@import "./layout/banner.css";
+@import "./layout/body.css";
+@import "./layout/breadcrumb.css";
+@import "./layout/extramenu.css";
+@import "./layout/header.css";
+@import "./layout/submenu.css";
 
 *,
 *::before,
@@ -48,7 +56,7 @@
 }
 
 html {
-    font-size: 10px;
+    font-size: 110%;
 }
 
 body {
@@ -57,7 +65,7 @@ body {
 
     color: var(--color-grey12);
     font-family:
-        "Atkinson Hyperlegible",
+        Lexend,
         system-ui,
         BlinkMacSystemFont,
         "Segoe UI",
@@ -67,22 +75,22 @@ body {
         Cantarell,
         "Helvetica Neue",
         sans-serif;
-    font-size: 200%;
 
     background: var(--color-grey2);
 }
 
-*:focus {
-    outline: var(--width-outline) solid var(--color-primary9);
-}
-
 h1 {
+    color: var(--color-primary12);
     font-size: var(--font-size-bigger);
+    font-weight: 600;
     text-align: center;
 }
 
 h2 {
-    font-size: var(--font-size-big);
+    color: var(--color-primary12);
+    font-size: var(--font-size-normal);
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 h3 {
@@ -91,16 +99,6 @@ h3 {
 
 summary {
     cursor: pointer;
-}
-
-.sr-only {
-    position: absolute;
-
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-
-    width: 1px;
-    height: 1px;
 }
 
 .js-only {
@@ -119,31 +117,11 @@ summary {
     }
 }
 
-.accessibility-nav {
-    position: absolute;
-
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-
-    width: 1px;
-    height: 1px;
-}
-
-.accessibility-nav:focus {
-    top: 1rem;
-    left: 1rem;
-
-    clip: auto;
-
-    width: auto;
-    height: auto;
-}
-
 .turbo-progress-bar {
     position: fixed;
     top: 0;
 
-    height: 0.5rem;
+    height: 0.4rem;
 
-    background: linear-gradient(to right, var(--color-primary7), var(--color-primary9));
+    background: linear-gradient(to right, var(--color-teal12), var(--color-teal9));
 }

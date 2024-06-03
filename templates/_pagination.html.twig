@@ -13,12 +13,20 @@
         <ul class="pagination__container">
             {% if pagination.currentPageIsFirst %}
                 <li class="pagination__item pagination__item--prev pagination__item--disabled">
-                    {{ 'pagination.previous' | trans }}
+                    {{ icon('angle-down', 'icon--rotate90') }}
+
+                    <span class="sr-only">
+                        {{ 'pagination.previous' | trans }}
+                    </span>
                 </li>
             {% else %}
                 <li class="pagination__item pagination__item--prev">
                     <a class="pagination__link" href="{{ path(route_name, route_parameters|merge({'page': pagination.previousPage })) }}">
-                        {{ 'pagination.previous' | trans }}
+                        {{ icon('angle-down', 'icon--rotate90') }}
+
+                        <span class="sr-only">
+                            {{ 'pagination.previous' | trans }}
+                        </span>
                     </a>
                 </li>
             {% endif %}
@@ -43,12 +51,20 @@
 
             {% if pagination.currentPageIsLast %}
                 <li class="pagination__item pagination__item--next pagination__item--disabled">
-                    {{ 'pagination.next' | trans }}
+                    {{ icon('angle-down', 'icon--rotate270') }}
+
+                    <span class="sr-only">
+                        {{ 'pagination.next' | trans }}
+                    </span>
                 </li>
             {% else %}
                 <li class="pagination__item pagination__item--next">
                     <a class="pagination__link" href="{{ path(route_name, route_parameters|merge({'page': pagination.nextPage })) }}">
-                        {{ 'pagination.next' | trans }}
+                        {{ icon('angle-down', 'icon--rotate270') }}
+
+                        <span class="sr-only">
+                            {{ 'pagination.next' | trans }}
+                        </span>
                     </a>
                 </li>
             {% endif %}

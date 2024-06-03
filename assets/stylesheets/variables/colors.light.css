@@ -3,7 +3,9 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 /**
- * These colors come from https://www.radix-ui.com/colors
+ * Use these colors in your CSS.
+ * The real colors (tokens) are defined in colors.tokens.css.
+ *
  * Understanding the scale: https://www.radix-ui.com/docs/colors/palette-composition/understanding-the-scale
  *
  * In short:
@@ -18,89 +20,85 @@
 [data-color-scheme="light"] {
     color-scheme: light;
 
-    /* Tomato */
-    --color-error1: #fffcfc;
-    --color-error2: #fff8f7;
-    --color-error3: #fff0ee;
-    --color-error4: #ffe6e2;
-    --color-error5: #fdd8d3;
-    --color-error6: #fac7be;
-    --color-error7: #f3b0a2;
-    --color-error8: #ea9280;
-    --color-error9: #e54d2e;
-    --color-error10: #db4324;
-    --color-error11: #ca3214;
-    --color-error12: #341711;
+    --color-main-background: var(--color-white);
 
-    /* Slate */
-    --color-grey1: #fbfcfd;
-    --color-grey2: #f8f9fa;
-    --color-grey3: #f1f3f5;
-    --color-grey4: #eceef0;
-    --color-grey5: #e6e8eb;
-    --color-grey6: #dfe3e6;
-    --color-grey7: #d7dbdf;
-    --color-grey8: #c1c8cd;
-    --color-grey9: #889096;
-    --color-grey10: #7e868c;
-    --color-grey11: #687076;
-    --color-grey12: #11181c;
+    --color-box-shadow: rgb(0 0 0 / 10%);
 
-    /* Sky */
-    --color-info1: #f9feff;
-    --color-info2: #f1fcff;
-    --color-info3: #e4f9ff;
-    --color-info4: #d5f4fd;
-    --color-info5: #c1ecf9;
-    --color-info6: #a4dff1;
-    --color-info7: #79cfea;
-    --color-info8: #2ebde5;
-    --color-info9: #68ddfd;
-    --color-info10: #5fd4f4;
-    --color-info11: #0078a1;
-    --color-info12: #003242;
+    --color-error1: var(--color-red1);
+    --color-error2: var(--color-red2);
+    --color-error3: var(--color-red3);
+    --color-error4: var(--color-red4);
+    --color-error5: var(--color-red5);
+    --color-error6: var(--color-red6);
+    --color-error7: var(--color-red7);
+    --color-error8: var(--color-red8);
+    --color-error9: var(--color-red9);
+    --color-error10: var(--color-red10);
+    --color-error11: var(--color-red11);
+    --color-error12: var(--color-red12);
 
-    /* Teal */
-    --color-primary1: #fafefd;
-    --color-primary2: #f1fcfa;
-    --color-primary3: #e7f9f5;
-    --color-primary4: #d9f3ee;
-    --color-primary5: #c7ebe5;
-    --color-primary6: #afdfd7;
-    --color-primary7: #8dcec3;
-    --color-primary8: #53b9ab;
-    --color-primary9: #12a594;
-    --color-primary10: #0e9888;
-    --color-primary11: #067a6f;
-    --color-primary12: #10302b;
+    --color-grey1: var(--color-slate1);
+    --color-grey2: var(--color-slate2);
+    --color-grey3: var(--color-slate3);
+    --color-grey4: var(--color-slate4);
+    --color-grey5: var(--color-slate5);
+    --color-grey6: var(--color-slate6);
+    --color-grey7: var(--color-slate7);
+    --color-grey8: var(--color-slate8);
+    --color-grey9: var(--color-slate9);
+    --color-grey10: var(--color-slate10);
+    --color-grey11: var(--color-slate11);
+    --color-grey12: var(--color-slate12);
 
-    /* Green */
-    --color-success1: #fbfefc;
-    --color-success2: #f2fcf5;
-    --color-success3: #e9f9ee;
-    --color-success4: #ddf3e4;
-    --color-success5: #ccebd7;
-    --color-success6: #b4dfc4;
-    --color-success7: #92ceac;
-    --color-success8: #5bb98c;
-    --color-success9: #30a46c;
-    --color-success10: #299764;
-    --color-success11: #18794e;
-    --color-success12: #153226;
+    --color-info1: var(--color-blue1);
+    --color-info2: var(--color-blue2);
+    --color-info3: var(--color-blue3);
+    --color-info4: var(--color-blue4);
+    --color-info5: var(--color-blue5);
+    --color-info6: var(--color-blue6);
+    --color-info7: var(--color-blue7);
+    --color-info8: var(--color-blue8);
+    --color-info9: var(--color-blue9);
+    --color-info10: var(--color-blue10);
+    --color-info11: var(--color-blue11);
+    --color-info12: var(--color-blue12);
 
-    /* Amber */
-    --color-warning1: #fefdfb;
-    --color-warning2: #fff9ed;
-    --color-warning3: #fff4d5;
-    --color-warning4: #ffecbc;
-    --color-warning5: #ffe3a2;
-    --color-warning6: #ffd386;
-    --color-warning7: #f3ba63;
-    --color-warning8: #ee9d2b;
-    --color-warning9: #ffb224;
-    --color-warning10: #ffa01c;
-    --color-warning11: #ad5700;
-    --color-warning12: #4e2009;
+    --color-primary1: var(--color-teal1);
+    --color-primary2: var(--color-teal2);
+    --color-primary3: var(--color-teal3);
+    --color-primary4: var(--color-teal4);
+    --color-primary5: var(--color-teal5);
+    --color-primary6: var(--color-teal6);
+    --color-primary7: var(--color-teal7);
+    --color-primary8: var(--color-teal8);
+    --color-primary9: var(--color-teal9);
+    --color-primary10: var(--color-teal10);
+    --color-primary11: var(--color-teal11);
+    --color-primary12: var(--color-teal12);
 
-    --color-box-shadow: rgb(0 0 0 / 12%);
+    --color-success1: var(--color-green1);
+    --color-success2: var(--color-green2);
+    --color-success3: var(--color-green3);
+    --color-success4: var(--color-green4);
+    --color-success5: var(--color-green5);
+    --color-success6: var(--color-green6);
+    --color-success7: var(--color-green7);
+    --color-success8: var(--color-green8);
+    --color-success9: var(--color-green9);
+    --color-success10: var(--color-green10);
+    --color-success11: var(--color-green11);
+    --color-success12: var(--color-green12);
+
+    --color-warning1: var(--color-amber1);
+    --color-warning2: var(--color-amber2);
+    --color-warning3: var(--color-amber3);
+    --color-warning4: var(--color-amber4);
+    --color-warning5: var(--color-amber5);
+    --color-warning6: var(--color-amber6);
+    --color-warning7: var(--color-amber7);
+    --color-warning8: var(--color-amber8);
+    --color-warning9: var(--color-amber9);
+    --color-warning10: var(--color-amber10);
+    --color-warning11: var(--color-amber11);
+    --color-warning12: var(--color-amber12);
 }

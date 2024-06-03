@@ -4,15 +4,29 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<nav class="layout__sidebar flow flow--smaller" aria-labelledby="sidebar-tickets-title">
-    <div id="sidebar-tickets-title" class="sidebar__title">
-        {{ 'tickets.sidebar.title' | trans }}
-    </div>
+<nav
+    class="layout__extramenu extramenu"
+    data-controller="navigation"
+    aria-labelledby="extramenu-tickets-title"
+>
+    <button
+        class="extramenu__button only-mobile"
+        data-action="navigation#switch"
+        data-navigation-target="button"
+        aria-expanded="false"
+    >
+        <span class="extramenu__title" id="extramenu-tickets-title">
+            {{ 'tickets.index.views.title' | trans }}
 
-    <ul class="sidebar flow flow--smaller">
-        <li class="sidebar__item">
+        </span>
+
+        {{ icon('angle-down') }}
+    </button>
+
+    <ul class="extramenu__menu list--nostyle">
+        <li class="extramenu__item">
             <a
-                class="sidebar__anchor"
+                class="extramenu__anchor"
                 href="?"
                 {{ current == 'all' ? 'aria-current="page"' }}
             >
@@ -20,9 +34,9 @@
             </a>
         </li>
 
-        <li class="sidebar__item">
+        <li class="extramenu__item">
             <a
-                class="sidebar__anchor row row--always row--center flow flow--small"
+                class="extramenu__anchor"
                 href="?view=unassigned"
                 {{ current == 'unassigned' ? 'aria-current="page"' }}
             >
@@ -31,16 +45,16 @@
                 </span>
 
                 {% if countToAssign > 0 %}
-                    <span class="badge badge--small badge--grey">
+                    <span class="badge badge--small badge--border">
                         {{ countToAssign }}
                     </span>
                 {% endif %}
             </a>
         </li>
 
-        <li class="sidebar__item">
+        <li class="extramenu__item">
             <a
-                class="sidebar__anchor row row--always row--center flow flow--small"
+                class="extramenu__anchor"
                 href="?view=owned"
                 {{ current == 'owned' ? 'aria-current="page"' }}
             >
@@ -49,7 +63,7 @@
                 </span>
 
                 {% if countOwned > 0 %}
-                    <span class="badge badge--small badge--grey">
+                    <span class="badge badge--small badge--border">
                         {{ countOwned }}
                     </span>
                 {% endif %}

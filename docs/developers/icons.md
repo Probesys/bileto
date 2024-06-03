@@ -14,6 +14,12 @@ Icons can be displayed in templates via the Twig function `icon()` (see [`IconEx
 
 The parameter is the name of the icon, which corresponds to the name of the icon file without the extension.
 
+You can pass additional classes with the second parameter:
+
+```twig
+{{ icon('angle-down', 'icon--rotate90') }}
+```
+
 ## Build icons
 
 They are then built in a single file (`public/icons.svg`) with the following command:

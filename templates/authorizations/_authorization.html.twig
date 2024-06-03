@@ -66,7 +66,7 @@
                 action="{{ path('delete user authorization', { uid: authorization.uid }) }}"
             >
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete user authorization') }}">
-                <button type="submit" data-turbo-confirm="{{ 'authorizations.revoke.confirm' | trans }}">
+                <button type="submit" class="button--discreet" data-turbo-confirm="{{ 'authorizations.revoke.confirm' | trans }}">
                     {{ 'authorizations.revoke' | trans }}
                 </button>
             </form>
@@ -78,7 +78,7 @@
             action="{{ path('delete team authorization', { uid: authorization.uid }) }}"
         >
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete team authorization') }}">
-            <button type="submit" data-turbo-confirm="{{ 'authorizations.revoke.confirm' | trans }}">
+            <button type="submit" class="button--discreet" data-turbo-confirm="{{ 'authorizations.revoke.confirm' | trans }}">
                 {{ 'authorizations.revoke' | trans }}
             </button>
         </form>

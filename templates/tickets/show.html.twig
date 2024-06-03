@@ -4,167 +4,366 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'organization.html.twig' %}
 
-{% set currentPage = 'tickets' %}
+{% set currentMenu = 'tickets' %}
 
-{% block title %}{{ "#{ticket.title} (##{ticket.id}) – #{organization.name}" }}{% endblock %}
+{% block title %}{{ "##{ticket.id} #{ticket.title} – #{organization.name}" }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('organizations') }}">
+            {{ 'organizations.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('organization', { uid: organization.uid }) }}">
+            {{ organization.name }}
+        </a>
+
+        <a href="{{ path('organization tickets', { uid: organization.uid }) }}">
+            {{ 'tickets.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            #{{ ticket.id }} {{ ticket.title }}
+        </span>
+    </nav>
+{% endblock %}
 
 {% block body %}
-    <main class="layout__body flow flow--large tickets-show">
-        <div class="layout__breadcrumb wrapper wrapper--large wrapper--center">
-            <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
+    <main class="layout__body layout__body--extend tickets-show">
+        <div class="flow flow--small text--center">
+            <div class="row row--center row--middle flow flow--small">
+                <h1>
+                    #{{ ticket.id }} {{ ticket.title }}
+                </h1>
 
-            <a href="{{ path('organization tickets', { uid: organization.uid }) }}">
-                {{ 'tickets.index.title' | trans }}
-            </a>
-
-            <h1>
-                {{ ticket.title }}
-                <span class="ticket__id">#{{ ticket.id }}</span>
-            </h1>
-        </div>
-
-        <div class="ticket__top wrapper wrapper--large wrapper--center flow">
-            <div class="row row--center row--middle flow">
-                <span class="ticket__status badge badge--bold badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">{{ icon('status') }} {{ ticket.statusLabel | trans }}</span>
-
-                <span class="text--secondary row__item--extend">
-                    <strong>{{ ticket.createdBy.displayName }}</strong>
-
-                    {% if ticket.type == 'request' %}
-                        {{ 'tickets.show.opened_request' | trans | raw }}
-                    {% else %}
-                        {{ 'tickets.show.opened_incident' | trans | raw }}
-                    {% endif %}
-
-                    <time datetime="{{ ticket.createdAt | dateIso }}">
-                        {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
-                    </time>
-
-                    · {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
+                <span class="ticket__status badge badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">
+                    {{ icon('status') }} {{ ticket.statusLabel | trans }}
                 </span>
-
-                {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
-                {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
-                {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
-                {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
-
-                {% if menuHasItem %}
-                    <details
-                        class="popup"
-                        data-controller="popup"
-                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                    >
-                        <summary class="popup__opener">
-                            <span class="button button--caret">
-                                {{ 'common.actions' | trans }}
-                            </span>
-                        </summary>
-
-                        <nav class="popup__container popup__container--right">
-                            {% if canUpdateType %}
-                                <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
-                                    {% if ticket.type == 'request' %}
-                                        <input type="hidden" name="type" value="incident">
-                                        <button id="form-update-type-submit" class="popup__item" type="submit">
-                                            {{ 'tickets.show.actions.turn_into_incident' | trans }}
-                                        </button>
-                                    {% else %}
-                                        <input type="hidden" name="type" value="request">
-                                        <button id="form-update-type-submit" class="popup__item" type="submit">
-                                            {{ 'tickets.show.actions.turn_into_request' | trans }}
-                                        </button>
-                                    {% endif %}
-                                </form>
-                            {% endif %}
-
-                            {% if canUpdateTitle %}
-                                <button
-                                    class="popup__item"
-                                    type="button"
-                                    data-controller="modal-opener"
-                                    data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
-                                >
-                                    {{ 'tickets.show.actions.rename' | trans }}
-                                </button>
-                            {% endif %}
-
-                            {% if canUpdateStatus %}
-                                <button
-                                    class="popup__item"
-                                    type="button"
-                                    data-controller="modal-opener"
-                                    data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
-                                >
-                                    {{ 'tickets.show.actions.update_status' | trans }}
-                                </button>
-                            {% endif %}
-                        </nav>
-                    </details>
-                {% endif %}
             </div>
 
-            <div class="row row--always row--center flow flow--small text--small">
-                <form
-                    method="post"
-                    action="{{ path('update hide events') }}"
-                    data-turbo-preserve-scroll
-                >
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update hide events') }}">
-                    <input type="hidden" name="from" value="{{ path('ticket', { uid: ticket.uid }) }}">
+            <p>
+                <strong>{{ ticket.createdBy.displayName }}</strong>
 
-                    {% if app.user.areEventsHidden %}
-                        <button class="button--discreet" name="hideEvents" value="false">
-                            {{ icon('eye') }}
-                            {{ 'tickets.show.show_history' | trans }}
-                        </button>
-                    {% else %}
-                        <button class="button--discreet" name="hideEvents" value="true">
-                            {{ icon('eye-slash') }}
-                            {{ 'tickets.show.hide_history' | trans }}
-                        </button>
-                    {% endif %}
-                </form>
+                {% if ticket.type == 'request' %}
+                    {{ 'tickets.show.opened_request' | trans | raw }}
+                {% else %}
+                    {{ 'tickets.show.opened_incident' | trans | raw }}
+                {% endif %}
 
-                <button
-                    class="button--discreet"
-                    data-controller="scroll-to"
-                    data-scroll-to-target-value="#bottom"
-                    data-action="scroll-to#scroll"
+                <time datetime="{{ ticket.createdAt | dateIso }}">
+                    {{ 'tickets.show.opened_on' | trans({ 'date': ticket.createdAt | dateTrans }) }}
+                </time>
+            </p>
+
+            <p class="text--secondary">
+                {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
+            </p>
+
+            {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
+            {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
+            {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
+            {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
+
+            <div class="text--right">
+                <details
+                    class="popup"
+                    data-controller="popup"
+                    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
                 >
-                    {{ 'tickets.show.scroll_to_bottom' | trans }}
-                </button>
+                    <summary class="popup__opener">
+                        <span class="button button--discreet">
+                            {{ 'common.actions' | trans }}
+                            {{ icon('angle-down') }}
+                        </span>
+                    </summary>
+
+                    <nav class="popup__container popup__container--right">
+                        {% if canUpdateType %}
+                            <form action="{{ path('update ticket type', { uid: ticket.uid }) }}" method="post">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket type') }}">
+                                {% if ticket.type == 'request' %}
+                                    <input type="hidden" name="type" value="incident">
+                                    <button id="form-update-type-submit" class="popup__item" type="submit">
+                                        {{ 'tickets.show.actions.turn_into_incident' | trans }}
+                                    </button>
+                                {% else %}
+                                    <input type="hidden" name="type" value="request">
+                                    <button id="form-update-type-submit" class="popup__item" type="submit">
+                                        {{ 'tickets.show.actions.turn_into_request' | trans }}
+                                    </button>
+                                {% endif %}
+                            </form>
+                        {% endif %}
+
+                        {% if canUpdateTitle %}
+                            <button
+                                class="popup__item"
+                                type="button"
+                                data-controller="modal-opener"
+                                data-action="modal-opener#fetch"
+                                data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
+                            >
+                                {{ 'tickets.show.actions.rename' | trans }}
+                            </button>
+                        {% endif %}
+
+                        {% if canUpdateStatus %}
+                            <button
+                                class="popup__item"
+                                type="button"
+                                data-controller="modal-opener"
+                                data-action="modal-opener#fetch"
+                                data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
+                            >
+                                {{ 'tickets.show.actions.update_status' | trans }}
+                            </button>
+                        {% endif %}
+
+                        {% if menuHasItem %}
+                            <div class="popup__separator"></div>
+                        {% endif %}
+
+                        <form
+                            method="post"
+                            action="{{ path('update hide events') }}"
+                            data-turbo-preserve-scroll
+                        >
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('update hide events') }}">
+                            <input type="hidden" name="from" value="{{ path('ticket', { uid: ticket.uid }) }}">
+
+                            {% if app.user.areEventsHidden %}
+                                <button class="popup__item" name="hideEvents" value="false">
+                                    {{ 'tickets.show.show_history' | trans }}
+                                </button>
+                            {% else %}
+                                <button class="popup__item" name="hideEvents" value="true">
+                                    {{ 'tickets.show.hide_history' | trans }}
+                                </button>
+                            {% endif %}
+                        </form>
+                    </nav>
+                </details>
             </div>
         </div>
 
-        <div class="wrapper wrapper--large wrapper--center row flow flow--larger">
-            <div class="ticket__timeline row__item--extend flow flow--larger">
-                <div class="flow flow--larger timeline">
+        <div class="row flow flow--larger">
+            <div class="ticket__info text--small row__item--size3">
+                <div class="panel flow flow--large">
+                    <div class="flow">
+                        <div class="row row--center row--always flow">
+                            <h2 class="row__item--extend">
+                                {{ 'tickets.actors' | trans }}
+                            </h2>
+
+                            {% if is_granted('orga:update:tickets:actors', organization) %}
+                                <button
+                                    class="button--icon button--discreet"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                                >
+                                    {{ icon('pen-to-square') }}
+                                    <span class="sr-only">
+                                        {{ 'tickets.actors.edit.title' | trans }}
+                                    </span>
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        <p>
+                            <span class="text--secondary">
+                                {{ 'tickets.show.requester' | trans }}
+                            </span>
+
+                            <strong>
+                                {{ ticket.requester.displayName }}
+                            </strong>
+                        </p>
+
+                        <p>
+                            <span class="text--secondary">
+                                {{ 'tickets.show.assignee' | trans }}
+                            </span>
+
+                            <strong>
+                                {% if ticket.team %}
+                                    {{ ticket.team.name }} /
+                                {% endif %}
+
+                                {% if ticket.assignee %}
+                                    {{ ticket.assignee.displayName }}
+                                {% elseif is_granted('orga:update:tickets:actors', organization) %}
+                                    <button
+                                        class="button--anchor"
+                                        data-controller="modal-opener"
+                                        data-action="modal-opener#fetch"
+                                        data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                                    >
+                                        <strong>{{ 'tickets.unassigned' | trans }}</strong>
+                                    </button>
+
+                                    {% if is_agent(organization) and (not ticket.team or ticket.team.hasAgent(app.user)) %}
+                                        <form
+                                            action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
+                                            method="post"
+                                            class="form--inline"
+                                            data-turbo-preserve-scroll
+                                        >
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
+                                            <input type="hidden" name="assigneeUid" value="{{ app.user.uid }}">
+
+                                            →
+                                            <button id="form-self-assign-submit" class="button--anchor" type="submit">
+                                                {{ 'tickets.show.assign_yourself' | trans }}
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                {% else %}
+                                    <strong>{{ 'tickets.unassigned' | trans }}</strong>
+                                {% endif %}
+                            </strong>
+                        </p>
+                    </div>
+
+                    <div class="ticket__info-separator"></div>
+
+                    <div class="flow">
+                        <div class="row row--center row--always flow">
+                            <h2 class="row__item--extend">
+                                {{ 'tickets.priority' | trans }}
+                            </h2>
+
+                            {% if is_granted('orga:update:tickets:priority', organization) %}
+                                <button
+                                    class="button--icon button--discreet"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket priority', { uid: ticket.uid }) }}"
+                                >
+                                    {{ icon('pen-to-square') }}
+                                    <span class="sr-only">
+                                        {{ 'tickets.priority.edit.title' | trans }}
+                                    </span>
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        <div class="ticket__priority badge badge--big badge--{{ ticket.priorityBadgeColor }}">
+                            {{ ticket.priorityLabel | trans }}
+                        </div>
+
+                        <p>
+                            <span class="text--secondary">
+                                {{ 'tickets.show.urgency' | trans }}
+                            </span>
+
+                            <strong>
+                                {{ ticket.urgencyLabel | trans }}
+                            </strong>
+                        </p>
+
+                        <p>
+                            <span class="text--secondary">
+                                {{ 'tickets.show.impact' | trans }}
+                            </span>
+
+                            <strong>
+                                {{ ticket.impactLabel | trans }}
+                            </strong>
+                        </p>
+                    </div>
+
+                    <div class="ticket__info-separator"></div>
+
+                    {% if is_granted('orga:see:tickets:contracts', organization) %}
+                        <div class="flow">
+                            <div class="row row--center row--always flow">
+                                <h2 class="row__item--extend">
+                                    {{ 'tickets.contracts.ongoing' | trans }}
+                                </h2>
+
+                                {% if is_granted('orga:update:tickets:contracts', organization) %}
+                                    <button
+                                        class="button--icon button--discreet"
+                                        data-controller="modal-opener"
+                                        data-action="modal-opener#fetch"
+                                        data-modal-opener-href-value="{{ path('edit ticket contracts', { uid: ticket.uid }) }}"
+                                    >
+                                        {{ icon('pen-to-square') }}
+                                        <span class="sr-only">
+                                            {{ 'tickets.contracts.edit.title' | trans }}
+                                        </span>
+                                    </button>
+                                {% endif %}
+                            </div>
+
+                            {% set ongoingContract = ticket.ongoingContract %}
+                            {% if ongoingContract %}
+                                <p>
+                                    {% if is_granted('orga:see:contracts', organization) %}
+                                        <a href="{{ path('contract', { uid: ongoingContract.uid }) }}">
+                                            {{ ongoingContract.name }}
+                                        </a>
+                                    {% else %}
+                                        {{ ongoingContract.name }}
+                                    {% endif %}
+                                </p>
+
+                                <div class="flow flow--smaller">
+                                    <span class="text--small" id="contract-hours-consumed">
+                                        {{ 'contracts.hours_consumed' | trans({
+                                            'hours': ongoingContract.consumedMinutes | formatMinutes,
+                                            'maxHours': ongoingContract.maxHours,
+                                            'percentage': ongoingContract.consumedPercentage,
+                                        }) | raw }}
+                                    </span>
+
+                                    <progress value="{{ ongoingContract.consumedHours }}" max="{{ ongoingContract.maxHours }}" aria-labelledby="contract-hours-consumed">
+                                    </progress>
+                                </div>
+                            {% else %}
+                                <p class="text--secondary">
+                                    {{ 'tickets.contracts.none' | trans }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="ticket__timeline panel row__item--size9 flow flow--larger">
+                <div class="flow flow--larger timeline wrapper" data-controller="timeline">
                     {% set timelineDate = null %}
                     {% for timelineItem in timeline.sortedItems %}
                         {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.createdAt.format('Y-m-d') %}
                             {% set diff = timelineDate ? timelineDate.diff(timelineItem.createdAt).d : 0 %}
                             {% set timelineDate = timelineItem.createdAt %}
 
-                            <h2 class="timeline__date">
+                            <div class="timeline__date">
+                                <h2 class="text--inline">
+                                    <time datetime="{{ timelineDate | date('Y-m-d') }}">
+                                        {{ timelineDate | dateShort(true) }}
+                                    </time>
+                                </h2>
+
+                                    {% if today.format('Y-m-d') == timelineItem.createdAt.format('Y-m-d') %}
+                                        <span class="text--secondary">
+                                            {{ 'tickets.timeline.today' | trans }}
+                                        </span>
+                                    {% endif %}
+
                                 {% if diff >= 7 %}
-                                    <small class="timeline__date-diff">
-                                        {{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}&nbsp;—
-                                    </small>
+                                    <p class="text--inline text--secondary">
+                                        —&nbsp;{{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}
+                                    </p>
                                 {% endif %}
-
-                                <time datetime="{{ timelineDate | date('Y-m-d') }}">
-                                    {{ timelineDate | dateShort(true) }}
-                                </time>
-
-                                {% if today.format('Y-m-d') == timelineItem.createdAt.format('Y-m-d') %}
-                                    <small class="text--secondary">{{ 'tickets.timeline.today' | trans }}</small>
-                                {% endif %}
-                            </h2>
+                            </div>
                         {% endif %}
 
                         {% if timelineItem.timelineType == 'message' %}
@@ -343,7 +542,7 @@
                                                 >
                                                     <summary class="popup__opener">
                                                         <span class="button button--primary button-group__item">
-                                                            {{ icon('caret-down') }}
+                                                            {{ icon('angle-down') }}
                                                             <span class="sr-only">
                                                                 {{ 'tickets.show.answer.select_method' | trans }}
                                                             </span>
@@ -388,181 +587,6 @@
                         {% endif %}
                     </div>
                 </div>
-            </div>
-
-            <div class="ticket__info text--small row__item--noshrink flow flow--larger">
-                <div class="flow">
-                    <div class="row row--center row--always flow">
-                        <span class="row__item--extend">
-                            {{ icon('user-group') }}
-                            <strong>{{ 'tickets.actors' | trans }}</strong>
-                        </span>
-
-                        {% if is_granted('orga:update:tickets:actors', organization) %}
-                            <button
-                                class="button--icon"
-                                data-controller="modal-opener"
-                                data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
-                            >
-                                {{ icon('gear') }}
-                                <span class="sr-only">
-                                    {{ 'tickets.actors.edit.title' | trans }}
-                                </span>
-                            </button>
-                        {% endif %}
-                    </div>
-
-                    <div>
-                        <div class="text--secondary">
-                            {{ 'tickets.requester' | trans }}
-                        </div>
-
-                        <div>
-                            {{ ticket.requester.displayName }}
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="text--secondary">
-                            {{ 'tickets.assignee' | trans }}
-                        </div>
-
-                        <div>
-                            {% if ticket.team %}
-                                {{ ticket.team.name }} /
-                            {% endif %}
-
-                            {% if ticket.assignee %}
-                                {{ ticket.assignee.displayName }}
-                            {% elseif is_granted('orga:update:tickets:actors', organization) %}
-                                <button
-                                    class="button--anchor"
-                                    data-controller="modal-opener"
-                                    data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
-                                >
-                                    <strong>{{ 'tickets.unassigned' | trans }}</strong>
-                                </button>
-
-                                {% if is_agent(organization) and (not ticket.team or ticket.team.hasAgent(app.user)) %}
-                                    <form
-                                        action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
-                                        method="post"
-                                        class="form--inline"
-                                        data-turbo-preserve-scroll
-                                    >
-                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
-                                        <input type="hidden" name="assigneeUid" value="{{ app.user.uid }}">
-
-                                        →
-                                        <button id="form-self-assign-submit" class="button--anchor" type="submit">
-                                            {{ 'tickets.show.assign_yourself' | trans }}
-                                        </button>
-                                    </form>
-                                {% endif %}
-                            {% else %}
-                                <strong>{{ 'tickets.unassigned' | trans }}</strong>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flow">
-                    <div class="row row--center row--always flow">
-                        <span class="row__item--extend">
-                            {{ icon('priority') }}
-                            <strong>{{ 'tickets.priority' | trans }}</strong>
-                        </span>
-
-                        {% if is_granted('orga:update:tickets:priority', organization) %}
-                            <button
-                                class="button--icon"
-                                data-controller="modal-opener"
-                                data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('edit ticket priority', { uid: ticket.uid }) }}"
-                            >
-                                {{ icon('gear') }}
-                                <span class="sr-only">
-                                    {{ 'tickets.priority.edit.title' | trans }}
-                                </span>
-                            </button>
-                        {% endif %}
-                    </div>
-
-                    <div class="ticket__priority badge badge--block badge--bold badge--{{ ticket.priorityBadgeColor }}">
-                        {{ ticket.priorityLabel | trans }}
-                    </div>
-
-                    <p>
-                        <span class="text--secondary">
-                            {{ 'tickets.show.urgency' | trans }}
-                        </span>
-                        {{ ticket.urgencyLabel | trans }}
-                    </p>
-
-                    <p>
-                        <span class="text--secondary">
-                            {{ 'tickets.show.impact' | trans }}
-                        </span>
-                        {{ ticket.impactLabel | trans }}
-                    </p>
-                </div>
-
-                {% if is_granted('orga:see:tickets:contracts', organization) %}
-                    <div class="flow">
-                        <div class="row row--center row--always flow">
-                            <span class="row__item--extend">
-                                {{ icon('contract') }}
-                                <strong>{{ 'tickets.contracts.ongoing' | trans }}</strong>
-                            </span>
-
-                            {% if is_granted('orga:update:tickets:contracts', organization) %}
-                                <button
-                                    class="button--icon"
-                                    data-controller="modal-opener"
-                                    data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket contracts', { uid: ticket.uid }) }}"
-                                >
-                                    {{ icon('gear') }}
-                                    <span class="sr-only">
-                                        {{ 'tickets.contracts.edit.title' | trans }}
-                                    </span>
-                                </button>
-                            {% endif %}
-                        </div>
-
-                        {% set ongoingContract = ticket.ongoingContract %}
-                        {% if ongoingContract %}
-                            <p>
-                                {% if is_granted('orga:see:contracts', organization) %}
-                                    <a class="anchor--noline" href="{{ path('contract', { uid: ongoingContract.uid }) }}">
-                                        {{ ongoingContract.name }}
-                                    </a>
-                                {% else %}
-                                    {{ ongoingContract.name }}
-                                {% endif %}
-                            </p>
-
-                            <div>
-                                <span class="text--small" id="contract-hours-consumed">
-                                    {{ 'contracts.hours_consumed' | trans({
-                                        'hours': ongoingContract.consumedMinutes | formatMinutes,
-                                        'maxHours': ongoingContract.maxHours,
-                                        'percentage': ongoingContract.consumedPercentage,
-                                    }) | raw }}
-                                </span>
-
-                                <progress value="{{ ongoingContract.consumedHours }}" max="{{ ongoingContract.maxHours }}" aria-labelledby="contract-hours-consumed">
-                                </progress>
-                            </div>
-                        {% else %}
-                            <p class="text--secondary">
-                                {{ 'tickets.contracts.none' | trans }}
-                            </p>
-                        {% endif %}
-                    </div>
-                {% endif %}
             </div>
         </div>
     </main>

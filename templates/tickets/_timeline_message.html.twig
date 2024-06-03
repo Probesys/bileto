@@ -10,45 +10,48 @@
 >
     <div class="message__avatar">
         {{ icon('circle-user') }}
-        {% if message.createdBy == ticket.requester %}
-            <span class="message__role" title="{{ 'tickets.requester' | trans }}">
-                {{ icon('user') }}
-                <span class="sr-only">
-                    {{ 'tickets.requester' | trans }}
-                </span>
-            </span>
-        {% elseif message.createdBy == ticket.assignee %}
-            <span class="message__role" title="{{ 'tickets.assignee' | trans }}">
-                {{ icon('headset') }}
-                <span class="sr-only">
-                    {{ 'tickets.assignee' | trans }}
-                </span>
-            </span>
-        {% endif %}
     </div>
 
     <div class="message__box">
         <div class="message__top">
-            {% if message.via == 'email' %}
-                <div title="{{ 'tickets.show.message.via_email' | trans }}">
-                    {{ icon('envelope') }}
-                </div>
-            {% endif %}
+            <p>
+                {% if message.createdBy == ticket.requester %}
+                    <span class="message__role" title="{{ 'tickets.requester' | trans }}">
+                        {{ icon('user') }}
+                        <span class="sr-only">
+                            {{ 'tickets.requester' | trans }}
+                        </span>
+                    </span>
+                {% elseif message.createdBy == ticket.assignee %}
+                    <span class="message__role" title="{{ 'tickets.assignee' | trans }}">
+                        {{ icon('headset') }}
+                        <span class="sr-only">
+                            {{ 'tickets.assignee' | trans }}
+                        </span>
+                    </span>
+                {% endif %}
 
-            <div class="message__author">
-                {{ message.createdBy.displayName }}
-            </div>
+                <span class="message__author">
+                    {{ message.createdBy.displayName }}
+                </span>
+
+                {% if message.via == 'email' %}
+                    <span title="{{ 'tickets.show.message.via_email' | trans }}">
+                        {{ icon('envelope') }}
+                    </span>
+                {% endif %}
+            </p>
 
             {% if ticket.solution == message %}
-                <div class="message__badge">
+                <div class="badge badge--primary">
                     {{ icon('check') }}
                     {{ 'tickets.show.message.solution' | trans }}
                 </div>
             {% endif %}
 
             {% if message.isConfidential %}
-                <div class="message__badge">
-                    {{ icon('user-secret') }}
+                <div class="badge badge--red">
+                    {{ icon('shield-halved') }}
                     {{ 'tickets.show.message.confidential' | trans }}
                 </div>
             {% endif %}
@@ -66,7 +69,7 @@
 
         {% if message.messageDocuments is not empty %}
             <div class="message__bottom flow flow--small">
-                <p class="text--secondary">
+                <p class="text--primary-dark text--small">
                     {{ 'message_documents.attachments' | trans }}
                 </p>
 

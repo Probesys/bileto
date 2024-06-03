@@ -4,26 +4,41 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'teams' %}
 
 {% block title %}{{ 'teams.new.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'teams' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('teams') }}">
+            {{ 'teams.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'teams.new.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('teams') }}">{{ 'teams.index.title' | trans }}</a>
-            <h1>{{ 'teams.new.title' | trans }}</h1>
-        </div>
+    <main class="layout__body">
+        <h1>{{ 'teams.new.title' | trans }}</h1>
 
-        {{ include('teams/_form.html.twig', {
-            'form': form,
-            'submit_label': 'teams.new.submit' | trans,
-        }) }}
+        <div class="panel">
+            {{ include('teams/_form.html.twig', {
+                'form': form,
+                'submit_label': 'teams.new.submit' | trans,
+            }) }}
+        </div>
     </main>
 {% endblock %}

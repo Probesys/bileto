@@ -12,13 +12,13 @@
     <form
         action="{{ path('combine filters') }}"
         method="post"
-        class="wrapper wrapper--small wrapper--center flow flow--large"
+        class="form--standard"
     >
         <p class="text--secondary">
             {{ 'tickets.filters.actors.info' | trans }}
         </p>
 
-        <fieldset>
+        <fieldset class="flow">
             <legend>
                 {{ 'tickets.involves' | trans }}
             </legend>
@@ -35,12 +35,12 @@
             ) }}
         </fieldset>
 
-        <fieldset data-controller="checkboxes">
+        <fieldset class="flow" data-controller="checkboxes">
             <legend>
                 {{ 'tickets.assignee' | trans }}
             </legend>
 
-            <div>
+            <div class="flow">
                 <input
                     type="checkbox"
                     id="filter-assignee-no"
@@ -69,7 +69,7 @@
             ) }}
         </fieldset>
 
-        <fieldset>
+        <fieldset class="flow">
             <legend>
                 {{ 'tickets.requester' | trans }}
             </legend>

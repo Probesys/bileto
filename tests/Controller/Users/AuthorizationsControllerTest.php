@@ -71,19 +71,19 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Authorizations');
         $this->assertSelectorTextContains(
-            '[data-test="authorization-item"]:nth-child(2)',
+            '[data-test="authorization-item"]:nth-child(1)',
             'Role A'
         );
         $this->assertSelectorTextContains(
-            '[data-test="authorization-item"]:nth-child(3)',
+            '[data-test="authorization-item"]:nth-child(2)',
             'Role B Agent * global *'
         );
         $this->assertSelectorTextContains(
-            '[data-test="authorization-item"]:nth-child(4)',
+            '[data-test="authorization-item"]:nth-child(3)',
             'Role B Agent Orga A'
         );
         $this->assertSelectorTextContains(
-            '[data-test="authorization-item"]:nth-child(5)',
+            '[data-test="authorization-item"]:nth-child(4)',
             'Role B Agent Orga B'
         );
     }

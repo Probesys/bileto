@@ -4,12 +4,12 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<div class="card" data-test="role-{{ role.type }}-item">
-    <a class="card__title" href="{{ path('edit role', { uid: role.uid }) }}">
+<a class="card card--link" href="{{ path('edit role', { uid: role.uid }) }}" data-test="role-{{ role.type }}-item">
+    <p class="card__title">
         {{ role.name }}
-    </a>
+    </p>
 
     <p class="card__body text--secondary text--small text--center">
         {{ role.description }}
     </p>
-</div>
+</a>

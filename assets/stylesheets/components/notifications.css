@@ -9,7 +9,7 @@
     right: 0;
     left: 0;
 
-    padding: 3rem;
+    padding: var(--space-larger);
 
     pointer-events: none;
 }
@@ -19,40 +19,35 @@
 
     max-width: 500px;
     margin-left: auto;
-    padding: 2rem 5rem;
-
-    font-weight: bold;
+    padding: var(--space-medium);
+    padding-left: calc(var(--space-medium) + 1.5rem + 1rem);
 
     background-repeat: no-repeat;
     background-position: left 1rem center;
-    background-size: 3rem;
-    box-shadow: 1px 2px 3px 1px var(--color-box-shadow);
-    border-left-width: var(--width-border-bolder);
-    border-left-style: solid;
-    border-radius: 0.5rem;
+    background-size: 1.5rem;
+    box-shadow: 0 0 8px 0 var(--color-box-shadow);
+    border-radius: var(--border-radius);
 
     pointer-events: auto;
 }
 
 .notifications__item--success {
-    color: var(--color-success11);
+    color: var(--color-success12);
 
-    background-color: var(--color-success3);
+    background-color: var(--color-success7);
     background-image: url("../../icons/circle-check-success.svg");
-    border-color: var(--color-success9);
 }
 
 .notifications__item--error {
-    color: var(--color-error11);
+    color: var(--color-error12);
 
-    background-color: var(--color-error3);
+    background-color: var(--color-error7);
     background-image: url("../../icons/circle-exclamation-error.svg");
-    border-color: var(--color-error9);
 }
 
 .notifications__item button {
     position: absolute;
-    top: 1.25rem; /* Align the button with the first line of the notification. */
+    top: 0.5rem; /* Align the button with the first line of the notification. */
     right: 1rem;
 
     color: currentcolor;

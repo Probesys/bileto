@@ -1,0 +1,17 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2024 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.enclosure {
+    padding: var(--space-small);
+
+    border-radius: var(--border-radius);
+}
+
+.enclosure--primary {
+    background-color: var(--color-primary3);
+}
+
+.enclosure--grey {
+    background-color: var(--color-grey3);
+}

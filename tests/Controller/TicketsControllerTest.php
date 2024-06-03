@@ -40,7 +40,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('GET', '/tickets');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('[data-test="ticket-item"]', "My ticket #{$ticket->getId()}");
+        $this->assertSelectorTextContains('[data-test="ticket-item"]', "#{$ticket->getId()} My ticket");
     }
 
     public function testGetNewRendersCorrectlyIfManyOrganizationsAreAccessible(): void
@@ -142,7 +142,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('GET', "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', "My ticket #{$ticket->getId()}");
+        $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
     }
 
     public function testGetShowRendersCorrectlyIfTicketIsRequestedByUser(): void
@@ -158,7 +158,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('GET', "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', "My ticket #{$ticket->getId()}");
+        $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
     }
 
     public function testGetShowRendersCorrectlyIfTicketIsAssignedToUser(): void
@@ -174,7 +174,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('GET', "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', "My ticket #{$ticket->getId()}");
+        $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
     }
 
     public function testGetShowRendersCorrectlyIfAccessIsGranted(): void
@@ -190,7 +190,7 @@ class TicketsControllerTest extends WebTestCase
         $client->request('GET', "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', "My ticket #{$ticket->getId()}");
+        $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
     }
 
     public function testGetShowRendersMessages(): void

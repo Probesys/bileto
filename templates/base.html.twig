@@ -43,7 +43,7 @@
 
     <body>
         <a
-            class="no-mobile accessibility-nav anchor--action"
+            class="accessibility-nav button button--primary button--uppercase"
             href="#main-content"
             tabindex="0"
             data-turbo="false"
@@ -86,7 +86,7 @@
 
                         <button
                             type="button"
-                            class="button--icon"
+                            class="button--icon button--discreet"
                             data-action="notifications#closeItem"
                             data-notifications-item-param="{{ key }}"
                         >
@@ -109,166 +109,152 @@
                 </div>
             </noscript>
 
-            <header class="layout__header wrapper wrapper--center {{ app.user ? 'wrapper--large' : 'wrapper--small' }}">
-                <div class="row row--always row--center row--middle">
-                    <nav class="row__item--extend" aria-label="{{ 'layout.main_navigation' | trans }}">
-                        <ul class="list--nostyle row row--always row--center">
-                            <li>
-                                <a
-                                    class="layout__header-anchor layout__header-home"
-                                    href="{{ path('home') }}"
-                                    {{ currentPage == 'home' ? 'aria-current="page"' }}
-                                >
-                                    <img id="layout-logo" src="{{ asset('icons/icon.svg') }}" alt="{{ 'layout.home' | trans }}" />
-                                </a>
-                            </li>
-
+            {% block header %}
+                <header class="layout__header">
+                    <div class="row row--always row--center">
+                        <nav data-controller="navigation" aria-label="{{ 'layout.main_navigation' | trans }}">
                             {% if app.user %}
-                                <li>
-                                    <a
-                                        class="layout__header-anchor"
-                                        href="{{ path('tickets') }}"
-                                        {{ currentPage == 'tickets' ? 'aria-current="page"' }}
-                                    >
-                                        {{ icon('ticket') }}
+                                <button
+                                    class="layout__header-burger button--icon only-mobile"
+                                    data-action="navigation#switch"
+                                    data-navigation-target="button"
+                                    aria-expanded="false"
+                                >
+                                    {{ icon('bars') }}
+                                    {{ icon('close') }}
 
-                                        <span class="no-mobile">
-                                            {{ 'layout.tickets' | trans }}
-                                        </span>
+                                    <span class="sr-only">
+                                        {{ 'layout.main_navigation.open' | trans }}
+                                    </span>
+                                </button>
+                            {% endif %}
+
+                            <ul class="layout__header-navigation list--nostyle">
+                                <li class="no-mobile">
+                                    <a
+                                        class="layout__header-home"
+                                        href="{{ path('home') }}"
+                                        {{ currentPage == 'home' ? 'aria-current="page"' }}
+                                    >
+                                        <img id="layout-logo" src="{{ asset('logo-white.svg') }}" alt="{{ 'layout.home' | trans }}" />
                                     </a>
                                 </li>
 
-                                <li>
-                                    <a
-                                        class="layout__header-anchor"
-                                        href="{{ path('organizations') }}"
-                                        {{ currentPage == 'organizations' ? 'aria-current="page"' }}
-                                    >
-                                        {{ icon('organization') }}
-
-                                        <span class="no-mobile">
-                                            {{ 'layout.organizations' | trans }}
-                                        </span>
-                                    </a>
-                                </li>
-
-                                {% if is_granted('admin:see') %}
-                                    <li>
+                                {% if app.user %}
+                                    <li class="layout__header-item">
                                         <a
                                             class="layout__header-anchor"
-                                            href="{{ path('settings') }}"
-                                            {{ currentPage == 'settings' ? 'aria-current="page"' }}
+                                            href="{{ path('tickets') }}"
+                                            {{ currentPage == 'tickets' ? 'aria-current="page"' }}
                                         >
-                                            {{ icon('wrench') }}
-
-                                            <span class="no-mobile">
-                                                {{ 'settings.index.title' | trans }}
-                                            </span>
+                                            {{ 'layout.tickets' | trans }}
                                         </a>
                                     </li>
-                                {% endif %}
-                            {% endif %}
-                        </ul>
-                    </nav>
 
-                    {% if app.user %}
-                        <details
-                            class="popup"
-                            data-controller="popup"
-                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                        >
-                            <summary class="popup__opener" title="{{ 'layout.user_menu_title' | trans({'name': app.user.displayName}) }}">
-                                <div class="layout__header-avatar">{{ icon('circle-user') }}</div>
-                                <span class="sr-only">
-                                    {{ 'layout.user_menu_title' | trans({'name': app.user.displayName}) }}
-                                </span>
-                            </summary>
-
-                            <nav class="popup__container popup__container--large popup__container--right">
-                                <div class="popup__title">{{ app.user.displayName }}</div>
-
-                                <a
-                                    class="popup__item"
-                                    href="{{ path('profile') }}"
-                                    {{ currentPage == 'profile' ? 'aria-current="page"' }}
-                                >
-                                    {{ icon('id-card') }}
-                                    {{ 'profile.title' | trans }}
-                                </a>
-
-                                <a
-                                    class="popup__item"
-                                    href="{{ path('preferences') }}"
-                                    {{ currentPage == 'preferences' ? 'aria-current="page"' }}
-                                >
-                                    {{ icon('palette') }}
-                                    {{ 'preferences.title' | trans }}
-                                </a>
-
-                                <div class="popup__separator"></div>
-
-                                <a
-                                    class="popup__item"
-                                    href="{{ path('about') }}"
-                                    {{ currentPage == 'about' ? 'aria-current="page"' }}
-                                >
-                                    {{ icon('circle-question') }}
-                                    {{ 'about.title' | trans }}
-                                </a>
-
-                                <div class="popup__separator"></div>
-
-                                <form action="{{ path('logout') }}" method="post" data-turbo="false">
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
-                                    <button class="popup__item" id="form-logout-submit" type="submit">
-                                        {{ icon('logout') }}
-                                        {{ 'layout.logout' | trans }}
-                                    </button>
-                                </form>
-                            </nav>
-                        </details>
-                    {% else %}
-                        <details
-                            class="popup"
-                            data-controller="popup"
-                            data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                        >
-                            <summary class="popup__opener">
-                                <span class="button button--caret">
-                                    {{ icon('language') }}
-                                    {{ 'users.language' | trans }}
-                                </span>
-                            </summary>
-
-                            <nav class="popup__container popup__container--right">
-                                <form action="{{ path('update session locale') }}" method="post">
-                                    {% for locale, language in availableLanguages %}
-                                        <button
-                                            id="form-update-session-locale-{{ locale }}-submit"
-                                            class="popup__item"
-                                            type="submit"
-                                            name="locale"
-                                            value="{{ locale }}"
+                                    <li class="layout__header-item">
+                                        <a
+                                            class="layout__header-anchor"
+                                            href="{{ path('organizations') }}"
+                                            {{ currentPage == 'organizations' ? 'aria-current="page"' }}
                                         >
-                                            {{ language }}
+                                            {{ 'layout.organizations' | trans }}
+                                        </a>
+                                    </li>
+
+                                    {% if is_granted('admin:see') %}
+                                        <li class="layout__header-item">
+                                            <a
+                                                class="layout__header-anchor"
+                                                href="{{ path('settings') }}"
+                                                {{ currentPage == 'settings' ? 'aria-current="page"' }}
+                                            >
+                                                {{ 'settings.index.title' | trans }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            </ul>
+                        </nav>
+
+                        <div class="row__item--extend text--center">
+                            <a
+                                class="layout__header-home only-mobile"
+                                href="{{ path('home') }}"
+                                {{ currentPage == 'home' ? 'aria-current="page"' }}
+                            >
+                                <img id="layout-logo" src="{{ asset('icons/icon-white.svg') }}" alt="{{ 'layout.home' | trans }}" />
+                            </a>
+                        </div>
+
+                        {% if app.user %}
+                            <details
+                                class="row__item--noshrink popup"
+                                data-controller="popup"
+                                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                            >
+                                <summary class="popup__opener">
+                                    <div class="layout__header-account row row--center row--always">
+                                        {{ icon('circle-user') }}
+
+                                        <span class="sr-mobile">
+                                            {{ 'layout.my_account' | trans }}
+                                        </span>
+                                    </div>
+                                </summary>
+
+                                <nav class="popup__container popup__container--right">
+                                    <div class="popup__title">{{ app.user.displayName }}</div>
+
+                                    <a
+                                        class="popup__item"
+                                        href="{{ path('profile') }}"
+                                        {{ currentPage == 'profile' ? 'aria-current="page"' }}
+                                    >
+                                        {{ 'profile.title' | trans }}
+                                    </a>
+
+                                    <a
+                                        class="popup__item"
+                                        href="{{ path('preferences') }}"
+                                        {{ currentPage == 'preferences' ? 'aria-current="page"' }}
+                                    >
+                                        {{ 'preferences.title' | trans }}
+                                    </a>
+
+                                    <div class="popup__separator"></div>
+
+                                    <a
+                                        class="popup__item"
+                                        href="{{ path('about') }}"
+                                        {{ currentPage == 'about' ? 'aria-current="page"' }}
+                                    >
+                                        {{ 'about.title' | trans }}
+                                    </a>
+
+                                    <div class="popup__separator"></div>
+
+                                    <form action="{{ path('logout') }}" method="post" data-turbo="false">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                                        <button class="popup__item" id="form-logout-submit" type="submit">
+                                            {{ 'layout.logout' | trans }}
                                         </button>
-                                    {% endfor %}
+                                    </form>
+                                </nav>
+                            </details>
+                        {% endif %}
+                    </div>
+                </header>
+            {% endblock %}
 
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('update session locale') }}">
-                                    <input type="hidden" name="from" value="login">
-                                </form>
-                            </nav>
-                        </details>
-                    {% endif %}
-                </div>
-            </header>
+            {% block submenu %}
+            {% endblock %}
 
-            <div class="row flow">
-                {% block sidebar %}{% endblock %}
+            {% block breadcrumb %}
+            {% endblock %}
 
-                <div id="main-content" class="row__item--extend">
-                    {% block body %}{% endblock %}
-                </div>
+            <div id="main-content" tabindex="-1">
+                {% block body %}
+                {% endblock %}
             </div>
         </div>
 

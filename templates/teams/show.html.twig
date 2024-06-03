@@ -4,48 +4,64 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'teams' %}
 
 {% block title %}{{ team.name }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'teams' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('teams') }}">
+            {{ 'teams.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ team.name }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow flow--larger">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('teams') }}">{{ 'teams.index.title' | trans }}</a>
+    <main class="layout__body">
+        <div class="flow flow--smaller">
             <h1>{{ team.name }}</h1>
+
+            <div class="text--right">
+                <details
+                    class="popup"
+                    data-controller="popup"
+                    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                >
+                    <summary class="popup__opener">
+                        <span class="button button--discreet">
+                            {{ 'common.actions' | trans }}
+                            {{ icon('angle-down') }}
+                        </span>
+                    </summary>
+
+                    <nav class="popup__container popup__container--right">
+                        <a class="popup__item" href="{{ path('edit team', { uid: team.uid }) }}">
+                            {{ 'teams.show.edit' | trans }}
+                        </a>
+                    </nav>
+                </details>
+            </div>
         </div>
 
-        <div class="wrapper wrapper--large text--right">
-            <details
-                class="popup"
-                data-controller="popup"
-                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-            >
-                <summary class="popup__opener">
-                    <span class="button button--caret">
-                        {{ 'common.actions' | trans }}
-                    </span>
-                </summary>
-
-                <nav class="popup__container popup__container--right">
-                    <a class="popup__item" href="{{ path('edit team', { uid: team.uid }) }}">
-                        {{ 'teams.show.edit' | trans }}
-                    </a>
-                </nav>
-            </details>
-        </div>
-
-        <div class="wrapper wrapper--large flow">
-            <h2>{{ 'teams.show.agents.title' | trans }}</h2>
+        <div class="flow">
+            <h2 class="sr-only">{{ 'teams.show.agents.title' | trans }}</h2>
 
             <div class="row row--center row--always flow">
-                <a href="{{ path('new team agent', { uid: team.uid }) }}" class="anchor--action">
+                <a href="{{ path('new team agent', { uid: team.uid }) }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'teams.show.agents.new' | trans }}
                 </a>
@@ -62,11 +78,13 @@
                     {% for user in agents %}
                         <li class="row" data-test="user-item">
                             <span class="row__item--extend">
-                                {{ user.displayName }}
+                                <span class="list__item-title">
+                                    {{ user.displayName }}
 
-                                {% if user == app.user %}
-                                    ({{ 'users.yourself' | trans }})
-                                {% endif %}
+                                    {% if user == app.user %}
+                                        ({{ 'users.yourself' | trans }})
+                                    {% endif %}
+                                </span>
 
                                 {% if user.name %}
                                     <span class="text--secondary text--small">
@@ -81,7 +99,7 @@
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('remove team agent') }}">
 
                                     <button
-                                        class="button--anchor"
+                                        class="button--discreet"
                                         type="submit"
                                         data-turbo-confirm="{{ 'teams.show.agents.remove.confirm' | trans }}"
                                     >
@@ -99,24 +117,26 @@
             {% endif %}
         </div>
 
-        <div class="wrapper wrapper--large flow">
-            <h2>{{ 'teams.show.authorizations.title' | trans }}</h2>
+        <div class="panel flow">
+            <div class="row row--baseline flow">
+                <h2 class="row__item--extend">{{ 'teams.show.authorizations.title' | trans }}</h2>
 
-            <div class="grid">
-                <a class="card card--action" href="{{ path('new team authorization', { uid: team.uid }) }}">
-                    <span>
-                        {{ icon('plus') }}
-                        {{ 'teams.show.authorizations.new' | trans }}
-                    </span>
+                <a class="button button--primary button--uppercase" href="{{ path('new team authorization', { uid: team.uid }) }}">
+                    {{ icon('plus') }}
+                    {{ 'teams.show.authorizations.new' | trans }}
                 </a>
-
-                {% for authorization in teamAuthorizations %}
-                    {{ include('authorizations/_authorization.html.twig', {
-                        authorization: authorization,
-                        mode: 'team',
-                    }, with_context = false) }}
-                {% endfor %}
             </div>
+
+            {% if teamAuthorizations %}
+                <div class="grid">
+                    {% for authorization in teamAuthorizations %}
+                        {{ include('authorizations/_authorization.html.twig', {
+                            authorization: authorization,
+                            mode: 'team',
+                        }, with_context = false) }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

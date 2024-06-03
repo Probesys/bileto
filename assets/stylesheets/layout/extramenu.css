@@ -1,0 +1,98 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2024 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+@media (max-width: 800px) {
+    .layout__extramenu {
+        position: relative;
+
+        margin: var(--space-medium);
+    }
+
+    .extramenu__button {
+        display: flex;
+        width: 100%;
+        padding: var(--space-small) var(--space-medium);
+
+        color: var(--color-primary12);
+        text-align: left;
+        text-transform: uppercase;
+
+        background-color: var(--color-main-background);
+        border: var(--border-width) solid var(--color-primary9);
+        border-radius: var(--border-radius);
+    }
+
+    .extramenu__title {
+        flex: 1;
+    }
+
+    .extramenu__menu {
+        position: absolute;
+        z-index: 50;
+        top: 2.5rem;
+        right: 0;
+        left: 0;
+
+        padding: var(--space-medium);
+
+        background-color: var(--color-main-background);
+        border: var(--border-width) solid var(--color-primary9);
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+    }
+
+    .extramenu__button[aria-expanded="false"] + .extramenu__menu {
+        display: none;
+    }
+
+    .extramenu__item + .extramenu__item {
+        border-top: var(--border-width) solid var(--color-grey6);
+    }
+
+    .extramenu__anchor {
+        display: block;
+        padding-top: var(--space-small);
+        padding-bottom: var(--space-small);
+
+        color: var(--color-primary12);
+        text-decoration: none;
+    }
+
+    .extramenu__anchor[aria-current="page"] {
+        color: var(--color-primary9);
+        font-weight: bold;
+    }
+}
+
+@media (min-width: 800px) {
+    .layout__extramenu {
+        padding-left: 15.2rem;
+
+        color: var(--color-primary12);
+        font-size: var(--font-size-small);
+
+        background-color: var(--color-main-background);
+    }
+
+    .extramenu__menu {
+        display: flex;
+
+        align-items: stretch;
+    }
+
+    .extramenu__anchor {
+        display: block;
+        height: 100%;
+        padding: var(--space-medium);
+
+        color: currentcolor;
+        text-decoration: none;
+    }
+
+    .extramenu__anchor[aria-current="page"] {
+        color: var(--color-primary1);
+        font-weight: 600;
+
+        background-color: var(--color-primary9);
+    }
+}

@@ -4,175 +4,191 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'users' %}
 
 {% block title %}{{ 'authorizations.new.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'users' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('users') }}">
+            {{ 'users.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('user authorizations', { uid: user.uid }) }}">
+            {{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'authorizations.new.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('users') }}">{{ 'users.index.title' | trans }}</a>
-            <a href="{{ path('user authorizations', { uid: user.uid }) }}">
-                {{ 'users.authorizations.index.title' | trans({ name: user.displayName }) }}
-            </a>
-            <h1>{{ 'authorizations.new.title' | trans }}</h1>
-        </div>
+    <main class="layout__body">
+        <h1>{{ 'authorizations.new.title' | trans }}</h1>
 
-        <form action="" method="post" class="wrapper wrapper--small flow" data-controller="form-new-authorization">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create user authorization') }}">
-
-            {% if error %}
-                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-            {% endif %}
-
-            <div class="row flow">
-                <div>
-                    <input
-                        type="radio"
-                        id="type-user"
-                        name="type"
-                        value="user"
-                        {{ type == 'user' ? 'checked' }}
-                        data-action="form-new-authorization#refresh"
-                    />
-
-                    <label for="type-user">
-                        {{ 'roles.type.user' | trans }}
-                    </label>
-                </div>
-
-                <div>
-                    <input
-                        type="radio"
-                        id="type-agent"
-                        name="type"
-                        value="agent"
-                        {{ type == 'agent' ? 'checked' }}
-                        data-action="form-new-authorization#refresh"
-                    />
-
-                    <label for="type-agent">
-                        {{ 'roles.type.agent' | trans }}
-                    </label>
-                </div>
-
-                <div>
-                    <input
-                        type="radio"
-                        id="type-admin"
-                        name="type"
-                        value="admin"
-                        {{ type == 'admin' ? 'checked' }}
-                        data-action="form-new-authorization#refresh"
-                    />
-
-                    <label for="type-admin">
-                        {{ 'roles.type.admin' | trans }}
-                    </label>
-                </div>
-            </div>
-
-            <div class="flow flow--small">
-                <label for="role">
-                    {{ 'authorizations.new.role' | trans }}
-                </label>
-
-                {% if errors.role is defined %}
-                    <p class="form__error" role="alert" id="role-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.role }}
-                    </p>
+        <div class="panel">
+            <form action="" method="post" class="form--standard" data-controller="form-new-authorization">
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
                 {% endif %}
 
-                <select
-                    id="role"
-                    name="role"
-                    required
-                    aria-describedby="role-caption"
+                <div class="row flow">
+                    <div>
+                        <input
+                            type="radio"
+                            id="type-user"
+                            name="type"
+                            value="user"
+                            {{ type == 'user' ? 'checked' }}
+                            data-action="form-new-authorization#refresh"
+                        />
+
+                        <label for="type-user">
+                            {{ 'roles.type.user' | trans }}
+                        </label>
+                    </div>
+
+                    <div>
+                        <input
+                            type="radio"
+                            id="type-agent"
+                            name="type"
+                            value="agent"
+                            {{ type == 'agent' ? 'checked' }}
+                            data-action="form-new-authorization#refresh"
+                        />
+
+                        <label for="type-agent">
+                            {{ 'roles.type.agent' | trans }}
+                        </label>
+                    </div>
+
+                    <div>
+                        <input
+                            type="radio"
+                            id="type-admin"
+                            name="type"
+                            value="admin"
+                            {{ type == 'admin' ? 'checked' }}
+                            data-action="form-new-authorization#refresh"
+                        />
+
+                        <label for="type-admin">
+                            {{ 'roles.type.admin' | trans }}
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flow flow--small">
+                    <label for="role">
+                        {{ 'authorizations.new.role' | trans }}
+                    </label>
+
                     {% if errors.role is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="role-error"
+                        <p class="form__error" role="alert" id="role-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.role }}
+                        </p>
                     {% endif %}
-                    data-action="form-new-authorization#refreshRoleCaption"
-                    data-form-new-authorization-target="roleSelect"
-                >
-                    {% for role in roles %}
-                        <option
-                            value="{{ role.uid }}"
-                            data-form-new-authorization-target="roleOption"
-                            data-type="{{ role.type }}"
-                            {% if role.type == 'super' %}
-                                data-desc="{{ 'roles.super_admin.description' | trans }}"
-                            {% else %}
-                                data-desc="{{ role.description }}"
-                            {% endif %}
-                        >
-                            {% if role.type == 'super' %}
-                                {{ 'roles.super_admin' | trans }}
-                            {% else %}
-                                {{ role.name }}
-                            {% endif %}
-                        </option>
-                    {% endfor %}
-                </select>
 
-                <p
-                    id="role-caption"
-                    class="form__caption"
-                    aria-live="polite"
-                    aria-atomic="true"
-                    data-form-new-authorization-target="roleCaption"
-                ></p>
-            </div>
+                    <select
+                        id="role"
+                        name="role"
+                        required
+                        aria-describedby="role-caption"
+                        {% if errors.role is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="role-error"
+                        {% endif %}
+                        data-action="form-new-authorization#refreshRoleCaption"
+                        data-form-new-authorization-target="roleSelect"
+                    >
+                        {% for role in roles %}
+                            <option
+                                value="{{ role.uid }}"
+                                data-form-new-authorization-target="roleOption"
+                                data-type="{{ role.type }}"
+                                {% if role.type == 'super' %}
+                                    data-desc="{{ 'roles.super_admin.description' | trans }}"
+                                {% else %}
+                                    data-desc="{{ role.description }}"
+                                {% endif %}
+                            >
+                                {% if role.type == 'super' %}
+                                    {{ 'roles.super_admin' | trans }}
+                                {% else %}
+                                    {{ role.name }}
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
 
-            <div class="flow flow--small" data-form-new-authorization-target="organizationsGroup">
-                <label for="organization">
-                    {{ 'authorizations.new.organization_scope' | trans }}
-                </label>
+                    <p
+                        id="role-caption"
+                        class="form__caption"
+                        aria-live="polite"
+                        aria-atomic="true"
+                        data-form-new-authorization-target="roleCaption"
+                    ></p>
+                </div>
 
-                <p class="form__caption" id="organization-caption">
-                    {{ 'authorizations.new.organization_caption' | trans }}
-                </p>
+                <div class="flow flow--small" data-form-new-authorization-target="organizationsGroup">
+                    <label for="organization">
+                        {{ 'authorizations.new.organization_scope' | trans }}
+                    </label>
 
-                {% if errors.organization is defined %}
-                    <p class="form__error" role="alert" id="organization-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.organization }}
+                    <p class="form__caption" id="organization-caption">
+                        {{ 'authorizations.new.organization_caption' | trans }}
                     </p>
-                {% endif %}
 
-                <select
-                    id="organization"
-                    name="organization"
-                    aria-describedby="organization-caption"
                     {% if errors.organization is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="organization-error"
+                        <p class="form__error" role="alert" id="organization-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.organization }}
+                        </p>
                     {% endif %}
-                >
-                    <option value="">
-                        {{ 'authorizations.new.global' | trans }}
-                    </option>
 
-                    {% for organization in organizations %}
-                        <option value="{{ organization.uid }}" {{ organization.uid == organizationUid ? 'selected' }}>
-                            {{ organization.name }}
+                    <select
+                        id="organization"
+                        name="organization"
+                        aria-describedby="organization-caption"
+                        {% if errors.organization is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="organization-error"
+                        {% endif %}
+                    >
+                        <option value="">
+                            {{ 'authorizations.new.global' | trans }}
                         </option>
-                    {% endfor %}
-                </select>
-            </div>
 
-            <div class="form__actions">
-                <button id="form-create-authorization-submit" class="button--primary" type="submit">
-                    {{ 'authorizations.new.submit' | trans }}
-                </button>
-            </div>
-        </form>
+                        {% for organization in organizations %}
+                            <option value="{{ organization.uid }}" {{ organization.uid == organizationUid ? 'selected' }}>
+                                {{ organization.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form__actions">
+                    <button id="form-create-authorization-submit" class="button--primary" type="submit">
+                        {{ 'authorizations.new.submit' | trans }}
+                    </button>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('create user authorization') }}">
+            </form>
+        </div>
     </main>
 {% endblock %}

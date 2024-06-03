@@ -25,7 +25,7 @@ You can adapt this button to be completely rounded with the correct class:
 
 ```twig
 <button class="button--icon">
-    {{ icon('gear') }}
+    {{ icon('pen-to-square') }}
 
     <span class="sr-only">
         Configure the priority
@@ -56,25 +56,6 @@ Sometimes, it can be useful to keep the interface elegant though.
 </button>
 ```
 
-## Button with caret
-
-You can add a caret to buttons opening a popup menu.
-Read about it in “[Working with popups](/docs/developers/popups.md)”.
-
-## Button caption
-
-You can add a small caption to buttons in order to provide additional context to the button:
-
-```html
-<button>
-    <span class="button__caption">
-        Status
-    </span>
-
-    Opened
-</button>
-```
-
 ## Buttons group
 
 You can group buttons that complement each other.
@@ -90,7 +71,7 @@ Note that you must use an additional `.button-group__item` class on the buttons 
     <details class="popup">
         <summary class="popup__opener">
             <span class="button button-group__item">
-                {{ icon('caret-down') }}
+                {{ icon('angle-down') }}
 
                 <span class="sr-only">
                     Select a different method to answer.

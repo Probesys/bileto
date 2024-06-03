@@ -31,29 +31,36 @@
 }
 
 .modal__box {
+    position: relative;
+
     max-width: 1000px;
-    margin: 2rem auto 5rem;
+    margin: var(--space-large) auto var(--space-larger);
 
     background-color: var(--color-grey1);
-    box-shadow: 0 0 10px var(--color-box-shadow);
+    box-shadow: 0 0 8px 0 var(--color-box-shadow);
 
-    scroll-margin-top: 2rem;
+    scroll-margin-top: var(--space-large);
 }
 
 @media (min-width: 800px) {
     .modal__box {
-        margin-top: 5rem;
+        margin-top: var(--space-larger);
     }
 }
 
 @media (min-width: 1000px) {
     .modal__box {
-        border-radius: 0.75rem;
+        border-radius: var(--border-radius);
     }
 }
 
 .modal__header {
-    padding: 1rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    padding: var(--space-medium);
 
     text-align: right;
 }
@@ -62,22 +69,18 @@
     overflow: hidden;
 
     min-height: 15rem;
-    padding-right: 1rem;
-    padding-bottom: 6rem;
-    padding-left: 1rem;
+    padding: var(--space-larger) var(--space-medium);
 }
 
 @media (min-width: 800px) {
     .modal__body {
-        padding-right: 2rem;
-        padding-left: 2rem;
+        padding-right: var(--space-larger);
+        padding-left: var(--space-larger);
     }
 }
 
 .modal__title {
-    margin-bottom: 2rem;
-
-    text-align: center;
+    margin-bottom: var(--space-larger);
 }
 
 body.modal-opened {

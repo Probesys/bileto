@@ -12,7 +12,7 @@
     <form
         action="{{ path('combine filters') }}"
         method="post"
-        class="wrapper wrapper--small wrapper--center flow flow--large"
+        class="form--standard"
         data-controller="checkboxes"
     >
         <p class="text--secondary">
@@ -95,7 +95,7 @@
             </div>
         </div>
 
-        <button class="text--small" type="button" data-action="checkboxes#uncheckAll">
+        <button class="button--discreet" type="button" data-action="checkboxes#uncheckAll">
             {{ 'tickets.filters.uncheck_all' | trans }}
         </button>
 

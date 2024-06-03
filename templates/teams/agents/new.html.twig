@@ -4,122 +4,140 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'teams' %}
 
 {% block title %}{{ 'teams.agents.new.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'teams' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('teams') }}">
+            {{ 'teams.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('team', { uid: team.uid }) }}">
+            {{ team.name }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'teams.agents.new.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('teams') }}">{{ 'teams.index.title' | trans }}</a>
-            <a href="{{ path('team', { uid: team.uid }) }}">{{ team.name }}</a>
-            <h1>{{ 'teams.agents.new.title' | trans }}</h1>
+    <main class="layout__body">
+        <h1>{{ 'teams.agents.new.title' | trans }}</h1>
+
+        <div class="panel">
+            <form
+                method="post"
+                action="{{ path('add team agent', { uid: team.uid }) }}"
+                class="form--standard"
+            >
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
+
+                <div class="flow" data-controller="user-selector">
+                    <input
+                        data-user-selector-target="data"
+                        type="hidden"
+                        name="agentEmail"
+                        value="{{ agentEmail }}"
+                    />
+
+                    <div data-user-selector-target="sectionSelect" class="flow flow--small">
+                        <label for="agent-select">
+                            {{ 'teams.agents.new.select_agent' | trans }}
+                        </label>
+
+                        <div class="row row--center row--always flow flow--smaller">
+                            <select
+                                id="agent-select"
+                                class="row__item--extend"
+                                data-user-selector-target="select"
+                                data-action="user-selector#setData"
+                            >
+                                {% for agent in agents %}
+                                    <option value="{{ agent.email }}">
+                                        {{ agent.displayName }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                            <button
+                                type="button"
+                                class="button--icon"
+                                data-user-selector-target="showInputButton"
+                                data-action="user-selector#showInput"
+                            >
+                                {{ icon('plus') }}
+
+                                <span class="sr-only">
+                                    {{ 'teams.agents.new.go_to_create_agent' | trans }}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div data-user-selector-target="sectionInput" class="flow flow--small">
+                        <label for="agent-input">
+                            {{ 'teams.agents.new.enter_agent_email' | trans }}
+                        </label>
+
+                        {% if errors.email is defined %}
+                            <p class="form__error" role="alert" id="email-error">
+                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                {{ errors.email }}
+                            </p>
+                        {% endif %}
+
+                        <div class="row row--center row--always flow flow--smaller">
+                            <input
+                                id="agent-input"
+                                type="email"
+                                data-user-selector-target="input"
+                                data-action="user-selector#setData"
+                                {% if errors.email is defined %}
+                                    aria-invalid="true"
+                                    aria-errormessage="email-error"
+                                {% endif %}
+                            >
+
+                            <button
+                                type="button"
+                                class="button--icon"
+                                data-user-selector-target="showSelectButton"
+                                data-action="user-selector#showSelect"
+                            >
+                                {{ icon('close') }}
+
+                                <span class="sr-only">
+                                    {{ 'teams.agents.new.go_to_select_agent' | trans }}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__actions">
+                    <button class="button--primary" type="submit">
+                        {{ 'teams.agents.new.add_agent' | trans }}
+                    </button>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('add team agent') }}">
+            </form>
         </div>
-
-        <form
-            class="wrapper wrapper--small flow"
-            method="post"
-            action="{{ path('add team agent', { uid: team.uid }) }}"
-        >
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('add team agent') }}">
-
-            {% if error %}
-                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-            {% endif %}
-
-            <div class="flow" data-controller="user-selector">
-                <input
-                    data-user-selector-target="data"
-                    type="hidden"
-                    name="agentEmail"
-                    value="{{ agentEmail }}"
-                />
-
-                <div data-user-selector-target="sectionSelect" class="flow flow--small">
-                    <label for="agent-select">
-                        {{ 'teams.agents.new.select_agent' | trans }}
-                    </label>
-
-                    <div class="row row--always flow flow--smaller">
-                        <select
-                            id="agent-select"
-                            class="row__item--extend"
-                            data-user-selector-target="select"
-                            data-action="user-selector#setData"
-                        >
-                            {% for agent in agents %}
-                                <option value="{{ agent.email }}">
-                                    {{ agent.displayName }}
-                                </option>
-                            {% endfor %}
-                        </select>
-
-                        <button
-                            type="button"
-                            class="button--icon"
-                            data-user-selector-target="showInputButton"
-                            data-action="user-selector#showInput"
-                        >
-                            {{ icon('plus') }}
-
-                            <span class="sr-only">
-                                {{ 'teams.agents.new.go_to_create_agent' | trans }}
-                            </span>
-                        </button>
-                    </div>
-                </div>
-
-                <div data-user-selector-target="sectionInput" class="flow flow--small">
-                    <label for="agent-input">
-                        {{ 'teams.agents.new.enter_agent_email' | trans }}
-                    </label>
-
-                    {% if errors.email is defined %}
-                        <p class="form__error" role="alert" id="email-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.email }}
-                        </p>
-                    {% endif %}
-
-                    <div class="row row--always flow flow--smaller">
-                        <input
-                            id="agent-input"
-                            type="email"
-                            data-user-selector-target="input"
-                            data-action="user-selector#setData"
-                            {% if errors.email is defined %}
-                                aria-invalid="true"
-                                aria-errormessage="email-error"
-                            {% endif %}
-                        >
-
-                        <button
-                            type="button"
-                            class="button--icon"
-                            data-user-selector-target="showSelectButton"
-                            data-action="user-selector#showSelect"
-                        >
-                            {{ icon('close') }}
-
-                            <span class="sr-only">
-                                {{ 'teams.agents.new.go_to_select_agent' | trans }}
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form__actions">
-                <button class="button--primary" type="submit">
-                    {{ 'teams.agents.new.add_agent' | trans }}
-                </button>
-            </div>
-        </form>
     </main>
 {% endblock %}

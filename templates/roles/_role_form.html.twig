@@ -14,9 +14,7 @@
     {% set label = 'forms.save_changes' | trans %}
 {% endif %}
 
-<form action="{{ formAction }}" method="post" class="wrapper wrapper--small flow">
-    <input type="hidden" name="_csrf_token" value="{{ csrfToken }}">
-
+<form action="{{ formAction }}" method="post" class="form--standard">
     {% if error %}
         {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
     {% endif %}
@@ -80,56 +78,58 @@
         />
     </div>
 
-    <fieldset class="flow" data-controller="checkboxes">
+    <fieldset class="flow flow--large" data-controller="checkboxes">
         <legend>{{ 'roles.permissions' | trans }}</legend>
 
-        <div class="text--center">
-            <button class="text--small" type="button" data-action="checkboxes#checkAll">
+        <div>
+            <button class="button--discreet" type="button" data-action="checkboxes#checkAll">
                 {{ 'roles.permissions.check_all' | trans }}
             </button>
 
-            <button class="text--small" type="button" data-action="checkboxes#uncheckAll">
+            <button class="button--discreet" type="button" data-action="checkboxes#uncheckAll">
                 {{ 'roles.permissions.uncheck_all' | trans }}
             </button>
         </div>
 
-        {% for permission in assignablePermissions %}
-            <div>
-                <input
-                    type="checkbox"
-                    id="{{ permission }}"
-                    name="permissions[]"
-                    value="{{ permission }}"
-                    {{ permission in permissions ? 'checked' }}
-                />
+        <div class="flow">
+            {% for permission in assignablePermissions %}
+                <div>
+                    <input
+                        type="checkbox"
+                        id="{{ permission }}"
+                        name="permissions[]"
+                        value="{{ permission }}"
+                        {{ permission in permissions ? 'checked' }}
+                    />
 
-                <label for="{{ permission }}">
-                    {{ permission | rolePermissionToLabel | trans }}
-                </label>
-            </div>
-        {% endfor %}
+                    <label for="{{ permission }}">
+                        {{ permission | rolePermissionToLabel | trans }}
+                    </label>
+                </div>
+            {% endfor %}
 
-        {% if type == 'agent' %}
-            {# This permission is inherent in the agent roles and cannot
-             # be unset. In fact, it doesn't even exist as a permission in the
-             # code, it is only implied by the type of the role.
-             # This checkbox exists only to make it clear that agent
-             # roles implies that these users can be assigned to tickets.
-             #}
+            {% if type == 'agent' %}
+                {# This permission is inherent in the agent roles and cannot
+                 # be unset. In fact, it doesn't even exist as a permission in the
+                 # code, it is only implied by the type of the role.
+                 # This checkbox exists only to make it clear that agent
+                 # roles implies that these users can be assigned to tickets.
+                 #}
 
-            <div>
-                <input
-                    type="checkbox"
-                    id="fake:orga:update:tickets:assignee"
-                    disabled
-                    checked
-                />
+                <div>
+                    <input
+                        type="checkbox"
+                        id="fake:orga:update:tickets:assignee"
+                        disabled
+                        checked
+                    />
 
-                <label for="fake:orga:update:tickets:assignee">
-                    {{ 'roles.permissions.be_assigned_to_tickets' | trans }}
-                </label>
-            </div>
-        {% endif %}
+                    <label for="fake:orga:update:tickets:assignee">
+                        {{ 'roles.permissions.be_assigned_to_tickets' | trans }}
+                    </label>
+                </div>
+            {% endif %}
+        </div>
     </fieldset>
 
     <div class="form__actions">
@@ -139,4 +139,5 @@
     </div>
 
     <input type="hidden" name="type" value="{{ type }}">
+    <input type="hidden" name="_csrf_token" value="{{ csrfToken }}">
 </form>

@@ -1,0 +1,172 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2024 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.layout__header {
+    --header-base-height: 3rem;
+    --header-v-padding: var(--space-small);
+    --header-height: calc(var(--header-base-height) + var(--header-v-padding) * 2);
+
+    padding: var(--header-v-padding) var(--space-small);
+
+    color: var(--color-teal1);
+
+    background-color: var(--color-teal12);
+}
+
+@media (min-width: 800px) {
+    .layout__header {
+        padding-right: var(--space-medium);
+        padding-left: var(--space-medium);
+    }
+}
+
+@media (max-width: 800px) {
+    .layout__header-navigation {
+        position: absolute;
+        z-index: 100;
+        top: var(--header-height);
+        right: 0;
+        left: 0;
+
+        padding: var(--space-small) var(--space-medium);
+
+        background-color: var(--color-teal12);
+        border-top: var(--border-width) solid rgba(255 255 255 / 15%);
+    }
+
+    .layout__header-item + .layout__header-item {
+        border-top: var(--border-width) solid rgba(255 255 255 / 15%);
+    }
+}
+
+@media (min-width: 800px) {
+    .layout__header-navigation {
+        display: flex;
+
+        align-items: center;
+    }
+
+    .layout__header-navigation > * + * {
+        margin-left: var(--space-medium);
+    }
+}
+
+@media (max-width: 800px) {
+    .layout__header-burger {
+        --button-background-color: var(--color-teal12);
+        --button-color: var(--color-teal1);
+
+        height: calc(var(--header-base-height) * 0.9);
+    }
+
+    .layout__header-burger:not([disabled]):hover,
+    .layout__header-burger[aria-expanded="true"] {
+        --button-background-color: var(--color-teal11);
+    }
+
+    .layout__header-burger .icon {
+        width: 100%;
+    }
+
+    .layout__header-burger[aria-expanded="true"] .icon--bars {
+        display: none;
+    }
+
+    .layout__header-burger[aria-expanded="false"] .icon--close {
+        display: none;
+    }
+
+    .layout__header-burger[aria-expanded="false"] + .layout__header-navigation {
+        display: none;
+    }
+}
+
+.layout__header-anchor {
+    display: block;
+    padding-top: var(--space-small);
+    padding-bottom: var(--space-small);
+
+    color: currentcolor;
+    text-decoration: none;
+
+    border: var(--border-width) solid transparent;
+    border-radius: var(--border-radius);
+
+    transition: background-color 0.2s ease-in-out;
+}
+
+@media (min-width: 800px) {
+    .layout__header-anchor {
+        padding-right: var(--space-medium);
+        padding-left: var(--space-medium);
+
+        text-align: center;
+        text-transform: uppercase;
+    }
+}
+
+@media (max-width: 800px) {
+    .layout__header-anchor[aria-current="page"]:not(.layout__header-home) {
+        color: var(--color-teal8);
+        font-weight: bold;
+    }
+}
+
+@media (min-width: 800px) {
+    .layout__header-anchor[aria-current="page"]:not(.layout__header-home) {
+        border-color: currentcolor;
+    }
+}
+
+.layout__header-home {
+    display: inline-block;
+    height: var(--header-base-height);
+    margin-right: auto;
+    margin-left: auto;
+    padding: var(--space-small);
+
+    border-radius: var(--border-radius);
+}
+
+@media (min-width: 800px) {
+    .layout__header-home {
+        display: block;
+        width: 10rem;
+        margin-right: var(--space-larger);
+        margin-left: 0;
+    }
+}
+
+.layout__header-home img {
+    display: block;
+    height: 100%;
+}
+
+.layout__header-account {
+    width: var(--header-base-height);
+    height: var(--header-base-height);
+    padding: var(--space-smaller) var(--space-small);
+
+    text-decoration: underline;
+
+    border-radius: var(--border-radius);
+}
+
+.layout__header-account .icon {
+    width: 100%;
+
+    border-radius: 50%;
+}
+
+@media (min-width: 800px) {
+    .layout__header-account {
+        width: auto;
+    }
+
+    .layout__header-account .icon {
+        width: auto;
+        height: calc(var(--header-base-height) * 0.8);
+        margin-right: var(--space-small);
+    }
+}

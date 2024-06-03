@@ -3,30 +3,64 @@
 /* Copyright 2022-2024 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
+:root {
+    --checkbox-border-radius: var(--border-radius-smaller);
+    --checkbox-size: 1.0rem;
+    --checkbox-tick-color: var(--form-border-color);
+    --checkbox-tick-size: 0.6rem;
+    --checkbox-tick-width: 2px;
+
+    --form-background-color: var(--color-main-background);
+    --form-background-color-disabled: var(--color-grey7);
+    --form-background-color-error: var(--color-error2);
+
+    --form-color-disabled: var(--color-grey11);
+    --form-color-error: var(--color-error11);
+
+    --form-border-color: var(--color-primary12);
+    --form-border-color-disabled: var(--color-grey2);
+    --form-border-color-error: var(--color-error11);
+
+    --form-border-width: var(--border-width);
+
+    --form-border-radius: var(--border-radius);
+
+    --form-padding: var(--space-medium);
+
+    --select-icon-size: 1rem;
+}
+
+.form--standard {
+    max-width: 600px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.form--standard > * + * {
+    margin-top: var(--space-large);
+}
+
 .form--inline {
     display: inline-block;
 }
 
 label {
     display: block;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
 }
 
 input,
 textarea {
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: var(--form-padding);
 
     color: inherit;
     font-family: inherit;
     font-size: var(--font-size-normal);
     line-height: 1.5;
 
-    background-color: var(--color-grey1);
-    box-shadow: 2px 2px 3px var(--color-box-shadow) inset;
-    border: var(--width-border-input) solid var(--color-grey8);
-    border-radius: 0.5rem;
+    background-color: var(--form-background-color);
+    border: var(--form-border-width) solid var(--form-border-color);
+    border-radius: var(--form-border-radius);
 
     transition:
         background-color 0.2s ease-in-out,
@@ -40,37 +74,29 @@ textarea {
 
 input[disabled],
 textarea[disabled] {
-    color: var(--color-grey11);
-}
-
-input:not([disabled]):hover,
-input:not([disabled]):focus,
-textarea:not([disabled]):hover,
-textarea:not([disabled]):focus {
-    background-color: var(--color-primary2);
-    border-color: var(--color-primary8);
+    color: var(--form-color-disabled);
 }
 
 input[aria-invalid],
 textarea[aria-invalid] {
-    background-color: var(--color-error2);
-    border-color: var(--color-error11);
+    background-color: var(--form-background-color-error);
+    border-color: var(--form-border-color-error);
 }
 
 .input--size1 {
-    width: 6rem;
+    width: 3rem;
 }
 
 .input--size2 {
-    width: 10rem;
+    width: 6rem;
 }
 
 .input--size3 {
-    width: 15rem;
+    width: 12rem;
 }
 
 .input--size4 {
-    width: 20rem;
+    width: 18rem;
 }
 
 /**
@@ -99,7 +125,7 @@ input[type="radio"] + label {
 
 input[type="checkbox"][disabled] + label,
 input[type="radio"][disabled] + label {
-    color: var(--color-grey11);
+    color: var(--form-color-disabled);
 }
 
 input[type="checkbox"] + label::before,
@@ -108,16 +134,15 @@ input[type="radio"] + label::before {
 
     position: relative;
 
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-right: 0.75rem;
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    margin-right: var(--space-small);
 
     flex-shrink: 0;
 
-    background-color: var(--color-grey1);
-    box-shadow: 2px 2px 3px var(--color-box-shadow) inset;
-    border: var(--width-border-input) solid var(--color-grey8);
-    border-radius: 0.5rem;
+    background-color: var(--form-background-color);
+    border: var(--form-border-width) solid var(--form-border-color);
+    border-radius: var(--checkbox-border-radius);
 
     transition:
         border-color 0.2s ease-in-out,
@@ -128,21 +153,15 @@ input[type="radio"] + label::before {
     border-radius: 50%;
 }
 
-input[type="checkbox"]:focus + label::before {
-    outline: var(--width-outline) solid var(--color-primary9);
+input[type="checkbox"]:not([disabled]):focus + label,
+input[type="radio"]:not([disabled]):focus + label {
+    outline: var(--outline-width) solid var(--outline-color);
+    outline-offset: var(--outline-offset);
 }
 
 input[type="checkbox"]:not([disabled]):checked + label::before,
 input[type="radio"]:not([disabled]):checked + label::before {
-    border-color: var(--color-grey11);
-}
-
-input[type="checkbox"]:not([disabled]):hover + label::before,
-input[type="checkbox"]:not([disabled]):focus + label::before,
-input[type="radio"]:not([disabled]):hover + label::before,
-input[type="radio"]:not([disabled]):focus + label::before {
-    background-color: var(--color-primary2);
-    border-color: var(--color-primary8);
+    border-color: var(--form-border-color);
 }
 
 input[type="checkbox"]:checked + label::after,
@@ -150,36 +169,37 @@ input[type="radio"]:checked + label::after {
     content: "";
 
     position: absolute;
-    left: 1.25rem;
+    left: 0.20rem;
 
-    width: 1.5rem;
-    height: 0.75rem;
-    margin-top: -0.3rem;
+    width: var(--checkbox-tick-size);
+    height: calc(var(--checkbox-tick-size) / 2);
+    margin-top: -0.15rem;
 
-    border-bottom: var(--width-border-bold) solid var(--color-grey12);
-    border-left: var(--width-border-bold) solid var(--color-grey12);
+    border-bottom: var(--checkbox-tick-width) solid var(--checkbox-tick-color);
+    border-left: var(--checkbox-tick-width) solid var(--checkbox-tick-color);
 
     transform: rotate(-45deg);
 }
 
 input[type="radio"]:checked + label::after {
-    height: 1.5rem;
+    height: var(--checkbox-tick-size);
     margin-top: 0;
 
-    background-color: var(--color-grey12);
-    border-top: var(--width-border-bold) solid var(--color-grey12);
-    border-right: var(--width-border-bold) solid var(--color-grey12);
-    border-radius: 50%;
+    background-color: var(--checkbox-tick-color);
+    border: none;
+    border-radius: 100%;
+
+    transform: none;
 }
 
 input[type="checkbox"]:disabled:checked + label::after,
 input[type="radio"]:disabled:checked + label::after {
-    border-color: var(--color-grey11);
+    border-color: var(--form-border-color);
 }
 
 select {
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: var(--form-padding);
 
     color: inherit;
     font-family: inherit;
@@ -187,9 +207,9 @@ select {
     line-height: 1.5;
     text-overflow: ellipsis;
 
-    background-color: var(--color-grey3);
-    border: var(--width-border-input) solid var(--color-grey8);
-    border-radius: 0.5rem;
+    background-color: var(--form-background-color);
+    border: var(--form-border-width) solid var(--form-border-color);
+    border-radius: var(--form-border-radius);
 
     transition:
         background-color 0.2s ease-in-out,
@@ -201,12 +221,14 @@ select {
 }
 
 select:not([multiple]) {
-    padding-right: 3.5rem;
+    --icon-padding: var(--space-medium);
+
+    padding-right: calc(var(--form-padding) + var(--icon-padding) + var(--select-icon-size));
 
     background-image: url("../../icons/angle-down.svg");
     background-repeat: no-repeat;
-    background-position: right 0.75rem top 58%;
-    background-size: 2rem;
+    background-position: right var(--icon-padding) top 50%;
+    background-size: var(--select-icon-size);
 
     appearance: none;
 }
@@ -215,17 +237,11 @@ select:not([multiple]) {
     background-image: url("../../icons/angle-down-light.svg");
 }
 
-select:not([disabled]):hover,
-select:not([disabled]):focus {
-    background-color: var(--color-primary4);
-    border-color: var(--color-primary8);
-}
-
 select[disabled] {
-    color: var(--color-grey11);
+    color: var(--form-color-disabled);
 
-    background-color: var(--color-grey2);
-    border-color: var(--color-grey7);
+    background-color: var(--form-background-color-disabled);
+    border-color: var(--form-border-color-disabled);
 }
 
 select[disabled]:not([multiple]) {
@@ -237,20 +253,20 @@ select[disabled]:not([multiple]) {
 }
 
 select[aria-invalid] {
-    background-color: var(--color-error2);
-    border-color: var(--color-error11);
+    background-color: var(--form-background-color-error);
+    border-color: var(--form-border-color-error);
 }
 
 fieldset {
     min-width: auto;
     margin-right: -1rem;
     margin-left: -1rem;
-    padding: 1rem;
+    padding: var(--space-large);
 
     background-color: var(--color-grey2);
     border: none;
-    border-top: var(--width-border) solid var(--color-grey6);
-    border-bottom: var(--width-border) solid var(--color-grey6);
+    border-top: var(--border-width) solid var(--color-grey6);
+    border-bottom: var(--border-width) solid var(--color-grey6);
 }
 
 @media (min-width: 800px) {
@@ -258,8 +274,8 @@ fieldset {
         margin-right: -1.25rem;
         margin-left: -1.25rem;
 
-        border: var(--width-border) solid var(--color-grey6);
-        border-radius: 0.5rem;
+        border: var(--border-width) solid var(--color-grey6);
+        border-radius: var(--form-border-radius);
     }
 }
 
@@ -272,8 +288,8 @@ legend {
 
 .editor {
     background-color: var(--tinymce-background);
-    border: var(--width-border-input) solid var(--color-grey8);
-    border-radius: 0.5rem;
+    border: var(--form-border-width) solid var(--form-border-color);
+    border-radius: var(--form-border-radius);
 
     transition: border-color 0.2s ease-in-out;
 }
@@ -286,81 +302,71 @@ legend {
     --tinymce-background: #222f3e;
 }
 
-.editor:hover,
-.editor:focus-within {
-    border-color: var(--color-primary8);
-}
-
 .editor__documents {
-    padding: 1.5rem;
+    margin-right: var(--form-padding);
+    margin-left: var(--form-padding);
+    padding-top: var(--form-padding);
+    padding-bottom: var(--form-padding);
 
-    border-top: var(--width-border) solid var(--color-grey8);
+    border-top: var(--form-border-width) solid var(--color-grey6);
 }
 
 .editor .tox-tinymce {
     border: none;
-    border-radius: 0.5rem 0.5rem 0 0;
+    border-radius: var(--form-border-radius) var(--form-border-radius) 0 0;
 }
 
 .form__caption {
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
-
     color: var(--color-grey11);
     font-size: var(--font-size-small);
 }
 
 .form__error {
-    padding-left: 1.75em;
+    --icon-size: 1rem;
 
-    color: var(--color-error11);
+    padding-left: calc(var(--icon-size) + var(--space-small));
+
+    color: var(--form-color-error);
     font-size: var(--font-size-small);
     font-weight: bold;
 
     background-image: url("../../icons/circle-exclamation-error.svg");
     background-repeat: no-repeat;
-    background-position: 0.75rem center;
-    background-size: 1.1em;
+    background-position: 0 center;
+    background-size: var(--icon-size);
 }
 
 .form__actions {
-    display: flex;
-
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.form__actions > * + * {
-    margin-top: 1rem;
-}
-
-@media (min-width: 800px) {
-    .form__actions {
-        flex-direction: row-reverse;
-    }
-
-    .form__actions > * + * {
-        margin-top: 0;
-    }
+    text-align: center;
 }
 
 .input-container {
+    --button-size: 2.5rem;
+
     position: relative;
+}
+
+.input-container input {
+    padding-right: calc(var(--button-size) + var(--form-padding));
 }
 
 .input-container button {
     position: absolute;
-    right: 0;
+    top: 50%;
+    right: 5px;
 
-    color: var(--color-grey11);
+    width: var(--button-size);
+
+    color: currentcolor;
 
     background-color: transparent;
     background-image: none;
     box-shadow: none;
     border-color: transparent;
 
-    outline-offset: calc(-1 * var(--width-outline));
+    outline-offset: 0;
+
+    transform: translateY(-50%);
 }
 
 .input-container button:hover,

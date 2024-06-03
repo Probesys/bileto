@@ -12,12 +12,10 @@
     <form
         action="{{ path('update ticket priority', {'uid': ticket.uid}) }}"
         method="post"
-        class="wrapper wrapper--center flow"
+        class="form--standard"
         data-controller="form-priority"
         data-turbo-preserve-scroll
     >
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket priority') }}">
-
         {% if error %}
             {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
         {% endif %}
@@ -136,5 +134,7 @@
                 {{ 'forms.save_changes' | trans }}
             </button>
         </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket priority') }}">
     </form>
 {% endblock %}

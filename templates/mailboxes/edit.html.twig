@@ -4,39 +4,48 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'mailboxes' %}
 
 {% block title %}{{ 'mailboxes.edit.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'mailboxes' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('mailboxes') }}">
+            {{ 'mailboxes.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'mailboxes.edit.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('mailboxes') }}">{{ 'mailboxes.index.title' | trans }}</a>
-            <h1>{{ 'mailboxes.edit.title' | trans }}</h1>
-        </div>
+    <main class="layout__body">
+        <h1>{{ 'mailboxes.edit.title' | trans }}</h1>
 
-        <div class="wrapper wrapper--small flow flow--larger">
-            <div class="flow">
-                <form method="POST" action="{{ path('test mailbox', { uid: mailbox.uid }) }}" class="text--right">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('test mailbox') }}">
-                    <button type="submit">
-                        {{ 'mailboxes.edit.test_mailbox' | trans }}
-                    </button>
-                </form>
+        <div class="panel flow">
+            <form method="POST" action="{{ path('test mailbox', { uid: mailbox.uid }) }}" class="text--right">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('test mailbox') }}">
+                <button type="submit">
+                    {{ 'mailboxes.edit.test_mailbox' | trans }}
+                </button>
+            </form>
 
+            <form action="{{ path('update mailbox', { uid: mailbox.uid }) }}" method="post" class="form--standard">
                 {% if mailbox.lastError %}
                     {{ include('alerts/_error.html.twig', { message: mailbox.lastError }, with_context = false) }}
                 {% endif %}
-            </div>
-
-            <form action="{{ path('update mailbox', { uid: mailbox.uid }) }}" method="post" class="flow">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update mailbox') }}">
 
                 {% if error %}
                     {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
@@ -217,6 +226,7 @@
                         />
 
                         <button
+                            class="button--icon"
                             type="button"
                             role="switch"
                             data-action="password#toggle"
@@ -292,35 +302,37 @@
                         {{ 'forms.save_changes' | trans }}
                     </button>
                 </div>
-            </form>
 
-            <div class="flow">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update mailbox') }}">
+            </form>
+        </div>
+
+        <div class="panel">
+            <form action="{{ path('delete mailbox', { uid: mailbox.uid }) }}" method="post" class="form--standard">
                 <h2>{{ 'mailboxes.deletion.title' | trans }}</h2>
 
-                <form action="{{ path('delete mailbox', { uid: mailbox.uid }) }}" method="post" class="flow">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox') }}">
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'warning',
+                    title: 'common.caution' | trans,
+                    message: 'mailboxes.deletion.going_delete' | trans({ mailbox: mailbox.name }),
+                }, with_context = false) }}
 
-                    {{ include('alerts/_alert.html.twig', {
-                        type: 'warning',
-                        title: 'common.caution' | trans,
-                        message: 'mailboxes.deletion.going_delete' | trans({ mailbox: mailbox.name }),
-                    }, with_context = false) }}
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
 
-                    {% if error %}
-                        {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-                    {% endif %}
+                <div class="form__actions">
+                    <button
+                        class="button--primary"
+                        type="submit"
+                        data-turbo-confirm="{{ 'mailboxes.deletion.confirm' | trans }}"
+                    >
+                        {{ 'mailboxes.deletion.submit' | trans }}
+                    </button>
+                </div>
 
-                    <div class="form__actions">
-                        <button
-                            class="button--primary"
-                            type="submit"
-                            data-turbo-confirm="{{ 'mailboxes.deletion.confirm' | trans }}"
-                        >
-                            {{ 'mailboxes.deletion.submit' | trans }}
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox') }}">
+            </form>
         </div>
     </main>
 {% endblock %}

@@ -6,106 +6,104 @@
 
 <ul class="list-tickets list--padded list--border list--nostyle">
     {% for ticket in tickets %}
-        <li class="list-tickets__item flow flow--smaller" data-test="ticket-item">
-            <div class="row flow flow--smaller">
-                <div class="row__item--extend">
-                    <h2 class="text--normal">
-                        <a class="list-tickets__anchor" href="{{ path('ticket', {'uid': ticket.uid}) }}">
-                            {{ ticket.title }}
-
-                            <span class="ticket__id">#{{ ticket.id }}</span>
-                        </a>
-                    </h2>
+        <li class="list-tickets__item row flow flow--larger" data-test="ticket-item">
+            <div class="row__item--size7 row row--baseline row--always flow">
+                <div class="list-tickets__id text--big">
+                    #{{ ticket.id }}
                 </div>
 
-                <div>
-                    <span class="badge badge--small badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">
-                        {{ icon('status') }}
+                <div class="row__item--extend flow flow--small">
+                    <h3 class="list-tickets__title list__item-title">
+                        <a class="list-tickets__anchor" href="{{ path('ticket', {'uid': ticket.uid}) }}">
+                            {{ ticket.title }}
+                        </a>
+                    </h3>
 
-                        <span class="sr-only">
-                            {{ 'tickets.status' | trans }}
-                        </span>
-
-                        {{ ticket.statusLabel | trans }}
-                    </span>
-
-                    <span class="badge badge--small badge--{{ ticket.priorityBadgeColor }}" title="{{ 'tickets.priority' | trans }}">
-                        {{ icon('priority') }}
-
-                        <span class="sr-only">
-                            {{ 'tickets.priority' | trans }}
-                        </span>
-
-                        {{ ticket.priorityLabel | trans }}
-                    </span>
+                    <p class="text--small">
+                        {% if ticket.createdAt == ticket.updatedAt %}
+                            {% if ticket.type == 'request' %}
+                                {{ 'tickets.list.request_opened_on' | trans({
+                                    'date': ticket.createdAt | dateFull,
+                                    'dateIso': ticket.createdAt | dateIso,
+                                }) | raw }}
+                            {% else %}
+                                {{ 'tickets.list.incident_opened_on' | trans({
+                                    'date': ticket.createdAt | dateFull,
+                                    'dateIso': ticket.createdAt | dateIso,
+                                }) | raw }}
+                            {% endif %}
+                        {% else %}
+                            {% if ticket.type == 'request' %}
+                                {{ 'tickets.list.request_updated_on' | trans({
+                                    'date': ticket.updatedAt | dateFull,
+                                    'dateIso': ticket.updatedAt | dateIso,
+                                }) | raw }}
+                            {% else %}
+                                {{ 'tickets.list.incident_updated_on' | trans({
+                                    'date': ticket.updatedAt | dateFull,
+                                    'dateIso': ticket.updatedAt | dateIso,
+                                }) | raw }}
+                            {% endif %}
+                        {% endif %}
+                    </p>
                 </div>
             </div>
 
-            <div class="row row--baseline flow flow--smaller text--small">
-                <div class="row__item--extend">
-                    {% if ticket.createdAt == ticket.updatedAt %}
-                        {% if ticket.type == 'request' %}
-                            {{ 'tickets.list.request_opened_on' | trans({
-                                'date': ticket.createdAt | dateFull,
-                                'dateIso': ticket.createdAt | dateIso,
-                            }) | raw }}
-                        {% else %}
-                            {{ 'tickets.list.incident_opened_on' | trans({
-                                'date': ticket.createdAt | dateFull,
-                                'dateIso': ticket.createdAt | dateIso,
-                            }) | raw }}
-                        {% endif %}
-                    {% else %}
-                        {% if ticket.type == 'request' %}
-                            {{ 'tickets.list.request_updated_on' | trans({
-                                'date': ticket.updatedAt | dateFull,
-                                'dateIso': ticket.updatedAt | dateIso,
-                            }) | raw }}
-                        {% else %}
-                            {{ 'tickets.list.incident_updated_on' | trans({
-                                'date': ticket.updatedAt | dateFull,
-                                'dateIso': ticket.updatedAt | dateIso,
-                            }) | raw }}
-                        {% endif %}
-                    {% endif %}
+            <div class="list-tickets__actors row__item--size3 flow flow--small text--primary-dark">
+                <a class="list-tickets__organization" href="{{ path('organization tickets', { uid: ticket.organization.uid }) }}">
+                    {{ ticket.organization.name }}
+                </a>
 
-                    ⋅
+                <div class="list-tickets__requester" title="{{ 'tickets.requester' | trans }}">
+                    {{ icon('user') }}
 
-                    <a class="list-tickets__organization" href="{{ path('organization tickets', { uid: ticket.organization.uid }) }}">
-                        {{ ticket.organization.name }}
-                    </a>
+                    <span class="sr-only">
+                        {{ 'tickets.requester' | trans }}
+                    </span>
+
+                    {{ ticket.requester.displayName }}
                 </div>
 
-                <div class="row row--always flow flow--small">
-                    <span class="list-tickets__requester" title="{{ 'tickets.requester' | trans }}">
-                        {{ icon('user') }}
+                <div class="list-tickets__assignee" title="{{ 'tickets.assignee' | trans }}">
+                    {{ icon('headset') }}
 
-                        <span class="sr-only">
-                            {{ 'tickets.requester' | trans }}
-                        </span>
-
-                        {{ ticket.requester.displayName }}
+                    <span class="sr-only">
+                        {{ 'tickets.assignee' | trans }}
                     </span>
 
-                    <span class="list-tickets__assignee" title="{{ 'tickets.assignee' | trans }}">
-                        {{ icon('headset') }}
+                    {% if ticket.team %}
+                        {{ ticket.team.name }} /
+                    {% endif %}
 
-                        <span class="sr-only">
-                            {{ 'tickets.assignee' | trans }}
-                        </span>
+                    {% if ticket.assignee %}
+                        {{ ticket.assignee.displayName }}
+                    {% else %}
+                        <strong>
+                            {{ 'tickets.unassigned' | trans }}
+                        </strong>
+                    {% endif %}
+                </div>
+            </div>
 
-                        {% if ticket.team %}
-                            {{ ticket.team.name }} /
-                        {% endif %}
+            <div class="list-tickets__info row__item--size2 flow flow--small">
+                <div class="badge badge--block badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">
+                    {{ icon('status') }}
 
-                        {% if ticket.assignee %}
-                            {{ ticket.assignee.displayName }}
-                        {% else %}
-                            <strong>
-                                {{ 'tickets.unassigned' | trans }}
-                            </strong>
-                        {% endif %}
+                    <span class="sr-only">
+                        {{ 'tickets.status' | trans }}
                     </span>
+
+                    {{ ticket.statusLabel | trans }}
+                </div>
+
+                <div class="badge badge--block badge--{{ ticket.priorityBadgeColor }}" title="{{ 'tickets.priority' | trans }}">
+                    {{ icon('priority') }}
+
+                    <span class="sr-only">
+                        {{ 'tickets.priority' | trans }}
+                    </span>
+
+                    {{ ticket.priorityLabel | trans }}
                 </div>
             </div>
         </li>

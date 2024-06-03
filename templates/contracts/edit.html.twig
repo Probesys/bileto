@@ -4,28 +4,49 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'organization.html.twig' %}
 
-{% set currentPage = 'contracts' %}
+{% set currentMenu = 'contracts' %}
 
 {% block title %}{{ 'contracts.edit.title' | trans }} – {{ organization.name }}{% endblock %}
 
-{% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb wrapper wrapper--large wrapper--center">
-            <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
-            <a href="{{ path('organization contracts', { uid: organization.uid }) }}">
-                {{ 'contracts.index.title' | trans }}
-            </a>
-            <a href="{{ path('contract', { uid: contract.uid }) }}">
-                {{ contract.name }}
-            </a>
-            <h1>{{ 'contracts.edit.title' | trans }}</h1>
-        </div>
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
 
-        {{ include('contracts/_form.html.twig', {
-            'form': form,
-            'submit_label': 'forms.save_changes' | trans,
-        }) }}
+        <a href="{{ path('organizations') }}">
+            {{ 'organizations.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('organization', { uid: organization.uid }) }}">
+            {{ organization.name }}
+        </a>
+
+        <a href="{{ path('organization contracts', { uid: organization.uid }) }}">
+            {{ 'contracts.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('contract', { uid: contract.uid }) }}">
+            {{ contract.name }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'contracts.edit.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'contracts.edit.title' | trans }}</h1>
+
+        <div class="panel">
+            {{ include('contracts/_form.html.twig', {
+                'form': form,
+                'submit_label': 'forms.save_changes' | trans,
+            }) }}
+        </div>
     </main>
 {% endblock %}

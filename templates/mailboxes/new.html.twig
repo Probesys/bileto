@@ -4,271 +4,287 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'mailboxes' %}
 
 {% block title %}{{ 'mailboxes.new.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'mailboxes' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('mailboxes') }}">
+            {{ 'mailboxes.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'mailboxes.new.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('mailboxes') }}">{{ 'mailboxes.index.title' | trans }}</a>
-            <h1>{{ 'mailboxes.new.title' | trans }}</h1>
-        </div>
+    <main class="layout__body">
+        <h1>{{ 'mailboxes.new.title' | trans }}</h1>
 
-        <form action="{{ path('create mailbox') }}" method="post" class="wrapper wrapper--small flow">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create mailbox') }}">
-
-            {% if error %}
-                {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-            {% endif %}
-
-            <div class="flow flow--small">
-                <label for="name">
-                    {{ 'mailboxes.name' | trans }}
-                </label>
-
-                {% if errors.name is defined %}
-                    <p class="form__error" role="alert" id="name-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.name }}
-                    </p>
+        <div class="panel">
+            <form action="{{ path('create mailbox') }}" method="post" class="form--standard">
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
                 {% endif %}
 
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value="{{ name }}"
-                    maxlength="255"
-                    required
-                    {% if errors.name is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="name-error"
-                    {% endif %}
-                />
-            </div>
-
-            <div class="row row--center row--always flow flow--small">
-                <div class="row__item--size8 flow flow--small">
-                    <label for="host">
-                        {{ 'mailboxes.host' | trans }}
+                <div class="flow flow--small">
+                    <label for="name">
+                        {{ 'mailboxes.name' | trans }}
                     </label>
 
-                    {% if errors.host is defined %}
-                        <p class="form__error" role="alert" id="host-error">
+                    {% if errors.name is defined %}
+                        <p class="form__error" role="alert" id="name-error">
                             <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.host }}
+                            {{ errors.name }}
                         </p>
                     {% endif %}
 
                     <input
                         type="text"
-                        id="host"
-                        name="host"
-                        value="{{ host }}"
+                        id="name"
+                        name="name"
+                        value="{{ name }}"
                         maxlength="255"
                         required
-                        {% if errors.host is defined %}
+                        {% if errors.name is defined %}
                             aria-invalid="true"
-                            aria-errormessage="host-error"
+                            aria-errormessage="name-error"
                         {% endif %}
                     />
                 </div>
 
-                <div class="row__item--size4 flow flow--small">
-                    <label for="port">
-                        {{ 'mailboxes.port' | trans }}
+                <div class="row row--center row--always flow flow--small">
+                    <div class="row__item--size8 flow flow--small">
+                        <label for="host">
+                            {{ 'mailboxes.host' | trans }}
+                        </label>
+
+                        {% if errors.host is defined %}
+                            <p class="form__error" role="alert" id="host-error">
+                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                {{ errors.host }}
+                            </p>
+                        {% endif %}
+
+                        <input
+                            type="text"
+                            id="host"
+                            name="host"
+                            value="{{ host }}"
+                            maxlength="255"
+                            required
+                            {% if errors.host is defined %}
+                                aria-invalid="true"
+                                aria-errormessage="host-error"
+                            {% endif %}
+                        />
+                    </div>
+
+                    <div class="row__item--size4 flow flow--small">
+                        <label for="port">
+                            {{ 'mailboxes.port' | trans }}
+                        </label>
+
+                        {% if errors.port is defined %}
+                            <p class="form__error" role="alert" id="port-error">
+                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                {{ errors.port }}
+                            </p>
+                        {% endif %}
+
+                        <input
+                            type="number"
+                            id="port"
+                            name="port"
+                            value="{{ port }}"
+                            min="0"
+                            max="65535"
+                            required
+                            {% if errors.port is defined %}
+                                aria-invalid="true"
+                                aria-errormessage="port-error"
+                            {% endif %}
+                        />
+                    </div>
+                </div>
+
+                <div class="flow flow--small">
+                    <label for="encryption">
+                        {{ 'mailboxes.encryption' | trans }}
                     </label>
 
-                    {% if errors.port is defined %}
-                        <p class="form__error" role="alert" id="port-error">
+                    {% if errors.encryption is defined %}
+                        <p class="form__error" role="alert" id="encryption-error">
                             <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.port }}
+                            {{ errors.encryption }}
+                        </p>
+                    {% endif %}
+
+                    <select
+                        id="encryption"
+                        name="encryption"
+                        required
+                        {% if errors.encryption is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="encryption-error"
+                        {% endif %}
+                    >
+                        <option value="ssl" {{ "ssl" == encryption ? 'selected' }}>
+                            {{ 'mailboxes.encryption.ssl' | trans }}
+                        </option>
+                        <option value="tls" {{ "tls" == encryption ? 'selected' }}>
+                            {{ 'mailboxes.encryption.tls' | trans }}
+                        </option>
+                        <option value="none" {{ "none" == encryption ? 'selected' }}>
+                            {{ 'mailboxes.encryption.none' | trans }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="flow flow--small">
+                    <label for="username">
+                        {{ 'mailboxes.username' | trans }}
+                    </label>
+
+                    {% if errors.username is defined %}
+                        <p class="form__error" role="alert" id="username-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.username }}
                         </p>
                     {% endif %}
 
                     <input
-                        type="number"
-                        id="port"
-                        name="port"
-                        value="{{ port }}"
-                        min="0"
-                        max="65535"
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="{{ username }}"
+                        maxlength="255"
                         required
-                        {% if errors.port is defined %}
+                        {% if errors.username is defined %}
                             aria-invalid="true"
-                            aria-errormessage="port-error"
+                            aria-errormessage="username-error"
                         {% endif %}
                     />
                 </div>
-            </div>
 
-            <div class="flow flow--small">
-                <label for="encryption">
-                    {{ 'mailboxes.encryption' | trans }}
-                </label>
+                <div class="flow flow--small">
+                    <label for="password">
+                        {{ 'mailboxes.password' | trans }}
+                    </label>
 
-                {% if errors.encryption is defined %}
-                    <p class="form__error" role="alert" id="encryption-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.encryption }}
-                    </p>
-                {% endif %}
-
-                <select
-                    id="encryption"
-                    name="encryption"
-                    required
-                    {% if errors.encryption is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="encryption-error"
+                    {% if errors.password is defined %}
+                        <p class="form__error" role="alert" id="password-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.password }}
+                        </p>
                     {% endif %}
-                >
-                    <option value="ssl" {{ "ssl" == encryption ? 'selected' }}>
-                        {{ 'mailboxes.encryption.ssl' | trans }}
-                    </option>
-                    <option value="tls" {{ "tls" == encryption ? 'selected' }}>
-                        {{ 'mailboxes.encryption.tls' | trans }}
-                    </option>
-                    <option value="none" {{ "none" == encryption ? 'selected' }}>
-                        {{ 'mailboxes.encryption.none' | trans }}
-                    </option>
-                </select>
-            </div>
 
-            <div class="flow flow--small">
-                <label for="username">
-                    {{ 'mailboxes.username' | trans }}
-                </label>
+                    <div class="input-container" data-controller="password">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            autocomplete="new-password"
+                            data-password-target="input"
+                            {% if errors.password is defined %}
+                                aria-invalid="true"
+                                aria-errormessage="password-error"
+                            {% endif %}
+                        />
 
-                {% if errors.username is defined %}
-                    <p class="form__error" role="alert" id="username-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.username }}
-                    </p>
-                {% endif %}
+                        <button
+                            class="button--icon"
+                            type="button"
+                            role="switch"
+                            data-action="password#toggle"
+                            data-password-target="button"
+                        >
+                            {{ icon('eye') }}
+                            {{ icon('eye-slash') }}
+                            <span class="sr-only">
+                                {{ 'forms.show_password' | trans }}
+                            </span>
+                        </button>
+                    </div>
+                </div>
 
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value="{{ username }}"
-                    maxlength="255"
-                    required
-                    {% if errors.username is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="username-error"
+                <div class="flow flow--small">
+                    <label for="folder">
+                        {{ 'mailboxes.folder' | trans }}
+                    </label>
+
+                    {% if errors.folder is defined %}
+                        <p class="form__error" role="alert" id="folder-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.folder }}
+                        </p>
                     {% endif %}
-                />
-            </div>
 
-            <div class="flow flow--small">
-                <label for="password">
-                    {{ 'mailboxes.password' | trans }}
-                </label>
-
-                {% if errors.password is defined %}
-                    <p class="form__error" role="alert" id="password-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.password }}
-                    </p>
-                {% endif %}
-
-                <div class="input-container" data-controller="password">
                     <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        autocomplete="new-password"
-                        data-password-target="input"
-                        {% if errors.password is defined %}
+                        type="text"
+                        id="folder"
+                        name="folder"
+                        value="{{ folder }}"
+                        maxlength="255"
+                        required
+                        {% if errors.folder is defined %}
                             aria-invalid="true"
-                            aria-errormessage="password-error"
+                            aria-errormessage="folder-error"
                         {% endif %}
                     />
+                </div>
 
-                    <button
-                        type="button"
-                        role="switch"
-                        data-action="password#toggle"
-                        data-password-target="button"
+                <div class="flow flow--small">
+                    <label for="post-action">
+                        {{ 'mailboxes.post_action' | trans }}
+                    </label>
+
+                    {% if errors.postAction is defined %}
+                        <p class="form__error" role="alert" id="post-action-error">
+                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                            {{ errors.postAction }}
+                        </p>
+                    {% endif %}
+
+                    <select
+                        id="post-action"
+                        name="postAction"
+                        required
+                        {% if errors.postAction is defined %}
+                            aria-invalid="true"
+                            aria-errormessage="post-action-error"
+                        {% endif %}
                     >
-                        {{ icon('eye') }}
-                        {{ icon('eye-slash') }}
-                        <span class="sr-only">
-                            {{ 'forms.show_password' | trans }}
-                        </span>
+                        <option value="delete" {{ "delete" == postAction ? 'selected' }}>
+                            {{ 'mailboxes.post_action.delete' | trans }}
+                        </option>
+                        <option value="mark as read" {{ "mark as read" == postAction ? 'selected' }}>
+                            {{ 'mailboxes.post_action.mark_as_read' | trans }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form__actions">
+                    <button id="form-create-mailbox-submit" class="button--primary" type="submit">
+                        {{ 'mailboxes.new.submit' | trans }}
                     </button>
                 </div>
-            </div>
 
-            <div class="flow flow--small">
-                <label for="folder">
-                    {{ 'mailboxes.folder' | trans }}
-                </label>
-
-                {% if errors.folder is defined %}
-                    <p class="form__error" role="alert" id="folder-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.folder }}
-                    </p>
-                {% endif %}
-
-                <input
-                    type="text"
-                    id="folder"
-                    name="folder"
-                    value="{{ folder }}"
-                    maxlength="255"
-                    required
-                    {% if errors.folder is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="folder-error"
-                    {% endif %}
-                />
-            </div>
-
-            <div class="flow flow--small">
-                <label for="post-action">
-                    {{ 'mailboxes.post_action' | trans }}
-                </label>
-
-                {% if errors.postAction is defined %}
-                    <p class="form__error" role="alert" id="post-action-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.postAction }}
-                    </p>
-                {% endif %}
-
-                <select
-                    id="post-action"
-                    name="postAction"
-                    required
-                    {% if errors.postAction is defined %}
-                        aria-invalid="true"
-                        aria-errormessage="post-action-error"
-                    {% endif %}
-                >
-                    <option value="delete" {{ "delete" == postAction ? 'selected' }}>
-                        {{ 'mailboxes.post_action.delete' | trans }}
-                    </option>
-                    <option value="mark as read" {{ "mark as read" == postAction ? 'selected' }}>
-                        {{ 'mailboxes.post_action.mark_as_read' | trans }}
-                    </option>
-                </select>
-            </div>
-
-            <div class="form__actions">
-                <button id="form-create-mailbox-submit" class="button--primary" type="submit">
-                    {{ 'mailboxes.new.submit' | trans }}
-                </button>
-            </div>
-        </form>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('create mailbox') }}">
+            </form>
+        </div>
     </main>
 {% endblock %}

@@ -45,8 +45,8 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Roles');
-        $this->assertSelectorTextContains('[data-test="role-agent-item"]:nth-child(2)', 'bar');
-        $this->assertSelectorTextContains('[data-test="role-agent-item"]:nth-child(3)', 'foo');
+        $this->assertSelectorTextContains('[data-test="role-agent-item"]:nth-child(1)', 'bar');
+        $this->assertSelectorTextContains('[data-test="role-agent-item"]:nth-child(2)', 'foo');
     }
 
     public function testGetIndexCreatesAutomaticallyTheSuperRole(): void

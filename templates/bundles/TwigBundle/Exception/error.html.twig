@@ -9,10 +9,10 @@
 {% block title %}{{ 'errors.generic.title' | trans }}{% endblock %}
 
 {% block body %}
-    <main class="layout__body wrapper wrapper--small wrapper--center flow flow--large">
+    <main class="layout__body">
         <h1>{{ 'errors.generic.title' | trans }}</h1>
 
-        <div class="text--center flow flow--large">
+        <div class="text--center wrapper wrapper--small wrapper--center flow flow--large">
             <p class="text--big">
                 {{ 'errors.generic.description' | trans }}
             </p>
@@ -22,7 +22,7 @@
             </p>
 
             <p>
-                <a class="anchor--action" href="{{ path('home') }}">
+                <a class="button button--primary button--uppercase" href="{{ path('home') }}">
                     {{ 'errors.back_home' | trans }}
                 </a>
             </p>

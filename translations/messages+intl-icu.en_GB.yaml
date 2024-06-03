@@ -86,7 +86,7 @@ contracts.show.alert: Alert
 contracts.show.alert.before_end: '{days} days<br>before end'
 contracts.show.time_accounting_unit: 'Time accounting unit: {count, plural, one {1 minute} other {# minutes}}'
 contracts.show.edit: 'Edit the contract'
-contracts.show.notes_confidential: confidential
+contracts.show.notes_confidential: Confidential
 contracts.show.renew: Renew
 contracts.show.set_up_alerts: 'Set up alerts'
 contracts.show.warning: Warning
@@ -118,10 +118,13 @@ hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
 layout.activate_javascript: 'You need to activate the JavaScript in order to use Bileto.'
+layout.breadcrumb: Breadcrumb
 layout.home: Home
 layout.logout: Logout
 layout.main_navigation: 'Main navigation'
+layout.main_navigation.open: 'Open the main menu'
 layout.modal.close: 'Close this window'
+layout.my_account: 'My account'
 layout.notifications.close: 'Close the notification'
 layout.notifications.error: Error
 layout.notifications.success: Success
@@ -129,7 +132,7 @@ layout.organizations: Organizations
 layout.scroll_to_top: 'Scroll to top'
 layout.skip_to_main_content: 'Skip to main content'
 layout.tickets: Tickets
-layout.user_menu_title: 'Menu of {name}'
+login.intro: 'Manage your support<br><b>with ease</b>'
 login.remember_me: 'Remember me'
 login.submit: Login
 login.title: 'Log in'
@@ -251,6 +254,8 @@ roles.type.user: User
 settings.index.no_access: 'You don’t have access to the administration.'
 settings.index.no_access_advice: 'Your administrator role has probably no permissions. You should contact another administrator to fix this.'
 settings.index.title: Settings
+submenu.scroller.scroll_to_left: 'Scroll the menu to the left'
+submenu.scroller.scroll_to_right: 'Scroll the menu to the right'
 teams.agents.new.add_agent: 'Add the agent'
 teams.agents.new.enter_agent_email: 'Enter the agent’s email'
 teams.agents.new.go_to_create_agent: 'Create a new agent instead'
@@ -335,10 +340,12 @@ tickets.incident: Incident
 tickets.index.new_ticket: 'New ticket'
 tickets.index.no_tickets: 'No tickets'
 tickets.index.number: '{count, plural, =0 {No tickets} one {1 ticket} other {# tickets}}'
+tickets.index.tickets: Tickets
 tickets.index.title: Tickets
 tickets.index.title.all: 'All tickets'
 tickets.index.title.to_assign: 'Tickets to assign'
 tickets.index.title.your_tickets: 'Your tickets'
+tickets.index.views.title: 'Vos vues'
 tickets.involves: Involves
 tickets.list.incident_opened_on: 'Incident opened on <time datetime="{dateIso}">{date}</time>'
 tickets.list.incident_updated_on: 'Incident updated on <time datetime="{dateIso}">{date}</time>'
@@ -366,9 +373,9 @@ tickets.search.filters.type: 'Filter “type”'
 tickets.search.filters.used: 'Filters used'
 tickets.search.help: 'Show syntax help'
 tickets.search.label: 'Search using keywords or by using the advanced syntax'
+tickets.search.placeholder: 'Keywords or #id'
 tickets.search.quick_search: 'Quick search'
 tickets.search.submit: Search
-tickets.search.tablist: 'Search modes'
 tickets.show.actions.rename: 'Rename the ticket'
 tickets.show.actions.turn_into_incident: 'Turn into an incident'
 tickets.show.actions.turn_into_request: 'Turn into a request'
@@ -377,13 +384,14 @@ tickets.show.answer: Answer
 tickets.show.answer.select_method: 'Select a different method to answer.'
 tickets.show.answer.with_solution: 'Answer with a solution'
 tickets.show.approve: Approve
-tickets.show.assign_yourself: 'assign yourself'
+tickets.show.assign_yourself: 'assign yourself the ticket'
+tickets.show.assignee: 'Assignee:'
 tickets.show.closed: 'This ticket is closed.'
 tickets.show.confidential_answer: 'Confidential answer'
-tickets.show.hide_history: 'Hide history'
+tickets.show.hide_history: 'Hide changes history'
 tickets.show.impact: 'Impact:'
-tickets.show.message.confidential: confidential
-tickets.show.message.solution: solution
+tickets.show.message.confidential: Confidential
+tickets.show.message.solution: Solution
 tickets.show.message.via_email: 'This message has been sent by email'
 tickets.show.minutes: minutes
 tickets.show.number_messages: "{count, plural, =0 {No\_messages} one {1\_message} other {#\_messages}}"
@@ -391,14 +399,13 @@ tickets.show.opened_incident: 'opened this <strong>incident</strong>'
 tickets.show.opened_on: 'on {date}'
 tickets.show.opened_request: 'opened this <strong>request</strong>'
 tickets.show.refuse: Refuse
+tickets.show.requester: 'Requester:'
 tickets.show.resolved: 'This ticket is resolved.'
-tickets.show.scroll_to_bottom: 'Scroll to bottom'
-tickets.show.show_history: 'Show history'
+tickets.show.show_history: 'Show changes history'
 tickets.show.time_spent: '{count} spent'
 tickets.show.time_spent.accounted: '({ count } accounted)'
 tickets.show.time_spent.unaccounted: (unaccounted)
 tickets.show.urgency: 'Urgency:'
-tickets.sidebar.title: 'Your views'
 tickets.sort.alphabetical: 'Alphabetical order'
 tickets.sort.label: 'Sort by'
 tickets.sort.newest: Newest

@@ -3,53 +3,34 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 .documents__item {
-    font-size: var(--font-size-small);
-
-    background-color: var(--color-grey3);
-    border-radius: 0.5rem;
+    padding-top: var(--space-small);
+    padding-bottom: var(--space-small);
 }
 
 .documents__link {
-    display: flex;
-    height: 100%;
-    padding: 2rem 1rem;
-    /* Padding around the icon + icon size (see background properties) */
-    padding-left: calc(1rem + 2rem + 1rem);
-
-    align-items: center;
-
+    color: currentcolor;
     text-decoration: none;
 
-    background-repeat: no-repeat;
-    background-position: 1rem center;
-    background-size: 2rem;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
 
-    overflow-wrap: anywhere;
+    transition: color 0.2s ease-in-out;
 }
 
-.documents__item[data-type="archive"] .documents__link {
-    background-image: url('../../icons/file-zipper.svg');
+.documents__link:hover,
+.documents__link:focus {
+    color: var(--color-primary11);
 }
 
-.documents__item[data-type="doc"] .documents__link {
-    background-image: url('../../icons/file-word.svg');
+.documents__icon {
+    padding: var(--space-small);
+
+    background-color: var(--color-main-background);
+    border-radius: 50%;
 }
 
-.documents__item[data-type="pdf"] .documents__link {
-    background-image: url('../../icons/file-pdf.svg');
-}
-
-.documents__item[data-type="spreadsheet"] .documents__link {
-    background-image: url('../../icons/file-excel.svg');
-}
-
-.documents__item[data-type="image"] .documents__link {
-    background-image: url('../../icons/file-image.svg');
-}
-
-.documents__item[data-type="file"] .documents__link {
-    background-image: url('../../icons/file.svg');
+.documents__icon .icon {
+    width: 1.5em;
+    margin-top: 0;
 }
 
 .documents__delete {

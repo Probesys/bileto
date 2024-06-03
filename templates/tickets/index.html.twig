@@ -18,9 +18,9 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block sidebar %}
+{% block submenu %}
     {% if is_agent('any') %}
-        {{ include('tickets/_sidebar.html.twig', {
+        {{ include('tickets/_menu.html.twig', {
             current: view,
             countOwned: countOwned,
             countToAssign: countToAssign,
@@ -28,14 +28,24 @@
     {% endif %}
 {% endblock %}
 
-{% block body %}
-    <main class="layout__body">
-        <div class="flow wrapper wrapper--large {{ not is_agent('any') ? 'wrapper--center' }}">
-            <div class="layout__breadcrumb">
-                <h1>{{ title }}</h1>
-            </div>
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
 
-            <div class="flow">
+        <span aria-current="page">
+            {{ 'tickets.index.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body layout__body--extend">
+        <h1>{{ title }}</h1>
+
+        <div class="row flow flow--larger">
+            <div class="row__item--size3">
                 {{ include(
                     'tickets/_search_form.html.twig',
                     {
@@ -47,11 +57,17 @@
                     },
                     with_context = false
                 ) }}
+            </div>
+
+            <div class="row__item--size9 flow">
+                <h2 class="sr-only">
+                    {{ 'tickets.index.tickets' | trans }}
+                </h2>
 
                 <div class="row flow">
                     <div class="row__item--extend row row--center row--always flow">
                         {% if is_granted('orga:create:tickets', 'any') %}
-                            <a class="anchor--action" href="{{ path('new ticket') }}">
+                            <a class="button button--primary button--uppercase" href="{{ path('new ticket') }}">
                                 {{ icon('plus') }}
                                 {{ 'tickets.index.new_ticket' | trans }}
                             </a>
@@ -66,7 +82,10 @@
 
                     {{ include(
                         'tickets/_sort_button.html.twig',
-                        { currentPath: path('tickets', { q: query }) },
+                        {
+                            currentPath: path('tickets', { q: query }),
+                            currentSort: sort,
+                        },
                         with_context = false
                     ) }}
                 </div>
@@ -86,10 +105,13 @@
                         ) }}
                     </div>
                 {% else %}
-                    <p class="placeholder">
-                        {{ icon('ticket') }}
-                        {{ 'tickets.index.no_tickets' | trans }}
-                    </p>
+                    <div class="placeholder flow flow--larger">
+                        <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                        <p class="placeholder__text">
+                            {{ 'tickets.index.no_tickets' | trans }}
+                        </p>
+                    </div>
                 {% endif %}
             </div>
         </div>

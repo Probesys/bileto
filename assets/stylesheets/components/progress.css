@@ -5,11 +5,11 @@
 progress {
     display: block;
     width: 100%;
-    height: 2rem;
+    height: 1rem;
 
-    background-color: var(--color-primary2);
-    border: var(--width-border) solid var(--color-primary9);
-    border-radius: 1rem;
+    background-color: var(--color-main-background);
+    border: var(--border-width) solid var(--color-primary12);
+    border-radius: var(--border-radius);
 
     appearance: none;
 }
@@ -20,8 +20,8 @@ progress::-moz-progress-bar {
     height: calc(100% - 2px);
     margin: 1px;
 
-    background-color: var(--color-primary9);
-    border-radius: 1rem;
+    background-color: var(--color-primary12);
+    border-radius: var(--border-radius);
 }
 
 .progress--warning {
@@ -36,6 +36,8 @@ progress::-moz-progress-bar {
 
 .progress-with-marker {
     position: relative;
+
+    padding-bottom: var(--space-large);
 }
 
 .progress__marker {
@@ -43,7 +45,7 @@ progress::-moz-progress-bar {
     top: 0;
     left: var(--marker-percent);
 
-    padding-top: 2.5rem;
+    padding-top: 1.5rem;
 
     font-size: 0.8em;
     text-align: center;
@@ -60,7 +62,7 @@ progress::-moz-progress-bar {
 
     display: block;
     width: 0;
-    height: 2.5rem;
+    height: 1.5rem;
 
     border-left: 2px dotted var(--color-grey12);
 }

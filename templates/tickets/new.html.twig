@@ -10,18 +10,32 @@
 
 {% block title %}{{ 'tickets.new.title' | trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('tickets') }}">
+            {{ 'tickets.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'tickets.new.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
 {% block body %}
     <main class="layout__body">
-        <div class="wrapper wrapper--large wrapper--center flow">
-            <div class="layout__breadcrumb">
-                <a href="{{ path('tickets') }}">
-                    {{ 'tickets.index.title' | trans }}
-                </a>
+        <h1>{{ 'tickets.new.title' | trans }}</h1>
 
-                <h1>{{ 'tickets.new.title' | trans }}</h1>
-            </div>
-
-            <form action="" method="get" class="wrapper wrapper--small wrapper--center flow">
+        <div class="panel">
+            <form
+                action=""
+                method="get"
+                class="form--standard"
+            >
                 <div class="flow flow--small">
                     <label for="organization">
                         {{ 'tickets.new.choose_orga' | trans }}

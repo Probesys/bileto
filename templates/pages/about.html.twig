@@ -10,41 +10,65 @@
 
 {% block title %}{{ 'about.title' | trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'about.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <main class="layout__body wrapper wrapper--small wrapper--center flow flow--large">
-        <h1>{{ 'about.title' | trans }}</h1>
+    <main class="layout__body">
+        <div class="flow flow--large text--center">
+            <h1>{{ 'about.title' | trans }}</h1>
 
-        <p class="text--center">
-            {{ 'about.short' | trans }}
-        </p>
+            <p>
+                {{ 'about.short' | trans }}
+            </p>
 
-        <p class="text--center">
-            <a href="https://bileto.fr">
-                bileto.fr
-            </a>
-        </p>
+            <p>
+                <a href="https://bileto.fr" class="button button--primary button--uppercase">
+                    bileto.fr
+                </a>
+            </p>
+        </div>
 
-        <img src="{{ asset('logo.svg') }}" alt="Bileto" />
+        <div class="panel">
+            <div class="wrapper wrapper--text wrapper--center flow flow--large">
+                <img src="{{ asset('logo.svg') }}" alt="Bileto" />
 
-        <h2>{{ 'about.version' | trans }}</h2>
+                <div class="flow">
+                    <h2>{{ 'about.version' | trans }}</h2>
 
-        <p>
-            {{ version }}
-        </p>
+                    <p>
+                        {{ version }}
+                    </p>
+                </div>
 
-        <h2>{{ 'about.license' | trans }}</h2>
+                <div class="flow">
+                    <h2>{{ 'about.license' | trans }}</h2>
 
-        <p>
-            <a href="https://github.com/Probesys/bileto/blob/main/LICENSE.txt">
-                GNU Affero General Public License v3.0 or later
-            </a>
-            (<a href="https://github.com/Probesys/bileto">{{ 'about.source_code' | trans }}</a>)
-        </p>
+                    <p>
+                        <a href="https://github.com/Probesys/bileto/blob/main/LICENSE.txt">
+                            GNU Affero General Public License v3.0 or later
+                        </a>
+                        (<a href="https://github.com/Probesys/bileto">{{ 'about.source_code' | trans }}</a>)
+                    </p>
+                </div>
 
-        <h2>{{ 'about.authors' | trans }}</h2>
+                <div class="flow">
+                    <h2>{{ 'about.authors' | trans }}</h2>
 
-        <p>
-            {{ 'about.authors_description' | trans | raw }}
-        </p>
+                    <p>
+                        {{ 'about.authors_description' | trans | raw }}
+                    </p>
+                </div>
+            </div>
+        </div>
     </main>
 {% endblock %}

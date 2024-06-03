@@ -5,7 +5,7 @@
  #}
 
 {{ form_start(form, { attr: {
-    'class': 'wrapper wrapper--small wrapper--center flow',
+    'class': 'form--standard',
     'data-controller': 'form-contract',
 }}) }}
     {{ form_errors(form) }}
@@ -136,7 +136,7 @@
 
     <div class="flow flow--small">
         <label for="{{ field_id(form.notes) }}">
-            {{ icon('user-secret') }}
+            {{ icon('shield-halved') }}
             {{ 'contracts.form.notes' | trans }}
 
             <small class="text--secondary">

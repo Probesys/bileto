@@ -17,12 +17,14 @@ import MessageDocumentsController from '@/controllers/message_documents_controll
 import ModalController from '@/controllers/modal_controller.js';
 import ModalOpenerController from '@/controllers/modal_opener_controller.js';
 import MultiselectActorsController from '@/controllers/multiselect_actors_controller.js';
+import NavigationController from '@/controllers/navigation_controller.js';
 import NotificationsController from '@/controllers/notifications_controller.js';
 import PasswordController from '@/controllers/password_controller.js';
 import PopupController from '@/controllers/popup_controller.js';
 import ScrollToController from '@/controllers/scroll_to_controller.js';
+import SubmenuController from '@/controllers/submenu_controller.js';
 import SwitchController from '@/controllers/switch_controller.js';
-import TabsController from '@/controllers/tabs_controller.js';
+import TimelineController from '@/controllers/timeline_controller.js';
 import TinymceController from '@/controllers/tinymce_controller.js';
 import UserSelectorController from '@/controllers/user_selector_controller.js';
 
@@ -40,11 +42,13 @@ application.register('modal', ModalController);
 application.register('modal-opener', ModalOpenerController);
 application.register('multiselect-actors', MultiselectActorsController);
 application.register('notifications', NotificationsController);
+application.register('navigation', NavigationController);
 application.register('password', PasswordController);
 application.register('popup', PopupController);
 application.register('scroll-to', ScrollToController);
+application.register('submenu', SubmenuController);
 application.register('switch', SwitchController);
-application.register('tabs', TabsController);
+application.register('timeline', TimelineController);
 application.register('tinymce', TinymceController);
 application.register('user-selector', UserSelectorController);
 

@@ -10,16 +10,31 @@
 
 {% block title %}{{ 'organizations.new.title' | trans }}{% endblock %}
 
-{% block body %}
-    <main class="layout__body flow wrapper wrapper--large wrapper--center">
-        <div class="layout__breadcrumb">
-            <a href="{{ path('organizations') }}">{{ 'organizations.index.title' | trans }}</a>
-            <h1>{{ 'organizations.new.title' | trans }}</h1>
-        </div>
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
 
-        {{ include('organizations/_form.html.twig', {
-            'form': form,
-            'submit_label': 'organizations.new.submit' | trans,
-        }) }}
+        <a href="{{ path('organizations') }}">
+            {{ 'organizations.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'organizations.new.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'organizations.new.title' | trans }}</h1>
+
+        <div class="panel">
+            {{ include('organizations/_form.html.twig', {
+                'form': form,
+                'submit_label': 'organizations.new.submit' | trans,
+            }) }}
+        </div>
     </main>
 {% endblock %}

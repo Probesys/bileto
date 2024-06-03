@@ -9,15 +9,31 @@
 {% endif %}
 
 <li
-    class="documents__item row row--always row--center"
+    class="documents__item row row--always row--center text--small"
     data-type="{{ messageDocument.type }}"
     data-target="document-item"
 >
     <a
-        class="documents__link row__item--extend"
+        class="documents__link row__item--extend row row--always row--center flow flow--smaller"
         target="_blank"
         href="{{ path('message document', { uid: messageDocument.uid, extension: messageDocument.extension }) }}"
     >
+        <span class="documents__icon">
+            {% if messageDocument.type == 'archive' %}
+                {{ icon('file-zipper') }}
+            {% elseif messageDocument.type == 'doc' %}
+                {{ icon('file-word') }}
+            {% elseif messageDocument.type == 'pdf' %}
+                {{ icon('file-pdf') }}
+            {% elseif messageDocument.type == 'spreadsheet' %}
+                {{ icon('file-excel') }}
+            {% elseif messageDocument.type == 'image' %}
+                {{ icon('file-image') }}
+            {% else %}
+                {{ icon('file') }}
+            {% endif %}
+        </span>
+
         <span class="documents__name" data-target="document-name">
             {{ messageDocument.name }}
         </span>
@@ -26,7 +42,7 @@
     {% if displayRemove %}
         <div class="documents__delete">
             <button
-                class="button--icon"
+                class="button--icon button--discreet"
                 type="button"
                 data-action="message-documents#removeDocument"
                 data-url="{{ path('delete message document', { uid: messageDocument.uid }) }}"

@@ -14,7 +14,7 @@
 .scroll-to-top__button {
     position: fixed;
     right: 50%;
-    bottom: 2rem;
+    bottom: var(--space-small);
 
     visibility: visible;
 
@@ -27,7 +27,7 @@
 
 @media (min-width: 800px) {
     .scroll-to-top__button {
-        right: 2rem;
+        right: var(--space-small);
 
         transform: none;
     }

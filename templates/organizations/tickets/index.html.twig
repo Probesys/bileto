@@ -4,9 +4,9 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'organization.html.twig' %}
 
-{% set currentPage = 'tickets' %}
+{% set currentMenu = 'tickets' %}
 
 {% if view == 'all' %}
     {% set title = 'tickets.index.title.all' | trans %}
@@ -18,25 +18,32 @@
 
 {% block title %}{{ title ~ ' – ' ~ organization.name }}{% endblock %}
 
-{% block sidebar %}
-    {% if is_agent('any') %}
-        {{ include('tickets/_sidebar.html.twig', {
-            current: view,
-            countOwned: countOwned,
-            countToAssign: countToAssign,
-        }, with_context = false) }}
-    {% endif %}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('organizations') }}">
+            {{ 'organizations.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('organization', { uid: organization.uid }) }}">
+            {{ organization.name }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'tickets.index.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body">
-        <div class="flow wrapper wrapper--large {{ not is_agent('any') ? 'wrapper--center' }}">
-            <div class="layout__breadcrumb">
-                <a href="{{ path('organization', { uid: organization.uid }) }}">{{ organization.name }}</a>
-                <h1>{{ title }}</h1>
-            </div>
+    <main class="layout__body layout__body--extend">
+        <h1>{{ title }}</h1>
 
-            <div class="flow">
+        <div class="row flow flow--larger">
+            <div class="row__item--size3">
                 {{ include(
                     'tickets/_search_form.html.twig',
                     {
@@ -48,11 +55,17 @@
                     },
                     with_context = false
                 ) }}
+            </div>
+
+            <div class="row__item--size9 flow">
+                <h2 class="sr-only">
+                    {{ 'tickets.index.tickets' | trans }}
+                </h2>
 
                 <div class="row flow">
                     <div class="row__item--extend row row--center row--always flow">
                         {% if is_granted('orga:create:tickets', organization) %}
-                            <a class="anchor--action" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
+                            <a class="button button--primary button--uppercase" href="{{ path('new organization ticket', {'uid': organization.uid}) }}">
                                 {{ icon('plus') }}
                                 {{ 'tickets.index.new_ticket' | trans }}
                             </a>
@@ -67,7 +80,10 @@
 
                     {{ include(
                         'tickets/_sort_button.html.twig',
-                        { currentPath: path('organization tickets', { uid: organization.uid, q: query }) },
+                        {
+                            currentPath: path('organization tickets', { uid: organization.uid, q: query }),
+                            currentSort: sort,
+                        },
                         with_context = false
                     ) }}
                 </div>
@@ -87,10 +103,13 @@
                         ) }}
                     </div>
                 {% else %}
-                    <p class="placeholder">
-                        {{ icon('ticket') }}
-                        {{ 'tickets.index.no_tickets' | trans }}
-                    </p>
+                    <div class="placeholder flow flow--larger">
+                        <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                        <p class="placeholder__text">
+                            {{ 'tickets.index.no_tickets' | trans }}
+                        </p>
+                    </div>
                 {% endif %}
             </div>
         </div>

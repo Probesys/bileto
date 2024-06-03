@@ -11,8 +11,9 @@ The HTML of popups is based on the [`<details>`](https://developer.mozilla.org/f
     data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
 >
     <summary class="popup__opener">
-        <span class="button button--carret">
+        <span class="button">
             {{ 'Actions' | trans }}
+            {{ icon('angle-down') }}
         </span>
     </summary>
 
@@ -24,7 +25,7 @@ The HTML of popups is based on the [`<details>`](https://developer.mozilla.org/f
 Note the button in the `<summary>` element should not be a real `<button>` (only a class).
 It would take the focus and catch click events otherwise.
 
-Don’t forget to use the `.button--carret` class to put a carret on the right of the button.
+Don’t forget to add the icon on the right of the button.
 This shows to the user that the button will open a popup.
 
 ## Menu elements
@@ -34,7 +35,7 @@ The menu can have different kind of children.
 A basic link:
 
 ```twig
-<a class="popup__item" href="{{ path('preferences') }}" role="menuitem">
+<a class="popup__item" href="{{ path('preferences') }}">
     {{ 'Preferences' | trans }}
 </a>
 ```

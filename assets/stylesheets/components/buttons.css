@@ -4,20 +4,23 @@
 
 button,
 .button {
-    display: inline-block;
-    padding: 0.5rem 1.75rem;
+    --button-padding: var(--space-small) var(--space-medium);
+    --button-background-color: var(--color-primary12);
+    --button-color: var(--color-primary1);
 
-    color: var(--color-grey12);
+    display: inline-block;
+    padding: var(--button-padding);
+
+    color: var(--button-color);
     font-family: inherit;
     font-size: var(--font-size-normal);
+    font-weight: 600;
     line-height: 1.5;
     text-decoration: none;
 
-    background-color: var(--color-grey3);
-    background-image: linear-gradient(to bottom, rgb(0 0 0 / 0%), rgb(0 0 0 / 5%));
-    box-shadow: 0 1px 2px var(--color-box-shadow);
-    border: var(--width-border) solid var(--color-grey8);
-    border-radius: 2rem;
+    background-color: var(--button-background-color);
+    border: none;
+    border-radius: var(--border-radius);
 
     transition:
         background-color 0.2s ease-in-out,
@@ -27,22 +30,18 @@ button,
 }
 
 button:not([disabled]):hover,
-button:not([disabled]):focus,
-.button:not([aria-disabled]):hover,
-.button:not([aria-disabled]):focus {
-    background-color: var(--color-grey4);
+.button:not([aria-disabled]):hover {
+    --button-background-color: var(--color-primary11);
 }
 
 button:not([disabled]):active,
 .button:not([aria-disabled]):active {
-    background-color: var(--color-grey5);
+    --button-background-color: var(--color-primary12);
 }
 
 button[disabled],
 .button[aria-disabled] {
-    color: var(--color-grey11);
-
-    border-color: var(--color-grey7);
+    --button-color: var(--color-primary3);
 
     outline: none;
 
@@ -51,49 +50,33 @@ button[disabled],
 }
 
 .button--primary {
-    color: var(--color-primary12);
-
-    background-color: var(--color-primary6);
-    border-color: var(--color-primary8);
+    --button-padding: var(--space-small) var(--space-large);
+    --button-background-color: var(--color-primary9);
 }
 
 .button--primary:not([disabled]):hover,
-.button--primary:not([disabled]):focus,
-.button--primary:not([aria-disabled]):hover,
-.button--primary:not([aria-disabled]):focus {
-    background-color: var(--color-primary7);
+.button--primary:not([aria-disabled]):hover {
+    --button-background-color: var(--color-primary10);
 }
 
 .button--primary:not([disabled]):active,
 .button--primary:not([aria-disabled]):active {
-    background-color: var(--color-primary8);
-}
-
-.button--primary[disabled],
-.button--primary[aria-disabled] {
-    color: var(--color-primary11);
-
-    border-color: var(--color-primary7);
-}
-
-.button--icon {
-    padding: 0.75rem 1rem;
-
-    line-height: 1.2;
-
-    border-radius: 5rem;
+    --button-background-color: var(--color-primary12);
 }
 
 .button--anchor {
-    padding: 0;
+    --button-padding: 0;
+    --button-background-color: transparent;
+    --button-color: var(--color-primary9);
 
-    color: var(--color-primary11);
-
-    background-color: transparent;
     background-image: none;
     box-shadow: none;
-    border: none;
     border-radius: 0;
+}
+
+.button--anchor[disabled],
+.button--anchor[aria-disabled] {
+    --button-color: var(--color-primary8);
 }
 
 .button--anchor:not([disabled]):hover,
@@ -102,54 +85,66 @@ button[disabled],
 .button--anchor:not([aria-disabled]):focus,
 .button--anchor:not([disabled]):active,
 .button--anchor:not([aria-disabled]):active {
-    background-color: transparent;
+    --button-background-color: transparent;
 }
 
 .button--discreet {
-    padding: 0.25rem 1.25rem;
+    --button-padding: var(--space-smaller) var(--space-small);
+    --button-background-color: transparent;
+    --button-color: var(--color-grey11);
+
+    font-weight: normal;
+
+    border: 1px solid currentcolor;
+    border-radius: var(--border-radius);
 }
 
-.button--caret {
-    position: relative;
-
-    padding-right: 3.75rem;
+.button--discreet:not([disabled]):hover,
+.button--discreet:not([aria-disabled]):hover,
+.button--discreet:not([disabled]):focus,
+.button--discreet:not([aria-disabled]):focus,
+.button--discreet:not([disabled]):active,
+.button--discreet:not([aria-disabled]):active {
+    --button-background-color: var(--color-grey4);
 }
 
-.button--caret::after {
-    content: '';
+.button--icon {
+    --button-padding: var(--space-small);
 
-    position: absolute;
-    top: 0.5em;
-    right: 0.5em;
+    aspect-ratio: 1 / 1;
 
-    display: block;
-    width: 1em;
-    height: 1em;
+    line-height: 1.2;
 
-    opacity: 0.8;
-
-    background-image: url("../../icons/caret-down.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 0.7em;
+    border-radius: 5rem;
 }
 
-.button--caret.button--discreet {
-    padding-right: 3.5rem;
+.button--icon .icon {
+    margin-top: 0;
 }
 
-.button--caret.button--discreet::after {
-    top: 0.4em;
-    right: 0.3em;
+.button--icon .icon--eye,
+.button--icon .icon--eye-slash {
+    margin-top: 0.1em;
+}
 
-    background-size: 0.6em;
+.button--uppercase {
+    text-transform: uppercase;
+}
+
+.button--animated-icon:not([disabled]) .icon {
+    transition: transform 0.2s ease-in-out;
+}
+
+.button--animated-icon:not([disabled]):hover .icon,
+.button--animated-icon:not([disabled]):focus .icon {
+    transform: translateX(5px);
 }
 
 .button__caption {
     display: block;
-    margin-bottom: -0.7rem;
+    margin-bottom: -0.2rem;
 
-    color: var(--color-grey11);
+    color: var(--color-grey10);
     font-size: var(--font-size-small);
 }
 
@@ -163,7 +158,7 @@ button[disabled],
 
 .button-group > .button-group__item:not(:first-child),
 .button-group > *:not(:first-child) .button-group__item {
-    border-left: none;
+    border-left: var(--border-width) solid var(--button-color);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }

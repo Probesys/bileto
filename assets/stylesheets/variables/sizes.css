@@ -3,15 +3,31 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 :root {
+    --border-radius-smaller: 1.5px;
+    --border-radius: 6px;
+    --border-width: 1px;
+
     --font-size-smaller: 0.8em;
     --font-size-small: 0.9em;
     --font-size-normal: 1em;
     --font-size-big: 1.2em;
-    --font-size-bigger: 1.3em;
+    --font-size-bigger: 1.9em;
 
-    --width-border: 1px;
-    --width-border-bold: 2px;
-    --width-border-bolder: 0.5rem;
-    --width-border-input: var(--width-border-bold);
-    --width-outline: 0.2rem;
+    --space-smaller: 0.3rem;
+    --space-small: 0.6rem;
+    --space-medium: 1rem;
+    --space-large: 1.6rem;
+    --space-larger: 2.2rem;
+}
+
+@media (min-width: 800px) {
+    :root {
+        --space-larger: 2.6rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    :root {
+        --space-larger: 3rem;
+    }
 }

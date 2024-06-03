@@ -10,16 +10,26 @@
 
 {% block title %}{{ 'organizations.index.title' | trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'organizations.index.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <main class="layout__body flow wrapper wrapper--large wrapper--center">
-        <div class="layout__breadcrumb">
-            <h1>{{ 'organizations.index.title' | trans }}</h1>
-        </div>
+    <main class="layout__body">
+        <h1>{{ 'organizations.index.title' | trans }}</h1>
 
         <div class="flow">
             <div class="row row--center row--always flow">
                 {% if is_granted('admin:create:organizations') %}
-                    <a href="{{ path('new organization') }}" class="anchor--action">
+                    <a href="{{ path('new organization') }}" class="button button--primary button--uppercase">
                         {{ icon('plus') }}
                         {{ 'organizations.index.new_organization' | trans }}
                     </a>
@@ -30,13 +40,15 @@
                 </p>
             </div>
 
-            <div class="grid">
+            <ul class="list--padded list--border list--nostyle">
                 {% for organization in organizations %}
-                    <div class="card flow" data-test="organization-item">
-                        <a class="card__title" href="{{ path('organization', { uid: organization.uid }) }}">
-                            {{ organization.name }}
-                        </a>
-                    </div>
+                    <li class="row" data-test="organization-item">
+                        <div class="list__item-title">
+                            <a href="{{ path('organization', { uid: organization.uid }) }}">
+                                {{ organization.name }}
+                            </a>
+                        </div>
+                    </li>
                 {% endfor %}
             </div>
         </div>

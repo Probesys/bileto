@@ -4,25 +4,35 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'base.html.twig' %}
+{% extends 'settings.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentMenu = 'users' %}
 
 {% block title %}{{ 'users.index.title' | trans }}{% endblock %}
 
-{% block sidebar %}
-    {{ include('settings/_sidebar.html.twig', { current: 'users' }, with_context = false) }}
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('settings') }}">
+            {{ 'settings.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'users.index.title' | trans }}
+        </span>
+    </nav>
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body flow roles-index">
-        <div class="layout__breadcrumb">
-            <h1>{{ 'users.index.title' | trans }}</h1>
-        </div>
+    <main class="layout__body users-index">
+        <h1>{{ 'users.index.title' | trans }}</h1>
 
-        <div class="wrapper wrapper--large flow">
+        <div class="flow">
             <div class="row row--center row--always flow">
-                <a href="{{ path('new user') }}" class="anchor--action">
+                <a href="{{ path('new user') }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'users.index.new_user' | trans }}
                 </a>
@@ -36,11 +46,13 @@
                 {% for user in users %}
                     <li class="row" data-test="user-item">
                         <span class="row__item--extend">
-                            {{ user.displayName }}
+                            <span class="list__item-title">
+                                {{ user.displayName }}
 
-                            {% if user == app.user %}
-                                ({{ 'users.yourself' | trans }})
-                            {% endif %}
+                                {% if user == app.user %}
+                                    ({{ 'users.yourself' | trans }})
+                                {% endif %}
+                            </span>
 
                             {% if user.name %}
                                 <span class="text--secondary text--small">

@@ -49,9 +49,9 @@ Ideas, bug reports and contributions are welcome. Please follow [the contributin
 
 Bileto relies on a bunch of other projects:
 
-- [Atkinson Hyperlegible Font](https://brailleinstitute.org/freefont)
 - [ESLint](https://eslint.org/)
 - [Font Awesome icons](https://fontawesome.com)
+- [Lexend Font](https://www.lexend.com/)
 - [PHP\_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
 - [PHP-IMAP](https://www.php-imap.com/)
 - [PHPStan](https://phpstan.org/)

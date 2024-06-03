@@ -7,14 +7,14 @@
 <turbo-frame id="message-documents" data-controller="message-documents">
     <div class="flow flow--small">
         <div class="row row--always row--center flow">
-            <p class="text--secondary">
+            <p class="text--primary-dark text--small">
                 {{ 'message_documents.attachments' | trans }}
             </p>
 
             <div>
                 <button
                     type="button"
-                    class="button--icon text--small"
+                    class="button--icon button--discreet text--small"
                     data-action="message-documents#openFilesSelector"
                     data-message-documents-target="uploadButton"
                 >

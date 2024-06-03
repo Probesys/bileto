@@ -12,10 +12,8 @@
     <form
         action="{{ path('update contract alerts', {'uid': contract.uid}) }}"
         method="post"
-        class="wrapper wrapper--small wrapper--center flow"
+        class="form--standard"
     >
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update contract alerts') }}">
-
         {% if error %}
             {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
         {% endif %}
@@ -65,5 +63,7 @@
                 {{ 'forms.save_changes' | trans }}
             </button>
         </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update contract alerts') }}">
     </form>
 {% endblock %}
