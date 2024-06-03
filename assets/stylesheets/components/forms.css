@@ -259,9 +259,9 @@ select[aria-invalid] {
 
 fieldset {
     min-width: auto;
-    margin-right: -1rem;
-    margin-left: -1rem;
-    padding: var(--space-large);
+    padding-right: var(--space-small);
+    padding-bottom: var(--space-large);
+    padding-left: var(--space-small);
 
     background-color: var(--color-grey2);
     border: none;
@@ -271,8 +271,8 @@ fieldset {
 
 @media (min-width: 800px) {
     fieldset {
-        margin-right: -1.25rem;
-        margin-left: -1.25rem;
+        padding-right: var(--space-large);
+        padding-left: var(--space-large);
 
         border: var(--border-width) solid var(--color-grey6);
         border-radius: var(--form-border-radius);
