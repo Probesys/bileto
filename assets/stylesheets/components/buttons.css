@@ -96,7 +96,6 @@ button[disabled],
     font-weight: normal;
 
     border: 1px solid currentcolor;
-    border-radius: var(--border-radius);
 }
 
 .button--discreet:not([disabled]):hover,
