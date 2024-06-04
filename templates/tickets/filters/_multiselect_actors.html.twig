@@ -6,7 +6,7 @@
 
 <div data-controller="multiselect-actors">
     <select
-        id="{{ id }}"
+        id="{{ id }}-data"
         name="{{ name }}"
         multiple
         data-multiselect-actors-target="data"
@@ -15,9 +15,9 @@
     >
         {% for user in users %}
             {% set isCurrentUser = user.id == app.user.id %}
-            {% set id = isCurrentUser ? '@me' : user.id %}
+            {% set userId = isCurrentUser ? '@me' : user.id %}
 
-            <option value="{{ isCurrentUser ? id : '#' ~ id }}" {{ id in selected ? 'selected' }}>
+            <option value="{{ isCurrentUser ? userId : '#' ~ userId }}" {{ userId in selected ? 'selected' }}>
                 {{ user.displayName }}
 
                 {% if user.id == app.user.id %}
@@ -29,6 +29,7 @@
 
     <div class="flow">
         <select
+            id="{{ id }}"
             data-multiselect-actors-target="select"
             data-action="multiselect-actors#select"
         >
