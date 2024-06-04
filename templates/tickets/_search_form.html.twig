@@ -56,8 +56,8 @@
                                     value="open"
                                     {{ 'open' in ticketFilter.filter('status') ? 'checked' }}
                                     data-checkboxes-target="control"
-                                    data-checkboxes-control="[data-status-group='open']"
-                                    data-action="checkboxes#switchDisabled"
+                                    data-checkboxes-control="[data-status-group='open']#switch"
+                                    data-action="checkboxes#execute"
                                 />
 
                                 <label for="filter-status-open">
@@ -75,6 +75,8 @@
                                             value="{{ value }}"
                                             {{ value in ticketFilter.filter('status') ? 'checked' }}
                                             data-status-group="open"
+                                            data-checkboxes-control="#filter-status-open#uncheck"
+                                            data-action="checkboxes#execute"
                                         />
 
                                         <label for="filter-status-{{ value }}">
@@ -94,8 +96,8 @@
                                     value="finished"
                                     {{ 'finished' in ticketFilter.filter('status') ? 'checked' }}
                                     data-checkboxes-target="control"
-                                    data-checkboxes-control="[data-status-group='finished']"
-                                    data-action="checkboxes#switchDisabled"
+                                    data-checkboxes-control="[data-status-group='finished']#switch"
+                                    data-action="checkboxes#execute"
                                 />
 
                                 <label for="filter-status-finished">
@@ -113,6 +115,9 @@
                                             value="{{ value }}"
                                             {{ value in ticketFilter.filter('status') ? 'checked' }}
                                             data-status-group="finished"
+                                            data-checkboxes-target="control"
+                                            data-checkboxes-control="#filter-status-finished#uncheck"
+                                            data-action="checkboxes#execute"
                                         />
 
                                         <label for="filter-status-{{ value }}">
@@ -172,8 +177,8 @@
                                     value="no"
                                     {{ null in ticketFilter.filter('assignee') ? 'checked' }}
                                     data-checkboxes-target="control"
-                                    data-checkboxes-control="#filter-assignee-data"
-                                    data-action="checkboxes#switchDisabled"
+                                    data-checkboxes-control="#filter-assignee-data#switchDisabled"
+                                    data-action="checkboxes#execute"
                                 />
 
                                 <label for="filter-assignee-no">

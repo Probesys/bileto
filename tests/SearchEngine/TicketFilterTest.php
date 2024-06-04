@@ -32,6 +32,26 @@ class TicketFilterTest extends WebTestCase
         $this->assertSame(['new', 'in_progress'], $ticketFilter->getFilter('status'));
     }
 
+    public function testFromQueryWithOpenStatusConditionSanitizesTheIncludedStatuses(): void
+    {
+        $query = Query::fromString('status:open,new,in_progress');
+
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $this->assertNotNull($ticketFilter);
+        $this->assertSame(['open'], $ticketFilter->getFilter('status'));
+    }
+
+    public function testFromQueryWithFinishedStatusConditionSanitizesTheIncludedStatuses(): void
+    {
+        $query = Query::fromString('status:finished,closed,resolved');
+
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $this->assertNotNull($ticketFilter);
+        $this->assertSame(['finished'], $ticketFilter->getFilter('status'));
+    }
+
     public function testFromQueryWithTypeConditionReturnsFilter(): void
     {
         $query = Query::fromString('type:incident');

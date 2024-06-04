@@ -144,6 +144,14 @@ class TicketFilter
                     throw new \UnexpectedValueException("\"{$value}\" is not valid value for \"status\" filter");
                 }
             }
+
+            if (in_array('open', $values)) {
+                $values = array_diff($values, Ticket::OPEN_STATUSES);
+            }
+
+            if (in_array('finished', $values)) {
+                $values = array_diff($values, Ticket::FINISHED_STATUSES);
+            }
         }
 
         if ($filter === 'type') {

@@ -82,11 +82,23 @@
         <legend>{{ 'roles.permissions' | trans }}</legend>
 
         <div>
-            <button class="button--discreet" type="button" data-action="checkboxes#checkAll">
+            <button
+                class="button--discreet"
+                type="button"
+                data-checkboxes-target="control"
+                data-checkboxes-control="input[type='checkbox']#check"
+                data-action="checkboxes#execute"
+            >
                 {{ 'roles.permissions.check_all' | trans }}
             </button>
 
-            <button class="button--discreet" type="button" data-action="checkboxes#uncheckAll">
+            <button
+                class="button--discreet"
+                type="button"
+                data-checkboxes-target="control"
+                data-checkboxes-control="input[type='checkbox']#uncheck"
+                data-action="checkboxes#execute"
+            >
                 {{ 'roles.permissions.uncheck_all' | trans }}
             </button>
         </div>

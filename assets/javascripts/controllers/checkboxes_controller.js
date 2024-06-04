@@ -13,42 +13,40 @@ export default class extends Controller {
         this.refreshControls();
     }
 
-    checkAll () {
-        const checkboxes = this.element.querySelectorAll('input[type="checkbox"]:not([disabled])');
+    execute (event) {
+        const target = event.target;
 
+        let action, controlledNodes;
+
+        try {
+            [action, controlledNodes] = this.getActionAndControlledNodes(target);
+        } catch (error) {
+            console.error(error);
+            return;
+        }
+
+        if (action === 'check') {
+            this.setCheck(controlledNodes, true);
+        } else if (action === 'uncheck') {
+            this.setCheck(controlledNodes, false);
+        } else if (action === 'switch') {
+            this.setCheck(controlledNodes, target.checked);
+        } else if (action === 'switchDisabled') {
+            this.setDisabled(controlledNodes, target.checked);
+        }
+    }
+
+    setCheck (checkboxes, value) {
         checkboxes.forEach((checkbox) => {
-            checkbox.checked = true;
-        });
-
-        this.refreshControls();
-    }
-
-    uncheckAll () {
-        const checkboxes = this.element.querySelectorAll('input[type="checkbox"]:not([disabled])');
-
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = false;
-        });
-
-        this.refreshControls();
-    }
-
-    refreshControls () {
-        this.controlTargets.forEach((node) => {
-            this.switchDisabledForControl(node);
+            if (!checkbox.disabled) {
+                checkbox.checked = value;
+            }
         });
     }
 
-    switchDisabled (event) {
-        this.switchDisabledForControl(event.target);
-    }
-
-    switchDisabledForControl (control) {
-        const selector = control.dataset.checkboxesControl;
-        const controlledNodes = this.element.querySelectorAll(selector);
-
+    setDisabled (controlledNodes, value) {
         controlledNodes.forEach((node) => {
-            node.disabled = control.checked;
+            node.disabled = value;
 
             if (node.disabled) {
                 // Deselect the node value(s)
@@ -70,5 +68,55 @@ export default class extends Controller {
             const event = new Event('change');
             node.dispatchEvent(event);
         });
+    }
+
+    refreshControls () {
+        this.controlTargets.forEach((node) => {
+            let action, controlledNodes;
+
+            try {
+                [action, controlledNodes] = this.getActionAndControlledNodes(node);
+            } catch (error) {
+                console.error(error);
+                return;
+            }
+
+            if (action === 'switch' && node.checked) {
+                this.setCheck(controlledNodes, node.checked);
+            } else if (action === 'switchDisabled') {
+                this.setDisabled(controlledNodes, node.checked);
+            }
+        });
+    }
+
+    getActionAndControlledNodes (node) {
+        const control = node.dataset.checkboxesControl;
+
+        if (!control) {
+            throw new Error('Node has no data-checkboxes-control');
+        }
+
+        const indexHash = control.lastIndexOf('#');
+
+        if (indexHash === -1) {
+            throw new Error('Node data-checkboxes-control must contain a hash');
+        }
+
+        const selector = control.substring(0, indexHash);
+
+        if (!selector) {
+            throw new Error('Node data-checkboxes-control must contain a non-empty selector');
+        }
+
+        const action = control.substring(indexHash + 1);
+
+        const validActions = ['check', 'uncheck', 'switch', 'switchDisabled'];
+        if (!validActions.includes(action)) {
+            throw new Error('Node data-checkboxes-control must contain a valid action');
+        }
+
+        const controlledNodes = this.element.querySelectorAll(selector);
+
+        return [action, controlledNodes];
     }
 }
