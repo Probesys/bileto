@@ -420,7 +420,7 @@
                                         <div class="col--extend">
                                             <select
                                                 name="answerType"
-                                                class="answer__select-answer-type"
+                                                class="answer__select-answer-type widget--small"
                                                 required
                                                 aria-label="{{ 'tickets.show.answer_type' | trans }}"
                                                 {% if errors.answerType is defined %}
@@ -428,21 +428,21 @@
                                                     aria-errormessage="answer-type-error"
                                                 {% endif %}
                                             >
-                                                    <option value="normal" {{ answerType == 'normal' ? 'selected' }}>
-                                                        {{ 'tickets.show.answer_type.normal' | trans }}
+                                                <option value="normal" {{ answerType == 'normal' ? 'selected' }}>
+                                                    {{ 'tickets.show.answer_type.normal' | trans }}
+                                                </option>
+
+                                                {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
+                                                    <option value="confidential" {{ answerType == 'confidential' ? 'selected' }}>
+                                                        {{ 'tickets.show.answer_type.confidential' | trans }}
                                                     </option>
+                                                {% endif %}
 
-                                                    {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
-                                                        <option value="confidential" {{ answerType == 'confidential' ? 'selected' }}>
-                                                            {{ 'tickets.show.answer_type.confidential' | trans }}
-                                                        </option>
-                                                    {% endif %}
-
-                                                    {% if canPostSolution %}
-                                                        <option value="solution" {{ answerType == 'solution' ? 'selected' }}>
-                                                            {{ 'tickets.show.answer_type.solution' | trans }}
-                                                        </option>
-                                                    {% endif %}
+                                                {% if canPostSolution %}
+                                                    <option value="solution" {{ answerType == 'solution' ? 'selected' }}>
+                                                        {{ 'tickets.show.answer_type.solution' | trans }}
+                                                    </option>
+                                                {% endif %}
                                             </select>
                                         </div>
 
@@ -467,7 +467,7 @@
                                                 <div data-switch-target="panel" id="time-spent-input" {{ minutesSpent == 0 ? 'hidden' }}>
                                                     <label>
                                                         <input
-                                                            class="answer__input-time-spent"
+                                                            class="input--size2 widget--small"
                                                             name="timeSpent"
                                                             type="number"
                                                             value="{{ minutesSpent }}"

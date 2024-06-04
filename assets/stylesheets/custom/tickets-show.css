@@ -10,12 +10,4 @@
 
 .tickets-show .answer__select-answer-type {
     width: auto;
-    padding-top: var(--space-smaller);
-    padding-bottom: var(--space-smaller);
-}
-
-.tickets-show .answer__input-time-spent {
-    width: 6rem;
-    padding-top: var(--space-smaller);
-    padding-bottom: var(--space-smaller);
 }

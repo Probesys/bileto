@@ -257,6 +257,10 @@ select[aria-invalid] {
     border-color: var(--form-border-color-error);
 }
 
+.widget--small {
+    --form-padding: var(--space-smaller) var(--space-medium);
+}
+
 fieldset {
     min-width: auto;
     padding-right: var(--space-small);
