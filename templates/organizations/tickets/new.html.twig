@@ -54,253 +54,255 @@
 
             <div class="{{ agentLayout ? 'cols flow flow--larger' }}">
                 {% if agentLayout %}
-                    <div class="ticket__info text--small col--size3">
-                        <div class="panel flow flow--large">
+                    <div class="ticket__info col--size3">
+                        <div class="panel">
                             {% if canUpdateActors %}
-                                <div class="flow">
-                                    <h2>
+                                <details class="accordion" open>
+                                    <summary class="accordion__title">
                                         {{ 'tickets.actors' | trans }}
-                                    </h2>
+                                    </summary>
 
-                                    <div class="flow flow--small wrapper wrapper--small">
-                                        <label for="requester">
-                                            {{ 'tickets.requester' | trans }}
-                                        </label>
+                                    <div class="accordion__body flow">
+                                        <div class="flow flow--small wrapper wrapper--small">
+                                            <label for="requester">
+                                                {{ 'tickets.requester' | trans }}
+                                            </label>
 
-                                        {% if errors.requester is defined %}
-                                            <p class="form__error" role="alert" id="requester-error">
-                                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                                {{ errors.requester }}
-                                            </p>
+                                            {% if errors.requester is defined %}
+                                                <p class="form__error" role="alert" id="requester-error">
+                                                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                                    {{ errors.requester }}
+                                                </p>
+                                            {% endif %}
+
+                                            <select
+                                                id="requester"
+                                                name="requesterUid"
+                                                required
+                                                {% if errors.requester is defined %}
+                                                    autofocus
+                                                    aria-invalid="true"
+                                                    aria-errormessage="requester-error"
+                                                {% endif %}
+                                            >
+                                                {% for user in allUsers %}
+                                                    <option value="{{ user.uid }}" {{ user.uid == requesterUid ? 'selected' }}>
+                                                        {{ user.displayName }}
+
+                                                        {% if user.id == app.user.id %}
+                                                            ({{ 'users.yourself' | trans }})
+                                                        {% endif %}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        {% if teams %}
+                                            <div class="flow flow--small wrapper wrapper--small">
+                                                <label for="team">
+                                                    {{ 'tickets.team' | trans }}
+                                                    <small class="text--secondary">
+                                                        {{ 'forms.optional' | trans }}
+                                                    </small>
+                                                </label>
+
+                                                {% if errors.team is defined %}
+                                                    <p class="form__error" role="alert" id="team-error">
+                                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                                        {{ errors.team }}
+                                                    </p>
+                                                {% endif %}
+
+                                                <select
+                                                    id="team"
+                                                    name="teamUid"
+                                                    {% if errors.team is defined %}
+                                                        autofocus
+                                                        aria-invalid="true"
+                                                        aria-errormessage="team-error"
+                                                    {% endif %}
+                                                    data-form-ticket-actors-target="teams"
+                                                    data-action="form-ticket-actors#refreshAssignees"
+                                                >
+                                                    <option value="">
+                                                        {{ 'tickets.team.none' | trans }}
+                                                    </option>
+
+                                                    {% for team in teams %}
+                                                        <option
+                                                            value="{{ team.uid }}" {{ team.uid == teamUid ? 'selected' }}
+                                                            data-agents-uids="{{ team.agentsUids | json_encode }}"
+                                                        >
+                                                            {{ team.name }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
                                         {% endif %}
 
-                                        <select
-                                            id="requester"
-                                            name="requesterUid"
-                                            required
-                                            {% if errors.requester is defined %}
-                                                autofocus
-                                                aria-invalid="true"
-                                                aria-errormessage="requester-error"
-                                            {% endif %}
-                                        >
-                                            {% for user in allUsers %}
-                                                <option value="{{ user.uid }}" {{ user.uid == requesterUid ? 'selected' }}>
-                                                    {{ user.displayName }}
-
-                                                    {% if user.id == app.user.id %}
-                                                        ({{ 'users.yourself' | trans }})
-                                                    {% endif %}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-
-                                    {% if teams %}
                                         <div class="flow flow--small wrapper wrapper--small">
-                                            <label for="team">
-                                                {{ 'tickets.team' | trans }}
+                                            <label for="assignee">
+                                                {{ 'tickets.assignee' | trans }}
                                                 <small class="text--secondary">
                                                     {{ 'forms.optional' | trans }}
                                                 </small>
                                             </label>
 
-                                            {% if errors.team is defined %}
-                                                <p class="form__error" role="alert" id="team-error">
+                                            {% if errors.assignee is defined %}
+                                                <p class="form__error" role="alert" id="assignee-error">
                                                     <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                                    {{ errors.team }}
+                                                    {{ errors.assignee }}
                                                 </p>
                                             {% endif %}
 
                                             <select
-                                                id="team"
-                                                name="teamUid"
-                                                {% if errors.team is defined %}
+                                                id="assignee"
+                                                name="assigneeUid"
+                                                {% if errors.assignee is defined %}
                                                     autofocus
                                                     aria-invalid="true"
-                                                    aria-errormessage="team-error"
+                                                    aria-errormessage="assignee-error"
                                                 {% endif %}
-                                                data-form-ticket-actors-target="teams"
-                                                data-action="form-ticket-actors#refreshAssignees"
+                                                data-form-ticket-actors-target="assignees"
                                             >
                                                 <option value="">
-                                                    {{ 'tickets.team.none' | trans }}
+                                                    {{ 'tickets.unassigned' | trans }}
                                                 </option>
 
-                                                {% for team in teams %}
-                                                    <option
-                                                        value="{{ team.uid }}" {{ team.uid == teamUid ? 'selected' }}
-                                                        data-agents-uids="{{ team.agentsUids | json_encode }}"
-                                                    >
-                                                        {{ team.name }}
+                                                {% for user in agents %}
+                                                    <option value="{{ user.uid }}" {{ user.uid == assigneeUid ? 'selected' }}>
+                                                        {{ user.displayName }}
+
+                                                        {% if user.id == app.user.id %}
+                                                            ({{ 'users.yourself' | trans }})
+                                                        {% endif %}
                                                     </option>
                                                 {% endfor %}
                                             </select>
                                         </div>
-                                    {% endif %}
-
-                                    <div class="flow flow--small wrapper wrapper--small">
-                                        <label for="assignee">
-                                            {{ 'tickets.assignee' | trans }}
-                                            <small class="text--secondary">
-                                                {{ 'forms.optional' | trans }}
-                                            </small>
-                                        </label>
-
-                                        {% if errors.assignee is defined %}
-                                            <p class="form__error" role="alert" id="assignee-error">
-                                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                                {{ errors.assignee }}
-                                            </p>
-                                        {% endif %}
-
-                                        <select
-                                            id="assignee"
-                                            name="assigneeUid"
-                                            {% if errors.assignee is defined %}
-                                                autofocus
-                                                aria-invalid="true"
-                                                aria-errormessage="assignee-error"
-                                            {% endif %}
-                                            data-form-ticket-actors-target="assignees"
-                                        >
-                                            <option value="">
-                                                {{ 'tickets.unassigned' | trans }}
-                                            </option>
-
-                                            {% for user in agents %}
-                                                <option value="{{ user.uid }}" {{ user.uid == assigneeUid ? 'selected' }}>
-                                                    {{ user.displayName }}
-
-                                                    {% if user.id == app.user.id %}
-                                                        ({{ 'users.yourself' | trans }})
-                                                    {% endif %}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
                                     </div>
-                                </div>
-                            {% endif %}
-
-                            {% if canUpdateActors and canUpdatePriority %}
-                                <div class="ticket__info-separator"></div>
+                                </details>
                             {% endif %}
 
                             {% if canUpdatePriority %}
-                                <div class="flow">
-                                    <h2>
+                                {% set mustOpenAccordion = urgency != 'medium' or impact != 'medium' or priority != 'medium' %}
+
+                                <details class="accordion" {{ mustOpenAccordion ? 'open' }}>
+                                    <summary class="accordion__title">
                                         {{ 'tickets.priority' | trans }}
-                                    </h2>
+                                    </summary>
 
-                                    <div class="cols flow">
-                                        <div class="col--extend flow flow--small">
-                                            <label for="urgency">
-                                                {{ 'tickets.urgency' | trans }}
-                                            </label>
+                                    <div class="accordion__body flow">
+                                        <div class="cols flow">
+                                            <div class="col--extend flow flow--small">
+                                                <label for="urgency">
+                                                    {{ 'tickets.urgency' | trans }}
+                                                </label>
 
-                                            {% if errors.urgency is defined %}
-                                                <p class="form__error" role="alert" id="urgency-error">
-                                                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                                    {{ errors.urgency }}
-                                                </p>
-                                            {% endif %}
-
-                                            <select
-                                                id="urgency"
-                                                name="urgency"
-                                                required
                                                 {% if errors.urgency is defined %}
-                                                    autofocus
-                                                    aria-invalid="true"
-                                                    aria-errormessage="urgency-error"
+                                                    <p class="form__error" role="alert" id="urgency-error">
+                                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                                        {{ errors.urgency }}
+                                                    </p>
                                                 {% endif %}
-                                                data-form-priority-target="urgency"
-                                                data-action="form-priority#updatePriority"
-                                            >
-                                                <option value="low" {{ "low" == urgency ? 'selected' }}>
-                                                    {{ 'tickets.urgency.low' | trans }}
-                                                </option>
-                                                <option value="medium" {{ "medium" == urgency ? 'selected' }}>
-                                                    {{ 'tickets.urgency.medium' | trans }}
-                                                </option>
-                                                <option value="high" {{ "high" == urgency ? 'selected' }}>
-                                                    {{ 'tickets.urgency.high' | trans }}
-                                                </option>
-                                            </select>
+
+                                                <select
+                                                    id="urgency"
+                                                    name="urgency"
+                                                    required
+                                                    {% if errors.urgency is defined %}
+                                                        autofocus
+                                                        aria-invalid="true"
+                                                        aria-errormessage="urgency-error"
+                                                    {% endif %}
+                                                    data-form-priority-target="urgency"
+                                                    data-action="form-priority#updatePriority"
+                                                >
+                                                    <option value="low" {{ "low" == urgency ? 'selected' }}>
+                                                        {{ 'tickets.urgency.low' | trans }}
+                                                    </option>
+                                                    <option value="medium" {{ "medium" == urgency ? 'selected' }}>
+                                                        {{ 'tickets.urgency.medium' | trans }}
+                                                    </option>
+                                                    <option value="high" {{ "high" == urgency ? 'selected' }}>
+                                                        {{ 'tickets.urgency.high' | trans }}
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col--extend flow flow--small">
+                                                <label for="impact">
+                                                    {{ 'tickets.impact' | trans }}
+                                                </label>
+
+                                                {% if errors.impact is defined %}
+                                                    <p class="form__error" role="alert" id="impact-error">
+                                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                                        {{ errors.impact }}
+                                                    </p>
+                                                {% endif %}
+
+                                                <select
+                                                    id="impact"
+                                                    name="impact"
+                                                    required
+                                                    {% if errors.impact is defined %}
+                                                        autofocus
+                                                        aria-invalid="true"
+                                                        aria-errormessage="impact-error"
+                                                    {% endif %}
+                                                    data-form-priority-target="impact"
+                                                    data-action="form-priority#updatePriority"
+                                                >
+                                                    <option value="low" {{ "low" == impact ? 'selected' }}>
+                                                        {{ 'tickets.impact.low' | trans }}
+                                                    </option>
+                                                    <option value="medium" {{ "medium" == impact ? 'selected' }}>
+                                                        {{ 'tickets.impact.medium' | trans }}
+                                                    </option>
+                                                    <option value="high" {{ "high" == impact ? 'selected' }}>
+                                                        {{ 'tickets.impact.high' | trans }}
+                                                    </option>
+                                                </select>
+                                            </div>
                                         </div>
 
-                                        <div class="col--extend flow flow--small">
-                                            <label for="impact">
-                                                {{ 'tickets.impact' | trans }}
+                                        <div class="flow flow--small">
+                                            <label for="priority">
+                                                {{ 'tickets.priority' | trans }}
                                             </label>
 
-                                            {% if errors.impact is defined %}
-                                                <p class="form__error" role="alert" id="impact-error">
+                                            {% if errors.priority is defined %}
+                                                <p class="form__error" role="alert" id="priority-error">
                                                     <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                                    {{ errors.impact }}
+                                                    {{ errors.priority }}
                                                 </p>
                                             {% endif %}
 
                                             <select
-                                                id="impact"
-                                                name="impact"
+                                                id="priority"
+                                                name="priority"
                                                 required
-                                                {% if errors.impact is defined %}
+                                                {% if errors.priority is defined %}
                                                     autofocus
                                                     aria-invalid="true"
-                                                    aria-errormessage="impact-error"
+                                                    aria-errormessage="priority-error"
                                                 {% endif %}
-                                                data-form-priority-target="impact"
-                                                data-action="form-priority#updatePriority"
+                                                data-form-priority-target="priority"
                                             >
-                                                <option value="low" {{ "low" == impact ? 'selected' }}>
-                                                    {{ 'tickets.impact.low' | trans }}
+                                                <option value="low" {{ "low" == priority ? 'selected' }}>
+                                                    {{ 'tickets.priority.low' | trans }}
                                                 </option>
-                                                <option value="medium" {{ "medium" == impact ? 'selected' }}>
-                                                    {{ 'tickets.impact.medium' | trans }}
+                                                <option value="medium" {{ "medium" == priority ? 'selected' }}>
+                                                    {{ 'tickets.priority.medium' | trans }}
                                                 </option>
-                                                <option value="high" {{ "high" == impact ? 'selected' }}>
-                                                    {{ 'tickets.impact.high' | trans }}
+                                                <option value="high" {{ "high" == priority ? 'selected' }}>
+                                                    {{ 'tickets.priority.high' | trans }}
                                                 </option>
                                             </select>
                                         </div>
                                     </div>
-
-                                    <div class="flow flow--small">
-                                        <label for="priority">
-                                            {{ 'tickets.priority' | trans }}
-                                        </label>
-
-                                        {% if errors.priority is defined %}
-                                            <p class="form__error" role="alert" id="priority-error">
-                                                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                                {{ errors.priority }}
-                                            </p>
-                                        {% endif %}
-
-                                        <select
-                                            id="priority"
-                                            name="priority"
-                                            required
-                                            {% if errors.priority is defined %}
-                                                autofocus
-                                                aria-invalid="true"
-                                                aria-errormessage="priority-error"
-                                            {% endif %}
-                                            data-form-priority-target="priority"
-                                        >
-                                            <option value="low" {{ "low" == priority ? 'selected' }}>
-                                                {{ 'tickets.priority.low' | trans }}
-                                            </option>
-                                            <option value="medium" {{ "medium" == priority ? 'selected' }}>
-                                                {{ 'tickets.priority.medium' | trans }}
-                                            </option>
-                                            <option value="high" {{ "high" == priority ? 'selected' }}>
-                                                {{ 'tickets.priority.high' | trans }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
+                                </details>
                             {% endif %}
                         </div>
                     </div>
