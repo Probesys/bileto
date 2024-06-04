@@ -115,6 +115,20 @@ class TicketFilter
     }
 
     /**
+     * @param string[] $filtersToFind
+     */
+    public function hasAnyFilters(array $filtersToFind): bool
+    {
+        foreach ($filtersToFind as $filterToFind) {
+            if (isset($this->filters[$filterToFind])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param value-of<self::SUPPORTED_FILTERS> $filter
      * @param string[] $values
      */

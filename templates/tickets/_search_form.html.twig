@@ -30,7 +30,7 @@
             </button>
         </div>
 
-        <form method="post" action="{{ path('combine filters') }}" class="flow flow--small">
+        <form method="post" action="{{ path('combine filters') }}" class="flow flow--large">
             <input
                 type="text"
                 name="text"
@@ -40,6 +40,356 @@
                 placeholder="{{ 'tickets.search.placeholder' | trans }}"
             />
 
+            <div>
+                <details class="accordion" {{ ticketFilter.anyFilters(['status']) ? 'open' }}>
+                    <summary class="accordion__title">
+                        {{ 'tickets.filters.status.title' | trans }}
+                    </summary>
+
+                    <div class="accordion__body flow flow--small" data-controller="checkboxes">
+                        <div class="flow flow--small">
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="filter-status-open"
+                                    name="filters[status][]"
+                                    value="open"
+                                    {{ 'open' in ticketFilter.filter('status') ? 'checked' }}
+                                    data-checkboxes-target="control"
+                                    data-checkboxes-control="[data-status-group='open']"
+                                    data-action="checkboxes#switchDisabled"
+                                />
+
+                                <label for="filter-status-open">
+                                    {{ 'tickets.status.open' | trans }}
+                                </label>
+                            </div>
+
+                            <div class="indent flow flow--small">
+                                {% for value, label in openStatuses %}
+                                    <div>
+                                        <input
+                                            type="checkbox"
+                                            id="filter-status-{{ value }}"
+                                            name="filters[status][]"
+                                            value="{{ value }}"
+                                            {{ value in ticketFilter.filter('status') ? 'checked' }}
+                                            data-status-group="open"
+                                        />
+
+                                        <label for="filter-status-{{ value }}">
+                                            {{ label | trans }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="flow flow--small">
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="filter-status-finished"
+                                    name="filters[status][]"
+                                    value="finished"
+                                    {{ 'finished' in ticketFilter.filter('status') ? 'checked' }}
+                                    data-checkboxes-target="control"
+                                    data-checkboxes-control="[data-status-group='finished']"
+                                    data-action="checkboxes#switchDisabled"
+                                />
+
+                                <label for="filter-status-finished">
+                                    {{ 'tickets.status.finished' | trans }}
+                                </label>
+                            </div>
+
+                            <div class="indent flow flow--small">
+                                {% for value, label in finishedStatuses %}
+                                    <div>
+                                        <input
+                                            type="checkbox"
+                                            id="filter-status-{{ value }}"
+                                            name="filters[status][]"
+                                            value="{{ value }}"
+                                            {{ value in ticketFilter.filter('status') ? 'checked' }}
+                                            data-status-group="finished"
+                                        />
+
+                                        <label for="filter-status-{{ value }}">
+                                            {{ label | trans }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="accordion" {{ ticketFilter.anyFilters(['involves', 'assignee', 'requester']) ? 'open' }}>
+                    <summary class="accordion__title">
+                        {{ 'tickets.filters.actors.title' | trans }}
+                    </summary>
+
+                    <div class="accordion__body flow flow--large">
+                        <div class="flow flow--small">
+                            <label for="filter-involves" class="text--bold">
+                                {{ 'tickets.involves' | trans }}
+                            </label>
+
+                            {{ include(
+                                'tickets/filters/_multiselect_actors.html.twig',
+                                {
+                                    users: allUsers,
+                                    selected: ticketFilter.filter('involves'),
+                                    id: "filter-involves",
+                                    name: "filters[involves][]",
+                                },
+                                with_context = false
+                            ) }}
+                        </div>
+
+                        <div class="flow flow--small" data-controller="checkboxes">
+                            <label for="filter-assignee" class="text--bold">
+                                {{ 'tickets.assignee' | trans }}
+                            </label>
+
+                            {{ include(
+                                'tickets/filters/_multiselect_actors.html.twig',
+                                {
+                                    users: agents,
+                                    selected: ticketFilter.filter('assignee'),
+                                    id: "filter-assignee",
+                                    name: "filters[assignee][]",
+                                },
+                                with_context = false
+                            ) }}
+
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="filter-assignee-no"
+                                    name="filters[assignee][]"
+                                    value="no"
+                                    {{ null in ticketFilter.filter('assignee') ? 'checked' }}
+                                    data-checkboxes-target="control"
+                                    data-checkboxes-control="#filter-assignee-data"
+                                    data-action="checkboxes#switchDisabled"
+                                />
+
+                                <label for="filter-assignee-no">
+                                    {{ 'tickets.filters.assignee.no' | trans }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flow flow--small">
+                            <label for="filter-requester" class="text--bold">
+                                {{ 'tickets.requester' | trans }}
+                            </label>
+
+                            {{ include(
+                                'tickets/filters/_multiselect_actors.html.twig',
+                                {
+                                    users: allUsers,
+                                    selected: ticketFilter.filter('requester'),
+                                    id: "filter-requester",
+                                    name: "filters[requester][]",
+                                },
+                                with_context = false
+                            ) }}
+                        </div>
+                    </div>
+                </details>
+
+                <details class="accordion" {{ ticketFilter.anyFilters(['priority', 'urgency', 'impact']) ? 'open' }}>
+                    <summary class="accordion__title">
+                        {{ 'tickets.filters.priority.title' | trans }}
+                    </summary>
+
+                    <div class="accordion__body flow">
+                        <fieldset class="flow flow--small">
+                            <legend>
+                                {{ 'tickets.priority' | trans }}
+                            </legend>
+
+                            <div class="flow flow--smaller">
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-priority-low"
+                                        name="filters[priority][]"
+                                        value="low"
+                                        {{ 'low' in ticketFilter.filter('priority') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-priority-low">
+                                        {{ 'tickets.priority.low' | trans }}
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-priority-medium"
+                                        name="filters[priority][]"
+                                        value="medium"
+                                        {{ 'medium' in ticketFilter.filter('priority') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-priority-medium">
+                                        {{ 'tickets.priority.medium' | trans }}
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-priority-high"
+                                        name="filters[priority][]"
+                                        value="high"
+                                        {{ 'high' in ticketFilter.filter('priority') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-priority-high">
+                                        {{ 'tickets.priority.high' | trans }}
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="flow flow--small">
+                            <legend>
+                                {{ 'tickets.urgency' | trans }}
+                            </legend>
+
+                            <div class="flow flow--smaller">
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-urgency-low"
+                                        name="filters[urgency][]"
+                                        value="low"
+                                        {{ 'low' in ticketFilter.filter('urgency') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-urgency-low">
+                                        {{ 'tickets.urgency.low' | trans }}
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-urgency-medium"
+                                        name="filters[urgency][]"
+                                        value="medium"
+                                        {{ 'medium' in ticketFilter.filter('urgency') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-urgency-medium">
+                                        {{ 'tickets.urgency.medium' | trans }}
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-urgency-high"
+                                        name="filters[urgency][]"
+                                        value="high"
+                                        {{ 'high' in ticketFilter.filter('urgency') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-urgency-high">
+                                        {{ 'tickets.urgency.high' | trans }}
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="flow flow--small">
+                            <legend>
+                                {{ 'tickets.impact' | trans }}
+                            </legend>
+
+                            <div class="flow flow--smaller">
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-impact-low"
+                                        name="filters[impact][]"
+                                        value="low"
+                                        {{ 'low' in ticketFilter.filter('impact') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-impact-low">
+                                        {{ 'tickets.impact.low' | trans }}
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-impact-medium"
+                                        name="filters[impact][]"
+                                        value="medium"
+                                        {{ 'medium' in ticketFilter.filter('impact') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-impact-medium">
+                                        {{ 'tickets.impact.medium' | trans }}
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-impact-high"
+                                        name="filters[impact][]"
+                                        value="high"
+                                        {{ 'high' in ticketFilter.filter('impact') ? 'checked' }}
+                                    />
+
+                                    <label for="filter-impact-high">
+                                        {{ 'tickets.impact.high' | trans }}
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </details>
+
+                <details class="accordion" {{ ticketFilter.anyFilters(['type']) ? 'open' }}>
+                    <summary class="accordion__title">
+                        {{ 'tickets.filters.type.title' | trans }}
+                    </summary>
+
+                    <div class="accordion__body flow flow--small">
+                        <label for="type" class="text--bold">
+                            {{ 'tickets.filters.type.label' | trans }}
+                        </label>
+
+                        <select
+                            id="type"
+                            class="widget--small"
+                            name="filters[type][]"
+                        >
+                            <option value="" {{ ticketFilter.filter('type') is empty ? 'checked' }}>
+                                {{ 'tickets.filters.type.no_filter' | trans }}
+                            </option>
+
+                            <option value="incident" {{ 'incident' in ticketFilter.filter('type') ? 'selected' }}>
+                                {{ 'tickets.filters.type.only_incidents' | trans }}
+                            </option>
+
+                            <option value="request" {{ 'request' in ticketFilter.filter('type') ? 'selected' }}>
+                                {{ 'tickets.filters.type.only_requests' | trans }}
+                            </option>
+                        </select>
+                    </div>
+                </details>
+            </div>
+
             <div class="text--right">
                 <button class="button--animated-icon" type="submit">
                     {{ 'tickets.search.submit' | trans }}
@@ -47,101 +397,20 @@
                 </button>
             </div>
 
+            {# Send an empty value so the parameter is always sent, even if all the
+             # checkboxes are unchecked. #}
+            <input type="hidden" name="filters[status][]" value="">
+            <input type="hidden" name="filters[priority][]" value="" />
+            <input type="hidden" name="filters[urgency][]" value="" />
+            <input type="hidden" name="filters[impact][]" value="" />
+            <input type="hidden" name="filters[involves][]" value="" />
+            <input type="hidden" name="filters[assignee][]" value="" />
+            <input type="hidden" name="filters[requester][]" value="" />
+
             <input type="hidden" name="mode" value="quick">
             <input type="hidden" name="from" value="{{ from }}">
             <input type="hidden" name="query" value="{{ query }}">
         </form>
-
-        <div class="flow">
-            <div class="cols cols--center cols--always flow">
-                <p class="col--extend text--secondary">
-                    {{ 'tickets.search.filters.used' | trans }}
-                </p>
-
-                <details
-                    class="popup"
-                    data-controller="popup"
-                    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                >
-                    <summary class="popup__opener">
-                        <span class="button button--discreet">
-                            {{ 'tickets.search.filters.new' | trans }}
-                            {{ icon('angle-down') }}
-                        </span>
-                    </summary>
-
-                    <nav class="popup__container popup__container--right">
-                        <button
-                            class="popup__item"
-                            type="button"
-                            data-controller="modal-opener"
-                            data-action="modal-opener#fetch"
-                            data-modal-opener-href-value="{{ path('edit filter', { filter: 'actors', query: query, from: from }) }}"
-                        >
-                            {{ 'tickets.search.filters.actors' | trans }}
-                        </button>
-
-                        <button
-                            class="popup__item"
-                            type="button"
-                            data-controller="modal-opener"
-                            data-action="modal-opener#fetch"
-                            data-modal-opener-href-value="{{ path('edit filter', { filter: 'priority', query: query, from: from }) }}"
-                        >
-                            {{ 'tickets.search.filters.priority' | trans }}
-                        </button>
-
-                        <button
-                            class="popup__item"
-                            type="button"
-                            data-controller="modal-opener"
-                            data-action="modal-opener#fetch"
-                            data-modal-opener-href-value="{{ path('edit filter', { filter: 'status', query: query, from: from }) }}"
-                        >
-                            {{ 'tickets.search.filters.status' | trans }}
-                        </button>
-
-                        <button
-                            class="popup__item"
-                            type="button"
-                            data-controller="modal-opener"
-                            data-action="modal-opener#fetch"
-                            data-modal-opener-href-value="{{ path('edit filter', { filter: 'type', query: query, from: from }) }}"
-                        >
-                            {{ 'tickets.search.filters.type' | trans }}
-                        </button>
-                    </nav>
-                </details>
-            </div>
-
-            <div class="flow flow--small">
-                {% for filter, values in ticketFilter.filters %}
-                    <button
-                        class="text--left button--discreet"
-                        type="button"
-                        data-controller="modal-opener"
-                        data-action="modal-opener#fetch"
-                        data-modal-opener-href-value="{{ path('edit filter', { filter: filter, query: query, from: from }) }}"
-                    >
-                        <span class="button__caption">
-                            {% if filter == 'status' %}
-                                {{ icon('status') }}
-                            {% elseif filter == 'priority' %}
-                                {{ icon('priority') }}
-                            {% elseif filter == 'assignee' %}
-                                {{ icon('headset') }}
-                            {% elseif filter == 'requester' %}
-                                {{ icon('user') }}
-                            {% endif %}
-
-                            {{ ('tickets.' ~ filter) | trans }}
-                        </span>
-
-                        {{ values | transFilter(filter) | join(', ', 'tickets.search.filters.or' | trans) }}
-                    </button>
-                {% endfor %}
-            </div>
-        </div>
     </div>
 
     <div

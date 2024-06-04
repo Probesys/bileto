@@ -24,6 +24,10 @@
     }
 }
 
+.cols--wrap {
+    flex-wrap: wrap;
+}
+
 .cols.text--center {
     justify-content: center;
 }

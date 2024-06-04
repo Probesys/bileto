@@ -50,6 +50,10 @@
                         searchMode: searchMode,
                         query: query,
                         ticketFilter: ticketFilter,
+                        openStatuses: openStatuses,
+                        finishedStatuses: finishedStatuses,
+                        allUsers: allUsers,
+                        agents: agents,
                         from: path('organization tickets', { uid: organization.uid }),
                         error: errors.search ?? ''
                     },

@@ -15,6 +15,7 @@ use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\SearchEngine\Query;
 use App\Security\Authorizer;
+use App\Service\ActorsLister;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\TicketTimeline;
 use App\Utils\Pagination;
@@ -33,6 +34,7 @@ class TicketsController extends BaseController
         OrganizationRepository $orgaRepository,
         UserRepository $userRepository,
         TicketSearcher $ticketSearcher,
+        ActorsLister $actorsLister,
         TranslatorInterface $translator,
     ): Response {
         /** @var \App\Entity\User $user */
@@ -97,6 +99,10 @@ class TicketsController extends BaseController
             'sort' => $sort,
             'ticketFilter' => $ticketFilter,
             'searchMode' => $searchMode,
+            'openStatuses' => Ticket::getStatusesWithLabels('open'),
+            'finishedStatuses' => Ticket::getStatusesWithLabels('finished'),
+            'allUsers' => $actorsLister->findAll(),
+            'agents' => $actorsLister->findAll(roleType: 'agent'),
             'errors' => $errors,
         ]);
     }

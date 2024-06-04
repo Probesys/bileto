@@ -316,22 +316,17 @@ tickets.events.title: "<strong>{username}</strong> a renommé le ticket de «\_<
 tickets.events.type.to_incident: '<strong>{username}</strong> a changé le ticket en incident'
 tickets.events.type.to_request: '<strong>{username}</strong> a changé le ticket en demande'
 tickets.events.urgency: '<strong>{username}</strong> a changé l’urgence de <i>{oldValue}</i> à <i>{newValue}</i>'
-tickets.filters.actors.info: "Afficher uniquement les tickets avec les critères suivants\_:"
 tickets.filters.actors.select: 'Sélectionner un acteur'
-tickets.filters.actors.title: "Gérer les filtres «\_acteurs\_»"
+tickets.filters.actors.title: 'Filtrer par acteurs'
 tickets.filters.actors.unselect: Désélectionner
-tickets.filters.apply_filter: 'Appliquer le filtre'
 tickets.filters.assignee.no: 'Non attribués seulement'
-tickets.filters.priority.info: "Afficher uniquement les tickets avec les critères suivants\_:"
-tickets.filters.priority.title: "Gérer les filtres «\_priorité\_»"
-tickets.filters.status.info: "Afficher uniquement les tickets avec les statuts suivants\_:"
-tickets.filters.status.title: "Gérer le filtre «\_statut\_»"
-tickets.filters.type.label: "Choisissez le filtre des types de tickets\_:"
-tickets.filters.type.no_filter: 'Afficher tous les tickets (aucun filtre)'
-tickets.filters.type.only_incidents: 'Afficher uniquement les incidents'
-tickets.filters.type.only_requests: 'Afficher uniquement les demandes'
-tickets.filters.type.title: "Gérer le filtre «\_type\_»"
-tickets.filters.uncheck_all: 'Décocher toutes les cases'
+tickets.filters.priority.title: 'Filtrer par priorité'
+tickets.filters.status.title: 'Filtrer par statut'
+tickets.filters.type.label: 'Type des tickets'
+tickets.filters.type.no_filter: 'Tous les tickets'
+tickets.filters.type.only_incidents: 'Uniquement les incidents'
+tickets.filters.type.only_requests: 'Uniquement les demandes'
+tickets.filters.type.title: 'Filtrer par type'
 tickets.impact: Impact
 tickets.impact.high: Haut
 tickets.impact.low: Bas
@@ -364,13 +359,6 @@ tickets.priority.medium: Moyenne
 tickets.request: Demande
 tickets.requester: Demandeur
 tickets.search.advanced_search: 'Recherche avancée'
-tickets.search.filters.actors: "Filtres «\_acteurs\_»"
-tickets.search.filters.new: Nouveau
-tickets.search.filters.or: ' ou '
-tickets.search.filters.priority: "Filtres «\_piorité\_»"
-tickets.search.filters.status: "Filtre «\_statut\_»"
-tickets.search.filters.type: "Filtre «\_type\_»"
-tickets.search.filters.used: 'Filtres appliqués'
 tickets.search.help: 'Afficher l’aide de la syntaxe'
 tickets.search.label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
 tickets.search.placeholder: 'Mots-clés ou #id'

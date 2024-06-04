@@ -4,7 +4,7 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<div data-controller="multiselect-actors">
+<div class="multiselect-actors" data-controller="multiselect-actors">
     <select
         id="{{ id }}-data"
         name="{{ name }}"
@@ -27,9 +27,10 @@
         {% endfor %}
     </select>
 
-    <div class="flow">
+    <div class="flow flow--smaller">
         <select
             id="{{ id }}"
+            class="multiselect-actors__select widget--small"
             data-multiselect-actors-target="select"
             data-action="multiselect-actors#select"
         >
@@ -38,27 +39,23 @@
             </option>
         </select>
 
-        <ul class="list--nostyle flow flow--smaller" data-multiselect-actors-target="list">
-        </ul>
+        <div class="cols cols--always cols--wrap flow flow--smaller" data-multiselect-actors-target="list">
+        </div>
     </div>
 
     <template data-multiselect-actors-target="template">
-        <li class="cols cols--always cols--center">
-            <div class="col--extend" data-target="name">
-            </div>
+        <button
+            type="button"
+            class="multiselect-actors__button"
+            data-action="multiselect-actors#unselect"
+            data-target="unselect"
+            data-value=""
+            aria-label={{ 'tickets.filters.actors.unselect' | trans }}
+        >
+            <span data-target="name">
+            </span>
 
-            <button
-                type="button"
-                class="button--icon button--discreet"
-                data-action="multiselect-actors#unselect"
-                data-target="unselect"
-                data-value=""
-            >
-                {{ icon('close') }}
-                <span class="sr-only">
-                    {{ 'tickets.filters.actors.unselect' | trans }}
-                </span>
-            </button>
-        </li>
+            {{ icon('close') }}
+        </button>
     </template>
 </div>

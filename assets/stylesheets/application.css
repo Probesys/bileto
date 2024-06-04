@@ -29,6 +29,7 @@
 @import "./components/lists.css";
 @import "./components/messages.css";
 @import "./components/modal.css";
+@import "./components/multiselect-actors.css";
 @import "./components/notifications.css";
 @import "./components/pagination.css";
 @import "./components/panel.css";

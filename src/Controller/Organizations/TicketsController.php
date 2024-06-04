@@ -44,6 +44,7 @@ class TicketsController extends BaseController
         Request $request,
         OrganizationRepository $organizationRepository,
         TicketSearcher $ticketSearcher,
+        ActorsLister $actorsLister,
         UserRepository $userRepository,
         TranslatorInterface $translator,
     ): Response {
@@ -110,6 +111,10 @@ class TicketsController extends BaseController
             'sort' => $sort,
             'ticketFilter' => $ticketFilter,
             'searchMode' => $searchMode,
+            'openStatuses' => Ticket::getStatusesWithLabels('open'),
+            'finishedStatuses' => Ticket::getStatusesWithLabels('finished'),
+            'allUsers' => $actorsLister->findByOrganization($organization),
+            'agents' => $actorsLister->findByOrganization($organization, roleType: 'agent'),
             'errors' => $errors,
         ]);
     }

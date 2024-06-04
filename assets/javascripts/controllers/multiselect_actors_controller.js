@@ -87,10 +87,8 @@ export default class extends Controller {
     itemNode (value, name) {
         const item = this.templateTarget.content.firstElementChild.cloneNode(true);
 
+        item.setAttribute('data-value', value);
         item.querySelector('[data-target="name"]').textContent = name;
-
-        const unselectButton = item.querySelector('[data-target="unselect"]');
-        unselectButton.setAttribute('data-value', value);
 
         return item;
     }

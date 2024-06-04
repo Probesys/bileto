@@ -17,69 +17,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FiltersController extends BaseController
 {
-    #[Route('/tickets/filters/{filter}/edit', name: 'edit filter', methods: ['GET', 'HEAD'], priority: 1)]
-    public function edit(
-        string $filter,
-        Request $request,
-        ActorsLister $actorsLister,
-    ): Response {
-        /** @var string $textualQuery */
-        $textualQuery = $request->query->get('query', '');
-
-        /** @var string $from */
-        $from = $request->query->get('from', '');
-
-        try {
-            $query = Query::fromString($textualQuery);
-        } catch (\Exception $e) {
-            $query = null;
-        }
-
-        $ticketFilter = null;
-
-        if ($query) {
-            $ticketFilter = TicketFilter::fromQuery($query);
-        }
-
-        if (!$ticketFilter) {
-            $ticketFilter = new TicketFilter();
-        }
-
-        if ($filter === 'status') {
-            return $this->render("tickets/filters/edit_status.html.twig", [
-                'ticketFilter' => $ticketFilter,
-                'openStatuses' => Ticket::getStatusesWithLabels('open'),
-                'finishedStatuses' => Ticket::getStatusesWithLabels('finished'),
-                'query' => $textualQuery,
-                'from' => $from,
-            ]);
-        } elseif ($filter === 'type') {
-            return $this->render("tickets/filters/edit_type.html.twig", [
-                'ticketFilter' => $ticketFilter,
-                'query' => $textualQuery,
-                'from' => $from,
-            ]);
-        } elseif ($filter === 'priority' || $filter === 'urgency' || $filter === 'impact') {
-            return $this->render("tickets/filters/edit_priority.html.twig", [
-                'ticketFilter' => $ticketFilter,
-                'query' => $textualQuery,
-                'from' => $from,
-            ]);
-        } elseif ($filter === 'actors' || $filter === 'assignee' || $filter === 'requester' || $filter === 'involves') {
-            $allUsers = $actorsLister->findAll();
-            $agents = $actorsLister->findAll(roleType: 'agent');
-            return $this->render("tickets/filters/edit_actors.html.twig", [
-                'ticketFilter' => $ticketFilter,
-                'allUsers' => $allUsers,
-                'agents' => $agents,
-                'query' => $textualQuery,
-                'from' => $from,
-            ]);
-        } else {
-            throw $this->createNotFoundException('Filter parameter is not supported.');
-        }
-    }
-
     #[Route('/tickets/filters/combine', name: 'combine filters', methods: ['POST'], priority: 1)]
     public function combine(Request $request): Response
     {

@@ -316,22 +316,17 @@ tickets.events.title: '<strong>{username}</strong> renamed the ticket from “<i
 tickets.events.type.to_incident: '<strong>{username}</strong> changed the ticket to incident'
 tickets.events.type.to_request: '<strong>{username}</strong> changed the ticket to request'
 tickets.events.urgency: '<strong>{username}</strong> changed the urgency from <i>{oldValue}</i> to <i>{newValue}</i>'
-tickets.filters.actors.info: 'Show only those tickets with the following criteria:'
 tickets.filters.actors.select: 'Select an actor'
-tickets.filters.actors.title: 'Edit “actors” filters'
+tickets.filters.actors.title: 'Filter by actors'
 tickets.filters.actors.unselect: Unselect
-tickets.filters.apply_filter: 'Apply the filter'
 tickets.filters.assignee.no: 'Unassigned only'
-tickets.filters.priority.info: 'Show only those tickets with the following criteria:'
-tickets.filters.priority.title: 'Edit “priority” filters'
-tickets.filters.status.info: 'Show only those tickets with the following statuses:'
-tickets.filters.status.title: 'Edit “status” filter'
-tickets.filters.type.label: 'Select the filter for the types of tickets:'
-tickets.filters.type.no_filter: 'Show all the tickets (no filter)'
-tickets.filters.type.only_incidents: 'Show only the incidents'
-tickets.filters.type.only_requests: 'Show only the requests'
-tickets.filters.type.title: 'Edit “type” filter'
-tickets.filters.uncheck_all: 'Uncheck all the boxes'
+tickets.filters.priority.title: 'Filter by priority'
+tickets.filters.status.title: 'Filter by status'
+tickets.filters.type.label: 'Type of tickets'
+tickets.filters.type.no_filter: 'All the tickets'
+tickets.filters.type.only_incidents: 'Only the incidents'
+tickets.filters.type.only_requests: 'Only the requests'
+tickets.filters.type.title: 'Filter by type'
 tickets.impact: Impact
 tickets.impact.high: High
 tickets.impact.low: Low
@@ -364,13 +359,6 @@ tickets.priority.medium: Medium
 tickets.request: Request
 tickets.requester: Requester
 tickets.search.advanced_search: 'Advanced search'
-tickets.search.filters.actors: 'Filters “actors”'
-tickets.search.filters.new: New
-tickets.search.filters.or: ' or '
-tickets.search.filters.priority: 'Filters “priority”'
-tickets.search.filters.status: 'Filter “status”'
-tickets.search.filters.type: 'Filter “type”'
-tickets.search.filters.used: 'Filters used'
 tickets.search.help: 'Show syntax help'
 tickets.search.label: 'Search using keywords or by using the advanced syntax'
 tickets.search.placeholder: 'Keywords or #id'

@@ -139,14 +139,6 @@ button[disabled],
     transform: translateX(5px);
 }
 
-.button__caption {
-    display: block;
-    margin-bottom: -0.2rem;
-
-    color: var(--color-grey10);
-    font-size: var(--font-size-small);
-}
-
 .button-group {
     display: inline-flex;
 }
