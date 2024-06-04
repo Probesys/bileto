@@ -16,6 +16,7 @@
 @import "./utils/text.css";
 @import "./utils/wrapper.css";
 @import "./components/alerts.css";
+@import "./components/accordions.css";
 @import "./components/anchors.css";
 @import "./components/badges.css";
 @import "./components/buttons.css";

@@ -22,6 +22,7 @@ Dedicated to the frontend:
 - [Working with the popups](/docs/developers/popups.md)
 - [Working with the notifications](/docs/developers/notifications.md)
 - [Working with columns and grids](/docs/developers/columns-and-grids.md)
+- [Working with accordions](/docs/developers/accordions.md)
 
 Dedicated to the maintainers:
 
