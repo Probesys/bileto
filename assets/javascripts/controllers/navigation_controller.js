@@ -20,15 +20,15 @@ export default class extends Controller {
     }
 
     switch () {
-        if (this.buttonTarget.ariaExpanded === 'true') {
-            this.buttonTarget.ariaExpanded = 'false';
+        if (this.buttonTarget.getAttribute('aria-expanded') === 'true') {
+            this.buttonTarget.setAttribute('aria-expanded', 'false');
         } else {
-            this.buttonTarget.ariaExpanded = 'true';
+            this.buttonTarget.setAttribute('aria-expanded', 'true');
         }
     }
 
     close() {
-        this.buttonTarget.ariaExpanded = 'false';
+        this.buttonTarget.setAttribute('aria-expanded', 'false');
         this.buttonTarget.focus();
     }
 }
