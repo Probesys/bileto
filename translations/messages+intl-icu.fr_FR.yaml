@@ -28,8 +28,8 @@ advanced_search_syntax.not.title: 'Rechercher par négation'
 advanced_search_syntax.qualifiers.actors.example1: "Les tickets attribués à un utilisateur dont le nom ou l’email contient «\_alix\_»"
 advanced_search_syntax.qualifiers.actors.example2: 'Les tickets pour lesquels vous êtes demandeur'
 advanced_search_syntax.qualifiers.actors.example3: "Les tickets attribués à un utilisateur «\_alix\_», ou pour lesquels il est demandeur"
-advanced_search_syntax.qualifiers.actors.example4: 'Les tickets n’ayant pas de personne attribuée'
-advanced_search_syntax.qualifiers.actors.example5: 'Les tickets ayant une personne attribuée'
+advanced_search_syntax.qualifiers.actors.example4: 'Les tickets n’ayant pas d’agent attribué'
+advanced_search_syntax.qualifiers.actors.example5: 'Les tickets ayant un agent attribué'
 advanced_search_syntax.qualifiers.actors.title: Acteurs
 advanced_search_syntax.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
 advanced_search_syntax.qualifiers.organization.example1: "Les tickets des organisations dont le nom contient «\_probesys\_»"

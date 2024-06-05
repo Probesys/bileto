@@ -28,8 +28,8 @@ advanced_search_syntax.not.title: 'Search by negation'
 advanced_search_syntax.qualifiers.actors.example1: 'Tickets assigned to a user whose name or email contains “alix”'
 advanced_search_syntax.qualifiers.actors.example2: 'Tickets for which you are the requester'
 advanced_search_syntax.qualifiers.actors.example3: 'Tickets assigned to a user “alix”, or for which he is the requester'
-advanced_search_syntax.qualifiers.actors.example4: 'Tickets without an assigned person'
-advanced_search_syntax.qualifiers.actors.example5: 'Tickets with an assigned person'
+advanced_search_syntax.qualifiers.actors.example4: 'Tickets without an assigned agent'
+advanced_search_syntax.qualifiers.actors.example5: 'Tickets with an assigned agent'
 advanced_search_syntax.qualifiers.actors.title: Actors
 advanced_search_syntax.qualifiers.description: 'Qualifiers are special keywords (e.g. <code>status:</code>) that take a value or a comma-separated list of values. They are used to target a particular property.'
 advanced_search_syntax.qualifiers.organization.example1: 'Tickets from organizations with “probesys” in their name'
@@ -44,7 +44,7 @@ advanced_search_syntax.qualifiers.solution.title: Solution
 advanced_search_syntax.qualifiers.status.example1: 'Tickets with the status “new”'
 advanced_search_syntax.qualifiers.status.example2: 'Tickets with the status “new” or “in progress”'
 advanced_search_syntax.qualifiers.status.title: Status
-advanced_search_syntax.qualifiers.status.values: 'The possible values for “status” are: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, as well as the shortcuts <code>open</code> (includes the first 4) et <code>finished</code> (includes the last 2).'
+advanced_search_syntax.qualifiers.status.values: 'The possible values for “status” are: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, as well as the shortcuts <code>open</code> (includes the first 4) and <code>finished</code> (includes the last 2).'
 advanced_search_syntax.qualifiers.title: 'Search by qualifiers'
 advanced_search_syntax.qualifiers.type.example1: 'Tickets of type “incident”'
 advanced_search_syntax.qualifiers.type.title: Type
