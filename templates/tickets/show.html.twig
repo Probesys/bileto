@@ -410,11 +410,11 @@
                                 {% endif %}
 
                                 {% set canPostSolutionApprovement = ticket.status == 'resolved' and ticket.requester == app.user %}
-                                {% set canSeeAgentMenu = not canPostSolutionApprovement and ticket.assignee == app.user %}
+                                {% set canSeeAgentMenu = not canPostSolutionApprovement and is_agent(organization) %}
 
                                 {% if canSeeAgentMenu %}
-                                    {% set canPostSolution = not ticket.isFinished and not ticket.hasSolution %}
-                                    {% set canPostTimeSpent = not ticket.isFinished and is_granted('orga:create:tickets:time_spent', organization) %}
+                                    {% set canPostSolution = not ticket.isFinished and not ticket.hasSolution and ticket.assignee == app.user %}
+                                    {% set canPostTimeSpent = is_granted('orga:create:tickets:time_spent', organization) %}
 
                                     <div class="cols flow">
                                         <div class="col--extend">
