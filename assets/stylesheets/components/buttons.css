@@ -112,18 +112,13 @@ button[disabled],
 
     aspect-ratio: 1 / 1;
 
-    line-height: 1.2;
+    line-height: 0;
 
     border-radius: 5rem;
 }
 
 .button--icon .icon {
     margin-top: 0;
-}
-
-.button--icon .icon--eye,
-.button--icon .icon--eye-slash {
-    margin-top: 0.1em;
 }
 
 .button--uppercase {
