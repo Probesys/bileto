@@ -39,11 +39,10 @@
 @import "./components/scroll-to-top.css";
 @import "./components/spinners.css";
 @import "./components/tables.css";
-@import "./components/tickets.css";
 @import "./components/timelines.css";
 @import "./custom/contracts.css";
 @import "./custom/login.css";
-@import "./custom/tickets-show.css";
+@import "./custom/tickets.css";
 @import "./layout/banner.css";
 @import "./layout/body.css";
 @import "./layout/breadcrumb.css";
