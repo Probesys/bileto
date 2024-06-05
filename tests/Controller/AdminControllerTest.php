@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
-class SettingsControllerTest extends WebTestCase
+class AdminControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
@@ -31,7 +31,7 @@ class SettingsControllerTest extends WebTestCase
             'admin:create:organizations',
         ]);
 
-        $client->request('GET', '/settings');
+        $client->request('GET', '/admin');
 
         $this->assertResponseRedirects('/roles', 302);
     }
@@ -47,7 +47,7 @@ class SettingsControllerTest extends WebTestCase
             'admin:create:organizations',
         ]);
 
-        $client->request('GET', '/settings');
+        $client->request('GET', '/admin');
 
         $this->assertResponseRedirects('/users', 302);
     }
@@ -61,7 +61,7 @@ class SettingsControllerTest extends WebTestCase
             'admin:see',
         ]);
 
-        $client->request('GET', '/settings');
+        $client->request('GET', '/admin');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains(
@@ -79,6 +79,6 @@ class SettingsControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/settings');
+        $client->request('GET', '/admin');
     }
 }

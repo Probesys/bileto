@@ -10,9 +10,9 @@ use App\Security\Authorizer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SettingsController extends BaseController
+class AdminController extends BaseController
 {
-    #[Route('/settings', name: 'settings', methods: ['GET', 'HEAD'])]
+    #[Route('/admin', name: 'admin', methods: ['GET', 'HEAD'])]
     public function index(Authorizer $authorizer): Response
     {
         $this->denyAccessUnlessGranted('admin:see');
@@ -34,6 +34,6 @@ class SettingsController extends BaseController
         // one of the previous admin permissions.
         // However, theorically, an admin role could be created without any
         // permission. The template will handle this case.
-        return $this->render('settings/index.html.twig');
+        return $this->render('admin/index.html.twig');
     }
 }

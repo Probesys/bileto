@@ -31,7 +31,7 @@ $ ./docker/bin/console db:seeds:load
 ```
 
 You can configure more mailboxes with IMAP in the interface.
-As an admin, go to the “Settings > Mailboxes” and create a new mailbox.
+As an admin, go to the “Admin > Mailboxes” and create a new mailbox.
 Configure it with the following information:
 
 - name: whatever name you want

@@ -5,6 +5,9 @@ about.short: 'L’outil de ticketing ergonomique pour votre gestion helpdesk.'
 about.source_code: 'code source'
 about.title: 'À propos de Bileto'
 about.version: Version
+admin.index.no_access: 'Vous n’avez pas accès à l’administration.'
+admin.index.no_access_advice: 'Votre rôle administrateur n’a probablement aucune permission. Vous devriez contacter un autre administrateur pour corriger cela.'
+admin.index.title: Admin
 advanced_search_syntax.complex.example1: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_»"
 advanced_search_syntax.complex.example2: "Les tickets de statut «\_nouveau\_», ou ceux qui vous sont attribués"
 advanced_search_syntax.complex.example3: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_» ou qui vous sont attribués"
@@ -252,9 +255,6 @@ roles.super_admin.description: 'Un rôle spécial avec un accès à toute l’ad
 roles.type.admin: Administrateur
 roles.type.agent: Agent
 roles.type.user: Utilisateur
-settings.index.no_access: 'Vous n’avez pas accès à l’administration.'
-settings.index.no_access_advice: 'Votre rôle administrateur n’a probablement aucune permission. Vous devriez contacter un autre administrateur pour corriger cela.'
-settings.index.title: Gestion
 submenu.scroller.scroll_to_left: 'Défile le menu vers la gauche'
 submenu.scroller.scroll_to_right: 'Défile le menu vers la droite'
 teams.agents.new.add_agent: 'Ajouter l’agent'

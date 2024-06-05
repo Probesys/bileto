@@ -6,13 +6,13 @@
 
 {% extends 'base.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentPage = 'admin' %}
 
 {% block submenu %}
     <nav class="layout__submenu submenu" data-controller="submenu" aria-labelledby="submenu-title">
         <div class="cols cols--always cols--center">
             <div class="submenu__title col--extend" id="submenu-title">
-                {{ 'settings.index.title' | trans }}
+                {{ 'admin.index.title' | trans }}
             </div>
 
             <div class="submenu__scroller only-mobile">

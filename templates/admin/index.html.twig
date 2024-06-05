@@ -6,19 +6,19 @@
 
 {% extends 'base.html.twig' %}
 
-{% set currentPage = 'settings' %}
+{% set currentPage = 'admin' %}
 
-{% block title %}{{ 'settings.index.title' | trans }}{% endblock %}
+{% block title %}{{ 'admin.index.title' | trans }}{% endblock %}
 
 {% block body %}
     <main class="layout__body flow flow--larger">
-        <h1>{{ 'settings.index.title' | trans }}</h1>
+        <h1>{{ 'admin.index.title' | trans }}</h1>
 
         <div class="wrapper wrapper--text wrapper--center">
             {{ include('alerts/_alert.html.twig', {
                 type: 'warning',
-                title: 'settings.index.no_access' | trans,
-                message: 'settings.index.no_access_advice' | trans,
+                title: 'admin.index.no_access' | trans,
+                message: 'admin.index.no_access_advice' | trans,
             }, with_context = false) }}
         </div>
     </main>

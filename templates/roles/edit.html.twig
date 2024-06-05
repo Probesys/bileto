@@ -4,7 +4,7 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'settings.html.twig' %}
+{% extends 'admin.html.twig' %}
 
 {% set currentMenu = 'roles' %}
 
@@ -26,8 +26,8 @@
             {{ 'layout.home' | trans }}
         </a>
 
-        <a href="{{ path('settings') }}">
-            {{ 'settings.index.title' | trans }}
+        <a href="{{ path('admin') }}">
+            {{ 'admin.index.title' | trans }}
         </a>
 
         <a href="{{ path('roles') }}">
