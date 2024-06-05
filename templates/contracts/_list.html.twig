@@ -1,0 +1,70 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<ul class="list--padded list--border list--nostyle">
+    {% for contract in contracts %}
+        <li class="cols flow flow--larger" data-test="contract-item">
+            <div class="col--size6 flow flow--small">
+                <h2 class="list__item-title">
+                    <a href="{{ path('contract', {'uid': contract.uid }) }}">
+                        {{ contract.name }}
+                    </a>
+                </h2>
+
+                <p class="text--small">
+                    <time datetime="{{ contract.startAt | dateIso }}">
+                        {{ contract.startAt | dateTrans('dd MMM yyyy') }}
+                    </time>
+
+                    —
+
+                    <time datetime="{{ contract.endAt | dateIso }}">
+                        {{ contract.endAt | dateTrans('dd MMM yyyy') }}
+                    </time>
+                </p>
+            </div>
+
+            <div class="col--size4 flow flow--small text--primary-dark">
+                <p>
+                    <a class="list-contracts__organization" href="{{ path('organization contracts', { uid: contract.organization.uid }) }}">
+                        {{ contract.organization.name }}
+                    </a>
+                </p>
+
+                <p>
+                    <a href="{{ path('organization tickets', { uid: contract.organization.uid, q: 'contract:#' ~ contract.id }) }}">
+                        {{ 'contracts.index.tickets' | trans({ count: contract.tickets.count }) }}
+                    </a>
+                </p>
+
+                <p>
+                    {{ 'contracts.hours_consumed' | trans({
+                        'hours': contract.consumedMinutes | formatMinutes,
+                        'maxHours': contract.maxHours,
+                        'percentage': contract.consumedPercentage,
+                    }) | raw }}
+                </p>
+            </div>
+
+            <div class="col--size2 flow flow--small">
+                <div class="badge badge--block badge--{{ contract.statusBadgeColor }}" title="{{ 'contracts.status' | trans }}">
+                    <span class="sr-only">
+                        {{ 'contracts.status' | trans }}
+                    </span>
+
+                    {{ contract.statusLabel | trans }}
+                </div>
+
+                {% if contract.alertActivated %}
+                    <div class="badge badge--block badge--orange">
+                        {{ icon('triangle-exclamation-warning') }}
+                        {{ 'contracts.index.alert' | trans }}
+                    </div>
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>

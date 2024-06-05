@@ -151,6 +151,18 @@
                                         </a>
                                     </li>
 
+                                    {% if is_granted('orga:see:contracts', 'any') %}
+                                        <li class="layout__header-item">
+                                            <a
+                                                class="layout__header-anchor"
+                                                href="{{ path('contracts') }}"
+                                                {{ currentPage == 'contracts' ? 'aria-current="page"' }}
+                                            >
+                                                {{ 'layout.contracts' | trans }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
                                     <li class="layout__header-item">
                                         <a
                                             class="layout__header-anchor"

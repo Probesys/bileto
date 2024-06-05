@@ -4,24 +4,16 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% extends 'organization.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% set currentMenu = 'contracts' %}
+{% set currentPage = 'contracts' %}
 
-{% block title %}{{ 'contracts.index.title' | trans }} – {{ organization.name }}{% endblock %}
+{% block title %}{{ 'contracts.index.title' | trans }}{% endblock %}
 
 {% block breadcrumb %}
     <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
         <a href="{{ path('home') }}">
             {{ 'layout.home' | trans }}
-        </a>
-
-        <a href="{{ path('organizations') }}">
-            {{ 'organizations.index.title' | trans }}
-        </a>
-
-        <a href="{{ path('organization', { uid: organization.uid }) }}">
-            {{ organization.name }}
         </a>
 
         <span aria-current="page">
@@ -36,13 +28,6 @@
 
         <div class="flow">
             <div class="cols cols--center flow">
-                {% if is_granted('orga:manage:contracts', organization) %}
-                    <a class="button button--primary button--uppercase" href="{{ path('new organization contract', { uid: organization.uid }) }}">
-                        {{ icon('plus') }}
-                        {{ 'contracts.index.new_contract' | trans }}
-                    </a>
-                {% endif %}
-
                 {% if contractsPagination.count > 0 %}
                     <p class="text--secondary">
                         {{ 'contracts.index.number' | trans({ count: contractsPagination.countAll }) }}

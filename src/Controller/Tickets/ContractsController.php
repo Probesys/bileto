@@ -13,7 +13,6 @@ use App\Repository\ContractRepository;
 use App\Repository\EntityEventRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TimeSpentRepository;
-use App\Service\Sorter\ContractSorter;
 use App\Service\ContractTimeAccounting;
 use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +26,6 @@ class ContractsController extends BaseController
     public function edit(
         Ticket $ticket,
         ContractRepository $contractRepository,
-        ContractSorter $contractSorter,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $organization);
@@ -40,7 +38,6 @@ class ContractsController extends BaseController
         }
 
         $ongoingContracts = $contractRepository->findOngoingByOrganization($organization);
-        $contractSorter->sort($ongoingContracts);
         $initialOngoingContract = $ticket->getOngoingContract();
 
         return $this->render('tickets/contracts/edit.html.twig', [
@@ -59,7 +56,6 @@ class ContractsController extends BaseController
         TicketRepository $ticketRepository,
         TimeSpentRepository $timeSpentRepository,
         ContractTimeAccounting $contractTimeAccounting,
-        ContractSorter $contractSorter,
         TranslatorInterface $translator,
     ): Response {
         $organization = $ticket->getOrganization();
@@ -79,7 +75,6 @@ class ContractsController extends BaseController
         $csrfToken = $request->request->getString('_csrf_token');
 
         $ongoingContracts = $contractRepository->findOngoingByOrganization($organization);
-        $contractSorter->sort($ongoingContracts);
         $initialOngoingContract = $ticket->getOngoingContract();
 
         if (!$this->isCsrfTokenValid('update ticket contracts', $csrfToken)) {

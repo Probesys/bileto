@@ -119,6 +119,7 @@ hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minu
 hours_formatter.minutes.short: "{minutes}\_m"
 layout.activate_javascript: 'Vous devez activer le JavaScript pour utiliser Bileto.'
 layout.breadcrumb: 'Fil d’Ariane'
+layout.contracts: Contrats
 layout.home: Accueil
 layout.logout: 'Se déconnecter'
 layout.main_navigation: 'Navigation principale'

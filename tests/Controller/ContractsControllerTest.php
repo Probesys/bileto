@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
+use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
@@ -24,6 +25,90 @@ class ContractsControllerTest extends WebTestCase
     use Factories;
     use ResetDatabase;
     use SessionHelper;
+
+    public function testGetIndexRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:see:contracts']);
+        $endAt1 = Utils\Time::fromNow(1, 'months');
+        $contract1 = ContractFactory::createOne([
+            'name' => 'My contract 1',
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => $endAt1,
+        ]);
+        $endAt2 = Utils\Time::fromNow(2, 'months');
+        $contract2 = ContractFactory::createOne([
+            'name' => 'My contract 2',
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => $endAt2,
+        ]);
+
+        $client->request('GET', '/contracts');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(1)', 'My contract 2');
+        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(2)', 'My contract 1');
+    }
+
+    public function testGetIndexRendersCorrectlyListsOnlyAccessibleContracts(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization1 = OrganizationFactory::createOne();
+        $organization2 = OrganizationFactory::createOne();
+        $organization3 = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:see',
+            'orga:see:contracts'
+        ], $organization1->object());
+        $this->grantOrga($user->object(), [
+            'orga:see',
+        ], $organization2->object());
+        $contract1 = ContractFactory::createOne([
+            'name' => 'My contract 1',
+            'organization' => $organization1,
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => Utils\Time::fromNow(1, 'months'),
+        ]);
+        $contract2 = ContractFactory::createOne([
+            'name' => 'My contract 2',
+            'organization' => $organization2,
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => Utils\Time::fromNow(1, 'months'),
+        ]);
+        $contract3 = ContractFactory::createOne([
+            'name' => 'My contract 3',
+            'organization' => $organization3,
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => Utils\Time::fromNow(1, 'months'),
+        ]);
+
+        $crawler = $client->request('GET', '/contracts');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="contract-item"]', 'My contract 1');
+        $this->assertSelectorNotExists('[data-test="contract-item"]:nth-child(2)');
+    }
+
+    public function testGetIndexFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantOrga($user->object(), ['orga:see']);
+        $contract = ContractFactory::createOne([
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => Utils\Time::fromNow(1, 'months'),
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request('GET', '/contracts');
+    }
 
     public function testGetEditRendersCorrectly(): void
     {

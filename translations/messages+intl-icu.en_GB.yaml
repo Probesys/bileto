@@ -119,6 +119,7 @@ hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minu
 hours_formatter.minutes.short: "{minutes}\_m"
 layout.activate_javascript: 'You need to activate the JavaScript in order to use Bileto.'
 layout.breadcrumb: Breadcrumb
+layout.contracts: Contracts
 layout.home: Home
 layout.logout: Logout
 layout.main_navigation: 'Main navigation'

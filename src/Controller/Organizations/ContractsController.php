@@ -13,7 +13,6 @@ use App\Form\Type\ContractType;
 use App\Repository\ContractRepository;
 use App\Repository\OrganizationRepository;
 use App\Security\Authorizer;
-use App\Service\Sorter\ContractSorter;
 use App\Utils;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,25 +25,28 @@ class ContractsController extends BaseController
 {
     #[Route('/organizations/{uid}/contracts', name: 'organization contracts', methods: ['GET', 'HEAD'])]
     public function index(
+        Request $request,
         Organization $organization,
         ContractRepository $contractRepository,
         OrganizationRepository $organizationRepository,
-        ContractSorter $contractSorter,
-        Authorizer $authorizer,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
 
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        $contracts = $contractRepository->findBy([
-            'organization' => $organization,
+        $page = $request->query->getInt('page', 1);
+
+        $contractsQuery = $contractRepository->findByOrganizationQuery($organization);
+
+        $contractsPagination = Utils\Pagination::paginate($contractsQuery, [
+            'page' => $page,
+            'maxResults' => 25,
         ]);
-        $contractSorter->sort($contracts);
 
         return $this->render('organizations/contracts/index.html.twig', [
             'organization' => $organization,
-            'contracts' => $contracts,
+            'contractsPagination' => $contractsPagination,
         ]);
     }
 

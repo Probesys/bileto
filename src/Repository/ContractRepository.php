@@ -12,6 +12,7 @@ use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
 use App\Utils;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -33,10 +34,26 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
         parent::__construct($registry, Contract::class);
     }
 
+    public function findByOrganizationQuery(Organization $organization): ORM\Query
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT c
+            FROM App\Entity\Contract c
+            WHERE c.organization = :organization
+            ORDER BY c.endAt DESC, c.name
+        SQL);
+
+        $query->setParameter('organization', $organization);
+
+        return $query;
+    }
+
     /**
-     * @return Contract[]
+     * @param Organization[] $organizations
      */
-    public function findOngoingByOrganization(Organization $organization): array
+    public function findOngoingByOrganizationsQuery(array $organizations): ORM\Query
     {
         $entityManager = $this->getEntityManager();
 
@@ -49,15 +66,26 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
 
             WHERE c.startAt <= :now
             AND :now < c.endAt
-            AND c.organization = :organization
+            AND c.organization IN (:organizations)
 
             GROUP BY c.id
             HAVING c.maxHours > (COALESCE(SUM(ts.time), 0) / 60.0)
+
+            ORDER BY c.endAt DESC, c.name
         SQL);
 
         $query->setParameter('now', $now);
-        $query->setParameter('organization', $organization);
+        $query->setParameter('organizations', $organizations);
 
+        return $query;
+    }
+
+    /**
+     * @return Contract[]
+     */
+    public function findOngoingByOrganization(Organization $organization): array
+    {
+        $query = $this->findOngoingByOrganizationsQuery([$organization]);
         return $query->getResult();
     }
 }
