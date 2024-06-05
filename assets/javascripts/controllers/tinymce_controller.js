@@ -40,6 +40,7 @@ export default class extends Controller {
             statusbar: false,
             contextmenu: false,
             promotion: false,
+            license_key: 'gpl',
             link_assume_external_targets: true,
             link_target_list: false,
             auto_focus: autofocus,
