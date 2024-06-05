@@ -25,7 +25,9 @@
 
     --form-border-radius: var(--border-radius);
 
-    --form-padding: var(--space-medium);
+    --form-padding-x: var(--space-medium);
+    --form-padding-y: var(--space-medium);
+    --form-padding: var(--form-padding-y) var(--form-padding-x);
 
     --select-icon-size: 1rem;
 }
@@ -221,13 +223,11 @@ select {
 }
 
 select:not([multiple]) {
-    --icon-padding: var(--space-medium);
-
-    padding-right: calc(var(--form-padding) + var(--icon-padding) + var(--select-icon-size));
+    padding-right: calc(var(--form-padding-x) + var(--select-icon-size) + var(--form-padding-x));
 
     background-image: url("../../icons/angle-down.svg");
     background-repeat: no-repeat;
-    background-position: right var(--icon-padding) top 50%;
+    background-position: right var(--form-padding-x) top 50%;
     background-size: var(--select-icon-size);
 
     appearance: none;
@@ -258,7 +258,8 @@ select[aria-invalid] {
 }
 
 .widget--small {
-    --form-padding: var(--space-smaller) var(--space-medium);
+    --form-padding-y: var(--space-smaller);
+    --form-padding: var(--form-padding-y) var(--form-padding-x);
 }
 
 fieldset {
@@ -307,10 +308,10 @@ legend {
 }
 
 .editor__documents {
-    margin-right: var(--form-padding);
-    margin-left: var(--form-padding);
-    padding-top: var(--form-padding);
-    padding-bottom: var(--form-padding);
+    margin-right: var(--form-padding-x);
+    margin-left: var(--form-padding-x);
+    padding-top: var(--form-padding-y);
+    padding-bottom: var(--form-padding-y);
 
     border-top: var(--form-border-width) solid var(--color-grey6);
 }
@@ -356,7 +357,7 @@ legend {
 }
 
 .input-container input {
-    padding-right: calc(var(--button-size) + var(--form-padding));
+    padding-right: calc(var(--button-size) + var(--form-padding-x));
 }
 
 .input-container button {
