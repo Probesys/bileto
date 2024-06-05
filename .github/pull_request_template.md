@@ -19,6 +19,7 @@
 - [ ] permissions / authorizations are verified
 - [ ] interface works on both mobiles and big screens
 - [ ] interface works in both light and dark modes
+- [ ] interface works on both Firefox and Chrome
 - [ ] accessibility has been tested
 - [ ] tests are up-to-date
 - [ ] locales are synchronized

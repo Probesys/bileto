@@ -96,6 +96,14 @@ If you have used the colors as explained in [the `colors.light.css` file](/asset
 However, you should still manually check that it works in both modes.
 You can change the mode in the “Preferences” page of Bileto.
 
+#### “Interface works on both Firefox and Chrome”
+
+We aim to make Bileto work well on all major browsers.
+We strongly support Firefox and it
+This is our standard web browser and we develop with it.
+However, Chrome is the number one brower in terms of market share.
+Please always try your changes with at least Firefox and Chrome (or Chromium, or at least a Webkit browser).
+
 #### “Accessibility has been tested”
 
 We want Bileto to be as accessible as possible.
