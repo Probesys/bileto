@@ -42,6 +42,10 @@
     background-image: url("../../icons/minus-primary.svg");
 }
 
+.accordion__title::-webkit-details-marker {
+    display: none;
+}
+
 .accordion__body {
     margin-top: calc(var(--space-medium) * -1);
     padding: var(--space-large) var(--space-small);
