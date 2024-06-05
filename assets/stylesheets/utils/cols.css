@@ -14,6 +14,14 @@
     }
 }
 
+.cols--always.cols--center {
+    align-items: center;
+}
+
+.cols--always.cols--baseline {
+    align-items: baseline;
+}
+
 @media (min-width: 800px) {
     .cols--center {
         align-items: center;
