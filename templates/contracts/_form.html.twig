@@ -156,6 +156,23 @@
         >{{ field_value(form.notes) }}</textarea>
     </div>
 
+    {% if display_associate_checkboxes %}
+        <div>
+            <input
+                type="checkbox"
+                id="{{ field_id(form.associateTickets) }}"
+                name="{{ field_name(form.associateTickets) }}"
+                {{ form.associateTickets.vars.checked ? 'checked' }}
+            />
+
+            <label for="{{ field_id(form.associateTickets) }}">
+                {{ 'contracts.form.associate_tickets' | trans }}
+            </label>
+        </div>
+    {% else %}
+        <!-- {{ field_name(form.associateTickets) }} -->
+    {% endif %}
+
     <div class="form__actions">
         <button class="button--primary" type="submit">
             {{ submit_label }}

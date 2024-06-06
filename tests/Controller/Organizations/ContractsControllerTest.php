@@ -9,6 +9,7 @@ namespace App\Tests\Controller\Organizations;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\OrganizationFactory;
+use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -147,6 +148,94 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame($notes, $contract->getNotes());
         $this->assertSame(80, $contract->getHoursAlert());
         $this->assertSame(24, $contract->getDateAlert()); // 20% of the days duration
+    }
+
+    public function testPostCreateCanAttachTicketsToContract(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:see:contracts',
+            'orga:manage:contracts',
+        ]);
+        $startAt = new \DateTimeImmutable('2023-01-01');
+        $endAt = new \DateTimeImmutable('2023-12-31');
+        $ticket = TicketFactory::createOne([
+            'organization' => $organization,
+            'createdAt' => new \DateTimeImmutable('2023-06-06'),
+        ]);
+
+        $this->assertSame(0, ContractFactory::count());
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'contract'),
+                'name' => 'My contract',
+                'maxHours' => 10,
+                'startAt' => $startAt->format('Y-m-d'),
+                'endAt' => $endAt->format('Y-m-d'),
+                'associateTickets' => true,
+            ],
+        ]);
+
+        $this->assertSame(1, ContractFactory::count());
+        $contract = ContractFactory::last();
+        $contract->refresh();
+        $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
+        $tickets = $contract->getTickets();
+        $this->assertSame(1, count($tickets));
+        $this->assertSame($ticket->getUid(), $tickets[0]->getUid());
+    }
+
+    public function testPostCreateDoesNotAttachContractIfTicketsHaveAlreadyOneOngoing(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:see:contracts',
+            'orga:manage:contracts',
+        ]);
+        $startAt = new \DateTimeImmutable('2023-01-01');
+        $endAt = new \DateTimeImmutable('2023-12-31');
+        // We use an overlapping contract. Note that the ticket has been
+        // created before the start of the existing contract. It allows to test
+        // an edge-case that we want to handle correctly.
+        $existingStartAt = new \DateTimeImmutable('2023-09-01');
+        $existingEndAt = new \DateTimeImmutable('2023-08-31');
+        $existingContract = ContractFactory::createOne([
+            'organization' => $organization,
+            'startAt' => $startAt,
+            'endAt' => $endAt,
+        ]);
+        $ticket = TicketFactory::createOne([
+            'organization' => $organization,
+            'createdAt' => new \DateTimeImmutable('2023-06-06'),
+            'contracts' => [$existingContract],
+        ]);
+
+        $this->assertSame(1, ContractFactory::count());
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'contract'),
+                'name' => 'My contract',
+                'maxHours' => 10,
+                'startAt' => $startAt->format('Y-m-d'),
+                'endAt' => $endAt->format('Y-m-d'),
+                'associateTickets' => true,
+            ],
+        ]);
+
+        $this->assertSame(2, ContractFactory::count());
+        $contract = ContractFactory::last();
+        $contract->refresh();
+        $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
+        $tickets = $contract->getTickets();
+        $this->assertSame(0, count($tickets));
     }
 
     public function testPostCreateFailsIfNameIsInvalid(): void

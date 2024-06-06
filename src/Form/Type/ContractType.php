@@ -43,6 +43,11 @@ class ContractType extends AbstractType
             'empty_data' => '',
             'trim' => true,
         ]);
+        $builder->add('associateTickets', Type\CheckboxType::class, [
+            'required' => false,
+            'mapped' => false,
+            'data' => true,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

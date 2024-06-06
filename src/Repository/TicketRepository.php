@@ -6,9 +6,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Contract;
 use App\Entity\Ticket;
 use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
+use App\Utils;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -33,5 +35,46 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Ticket::class);
+    }
+
+    /**
+     * @return Ticket[]
+     */
+    public function findAssociableTickets(Contract $contract): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT t
+            FROM App\Entity\Ticket t
+
+            WHERE t.organization = :organization
+            AND :startAt <= t.createdAt
+            AND t.createdAt < :endAt
+        SQL);
+
+        $query->setParameter('organization', $contract->getOrganization());
+        $query->setParameter('startAt', $contract->getStartAt());
+        $query->setParameter('endAt', $contract->getEndAt());
+
+        $tickets = $query->getResult();
+
+        // Filter tickets that have no ongoing contract on the period of the
+        // given contract.
+        return array_filter($tickets, function ($ticket) use ($contract): bool {
+            $ticketContracts = $ticket->getContracts()->toArray();
+
+            $hasOngoingContract = Utils\ArrayHelper::any(
+                $ticketContracts,
+                function ($ticketContract) use ($contract): bool {
+                    return (
+                        $ticketContract->getEndAt() >= $contract->getStartAt() &&
+                        $ticketContract->getStartAt() < $contract->getEndAt()
+                    );
+                }
+            );
+
+            return !$hasOngoingContract;
+        });
     }
 }

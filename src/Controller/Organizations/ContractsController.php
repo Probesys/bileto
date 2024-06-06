@@ -12,6 +12,7 @@ use App\Entity\Organization;
 use App\Form\Type\ContractType;
 use App\Repository\ContractRepository;
 use App\Repository\OrganizationRepository;
+use App\Repository\TicketRepository;
 use App\Security\Authorizer;
 use App\Utils;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -86,6 +87,7 @@ class ContractsController extends BaseController
         Organization $organization,
         Request $request,
         ContractRepository $contractRepository,
+        TicketRepository $ticketRepository,
         ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
@@ -105,6 +107,16 @@ class ContractsController extends BaseController
         $contract->setOrganization($organization);
         $contract->initDefaultAlerts();
         $contractRepository->save($contract, true);
+
+        if ($form->get('associateTickets')->getData()) {
+            $tickets = $ticketRepository->findAssociableTickets($contract);
+
+            foreach ($tickets as $ticket) {
+                $ticket->addContract($contract);
+            }
+
+            $ticketRepository->save($tickets, true);
+        }
 
         return $this->redirectToRoute('contract', [
             'uid' => $contract->getUid(),
