@@ -45,6 +45,7 @@
         <div class="panel">
             {{ include('contracts/_form.html.twig', {
                 'form': form,
+                'display_associate_checkboxes': false,
                 'submit_label': 'forms.save_changes' | trans,
             }) }}
         </div>

@@ -8,11 +8,16 @@ namespace App\Controller\Organizations;
 
 use App\Controller\BaseController;
 use App\Entity\Contract;
+use App\Entity\EntityEvent;
 use App\Entity\Organization;
 use App\Form\Type\ContractType;
 use App\Repository\ContractRepository;
+use App\Repository\EntityEventRepository;
 use App\Repository\OrganizationRepository;
+use App\Repository\TicketRepository;
+use App\Repository\TimeSpentRepository;
 use App\Security\Authorizer;
+use App\Service\ContractTimeAccounting;
 use App\Utils;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
@@ -86,6 +91,10 @@ class ContractsController extends BaseController
         Organization $organization,
         Request $request,
         ContractRepository $contractRepository,
+        EntityEventRepository $entityEventRepository,
+        TicketRepository $ticketRepository,
+        TimeSpentRepository $timeSpentRepository,
+        ContractTimeAccounting $contractTimeAccounting,
         ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
@@ -105,6 +114,37 @@ class ContractsController extends BaseController
         $contract->setOrganization($organization);
         $contract->initDefaultAlerts();
         $contractRepository->save($contract, true);
+
+        $contractTickets = [];
+
+        if ($form->get('associateTickets')->getData()) {
+            $contractTickets = $ticketRepository->findAssociableTickets($contract);
+            $entityEvents = [];
+
+            foreach ($contractTickets as $ticket) {
+                $ticket->addContract($contract);
+
+                $entityEvents[] = EntityEvent::initUpdate($ticket, [
+                    'ongoingContract' => [null, $contract->getId()],
+                ]);
+            }
+
+            $ticketRepository->save($contractTickets, true);
+            $entityEventRepository->save($entityEvents, true);
+        }
+
+        if ($form->get('associateUnaccountedTimes')->getData()) {
+            foreach ($contractTickets as $ticket) {
+                $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
+
+                if (!$timeSpents) {
+                    continue;
+                }
+
+                $contractTimeAccounting->accountTimeSpents($contract, $timeSpents);
+                $timeSpentRepository->save($timeSpents, true);
+            }
+        }
 
         return $this->redirectToRoute('contract', [
             'uid' => $contract->getUid(),
