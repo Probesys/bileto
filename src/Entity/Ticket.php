@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -509,7 +510,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         $criteria = Criteria::create();
         $expr = Criteria::expr()->isNull('contract');
         $criteria->where($expr);
-        $criteria->orderBy(['createdAt' => 'ASC']);
+        $criteria->orderBy(['createdAt' => Order::Ascending]);
 
         /** @var ArrayCollection<int, TimeSpent> */
         $timeSpents = $this->timeSpents;
