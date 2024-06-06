@@ -289,7 +289,7 @@ teams.show.edit: 'Edit the team'
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee
-tickets.contracts.edit.include_unaccounted_time: 'Include unaccounted time in the contract'
+tickets.contracts.edit.associate_unaccounted_times: 'Associate existing unaccounted spent times'
 tickets.contracts.edit.title: 'Edit the contract'
 tickets.contracts.none: 'No contract'
 tickets.contracts.ongoing: 'Ongoing contract'
