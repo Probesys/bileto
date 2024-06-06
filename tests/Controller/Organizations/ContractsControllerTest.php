@@ -10,6 +10,7 @@ use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
+use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -236,6 +237,55 @@ class ContractsControllerTest extends WebTestCase
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $tickets = $contract->getTickets();
         $this->assertSame(0, count($tickets));
+    }
+
+    public function testPostCreateCanAttachUnaccountedTimeSpentsToContract(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->object(), [
+            'orga:see:contracts',
+            'orga:manage:contracts',
+        ]);
+        $startAt = new \DateTimeImmutable('2023-01-01');
+        $endAt = new \DateTimeImmutable('2023-12-31');
+        $timeAccountingUnit = 30;
+        $ticket = TicketFactory::createOne([
+            'organization' => $organization,
+            'createdAt' => new \DateTimeImmutable('2023-06-06'),
+        ]);
+        $timeSpent = TimeSpentFactory::createOne([
+            'ticket' => $ticket,
+            'contract' => null,
+            'time' => 10,
+            'realTime' => 10,
+        ]);
+
+        $this->assertSame(0, ContractFactory::count());
+
+        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'contract'),
+                'name' => 'My contract',
+                'maxHours' => 10,
+                'startAt' => $startAt->format('Y-m-d'),
+                'endAt' => $endAt->format('Y-m-d'),
+                'timeAccountingUnit' => $timeAccountingUnit,
+                'associateTickets' => true,
+                'associateUnaccountedTimes' => true,
+            ],
+        ]);
+
+        $this->assertSame(1, ContractFactory::count());
+        $contract = ContractFactory::last();
+        $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
+        $timeSpent->refresh();
+        $timeSpentContract = $timeSpent->getContract();
+        $this->assertNotNull($timeSpentContract);
+        $this->assertSame($contract->getUid(), $timeSpentContract->getUid());
+        $this->assertSame(30, $timeSpent->getTime());
     }
 
     public function testPostCreateFailsIfNameIsInvalid(): void

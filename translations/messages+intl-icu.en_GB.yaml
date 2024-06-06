@@ -69,6 +69,7 @@ contracts.alerts.edit.title: 'Set up contract alerts'
 contracts.days_consumed: "<strong>{days}\_d consumed</strong>"
 contracts.edit.title: 'Edit a contract'
 contracts.form.associate_tickets: 'Associate existing tickets created during the contract period'
+contracts.form.associate_unaccounted_times: 'Associate existing unaccounted spent times'
 contracts.form.time_accounting_unit: 'Time accounting unit (minutes)'
 contracts.form.time_accounting_unit.caption: 'The time spent on tickets will be rounded up for contractual purposes. For example, if the time accounting unit is 30 minutes, and a technician spends 15 minutes on a ticket, 30 minutes will be accounted for in the contract.'
 contracts.form.end_at: 'End on'

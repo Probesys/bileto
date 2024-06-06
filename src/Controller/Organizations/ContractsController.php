@@ -13,7 +13,9 @@ use App\Form\Type\ContractType;
 use App\Repository\ContractRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
+use App\Repository\TimeSpentRepository;
 use App\Security\Authorizer;
+use App\Service\ContractTimeAccounting;
 use App\Utils;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,6 +90,8 @@ class ContractsController extends BaseController
         Request $request,
         ContractRepository $contractRepository,
         TicketRepository $ticketRepository,
+        TimeSpentRepository $timeSpentRepository,
+        ContractTimeAccounting $contractTimeAccounting,
         ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
@@ -108,14 +112,29 @@ class ContractsController extends BaseController
         $contract->initDefaultAlerts();
         $contractRepository->save($contract, true);
 
-        if ($form->get('associateTickets')->getData()) {
-            $tickets = $ticketRepository->findAssociableTickets($contract);
+        $contractTickets = [];
 
-            foreach ($tickets as $ticket) {
+        if ($form->get('associateTickets')->getData()) {
+            $contractTickets = $ticketRepository->findAssociableTickets($contract);
+
+            foreach ($contractTickets as $ticket) {
                 $ticket->addContract($contract);
             }
 
-            $ticketRepository->save($tickets, true);
+            $ticketRepository->save($contractTickets, true);
+        }
+
+        if ($form->get('associateUnaccountedTimes')->getData()) {
+            foreach ($contractTickets as $ticket) {
+                $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
+
+                if (!$timeSpents) {
+                    continue;
+                }
+
+                $contractTimeAccounting->accountTimeSpents($contract, $timeSpents);
+                $timeSpentRepository->save($timeSpents, true);
+            }
         }
 
         return $this->redirectToRoute('contract', [

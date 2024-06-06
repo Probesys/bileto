@@ -169,8 +169,22 @@
                 {{ 'contracts.form.associate_tickets' | trans }}
             </label>
         </div>
+
+        <div>
+            <input
+                type="checkbox"
+                id="{{ field_id(form.associateUnaccountedTimes) }}"
+                name="{{ field_name(form.associateUnaccountedTimes) }}"
+                {{ form.associateUnaccountedTimes.vars.checked ? 'checked' }}
+            />
+
+            <label for="{{ field_id(form.associateUnaccountedTimes) }}">
+                {{ 'contracts.form.associate_unaccounted_times' | trans }}
+            </label>
+        </div>
     {% else %}
         <!-- {{ field_name(form.associateTickets) }} -->
+        <!-- {{ field_name(form.associateUnaccountedTimes) }} -->
     {% endif %}
 
     <div class="form__actions">

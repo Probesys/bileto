@@ -69,6 +69,7 @@ contracts.alerts.edit.title: 'Configurer les alertes du contrat'
 contracts.days_consumed: "<strong>{days, plural, =0 {0\_j consommé} one {1\_j consommé} other {#\_j consommés}}</strong>"
 contracts.edit.title: 'Modifier un contrat'
 contracts.form.associate_tickets: 'Associer les tickets existants créés durant la période du contrat'
+contracts.form.associate_unaccounted_times: 'Associer les temps passés existants non comptabilisés'
 contracts.form.time_accounting_unit: 'Unité de comptabilisation du temps (minutes)'
 contracts.form.time_accounting_unit.caption: 'Le temps passé sur les tickets sera arrondi à l’unité supérieure à des fins contractuelles. Par exemple, si l’unité de comptabilisation du temps est de 30 minutes et qu’un technicien passe 15 minutes sur un ticket, 30 minutes seront comptabilisées dans le contrat.'
 contracts.form.end_at: 'Termine le'
