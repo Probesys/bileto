@@ -6,6 +6,7 @@
 
 namespace App\Command;
 
+use App\Entity\Role;
 use App\Repository\AuthorizationRepository;
 use App\Repository\MailboxRepository;
 use App\Repository\MessageRepository;
@@ -55,12 +56,12 @@ class SeedsCommand extends Command
             return Command::SUCCESS;
         }
 
-        $roleTech = $this->roleRepository->findOneOrCreateBy([
-            'name' => 'Technician',
-        ], [
-            'description' => 'Solve problems.',
-            'type' => 'agent',
-            'permissions' => [
+        if ($this->environment === 'dev') {
+            // In dev, give all "agent" permissions to technicians so it's
+            // easier to work with.
+            $techPermissions = Role::PERMISSIONS['agent'];
+        } else {
+            $techPermissions = [
                 'orga:create:tickets',
                 'orga:create:tickets:messages',
                 'orga:create:tickets:messages:confidential',
@@ -76,7 +77,15 @@ class SeedsCommand extends Command
                 'orga:update:tickets:status',
                 'orga:update:tickets:title',
                 'orga:update:tickets:type',
-            ],
+            ];
+        }
+
+        $roleTech = $this->roleRepository->findOneOrCreateBy([
+            'name' => 'Technician',
+        ], [
+            'description' => 'Solve problems.',
+            'type' => 'agent',
+            'permissions' => $techPermissions,
         ]);
 
         $roleSalesman = $this->roleRepository->findOneOrCreateBy([
