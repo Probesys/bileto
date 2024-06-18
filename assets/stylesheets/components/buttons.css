@@ -107,6 +107,25 @@ button[disabled],
     --button-background-color: var(--color-grey4);
 }
 
+.button--discreet-alt {
+    --button-padding: var(--space-smaller) var(--space-small);
+    --button-background-color: transparent;
+    --button-color: var(--color-primary12);
+
+    font-weight: 500;
+
+    border: 1px solid currentcolor;
+}
+
+.button--discreet-alt:not([disabled]):hover,
+.button--discreet-alt:not([aria-disabled]):hover,
+.button--discreet-alt:not([disabled]):focus,
+.button--discreet-alt:not([aria-disabled]):focus,
+.button--discreet-alt:not([disabled]):active,
+.button--discreet-alt:not([aria-disabled]):active {
+    --button-background-color: var(--color-primary4);
+}
+
 .button--icon {
     --button-padding: var(--space-small);
 

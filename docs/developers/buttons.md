@@ -33,14 +33,24 @@ You can adapt this button to be completely rounded with the correct class:
 </button>
 ```
 
-## Discreet button
+## Discreet buttons
 
 Some buttons have small importance.
-Such button can be made smaller to attract less attention:
+These are for actions that aren't in the default workflow, such as a button to sort items, or to access secondary actions.
+Such buttons can be made smaller to attract less attention:
 
 ```html
 <button class="button--discreet">
-    Go to bottom
+    Sort by
+</button>
+```
+
+There is an alternative form that uses the primary color and with a slightly bolder font.
+Actually, this form is used for buttons that remove elements from a dynamic list.
+
+```html
+<button class="button--discreet-alt" aria-label="Unselect Alix Hambourg">
+    Alix Hambourg
 </button>
 ```
 
