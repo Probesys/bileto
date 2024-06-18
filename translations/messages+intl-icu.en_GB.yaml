@@ -106,6 +106,7 @@ errors.generic.description: 'Please tell your administrator what you were doing 
 errors.generic.sorry: 'Sorry for any inconvenience caused.'
 errors.generic.title: 'An error has occured!'
 forms.error: Error
+forms.input_texts.remove: Remove
 forms.max_chars: '(max. {number} characters)'
 forms.optional: (optional)
 forms.optional_max_chars: '(optional, max. {number} characters)'

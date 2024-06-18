@@ -13,6 +13,7 @@ import FormNewAuthorizationController from '@/controllers/form_new_authorization
 import FormContractController from '@/controllers/form_contract_controller.js';
 import FormPriorityController from '@/controllers/form_priority_controller.js';
 import FormTicketActorsController from '@/controllers/form_ticket_actors_controller.js';
+import InputTextsController from '@/controllers/input_texts_controller.js';
 import MessageDocumentsController from '@/controllers/message_documents_controller.js';
 import ModalController from '@/controllers/modal_controller.js';
 import ModalOpenerController from '@/controllers/modal_opener_controller.js';
@@ -37,6 +38,7 @@ application.register('form-new-authorization', FormNewAuthorizationController);
 application.register('form-contract', FormContractController);
 application.register('form-priority', FormPriorityController);
 application.register('form-ticket-actors', FormTicketActorsController);
+application.register('input-texts', InputTextsController);
 application.register('message-documents', MessageDocumentsController);
 application.register('modal', ModalController);
 application.register('modal-opener', ModalOpenerController);

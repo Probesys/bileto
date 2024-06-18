@@ -106,6 +106,7 @@ errors.generic.description: 'Veuillez indiquer à votre administrateur ce que vo
 errors.generic.sorry: 'Désolé pour la gêne occasionnée.'
 errors.generic.title: "Une erreur est survenue\_!"
 forms.error: Erreur
+forms.input_texts.remove: Retirer
 forms.max_chars: '(max. {number} caractères)'
 forms.optional: (optionnel)
 forms.optional_max_chars: '(optionnel, max. {number} caractères)'

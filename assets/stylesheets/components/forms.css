@@ -51,7 +51,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+.input-texts {
     width: 100%;
     padding: var(--form-padding);
 
@@ -389,4 +390,50 @@ legend {
 .input-container button[aria-pressed="false"] .icon--eye-slash,
 .input-container button[aria-pressed="true"] .icon--eye {
     display: none;
+}
+
+.input-texts {
+    --input-texts-elements-padding-y: var(--space-smaller);
+    --input-texts-elements-margin-bottom: var(--space-smaller);
+    --input-texts-elements-border-width: 1px;
+
+    /* Make sure to remove the paddings, margins and borders of internal
+     * elements of the container from the initial padding. */
+    padding-top: calc(var(--form-padding-y) - var(--input-texts-elements-padding-y) - var(--input-texts-elements-border-width));
+    padding-bottom: calc(var(--form-padding-y) - var(--input-texts-elements-padding-y) - var(--input-texts-elements-margin-bottom) - var(--input-texts-elements-border-width));
+
+    cursor: text;
+}
+
+.input-texts:focus-within {
+    outline: var(--outline-width) solid var(--outline-color);
+    outline-offset: var(--outline-offset);
+}
+
+.input-texts__input {
+    display: inline-block;
+    width: 175px;
+    margin-bottom: var(--input-texts-elements-margin-bottom);
+    padding: var(--input-texts-elements-padding-y) 0;
+
+    border-color: transparent;
+}
+
+.input-texts__input:focus {
+    outline: none;
+}
+
+.input-texts__list > * {
+    margin-right: var(--space-smaller);
+    margin-bottom: var(--input-texts-elements-margin-bottom);
+}
+
+.input-texts__list > *[aria-invalid] {
+    --button-color: var(--color-error11);
+}
+
+.input-texts__list > *[aria-invalid]:hover,
+.input-texts__list > *[aria-invalid]:focus,
+.input-texts__list > *[aria-invalid]:active {
+    --button-background-color: var(--color-error3);
 }
