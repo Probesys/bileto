@@ -48,10 +48,12 @@
                 </div>
             {% endif %}
 
-            <a class="button button--primary button--uppercase" href="{{ path('new user authorization', { uid: user.uid }) }}">
-                {{ icon('plus') }}
-                {{ 'users.authorizations.index.new_authorization' | trans }}
-            </a>
+            <div class="text--right">
+                <a class="button button--primary button--uppercase" href="{{ path('new user authorization', { uid: user.uid }) }}">
+                    {{ icon('plus') }}
+                    {{ 'users.authorizations.index.new_authorization' | trans }}
+                </a>
+            </div>
 
             <div class="grid">
                 {% for authorization in authorizations %}

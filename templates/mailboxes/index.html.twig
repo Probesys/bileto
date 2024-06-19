@@ -33,47 +33,59 @@
         <div class="flow">
             <div class="cols flow">
                 <div class="col--extend cols cols--center flow">
-                    <a href="{{ path('new mailbox') }}" class="button button--primary button--uppercase">
-                        {{ icon('plus') }}
-                        {{ 'mailboxes.index.new_mailbox' | trans }}
-                    </a>
+                    {% if mailboxes|length > 0 %}
+                        <p class="text--secondary">
+                            {{ 'mailboxes.index.number' | trans({ count: mailboxes|length }) }}
+                        </p>
 
-                    <p class="text--secondary">
-                        {{ 'mailboxes.index.number' | trans({ count: mailboxes|length }) }}
-                    </p>
+                        <form method="POST" action="{{ path('collect mailboxes') }}">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('collect mailboxes') }}">
+                            <button type="submit">
+                                {{ 'mailboxes.index.collect' | trans }}
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
 
-                <form method="POST" action="{{ path('collect mailboxes') }}">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('collect mailboxes') }}">
-                    <button type="submit">
-                        {{ 'mailboxes.index.collect' | trans }}
-                    </button>
-                </form>
+                <a href="{{ path('new mailbox') }}" class="button button--primary button--uppercase">
+                    {{ icon('plus') }}
+                    {{ 'mailboxes.index.new_mailbox' | trans }}
+                </a>
             </div>
 
-            <ul class="list--padded list--border list--nostyle">
-                {% for mailbox in mailboxes %}
-                    <li class="flow flow--small" data-test="mailbox-item">
-                        <div class="cols">
-                            <span class="col--extend">
-                                {% if mailbox.lastError %}
-                                    <span class="text--error">
-                                        {{ icon('circle-exclamation-error') }}
+            {% if mailboxes|length > 0 %}
+                <ul class="list--padded list--border list--nostyle">
+                    {% for mailbox in mailboxes %}
+                        <li class="flow flow--small" data-test="mailbox-item">
+                            <div class="cols">
+                                <span class="col--extend">
+                                    {% if mailbox.lastError %}
+                                        <span class="text--error">
+                                            {{ icon('circle-exclamation-error') }}
+                                            {{ mailbox.name }}
+                                            {{ 'mailboxes.index.error' | trans }}
+                                        </span>
+                                    {% else %}
                                         {{ mailbox.name }}
-                                        {{ 'mailboxes.index.error' | trans }}
-                                    </span>
-                                {% else %}
-                                    {{ mailbox.name }}
-                                {% endif %}
-                            </span>
+                                    {% endif %}
+                                </span>
 
-                            <a href="{{ path('edit mailbox', { uid: mailbox.uid }) }}">
-                                {{ 'mailboxes.index.edit' | trans }}
-                            </a>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
+                                <a href="{{ path('edit mailbox', { uid: mailbox.uid }) }}">
+                                    {{ 'mailboxes.index.edit' | trans }}
+                                </a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'mailboxes.index.none' | trans }}
+                    </p>
+                </div>
+            {% endif %}
 
             {% if errorMailboxEmails %}
                 <h2>{{ 'mailboxes.index.emails.title' | trans }}</h2>

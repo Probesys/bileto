@@ -36,17 +36,19 @@
 
         <div class="flow">
             <div class="cols cols--center flow">
+                <div class="col--extend">
+                    {% if contractsPagination.count > 0 %}
+                        <p class="text--secondary">
+                            {{ 'contracts.index.number' | trans({ count: contractsPagination.countAll }) }}
+                        </p>
+                    {% endif %}
+                </div>
+
                 {% if is_granted('orga:manage:contracts', organization) %}
                     <a class="button button--primary button--uppercase" href="{{ path('new organization contract', { uid: organization.uid }) }}">
                         {{ icon('plus') }}
                         {{ 'contracts.index.new_contract' | trans }}
                     </a>
-                {% endif %}
-
-                {% if contractsPagination.count > 0 %}
-                    <p class="text--secondary">
-                        {{ 'contracts.index.number' | trans({ count: contractsPagination.countAll }) }}
-                    </p>
                 {% endif %}
             </div>
 

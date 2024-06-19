@@ -32,16 +32,18 @@
 
         <div class="flow">
             <div class="cols cols--center flow">
+                <div class="col--extend">
+                    {% if teams|length > 0 %}
+                        <p class="text--secondary">
+                            {{ 'teams.index.number' | trans({ count: teams|length }) }}
+                        </p>
+                    {% endif %}
+                </div>
+
                 <a href="{{ path('new team') }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'teams.index.new_team' | trans }}
                 </a>
-
-                {% if teams|length > 0 %}
-                    <p class="text--secondary">
-                        {{ 'teams.index.number' | trans({ count: teams|length }) }}
-                    </p>
-                {% endif %}
             </div>
 
             {% if teams|length > 0 %}

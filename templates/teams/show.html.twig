@@ -61,16 +61,18 @@
             <h2 class="sr-only">{{ 'teams.show.agents.title' | trans }}</h2>
 
             <div class="cols cols--center flow">
+                <div class="col--extend">
+                    {% if agents|length > 0 %}
+                        <p class="text--secondary">
+                            {{ 'teams.show.agents.number' | trans({ count: agents|length }) }}
+                        </p>
+                    {% endif %}
+                </div>
+
                 <a href="{{ path('new team agent', { uid: team.uid }) }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'teams.show.agents.new' | trans }}
                 </a>
-
-                {% if agents|length > 0 %}
-                    <p class="text--secondary">
-                        {{ 'teams.show.agents.number' | trans({ count: agents|length }) }}
-                    </p>
-                {% endif %}
             </div>
 
             {% if agents|length > 0 %}

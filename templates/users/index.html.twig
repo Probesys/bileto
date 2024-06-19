@@ -32,14 +32,16 @@
 
         <div class="flow">
             <div class="cols cols--center flow">
+                <div class="col--extend">
+                    <p class="text--secondary">
+                        {{ 'users.index.number' | trans({ count: users|length }) }}
+                    </p>
+                </div>
+
                 <a href="{{ path('new user') }}" class="button button--primary button--uppercase">
                     {{ icon('plus') }}
                     {{ 'users.index.new_user' | trans }}
                 </a>
-
-                <p class="text--secondary">
-                    {{ 'users.index.number' | trans({ count: users|length }) }}
-                </p>
             </div>
 
             <ul class="list--padded list--border list--nostyle">

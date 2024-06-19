@@ -28,29 +28,43 @@
 
         <div class="flow">
             <div class="cols cols--center flow">
+                <div class="col--extend">
+                    {% if organizations|length > 0 %}
+                        <p class="text--secondary">
+                            {{ 'organizations.index.number' | trans({ count: organizations|length }) }}
+                        </p>
+                    {% endif %}
+                </div>
+
                 {% if is_granted('admin:create:organizations') %}
                     <a href="{{ path('new organization') }}" class="button button--primary button--uppercase">
                         {{ icon('plus') }}
                         {{ 'organizations.index.new_organization' | trans }}
                     </a>
                 {% endif %}
-
-                <p class="text--secondary">
-                    {{ 'organizations.index.number' | trans({ count: organizations|length }) }}
-                </p>
             </div>
 
-            <ul class="list--padded list--border list--nostyle">
-                {% for organization in organizations %}
-                    <li class="cols" data-test="organization-item">
-                        <div class="list__item-title">
-                            <a href="{{ path('organization', { uid: organization.uid }) }}">
-                                {{ organization.name }}
-                            </a>
-                        </div>
-                    </li>
-                {% endfor %}
-            </div>
+            {% if organizations|length > 0 %}
+                <ul class="list--padded list--border list--nostyle">
+                    {% for organization in organizations %}
+                        <li class="cols" data-test="organization-item">
+                            <div class="list__item-title">
+                                <a href="{{ path('organization', { uid: organization.uid }) }}">
+                                    {{ organization.name }}
+                                </a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'organizations.index.none' | trans }}
+                    </p>
+                </div>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

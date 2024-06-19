@@ -164,6 +164,7 @@ mailboxes.index.emails.error: "Erreur\_:"
 mailboxes.index.emails.title: 'Emails en erreur'
 mailboxes.index.error: (erreur)
 mailboxes.index.new_mailbox: 'Nouvelle boite mail'
+mailboxes.index.none: 'Aucune boite mail'
 mailboxes.index.number: '{count, plural, =0 {Aucune boite mail} one {1 boite mail} other {# boites mails}}'
 mailboxes.index.title: 'Boites mails'
 mailboxes.name: 'Nom de la boite mail'
@@ -181,6 +182,7 @@ message_documents.attachments.attach: 'Ajouter une pièce-jointe'
 message_documents.remove: 'Retirer la pièce-jointe'
 notifications.saved: 'Vos changements ont été sauvegardés.'
 organizations.index.new_organization: 'Nouvelle organisation'
+organizations.index.none: 'Aucune organisation'
 organizations.index.number: '{count, plural, =0 {Aucune organisation} one {1 organisation} other {# organisations}}'
 organizations.index.title: Organisations
 organizations.name: Nom

@@ -164,6 +164,7 @@ mailboxes.index.emails.error: 'Error:'
 mailboxes.index.emails.title: 'Emails in error'
 mailboxes.index.error: (error)
 mailboxes.index.new_mailbox: 'New mailbox'
+mailboxes.index.none: 'No mailboxes'
 mailboxes.index.number: '{count, plural, =0 {No mailboxes} one {1 mailbox} other {# mailboxes}}'
 mailboxes.index.title: Mailboxes
 mailboxes.name: 'Mailbox name'
@@ -181,6 +182,7 @@ message_documents.attachments.attach: 'Attach a document'
 message_documents.remove: 'Remove attachment'
 notifications.saved: 'Your changes have been successfully saved.'
 organizations.index.new_organization: 'New organization'
+organizations.index.none: 'No organizations'
 organizations.index.number: '{count, plural, =0 {No organizations} one {1 organization} other {# organizations}}'
 organizations.index.title: Organizations
 organizations.name: Name
