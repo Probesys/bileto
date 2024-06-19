@@ -65,10 +65,13 @@
                     ) }}
                 </div>
             {% else %}
-                <p class="placeholder">
-                    {{ icon('contract') }}
-                    {{ 'contracts.index.no_contracts' | trans }}
-                </p>
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'contracts.index.no_contracts' | trans }}
+                    </p>
+                </div>
             {% endif %}
         </div>
     </main>

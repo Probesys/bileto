@@ -17,9 +17,3 @@
     background-color: var(--color-main-background);
     border-radius: var(--border-radius);
 }
-
-.placeholder .icon {
-    margin-bottom: 1rem;
-
-    font-size: 2em;
-}

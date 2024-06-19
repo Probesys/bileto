@@ -67,9 +67,13 @@
                     {% endfor %}
                 </ul>
             {% else %}
-                <p class="placeholder">
-                    {{ 'teams.index.none' | trans }}
-                </p>
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'teams.index.none' | trans }}
+                    </p>
+                </div>
             {% endif %}
         </div>
     </main>
