@@ -189,7 +189,7 @@ organizations.name: Name
 organizations.new.submit: 'Create the organization'
 organizations.new.title: 'New organization'
 organizations.settings.deletion.confirm: 'Are you sure that you want to delete this organization?'
-organizations.settings.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and authorizations.'
+organizations.settings.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and contracts.'
 organizations.settings.deletion.submit: 'Delete the organization'
 organizations.settings.deletion.title: 'Delete an organization'
 organizations.settings.title: Settings

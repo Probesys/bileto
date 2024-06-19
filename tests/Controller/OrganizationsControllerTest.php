@@ -10,9 +10,11 @@ use App\Entity\Organization;
 use App\Tests\AuthorizationHelper;
 use App\Tests\FactoriesHelper;
 use App\Tests\Factory\AuthorizationFactory;
+use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
+use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -345,15 +347,24 @@ class OrganizationsControllerTest extends WebTestCase
     public function testPostDeleteRemovesTheOrganizationAndRedirects(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), ['orga:manage']);
-        $organization = OrganizationFactory::createOne();
         $authorization = AuthorizationFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $contract = ContractFactory::createOne([
             'organization' => $organization,
         ]);
         $ticket = TicketFactory::createOne([
             'organization' => $organization,
+        ]);
+        $timeSpent = TimeSpentFactory::createOne([
+            'ticket' => $ticket,
+            'contract' => $contract,
         ]);
         $message = MessageFactory::createOne([
             'ticket' => $ticket,

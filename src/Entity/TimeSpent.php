@@ -45,7 +45,7 @@ class TimeSpent implements MonitorableEntityInterface, UidEntityInterface
     private ?User $updatedBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'timeSpents')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Ticket $ticket = null;
 
     #[ORM\Column]
@@ -69,6 +69,7 @@ class TimeSpent implements MonitorableEntityInterface, UidEntityInterface
     private ?int $realTime = null;
 
     #[ORM\ManyToOne(inversedBy: 'timeSpents')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Contract $contract = null;
 
     public function getTicket(): ?Ticket

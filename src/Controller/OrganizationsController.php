@@ -151,6 +151,13 @@ class OrganizationsController extends BaseController
             return $this->redirectToRoute('organizations');
         }
 
+        $userOrganization = $user->getOrganization();
+        if ($userOrganization && $userOrganization->getUid() === $organization->getUid()) {
+            // Reset the current user default organization or Doctrine will
+            // complain about an entity found.
+            $user->setOrganization(null);
+        }
+
         $organizationRepository->remove($organization, true);
 
         return $this->redirectToRoute('organizations');

@@ -189,7 +189,7 @@ organizations.name: Nom
 organizations.new.submit: 'Créer l’organisation'
 organizations.new.title: 'Nouvelle organisation'
 organizations.settings.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
-organizations.settings.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et autorisations associées."
+organizations.settings.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et contrats associés."
 organizations.settings.deletion.submit: 'Supprimer l’organisation'
 organizations.settings.deletion.title: Suppression
 organizations.settings.title: Gestion

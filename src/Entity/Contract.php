@@ -91,7 +91,7 @@ class Contract implements MonitorableEntityInterface, UidEntityInterface
     private ?string $notes = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Organization $organization = null;
 
     /** @var Collection<int, Ticket> $tickets */
