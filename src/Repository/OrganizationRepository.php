@@ -10,6 +10,7 @@ use App\Entity\Organization;
 use App\Entity\User;
 use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
+use App\Utils;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -81,5 +82,21 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
                 'id' => $authorizedOrgaIds,
             ]);
         }
+    }
+
+    public function findOneByDomain(string $domain): ?Organization
+    {
+        $domain = Utils\Url::sanitizeDomain($domain);
+
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT o
+            FROM App\Entity\Organization o
+            WHERE JSON_CONTAINS(o.domains, :domain) = true
+        SQL);
+        $query->setParameter('domain', '"' . $domain . '"');
+
+        return $query->getOneOrNullResult();
     }
 }

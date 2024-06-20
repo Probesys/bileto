@@ -46,4 +46,13 @@ class UrlTest extends TestCase
 
         $this->assertEquals('xn--xample-9ua.com', $sanitizedDomain);
     }
+
+    public function testDomainToUtf8(): void
+    {
+        $domain = 'xn--xample-9ua.com';
+
+        $utf8Domain = Url::domainToUtf8($domain);
+
+        $this->assertEquals('éxample.com', $utf8Domain);
+    }
 }

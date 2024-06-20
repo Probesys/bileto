@@ -24,4 +24,15 @@ class Url
 
         return $domain;
     }
+
+    public static function domainToUtf8(string $domain): string
+    {
+        $utf8Domain = idn_to_utf8($domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+
+        if ($utf8Domain === false) {
+            return $domain;
+        } else {
+            return $utf8Domain;
+        }
+    }
 }

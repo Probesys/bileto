@@ -182,6 +182,8 @@ message_documents.attachments: Attachments
 message_documents.attachments.attach: 'Attach a document'
 message_documents.remove: 'Remove attachment'
 notifications.saved: 'Your changes have been successfully saved.'
+organizations.domains: 'Linked domains'
+organizations.domains.caption: 'Users whose email address corresponds to one of these domains will be associated with this organization by default. Use the “*” character to handle all domains.'
 organizations.index.new_organization: 'New organization'
 organizations.index.none: 'No organizations'
 organizations.index.number: '{count, plural, =0 {No organizations} one {1 organization} other {# organizations}}'

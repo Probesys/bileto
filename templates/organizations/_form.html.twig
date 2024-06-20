@@ -34,6 +34,27 @@
         />
     </div>
 
+    <div class="flow flow--small">
+        <label for="{{ field_id(form.domains) }}">
+            {{ 'organizations.domains' | trans }}
+        </label>
+
+        <p id="domains-caption" class="form__caption">
+            {{ 'organizations.domains.caption' | trans }}
+        </p>
+
+        {% for childField in form.domains %}
+            {{ form_errors(childField) }}
+        {% endfor %}
+
+        {{ include('form/_input_texts.html.twig', {
+            field: form.domains,
+            inputAttrs: {
+                'aria-describedby': 'domains-caption',
+            }
+        }, with_context = false) }}
+    </div>
+
     <div class="form__actions">
         <button class="button--primary" type="submit">
             {{ submit_label }}
