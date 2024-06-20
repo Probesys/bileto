@@ -20,6 +20,14 @@ class OrganizationType extends AbstractType
             'empty_data' => '',
             'trim' => true,
         ]);
+        $builder->add('domains', Type\CollectionType::class, [
+            'entry_type' => Type\TextType::class,
+            'entry_options' => [
+                'trim' => true,
+            ],
+            'allow_add' => true,
+            'allow_delete' => true,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

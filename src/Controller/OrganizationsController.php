@@ -71,6 +71,7 @@ class OrganizationsController extends BaseController
         }
 
         $organization = $form->getData();
+        $organization->normalizeDomains();
         $orgaRepository->save($organization, true);
 
         return $this->redirectToRoute('organizations');
@@ -122,6 +123,7 @@ class OrganizationsController extends BaseController
         }
 
         $organization = $form->getData();
+        $organization->normalizeDomains();
         $orgaRepository->save($organization, true);
 
         $this->addFlash('success', new TranslatableMessage('notifications.saved'));

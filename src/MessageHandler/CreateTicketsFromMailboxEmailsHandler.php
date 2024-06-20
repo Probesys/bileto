@@ -11,12 +11,14 @@ use App\Entity\MailboxEmail;
 use App\Entity\Message;
 use App\Entity\MessageDocument;
 use App\Entity\Ticket;
+use App\Entity\User;
 use App\Message\CreateTicketsFromMailboxEmails;
 use App\Message\SendMessageEmail;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Repository\MessageRepository;
 use App\Repository\MessageDocumentRepository;
+use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Security\Authorizer;
@@ -25,6 +27,7 @@ use App\Service\MessageDocumentStorage;
 use App\Service\MessageDocumentStorageError;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
+use App\Utils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -42,6 +45,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private MessageRepository $messageRepository,
         private MessageDocumentRepository $messageDocumentRepository,
         private MessageDocumentStorage $messageDocumentStorage,
+        private OrganizationRepository $organizationRepository,
         private TicketRepository $ticketRepository,
         private UserRepository $userRepository,
         private Authorizer $authorizer,
@@ -64,18 +68,27 @@ class CreateTicketsFromMailboxEmailsHandler
                 $senderEmail = $mailboxEmail->getFrom();
             }
 
+            $domain = Utils\Email::extractDomain($senderEmail);
+            $domainOrganization = $this->organizationRepository->findOneByDomainOrDefault($domain);
+
             $requester = $this->userRepository->findOneBy([
                 'email' => $senderEmail,
             ]);
 
-            if (!$requester) {
+            if (!$requester && $domainOrganization) {
+                $requester = new User();
+                $requester->setEmail($senderEmail);
+                $this->userRepository->save($requester, true);
+            } elseif (!$requester) {
                 $this->markError($mailboxEmail, 'unknown sender');
                 continue;
             }
 
             $requesterOrganization = $requester->getOrganization();
 
-            if (!$requesterOrganization) {
+            if (!$requesterOrganization && $domainOrganization) {
+                $requesterOrganization = $domainOrganization;
+            } elseif (!$requesterOrganization) {
                 $this->markError($mailboxEmail, 'sender is not attached to an organization');
                 continue;
             }

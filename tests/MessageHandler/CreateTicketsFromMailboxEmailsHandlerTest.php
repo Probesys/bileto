@@ -383,6 +383,76 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
     }
 
+    public function testInvokeUsesDomainOrganizationIfRequesterDoesNotHaveDefaultOrganization(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $email = 'alix@example.com';
+        $domain = 'example.com';
+        $organization = OrganizationFactory::createOne([
+            'domains' => [$domain],
+        ]);
+        $user = UserFactory::createOne([
+            'email' => $email,
+            'organization' => null,
+        ]);
+        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
+        $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
+        $this->assertSame($user->getId(), $ticket->getRequester()->getId());
+    }
+
+    public function testInvokeCreatesRequesterIfDoesNotExistButEmailDomainIsHandledByOrganization(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $email = 'alix@example.com';
+        $domain = 'example.com';
+        $organization = OrganizationFactory::createOne([
+            'domains' => [$domain],
+        ]);
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $email,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, UserFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(1, UserFactory::count());
+
+        $mailboxEmail->refresh();
+        $this->assertSame('sender has not permission to create tickets', $mailboxEmail->getLastError());
+        $user = UserFactory::last();
+        $this->assertSame($email, $user->getEmail());
+        $this->assertNull($user->getOrganization());
+    }
+
     public function testInvokeFailsIfRequesterDoesNotExists(): void
     {
         $container = static::getContainer();

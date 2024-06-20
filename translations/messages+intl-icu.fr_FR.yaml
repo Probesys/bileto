@@ -182,6 +182,8 @@ message_documents.attachments: Pièces-jointes
 message_documents.attachments.attach: 'Ajouter une pièce-jointe'
 message_documents.remove: 'Retirer la pièce-jointe'
 notifications.saved: 'Vos changements ont été sauvegardés.'
+organizations.domains: 'Domaines liés'
+organizations.domains.caption: "Les utilisateurs dont l’adresse email correspond à l’un de ces domaines seront associés à cette organisation par défaut. Utilisez le caractère «\_*\_» pour prendre en charge tous les domaines."
 organizations.index.new_organization: 'Nouvelle organisation'
 organizations.index.none: 'Aucune organisation'
 organizations.index.number: '{count, plural, =0 {Aucune organisation} one {1 organisation} other {# organisations}}'
