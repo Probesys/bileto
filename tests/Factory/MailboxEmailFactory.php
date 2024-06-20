@@ -77,10 +77,6 @@ final class MailboxEmailFactory extends ModelFactory
                 Content-Type: text/html\r
                 TEXT;
 
-            if (isset($attributes['replyTo'])) {
-                $headers .= "\nReply-To: <{$attributes['replyTo']}>\r";
-            }
-
             if (isset($attributes['inReplyTo'])) {
                 $headers .= "\nIn-Reply-To: <{$attributes['inReplyTo']}>\r";
             }

@@ -63,10 +63,7 @@ class CreateTicketsFromMailboxEmailsHandler
         $mailboxEmails = $this->mailboxEmailRepository->findAll();
 
         foreach ($mailboxEmails as $mailboxEmail) {
-            $senderEmail = $mailboxEmail->getReplyTo();
-            if (!$senderEmail) {
-                $senderEmail = $mailboxEmail->getFrom();
-            }
+            $senderEmail = $mailboxEmail->getFrom();
 
             $domain = Utils\Email::extractDomain($senderEmail);
             $domainOrganization = $this->organizationRepository->findOneByDomainOrDefault($domain);

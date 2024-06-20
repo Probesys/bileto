@@ -126,17 +126,6 @@ class MailboxEmail implements MonitorableEntityInterface, UidEntityInterface
         return $this->getEmail()->getFrom()->first()->mail;
     }
 
-    public function getReplyTo(): ?string
-    {
-        $address = $this->getEmail()->getReplyTo()->first();
-
-        if (!$address) {
-            return null;
-        }
-
-        return $address->mail;
-    }
-
     public function getInReplyTo(): ?string
     {
         $inReplyTo = $this->getEmail()->getInReplyTo()->first();

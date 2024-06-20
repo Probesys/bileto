@@ -306,38 +306,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($subject, $ticket->getTitle());
     }
 
-    public function testInvokeConsidersReplyToInPriority(): void
-    {
-        $container = static::getContainer();
-        /** @var MessageBusInterface */
-        $bus = $container->get(MessageBusInterface::class);
-
-        $organization = OrganizationFactory::createOne();
-        $user = UserFactory::createOne([
-            'organization' => $organization,
-        ]);
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
-        $subject = Factory::faker()->words(3, true);
-        $body = Factory::faker()->randomHtml();
-        $mailboxEmail = MailboxEmailFactory::createOne([
-            'from' => UserFactory::createOne()->getEmail(),
-            'replyTo' => $user->getEmail(),
-        ]);
-
-        $bus->dispatch(new CreateTicketsFromMailboxEmails());
-
-        $this->assertSame(0, MailboxEmailFactory::count());
-        $this->assertSame(1, TicketFactory::count());
-        $this->assertSame(1, MessageFactory::count());
-
-        $ticket = TicketFactory::first();
-        $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
-        $this->assertSame($user->getId(), $ticket->getRequester()->getId());
-
-        $message = MessageFactory::first();
-        $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
-    }
-
     public function testInvokeCreatesATicketIfAccessIsForbiddenWhenAnswering(): void
     {
         $container = static::getContainer();

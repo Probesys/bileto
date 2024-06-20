@@ -24,7 +24,7 @@ This is the job of the [`CreateTicketsFromMailboxEmailsHandler`](/src/MessageHan
 
 For each `MailboxEmail`:
 
-1. it gets the requester (i.e. the `Reply-To` or the `From` headers);
+1. it gets the requester (i.e. the `From` header);
 2. it gets the default organization of the requester;
 3. it detects a potential ticket to which the email might reply;
 4. if it detects a ticket, it checks that the requester can answer to it and that it is not closed;
