@@ -12,11 +12,12 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\ActorsLister;
 use App\Service\TeamService;
+use App\Service\UserCreator;
+use App\Service\UserCreatorException;
 use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AgentsController extends BaseController
@@ -45,9 +46,9 @@ class AgentsController extends BaseController
         Team $team,
         Request $request,
         UserRepository $userRepository,
+        UserCreator $userCreator,
         TeamService $teamService,
         ActorsLister $actorsLister,
-        ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:agents');
@@ -75,23 +76,25 @@ class AgentsController extends BaseController
             ]);
         }
 
-        $agent = $userRepository->findOneOrBuildBy([
+        $agent = $userRepository->findOneBy([
             'email' => $agentEmail,
-        ], [
-            'locale' => $currentUser->getLocale(),
         ]);
 
-        $errors = $validator->validate($agent);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('teams/agents/new.html.twig', [
-                'team' => $team,
-                'agents' => $agents,
-                'agentEmail' => $agentEmail,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
+        if (!$agent) {
+            try {
+                $agent = $userCreator->create(
+                    email: $agentEmail,
+                    locale: $currentUser->getLocale(),
+                );
+            } catch (UserCreatorException $e) {
+                return $this->renderBadRequest('teams/agents/new.html.twig', [
+                    'team' => $team,
+                    'agents' => $agents,
+                    'agentEmail' => $agentEmail,
+                    'errors' => ConstraintErrorsFormatter::format($e->getErrors()),
+                ]);
+            }
         }
-
-        $userRepository->save($agent, true);
 
         $teamService->addAgent($team, $agent);
 

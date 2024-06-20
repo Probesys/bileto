@@ -11,6 +11,8 @@ use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\Sorter\UserSorter;
+use App\Service\UserCreator;
+use App\Service\UserCreatorException;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -57,12 +59,10 @@ class UsersController extends BaseController
     #[Route('/users/new', name: 'create user', methods: ['POST'])]
     public function create(
         Request $request,
-        UserRepository $userRepository,
         OrganizationRepository $organizationRepository,
         OrganizationSorter $organizationSorter,
-        ValidatorInterface $validator,
+        UserCreator $userCreator,
         TranslatorInterface $translator,
-        UserPasswordHasherInterface $passwordHasher,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -99,29 +99,23 @@ class UsersController extends BaseController
 
         $organization = $organizationRepository->findOneBy(['uid' => $organizationUid]);
 
-        $newUser = new User();
-        $newUser->setEmail($email);
-        $newUser->setName($name);
-        $newUser->setLocale($user->getLocale());
-        $newUser->setOrganization($organization);
-
-        if ($password !== '') {
-            $hashedPassword = $passwordHasher->hashPassword($newUser, $password);
-            $newUser->setPassword($hashedPassword);
-        }
-
-        $errors = $validator->validate($newUser);
-        if (count($errors) > 0) {
+        try {
+            $newUser = $userCreator->create(
+                email: $email,
+                name: $name,
+                password: $password,
+                locale: $user->getLocale(),
+                organization: $organization,
+            );
+        } catch (UserCreatorException $e) {
             return $this->renderBadRequest('users/new.html.twig', [
                 'organizations' => $organizations,
                 'email' => $email,
                 'name' => $name,
                 'organizationUid' => $organizationUid,
-                'errors' => ConstraintErrorsFormatter::format($errors),
+                'errors' => ConstraintErrorsFormatter::format($e->getErrors()),
             ]);
         }
-
-        $userRepository->save($newUser, true);
 
         $parameters = [
             'uid' => $newUser->getUid(),

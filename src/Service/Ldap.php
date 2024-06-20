@@ -168,10 +168,9 @@ class Ldap
 
         $user = new User();
 
-        $user->setLdapIdentifier($identifier);
         $user->setEmail($email);
         $user->setName($fullName);
-        $user->setPassword(Random::hex(50));
+        $user->setLdapIdentifier($identifier);
 
         return $user;
     }

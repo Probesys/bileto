@@ -7,9 +7,10 @@
 namespace App\Command\Users;
 
 use App\Entity;
-use App\Repository\UserRepository;
 use App\Repository\RoleRepository;
 use App\Repository\AuthorizationRepository;
+use App\Service\UserCreator;
+use App\Service\UserCreatorException;
 use App\Utils\Time;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,8 +19,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 #[AsCommand(
@@ -29,11 +28,9 @@ use Doctrine\Persistence\ManagerRegistry;
 class CreateCommand extends Command
 {
     public function __construct(
-        private UserRepository $userRepository,
         private RoleRepository $roleRepository,
         private AuthorizationRepository $authorizationRepository,
-        private UserPasswordHasherInterface $passwordHasher,
-        private ValidatorInterface $validator,
+        private UserCreator $userCreator,
     ) {
         parent::__construct();
     }
@@ -74,23 +71,19 @@ class CreateCommand extends Command
         $email = trim($input->getOption('email'));
         $password = $input->getOption('password');
 
-        $user = new Entity\User();
-
-        $user->setEmail($email);
-        $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
-        $user->setPassword($hashedPassword);
-
-        $errors = $this->validator->validate($user);
-        if (count($errors) > 0) {
+        try {
+            $user = $this->userCreator->create(
+                email: $email,
+                password: $password,
+            );
+        } catch (UserCreatorException $e) {
             $output = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
-            foreach ($errors as $error) {
+            foreach ($e->getErrors() as $error) {
                 $output->writeln($error->getMessage());
             }
 
             return Command::INVALID;
         }
-
-        $this->userRepository->save($user, true);
 
         $superRole = $this->roleRepository->findOrCreateSuperRole();
         $this->authorizationRepository->grant($user, $superRole);

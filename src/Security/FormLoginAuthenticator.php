@@ -9,6 +9,8 @@ namespace App\Security;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Ldap;
+use App\Service\UserCreator;
+use App\Service\UserCreatorException;
 use App\Utils\ConstraintErrorsFormatter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -30,7 +32,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -44,13 +45,13 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
      * @param UserProviderInterface<User> $userProvider
      */
     public function __construct(
+        private UserCreator $userCreator,
         private Ldap $ldap,
         private LoggerInterface $logger,
         private TranslatorInterface $translator,
         private UrlGeneratorInterface $urlGenerator,
         private UserProviderInterface $userProvider,
         private UserRepository $userRepository,
-        private ValidatorInterface $validator,
         #[Autowire(env: 'bool:LDAP_ENABLED')]
         private bool $ldapEnabled,
     ) {
@@ -116,20 +117,23 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
         if (!$user) {
             // If the user doesn't exist yet, search for them in the LDAP
             // directory and try to create them in the database.
-            $user = $this->ldap->searchUser($identifier);
+            $ldapUser = $this->ldap->searchUser($identifier);
 
-            if ($user) {
-                $errors = $this->validator->validate($user);
-
-                if (count($errors) > 0) {
-                    $errors = implode(' ', ConstraintErrorsFormatter::format($errors));
+            if ($ldapUser) {
+                try {
+                    $user = $this->userCreator->create(
+                        email: $ldapUser->getEmail(),
+                        name: $ldapUser->getName(),
+                        ldapIdentifier: $ldapUser->getLdapIdentifier(),
+                    );
+                } catch (UserCreatorException $e) {
+                    $errors = implode(' ', ConstraintErrorsFormatter::format($e->getErrors()));
                     $this->logger->error("Can't create LDAP user: {$errors}");
+
                     throw new CustomUserMessageAuthenticationException(
                         $this->translator->trans('Invalid credentials.', [], 'security')
                     );
                 }
-
-                $this->userRepository->save($user, true);
             }
         }
 

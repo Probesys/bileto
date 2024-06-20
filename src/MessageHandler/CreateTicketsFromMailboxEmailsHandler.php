@@ -25,6 +25,8 @@ use App\Security\Authorizer;
 use App\Security\Encryptor;
 use App\Service\MessageDocumentStorage;
 use App\Service\MessageDocumentStorageError;
+use App\Service\UserCreator;
+use App\Service\UserCreatorException;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
 use App\Utils;
@@ -48,6 +50,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private OrganizationRepository $organizationRepository,
         private TicketRepository $ticketRepository,
         private UserRepository $userRepository,
+        private UserCreator $userCreator,
         private Authorizer $authorizer,
         private HtmlSanitizerInterface $appMessageSanitizer,
         private MessageBusInterface $bus,
@@ -73,9 +76,14 @@ class CreateTicketsFromMailboxEmailsHandler
             ]);
 
             if (!$requester && $domainOrganization) {
-                $requester = new User();
-                $requester->setEmail($senderEmail);
-                $this->userRepository->save($requester, true);
+                try {
+                    $requester = $this->userCreator->create(email: $senderEmail);
+                } catch (UserCreatorException $e) {
+                    $errors = Utils\ConstraintErrorsFormatter::format($e->getErrors());
+                    $errors = implode(' ', $errors);
+                    $this->markError($mailboxEmail, 'cannot create sender: ' . $errors);
+                    continue;
+                }
             } elseif (!$requester) {
                 $this->markError($mailboxEmail, 'unknown sender');
                 continue;

@@ -10,6 +10,8 @@ use App\Entity\User;
 use App\Message\SynchronizeLdap;
 use App\Repository\UserRepository;
 use App\Service\Ldap;
+use App\Service\UserCreator;
+use App\Service\UserCreatorException;
 use App\Utils\ConstraintErrorsFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -22,6 +24,7 @@ class SynchronizeLdapHandler
     public function __construct(
         private EntityManagerInterface $entityManager,
         private Ldap $ldap,
+        private UserCreator $userCreator,
         private LoggerInterface $logger,
         private ValidatorInterface $validator,
     ) {
@@ -49,21 +52,35 @@ class SynchronizeLdapHandler
                 'ldapIdentifier' => $ldapUser->getLdapIdentifier(),
             ]);
 
+            $errors = [];
+
             if ($user) {
                 $user->setEmail($ldapUser->getEmail());
                 $user->setName($ldapUser->getName());
 
-                $countUpdated += 1;
-            } else {
-                $user = $ldapUser;
+                $errors = $this->validator->validate($user);
+                $errors = ConstraintErrorsFormatter::format($errors);
 
-                $countCreated += 1;
+                if (count($errors) === 0) {
+                    $countUpdated += 1;
+                }
+            } else {
+                try {
+                    $user = $this->userCreator->create(
+                        email: $ldapUser->getEmail(),
+                        name: $ldapUser->getName(),
+                        ldapIdentifier: $ldapUser->getLdapIdentifier(),
+                        flush: false,
+                    );
+
+                    $countCreated += 1;
+                } catch (UserCreatorException $e) {
+                    $errors = ConstraintErrorsFormatter::format($e->getErrors());
+                }
             }
 
-            $errors = $this->validator->validate($user);
-
             if (count($errors) > 0) {
-                $errors = implode(' ', ConstraintErrorsFormatter::format($errors));
+                $errors = implode(' ', $errors);
                 $this->logger->error(
                     "[SynchronizeLdap] Can't sync user {$user->getLdapIdentifier()}: {$errors}"
                 );
