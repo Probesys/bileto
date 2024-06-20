@@ -99,4 +99,23 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
 
         return $query->getOneOrNullResult();
     }
+
+    public function findOneByDomainOrDefault(string $domain): ?Organization
+    {
+        $organization = $this->findOneByDomain($domain);
+
+        if ($organization) {
+            return $organization;
+        }
+
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT o
+            FROM App\Entity\Organization o
+            WHERE JSON_CONTAINS(o.domains, '"*"') = true
+        SQL);
+
+        return $query->getOneOrNullResult();
+    }
 }
