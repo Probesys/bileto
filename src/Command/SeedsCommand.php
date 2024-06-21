@@ -115,6 +115,7 @@ class SeedsCommand extends Command
         ], [
             'description' => 'Have problems.',
             'type' => 'user',
+            'isDefault' => true,
             'permissions' => [
                 'orga:create:tickets',
                 'orga:create:tickets:messages',

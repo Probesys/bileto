@@ -291,6 +291,62 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(['admin:see'], $role->getPermissions());
     }
 
+    public function testPostCreateCanCreateDefaultUserRole(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $name = 'My role';
+        $description = 'What it does';
+        $initialDefaultRole = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+
+        $client->request('POST', '/roles/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
+            'name' => $name,
+            'description' => $description,
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+
+        $this->assertResponseRedirects('/roles', 302);
+        $role = RoleFactory::last();
+        $this->assertTrue($role->isDefault());
+        $initialDefaultRole->refresh();
+        $this->assertFalse($initialDefaultRole->isDefault());
+    }
+
+    public function testPostCreateDoesNotCreateDefaultAgentRole(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $name = 'My role';
+        $description = 'What it does';
+        $initialDefaultRole = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+
+        $client->request('POST', '/roles/new', [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
+            'name' => $name,
+            'description' => $description,
+            'type' => 'agent',
+            'isDefault' => true,
+        ]);
+
+        $this->assertResponseRedirects('/roles', 302);
+        $role = RoleFactory::last();
+        $this->assertFalse($role->isDefault());
+        $initialDefaultRole->refresh();
+        $this->assertTrue($initialDefaultRole->isDefault());
+    }
+
     public function testPostCreateFailsIfNameIsEmpty(): void
     {
         $client = static::createClient();
@@ -558,6 +614,66 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame($newName, $role->getName());
         $this->assertSame($newDescription, $role->getDescription());
         $this->assertEquals(['admin:see'], $role->getPermissions());
+    }
+
+    public function testPostUpdateCanSetDefaultRole(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $initialDefaultRole = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+        $role = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => false,
+        ]);
+
+        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
+            'name' => $role->getName(),
+            'description' => $role->getDescription(),
+            'permissions' => $role->getPermissions(),
+            'isDefault' => true,
+        ]);
+
+        $this->assertResponseRedirects('/roles', 302);
+        $role->refresh();
+        $this->assertTrue($role->isDefault());
+        $initialDefaultRole->refresh();
+        $this->assertFalse($initialDefaultRole->isDefault());
+    }
+
+    public function testPostUpdateDoesNotSetDefaultForAgentRole(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $initialDefaultRole = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+        $role = RoleFactory::createOne([
+            'type' => 'agent',
+            'isDefault' => false,
+        ]);
+
+        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
+            'name' => $role->getName(),
+            'description' => $role->getDescription(),
+            'permissions' => $role->getPermissions(),
+            'isDefault' => true,
+        ]);
+
+        $this->assertResponseRedirects('/roles', 302);
+        $role->refresh();
+        $this->assertFalse($role->isDefault());
+        $initialDefaultRole->refresh();
+        $this->assertTrue($initialDefaultRole->isDefault());
     }
 
     public function testPostUpdateFailsIfParamsAreInvalid(): void

@@ -4,8 +4,19 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<a class="card card--link" href="{{ path('edit role', { uid: role.uid }) }}" data-test="role-{{ role.type }}-item">
+<a
+    class="card card--link {{ role.isDefault ? 'card--primary' }}"
+    href="{{ path('edit role', { uid: role.uid }) }}"
+    data-test="role-{{ role.type }}-item"
+>
     <p class="card__title">
+
+        {% if role.isDefault %}
+            <span title="{{ 'roles.is_default' | trans }}">
+                {{ icon('star') }}
+            </span>
+        {% endif %}
+
         {{ role.name }}
     </p>
 
