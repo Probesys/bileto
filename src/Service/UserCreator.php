@@ -8,13 +8,20 @@ namespace App\Service;
 
 use App\Entity\Organization;
 use App\Entity\User;
+use App\Repository\AuthorizationRepository;
+use App\Repository\OrganizationRepository;
+use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
+use App\Utils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserCreator
 {
     public function __construct(
+        private AuthorizationRepository $authorizationRepository,
+        private OrganizationRepository $organizationRepository,
+        private RoleRepository $roleRepository,
         private UserRepository $userRepository,
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $passwordHasher,
@@ -25,7 +32,7 @@ class UserCreator
         string $email,
         string $name = '',
         string $password = '',
-        string $locale = \App\Utils\Locales::DEFAULT_LOCALE,
+        string $locale = Utils\Locales::DEFAULT_LOCALE,
         ?string $ldapIdentifier = null,
         ?Organization $organization = null,
         bool $flush = true,
@@ -48,6 +55,24 @@ class UserCreator
         }
 
         $this->userRepository->save($user, $flush);
+
+        $defaultRole = $this->roleRepository->findDefault();
+        if ($defaultRole) {
+            if ($organization) {
+                $authorizationOrganization = $organization;
+            } else {
+                $emailDomain = Utils\Email::extractDomain($user->getEmail());
+                $authorizationOrganization = $this->organizationRepository->findOneByDomainOrDefault($emailDomain);
+            }
+
+            if ($authorizationOrganization) {
+                $this->authorizationRepository->grant(
+                    $user,
+                    $defaultRole,
+                    $authorizationOrganization,
+                );
+            }
+        }
 
         return $user;
     }
