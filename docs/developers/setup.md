@@ -37,7 +37,7 @@ Open [localhost:8000](http://localhost:8000) and login with one of the following
 
 - `alix@example.com` / `secret` (super-admin and technician for all the organizations)
 - `benedict@example.com` / `secret` (salesman for all the organizations)
-- `charlie@example.com` / `secret` (user in the “Friendly Coorp” organization)
+- `charlie@example.com` / `secret` (user in the “Friendly Coop” organization)
 
 A note about the `make` commands: they might feel magic, but they are not!
 They are just shortcuts for common commands.

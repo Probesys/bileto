@@ -23,7 +23,7 @@ cn: dominique
 givenName: Dominique
 sn: Aragua
 displayName: Dominique Aragua
-mail: dominique@example.com
+mail: dominique@example.org
 uid: dominique
 userPassword: secret
 objectclass: inetOrgPerson

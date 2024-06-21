@@ -129,19 +129,21 @@ class SeedsCommand extends Command
             // Seed organizations
             $orgaProbesys = $this->orgaRepository->findOneOrCreateBy([
                 'name' => 'Probesys',
+            ], [
+                'domains' => ['example.com'],
             ]);
 
-            $orgaFriendlyCoorp = $this->orgaRepository->findOneOrCreateBy([
-                'name' => 'Friendly Coorp',
+            $orgaFriendlyCoop = $this->orgaRepository->findOneOrCreateBy([
+                'name' => 'Friendly Coop',
+            ], [
+                'domains' => ['*'],
             ]);
 
             // Seed users and authorizations
-            $password = Random::hex(50);
             $userAlix = $this->userRepository->findOneOrCreateBy([
                 'email' => 'alix@example.com',
             ], [
                 'name' => 'Alix Hambourg',
-                'password' => $password,
                 'organization' => $orgaProbesys,
             ]);
 
@@ -149,7 +151,6 @@ class SeedsCommand extends Command
                 'email' => 'benedict@example.com',
             ], [
                 'name' => 'Benedict Aphone',
-                'password' => $password,
                 'organization' => $orgaProbesys,
             ]);
 
@@ -157,13 +158,12 @@ class SeedsCommand extends Command
                 'email' => 'charlie@example.com',
             ], [
                 'name' => 'Charlie Gature',
-                'password' => $password,
-                'organization' => $orgaFriendlyCoorp,
+                'organization' => $orgaFriendlyCoop,
                 'ldapIdentifier' => 'charlie',
             ]);
 
             foreach ([$userAlix, $userBenedict, $userCharlie] as $user) {
-                if ($user->getPassword() === $password) {
+                if ($user->getPassword() === '') {
                     $user->setPassword($this->passwordHasher->hashPassword($user, 'secret'));
                     $this->userRepository->save($user);
                 }
@@ -176,16 +176,16 @@ class SeedsCommand extends Command
                 $this->authorizationRepository->grant($userAlix, $roleSuper);
             }
 
-            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userAlix, $orgaFriendlyCoorp))) {
+            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userAlix, $orgaFriendlyCoop))) {
                 $this->authorizationRepository->grant($userAlix, $roleTech, null);
             }
 
-            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userBenedict, $orgaFriendlyCoorp))) {
+            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userBenedict, $orgaFriendlyCoop))) {
                 $this->authorizationRepository->grant($userBenedict, $roleSalesman, null);
             }
 
-            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userCharlie, $orgaFriendlyCoorp))) {
-                $this->authorizationRepository->grant($userCharlie, $roleUser, $orgaFriendlyCoorp);
+            if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userCharlie, $orgaFriendlyCoop))) {
+                $this->authorizationRepository->grant($userCharlie, $roleUser, $orgaFriendlyCoop);
             }
 
             // Seed mailboxes
@@ -212,7 +212,7 @@ class SeedsCommand extends Command
                 'urgency' => 'high',
                 'impact' => 'medium',
                 'priority' => 'high',
-                'organization' => $orgaFriendlyCoorp,
+                'organization' => $orgaFriendlyCoop,
                 'requester' => $userCharlie,
                 'assignee' => $userAlix,
             ]);
@@ -260,7 +260,7 @@ class SeedsCommand extends Command
                 'urgency' => 'low',
                 'impact' => 'medium',
                 'priority' => 'low',
-                'organization' => $orgaFriendlyCoorp,
+                'organization' => $orgaFriendlyCoop,
                 'requester' => $userCharlie,
                 'assignee' => $userAlix,
             ]);
