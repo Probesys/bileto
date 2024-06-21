@@ -64,11 +64,14 @@ class RolesController extends BaseController
             $type = 'user';
         }
 
+        $defaultRole = $roleRepository->findDefault();
+
         return $this->render('roles/new.html.twig', [
             'type' => $type,
             'name' => '',
             'description' => '',
             'permissions' => [],
+            'isDefault' => $type === 'user' && !$defaultRole,
             'assignablePermissions' => Role::assignablePermissions($type),
         ]);
     }
@@ -97,6 +100,8 @@ class RolesController extends BaseController
         /** @var string[] $permissions */
         $permissions = $request->request->all('permissions');
 
+        $isDefault = $request->request->getBoolean('isDefault');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -113,12 +118,17 @@ class RolesController extends BaseController
             $permissions[] = 'orga:see';
         }
 
+        if ($type !== 'user') {
+            $isDefault = false;
+        }
+
         if (!$this->isCsrfTokenValid('create role', $csrfToken)) {
             return $this->renderBadRequest('roles/new.html.twig', [
                 'type' => $type,
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'isDefault' => $isDefault,
                 'assignablePermissions' => Role::assignablePermissions($type),
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
@@ -129,6 +139,7 @@ class RolesController extends BaseController
         $role->setDescription($description);
         $role->setType($type);
         $role->setPermissions($permissions);
+        $role->setIsDefault($isDefault);
 
         $errors = $validator->validate($role);
         if (count($errors) > 0) {
@@ -137,12 +148,17 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'isDefault' => $isDefault,
                 'assignablePermissions' => Role::assignablePermissions($type),
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
         $roleRepository->save($role, true);
+
+        if ($role->isDefault() && $role->getType() === 'user') {
+            $roleRepository->changeDefault($role);
+        }
 
         return $this->redirectToRoute('roles');
     }
@@ -161,6 +177,7 @@ class RolesController extends BaseController
             'name' => $role->getName(),
             'description' => $role->getDescription(),
             'permissions' => $role->getPermissions(),
+            'isDefault' => $role->isDefault(),
             'assignablePermissions' => Role::assignablePermissions($role->getType()),
         ]);
     }
@@ -191,6 +208,8 @@ class RolesController extends BaseController
         /** @var string[] $permissions */
         $permissions = $request->request->all('permissions');
 
+        $isDefault = $request->request->getBoolean('isDefault');
+
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
@@ -204,12 +223,17 @@ class RolesController extends BaseController
             $permissions[] = 'orga:see';
         }
 
+        if ($type !== 'user') {
+            $isDefault = false;
+        }
+
         if (!$this->isCsrfTokenValid('update role', $csrfToken)) {
             return $this->renderBadRequest('roles/edit.html.twig', [
                 'role' => $role,
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'isDefault' => $isDefault,
                 'assignablePermissions' => Role::assignablePermissions($type),
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
@@ -218,6 +242,7 @@ class RolesController extends BaseController
         $role->setName($name);
         $role->setDescription($description);
         $role->setPermissions($permissions);
+        $role->setIsDefault($isDefault);
 
         $errors = $validator->validate($role);
         if (count($errors) > 0) {
@@ -226,12 +251,17 @@ class RolesController extends BaseController
                 'name' => $name,
                 'description' => $description,
                 'permissions' => $permissions,
+                'isDefault' => $isDefault,
                 'assignablePermissions' => Role::assignablePermissions($type),
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
 
         $roleRepository->save($role, true);
+
+        if ($role->isDefault() && $role->getType() === 'user') {
+            $roleRepository->changeDefault($role);
+        }
 
         return $this->redirectToRoute('roles');
     }

@@ -8,6 +8,7 @@
 Dedicated to the backend:
 
 - [Declaring a new Entity](/docs/developers/entity.md)
+- [Creating a User](/docs/developers/create-user.md)
 - [Encrypting data](/docs/developers/encryptor.md)
 - [Sorting the entities](/docs/developers/sorters.md)
 - [How to paginate the entities](/docs/developers/pagination.md)

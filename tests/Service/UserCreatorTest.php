@@ -8,7 +8,9 @@ namespace App\Tests\Service;
 
 use App\Service\UserCreator;
 use App\Service\UserCreatorException;
+use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\OrganizationFactory;
+use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -78,6 +80,74 @@ class UserCreatorTest extends WebTestCase
         $userOrganization = $user->getOrganization();
         $this->assertNotNull($userOrganization);
         $this->assertSame($organization->getUid(), $userOrganization->getUid());
+    }
+
+    public function testCreateCanGrantAccessToDomainOrganization(): void
+    {
+        $email = 'alix@example.com';
+        $role = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+        $organization = OrganizationFactory::createOne([
+            'domains' => ['example.com'],
+        ]);
+
+        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, AuthorizationFactory::count());
+
+        $user = $this->userCreator->create(
+            email: $email,
+        );
+
+        $this->assertSame(1, UserFactory::count());
+        $this->assertSame($email, $user->getEmail());
+
+        $this->assertSame(1, AuthorizationFactory::count());
+        $authorization = AuthorizationFactory::last();
+        $authHolder = $authorization->getHolder();
+        $authRole = $authorization->getRole();
+        $authOrganization = $authorization->getOrganization();
+        $this->assertSame($user->getUid(), $authHolder->getUid());
+        $this->assertSame($role->getUid(), $authRole->getUid());
+        $this->assertNotNull($authOrganization);
+        $this->assertSame($organization->getUid(), $authOrganization->getUid());
+    }
+
+    public function testCreateCanGrantAccessToDefaultOrganization(): void
+    {
+        $email = 'alix@example.com';
+        $role = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+        $organization = OrganizationFactory::createOne([
+            'domains' => ['example.com'],
+        ]);
+        $defaultOrganization = OrganizationFactory::createOne([
+            'domains' => [],
+        ]);
+
+        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, AuthorizationFactory::count());
+
+        $user = $this->userCreator->create(
+            email: $email,
+            organization: $defaultOrganization->object(),
+        );
+
+        $this->assertSame(1, UserFactory::count());
+        $this->assertSame($email, $user->getEmail());
+
+        $this->assertSame(1, AuthorizationFactory::count());
+        $authorization = AuthorizationFactory::last();
+        $authHolder = $authorization->getHolder();
+        $authRole = $authorization->getRole();
+        $authOrganization = $authorization->getOrganization();
+        $this->assertSame($user->getUid(), $authHolder->getUid());
+        $this->assertSame($role->getUid(), $authRole->getUid());
+        $this->assertNotNull($authOrganization);
+        $this->assertSame($defaultOrganization->getUid(), $authOrganization->getUid());
     }
 
     public function testCreateFailsOnError(): void

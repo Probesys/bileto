@@ -224,6 +224,7 @@ roles.index.title: Rôles
 roles.index.user_roles.desc: 'Les rôles utilisateurs permettent aux utilisateurs finaux d’accéder aux outils d’assistance.'
 roles.index.user_roles.new: 'Nouveau rôle utilisateur'
 roles.index.user_roles.title: 'Rôles utilisateurs'
+roles.is_default: 'Rôle utilisateur par défaut'
 roles.name: Nom
 roles.new.submit: 'Créer le rôle'
 roles.new.title.admin: 'Nouveau rôle administrateur'

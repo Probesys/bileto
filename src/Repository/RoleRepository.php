@@ -46,4 +46,28 @@ class RoleRepository extends ServiceEntityRepository implements UidGeneratorInte
             'permissions' => ['admin:*'],
         ], true);
     }
+
+    public function findDefault(): ?Role
+    {
+        return $this->findOneBy([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+    }
+
+    public function changeDefault(Role $newDefaultRole): void
+    {
+        if ($newDefaultRole->getType() !== 'user') {
+            throw new \DomainException('Only user roles can be set as default.');
+        }
+
+        $initialDefaultRole = $this->findDefault();
+        if ($initialDefaultRole) {
+            $initialDefaultRole->setIsDefault(false);
+            $this->save($initialDefaultRole);
+        }
+
+        $newDefaultRole->setIsDefault(true);
+        $this->save($newDefaultRole, true);
+    }
 }

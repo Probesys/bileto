@@ -78,6 +78,21 @@
         />
     </div>
 
+    {% if type == 'user' %}
+        <div>
+            <input
+                type="checkbox"
+                id="is-default"
+                name="isDefault"
+                {{ isDefault ? 'checked' }}
+            />
+
+            <label for="is-default">
+                {{ 'roles.is_default' | trans }}
+            </label>
+        </div>
+    {% endif %}
+
     <fieldset class="flow flow--large" data-controller="checkboxes">
         <legend>{{ 'roles.permissions' | trans }}</legend>
 
