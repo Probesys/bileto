@@ -342,7 +342,8 @@
                     {% set timelineDate = null %}
                     {% for timelineItem in timeline.sortedItems %}
                         {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.createdAt.format('Y-m-d') %}
-                            {% set diff = timelineDate ? timelineDate.diff(timelineItem.createdAt).d : 0 %}
+                            {# On the next line, "0 + numerical string" converts the string to an integer. #}
+                            {% set diff = timelineDate ? 0 + timelineDate.diff(timelineItem.createdAt).format('%a') : 0 %}
                             {% set timelineDate = timelineItem.createdAt %}
 
                             <div class="timeline__date">
