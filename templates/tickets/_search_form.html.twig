@@ -130,81 +130,83 @@
                     </div>
                 </details>
 
-                <details class="accordion" {{ ticketFilter.anyFilters(['involves', 'assignee', 'requester']) ? 'open' }}>
-                    <summary class="accordion__title">
-                        {{ 'tickets.filters.actors.title' | trans }}
-                    </summary>
+                {% if is_agent(organization ?? 'any') %}
+                    <details class="accordion" {{ ticketFilter.anyFilters(['involves', 'assignee', 'requester']) ? 'open' }}>
+                        <summary class="accordion__title">
+                            {{ 'tickets.filters.actors.title' | trans }}
+                        </summary>
 
-                    <div class="accordion__body flow flow--large">
-                        <div class="flow flow--small">
-                            <label for="filter-involves" class="text--bold">
-                                {{ 'tickets.involves' | trans }}
-                            </label>
-
-                            {{ include(
-                                'tickets/filters/_multiselect_actors.html.twig',
-                                {
-                                    users: allUsers,
-                                    selected: ticketFilter.filter('involves'),
-                                    id: "filter-involves",
-                                    name: "filters[involves][]",
-                                },
-                                with_context = false
-                            ) }}
-                        </div>
-
-                        <div class="flow flow--small" data-controller="checkboxes">
-                            <label for="filter-assignee" class="text--bold">
-                                {{ 'tickets.assignee' | trans }}
-                            </label>
-
-                            {{ include(
-                                'tickets/filters/_multiselect_actors.html.twig',
-                                {
-                                    users: agents,
-                                    selected: ticketFilter.filter('assignee'),
-                                    id: "filter-assignee",
-                                    name: "filters[assignee][]",
-                                },
-                                with_context = false
-                            ) }}
-
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    id="filter-assignee-no"
-                                    name="filters[assignee][]"
-                                    value="no"
-                                    {{ null in ticketFilter.filter('assignee') ? 'checked' }}
-                                    data-checkboxes-target="control"
-                                    data-checkboxes-control="#filter-assignee-data#switchDisabled"
-                                    data-action="checkboxes#execute"
-                                />
-
-                                <label for="filter-assignee-no">
-                                    {{ 'tickets.filters.assignee.no' | trans }}
+                        <div class="accordion__body flow flow--large">
+                            <div class="flow flow--small">
+                                <label for="filter-involves" class="text--bold">
+                                    {{ 'tickets.involves' | trans }}
                                 </label>
+
+                                {{ include(
+                                    'tickets/filters/_multiselect_actors.html.twig',
+                                    {
+                                        users: allUsers,
+                                        selected: ticketFilter.filter('involves'),
+                                        id: "filter-involves",
+                                        name: "filters[involves][]",
+                                    },
+                                    with_context = false
+                                ) }}
+                            </div>
+
+                            <div class="flow flow--small" data-controller="checkboxes">
+                                <label for="filter-assignee" class="text--bold">
+                                    {{ 'tickets.assignee' | trans }}
+                                </label>
+
+                                {{ include(
+                                    'tickets/filters/_multiselect_actors.html.twig',
+                                    {
+                                        users: agents,
+                                        selected: ticketFilter.filter('assignee'),
+                                        id: "filter-assignee",
+                                        name: "filters[assignee][]",
+                                    },
+                                    with_context = false
+                                ) }}
+
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="filter-assignee-no"
+                                        name="filters[assignee][]"
+                                        value="no"
+                                        {{ null in ticketFilter.filter('assignee') ? 'checked' }}
+                                        data-checkboxes-target="control"
+                                        data-checkboxes-control="#filter-assignee-data#switchDisabled"
+                                        data-action="checkboxes#execute"
+                                    />
+
+                                    <label for="filter-assignee-no">
+                                        {{ 'tickets.filters.assignee.no' | trans }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="flow flow--small">
+                                <label for="filter-requester" class="text--bold">
+                                    {{ 'tickets.requester' | trans }}
+                                </label>
+
+                                {{ include(
+                                    'tickets/filters/_multiselect_actors.html.twig',
+                                    {
+                                        users: allUsers,
+                                        selected: ticketFilter.filter('requester'),
+                                        id: "filter-requester",
+                                        name: "filters[requester][]",
+                                    },
+                                    with_context = false
+                                ) }}
                             </div>
                         </div>
-
-                        <div class="flow flow--small">
-                            <label for="filter-requester" class="text--bold">
-                                {{ 'tickets.requester' | trans }}
-                            </label>
-
-                            {{ include(
-                                'tickets/filters/_multiselect_actors.html.twig',
-                                {
-                                    users: allUsers,
-                                    selected: ticketFilter.filter('requester'),
-                                    id: "filter-requester",
-                                    name: "filters[requester][]",
-                                },
-                                with_context = false
-                            ) }}
-                        </div>
-                    </div>
-                </details>
+                    </details>
+                {% endif %}
 
                 <details class="accordion" {{ ticketFilter.anyFilters(['priority', 'urgency', 'impact']) ? 'open' }}>
                     <summary class="accordion__title">
