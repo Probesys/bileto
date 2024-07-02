@@ -52,10 +52,22 @@ class Index
             throw new IndexError('id is duplicated');
         }
 
+        if ($uniqueKey && isset($this->uniqueIndex[$uniqueKey])) {
+            $duplicatedId = $this->uniqueIndex[$uniqueKey];
+            throw new IndexError("duplicates id {$duplicatedId}");
+        }
+
         $this->index[$id] = $object;
 
         if ($uniqueKey) {
             $this->addUniqueAlias($id, $uniqueKey);
+        }
+    }
+
+    public function remove(string $id): void
+    {
+        if (isset($this->index[$id])) {
+            unset($this->index[$id]);
         }
     }
 

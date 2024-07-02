@@ -494,6 +494,11 @@ class DataImporter
                 $this->errors[] = "User {$id} error: authorizations: not an array.";
             }
 
+            if ($this->errors) {
+                $this->errors = [];
+                continue;
+            }
+
             // Add the user to the index
             try {
                 $this->indexUsers->add($id, $user, uniqueKey: $email);
@@ -568,6 +573,11 @@ class DataImporter
                     $this->errors[] = "User {$userId} error: authorizations: "
                                     . "references an unknown organization {$organizationId}";
                 }
+            }
+
+            if ($this->errors) {
+                $this->errors = [];
+                continue;
             }
 
             // Add the authorization to the user
@@ -669,6 +679,11 @@ class DataImporter
                 $this->errors[] = "Contract {$id} error: references an unknown organization {$organizationId}.";
             }
 
+            if ($this->errors) {
+                $this->errors = [];
+                continue;
+            }
+
             // Add the contract to the index
             try {
                 $uniqueKey = $contract->getUniqueKey();
@@ -689,7 +704,8 @@ class DataImporter
         foreach ($this->indexContracts->list() as $id => $contract) {
             $error = $this->validate($contract);
             if ($error) {
-                $this->errors[] = "Contract {$id} error: {$error}";
+                // $this->errors[] = "Contract {$id} error: {$error}";
+                $this->indexContracts->remove($id);
             }
         }
 
@@ -720,7 +736,7 @@ class DataImporter
             // Check the structure of the ticket
             $error = self::checkStructure($jsonTicket, required: $requiredFields);
             if ($error) {
-                $this->errors[] = "Tickets file contains invalid data: {$error}";
+                // $this->errors[] = "Tickets file contains invalid data: {$error}";
                 continue;
             }
 
@@ -872,6 +888,11 @@ class DataImporter
 
             if ($solutionId !== null && $ticket->getSolution() === null) {
                 $this->errors[] = "Ticket {$id} error: references an unknown solution {$solutionId}.";
+            }
+
+            if ($this->errors) {
+                $this->errors = [];
+                continue;
             }
 
             // Add the ticket to the index
@@ -1185,6 +1206,7 @@ class DataImporter
         $count = count($entitiesToSave);
         yield "Saving {$count} {$entityClass}… ";
 
+        // TODO save by batch instead of saving the entities all at once.
         $repository->save($entitiesToSave, true);
 
         yield "ok\n";
