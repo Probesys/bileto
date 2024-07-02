@@ -65,14 +65,10 @@
                             </a>
                         </span>
 
-                        <div class="col--noshrink cols cols--always cols--center flow flow--small">
-                            <a href="{{ path('edit user', { uid: user.uid }) }}">
-                                {{ 'users.index.edit' | trans }}
-                            </a>
-
-                            <a href="{{ path('user authorizations', { uid: user.uid }) }}">
-                                {{ 'users.index.authorizations' | trans }}
-                            </a>
+                        <div class="col--noshrink">
+                            <span class="badge badge--grey">
+                                {{ 'users.index.authorizations' | trans({ count: user.authorizations|length }) }}
+                            </span>
                         </div>
                     </li>
                 {% endfor %}

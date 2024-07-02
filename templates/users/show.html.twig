@@ -88,5 +88,38 @@
                 </div>
             </div>
         </div>
+
+        <div class="panel flow">
+            <div class="cols cols--center flow">
+                <h2 class="col--extend">{{ 'users.show.authorizations.title' | trans }}</h2>
+
+                <a class="button button--primary button--uppercase" href="{{ path('new user authorization', { uid: user.uid }) }}">
+                    {{ icon('plus') }}
+                    {{ 'users.show.authorizations.new' | trans }}
+                </a>
+            </div>
+
+            {% if user.organization and not is_granted_to_user(user, 'orga:create:tickets', user.organization) %}
+                <div class="wrapper wrapper--text wrapper--center">
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'warning',
+                        title: 'common.caution' | trans,
+                        message: 'users.no_organization_authorization' | trans({
+                            path: path('new user authorization', { uid: user.uid, orga: user.organization.uid }),
+                        }),
+                        raw: true,
+                    }) }}
+                </div>
+            {% endif %}
+
+            <div class="grid">
+                {% for authorization in authorizations %}
+                    {{ include('authorizations/_authorization.html.twig', {
+                        authorization: authorization,
+                        mode: 'user',
+                    }, with_context = false) }}
+                {% endfor %}
+            </div>
+        </div>
     </main>
 {% endblock %}

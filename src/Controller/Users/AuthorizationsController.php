@@ -13,7 +13,6 @@ use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\RoleRepository;
 use App\Security\Authorizer;
-use App\Service\Sorter\AuthorizationSorter;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\Sorter\RoleSorter;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,25 +23,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AuthorizationsController extends BaseController
 {
-    #[Route('/users/{uid}/authorizations', name: 'user authorizations', methods: ['GET', 'HEAD'])]
-    public function index(
-        User $holder,
-        AuthorizationRepository $authorizationRepository,
-        AuthorizationSorter $authorizationSorter,
-    ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:users');
-
-        $authorizations = $authorizationRepository->findBy([
-            'holder' => $holder,
-        ]);
-        $authorizationSorter->sort($authorizations);
-
-        return $this->render('users/authorizations/index.html.twig', [
-            'user' => $holder,
-            'authorizations' => $authorizations,
-        ]);
-    }
-
     #[Route('/users/{uid}/authorizations/new', name: 'new user authorization', methods: ['GET', 'HEAD'])]
     public function new(
         User $holder,
@@ -163,7 +143,7 @@ class AuthorizationsController extends BaseController
 
         $authorizationRepository->grant($holder, $role, $organization);
 
-        return $this->redirectToRoute('user authorizations', [
+        return $this->redirectToRoute('user', [
             'uid' => $holder->getUid(),
         ]);
     }
@@ -189,7 +169,7 @@ class AuthorizationsController extends BaseController
 
         if (!$this->isCsrfTokenValid('delete user authorization', $csrfToken)) {
             $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
-            return $this->redirectToRoute('user authorizations', [
+            return $this->redirectToRoute('user', [
                 'uid' => $holder->getUid(),
             ]);
         }
@@ -201,21 +181,21 @@ class AuthorizationsController extends BaseController
             )
         ) {
             $this->addFlash('error', $translator->trans('authorization.cannot_revoke.super', [], 'errors'));
-            return $this->redirectToRoute('user authorizations', [
+            return $this->redirectToRoute('user', [
                 'uid' => $holder->getUid(),
             ]);
         }
 
         if ($authorization->getTeamAuthorization() !== null) {
             $this->addFlash('error', $translator->trans('authorization.cannot_revoke.managed_by_team', [], 'errors'));
-            return $this->redirectToRoute('user authorizations', [
+            return $this->redirectToRoute('user', [
                 'uid' => $holder->getUid(),
             ]);
         }
 
         $authorizationRepository->remove($authorization, true);
 
-        return $this->redirectToRoute('user authorizations', [
+        return $this->redirectToRoute('user', [
             'uid' => $holder->getUid(),
         ]);
     }
