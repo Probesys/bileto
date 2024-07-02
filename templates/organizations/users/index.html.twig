@@ -1,0 +1,91 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'organization.html.twig' %}
+
+{% set currentMenu = 'users' %}
+
+{% block title %}{{ 'users.index.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('organizations') }}">
+            {{ 'organizations.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('organization', { uid: organization.uid }) }}">
+            {{ organization.name }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'users.index.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body users-index">
+        <h1>{{ 'users.index.title' | trans }}</h1>
+
+        <div class="flow">
+            <div class="cols cols--center flow">
+                <div class="col--extend">
+                    {% if users %}
+                        <p class="text--secondary">
+                            {{ 'users.index.number' | trans({ count: users|length }) }}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if users %}
+                <ul class="list--padded list--border list--nostyle">
+                    {% set canManageUsers = is_granted('admin:manage:users') %}
+
+                    {% for user in users %}
+                        <li class="cols cols--center flow flow--small" data-test="user-item">
+                            <span class="col--extend flow flow--small">
+                                <div class="list__item-title">
+                                    {% if canManageUsers %}
+                                        <a href="{{ path('user', { uid: user.uid }) }}">
+                                            {{ user.displayName }}
+
+                                            {% if user == app.user %}
+                                                ({{ 'users.yourself' | trans }})
+                                            {% endif %}
+                                        </a>
+                                    {% else %}
+                                        {{ user.displayName }}
+
+                                        {% if user == app.user %}
+                                            ({{ 'users.yourself' | trans }})
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+
+                                <div class="text--small text--wrap">
+                                    {{ user.email }}
+                                </div>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'users.index.no_users' | trans }}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

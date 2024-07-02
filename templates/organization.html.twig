@@ -57,6 +57,18 @@
                 </li>
             {% endif %}
 
+            {% if is_granted('orga:see:users', organization) %}
+                <li class="submenu__item">
+                    <a
+                        class="submenu__anchor"
+                        href="{{ path('organization users', { uid: organization.uid }) }}"
+                        {{ currentMenu == 'users' ? 'aria-current="page"' }}
+                    >
+                        {{ 'users.index.title' | trans }}
+                    </a>
+                </li>
+            {% endif %}
+
             {% if is_granted('orga:manage', organization) %}
                 <li class="submenu__item">
                     <a

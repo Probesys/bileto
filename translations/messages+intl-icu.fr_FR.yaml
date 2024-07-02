@@ -250,6 +250,7 @@ roles.permissions.orga.see.tickets.all: 'Voir tous les tickets de l’organisati
 roles.permissions.orga.see.tickets.contracts: 'Voir le contrat des tickets'
 roles.permissions.orga.see.tickets.messages.confidential: 'Voir les réponses confidentielles'
 roles.permissions.orga.see.tickets.time_spent: 'Voir le temps passé'
+roles.permissions.orga.see.users: 'Voir les utilisateurs'
 roles.permissions.orga.update.tickets.actors: 'Mettre à jour les acteurs d’un ticket'
 roles.permissions.orga.update.tickets.contracts: 'Mettre à jour le contrat d’un ticket'
 roles.permissions.orga.update.tickets.priority: 'Mettre à jour la priorité d’un ticket'
@@ -447,6 +448,7 @@ users.email: 'Adresse email'
 users.identifier: 'Adresse email ou identifiant'
 users.index.authorizations: '{count, plural, =0 {Aucune autorisation} one {1 autorisation} other {# autorisations}}'
 users.index.new_user: 'Nouvel utilisateur'
+users.index.no_users: 'Aucun utilisateur'
 users.index.number: '{count, plural, =0 {Aucun utilisateur} one {1 utilisateur} other {# utilisateurs}}'
 users.index.title: Utilisateurs
 users.language: Langue
