@@ -1,0 +1,92 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'admin.html.twig' %}
+
+{% set currentMenu = 'users' %}
+
+{% block title %}{{ user.displayName }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('admin') }}">
+            {{ 'admin.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('users') }}">
+            {{ 'users.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ user.displayName }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <div class="flow flow--smaller">
+            <h1>{{ user.displayName }}</h1>
+
+            <div class="text--right">
+                <details
+                    class="popup"
+                    data-controller="popup"
+                    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                >
+                    <summary class="popup__opener">
+                        <span class="button button--discreet">
+                            {{ 'common.actions' | trans }}
+                            {{ icon('angle-down') }}
+                        </span>
+                    </summary>
+
+                    <nav class="popup__container popup__container--right">
+                        <a class="popup__item" href="{{ path('edit user', { uid: user.uid }) }}">
+                            {{ 'users.show.edit' | trans }}
+                        </a>
+                    </nav>
+                </details>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="wrapper wrapper--small wrapper--center flow flow--larger">
+                <h2>{{ 'users.show.profile' | trans }}</h2>
+
+                <div class="flow flow--large">
+                    <p>
+                        {{ 'users.show.email' | trans({ email: user.email }) }}
+                    </p>
+
+                    <p>
+                        {{ 'users.show.name' | trans({ name: user.name }) }}
+                    </p>
+
+                    {% if ldapEnabled %}
+                        <p>
+                            {{ 'users.show.ldap_identifier' | trans({ identifier: user.ldapIdentifier }) }}
+                        </p>
+                    {% endif %}
+
+                    {% if user.organization %}
+                        <p>
+                            {{ 'users.show.organization' | trans({ name: user.organization.name }) }}
+                        </p>
+                    {% else %}
+                        <p>
+                            {{ 'users.show.organization.none' | trans }}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

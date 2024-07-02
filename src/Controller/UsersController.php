@@ -128,6 +128,21 @@ class UsersController extends BaseController
         return $this->redirectToRoute('new user authorization', $parameters);
     }
 
+    #[Route('/users/{uid}', name: 'user', methods: ['GET', 'HEAD'])]
+    public function show(
+        User $user,
+        #[Autowire(env: 'bool:LDAP_ENABLED')]
+        bool $ldapEnabled,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:users');
+
+        return $this->render('users/show.html.twig', [
+            'user' => $user,
+            'ldapEnabled' => $ldapEnabled,
+            'managedByLdap' => $ldapEnabled && $user->getAuthType() === 'ldap',
+        ]);
+    }
+
     #[Route('/users/{uid}/edit', name: 'edit user', methods: ['GET', 'HEAD'])]
     public function edit(
         User $user,

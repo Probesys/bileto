@@ -464,4 +464,11 @@ users.no_organization_authorization: 'Cet utilisateur ne peut pas créer de tick
 users.no_organization: 'Aucune organisation'
 users.organization: Organisation
 users.password: 'Mot de passe'
+users.show.edit: 'Modifier l’utilisateur'
+users.show.email: "Email\_: {email}"
+users.show.ldap_identifier: "Identifiant LDAP\_: {identifier}"
+users.show.name: "Nom\_: {name}"
+users.show.organization: "Organisation\_: {name}"
+users.show.organization.none: "Organisation\_: Aucune"
+users.show.profile: 'Profil utilisateur'
 users.yourself: vous
