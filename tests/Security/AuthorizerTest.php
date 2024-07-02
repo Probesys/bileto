@@ -6,6 +6,7 @@
 
 namespace App\Tests\Security;
 
+use App\Entity\Authorization;
 use App\Repository\AuthorizationRepository;
 use App\Security\Authorizer;
 use App\Tests\Factory\AuthorizationFactory;
@@ -38,10 +39,11 @@ class AuthorizerTest extends WebTestCase
         $authorizer = $container->get(Authorizer::class);
         $this->authorizer = $authorizer;
 
-        /** @var \Zenstruck\Foundry\RepositoryProxy<AuthorizationRepository> */
-        $authRepositoryProxy = AuthorizationFactory::repository();
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
+        $registry = $container->get('doctrine');
+        $entityManager = $registry->getManager();
         /** @var AuthorizationRepository */
-        $authRepository = $authRepositoryProxy->inner();
+        $authRepository = $entityManager->getRepository(Authorization::class);
         $this->authRepository = $authRepository;
     }
 

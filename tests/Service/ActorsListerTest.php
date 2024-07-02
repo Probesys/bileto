@@ -6,6 +6,7 @@
 
 namespace App\Tests\Service;
 
+use App\Entity\Authorization;
 use App\Entity\User;
 use App\Repository\AuthorizationRepository;
 use App\Service\ActorsLister;
@@ -43,10 +44,11 @@ class ActorsListerTest extends WebTestCase
         $this->currentUser = UserFactory::createOne()->_real();
         $client->loginUser($this->currentUser);
 
-        /** @var \Zenstruck\Foundry\RepositoryProxy<AuthorizationRepository> */
-        $authRepositoryProxy = AuthorizationFactory::repository();
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
+        $registry = $container->get('doctrine');
+        $entityManager = $registry->getManager();
         /** @var AuthorizationRepository */
-        $authRepository = $authRepositoryProxy->inner();
+        $authRepository = $entityManager->getRepository(Authorization::class);
         $this->authRepository = $authRepository;
     }
 
