@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\Controller\Organization;
+namespace App\Tests\Controller\Organizations;
 
 use App\Entity\User;
 use App\Tests\AuthorizationHelper;
