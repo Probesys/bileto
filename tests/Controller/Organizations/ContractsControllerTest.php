@@ -30,9 +30,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:see:contracts']);
+        $this->grantOrga($user->_real(), ['orga:see:contracts']);
         $endAt1 = new \DateTimeImmutable('2023-10-01');
         $contract1 = ContractFactory::createOne([
             'name' => 'My contract 1',
@@ -59,11 +59,11 @@ class ContractsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
-        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:see'], $organization->_real());
         $contract = ContractFactory::createOne([
             'name' => 'My contract',
             'organization' => $organization,
@@ -77,9 +77,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
@@ -96,9 +96,9 @@ class ContractsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
         ]);
 
@@ -110,9 +110,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
@@ -156,9 +156,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
@@ -184,7 +184,7 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSame(1, ContractFactory::count());
         $contract = ContractFactory::last();
-        $contract->refresh();
+        $contract->_refresh();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $tickets = $contract->getTickets();
         $this->assertSame(1, count($tickets));
@@ -195,9 +195,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
@@ -234,7 +234,7 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSame(2, ContractFactory::count());
         $contract = ContractFactory::last();
-        $contract->refresh();
+        $contract->_refresh();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $tickets = $contract->getTickets();
         $this->assertSame(0, count($tickets));
@@ -244,9 +244,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
@@ -282,7 +282,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame(1, ContractFactory::count());
         $contract = ContractFactory::last();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
-        $timeSpent->refresh();
+        $timeSpent->_refresh();
         $timeSpentContract = $timeSpent->getContract();
         $this->assertNotNull($timeSpentContract);
         $this->assertSame($contract->getUid(), $timeSpentContract->getUid());
@@ -293,9 +293,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
@@ -324,9 +324,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
@@ -355,9 +355,9 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
@@ -388,9 +388,9 @@ class ContractsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see:contracts',
         ]);
         $name = 'My contract';

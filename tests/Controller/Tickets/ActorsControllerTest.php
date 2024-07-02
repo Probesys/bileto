@@ -7,6 +7,7 @@
 namespace App\Tests\Controller\Tickets;
 
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
@@ -21,6 +22,7 @@ class ActorsControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -32,8 +34,8 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $requester,
@@ -56,7 +58,7 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $requester,
@@ -77,8 +79,8 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'requester' => $requester,
             'assignee' => $assignee,
@@ -96,13 +98,13 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne([
             'agents' => [$assignee],
         ]);
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->object(), ['orga:create:tickets']);
-        $this->grantTeam($team->object(), ['orga:create:tickets']);
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantTeam($team->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -118,7 +120,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
         $this->assertSame($team->getUid(), $ticket->getTeam()->getUid());
         $this->assertSame($assignee->getUid(), $ticket->getAssignee()->getUid());
@@ -131,9 +133,9 @@ class ActorsControllerTest extends WebTestCase
             $user,
             $requester,
         ) = UserFactory::createMany(2);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->object(), ['orga:create:tickets']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -147,7 +149,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
         $this->assertNull($ticket->getAssignee());
     }
@@ -160,10 +162,10 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->object(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->object(), ['orga:create:tickets'], type: 'user');
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->_real(), ['orga:create:tickets'], type: 'user');
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -177,7 +179,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
         $this->assertNull($ticket->getAssignee());
     }
@@ -190,16 +192,16 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $initialTeam = TeamFactory::createOne([
             'agents' => [$assignee],
         ]);
         $newTeam = TeamFactory::createOne([
             'agents' => [$assignee],
         ]);
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->object(), ['orga:create:tickets']);
-        $this->grantTeam($initialTeam->object(), ['orga:create:tickets']);
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantTeam($initialTeam->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -215,7 +217,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
         $this->assertNull($ticket->getTeam());
         $this->assertSame($assignee->getUid(), $ticket->getAssignee()->getUid());
@@ -229,12 +231,12 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->object(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->object(), ['orga:create:tickets']);
-        $this->grantTeam($team->object(), ['orga:create:tickets']);
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
+        $this->grantTeam($team->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -250,7 +252,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
         $this->assertSame($team->getUid(), $ticket->getTeam()->getUid());
         $this->assertNull($ticket->getAssignee());
@@ -263,8 +265,8 @@ class ActorsControllerTest extends WebTestCase
             $user,
             $requester,
         ) = UserFactory::createMany(2);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -278,7 +280,8 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
-        $ticket->refresh();
+        $this->clearEntityManager();
+        $ticket->_refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());
     }
@@ -291,10 +294,10 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->object(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->object(), ['orga:create:tickets']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -308,7 +311,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());
     }
@@ -323,9 +326,9 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
-        $this->grantOrga($requester->object(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->object(), ['orga:create:tickets']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
@@ -350,10 +353,10 @@ class ActorsControllerTest extends WebTestCase
             $requester,
             $assignee,
         ) = UserFactory::createMany(3);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->object(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->object(), ['orga:create:tickets']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'requester' => null,
             'assignee' => null,

@@ -7,52 +7,18 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Organization;
-use App\Repository\OrganizationRepository;
 use App\Utils\Random;
-use Zenstruck\Foundry\RepositoryProxy;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends ModelFactory<Organization>
- *
- * @method static Organization|Proxy createOne(array $attributes = [])
- * @method static Organization[]|Proxy[] createMany(int $number, array|callable $attributes = [])
- * @method static Organization[]|Proxy[] createSequence(array|callable $sequence)
- * @method static Organization|Proxy find(object|array|mixed $criteria)
- * @method static Organization|Proxy findOrCreate(array $attributes)
- * @method static Organization|Proxy first(string $sortedField = 'id')
- * @method static Organization|Proxy last(string $sortedField = 'id')
- * @method static Organization|Proxy random(array $attributes = [])
- * @method static Organization|Proxy randomOrCreate(array $attributes = [])
- * @method static Organization[]|Proxy[] all()
- * @method static Organization[]|Proxy[] findBy(array $attributes)
- * @method static Organization[]|Proxy[] randomSet(int $number, array $attributes = [])
- * @method static Organization[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @method static OrganizationRepository|RepositoryProxy repository()
- * @method Organization|Proxy create(array|callable $attributes = [])
- *
- * @phpstan-method static Organization&Proxy createOne(array $attributes = [])
- * @phpstan-method static Organization[]&Proxy[] createMany(int $number, array|callable $attributes = [])
- * @phpstan-method static Organization[]&Proxy[] createSequence(array|callable $sequence)
- * @phpstan-method static Organization&Proxy find(object|array|mixed $criteria)
- * @phpstan-method static Organization&Proxy findOrCreate(array $attributes)
- * @phpstan-method static Organization&Proxy first(string $sortedField = 'id')
- * @phpstan-method static Organization&Proxy last(string $sortedField = 'id')
- * @phpstan-method static Organization&Proxy random(array $attributes = [])
- * @phpstan-method static Organization&Proxy randomOrCreate(array $attributes = [])
- * @phpstan-method static Organization[]&Proxy[] all()
- * @phpstan-method static Organization[]&Proxy[] findBy(array $attributes)
- * @phpstan-method static Organization[]&Proxy[] randomSet(int $number, array $attributes = [])
- * @phpstan-method static Organization[]&Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @phpstan-method Organization&Proxy create(array|callable $attributes = [])
+ * @extends PersistentProxyObjectFactory<Organization>
  */
-final class OrganizationFactory extends ModelFactory
+final class OrganizationFactory extends PersistentProxyObjectFactory
 {
     /**
      * @return mixed[]
      */
-    protected function getDefaults(): array
+    protected function defaults(): array
     {
         return [
             'uid' => Random::hex(20),
@@ -61,12 +27,12 @@ final class OrganizationFactory extends ModelFactory
         ];
     }
 
-    protected function initialize(): self
+    protected function initialize(): static
     {
         return $this;
     }
 
-    protected static function getClass(): string
+    public static function class(): string
     {
         return Organization::class;
     }

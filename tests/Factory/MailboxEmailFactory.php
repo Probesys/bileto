@@ -7,55 +7,18 @@
 namespace App\Tests\Factory;
 
 use App\Entity\MailboxEmail;
-use App\Repository\MailboxEmailRepository;
-use App\Security\Encryptor;
-use App\Utils\Random;
-use Zenstruck\Foundry\Instantiator;
-use Zenstruck\Foundry\RepositoryProxy;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 use Webklex\PHPIMAP;
 
 /**
- * @extends ModelFactory<MailboxEmail>
- *
- * @method static MailboxEmail|Proxy createOne(array $attributes = [])
- * @method static MailboxEmail[]|Proxy[] createMany(int $number, array|callable $attributes = [])
- * @method static MailboxEmail[]|Proxy[] createSequence(array|callable $sequence)
- * @method static MailboxEmail|Proxy find(object|array|mixed $criteria)
- * @method static MailboxEmail|Proxy findOrCreate(array $attributes)
- * @method static MailboxEmail|Proxy first(string $sortedField = 'id')
- * @method static MailboxEmail|Proxy last(string $sortedField = 'id')
- * @method static MailboxEmail|Proxy random(array $attributes = [])
- * @method static MailboxEmail|Proxy randomOrCreate(array $attributes = [])
- * @method static MailboxEmail[]|Proxy[] all()
- * @method static MailboxEmail[]|Proxy[] findBy(array $attributes)
- * @method static MailboxEmail[]|Proxy[] randomSet(int $number, array $attributes = [])
- * @method static MailboxEmail[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @method static MailboxEmailRepository|RepositoryProxy repository()
- * @method MailboxEmail|Proxy create(array|callable $attributes = [])
- *
- * @phpstan-method static MailboxEmail&Proxy createOne(array $attributes = [])
- * @phpstan-method static MailboxEmail[]&Proxy[] createMany(int $number, array|callable $attributes = [])
- * @phpstan-method static MailboxEmail[]&Proxy[] createSequence(array|callable $sequence)
- * @phpstan-method static MailboxEmail&Proxy find(object|array|mixed $criteria)
- * @phpstan-method static MailboxEmail&Proxy findOrCreate(array $attributes)
- * @phpstan-method static MailboxEmail&Proxy first(string $sortedField = 'id')
- * @phpstan-method static MailboxEmail&Proxy last(string $sortedField = 'id')
- * @phpstan-method static MailboxEmail&Proxy random(array $attributes = [])
- * @phpstan-method static MailboxEmail&Proxy randomOrCreate(array $attributes = [])
- * @phpstan-method static MailboxEmail[]&Proxy[] all()
- * @phpstan-method static MailboxEmail[]&Proxy[] findBy(array $attributes)
- * @phpstan-method static MailboxEmail[]&Proxy[] randomSet(int $number, array $attributes = [])
- * @phpstan-method static MailboxEmail[]&Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @phpstan-method MailboxEmail&Proxy create(array|callable $attributes = [])
+ * @extends PersistentProxyObjectFactory<MailboxEmail>
  */
-final class MailboxEmailFactory extends ModelFactory
+final class MailboxEmailFactory extends PersistentProxyObjectFactory
 {
     /**
      * @return mixed[]
      */
-    protected function getDefaults(): array
+    protected function defaults(): array
     {
         return [
             'date' => self::faker()->dateTime(),
@@ -66,7 +29,7 @@ final class MailboxEmailFactory extends ModelFactory
         ];
     }
 
-    protected function initialize(): self
+    protected function initialize(): static
     {
         return $this->instantiateWith(function (array $attributes, string $class): MailboxEmail {
             $headers = <<<TEXT
@@ -96,7 +59,7 @@ final class MailboxEmailFactory extends ModelFactory
         });
     }
 
-    protected static function getClass(): string
+    public static function class(): string
     {
         return MailboxEmail::class;
     }

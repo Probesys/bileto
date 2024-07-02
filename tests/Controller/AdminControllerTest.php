@@ -24,8 +24,8 @@ class AdminControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), [
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), [
             'admin:see',
             'admin:manage:roles',
             'admin:manage:users',
@@ -41,8 +41,8 @@ class AdminControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), [
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), [
             'admin:see',
             'admin:manage:users',
             'admin:create:organizations',
@@ -57,8 +57,8 @@ class AdminControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), [
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), [
             'admin:see',
         ]);
 
@@ -77,7 +77,7 @@ class AdminControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/admin');

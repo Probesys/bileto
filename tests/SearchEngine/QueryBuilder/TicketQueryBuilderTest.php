@@ -32,7 +32,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        $this->currentUser = UserFactory::createOne()->object();
+        $this->currentUser = UserFactory::createOne()->_real();
         $client->loginUser($this->currentUser);
         /** @var SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder */
         $ticketQueryBuilder = $container->get(SearchEngine\QueryBuilder\TicketQueryBuilder::class);
@@ -250,7 +250,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString('assignee:alix');
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -265,7 +265,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString("assignee:#{$alix->getId()}");
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -292,7 +292,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString('assignee:alix,@me');
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -322,7 +322,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString('requester:alix');
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -337,7 +337,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString('involves:alix');
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -353,7 +353,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $alix = UserFactory::createOne([
             'name' => 'Alix Hambourg',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString('-involves:alix');
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -369,7 +369,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $probesys = OrganizationFactory::createOne([
             'name' => 'Probesys',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString('org:probesys');
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -384,7 +384,7 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $probesys = OrganizationFactory::createOne([
             'name' => 'Probesys',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString("org:#{$probesys->getId()}");
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -399,10 +399,10 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $probesys = OrganizationFactory::createOne([
             'name' => 'Probesys',
-        ])->object();
+        ])->_real();
         $friendlyCoorp = OrganizationFactory::createOne([
             'name' => 'Friendly Coorp',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString('org:Probesys,coorp');
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
@@ -420,10 +420,10 @@ class TicketQueryBuilderTest extends WebTestCase
     {
         $probesys = OrganizationFactory::createOne([
             'name' => 'Probesys',
-        ])->object();
+        ])->_real();
         $friendlyCoorp = OrganizationFactory::createOne([
             'name' => 'Friendly Coorp',
-        ])->object();
+        ])->_real();
         $query = SearchEngine\Query::fromString("org:#{$probesys->getId()},coorp");
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);

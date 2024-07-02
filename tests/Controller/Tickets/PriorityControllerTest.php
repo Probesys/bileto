@@ -7,6 +7,7 @@
 namespace App\Tests\Controller\Tickets;
 
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
@@ -20,6 +21,7 @@ class PriorityControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -27,8 +29,8 @@ class PriorityControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:priority']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -45,7 +47,7 @@ class PriorityControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -60,8 +62,8 @@ class PriorityControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:priority']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
         $ticket = TicketFactory::createOne();
 
         $client->catchExceptions(false);
@@ -72,8 +74,8 @@ class PriorityControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:priority']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
         $oldUrgency = 'low';
         $oldImpact = 'low';
         $oldPriority = 'low';
@@ -95,7 +97,7 @@ class PriorityControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($newUrgency, $ticket->getUrgency());
         $this->assertSame($newImpact, $ticket->getImpact());
         $this->assertSame($newPriority, $ticket->getPriority());
@@ -105,8 +107,8 @@ class PriorityControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:priority']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
         $oldUrgency = 'low';
         $oldImpact = 'low';
         $oldPriority = 'low';
@@ -128,7 +130,8 @@ class PriorityControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#priority-error', 'Select a priority from the list');
-        $ticket->refresh();
+        $this->clearEntityManager();
+        $ticket->_refresh();
         $this->assertSame($oldUrgency, $ticket->getUrgency());
         $this->assertSame($oldImpact, $ticket->getImpact());
         $this->assertSame($oldPriority, $ticket->getPriority());
@@ -138,8 +141,8 @@ class PriorityControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:priority']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
         $oldUrgency = 'low';
         $oldImpact = 'low';
         $oldPriority = 'low';
@@ -161,7 +164,7 @@ class PriorityControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($oldUrgency, $ticket->getUrgency());
         $this->assertSame($oldImpact, $ticket->getImpact());
         $this->assertSame($oldPriority, $ticket->getPriority());
@@ -173,7 +176,7 @@ class PriorityControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $oldUrgency = 'low';
         $oldImpact = 'low';
         $oldPriority = 'low';
@@ -202,8 +205,8 @@ class PriorityControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:priority']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
         $oldUrgency = 'low';
         $oldImpact = 'low';
         $oldPriority = 'low';

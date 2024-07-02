@@ -34,7 +34,7 @@ class LoginControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_GET, '/login');
 
@@ -140,7 +140,7 @@ class LoginControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_GET, '/profile');
         $client->submitForm('form-logout-submit');

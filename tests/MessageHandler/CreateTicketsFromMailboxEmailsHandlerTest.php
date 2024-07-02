@@ -40,9 +40,9 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
-        $subject = Factory::faker()->words(3, true);
-        $body = Factory::faker()->randomHtml();
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $user->getEmail(),
             'subject' => $subject,
@@ -87,10 +87,10 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         ]);
         // Log the user so the created Contract has a createdBy and a updatedBy
         // fields set.
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
-        $subject = Factory::faker()->words(3, true);
-        $body = Factory::faker()->randomHtml();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $user->getEmail(),
             'subject' => $subject,
@@ -123,7 +123,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages'], $organization->_real());
         $assignee = UserFactory::createOne();
         $ticket = TicketFactory::createOne([
             'status' => 'new',
@@ -132,9 +132,9 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'assignee' => $assignee,
         ]);
         /** @var string */
-        $subject = Factory::faker()->words(3, true);
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
         $subject = "Re: [#{$ticket->getId()}] " . $subject;
-        $body = Factory::faker()->randomHtml();
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $user->getEmail(),
             'subject' => $subject,
@@ -176,7 +176,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages'], $organization->_real());
         $emailId = 'abc@example.com';
         $assignee = UserFactory::createOne();
         $ticket = TicketFactory::createOne([
@@ -190,8 +190,8 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'emailId' => $emailId,
         ]);
         /** @var string */
-        $subject = Factory::faker()->words(3, true);
-        $body = Factory::faker()->randomHtml();
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $user->getEmail(),
             'inReplyTo' => $emailId,
@@ -234,15 +234,15 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
         $ticket = TicketFactory::createOne([
             'status' => 'new',
             'organization' => $organization,
         ]);
         /** @var string */
-        $subject = Factory::faker()->words(3, true);
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
         $subject = "Re: [#{$ticket->getId()}] " . $subject;
-        $body = Factory::faker()->randomHtml();
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $user->getEmail(),
             'subject' => $subject,
@@ -276,15 +276,15 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
         $ticket = TicketFactory::createOne([
             'status' => 'closed',
             'organization' => $organization,
         ]);
         /** @var string */
-        $subject = Factory::faker()->words(3, true);
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
         $subject = "Re: [#{$ticket->getId()}] " . $subject;
-        $body = Factory::faker()->randomHtml();
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $user->getEmail(),
             'subject' => $subject,
@@ -318,17 +318,17 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'organization' => $organization,
         ]);
         // The user has the expected permissions on its organization.
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:create:tickets:messages',
-        ], $organization->object());
+        ], $organization->_real());
         // But the ticket is associated to another organization!
         $ticket = TicketFactory::createOne([
             'status' => 'new',
             'organization' => $otherOrganization,
         ]);
         /** @var string */
-        $subject = Factory::faker()->words(3, true);
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
         $subject = "Re: [#{$ticket->getId()}] " . $subject;
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $user->getEmail(),
@@ -366,7 +366,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'email' => $email,
             'organization' => null,
         ]);
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $user->getEmail(),
         ]);
@@ -414,7 +414,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(0, MessageFactory::count());
         $this->assertSame(1, UserFactory::count());
 
-        $mailboxEmail->refresh();
+        $mailboxEmail->_refresh();
         $this->assertSame('sender has not permission to create tickets', $mailboxEmail->getLastError());
         $user = UserFactory::last();
         $this->assertSame($email, $user->getEmail());
@@ -428,7 +428,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $bus = $container->get(MessageBusInterface::class);
 
         $mailboxEmail = MailboxEmailFactory::createOne([
-            'from' => Factory::faker()->email(),
+            'from' => \Zenstruck\Foundry\faker()->email(),
         ]);
 
         $bus->dispatch(new CreateTicketsFromMailboxEmails());
@@ -437,7 +437,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $mailboxEmail->refresh();
+        $mailboxEmail->_refresh();
         $this->assertSame('unknown sender', $mailboxEmail->getLastError());
     }
 
@@ -460,7 +460,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $mailboxEmail->refresh();
+        $mailboxEmail->_refresh();
         $this->assertSame('sender is not attached to an organization', $mailboxEmail->getLastError());
     }
 
@@ -484,7 +484,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $mailboxEmail->refresh();
+        $mailboxEmail->_refresh();
         $this->assertSame('sender has not permission to create tickets', $mailboxEmail->getLastError());
     }
 }

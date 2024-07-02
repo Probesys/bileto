@@ -9,50 +9,17 @@ namespace App\Tests\Factory;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
 use App\Utils\Random;
-use Zenstruck\Foundry\RepositoryProxy;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends ModelFactory<Message>
- *
- * @method static Message|Proxy createOne(array $attributes = [])
- * @method static Message[]|Proxy[] createMany(int $number, array|callable $attributes = [])
- * @method static Message[]|Proxy[] createSequence(array|callable $sequence)
- * @method static Message|Proxy find(object|array|mixed $criteria)
- * @method static Message|Proxy findOrCreate(array $attributes)
- * @method static Message|Proxy first(string $sortedField = 'id')
- * @method static Message|Proxy last(string $sortedField = 'id')
- * @method static Message|Proxy random(array $attributes = [])
- * @method static Message|Proxy randomOrCreate(array $attributes = [])
- * @method static Message[]|Proxy[] all()
- * @method static Message[]|Proxy[] findBy(array $attributes)
- * @method static Message[]|Proxy[] randomSet(int $number, array $attributes = [])
- * @method static Message[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @method static MessageRepository|RepositoryProxy repository()
- * @method Message|Proxy create(array|callable $attributes = [])
- *
- * @phpstan-method static Message&Proxy createOne(array $attributes = [])
- * @phpstan-method static Message[]&Proxy[] createMany(int $number, array|callable $attributes = [])
- * @phpstan-method static Message[]&Proxy[] createSequence(array|callable $sequence)
- * @phpstan-method static Message&Proxy find(object|array|mixed $criteria)
- * @phpstan-method static Message&Proxy findOrCreate(array $attributes)
- * @phpstan-method static Message&Proxy first(string $sortedField = 'id')
- * @phpstan-method static Message&Proxy last(string $sortedField = 'id')
- * @phpstan-method static Message&Proxy random(array $attributes = [])
- * @phpstan-method static Message&Proxy randomOrCreate(array $attributes = [])
- * @phpstan-method static Message[]&Proxy[] all()
- * @phpstan-method static Message[]&Proxy[] findBy(array $attributes)
- * @phpstan-method static Message[]&Proxy[] randomSet(int $number, array $attributes = [])
- * @phpstan-method static Message[]&Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @phpstan-method Message&Proxy create(array|callable $attributes = [])
+ * @extends PersistentProxyObjectFactory<Message>
  */
-final class MessageFactory extends ModelFactory
+final class MessageFactory extends PersistentProxyObjectFactory
 {
     /**
      * @return mixed[]
      */
-    protected function getDefaults(): array
+    protected function defaults(): array
     {
         return [
             'uid' => Random::hex(20),
@@ -63,12 +30,12 @@ final class MessageFactory extends ModelFactory
         ];
     }
 
-    protected function initialize(): self
+    protected function initialize(): static
     {
         return $this;
     }
 
-    protected static function getClass(): string
+    public static function class(): string
     {
         return Message::class;
     }

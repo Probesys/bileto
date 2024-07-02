@@ -38,8 +38,8 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var RouterInterface */
         $router = static::getContainer()->get('router');
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $filepath = sys_get_temp_dir() . '/document.txt';
         $content = 'Hello World!';
         $hash = hash('sha256', $content);
@@ -83,8 +83,8 @@ class MessageDocumentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $filepath = sys_get_temp_dir() . '/document.txt';
         $content = 'Hello World!';
         $hash = hash('sha256', $content);
@@ -111,8 +111,8 @@ class MessageDocumentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $filepath = sys_get_temp_dir() . '/document.mp3';
         touch($filepath);
         $document = new UploadedFile($filepath, 'My audio file');
@@ -137,8 +137,8 @@ class MessageDocumentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
 
         $client->request(Request::METHOD_POST, '/messages/documents/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create message document'),
@@ -158,7 +158,7 @@ class MessageDocumentsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $content = 'Hello World!';
         $hash = hash('sha256', $content);
@@ -181,7 +181,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var MessageDocumentRepository */
         $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $expectedContent = 'Hello World!';
         $hash = hash('sha256', $expectedContent);
@@ -213,7 +213,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
         $user = UserFactory::createOne();
         $otherUser = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $expectedContent = 'Hello World!';
         $hash = hash('sha256', $expectedContent);
@@ -221,7 +221,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $document = new File($filepath);
         $messageDocument = $messageDocumentStorage->store($document, 'My document');
         $messageDocumentRepository->save($messageDocument, true);
-        $client->loginUser($otherUser->object());
+        $client->loginUser($otherUser->_real());
 
         $this->assertNull($messageDocument->getMessage());
 
@@ -240,7 +240,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
         $user = UserFactory::createOne();
         $otherUser = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $expectedContent = 'Hello World!';
         $hash = hash('sha256', $expectedContent);
@@ -249,10 +249,10 @@ class MessageDocumentsControllerTest extends WebTestCase
         $messageDocument = $messageDocumentStorage->store($document, 'My document');
 
         $message = MessageFactory::createOne();
-        $messageDocument->setMessage($message->object());
+        $messageDocument->setMessage($message->_real());
         $messageDocumentRepository->save($messageDocument, true);
 
-        $client->loginUser($otherUser->object());
+        $client->loginUser($otherUser->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/messages/documents/{$messageDocument->getUid()}.txt");
@@ -269,8 +269,8 @@ class MessageDocumentsControllerTest extends WebTestCase
         $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
         $user = UserFactory::createOne();
         $otherUser = UserFactory::createOne();
-        $this->grantOrga($otherUser->object(), ['orga:see:tickets:all']);
-        $client->loginUser($user->object());
+        $this->grantOrga($otherUser->_real(), ['orga:see:tickets:all']);
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $expectedContent = 'Hello World!';
         $hash = hash('sha256', $expectedContent);
@@ -281,10 +281,10 @@ class MessageDocumentsControllerTest extends WebTestCase
         $message = MessageFactory::createOne([
             'isConfidential' => true,
         ]);
-        $messageDocument->setMessage($message->object());
+        $messageDocument->setMessage($message->_real());
         $messageDocumentRepository->save($messageDocument, true);
 
-        $client->loginUser($otherUser->object());
+        $client->loginUser($otherUser->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/messages/documents/{$messageDocument->getUid()}.txt");
@@ -300,7 +300,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var MessageDocumentRepository */
         $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $expectedContent = 'Hello World!';
         $hash = hash('sha256', $expectedContent);
@@ -323,7 +323,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var MessageDocumentRepository */
         $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $expectedContent = 'Hello World!';
         $hash = hash('sha256', $expectedContent);
@@ -369,7 +369,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var MessageDocumentRepository */
         $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $expectedContent = 'Hello World!';
         $hash = hash('sha256', $expectedContent);
@@ -378,7 +378,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $messageDocument = $messageDocumentStorage->store($document, 'My document');
         $messageDocumentRepository->save($messageDocument, true);
         $otherUser = UserFactory::createOne();
-        $client->loginUser($otherUser->object());
+        $client->loginUser($otherUser->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/messages/documents/{$messageDocument->getUid()}/deletion", [
@@ -394,7 +394,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         /** @var MessageDocumentRepository */
         $messageDocumentRepository = static::getContainer()->get(MessageDocumentRepository::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $filepath = sys_get_temp_dir() . '/document.txt';
         $expectedContent = 'Hello World!';
         $hash = hash('sha256', $expectedContent);
@@ -421,17 +421,17 @@ class MessageDocumentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $message = MessageFactory::createOne();
         $messageDocument1 = MessageDocumentFactory::createOne([
             'createdAt' => Time::ago(2, 'hour'),
-            'createdBy' => $user->object(),
+            'createdBy' => $user->_real(),
             'name' => 'foo.txt',
             'message' => $message,
         ]);
         $messageDocument2 = MessageDocumentFactory::createOne([
             'createdAt' => Time::ago(1, 'hour'),
-            'createdBy' => $user->object(),
+            'createdBy' => $user->_real(),
             'name' => 'bar.txt',
             'message' => null,
         ]);
@@ -453,17 +453,17 @@ class MessageDocumentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $message = MessageFactory::createOne();
         $messageDocument1 = MessageDocumentFactory::createOne([
             'createdAt' => Time::ago(2, 'hour'),
-            'createdBy' => $user->object(),
+            'createdBy' => $user->_real(),
             'name' => 'foo.txt',
             'message' => $message,
         ]);
         $messageDocument2 = MessageDocumentFactory::createOne([
             'createdAt' => Time::ago(1, 'hour'),
-            'createdBy' => $user->object(),
+            'createdBy' => $user->_real(),
             'name' => 'bar.txt',
             'message' => null,
         ]);

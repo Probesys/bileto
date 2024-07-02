@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Role;
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\UserFactory;
@@ -17,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Zenstruck\Foundry;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -24,6 +26,7 @@ class RolesControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -31,8 +34,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         RoleFactory::createOne([
             'name' => 'foo',
             'type' => 'agent',
@@ -54,8 +57,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
 
         $this->assertSame(0, count(RoleFactory::findBy(['type' => 'super'])));
 
@@ -73,7 +76,7 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/roles');
@@ -83,8 +86,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
 
         $client->request(Request::METHOD_GET, '/roles/new?type=agent');
 
@@ -98,7 +101,7 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/roles/new?type=agent');
@@ -110,8 +113,8 @@ class RolesControllerTest extends WebTestCase
         Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -144,8 +147,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -167,8 +170,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -188,8 +191,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -208,8 +211,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         $permissions = [
@@ -237,8 +240,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         $permissions = [
@@ -267,8 +270,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         $permissions = [
@@ -296,8 +299,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         $initialDefaultRole = RoleFactory::createOne([
@@ -316,7 +319,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
         $this->assertTrue($role->isDefault());
-        $initialDefaultRole->refresh();
+        $initialDefaultRole->_refresh();
         $this->assertFalse($initialDefaultRole->isDefault());
     }
 
@@ -324,8 +327,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         $initialDefaultRole = RoleFactory::createOne([
@@ -344,7 +347,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertResponseRedirects('/roles', 302);
         $role = RoleFactory::last();
         $this->assertFalse($role->isDefault());
-        $initialDefaultRole->refresh();
+        $initialDefaultRole->_refresh();
         $this->assertTrue($initialDefaultRole->isDefault());
     }
 
@@ -352,8 +355,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = '';
         $description = 'What it does';
 
@@ -371,8 +374,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = str_repeat('a', 51);
         $description = 'What it does';
 
@@ -390,8 +393,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = '';
 
@@ -409,8 +412,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = str_repeat('a', 256);
 
@@ -428,8 +431,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
         RoleFactory::createOne([
@@ -452,8 +455,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $name = 'My role';
         $description = 'What it does';
 
@@ -473,7 +476,7 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $name = 'My role';
         $description = 'What it does';
 
@@ -489,9 +492,9 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'agent', 'user']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
+        $type = Foundry\faker()->randomElement(['admin', 'agent', 'user']);
         $role = RoleFactory::createOne([
             'type' => $type,
         ]);
@@ -514,8 +517,8 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $role = RoleFactory::createOne([
             'type' => 'super',
         ]);
@@ -530,9 +533,9 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['admin', 'agent', 'user']),
+            'type' => Foundry\faker()->randomElement(['admin', 'agent', 'user']),
         ]);
 
         $client->catchExceptions(false);
@@ -543,9 +546,9 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'agent', 'user']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
+        $type = Foundry\faker()->randomElement(['admin', 'agent', 'user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
@@ -572,7 +575,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/roles', 302);
-        $role->refresh();
+        $role->_refresh();
         $this->assertSame($newName, $role->getName());
         $this->assertSame($newDescription, $role->getDescription());
         if ($type === 'admin') {
@@ -587,8 +590,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $type = 'admin';
         $oldName = 'Old role';
         $newName = 'New role';
@@ -611,7 +614,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/roles', 302);
-        $role->refresh();
+        $role->_refresh();
         $this->assertSame($newName, $role->getName());
         $this->assertSame($newDescription, $role->getDescription());
         $this->assertEquals(['admin:see'], $role->getPermissions());
@@ -621,8 +624,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $initialDefaultRole = RoleFactory::createOne([
             'type' => 'user',
             'isDefault' => true,
@@ -641,9 +644,9 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/roles', 302);
-        $role->refresh();
+        $role->_refresh();
         $this->assertTrue($role->isDefault());
-        $initialDefaultRole->refresh();
+        $initialDefaultRole->_refresh();
         $this->assertFalse($initialDefaultRole->isDefault());
     }
 
@@ -651,8 +654,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $initialDefaultRole = RoleFactory::createOne([
             'type' => 'user',
             'isDefault' => true,
@@ -671,9 +674,9 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/roles', 302);
-        $role->refresh();
+        $role->_refresh();
         $this->assertFalse($role->isDefault());
-        $initialDefaultRole->refresh();
+        $initialDefaultRole->_refresh();
         $this->assertTrue($initialDefaultRole->isDefault());
     }
 
@@ -681,9 +684,9 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'agent', 'user']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
+        $type = Foundry\faker()->randomElement(['admin', 'agent', 'user']);
         $oldName = 'Old role';
         $newName = '';
         $oldDescription = 'Description of the old role';
@@ -710,7 +713,8 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#name-error', 'Enter a name');
-        $role->refresh();
+        $this->clearEntityManager();
+        $role->_refresh();
         $this->assertSame($oldName, $role->getName());
         $this->assertSame($oldDescription, $role->getDescription());
         $this->assertEquals($oldPermissions, $role->getPermissions());
@@ -720,9 +724,9 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
-        $type = RoleFactory::faker()->randomElement(['admin', 'agent', 'user']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
+        $type = Foundry\faker()->randomElement(['admin', 'agent', 'user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
@@ -749,7 +753,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $role->refresh();
+        $role->_refresh();
         $this->assertSame($oldName, $role->getName());
         $this->assertSame($oldDescription, $role->getDescription());
         $this->assertEquals($oldPermissions, $role->getPermissions());
@@ -761,8 +765,8 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $type = 'super';
         $oldName = 'Old role';
         $newName = 'New role';
@@ -792,8 +796,8 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $type = RoleFactory::faker()->randomElement(['admin', 'agent', 'user']);
+        $client->loginUser($user->_real());
+        $type = Foundry\faker()->randomElement(['admin', 'agent', 'user']);
         $oldName = 'Old role';
         $newName = 'New role';
         $oldDescription = 'Description of the old role';
@@ -825,8 +829,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $role = RoleFactory::createOne([
             'type' => 'agent',
         ]);
@@ -847,8 +851,8 @@ class RolesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $role = RoleFactory::createOne([
             'type' => 'agent',
         ]);
@@ -873,8 +877,8 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:roles']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
         $role = RoleFactory::createOne([
             'type' => 'super',
         ]);
@@ -891,7 +895,7 @@ class RolesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $role = RoleFactory::createOne([
             'type' => 'agent',
         ]);

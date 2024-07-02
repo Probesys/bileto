@@ -24,7 +24,7 @@ class PagesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_GET, '/');
 
@@ -55,7 +55,7 @@ class PagesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_GET, '/advanced-search-syntax');
 

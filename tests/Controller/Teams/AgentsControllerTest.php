@@ -29,8 +29,8 @@ class AgentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/agents/new");
@@ -45,7 +45,7 @@ class AgentsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne();
 
         $client->catchExceptions(false);
@@ -56,12 +56,12 @@ class AgentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne();
 
-        $this->assertFalse($team->hasAgent($agent->object()));
+        $this->assertFalse($team->hasAgent($agent->_real()));
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'add team agent'),
@@ -69,15 +69,15 @@ class AgentsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        $this->assertTrue($team->hasAgent($agent->object()));
+        $this->assertTrue($team->hasAgent($agent->_real()));
     }
 
     public function testPostCreateCreatesTheAgentIfEmailDoesNotExist(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $agentEmail = 'alix@example.com';
 
@@ -92,15 +92,15 @@ class AgentsControllerTest extends WebTestCase
         $this->assertSame(2, UserFactory::count());
         $agent = UserFactory::last();
         $this->assertSame($agentEmail, $agent->getEmail());
-        $this->assertTrue($team->hasAgent($agent->object()));
+        $this->assertTrue($team->hasAgent($agent->_real()));
     }
 
     public function testPostCreateGrantsTeamAuthorizationsToTheAgent(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne();
         $teamAuthorization = TeamAuthorizationFactory::createOne([
@@ -112,7 +112,7 @@ class AgentsControllerTest extends WebTestCase
             'agentEmail' => $agent->getEmail(),
         ]);
 
-        $agent->refresh();
+        $agent->_refresh();
         $authorizations = $agent->getAuthorizations();
         $this->assertSame(1, count($authorizations));
         $this->assertSame($teamAuthorization->getId(), $authorizations[0]->getTeamAuthorization()->getId());
@@ -122,8 +122,8 @@ class AgentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $agentEmail = '';
 
@@ -140,8 +140,8 @@ class AgentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $agentEmail = 'not an email';
 
@@ -158,12 +158,12 @@ class AgentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne();
 
-        $this->assertFalse($team->hasAgent($agent->object()));
+        $this->assertFalse($team->hasAgent($agent->_real()));
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => 'not a token',
@@ -171,7 +171,7 @@ class AgentsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $this->assertFalse($team->hasAgent($agent->object()));
+        $this->assertFalse($team->hasAgent($agent->_real()));
     }
 
     public function testPostCreateFailsIfAccessIsForbidden(): void
@@ -180,7 +180,7 @@ class AgentsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne();
 
@@ -195,14 +195,14 @@ class AgentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne([
             'agents' => [$agent],
         ]);
 
-        $this->assertTrue($team->hasAgent($agent->object()));
+        $this->assertTrue($team->hasAgent($agent->_real()));
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
@@ -210,15 +210,15 @@ class AgentsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        $this->assertFalse($team->hasAgent($agent->object()));
+        $this->assertFalse($team->hasAgent($agent->_real()));
     }
 
     public function testPostDeleteUngrantsTeamAuthorizationsFromTheAgent(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne([
             'agents' => [$agent],
@@ -244,8 +244,8 @@ class AgentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/deletion", [
@@ -260,14 +260,14 @@ class AgentsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne([
             'agents' => [$agent],
         ]);
 
-        $this->assertTrue($team->hasAgent($agent->object()));
+        $this->assertTrue($team->hasAgent($agent->_real()));
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/deletion", [
             '_csrf_token' => 'not a token',
@@ -277,7 +277,7 @@ class AgentsControllerTest extends WebTestCase
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
-        $this->assertTrue($team->hasAgent($agent->object()));
+        $this->assertTrue($team->hasAgent($agent->_real()));
     }
 
     public function testPostDeleteFailsIfAccessIsForbidden(): void
@@ -286,7 +286,7 @@ class AgentsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne([
             'agents' => [$agent],

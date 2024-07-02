@@ -18,6 +18,7 @@ use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Zenstruck\Foundry;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -34,8 +35,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/authorizations/new");
@@ -50,7 +51,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne();
 
         $client->catchExceptions(false);
@@ -61,8 +62,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'agent',
@@ -90,8 +91,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'agent',
@@ -116,8 +117,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $agent = UserFactory::createOne();
         $team = TeamFactory::createOne([
             'agents' => [$agent],
@@ -132,7 +133,7 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        $agent->refresh();
+        $agent->_refresh();
         $authorizations = $agent->getAuthorizations();
         $teamAuthorization = TeamAuthorizationFactory::last();
         $this->assertSame(1, count($authorizations));
@@ -143,8 +144,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
@@ -160,11 +161,11 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => Factory::faker()->randomElement(['user', 'admin', 'super']),
+            'type' => Foundry\faker()->randomElement(['user', 'admin', 'super']),
         ]);
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
@@ -180,8 +181,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'agent',
@@ -202,7 +203,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'agent',
@@ -219,8 +220,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $teamAuthorization = TeamAuthorizationFactory::createOne([
             'team' => $team,
@@ -244,8 +245,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
         $teamAuthorization = TeamAuthorizationFactory::createOne([
             'team' => $team,
@@ -267,7 +268,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne();
         $teamAuthorization = TeamAuthorizationFactory::createOne([
             'team' => $team,

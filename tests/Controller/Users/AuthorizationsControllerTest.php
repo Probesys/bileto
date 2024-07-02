@@ -32,8 +32,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
 
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
 
@@ -45,8 +45,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:*']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:*']);
 
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
 
@@ -60,7 +60,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
@@ -70,8 +70,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'admin',
@@ -96,8 +96,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'agent',
@@ -125,8 +125,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:*']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:*']);
         $holder = UserFactory::createOne();
         $container = static::getContainer();
         /** @var \Doctrine\Bundle\DoctrineBundle\Registry $registry */
@@ -153,8 +153,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
@@ -170,8 +170,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $container = static::getContainer();
         /** @var \Doctrine\Bundle\DoctrineBundle\Registry $registry */
@@ -194,8 +194,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'admin',
@@ -215,7 +215,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'admin',
@@ -232,8 +232,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'admin',
@@ -255,8 +255,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:*']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:*']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'super',
@@ -278,8 +278,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'super',
@@ -306,8 +306,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:*']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:*']);
         $authorization = AuthorizationFactory::last();
 
         $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
@@ -327,8 +327,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'admin',
@@ -357,8 +357,8 @@ class AuthorizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'admin',
@@ -384,7 +384,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $holder = UserFactory::createOne();
         $role = RoleFactory::createOne([
             'type' => 'admin',

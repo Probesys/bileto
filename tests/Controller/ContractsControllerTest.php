@@ -7,6 +7,7 @@
 namespace App\Tests\Controller;
 
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
@@ -24,6 +25,7 @@ class ContractsControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -31,8 +33,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:see:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see:contracts']);
         $endAt1 = Utils\Time::fromNow(1, 'months');
         $contract1 = ContractFactory::createOne([
             'name' => 'My contract 1',
@@ -57,17 +59,17 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization1 = OrganizationFactory::createOne();
         $organization2 = OrganizationFactory::createOne();
         $organization3 = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:see',
             'orga:see:contracts'
-        ], $organization1->object());
-        $this->grantOrga($user->object(), [
+        ], $organization1->_real());
+        $this->grantOrga($user->_real(), [
             'orga:see',
-        ], $organization2->object());
+        ], $organization2->_real());
         $contract1 = ContractFactory::createOne([
             'name' => 'My contract 1',
             'organization' => $organization1,
@@ -100,8 +102,8 @@ class ContractsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:see']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
         $contract = ContractFactory::createOne([
             'startAt' => Utils\Time::ago(1, 'months'),
             'endAt' => Utils\Time::fromNow(1, 'months'),
@@ -115,8 +117,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $contract = ContractFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/edit");
@@ -131,7 +133,7 @@ class ContractsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $contract = ContractFactory::createOne();
 
         $client->catchExceptions(false);
@@ -142,8 +144,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $oldName = 'Contract 2023';
         $newName = 'Contract 2024';
         $oldMaxHours = 5;
@@ -162,7 +164,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
-        $contract->refresh();
+        $contract->_refresh();
         $this->assertSame($newName, $contract->getName());
         $this->assertSame($newMaxHours, $contract->getMaxHours());
     }
@@ -171,8 +173,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $oldName = 'Contract 2023';
         $newName = 'Contract 2024';
         $oldMaxHours = 10;
@@ -198,7 +200,8 @@ class ContractsControllerTest extends WebTestCase
             '#contract_maxHours-error',
             'Enter a number of hours greater than or equal 2.'
         );
-        $contract->refresh();
+        $this->clearEntityManager();
+        $contract->_refresh();
         $this->assertSame($oldName, $contract->getName());
         $this->assertSame($oldMaxHours, $contract->getMaxHours());
     }
@@ -207,8 +210,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $oldName = 'Contract 2023';
         $newName = 'Contract 2024';
         $oldMaxHours = 5;
@@ -227,7 +230,8 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#contract-error', 'The security token is invalid');
-        $contract->refresh();
+        $this->clearEntityManager();
+        $contract->_refresh();
         $this->assertSame($oldName, $contract->getName());
         $this->assertSame($oldMaxHours, $contract->getMaxHours());
     }
@@ -238,7 +242,7 @@ class ContractsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $oldName = 'Contract 2023';
         $newName = 'Contract 2024';
         $oldMaxHours = 5;

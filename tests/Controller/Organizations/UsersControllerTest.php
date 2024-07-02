@@ -37,18 +37,18 @@ class UsersControllerTest extends WebTestCase
         $user3 = UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ]);
-        $client->loginUser($user1->object());
-        $this->grantAdmin($user1->object(), ['admin:manage:users']);
+        $client->loginUser($user1->_real());
+        $this->grantAdmin($user1->_real(), ['admin:manage:users']);
         $this->grantOrga(
-            $user1->object(),
+            $user1->_real(),
             ['orga:see:users'],
-            $organization->object(),
+            $organization->_real(),
             'agent',
         );
         $this->grantOrga(
-            $user3->object(),
+            $user3->_real(),
             ['orga:see'],
-            $organization->object(),
+            $organization->_real(),
             'user',
         );
 
@@ -67,7 +67,7 @@ class UsersControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $organization = OrganizationFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/users");

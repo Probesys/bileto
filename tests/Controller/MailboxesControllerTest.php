@@ -31,8 +31,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         MailboxFactory::createOne([
             'name' => 'Mailbox 2',
         ]);
@@ -52,8 +52,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         MailboxEmailFactory::createOne([
             'lastError' => 'unknown sender',
         ]);
@@ -70,7 +70,7 @@ class MailboxesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/mailboxes');
@@ -80,8 +80,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
 
         $client->request(Request::METHOD_GET, '/mailboxes/new');
 
@@ -95,7 +95,7 @@ class MailboxesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/mailboxes/new');
@@ -107,8 +107,8 @@ class MailboxesControllerTest extends WebTestCase
         /** @var Encryptor */
         $encryptor = static::getContainer()->get(Encryptor::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $name = 'My mailbox';
         $host = 'localhost';
         $port = 993;
@@ -148,8 +148,8 @@ class MailboxesControllerTest extends WebTestCase
         /** @var Encryptor */
         $encryptor = static::getContainer()->get(Encryptor::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $name = 'My mailbox';
         $host = 'localhost';
         $port = 993;
@@ -179,8 +179,8 @@ class MailboxesControllerTest extends WebTestCase
         /** @var Encryptor */
         $encryptor = static::getContainer()->get(Encryptor::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $name = '';
         $host = 'localhost';
         $port = 993;
@@ -212,7 +212,7 @@ class MailboxesControllerTest extends WebTestCase
         /** @var Encryptor */
         $encryptor = static::getContainer()->get(Encryptor::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $name = 'My mailbox';
         $host = 'localhost';
         $port = 993;
@@ -238,8 +238,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $mailbox = MailboxFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/mailboxes/{$mailbox->getUid()}/edit");
@@ -254,7 +254,7 @@ class MailboxesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $mailbox = MailboxFactory::createOne();
 
         $client->catchExceptions(false);
@@ -265,8 +265,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $oldName = 'Old mailbox name';
         $newName = 'New mailbox name';
         $mailbox = MailboxFactory::createOne([
@@ -285,7 +285,7 @@ class MailboxesControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/mailboxes/{$mailbox->getUid()}/edit", 302);
-        $mailbox->refresh();
+        $mailbox->_refresh();
         $this->assertSame($newName, $mailbox->getName());
     }
 
@@ -295,8 +295,8 @@ class MailboxesControllerTest extends WebTestCase
         /** @var Encryptor */
         $encryptor = static::getContainer()->get(Encryptor::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $password = 'secret';
         $mailbox = MailboxFactory::createOne([
             'password' => $password,
@@ -314,7 +314,7 @@ class MailboxesControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/mailboxes/{$mailbox->getUid()}/edit", 302);
-        $mailbox->refresh();
+        $mailbox->_refresh();
         $this->assertSame($password, $encryptor->decrypt($mailbox->getPassword()));
     }
 
@@ -322,8 +322,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $oldName = 'Old mailbox name';
         $newName = '';
         $mailbox = MailboxFactory::createOne([
@@ -342,7 +342,8 @@ class MailboxesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#name-error', 'Enter a name for the mailbox.');
-        $mailbox->refresh();
+        $this->clearEntityManager();
+        $mailbox->_refresh();
         $this->assertSame($oldName, $mailbox->getName());
     }
 
@@ -350,8 +351,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $oldName = 'Old mailbox name';
         $newName = 'New mailbox name';
         $mailbox = MailboxFactory::createOne([
@@ -370,7 +371,7 @@ class MailboxesControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $mailbox->refresh();
+        $mailbox->_refresh();
         $this->assertSame($oldName, $mailbox->getName());
     }
 
@@ -380,7 +381,7 @@ class MailboxesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $oldName = 'Old mailbox name';
         $newName = 'New mailbox name';
         $mailbox = MailboxFactory::createOne([
@@ -404,8 +405,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $mailbox = MailboxFactory::createOne();
         $mailboxEmail = MailboxEmailFactory::createOne([
             'mailbox' => $mailbox,
@@ -426,8 +427,8 @@ class MailboxesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $mailbox = MailboxFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/deletion", [
@@ -446,7 +447,7 @@ class MailboxesControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $mailbox = MailboxFactory::createOne();
 
         $client->catchExceptions(false);

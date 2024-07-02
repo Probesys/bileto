@@ -52,7 +52,7 @@ class SynchronizeLdapHandlerTest extends WebTestCase
 
         $bus->dispatch(new SynchronizeLdap());
 
-        $user->refresh();
+        $user->_refresh();
         $this->assertSame('charlie@example.com', $user->getEmail());
         $this->assertSame('Charlie Gature', $user->getName());
         $this->assertSame('charlie', $user->getLdapIdentifier());

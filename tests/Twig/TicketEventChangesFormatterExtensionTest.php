@@ -18,7 +18,7 @@ use App\Twig\TicketEventChangesFormatterExtension;
 use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Persistence\Proxy;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -58,7 +58,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $this->formatter = $formatter;
 
         $user = UserFactory::createOne();
-        $this->client->loginUser($user->object());
+        $this->client->loginUser($user->_real());
     }
 
     /**
@@ -66,7 +66,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
      */
     private function saveEvent(Proxy $ticket): EntityEvent
     {
-        $this->ticketRepository->save($ticket->object(), true);
+        $this->ticketRepository->save($ticket->_real(), true);
         return $this->entityEventRepository->findOneBy([
             'type' => 'update',
             'entityType' => Ticket::class,
@@ -171,7 +171,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $ticket = TicketFactory::createOne([
             'assignee' => null,
         ]);
-        $ticket->setAssignee($assignee->object());
+        $ticket->setAssignee($assignee->_real());
         $event = $this->saveEvent($ticket);
 
         $message = $this->formatter->formatTicketChanges($event, 'assignee');
@@ -200,7 +200,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $ticket = TicketFactory::createOne([
             'assignee' => $oldAssignee,
         ]);
-        $ticket->setAssignee($newAssignee->object());
+        $ticket->setAssignee($newAssignee->_real());
         $event = $this->saveEvent($ticket);
 
         $message = $this->formatter->formatTicketChanges($event, 'assignee');
@@ -215,7 +215,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $ticket = TicketFactory::createOne([
             'requester' => $oldRequester,
         ]);
-        $ticket->setRequester($newRequester->object());
+        $ticket->setRequester($newRequester->_real());
         $event = $this->saveEvent($ticket);
 
         $message = $this->formatter->formatTicketChanges($event, 'requester');
@@ -229,7 +229,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $ticket = TicketFactory::createOne([
             'solution' => null,
         ]);
-        $ticket->setSolution($solution->object());
+        $ticket->setSolution($solution->_real());
         $event = $this->saveEvent($ticket);
 
         $message = $this->formatter->formatTicketChanges($event, 'solution');
@@ -258,7 +258,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $ticket = TicketFactory::createOne([
             'solution' => $oldSolution,
         ]);
-        $ticket->setSolution($newSolution->object());
+        $ticket->setSolution($newSolution->_real());
         $event = $this->saveEvent($ticket);
 
         $message = $this->formatter->formatTicketChanges($event, 'solution');
@@ -273,7 +273,7 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $ticket = TicketFactory::createOne([
             'organization' => $oldOrganization,
         ]);
-        $ticket->setOrganization($newOrganization->object());
+        $ticket->setOrganization($newOrganization->_real());
         $event = $this->saveEvent($ticket);
 
         $message = $this->formatter->formatTicketChanges($event, 'organization');

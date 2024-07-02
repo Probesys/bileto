@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Zenstruck\Foundry;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -31,11 +32,11 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'assignee' => $user,
-            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+            'status' => Foundry\faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
         $client->request(Request::METHOD_GET, '/tickets');
@@ -48,9 +49,9 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         OrganizationFactory::createMany(2);
-        $this->grantOrga($user->object(), ['orga:create:tickets']);
+        $this->grantOrga($user->_real(), ['orga:create:tickets']);
 
         $client->request(Request::METHOD_GET, '/tickets/new');
 
@@ -65,8 +66,8 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $orga1,
         ]);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:create:tickets']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets']);
 
         $client->request(Request::METHOD_GET, '/tickets/new');
 
@@ -77,9 +78,9 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         list($orga1, $orga2) = OrganizationFactory::createMany(2);
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $orga1->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $orga1->_real());
 
         $client->request(Request::METHOD_GET, '/tickets/new');
 
@@ -90,9 +91,9 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         list($orga1, $orga2) = OrganizationFactory::createMany(2);
-        $this->grantOrga($user->object(), ['orga:create:tickets']);
+        $this->grantOrga($user->_real(), ['orga:create:tickets']);
 
         $client->request(Request::METHOD_GET, '/tickets/new', [
             'organization' => $orga2->getUid(),
@@ -107,9 +108,9 @@ class TicketsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         list($orga1, $orga2) = OrganizationFactory::createMany(2);
-        $this->grantOrga($user->object(), ['orga:create:tickets']);
+        $this->grantOrga($user->_real(), ['orga:create:tickets']);
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/tickets/new', [
@@ -123,7 +124,7 @@ class TicketsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         list($orga1, $orga2) = OrganizationFactory::createMany(2);
 
         $client->catchExceptions(false);
@@ -134,7 +135,7 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'createdBy' => $user,
@@ -150,7 +151,7 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'requester' => $user,
@@ -166,7 +167,7 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'assignee' => $user,
@@ -182,8 +183,8 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:see:tickets:all']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see:tickets:all']);
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
         ]);
@@ -198,7 +199,7 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'createdBy' => $user,
@@ -220,8 +221,8 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), [
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), [
             'orga:see:tickets:all',
             'orga:see:tickets:messages:confidential',
         ]);
@@ -243,8 +244,8 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:see:tickets:all']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see:tickets:all']);
         $content = 'The content of the answer';
         $ticket = TicketFactory::createOne();
         $message = MessageFactory::createOne([
@@ -263,7 +264,7 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'title' => 'The old title',
             'createdBy' => $user,
@@ -277,7 +278,7 @@ class TicketsControllerTest extends WebTestCase
         $entityManager = $registry->getManager();
         /** @var \App\Repository\TicketRepository $ticketRepository */
         $ticketRepository = $entityManager->getRepository(Ticket::class);
-        $ticketRepository->save($ticket->object(), true);
+        $ticketRepository->save($ticket->_real(), true);
 
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
@@ -291,7 +292,7 @@ class TicketsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
         ]);

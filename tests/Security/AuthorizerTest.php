@@ -47,11 +47,11 @@ class AuthorizerTest extends WebTestCase
 
     public function testIsAgentWithAgentRole(): void
     {
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $role = RoleFactory::createOne([
             'type' => 'agent',
-        ])->object();
+        ])->_real();
         $this->authRepository->grant($user, $role, null);
 
         $isAgent = $this->authorizer->isAgent('any');
@@ -61,13 +61,13 @@ class AuthorizerTest extends WebTestCase
 
     public function testIsAgentWithAgentRoleAndScope(): void
     {
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $role = RoleFactory::createOne([
             'type' => 'agent',
-        ])->object();
-        $organization1 = OrganizationFactory::createOne()->object();
-        $organization2 = OrganizationFactory::createOne()->object();
+        ])->_real();
+        $organization1 = OrganizationFactory::createOne()->_real();
+        $organization2 = OrganizationFactory::createOne()->_real();
         $this->authRepository->grant($user, $role, $organization1);
 
         $isAgent = $this->authorizer->isAgent('any');
@@ -82,11 +82,11 @@ class AuthorizerTest extends WebTestCase
 
     public function testIsAgentWithUserRole(): void
     {
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $role = RoleFactory::createOne([
             'type' => 'user',
-        ])->object();
+        ])->_real();
         $this->authRepository->grant($user, $role, null);
 
         $isAgent = $this->authorizer->isAgent('any');
@@ -96,7 +96,7 @@ class AuthorizerTest extends WebTestCase
 
     public function testIsAgentWithNoAuthorization(): void
     {
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $role = RoleFactory::createOne([
             'type' => 'agent',
@@ -109,10 +109,10 @@ class AuthorizerTest extends WebTestCase
 
     public function testIsAgentIfNotConnected(): void
     {
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $role = RoleFactory::createOne([
             'type' => 'agent',
-        ])->object();
+        ])->_real();
         $this->authRepository->grant($user, $role, null);
 
         $isAgent = $this->authorizer->isAgent('any');

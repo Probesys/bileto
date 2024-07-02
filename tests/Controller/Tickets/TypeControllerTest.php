@@ -27,8 +27,8 @@ class TypeControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:type']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:type']);
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
@@ -40,7 +40,7 @@ class TypeControllerTest extends WebTestCase
         $crawler = $client->submitForm('form-update-type-submit');
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($newType, $ticket->getType());
     }
 
@@ -48,8 +48,8 @@ class TypeControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:type']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:type']);
         $oldType = 'request';
         $newType = 'not a type';
         $ticket = TicketFactory::createOne([
@@ -65,7 +65,7 @@ class TypeControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains('#notifications', 'Select a type from the list');
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($oldType, $ticket->getType());
     }
 
@@ -73,8 +73,8 @@ class TypeControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:type']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:type']);
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
@@ -90,7 +90,7 @@ class TypeControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($oldType, $ticket->getType());
     }
 
@@ -100,7 +100,7 @@ class TypeControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
@@ -121,8 +121,8 @@ class TypeControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:type']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:type']);
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([

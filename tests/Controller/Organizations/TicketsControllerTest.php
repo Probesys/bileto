@@ -21,6 +21,7 @@ use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Zenstruck\Foundry;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -36,16 +37,16 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
-        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:see'], $organization->_real());
         $ticket = TicketFactory::createOne([
             'assignee' => $user,
             'title' => 'My ticket',
             'organization' => $organization,
-            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+            'status' => Foundry\faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets");
@@ -58,15 +59,15 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
-        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:see'], $organization->_real());
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'organization' => $organization,
-            'status' => Factory::faker()->randomElement(Ticket::FINISHED_STATUSES),
+            'status' => Foundry\faker()->randomElement(Ticket::FINISHED_STATUSES),
         ]);
 
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets");
@@ -79,22 +80,22 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
-        $this->grantOrga($user->object(), ['orga:see', 'orga:see:tickets:all']);
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all']);
         $ticketAssigned = TicketFactory::createOne([
             'title' => 'Ticket assigned',
             'organization' => $organization,
             'assignee' => $user,
-            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+            'status' => Foundry\faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
         $ticketToAssign = TicketFactory::createOne([
             'title' => 'Ticket to assign',
             'organization' => $organization,
             'assignee' => null,
-            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+            'status' => Foundry\faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets?view=unassigned");
@@ -108,29 +109,29 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
-        $this->grantOrga($user->object(), ['orga:see', 'orga:see:tickets:all']);
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all']);
         TicketFactory::createOne([
             'createdAt' => Time::ago(1, 'minute'),
             'title' => 'Ticket assigned to user',
             'organization' => $organization,
             'assignee' => $user,
-            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+            'status' => Foundry\faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
         TicketFactory::createOne([
             'createdAt' => Time::ago(2, 'minutes'),
             'title' => 'Ticket requested by user',
             'organization' => $organization,
             'requester' => $user,
-            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+            'status' => Foundry\faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
         TicketFactory::createOne([
             'title' => 'Other ticket',
             'organization' => $organization,
-            'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
+            'status' => Foundry\faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
         $client->request(
@@ -150,7 +151,7 @@ class TicketsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
@@ -163,15 +164,15 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
 
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets/new");
 
@@ -185,7 +186,7 @@ class TicketsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
@@ -201,18 +202,18 @@ class TicketsControllerTest extends WebTestCase
             $user,
             $requester,
         ) = UserFactory::createMany(2);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
-        $this->grantOrga($requester->object(), [
+        ], $organization->_real());
+        $this->grantOrga($requester->_real(), [
             'orga:create:tickets',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -265,15 +266,15 @@ class TicketsControllerTest extends WebTestCase
         Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
 
@@ -301,9 +302,9 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
         $ongoingContract = ContractFactory::createOne([
@@ -330,13 +331,13 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
         list($messageDocument1, $messageDocument2) = MessageDocumentFactory::createMany(2, [
-            'createdBy' => $user->object(),
+            'createdBy' => $user->_real(),
             'message' => null,
         ]);
 
@@ -352,8 +353,8 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $message = MessageFactory::first();
-        $messageDocument1->refresh();
-        $messageDocument2->refresh();
+        $messageDocument1->_refresh();
+        $messageDocument2->_refresh();
         $this->assertNotNull($message);
         $this->assertSame($message->getUid(), $messageDocument1->getMessage()->getUid());
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
@@ -367,21 +368,21 @@ class TicketsControllerTest extends WebTestCase
             $user,
             $assignee
         ) = UserFactory::createMany(2);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
         $team = TeamFactory::createOne([
             'agents' => [$assignee],
         ]);
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
-        $this->grantTeam($team->object(), [
+        ], $organization->_real());
+        $this->grantTeam($team->_real(), [
             'orga:create:tickets',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -411,15 +412,15 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -442,9 +443,9 @@ class TicketsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:create:tickets'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -488,18 +489,18 @@ class TicketsControllerTest extends WebTestCase
             $user,
             $assignee
         ) = UserFactory::createMany(2);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
-        $this->grantOrga($assignee->object(), [
+        ], $organization->_real());
+        $this->grantOrga($assignee->_real(), [
             'orga:create:tickets',
-        ], $organization->object(), 'user');
+        ], $organization->_real(), 'user');
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -532,18 +533,18 @@ class TicketsControllerTest extends WebTestCase
             $user,
             $assignee
         ) = UserFactory::createMany(2);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
         $team = TeamFactory::createOne([
             'agents' => [$assignee],
         ]);
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -577,22 +578,22 @@ class TicketsControllerTest extends WebTestCase
             $user,
             $assignee
         ) = UserFactory::createMany(2);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
         $team = TeamFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
-        $this->grantOrga($assignee->object(), [
+        ], $organization->_real());
+        $this->grantOrga($assignee->_real(), [
             'orga:create:tickets',
-        ], $organization->object());
-        $this->grantTeam($team->object(), [
+        ], $organization->_real());
+        $this->grantTeam($team->_real(), [
             'orga:create:tickets',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -626,15 +627,15 @@ class TicketsControllerTest extends WebTestCase
             $user,
             $requester,
         ) = UserFactory::createMany(2);
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -656,15 +657,15 @@ class TicketsControllerTest extends WebTestCase
         Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = '';
         $messageContent = 'My message';
 
@@ -689,15 +690,15 @@ class TicketsControllerTest extends WebTestCase
         Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = str_repeat('a', 256);
         $messageContent = 'My message';
 
@@ -722,15 +723,15 @@ class TicketsControllerTest extends WebTestCase
         Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = '';
 
@@ -755,15 +756,15 @@ class TicketsControllerTest extends WebTestCase
         Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -788,15 +789,15 @@ class TicketsControllerTest extends WebTestCase
         Time::freeze($now);
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), [
+        $this->grantOrga($user->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
             'orga:update:tickets:actors',
             'orga:update:tickets:priority',
-        ], $organization->object());
+        ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
 
@@ -821,7 +822,7 @@ class TicketsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
         $title = 'My ticket';
         $messageContent = 'My message';

@@ -356,7 +356,7 @@ class DataImporterTest extends WebTestCase
 
         $this->assertSame(1, UserFactory::count());
         $user = UserFactory::last();
-        $user->refresh();
+        $user->_refresh();
         $this->assertSame('Alix Hambourg', $user->getName());
         $this->assertSame('alix@example.com', $user->getEmail());
         $this->assertSame('fr_FR', $user->getLocale());
@@ -831,7 +831,7 @@ class DataImporterTest extends WebTestCase
 
         $this->assertSame(1, TicketFactory::count());
         $ticket = TicketFactory::last();
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame('It does not work', $ticket->getTitle());
         $this->assertSame(1714066680, $ticket->getCreatedAt()->getTimestamp());
         $this->assertSame('incident', $ticket->getType());

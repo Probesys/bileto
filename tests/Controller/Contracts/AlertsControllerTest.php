@@ -28,8 +28,8 @@ class AlertsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $contract = ContractFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/alerts/edit");
@@ -44,7 +44,7 @@ class AlertsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $contract = ContractFactory::createOne();
 
         $client->catchExceptions(false);
@@ -55,8 +55,8 @@ class AlertsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $contract = ContractFactory::createOne([
             'startAt' => utils\Time::now(),
             'endAt' => utils\Time::fromNow(1, 'year'),
@@ -71,7 +71,7 @@ class AlertsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
-        $contract->refresh();
+        $contract->_refresh();
         $this->assertSame(80, $contract->getHoursAlert());
         $this->assertSame(300, $contract->getDateAlert());
     }
@@ -80,8 +80,8 @@ class AlertsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $contract = ContractFactory::createOne([
             'startAt' => utils\Time::now(),
             'endAt' => utils\Time::fromNow(1, 'year'),
@@ -97,7 +97,7 @@ class AlertsControllerTest extends WebTestCase
 
         $organization = $contract->getOrganization();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
-        $contract->refresh();
+        $contract->_refresh();
         $this->assertSame(0, $contract->getHoursAlert());
         $this->assertSame(0, $contract->getDateAlert());
     }
@@ -106,8 +106,8 @@ class AlertsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $contract = ContractFactory::createOne([
             'startAt' => utils\Time::now(),
             'endAt' => utils\Time::fromNow(1, 'year'),
@@ -123,7 +123,7 @@ class AlertsControllerTest extends WebTestCase
 
         $organization = $contract->getOrganization();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
-        $contract->refresh();
+        $contract->_refresh();
         $this->assertSame(100, $contract->getHoursAlert());
         $this->assertSame($contract->getDaysDuration(), $contract->getDateAlert());
     }
@@ -132,8 +132,8 @@ class AlertsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $contract = ContractFactory::createOne([
             'startAt' => utils\Time::now(),
             'endAt' => utils\Time::fromNow(1, 'year'),
@@ -149,7 +149,7 @@ class AlertsControllerTest extends WebTestCase
 
         $organization = $contract->getOrganization();
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $contract->refresh();
+        $contract->_refresh();
         $this->assertSame(0, $contract->getHoursAlert());
         $this->assertSame(0, $contract->getDateAlert());
     }
@@ -160,7 +160,7 @@ class AlertsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $contract = ContractFactory::createOne([
             'startAt' => utils\Time::now(),
             'endAt' => utils\Time::fromNow(1, 'year'),
