@@ -7,8 +7,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
+use App\Service\Sorter\AuthorizationSorter;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\Sorter\UserSorter;
 use App\Service\UserCreator;
@@ -126,6 +128,29 @@ class UsersController extends BaseController
         }
 
         return $this->redirectToRoute('new user authorization', $parameters);
+    }
+
+    #[Route('/users/{uid}', name: 'user', methods: ['GET', 'HEAD'])]
+    public function show(
+        User $user,
+        AuthorizationRepository $authorizationRepository,
+        AuthorizationSorter $authorizationSorter,
+        #[Autowire(env: 'bool:LDAP_ENABLED')]
+        bool $ldapEnabled,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:users');
+
+        $authorizations = $authorizationRepository->findBy([
+            'holder' => $user,
+        ]);
+        $authorizationSorter->sort($authorizations);
+
+        return $this->render('users/show.html.twig', [
+            'user' => $user,
+            'ldapEnabled' => $ldapEnabled,
+            'managedByLdap' => $ldapEnabled && $user->getAuthType() === 'ldap',
+            'authorizations' => $authorizations,
+        ]);
     }
 
     #[Route('/users/{uid}/edit', name: 'edit user', methods: ['GET', 'HEAD'])]

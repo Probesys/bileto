@@ -221,6 +221,31 @@ class UsersControllerTest extends WebTestCase
         ]);
     }
 
+    public function testGetShowRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+        $this->grantAdmin($user->object(), ['admin:manage:users']);
+
+        $client->request('GET', "/users/{$user->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', $user->getDisplayName());
+    }
+
+    public function testGetShowFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->object());
+
+        $client->catchExceptions(false);
+        $client->request('GET', "/users/{$user->getUid()}");
+    }
+
     public function testGetEditRendersCorrectly(): void
     {
         $client = static::createClient();

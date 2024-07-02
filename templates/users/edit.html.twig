@@ -8,7 +8,7 @@
 
 {% set currentMenu = 'users' %}
 
-{% block title %}{{ 'users.edit.title' | trans }}{% endblock %}
+{% block title %}{{ 'users.edit.title' | trans }} - {{ user.displayName }}{% endblock %}
 
 {% block breadcrumb %}
     <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
@@ -22,6 +22,10 @@
 
         <a href="{{ path('users') }}">
             {{ 'users.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('user', { uid: user.uid }) }}">
+            {{ user.displayName }}
         </a>
 
         <span aria-current="page">

@@ -64,6 +64,7 @@
                 class="text--center"
                 method="post"
                 action="{{ path('delete user authorization', { uid: authorization.uid }) }}"
+                data-turbo-preserve-scroll
             >
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete user authorization') }}">
                 <button type="submit" class="button--discreet" data-turbo-confirm="{{ 'authorizations.revoke.confirm' | trans }}">

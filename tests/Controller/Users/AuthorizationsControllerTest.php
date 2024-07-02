@@ -27,79 +27,6 @@ class AuthorizationsControllerTest extends WebTestCase
     use ResetDatabase;
     use SessionHelper;
 
-    public function testGetIndexListsAuthorizationsSortedByRolesAndOrgasNames(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $roleA = RoleFactory::createOne([
-            'name' => 'Role A',
-            'type' => 'admin',
-            'permissions' => ['admin:manage:users'],
-        ]);
-        $roleB = RoleFactory::createOne([
-            'name' => 'Role B',
-            'type' => 'agent',
-        ]);
-        $orgaA = OrganizationFactory::createOne([
-            'name' => 'Orga A',
-        ]);
-        $orgaB = OrganizationFactory::createOne([
-            'name' => 'Orga B',
-        ]);
-        AuthorizationFactory::createOne([
-            'holder' => $user,
-            'role' => $roleB,
-            'organization' => $orgaB,
-        ]);
-        AuthorizationFactory::createOne([
-            'holder' => $user,
-            'role' => $roleB,
-            'organization' => $orgaA,
-        ]);
-        AuthorizationFactory::createOne([
-            'holder' => $user,
-            'role' => $roleB,
-        ]);
-        AuthorizationFactory::createOne([
-            'holder' => $user,
-            'role' => $roleA,
-        ]);
-
-        $client->request('GET', "/users/{$user->getUid()}/authorizations");
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Authorizations');
-        $this->assertSelectorTextContains(
-            '[data-test="authorization-item"]:nth-child(1)',
-            'Role A'
-        );
-        $this->assertSelectorTextContains(
-            '[data-test="authorization-item"]:nth-child(2)',
-            'Role B Agent * global *'
-        );
-        $this->assertSelectorTextContains(
-            '[data-test="authorization-item"]:nth-child(3)',
-            'Role B Agent Orga A'
-        );
-        $this->assertSelectorTextContains(
-            '[data-test="authorization-item"]:nth-child(4)',
-            'Role B Agent Orga B'
-        );
-    }
-
-    public function testGetIndexFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-
-        $client->catchExceptions(false);
-        $client->request('GET', "/users/{$user->getUid()}/authorizations");
-    }
-
     public function testGetNewRendersCorrectly(): void
     {
         $client = static::createClient();
@@ -158,7 +85,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(2, AuthorizationFactory::count());
 
-        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
         $authorization = AuthorizationFactory::last();
         $this->assertSame($holder->getId(), $authorization->getHolder()->getId());
         $this->assertSame($role->getId(), $authorization->getRole()->getId());
@@ -186,7 +113,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(2, AuthorizationFactory::count());
 
-        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
         $authorization = AuthorizationFactory::last();
         $this->assertSame($holder->getId(), $authorization->getHolder()->getId());
         $this->assertSame($role->getId(), $authorization->getRole()->getId());
@@ -215,7 +142,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(2, AuthorizationFactory::count());
 
-        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
         $authorization = AuthorizationFactory::last();
         $this->assertSame($holder->getId(), $authorization->getHolder()->getId());
         $this->assertSame($superRole->getId(), $authorization->getRole()->getId());
@@ -319,7 +246,7 @@ class AuthorizationsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
-        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
         AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
     }
 
@@ -342,7 +269,7 @@ class AuthorizationsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
-        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
         AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
     }
 
@@ -365,7 +292,7 @@ class AuthorizationsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
-        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains(
             '#notifications',
@@ -386,7 +313,7 @@ class AuthorizationsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
-        $this->assertResponseRedirects("/users/{$user->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$user->getUid()}", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains(
             '#notifications',
@@ -416,7 +343,7 @@ class AuthorizationsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
-        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains(
             '#notifications',
@@ -444,7 +371,7 @@ class AuthorizationsControllerTest extends WebTestCase
             '_csrf_token' => 'not a token',
         ]);
 
-        $this->assertResponseRedirects("/users/{$holder->getUid()}/authorizations", 302);
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
         AuthorizationFactory::assert()->exists(['id' => $authorization->getId()]);

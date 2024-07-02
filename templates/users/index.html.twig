@@ -47,30 +47,26 @@
             <ul class="list--padded list--border list--nostyle">
                 {% for user in users %}
                     <li class="cols cols--center flow flow--small" data-test="user-item">
-                        <span class="col--extend">
-                            <span class="list__item-title">
-                                {{ user.displayName }}
+                        <span class="col--extend flow flow--small">
+                            <div class="list__item-title">
+                                <a href="{{ path('user', { uid: user.uid }) }}">
+                                    {{ user.displayName }}
 
-                                {% if user == app.user %}
-                                    ({{ 'users.yourself' | trans }})
-                                {% endif %}
-                            </span>
+                                    {% if user == app.user %}
+                                        ({{ 'users.yourself' | trans }})
+                                    {% endif %}
+                                </a>
+                            </div>
 
-                            {% if user.name %}
-                                <span class="text--secondary text--small">
-                                    {{ user.email }}
-                                </span>
-                            {% endif %}
+                            <div class="text--small text--wrap">
+                                {{ user.email }}
+                            </div>
                         </span>
 
-                        <div class="col--noshrink cols cols--always cols--center flow flow--small">
-                            <a href="{{ path('edit user', { uid: user.uid }) }}">
-                                {{ 'users.index.edit' | trans }}
-                            </a>
-
-                            <a href="{{ path('user authorizations', { uid: user.uid }) }}">
-                                {{ 'users.index.authorizations' | trans }}
-                            </a>
+                        <div class="col--noshrink">
+                            <span class="badge badge--grey">
+                                {{ 'users.index.authorizations' | trans({ count: user.authorizations|length }) }}
+                            </span>
                         </div>
                     </li>
                 {% endfor %}

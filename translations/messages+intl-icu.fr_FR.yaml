@@ -434,8 +434,6 @@ tickets.urgency: Urgence
 tickets.urgency.high: Haute
 tickets.urgency.low: Basse
 tickets.urgency.medium: Moyenne
-users.authorizations.index.new_authorization: 'Donner une autorisation'
-users.authorizations.index.title: 'Autorisations ({name})'
 users.color_scheme: 'Schéma de couleurs'
 users.color_scheme.auto: Auto
 users.color_scheme.dark: Sombre
@@ -447,8 +445,7 @@ users.edit.organization_caption: 'Les tickets ouverts par email par cet utilisat
 users.edit.title: 'Modifier un utilisateur'
 users.email: 'Adresse email'
 users.identifier: 'Adresse email ou identifiant'
-users.index.authorizations: Autorisations
-users.index.edit: Modifier
+users.index.authorizations: '{count, plural, =0 {Aucune autorisation} one {1 autorisation} other {# autorisations}}'
 users.index.new_user: 'Nouvel utilisateur'
 users.index.number: '{count, plural, =0 {Aucun utilisateur} one {1 utilisateur} other {# utilisateurs}}'
 users.index.title: Utilisateurs
@@ -464,4 +461,13 @@ users.no_organization_authorization: 'Cet utilisateur ne peut pas créer de tick
 users.no_organization: 'Aucune organisation'
 users.organization: Organisation
 users.password: 'Mot de passe'
+users.show.authorizations.new: 'Donner une autorisation'
+users.show.authorizations.title: Autorisations
+users.show.edit: 'Modifier l’utilisateur'
+users.show.email: "Email\_: {email}"
+users.show.ldap_identifier: "Identifiant LDAP\_: {identifier}"
+users.show.name: "Nom\_: {name}"
+users.show.organization: "Organisation\_: {name}"
+users.show.organization.none: "Organisation\_: Aucune"
+users.show.profile: 'Profil utilisateur'
 users.yourself: vous
