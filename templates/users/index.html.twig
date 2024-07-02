@@ -47,22 +47,20 @@
             <ul class="list--padded list--border list--nostyle">
                 {% for user in users %}
                     <li class="cols cols--center flow flow--small" data-test="user-item">
-                        <span class="col--extend">
-                            <a class="anchor--noline" href="{{ path('user', { uid: user.uid }) }}">
-                                <span class="list__item-title">
+                        <span class="col--extend flow flow--small">
+                            <div class="list__item-title">
+                                <a href="{{ path('user', { uid: user.uid }) }}">
                                     {{ user.displayName }}
 
                                     {% if user == app.user %}
                                         ({{ 'users.yourself' | trans }})
                                     {% endif %}
-                                </span>
+                                </a>
+                            </div>
 
-                                {% if user.name %}
-                                    <span class="text--secondary text--small">
-                                        {{ user.email }}
-                                    </span>
-                                {% endif %}
-                            </a>
+                            <div class="text--small text--wrap">
+                                {{ user.email }}
+                            </div>
                         </span>
 
                         <div class="col--noshrink">
