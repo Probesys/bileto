@@ -23,7 +23,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => 'foo',
@@ -39,7 +39,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
@@ -57,7 +57,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => '',
@@ -73,7 +73,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
@@ -91,7 +91,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
@@ -109,7 +109,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => 'foo',
@@ -125,7 +125,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => 'foo',
@@ -141,7 +141,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
@@ -159,7 +159,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
@@ -177,7 +177,7 @@ class FiltersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
@@ -197,7 +197,7 @@ class FiltersControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, '/tickets/filters/combine', [

@@ -68,7 +68,7 @@ class UserCreatorTest extends WebTestCase
             password: $password,
             locale: $locale,
             ldapIdentifier: $ldapIdentifier,
-            organization: $organization->object(),
+            organization: $organization->_real(),
         );
 
         $this->assertSame(1, UserFactory::count());
@@ -133,7 +133,7 @@ class UserCreatorTest extends WebTestCase
 
         $user = $this->userCreator->create(
             email: $email,
-            organization: $defaultOrganization->object(),
+            organization: $defaultOrganization->_real(),
         );
 
         $this->assertSame(1, UserFactory::count());

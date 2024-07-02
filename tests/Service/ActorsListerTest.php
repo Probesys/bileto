@@ -40,7 +40,7 @@ class ActorsListerTest extends WebTestCase
         $actorsLister = $container->get(ActorsLister::class);
         $this->actorsLister = $actorsLister;
 
-        $this->currentUser = UserFactory::createOne()->object();
+        $this->currentUser = UserFactory::createOne()->_real();
         $client->loginUser($this->currentUser);
 
         /** @var \Zenstruck\Foundry\RepositoryProxy<AuthorizationRepository> */
@@ -54,21 +54,21 @@ class ActorsListerTest extends WebTestCase
     {
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['agent', 'user']),
+            'type' => \Zenstruck\Foundry\faker()->randomElement(['agent', 'user']),
         ]);
         // The current user must have an authorization on the users'
         // organizations that we want to list.
         $this->authRepository->grant(
             $this->currentUser,
-            $role->object(),
+            $role->_real(),
             null,
         );
         // The listed users must have authorizations on some organizations
         // themselves. Otherwise, they are not part of any organization and we
         // don't want to list them.
         $this->authRepository->grant(
-            $otherUser->object(),
-            $role->object(),
+            $otherUser->_real(),
+            $role->_real(),
             null,
         );
 
@@ -84,20 +84,20 @@ class ActorsListerTest extends WebTestCase
     {
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['agent', 'user']),
+            'type' => \Zenstruck\Foundry\faker()->randomElement(['agent', 'user']),
         ]);
         $organization = OrganizationFactory::createOne();
         $otherOrga = OrganizationFactory::createOne();
         $this->authRepository->grant(
             $this->currentUser,
-            $role->object(),
-            $organization->object(),
+            $role->_real(),
+            $organization->_real(),
         );
         // The $otherUser is now in a totally separated organization.
         $this->authRepository->grant(
-            $otherUser->object(),
-            $role->object(),
-            $otherOrga->object(),
+            $otherUser->_real(),
+            $role->_real(),
+            $otherOrga->_real(),
         );
 
         $users = $this->actorsLister->findAll();
@@ -120,13 +120,13 @@ class ActorsListerTest extends WebTestCase
         // $currentUser has a "tech" role
         $this->authRepository->grant(
             $this->currentUser,
-            $roleTech->object(),
+            $roleTech->_real(),
             null,
         );
         // $otherUser has a "user" role
         $this->authRepository->grant(
-            $otherUser->object(),
-            $roleUser->object(),
+            $otherUser->_real(),
+            $roleUser->_real(),
             null,
         );
 
@@ -144,22 +144,22 @@ class ActorsListerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['agent', 'user']),
+            'type' => \Zenstruck\Foundry\faker()->randomElement(['agent', 'user']),
         ]);
         // The $currentUser must have an authorization on the requested
         // organization.
         $this->authRepository->grant(
             $this->currentUser,
-            $role->object(),
-            $organization->object(),
+            $role->_real(),
+            $organization->_real(),
         );
         $this->authRepository->grant(
-            $otherUser->object(),
-            $role->object(),
-            $organization->object(),
+            $otherUser->_real(),
+            $role->_real(),
+            $organization->_real(),
         );
 
-        $users = $this->actorsLister->findByOrganization($organization->object());
+        $users = $this->actorsLister->findByOrganization($organization->_real());
 
         $this->assertSame(2, count($users));
         $userIds = array_map(fn ($user): int => $user->getId(), $users);
@@ -179,16 +179,16 @@ class ActorsListerTest extends WebTestCase
         ]);
         $this->authRepository->grant(
             $this->currentUser,
-            $roleTech->object(),
-            $organization->object(),
+            $roleTech->_real(),
+            $organization->_real(),
         );
         $this->authRepository->grant(
-            $otherUser->object(),
-            $roleUser->object(),
-            $organization->object(),
+            $otherUser->_real(),
+            $roleUser->_real(),
+            $organization->_real(),
         );
 
-        $users = $this->actorsLister->findByOrganization($organization->object(), roleType: 'user');
+        $users = $this->actorsLister->findByOrganization($organization->_real(), roleType: 'user');
 
         $this->assertSame(1, count($users));
         $userIds = array_map(fn ($user): int => $user->getId(), $users);
@@ -202,20 +202,20 @@ class ActorsListerTest extends WebTestCase
         $otherOrganization = OrganizationFactory::createOne();
         $otherUser = UserFactory::createOne();
         $role = RoleFactory::createOne([
-            'type' => RoleFactory::faker()->randomElement(['agent', 'user']),
+            'type' => \Zenstruck\Foundry\faker()->randomElement(['agent', 'user']),
         ]);
         $this->authRepository->grant(
             $this->currentUser,
-            $role->object(),
-            $organization->object(),
+            $role->_real(),
+            $organization->_real(),
         );
         $this->authRepository->grant(
-            $otherUser->object(),
-            $role->object(),
-            $otherOrganization->object(),
+            $otherUser->_real(),
+            $role->_real(),
+            $otherOrganization->_real(),
         );
 
-        $users = $this->actorsLister->findByOrganization($otherOrganization->object());
+        $users = $this->actorsLister->findByOrganization($otherOrganization->_real());
 
         $this->assertSame(0, count($users));
     }

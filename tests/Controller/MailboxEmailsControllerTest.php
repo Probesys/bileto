@@ -27,8 +27,8 @@ class MailboxEmailsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $mailboxEmail = MailboxEmailFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/mailbox-emails/{$mailboxEmail->getUid()}/deletion", [
@@ -43,8 +43,8 @@ class MailboxEmailsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:mailboxes']);
         $mailboxEmail = MailboxEmailFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/mailbox-emails/{$mailboxEmail->getUid()}/deletion", [
@@ -63,7 +63,7 @@ class MailboxEmailsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $mailboxEmail = MailboxEmailFactory::createOne();
 
         $client->catchExceptions(false);

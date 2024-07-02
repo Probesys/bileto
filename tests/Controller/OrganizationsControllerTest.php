@@ -35,8 +35,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:see']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
         OrganizationFactory::createOne([
             'name' => 'foo',
         ]);
@@ -60,14 +60,14 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $orga1 = OrganizationFactory::createOne([
             'name' => 'foo',
         ]);
         $orga2 = OrganizationFactory::createOne([
             'name' => 'bar',
         ]);
-        $this->grantOrga($user->object(), ['orga:see'], $orga1->object());
+        $this->grantOrga($user->_real(), ['orga:see'], $orga1->_real());
 
         $client->request(Request::METHOD_GET, '/organizations');
 
@@ -81,8 +81,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:create:organizations']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:create:organizations']);
 
         $client->request(Request::METHOD_GET, '/organizations/new');
 
@@ -96,7 +96,7 @@ class OrganizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/organizations/new');
@@ -106,8 +106,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:create:organizations']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:create:organizations']);
         $name = 'My organization';
 
         $client->request(Request::METHOD_POST, '/organizations/new', [
@@ -127,8 +127,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:create:organizations']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:create:organizations']);
         $name = '';
 
         $client->request(Request::METHOD_POST, '/organizations/new', [
@@ -146,8 +146,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:create:organizations']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:create:organizations']);
         $name = str_repeat('a', 256);
 
         $client->request(Request::METHOD_POST, '/organizations/new', [
@@ -165,8 +165,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:create:organizations']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:create:organizations']);
         $name = 'My organization';
 
         $client->request(Request::METHOD_POST, '/organizations/new', [
@@ -186,7 +186,7 @@ class OrganizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $name = 'My organization';
 
         $client->catchExceptions(false);
@@ -202,9 +202,9 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->object(), ['orga:see'], $organization->object());
+        $this->grantOrga($user->_real(), ['orga:see'], $organization->_real());
 
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}");
 
@@ -217,7 +217,7 @@ class OrganizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
@@ -228,8 +228,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/settings");
@@ -244,7 +244,7 @@ class OrganizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
@@ -255,8 +255,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = 'New name';
         $organization = OrganizationFactory::createOne([
@@ -271,7 +271,7 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/organizations/{$organization->getUid()}/settings", 302);
-        $organization->refresh();
+        $organization->_refresh();
         $this->assertSame($newName, $organization->getName());
     }
 
@@ -279,8 +279,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = str_repeat('a', 256);
         $organization = OrganizationFactory::createOne([
@@ -295,7 +295,8 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#organization_name-error', 'Enter a name of less than 255 characters');
-        $organization->refresh();
+        $this->clearEntityManager();
+        $organization->_refresh();
         $this->assertSame($oldName, $organization->getName());
     }
 
@@ -303,8 +304,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage']);
         $oldName = 'Old name';
         $newName = 'New name';
         $organization = OrganizationFactory::createOne([
@@ -319,7 +320,8 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#organization-error', 'The security token is invalid');
-        $organization->refresh();
+        $this->clearEntityManager();
+        $organization->_refresh();
         $this->assertSame($oldName, $organization->getName());
     }
 
@@ -329,7 +331,7 @@ class OrganizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $oldName = 'Old name';
         $newName = 'New name';
         $organization = OrganizationFactory::createOne([
@@ -352,8 +354,8 @@ class OrganizationsControllerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage']);
         $authorization = AuthorizationFactory::createOne([
             'organization' => $organization,
         ]);
@@ -388,8 +390,8 @@ class OrganizationsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:manage']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/deletion", [
@@ -408,7 +410,7 @@ class OrganizationsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);

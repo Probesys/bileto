@@ -27,8 +27,8 @@ class TitleControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -45,7 +45,7 @@ class TitleControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -60,8 +60,8 @@ class TitleControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $ticket = TicketFactory::createOne();
 
         $client->catchExceptions(false);
@@ -72,8 +72,8 @@ class TitleControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = TicketFactory::createOne([
@@ -87,7 +87,7 @@ class TitleControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($newTitle, $ticket->getTitle());
     }
 
@@ -95,8 +95,8 @@ class TitleControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = str_repeat('a', 256);
         $ticket = TicketFactory::createOne([
@@ -109,7 +109,7 @@ class TitleControllerTest extends WebTestCase
             'title' => $newTitle,
         ]);
 
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSelectorTextContains('#title-error', 'Enter a title of less than 255 characters');
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
@@ -118,8 +118,8 @@ class TitleControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = TicketFactory::createOne([
@@ -133,7 +133,7 @@ class TitleControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
 
@@ -143,7 +143,7 @@ class TitleControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = TicketFactory::createOne([
@@ -164,8 +164,8 @@ class TitleControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:title']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = TicketFactory::createOne([

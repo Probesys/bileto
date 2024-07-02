@@ -42,7 +42,7 @@ class CreateCommandTest extends KernelTestCase
         $user = UserFactory::first();
         $this->assertNotNull($user);
         $this->assertSame($email, $user->getEmail());
-        $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $password));
+        $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $password));
         $this->assertSame(['ROLE_USER'], $user->getRoles());
         $this->assertSame(20, strlen($user->getUid()));
         // It should also give the "super-admin" permissions to the user.
@@ -73,7 +73,7 @@ class CreateCommandTest extends KernelTestCase
         $user = UserFactory::first();
         $this->assertNotNull($user);
         $this->assertSame($email, $user->getEmail());
-        $this->assertTrue($passwordHasher->isPasswordValid($user->object(), $password));
+        $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $password));
         $this->assertSame(['ROLE_USER'], $user->getRoles());
         $this->assertSame(20, strlen($user->getUid()));
     }

@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\User;
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
@@ -21,6 +22,7 @@ class UsersControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -37,8 +39,8 @@ class UsersControllerTest extends WebTestCase
             'name' => '',
             'email' => 'alix.pataques@example.com',
         ]);
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
 
         $client->request(Request::METHOD_GET, '/users');
 
@@ -55,7 +57,7 @@ class UsersControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/users');
@@ -65,8 +67,8 @@ class UsersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
 
         $client->request(Request::METHOD_GET, '/users/new');
 
@@ -80,7 +82,7 @@ class UsersControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/users/new');
@@ -92,8 +94,8 @@ class UsersControllerTest extends WebTestCase
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $email = 'alix@example.com';
         $name = 'Alix Pataquès';
         $password = 'secret';
@@ -119,7 +121,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($name, $newUser->getName());
         $this->assertSame($user->getLocale(), $newUser->getLocale());
         $this->assertSame(20, strlen($newUser->getUid()));
-        $this->assertTrue($passwordHasher->isPasswordValid($newUser->object(), $password));
+        $this->assertTrue($passwordHasher->isPasswordValid($newUser->_real(), $password));
         $this->assertSame($organization->getId(), $newUser->getOrganization()->getId());
     }
 
@@ -130,8 +132,8 @@ class UsersControllerTest extends WebTestCase
         $user = UserFactory::createOne([
             'email' => $email,
         ]);
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $name = 'Alix Pataquès';
 
         $client->request(Request::METHOD_POST, '/users/new', [
@@ -151,8 +153,8 @@ class UsersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $email = '';
         $name = 'Alix Pataquès';
 
@@ -170,8 +172,8 @@ class UsersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $email = 'not an email';
         $name = 'Alix Pataquès';
 
@@ -189,8 +191,8 @@ class UsersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $email = 'alix@example.com';
         $name = 'Alix Pataquès';
 
@@ -210,7 +212,7 @@ class UsersControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $email = 'alix@example.com';
         $name = 'Alix Pataquès';
 
@@ -226,8 +228,8 @@ class UsersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
 
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}");
 
@@ -241,7 +243,7 @@ class UsersControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}");
@@ -251,8 +253,8 @@ class UsersControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
 
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/edit");
 
@@ -266,7 +268,7 @@ class UsersControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/edit");
@@ -278,8 +280,8 @@ class UsersControllerTest extends WebTestCase
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $oldEmail = 'alix@example.com';
         $newEmail = 'benedict@example.com';
         $oldName = 'Alix Pataquès';
@@ -304,10 +306,10 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/users', 302);
-        $otherUser->refresh();
+        $otherUser->_refresh();
         $this->assertSame($newEmail, $otherUser->getEmail());
         $this->assertSame($newName, $otherUser->getName());
-        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $newPassword));
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $newPassword));
         $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
     }
 
@@ -317,8 +319,8 @@ class UsersControllerTest extends WebTestCase
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $oldEmail = 'alix@example.com';
         $newEmail = 'benedict@example.com';
         $oldName = 'Alix Pataquès';
@@ -343,10 +345,10 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/users', 302);
-        $otherUser->refresh();
+        $otherUser->_refresh();
         $this->assertSame($newEmail, $otherUser->getEmail());
         $this->assertSame($newName, $otherUser->getName());
-        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $oldPassword));
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $oldPassword));
         $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
     }
 
@@ -356,8 +358,8 @@ class UsersControllerTest extends WebTestCase
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $oldEmail = 'alix@example.com';
         $newEmail = 'benedict@example.com';
         $oldName = 'Alix Pataquès';
@@ -386,10 +388,10 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/users', 302);
-        $otherUser->refresh();
+        $otherUser->_refresh();
         $this->assertSame($oldEmail, $otherUser->getEmail());
         $this->assertSame($oldName, $otherUser->getName());
-        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $oldPassword));
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $oldPassword));
         $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
         $this->assertSame($newLdapIdentifier, $otherUser->getLdapIdentifier());
     }
@@ -400,8 +402,8 @@ class UsersControllerTest extends WebTestCase
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $oldEmail = 'alix@example.com';
         $newEmail = 'benedict@example.com';
         $oldName = 'Alix Pataquès';
@@ -425,10 +427,10 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/users', 302);
-        $otherUser->refresh();
+        $otherUser->_refresh();
         $this->assertSame($newEmail, $otherUser->getEmail());
         $this->assertSame($newName, $otherUser->getName());
-        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $newPassword));
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $newPassword));
         $this->assertNull($otherUser->getOrganization());
     }
 
@@ -438,8 +440,8 @@ class UsersControllerTest extends WebTestCase
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $oldEmail = 'alix@example.com';
         $newEmail = 'not an email'; // oops
         $oldName = 'Alix Pataquès';
@@ -464,10 +466,11 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#email-error', 'Enter a valid email address');
-        $otherUser->refresh();
+        $this->clearEntityManager();
+        $otherUser->_refresh();
         $this->assertSame($oldEmail, $otherUser->getEmail());
         $this->assertSame($oldName, $otherUser->getName());
-        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $oldPassword));
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $oldPassword));
         $this->assertSame($oldOrganization->getId(), $otherUser->getOrganization()->getId());
     }
 
@@ -477,8 +480,8 @@ class UsersControllerTest extends WebTestCase
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:users']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
         $oldEmail = 'alix@example.com';
         $newEmail = 'benedict@example.com';
         $oldName = 'Alix Pataquès';
@@ -503,10 +506,10 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $otherUser->refresh();
+        $otherUser->_refresh();
         $this->assertSame($oldEmail, $otherUser->getEmail());
         $this->assertSame($oldName, $otherUser->getName());
-        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->object(), $oldPassword));
+        $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $oldPassword));
         $this->assertSame($oldOrganization->getId(), $otherUser->getOrganization()->getId());
     }
 
@@ -516,7 +519,7 @@ class UsersControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $oldEmail = 'alix@example.com';
         $newEmail = 'benedict@example.com';
         $oldName = 'Alix Pataquès';

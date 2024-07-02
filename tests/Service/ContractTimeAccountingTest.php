@@ -32,7 +32,7 @@ class ContractTimeAccountingTest extends WebTestCase
         $this->contractTimeAccounting = $contractTimeAccounting;
 
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
     }
 
     public function testAccountTime(): void
@@ -40,7 +40,7 @@ class ContractTimeAccountingTest extends WebTestCase
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
             'timeAccountingUnit' => 0,
-        ])->object();
+        ])->_real();
         $minutes = 20;
 
         $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
@@ -55,7 +55,7 @@ class ContractTimeAccountingTest extends WebTestCase
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
             'timeAccountingUnit' => 0,
-        ])->object();
+        ])->_real();
         $minutes = 70;
 
         $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
@@ -70,7 +70,7 @@ class ContractTimeAccountingTest extends WebTestCase
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
             'timeAccountingUnit' => 30,
-        ])->object();
+        ])->_real();
         $minutes = 20;
 
         $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
@@ -85,7 +85,7 @@ class ContractTimeAccountingTest extends WebTestCase
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
             'timeAccountingUnit' => 30,
-        ])->object();
+        ])->_real();
         TimeSpentFactory::createOne([
             'contract' => $contract,
             'time' => 45, // 45 minutes are already deducted from the contract
@@ -104,12 +104,12 @@ class ContractTimeAccountingTest extends WebTestCase
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
             'timeAccountingUnit' => 0,
-        ])->object();
+        ])->_real();
         $minutes = 20;
         $timeSpent = TimeSpentFactory::createOne([
             'contract' => null,
             'realTime' => $minutes,
-        ])->object();
+        ])->_real();
 
         $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent]);
 
@@ -123,19 +123,19 @@ class ContractTimeAccountingTest extends WebTestCase
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
             'timeAccountingUnit' => 0,
-        ])->object();
+        ])->_real();
         $timeSpent1 = TimeSpentFactory::createOne([
             'contract' => null,
             'realTime' => 20,
-        ])->object();
+        ])->_real();
         $timeSpent2 = TimeSpentFactory::createOne([
             'contract' => null,
             'realTime' => 50,
-        ])->object();
+        ])->_real();
         $timeSpent3 = TimeSpentFactory::createOne([
             'contract' => null,
             'realTime' => 20,
-        ])->object();
+        ])->_real();
 
         $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent1, $timeSpent2, $timeSpent3]);
 
@@ -154,12 +154,12 @@ class ContractTimeAccountingTest extends WebTestCase
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
             'timeAccountingUnit' => 30,
-        ])->object();
+        ])->_real();
         $minutes = 20;
         $timeSpent = TimeSpentFactory::createOne([
             'contract' => null,
             'realTime' => $minutes,
-        ])->object();
+        ])->_real();
 
         $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent]);
 

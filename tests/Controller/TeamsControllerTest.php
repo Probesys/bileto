@@ -33,8 +33,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team1 = TeamFactory::createOne([
             'name' => 'foo',
         ]);
@@ -56,7 +56,7 @@ class TeamsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/teams');
@@ -66,8 +66,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
 
         $client->request(Request::METHOD_GET, '/teams/new');
 
@@ -81,7 +81,7 @@ class TeamsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, '/teams/new');
@@ -91,8 +91,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $name = 'My team';
 
         $this->assertSame(0, TeamFactory::count());
@@ -115,8 +115,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $name = 'My team';
         TeamFactory::createOne([
             'name' => $name,
@@ -140,8 +140,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $name = '';
 
         $crawler = $client->request(Request::METHOD_POST, '/teams/new', [
@@ -159,8 +159,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $name = 'My team';
 
         $crawler = $client->request(Request::METHOD_POST, '/teams/new', [
@@ -180,7 +180,7 @@ class TeamsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $name = 'My team';
 
         $client->catchExceptions(false);
@@ -196,8 +196,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne([
             'name' => 'foo',
         ]);
@@ -214,7 +214,7 @@ class TeamsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne([
             'name' => 'foo',
         ]);
@@ -227,8 +227,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/edit");
@@ -243,7 +243,7 @@ class TeamsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne();
 
         $client->catchExceptions(false);
@@ -254,8 +254,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $initialName = 'team';
         $newName = 'My team';
         $team = TeamFactory::createOne([
@@ -270,7 +270,7 @@ class TeamsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        $team->refresh();
+        $team->_refresh();
         $this->assertSame($newName, $team->getName());
     }
 
@@ -278,8 +278,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $initialName = 'team';
         $newName = 'My team';
         $team = TeamFactory::createOne([
@@ -300,7 +300,8 @@ class TeamsControllerTest extends WebTestCase
             '#team_name-error',
             'Enter a different name, a team already has this name',
         );
-        $team->refresh();
+        $this->clearEntityManager();
+        $team->_refresh();
         $this->assertSame($initialName, $team->getName());
     }
 
@@ -308,8 +309,8 @@ class TeamsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $initialName = 'team';
         $newName = 'My team';
         $team = TeamFactory::createOne([
@@ -324,7 +325,8 @@ class TeamsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#team-error', 'The security token is invalid');
-        $team->refresh();
+        $this->clearEntityManager();
+        $team->_refresh();
         $this->assertSame($initialName, $team->getName());
     }
 
@@ -334,7 +336,7 @@ class TeamsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $initialName = 'team';
         $newName = 'My team';
         $team = TeamFactory::createOne([
@@ -355,12 +357,12 @@ class TeamsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $agent = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne([
             'agents' => [$agent],
         ]);
-        $this->grantTeam($team->object(), ['orga:see']);
+        $this->grantTeam($team->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'team' => $team,
         ]);
@@ -375,7 +377,7 @@ class TeamsControllerTest extends WebTestCase
         TeamFactory::assert()->notExists(['id' => $team->getId()]);
         TeamAuthorizationFactory::assert()->count(0);
         AuthorizationFactory::assert()->count(1);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertNull($ticket->getTeam());
     }
 
@@ -384,12 +386,12 @@ class TeamsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $agent = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantAdmin($user->object(), ['admin:manage:agents']);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
         $team = TeamFactory::createOne([
             'agents' => [$agent],
         ]);
-        $this->grantTeam($team->object(), ['orga:see']);
+        $this->grantTeam($team->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'team' => $team,
         ]);
@@ -406,7 +408,7 @@ class TeamsControllerTest extends WebTestCase
         TeamFactory::assert()->exists(['id' => $team->getId()]);
         TeamAuthorizationFactory::assert()->count(1);
         AuthorizationFactory::assert()->count(2);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertNotNull($ticket->getTeam());
     }
 
@@ -417,11 +419,11 @@ class TeamsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $agent = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $team = TeamFactory::createOne([
             'agents' => [$agent],
         ]);
-        $this->grantTeam($team->object(), ['orga:see']);
+        $this->grantTeam($team->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'team' => $team,
         ]);

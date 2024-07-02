@@ -7,6 +7,7 @@
 namespace App\Tests\Controller\Tickets;
 
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
@@ -20,6 +21,7 @@ class StatusControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -27,8 +29,8 @@ class StatusControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:status']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -45,7 +47,7 @@ class StatusControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -60,8 +62,8 @@ class StatusControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:status']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
         $ticket = TicketFactory::createOne();
 
         $client->catchExceptions(false);
@@ -72,8 +74,8 @@ class StatusControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:status']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
         $oldStatus = 'new';
         $newStatus = 'in_progress';
         $ticket = TicketFactory::createOne([
@@ -87,7 +89,7 @@ class StatusControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($newStatus, $ticket->getStatus());
     }
 
@@ -95,8 +97,8 @@ class StatusControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:status']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
         $oldStatus = 'new';
         $newStatus = 'invalid';
         $ticket = TicketFactory::createOne([
@@ -110,7 +112,8 @@ class StatusControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#status-error', 'Select a status from the list');
-        $ticket->refresh();
+        $this->clearEntityManager();
+        $ticket->_refresh();
         $this->assertSame($oldStatus, $ticket->getStatus());
     }
 
@@ -118,8 +121,8 @@ class StatusControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:status']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
         $oldStatus = 'new';
         $newStatus = 'in_progress';
         $ticket = TicketFactory::createOne([
@@ -133,7 +136,7 @@ class StatusControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $ticket->refresh();
+        $ticket->_refresh();
         $this->assertSame($oldStatus, $ticket->getStatus());
     }
 
@@ -143,7 +146,7 @@ class StatusControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $oldStatus = 'new';
         $newStatus = 'in_progress';
         $ticket = TicketFactory::createOne([
@@ -164,8 +167,8 @@ class StatusControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:status']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
         $oldStatus = 'new';
         $newStatus = 'in_progress';
         $ticket = TicketFactory::createOne([

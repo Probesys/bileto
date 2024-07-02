@@ -34,8 +34,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -52,7 +52,7 @@ class ContractsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
         ]);
@@ -68,8 +68,8 @@ class ContractsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $otherUser = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $otherUser,
         ]);
@@ -82,8 +82,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $organization = OrganizationFactory::createOne();
         $oldContract = ContractFactory::createOne([
             'organization' => $organization,
@@ -107,7 +107,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame($newContract->getId(), $contracts[0]->getId());
@@ -123,8 +123,8 @@ class ContractsControllerTest extends WebTestCase
         /** @var EntityEventRepository */
         $entityEventRepository = $entityManager->getRepository(EntityEvent::class);
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $organization = OrganizationFactory::createOne();
         $oldContract = ContractFactory::createOne([
             'organization' => $organization,
@@ -162,8 +162,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $organization = OrganizationFactory::createOne();
         $oldContract = ContractFactory::createOne([
             'organization' => $organization,
@@ -199,13 +199,13 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->refresh();
+        $ticket->_refresh();
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame($newContract->getId(), $contracts[0]->getId());
-        $timeSpentAccounted->refresh();
+        $timeSpentAccounted->_refresh();
         $this->assertSame($oldContract->getId(), $timeSpentAccounted->getContract()->getId());
-        $timeSpentNotAccounted->refresh();
+        $timeSpentNotAccounted->_refresh();
         $this->assertSame($newContract->getId(), $timeSpentNotAccounted->getContract()->getId());
         $this->assertSame(30, $timeSpentNotAccounted->getTime());
         $this->assertSame(15, $timeSpentNotAccounted->getRealTime());
@@ -215,8 +215,8 @@ class ContractsControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $organization = OrganizationFactory::createOne();
         $oldContract = ContractFactory::createOne([
             'organization' => $organization,
@@ -240,7 +240,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $ticket->refresh();
+        $ticket->_refresh();
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame($oldContract->getId(), $contracts[0]->getId());
@@ -252,7 +252,7 @@ class ContractsControllerTest extends WebTestCase
 
         $client = static::createClient();
         $user = UserFactory::createOne();
-        $client->loginUser($user->object());
+        $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
         $oldContract = ContractFactory::createOne([
             'organization' => $organization,
@@ -284,8 +284,8 @@ class ContractsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $otherUser = UserFactory::createOne();
-        $client->loginUser($user->object());
-        $this->grantOrga($user->object(), ['orga:update:tickets:contracts']);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $organization = OrganizationFactory::createOne();
         $oldContract = ContractFactory::createOne([
             'organization' => $organization,

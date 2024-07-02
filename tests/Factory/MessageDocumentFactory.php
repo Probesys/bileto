@@ -7,55 +7,20 @@
 namespace App\Tests\Factory;
 
 use App\Entity\MessageDocument;
-use App\Repository\MessageDocumentRepository;
-use App\Security\Encryptor;
 use App\Utils\Random;
 use Symfony\Component\Mime\MimeTypes;
-use Zenstruck\Foundry\Instantiator;
-use Zenstruck\Foundry\RepositoryProxy;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Object\Instantiator;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends ModelFactory<MessageDocument>
- *
- * @method static MessageDocument|Proxy createOne(array $attributes = [])
- * @method static MessageDocument[]|Proxy[] createMany(int $number, array|callable $attributes = [])
- * @method static MessageDocument[]|Proxy[] createSequence(array|callable $sequence)
- * @method static MessageDocument|Proxy find(object|array|mixed $criteria)
- * @method static MessageDocument|Proxy findOrCreate(array $attributes)
- * @method static MessageDocument|Proxy first(string $sortedField = 'id')
- * @method static MessageDocument|Proxy last(string $sortedField = 'id')
- * @method static MessageDocument|Proxy random(array $attributes = [])
- * @method static MessageDocument|Proxy randomOrCreate(array $attributes = [])
- * @method static MessageDocument[]|Proxy[] all()
- * @method static MessageDocument[]|Proxy[] findBy(array $attributes)
- * @method static MessageDocument[]|Proxy[] randomSet(int $number, array $attributes = [])
- * @method static MessageDocument[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @method static MessageDocumentRepository|RepositoryProxy repository()
- * @method MessageDocument|Proxy create(array|callable $attributes = [])
- *
- * @phpstan-method static MessageDocument&Proxy createOne(array $attributes = [])
- * @phpstan-method static MessageDocument[]&Proxy[] createMany(int $number, array|callable $attributes = [])
- * @phpstan-method static MessageDocument[]&Proxy[] createSequence(array|callable $sequence)
- * @phpstan-method static MessageDocument&Proxy find(object|array|mixed $criteria)
- * @phpstan-method static MessageDocument&Proxy findOrCreate(array $attributes)
- * @phpstan-method static MessageDocument&Proxy first(string $sortedField = 'id')
- * @phpstan-method static MessageDocument&Proxy last(string $sortedField = 'id')
- * @phpstan-method static MessageDocument&Proxy random(array $attributes = [])
- * @phpstan-method static MessageDocument&Proxy randomOrCreate(array $attributes = [])
- * @phpstan-method static MessageDocument[]&Proxy[] all()
- * @phpstan-method static MessageDocument[]&Proxy[] findBy(array $attributes)
- * @phpstan-method static MessageDocument[]&Proxy[] randomSet(int $number, array $attributes = [])
- * @phpstan-method static MessageDocument[]&Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @phpstan-method MessageDocument&Proxy create(array|callable $attributes = [])
+ * @extends PersistentProxyObjectFactory<MessageDocument>
  */
-final class MessageDocumentFactory extends ModelFactory
+final class MessageDocumentFactory extends PersistentProxyObjectFactory
 {
     /**
      * @return mixed[]
      */
-    protected function getDefaults(): array
+    protected function defaults(): array
     {
         $hash = self::faker()->sha256();
         $mimetype = self::faker()->randomElement(array_keys(MessageDocument::ACCEPTED_MIMETYPES));
@@ -71,12 +36,12 @@ final class MessageDocumentFactory extends ModelFactory
         ];
     }
 
-    protected function initialize(): self
+    protected function initialize(): static
     {
-        return $this->instantiateWith((new Instantiator())->alwaysForceProperties());
+        return $this->instantiateWith((Instantiator::withConstructor())->alwaysForce());
     }
 
-    protected static function getClass(): string
+    public static function class(): string
     {
         return MessageDocument::class;
     }
