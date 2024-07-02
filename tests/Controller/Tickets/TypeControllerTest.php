@@ -7,6 +7,7 @@
 namespace App\Tests\Controller\Tickets;
 
 use App\Tests\AuthorizationHelper;
+use App\Tests\FactoriesHelper;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
@@ -20,6 +21,7 @@ class TypeControllerTest extends WebTestCase
 {
     use AuthorizationHelper;
     use Factories;
+    use FactoriesHelper;
     use ResetDatabase;
     use SessionHelper;
 
@@ -61,6 +63,8 @@ class TypeControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket type'),
             'type' => $newType,
         ]);
+
+        $this->clearEntityManager();
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $client->followRedirect();

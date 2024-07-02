@@ -115,6 +115,6 @@
         "symfony/phpunit-bridge": "6.4.*",
         "symfony/stopwatch": "6.4.*",
         "symfony/web-profiler-bundle": "6.4.*",
-        "zenstruck/foundry": "^1.22"
+        "zenstruck/foundry": "^2.0"
     }
 }
