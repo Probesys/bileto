@@ -8,6 +8,7 @@ namespace App\Tests\Controller\Tickets;
 
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
@@ -24,7 +25,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => 'foo',
             'query' => 'status:open',
             'from' => '/tickets',
@@ -40,7 +41,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
                 'status' => ['new', 'in_progress'],
             ],
@@ -58,7 +59,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => '',
             'query' => 'foo',
             'from' => '/tickets',
@@ -74,7 +75,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
                 'type' => [''],
             ],
@@ -92,7 +93,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
                 'assignee' => ['no'],
             ],
@@ -110,7 +111,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => 'foo',
             'query' => 'status:(open)',
             'from' => '/tickets',
@@ -126,7 +127,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => 'foo',
             'query' => 'org:#1',
             'from' => '/tickets',
@@ -142,7 +143,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
                 'org' => ['#1'],
             ],
@@ -160,7 +161,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
                 'type' => 'incident',
             ],
@@ -178,7 +179,7 @@ class FiltersControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('POST', '/tickets/filters/combine', [
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'filters' => [
                 'assignee' => ['1'],
             ],
@@ -199,7 +200,7 @@ class FiltersControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('POST', '/tickets/filters/combine', [
+        $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
             'text' => 'foo',
             'query' => 'status:open',
             'from' => '/does-not-exist',

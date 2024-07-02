@@ -13,6 +13,7 @@ use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TeamAuthorizationFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -32,7 +33,7 @@ class AgentsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
-        $client->request('GET', "/teams/{$team->getUid()}/agents/new");
+        $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/agents/new");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New agent');
@@ -48,7 +49,7 @@ class AgentsControllerTest extends WebTestCase
         $team = TeamFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/teams/{$team->getUid()}/agents/new");
+        $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/agents/new");
     }
 
     public function testPostCreateAddsTheAgentAndRedirects(): void
@@ -62,7 +63,7 @@ class AgentsControllerTest extends WebTestCase
 
         $this->assertFalse($team->hasAgent($agent->object()));
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'add team agent'),
             'agentEmail' => $agent->getEmail(),
         ]);
@@ -82,7 +83,7 @@ class AgentsControllerTest extends WebTestCase
 
         $this->assertSame(1, UserFactory::count());
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'add team agent'),
             'agentEmail' => $agentEmail,
         ]);
@@ -106,7 +107,7 @@ class AgentsControllerTest extends WebTestCase
             'team' => $team,
         ]);
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'add team agent'),
             'agentEmail' => $agent->getEmail(),
         ]);
@@ -126,7 +127,7 @@ class AgentsControllerTest extends WebTestCase
         $team = TeamFactory::createOne();
         $agentEmail = '';
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'add team agent'),
             'agentEmail' => $agentEmail,
         ]);
@@ -144,7 +145,7 @@ class AgentsControllerTest extends WebTestCase
         $team = TeamFactory::createOne();
         $agentEmail = 'not an email';
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'add team agent'),
             'agentEmail' => $agentEmail,
         ]);
@@ -164,7 +165,7 @@ class AgentsControllerTest extends WebTestCase
 
         $this->assertFalse($team->hasAgent($agent->object()));
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => 'not a token',
             'agentEmail' => $agent->getEmail(),
         ]);
@@ -184,7 +185,7 @@ class AgentsControllerTest extends WebTestCase
         $team = TeamFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('POST', "/teams/{$team->getUid()}/agents/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'add team agent'),
             'agentEmail' => $agent->getEmail(),
         ]);
@@ -203,7 +204,7 @@ class AgentsControllerTest extends WebTestCase
 
         $this->assertTrue($team->hasAgent($agent->object()));
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
             'agentUid' => $agent->getUid(),
         ]);
@@ -230,7 +231,7 @@ class AgentsControllerTest extends WebTestCase
             'teamAuthorization' => $teamAuthorization,
         ]);
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
             'agentUid' => $agent->getUid(),
         ]);
@@ -247,7 +248,7 @@ class AgentsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
             'agentUid' => 'not a uid',
         ]);
@@ -268,7 +269,7 @@ class AgentsControllerTest extends WebTestCase
 
         $this->assertTrue($team->hasAgent($agent->object()));
 
-        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/deletion", [
             '_csrf_token' => 'not a token',
             'agentUid' => $agent->getUid(),
         ]);
@@ -292,7 +293,7 @@ class AgentsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/teams/{$team->getUid()}/agents/deletion", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/agents/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'remove team agent'),
             'agentUid' => $agent->getUid(),
         ]);

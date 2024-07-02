@@ -11,6 +11,7 @@ use App\Tests\Factory\MailboxEmailFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -30,7 +31,7 @@ class MailboxEmailsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
         $mailboxEmail = MailboxEmailFactory::createOne();
 
-        $client->request('POST', "/mailbox-emails/{$mailboxEmail->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/mailbox-emails/{$mailboxEmail->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete mailbox email'),
         ]);
 
@@ -46,7 +47,7 @@ class MailboxEmailsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
         $mailboxEmail = MailboxEmailFactory::createOne();
 
-        $client->request('POST', "/mailbox-emails/{$mailboxEmail->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/mailbox-emails/{$mailboxEmail->getUid()}/deletion", [
             '_csrf_token' => 'not the token',
         ]);
 
@@ -66,7 +67,7 @@ class MailboxEmailsControllerTest extends WebTestCase
         $mailboxEmail = MailboxEmailFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('POST', "/mailbox-emails/{$mailboxEmail->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/mailbox-emails/{$mailboxEmail->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete mailbox email'),
         ]);
     }

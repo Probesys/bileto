@@ -10,6 +10,7 @@ use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -25,7 +26,7 @@ class PagesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('GET', '/');
+        $crawler = $client->request(Request::METHOD_GET, '/');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Welcome to Bileto');
@@ -35,7 +36,7 @@ class PagesControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/');
+        $crawler = $client->request(Request::METHOD_GET, '/');
 
         $this->assertResponseRedirects('/login', 302);
     }
@@ -44,7 +45,7 @@ class PagesControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/about');
+        $crawler = $client->request(Request::METHOD_GET, '/about');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'About Bileto');
@@ -56,7 +57,7 @@ class PagesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $crawler = $client->request('GET', '/advanced-search-syntax');
+        $crawler = $client->request(Request::METHOD_GET, '/advanced-search-syntax');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Quick reference for the advanced syntax');

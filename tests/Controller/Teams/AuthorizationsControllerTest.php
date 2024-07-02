@@ -16,6 +16,7 @@ use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TeamAuthorizationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
@@ -37,7 +38,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
-        $client->request('GET', "/teams/{$team->getUid()}/authorizations/new");
+        $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/authorizations/new");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New authorization');
@@ -53,7 +54,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $team = TeamFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/teams/{$team->getUid()}/authorizations/new");
+        $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/authorizations/new");
     }
 
     public function testPostCreateGrantsAdminAuthorizationAndRedirects(): void
@@ -70,7 +71,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(0, TeamAuthorizationFactory::count());
 
-        $client->request('POST', "/teams/{$team->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
             'role' => $role->getUid(),
             'organization' => $organization->getUid(),
@@ -98,7 +99,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(0, TeamAuthorizationFactory::count());
 
-        $client->request('POST', "/teams/{$team->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
             'role' => $role->getUid(),
         ]);
@@ -125,7 +126,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'type' => 'agent',
         ]);
 
-        $client->request('POST', "/teams/{$team->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
             'role' => $role->getUid(),
         ]);
@@ -146,7 +147,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
-        $client->request('POST', "/teams/{$team->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
             'role' => 'not a uid',
         ]);
@@ -166,7 +167,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'type' => Factory::faker()->randomElement(['user', 'admin', 'super']),
         ]);
 
-        $client->request('POST', "/teams/{$team->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
             'role' => $role->getUid(),
         ]);
@@ -186,7 +187,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'type' => 'agent',
         ]);
 
-        $client->request('POST', "/teams/{$team->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
             '_csrf_token' => 'not a token',
             'role' => $role->getUid(),
         ]);
@@ -208,7 +209,7 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/teams/{$team->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
             'role' => $role->getUid(),
         ]);
@@ -230,7 +231,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->clearEntityManager();
 
-        $client->request('POST', "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete team authorization'),
         ]);
 
@@ -250,7 +251,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'team' => $team,
         ]);
 
-        $client->request('POST', "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
             '_csrf_token' => 'not a token',
         ]);
 
@@ -273,7 +274,7 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete team authorization'),
         ]);
     }

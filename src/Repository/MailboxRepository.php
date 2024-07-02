@@ -14,13 +14,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Mailbox>
- *
- * @method Mailbox|null find($id, $lockMode = null, $lockVersion = null)
- * @method Mailbox|null findOneBy(array $criteria, array $orderBy = null)
- * @method Mailbox[]    findAll()
- * @method Mailbox[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- *
- * @method Mailbox findOneOrCreateBy(array $criteria, array $valuesToCreate = [], bool $flush = false)
  */
 class MailboxRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {

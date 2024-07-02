@@ -14,6 +14,7 @@ use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -45,7 +46,7 @@ class ContractsControllerTest extends WebTestCase
             'endAt' => $endAt2,
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/contracts");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/contracts");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(1)', 'My contract 1');
@@ -69,7 +70,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/contracts");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/contracts");
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -83,7 +84,7 @@ class ContractsControllerTest extends WebTestCase
             'orga:manage:contracts',
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/contracts/new");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/contracts/new");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New contract');
@@ -102,7 +103,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/contracts/new");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/contracts/new");
     }
 
     public function testPostCreateCreatesAContractAndRedirects(): void
@@ -124,7 +125,7 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSame(0, ContractFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => $name,
@@ -170,7 +171,7 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSame(0, ContractFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => 'My contract',
@@ -220,7 +221,7 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSame(1, ContractFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => 'My contract',
@@ -265,7 +266,7 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSame(0, ContractFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => 'My contract',
@@ -304,7 +305,7 @@ class ContractsControllerTest extends WebTestCase
         $endAt = new \DateTimeImmutable('2023-12-31');
         $notes = 'Some notes';
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => $name,
@@ -334,7 +335,7 @@ class ContractsControllerTest extends WebTestCase
         $endAt = new \DateTimeImmutable('2023-12-31');
         $notes = 'Some notes';
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization contract'),
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
@@ -366,7 +367,7 @@ class ContractsControllerTest extends WebTestCase
         $endAt = new \DateTimeImmutable('2023-12-31');
         $notes = 'Some notes';
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'not a token'),
                 'name' => $name,
@@ -399,7 +400,7 @@ class ContractsControllerTest extends WebTestCase
         $notes = 'Some notes';
 
         $client->catchExceptions(false);
-        $client->request('POST', "/organizations/{$organization->getUid()}/contracts/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => $name,

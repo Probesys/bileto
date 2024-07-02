@@ -17,6 +17,7 @@ use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -47,7 +48,7 @@ class MessageDocumentsControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageDocumentFactory::count());
 
-        $client->request('POST', '/messages/documents/new', [
+        $client->request(Request::METHOD_POST, '/messages/documents/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create message document'),
         ], [
             'document' => $document,
@@ -92,7 +93,7 @@ class MessageDocumentsControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageDocumentFactory::count());
 
-        $client->request('POST', '/messages/documents/new', [
+        $client->request(Request::METHOD_POST, '/messages/documents/new', [
             '_csrf_token' => 'not the token',
         ], [
             'document' => $document,
@@ -118,7 +119,7 @@ class MessageDocumentsControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageDocumentFactory::count());
 
-        $client->request('POST', '/messages/documents/new', [
+        $client->request(Request::METHOD_POST, '/messages/documents/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create message document'),
         ], [
             'document' => $document,
@@ -139,7 +140,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), ['orga:create:tickets:messages']);
 
-        $client->request('POST', '/messages/documents/new', [
+        $client->request(Request::METHOD_POST, '/messages/documents/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create message document'),
         ]);
 
@@ -165,7 +166,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $document = new UploadedFile($filepath, 'My document');
 
         $client->catchExceptions(false);
-        $client->request('POST', '/messages/documents/new', [
+        $client->request(Request::METHOD_POST, '/messages/documents/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create message document'),
         ], [
             'document' => $document,
@@ -191,7 +192,7 @@ class MessageDocumentsControllerTest extends WebTestCase
 
         $this->assertNull($messageDocument->getMessage());
 
-        $client->request('GET', "/messages/documents/{$messageDocument->getUid()}.txt");
+        $client->request(Request::METHOD_GET, "/messages/documents/{$messageDocument->getUid()}.txt");
 
         $response = $client->getResponse();
         $content = $response->getContent();
@@ -225,7 +226,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $this->assertNull($messageDocument->getMessage());
 
         $client->catchExceptions(false);
-        $client->request('GET', "/messages/documents/{$messageDocument->getUid()}.txt");
+        $client->request(Request::METHOD_GET, "/messages/documents/{$messageDocument->getUid()}.txt");
     }
 
     public function testGetShowFailsIfMessageIsSetAndCurrentUserIsNotActorOfTheAssociatedTicket(): void
@@ -254,7 +255,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $client->loginUser($otherUser->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', "/messages/documents/{$messageDocument->getUid()}.txt");
+        $client->request(Request::METHOD_GET, "/messages/documents/{$messageDocument->getUid()}.txt");
     }
 
     public function testGetShowFailsIfMessageIsSetAndCurrentUserCannotReadConfidentialMessage(): void
@@ -286,7 +287,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $client->loginUser($otherUser->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', "/messages/documents/{$messageDocument->getUid()}.txt");
+        $client->request(Request::METHOD_GET, "/messages/documents/{$messageDocument->getUid()}.txt");
     }
 
     public function testGetShowFailsIfExtensionDoesNotMatch(): void
@@ -309,7 +310,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $messageDocumentRepository->save($messageDocument, true);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/messages/documents/{$messageDocument->getUid()}.pdf");
+        $client->request(Request::METHOD_GET, "/messages/documents/{$messageDocument->getUid()}.pdf");
     }
 
     public function testPostDeleteRemovesTheDocument(): void
@@ -334,7 +335,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $this->assertSame(1, MessageDocumentFactory::count());
         $this->assertTrue($messageDocumentStorage->exists($messageDocument));
 
-        $client->request('POST', "/messages/documents/{$messageDocument->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/messages/documents/{$messageDocument->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete message document'),
         ]);
 
@@ -380,7 +381,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $client->loginUser($otherUser->object());
 
         $client->catchExceptions(false);
-        $client->request('POST', "/messages/documents/{$messageDocument->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/messages/documents/{$messageDocument->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete message document'),
         ]);
     }
@@ -402,7 +403,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $messageDocument = $messageDocumentStorage->store($document, 'My document');
         $messageDocumentRepository->save($messageDocument, true);
 
-        $client->request('POST', "/messages/documents/{$messageDocument->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/messages/documents/{$messageDocument->getUid()}/deletion", [
             '_csrf_token' => 'not the token',
         ]);
 
@@ -435,7 +436,7 @@ class MessageDocumentsControllerTest extends WebTestCase
             'message' => null,
         ]);
 
-        $client->request('GET', '/messages/documents');
+        $client->request(Request::METHOD_GET, '/messages/documents');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains(
@@ -467,7 +468,7 @@ class MessageDocumentsControllerTest extends WebTestCase
             'message' => null,
         ]);
 
-        $client->request('GET', '/messages/documents?filter=unattached');
+        $client->request(Request::METHOD_GET, '/messages/documents?filter=unattached');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains(

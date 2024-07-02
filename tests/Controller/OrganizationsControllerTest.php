@@ -18,6 +18,7 @@ use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -46,7 +47,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => 'Baz',
         ]);
 
-        $client->request('GET', '/organizations');
+        $client->request(Request::METHOD_GET, '/organizations');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Organizations');
@@ -68,7 +69,7 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
         $this->grantOrga($user->object(), ['orga:see'], $orga1->object());
 
-        $client->request('GET', '/organizations');
+        $client->request(Request::METHOD_GET, '/organizations');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Organizations');
@@ -83,7 +84,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:create:organizations']);
 
-        $client->request('GET', '/organizations/new');
+        $client->request(Request::METHOD_GET, '/organizations/new');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New organization');
@@ -98,7 +99,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/organizations/new');
+        $client->request(Request::METHOD_GET, '/organizations/new');
     }
 
     public function testPostCreateCreatesAnOrganizationAndRedirects(): void
@@ -109,7 +110,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = 'My organization';
 
-        $client->request('POST', '/organizations/new', [
+        $client->request(Request::METHOD_POST, '/organizations/new', [
             'organization' => [
                 '_token' => $this->generateCsrfToken($client, 'organization'),
                 'name' => $name,
@@ -130,7 +131,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = '';
 
-        $client->request('POST', '/organizations/new', [
+        $client->request(Request::METHOD_POST, '/organizations/new', [
             'organization' => [
                 '_token' => $this->generateCsrfToken($client, 'organization'),
                 'name' => $name,
@@ -149,7 +150,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = str_repeat('a', 256);
 
-        $client->request('POST', '/organizations/new', [
+        $client->request(Request::METHOD_POST, '/organizations/new', [
             'organization' => [
                 '_token' => $this->generateCsrfToken($client, 'organization'),
                 'name' => $name,
@@ -168,7 +169,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:create:organizations']);
         $name = 'My organization';
 
-        $client->request('POST', '/organizations/new', [
+        $client->request(Request::METHOD_POST, '/organizations/new', [
             'organization' => [
                 '_token' => 'not a token',
                 'name' => $name,
@@ -189,7 +190,7 @@ class OrganizationsControllerTest extends WebTestCase
         $name = 'My organization';
 
         $client->catchExceptions(false);
-        $client->request('POST', '/organizations/new', [
+        $client->request(Request::METHOD_POST, '/organizations/new', [
             'organization' => [
                 '_token' => $this->generateCsrfToken($client, 'organization'),
                 'name' => $name,
@@ -205,7 +206,7 @@ class OrganizationsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->object(), ['orga:see'], $organization->object());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}");
 
         $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
     }
@@ -220,7 +221,7 @@ class OrganizationsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}");
     }
 
     public function testGetSettingsRendersCorrectly(): void
@@ -231,7 +232,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/settings");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/settings");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Settings');
@@ -247,7 +248,7 @@ class OrganizationsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/settings");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/settings");
     }
 
     public function testPostUpdateSavesTheOrganizationAndRedirects(): void
@@ -262,7 +263,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/settings", [
             'organization' => [
                 '_token' => $this->generateCsrfToken($client, 'organization'),
                 'name' => $newName,
@@ -286,7 +287,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/settings", [
             'organization' => [
                 '_token' => $this->generateCsrfToken($client, 'organization'),
                 'name' => $newName,
@@ -310,7 +311,7 @@ class OrganizationsControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/settings", [
             'organization' => [
                 '_token' => 'not a token',
                 'name' => $newName,
@@ -336,7 +337,7 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/organizations/{$organization->getUid()}/settings", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/settings", [
             'organization' => [
                 '_token' => $this->generateCsrfToken($client, 'organization'),
                 'name' => $newName,
@@ -372,7 +373,7 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->clearEntityManager();
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
         ]);
 
@@ -391,7 +392,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->grantOrga($user->object(), ['orga:manage']);
         $organization = OrganizationFactory::createOne();
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/deletion", [
             '_csrf_token' => 'not a token',
         ]);
 
@@ -411,7 +412,7 @@ class OrganizationsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('POST', "/organizations/{$organization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
         ]);
     }

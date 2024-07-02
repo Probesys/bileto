@@ -14,6 +14,7 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
@@ -41,7 +42,7 @@ class RolesControllerTest extends WebTestCase
             'type' => 'agent',
         ]);
 
-        $client->request('GET', '/roles');
+        $client->request(Request::METHOD_GET, '/roles');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Roles');
@@ -58,7 +59,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(0, count(RoleFactory::findBy(['type' => 'super'])));
 
-        $client->request('GET', '/roles');
+        $client->request(Request::METHOD_GET, '/roles');
 
         $this->assertSame(1, count(RoleFactory::findBy(['type' => 'super'])));
 
@@ -75,7 +76,7 @@ class RolesControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/roles');
+        $client->request(Request::METHOD_GET, '/roles');
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -85,7 +86,7 @@ class RolesControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:roles']);
 
-        $client->request('GET', '/roles/new?type=agent');
+        $client->request(Request::METHOD_GET, '/roles/new?type=agent');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New agent role');
@@ -100,7 +101,7 @@ class RolesControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/roles/new?type=agent');
+        $client->request(Request::METHOD_GET, '/roles/new?type=agent');
     }
 
     public function testPostCreateCreatesARoleAndRedirects(): void
@@ -116,7 +117,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(1, RoleFactory::count());
 
-        $client->request('GET', '/roles/new?type=agent');
+        $client->request(Request::METHOD_GET, '/roles/new?type=agent');
         $crawler = $client->submitForm('form-save-role-submit', [
             'name' => $name,
             'description' => $description,
@@ -148,7 +149,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -171,7 +172,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -192,7 +193,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -219,7 +220,7 @@ class RolesControllerTest extends WebTestCase
             'foo:bar',
         ];
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -249,7 +250,7 @@ class RolesControllerTest extends WebTestCase
             'foo:bar',
         ];
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -278,7 +279,7 @@ class RolesControllerTest extends WebTestCase
             'foo:bar',
         ];
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -304,7 +305,7 @@ class RolesControllerTest extends WebTestCase
             'isDefault' => true,
         ]);
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -332,7 +333,7 @@ class RolesControllerTest extends WebTestCase
             'isDefault' => true,
         ]);
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -356,7 +357,7 @@ class RolesControllerTest extends WebTestCase
         $name = '';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -375,7 +376,7 @@ class RolesControllerTest extends WebTestCase
         $name = str_repeat('a', 51);
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -394,7 +395,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = '';
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -413,7 +414,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = str_repeat('a', 256);
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -437,7 +438,7 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(2, RoleFactory::count());
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -456,7 +457,7 @@ class RolesControllerTest extends WebTestCase
         $name = 'My role';
         $description = 'What it does';
 
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => 'not a token',
             'name' => $name,
             'description' => $description,
@@ -477,7 +478,7 @@ class RolesControllerTest extends WebTestCase
         $description = 'What it does';
 
         $client->catchExceptions(false);
-        $client->request('POST', '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create role'),
             'name' => $name,
             'description' => $description,
@@ -495,7 +496,7 @@ class RolesControllerTest extends WebTestCase
             'type' => $type,
         ]);
 
-        $client->request('GET', "/roles/{$role->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/roles/{$role->getUid()}/edit");
 
         $this->assertResponseIsSuccessful();
         if ($type === 'admin') {
@@ -520,7 +521,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/roles/{$role->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/roles/{$role->getUid()}/edit");
     }
 
     public function testGetEditFailsIfAccessIsForbidden(): void
@@ -535,7 +536,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/roles/{$role->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/roles/{$role->getUid()}/edit");
     }
 
     public function testPostUpdateChangesTheRoleAndRedirects(): void
@@ -563,7 +564,7 @@ class RolesControllerTest extends WebTestCase
             'permissions' => $oldPermissions,
         ]);
 
-        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
             'description' => $newDescription,
@@ -602,7 +603,7 @@ class RolesControllerTest extends WebTestCase
             'permissions' => $oldPermissions,
         ]);
 
-        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
             'description' => $newDescription,
@@ -631,7 +632,7 @@ class RolesControllerTest extends WebTestCase
             'isDefault' => false,
         ]);
 
-        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $role->getName(),
             'description' => $role->getDescription(),
@@ -661,7 +662,7 @@ class RolesControllerTest extends WebTestCase
             'isDefault' => false,
         ]);
 
-        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $role->getName(),
             'description' => $role->getDescription(),
@@ -701,7 +702,7 @@ class RolesControllerTest extends WebTestCase
             'permissions' => $oldPermissions,
         ]);
 
-        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
             'description' => $newDescription,
@@ -740,7 +741,7 @@ class RolesControllerTest extends WebTestCase
             'permissions' => $oldPermissions,
         ]);
 
-        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => 'not a token',
             'name' => $newName,
             'description' => $newDescription,
@@ -777,7 +778,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
             'description' => $newDescription,
@@ -812,7 +813,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/roles/{$role->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update role'),
             'name' => $newName,
             'description' => $newDescription,
@@ -833,7 +834,7 @@ class RolesControllerTest extends WebTestCase
             'role' => $role,
         ]);
 
-        $client->request('POST', "/roles/{$role->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete role'),
         ]);
 
@@ -855,7 +856,7 @@ class RolesControllerTest extends WebTestCase
             'role' => $role,
         ]);
 
-        $client->request('POST', "/roles/{$role->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/deletion", [
             '_csrf_token' => 'not the token',
         ]);
 
@@ -879,7 +880,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/roles/{$role->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete role'),
         ]);
     }
@@ -899,7 +900,7 @@ class RolesControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/roles/{$role->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete role'),
         ]);
     }

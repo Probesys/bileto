@@ -9,6 +9,7 @@ namespace App\Tests\Controller;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -31,7 +32,7 @@ class AdminControllerTest extends WebTestCase
             'admin:create:organizations',
         ]);
 
-        $client->request('GET', '/admin');
+        $client->request(Request::METHOD_GET, '/admin');
 
         $this->assertResponseRedirects('/roles', 302);
     }
@@ -47,7 +48,7 @@ class AdminControllerTest extends WebTestCase
             'admin:create:organizations',
         ]);
 
-        $client->request('GET', '/admin');
+        $client->request(Request::METHOD_GET, '/admin');
 
         $this->assertResponseRedirects('/users', 302);
     }
@@ -61,7 +62,7 @@ class AdminControllerTest extends WebTestCase
             'admin:see',
         ]);
 
-        $client->request('GET', '/admin');
+        $client->request(Request::METHOD_GET, '/admin');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains(
@@ -79,6 +80,6 @@ class AdminControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/admin');
+        $client->request(Request::METHOD_GET, '/admin');
     }
 }

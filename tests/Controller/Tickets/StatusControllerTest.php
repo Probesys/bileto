@@ -11,6 +11,7 @@ use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -32,7 +33,7 @@ class StatusControllerTest extends WebTestCase
             'createdBy' => $user,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}/status/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/status/edit");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit the status');
@@ -50,7 +51,7 @@ class StatusControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/tickets/{$ticket->getUid()}/status/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/status/edit");
     }
 
     public function testGetEditFailsIfAccessToTicketIsForbidden(): void
@@ -64,7 +65,7 @@ class StatusControllerTest extends WebTestCase
         $ticket = TicketFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/tickets/{$ticket->getUid()}/status/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/status/edit");
     }
 
     public function testPostUpdateSavesTicketAndRedirects(): void
@@ -80,7 +81,7 @@ class StatusControllerTest extends WebTestCase
             'status' => $oldStatus,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}/status/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/status/edit");
         $crawler = $client->submitForm('form-update-status-submit', [
             'status' => $newStatus,
         ]);
@@ -103,7 +104,7 @@ class StatusControllerTest extends WebTestCase
             'status' => $oldStatus,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/status/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket status'),
             'status' => $newStatus,
         ]);
@@ -126,7 +127,7 @@ class StatusControllerTest extends WebTestCase
             'status' => $oldStatus,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/status/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/edit", [
             '_csrf_token' => 'not the token',
             'status' => $newStatus,
         ]);
@@ -151,7 +152,7 @@ class StatusControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/status/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket status'),
             'status' => $newStatus,
         ]);
@@ -172,7 +173,7 @@ class StatusControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/status/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket status'),
             'status' => $newStatus,
         ]);

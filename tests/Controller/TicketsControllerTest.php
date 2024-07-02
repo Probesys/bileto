@@ -14,6 +14,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Factory;
@@ -37,7 +38,7 @@ class TicketsControllerTest extends WebTestCase
             'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
-        $client->request('GET', '/tickets');
+        $client->request(Request::METHOD_GET, '/tickets');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="ticket-item"]', "#{$ticket->getId()} My ticket");
@@ -51,7 +52,7 @@ class TicketsControllerTest extends WebTestCase
         OrganizationFactory::createMany(2);
         $this->grantOrga($user->object(), ['orga:create:tickets']);
 
-        $client->request('GET', '/tickets/new');
+        $client->request(Request::METHOD_GET, '/tickets/new');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New ticket');
@@ -67,7 +68,7 @@ class TicketsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantOrga($user->object(), ['orga:create:tickets']);
 
-        $client->request('GET', '/tickets/new');
+        $client->request(Request::METHOD_GET, '/tickets/new');
 
         $this->assertResponseRedirects("/organizations/{$orga1->getUid()}/tickets/new", 302);
     }
@@ -80,7 +81,7 @@ class TicketsControllerTest extends WebTestCase
         list($orga1, $orga2) = OrganizationFactory::createMany(2);
         $this->grantOrga($user->object(), ['orga:create:tickets'], $orga1->object());
 
-        $client->request('GET', '/tickets/new');
+        $client->request(Request::METHOD_GET, '/tickets/new');
 
         $this->assertResponseRedirects("/organizations/{$orga1->getUid()}/tickets/new", 302);
     }
@@ -93,7 +94,7 @@ class TicketsControllerTest extends WebTestCase
         list($orga1, $orga2) = OrganizationFactory::createMany(2);
         $this->grantOrga($user->object(), ['orga:create:tickets']);
 
-        $client->request('GET', '/tickets/new', [
+        $client->request(Request::METHOD_GET, '/tickets/new', [
             'organization' => $orga2->getUid(),
         ]);
 
@@ -111,7 +112,7 @@ class TicketsControllerTest extends WebTestCase
         $this->grantOrga($user->object(), ['orga:create:tickets']);
 
         $client->catchExceptions(false);
-        $client->request('GET', '/tickets/new', [
+        $client->request(Request::METHOD_GET, '/tickets/new', [
             'organization' => 'not an uid',
         ]);
     }
@@ -126,7 +127,7 @@ class TicketsControllerTest extends WebTestCase
         list($orga1, $orga2) = OrganizationFactory::createMany(2);
 
         $client->catchExceptions(false);
-        $client->request('GET', '/tickets/new');
+        $client->request(Request::METHOD_GET, '/tickets/new');
     }
 
     public function testGetShowRendersCorrectlyIfTicketIsCreatedByUser(): void
@@ -139,7 +140,7 @@ class TicketsControllerTest extends WebTestCase
             'createdBy' => $user,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
@@ -155,7 +156,7 @@ class TicketsControllerTest extends WebTestCase
             'requester' => $user,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
@@ -171,7 +172,7 @@ class TicketsControllerTest extends WebTestCase
             'assignee' => $user,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
@@ -187,7 +188,7 @@ class TicketsControllerTest extends WebTestCase
             'title' => 'My ticket',
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
@@ -209,7 +210,7 @@ class TicketsControllerTest extends WebTestCase
             'content' => $content
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="message-item"]', $content);
@@ -232,7 +233,7 @@ class TicketsControllerTest extends WebTestCase
             'content' => $content
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="message-item"]', $content);
@@ -252,7 +253,7 @@ class TicketsControllerTest extends WebTestCase
             'content' => $content
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('[data-test="message-item"]');
@@ -278,7 +279,7 @@ class TicketsControllerTest extends WebTestCase
         $ticketRepository = $entityManager->getRepository(Ticket::class);
         $ticketRepository->save($ticket->object(), true);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="event-item"]', 'The old title');
@@ -296,7 +297,7 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
     }
 
     public function testGetShowRedirectsToLoginIfNotConnected(): void
@@ -308,7 +309,7 @@ class TicketsControllerTest extends WebTestCase
             'createdBy' => $user,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
 
         $this->assertResponseRedirects('/login', 302);
     }

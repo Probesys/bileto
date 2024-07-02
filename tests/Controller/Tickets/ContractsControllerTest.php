@@ -18,6 +18,7 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -39,7 +40,7 @@ class ContractsControllerTest extends WebTestCase
             'createdBy' => $user,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}/contracts/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/contracts/edit");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit the contract');
@@ -57,7 +58,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/tickets/{$ticket->getUid()}/contracts/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/contracts/edit");
     }
 
     public function testGetEditFailsIfAccessToTicketIsForbidden(): void
@@ -74,7 +75,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/tickets/{$ticket->getUid()}/contracts/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/contracts/edit");
     }
 
     public function testPostUpdateSavesTicketAndRedirects(): void
@@ -100,7 +101,7 @@ class ContractsControllerTest extends WebTestCase
             'contracts' => [$oldContract],
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/contracts/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/contracts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
             'ongoingContractUid' => $newContract->getUid(),
         ]);
@@ -141,7 +142,7 @@ class ContractsControllerTest extends WebTestCase
             'contracts' => [$oldContract],
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/contracts/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/contracts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
             'ongoingContractUid' => $newContract->getUid(),
         ]);
@@ -191,7 +192,7 @@ class ContractsControllerTest extends WebTestCase
             'realTime' => 15,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/contracts/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/contracts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
             'ongoingContractUid' => $newContract->getUid(),
             'includeUnaccountedTime' => true,
@@ -233,7 +234,7 @@ class ContractsControllerTest extends WebTestCase
             'contracts' => [$oldContract],
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/contracts/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/contracts/edit", [
             '_csrf_token' => 'not the token',
             'ongoingContractUid' => $newContract->getUid(),
         ]);
@@ -270,7 +271,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/contracts/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/contracts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
             'ongoingContractUid' => $newContract->getUid(),
         ]);
@@ -303,7 +304,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/contracts/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/contracts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
             'ongoingContractUid' => $newContract->getUid(),
         ]);

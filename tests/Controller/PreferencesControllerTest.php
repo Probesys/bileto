@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -25,7 +26,7 @@ class PreferencesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $client->request('GET', '/preferences');
+        $client->request(Request::METHOD_GET, '/preferences');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Preferences');
@@ -35,7 +36,7 @@ class PreferencesControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/preferences');
+        $client->request(Request::METHOD_GET, '/preferences');
 
         $this->assertResponseRedirects('/login', 302);
     }
@@ -53,7 +54,7 @@ class PreferencesControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('GET', '/preferences');
+        $client->request(Request::METHOD_GET, '/preferences');
         $crawler = $client->submitForm('form-update-preferences-submit', [
             'colorScheme' => $newColorScheme,
             'locale' => $newLocale,
@@ -78,7 +79,7 @@ class PreferencesControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/preferences', [
+        $client->request(Request::METHOD_POST, '/preferences', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update preferences'),
             'colorScheme' => $newColorScheme,
             'locale' => $newLocale,
@@ -103,7 +104,7 @@ class PreferencesControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/preferences', [
+        $client->request(Request::METHOD_POST, '/preferences', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update preferences'),
             'colorScheme' => $newColorScheme,
             'locale' => $newLocale,
@@ -128,7 +129,7 @@ class PreferencesControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/preferences', [
+        $client->request(Request::METHOD_POST, '/preferences', [
             '_csrf_token' => 'not the token',
             'colorScheme' => $newColorScheme,
             'locale' => $newLocale,
@@ -150,7 +151,7 @@ class PreferencesControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/preferences/hide-events', [
+        $client->request(Request::METHOD_POST, '/preferences/hide-events', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update hide events'),
             'hideEvents' => $newHideEvents,
             'from' => '/preferences',

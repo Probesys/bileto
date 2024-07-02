@@ -14,11 +14,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<TimeSpent>
- *
- * @method TimeSpent|null find($id, $lockMode = null, $lockVersion = null)
- * @method TimeSpent|null findOneBy(array $criteria, array $orderBy = null)
- * @method TimeSpent[]    findAll()
- * @method TimeSpent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class TimeSpentRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {

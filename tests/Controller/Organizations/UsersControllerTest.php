@@ -12,6 +12,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -51,7 +52,7 @@ class UsersControllerTest extends WebTestCase
             'user',
         );
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/users");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/users");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Users');
@@ -69,6 +70,6 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/users");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/users");
     }
 }

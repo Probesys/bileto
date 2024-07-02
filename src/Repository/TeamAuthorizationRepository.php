@@ -14,11 +14,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<TeamAuthorization>
- *
- * @method TeamAuthorization|null find($id, $lockMode = null, $lockVersion = null)
- * @method TeamAuthorization|null findOneBy(array $criteria, array $orderBy = null)
- * @method TeamAuthorization[]    findAll()
- * @method TeamAuthorization[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class TeamAuthorizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
