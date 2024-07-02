@@ -11,6 +11,7 @@ use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -35,7 +36,7 @@ class TypeControllerTest extends WebTestCase
             'type' => $oldType,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
         $crawler = $client->submitForm('form-update-type-submit');
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
@@ -56,7 +57,7 @@ class TypeControllerTest extends WebTestCase
             'type' => $oldType,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/type/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/type/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket type'),
             'type' => $newType,
         ]);
@@ -81,7 +82,7 @@ class TypeControllerTest extends WebTestCase
             'type' => $oldType,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/type/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/type/edit", [
             '_csrf_token' => 'not the token',
             'type' => $newType,
         ]);
@@ -108,7 +109,7 @@ class TypeControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/type/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/type/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket type'),
             'type' => $newType,
         ]);
@@ -129,7 +130,7 @@ class TypeControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/type/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/type/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket type'),
             'type' => $newType,
         ]);

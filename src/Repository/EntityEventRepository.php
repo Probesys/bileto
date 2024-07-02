@@ -14,11 +14,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<EntityEvent>
- *
- * @method EntityEvent|null find($id, $lockMode = null, $lockVersion = null)
- * @method EntityEvent|null findOneBy(array $criteria, array $orderBy = null)
- * @method EntityEvent[]    findAll()
- * @method EntityEvent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class EntityEventRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {

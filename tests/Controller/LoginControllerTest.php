@@ -9,6 +9,7 @@ namespace App\Tests\Controller;
 use App\Entity\User;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -21,7 +22,7 @@ class LoginControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/login');
+        $client->request(Request::METHOD_GET, '/login');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('#form-login-submit', 'Login');
@@ -35,7 +36,7 @@ class LoginControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $client->request('GET', '/login');
+        $client->request(Request::METHOD_GET, '/login');
 
         $this->assertResponseRedirects('/', 302);
         $user = $this->getLoggedUser();
@@ -52,7 +53,7 @@ class LoginControllerTest extends WebTestCase
             'password' => $password,
         ]);
 
-        $client->request('GET', '/login');
+        $client->request(Request::METHOD_GET, '/login');
         $crawler = $client->submitForm('form-login-submit', [
             '_identifier' => $identifier,
             '_password' => $password,
@@ -74,7 +75,7 @@ class LoginControllerTest extends WebTestCase
         $identifier = 'dominique';
         $password = 'secret';
 
-        $client->request('GET', '/login');
+        $client->request(Request::METHOD_GET, '/login');
         $crawler = $client->submitForm('form-login-submit', [
             '_identifier' => $identifier,
             '_password' => $password,
@@ -95,7 +96,7 @@ class LoginControllerTest extends WebTestCase
             'password' => $password,
         ]);
 
-        $client->request('GET', '/login');
+        $client->request(Request::METHOD_GET, '/login');
         $crawler = $client->submitForm('form-login-submit', [
             '_identifier' => $identifier,
             '_password' => 'not the secret',
@@ -118,7 +119,7 @@ class LoginControllerTest extends WebTestCase
         $identifier = 'alix@example.com';
         $password = 'secret';
 
-        $client->request('GET', '/login');
+        $client->request(Request::METHOD_GET, '/login');
         $client->submitForm('form-login-submit', [
             '_identifier' => $identifier,
             '_password' => $password,
@@ -141,7 +142,7 @@ class LoginControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $client->request('GET', '/profile');
+        $client->request(Request::METHOD_GET, '/profile');
         $client->submitForm('form-logout-submit');
 
         $this->assertResponseRedirects('http://localhost/', 302);

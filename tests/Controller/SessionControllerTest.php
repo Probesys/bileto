@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class SessionControllerTest extends WebTestCase
 {
@@ -18,7 +19,7 @@ class SessionControllerTest extends WebTestCase
         $client = static::createClient();
         $session = $this->getSession($client);
 
-        $client->request('POST', '/session/locale', [
+        $client->request(Request::METHOD_POST, '/session/locale', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update session locale'),
             'locale' => 'fr_FR',
             'from' => 'login',
@@ -33,7 +34,7 @@ class SessionControllerTest extends WebTestCase
         $client = static::createClient();
         $session = $this->getSession($client);
 
-        $client->request('POST', '/session/locale', [
+        $client->request(Request::METHOD_POST, '/session/locale', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update session locale'),
             'locale' => 'unsupported',
             'from' => 'login',
@@ -48,7 +49,7 @@ class SessionControllerTest extends WebTestCase
         $client = static::createClient();
         $session = $this->getSession($client);
 
-        $client->request('POST', '/session/locale', [
+        $client->request(Request::METHOD_POST, '/session/locale', [
             '_csrf_token' => 'not the token',
             'locale' => 'fr_FR',
             'from' => 'login',

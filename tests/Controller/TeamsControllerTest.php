@@ -16,6 +16,7 @@ use App\Tests\Factory\TeamAuthorizationFactory;
 use App\Tests\FactoriesHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -41,7 +42,7 @@ class TeamsControllerTest extends WebTestCase
             'name' => 'bar',
         ]);
 
-        $client->request('GET', '/teams');
+        $client->request(Request::METHOD_GET, '/teams');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Teams & Agents');
@@ -58,7 +59,7 @@ class TeamsControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/teams');
+        $client->request(Request::METHOD_GET, '/teams');
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -68,7 +69,7 @@ class TeamsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
 
-        $client->request('GET', '/teams/new');
+        $client->request(Request::METHOD_GET, '/teams/new');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New team');
@@ -83,7 +84,7 @@ class TeamsControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/teams/new');
+        $client->request(Request::METHOD_GET, '/teams/new');
     }
 
     public function testPostCreateCreatesTheTeamAndRedirects(): void
@@ -96,7 +97,7 @@ class TeamsControllerTest extends WebTestCase
 
         $this->assertSame(0, TeamFactory::count());
 
-        $crawler = $client->request('POST', '/teams/new', [
+        $crawler = $client->request(Request::METHOD_POST, '/teams/new', [
             'team' => [
                 '_token' => $this->generateCsrfToken($client, 'team'),
                 'name' => $name,
@@ -121,7 +122,7 @@ class TeamsControllerTest extends WebTestCase
             'name' => $name,
         ]);
 
-        $crawler = $client->request('POST', '/teams/new', [
+        $crawler = $client->request(Request::METHOD_POST, '/teams/new', [
             'team' => [
                 '_token' => $this->generateCsrfToken($client, 'team'),
                 'name' => $name,
@@ -143,7 +144,7 @@ class TeamsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $name = '';
 
-        $crawler = $client->request('POST', '/teams/new', [
+        $crawler = $client->request(Request::METHOD_POST, '/teams/new', [
             'team' => [
                 '_token' => $this->generateCsrfToken($client, 'team'),
                 'name' => $name,
@@ -162,7 +163,7 @@ class TeamsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $name = 'My team';
 
-        $crawler = $client->request('POST', '/teams/new', [
+        $crawler = $client->request(Request::METHOD_POST, '/teams/new', [
             'team' => [
                 '_token' => 'not a token',
                 'name' => $name,
@@ -183,7 +184,7 @@ class TeamsControllerTest extends WebTestCase
         $name = 'My team';
 
         $client->catchExceptions(false);
-        $crawler = $client->request('POST', '/teams/new', [
+        $crawler = $client->request(Request::METHOD_POST, '/teams/new', [
             'team' => [
                 '_token' => $this->generateCsrfToken($client, 'team'),
                 'name' => $name,
@@ -201,7 +202,7 @@ class TeamsControllerTest extends WebTestCase
             'name' => 'foo',
         ]);
 
-        $client->request('GET', "/teams/{$team->getUid()}");
+        $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', $team->getName());
@@ -219,7 +220,7 @@ class TeamsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/teams/{$team->getUid()}");
+        $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}");
     }
 
     public function testGetEditRendersCorrectly(): void
@@ -230,7 +231,7 @@ class TeamsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:agents']);
         $team = TeamFactory::createOne();
 
-        $client->request('GET', "/teams/{$team->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/edit");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit a team');
@@ -246,7 +247,7 @@ class TeamsControllerTest extends WebTestCase
         $team = TeamFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/teams/{$team->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/edit");
     }
 
     public function testPostUpdateSavesTheTeamAndRedirects(): void
@@ -261,7 +262,7 @@ class TeamsControllerTest extends WebTestCase
             'name' => $initialName,
         ]);
 
-        $client->request('POST', "/teams/{$team->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/edit", [
             'team' => [
                 '_token' => $this->generateCsrfToken($client, 'team'),
                 'name' => $newName,
@@ -288,7 +289,7 @@ class TeamsControllerTest extends WebTestCase
             'name' => $newName,
         ]);
 
-        $client->request('POST', "/teams/{$team->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/edit", [
             'team' => [
                 '_token' => $this->generateCsrfToken($client, 'team'),
                 'name' => $newName,
@@ -315,7 +316,7 @@ class TeamsControllerTest extends WebTestCase
             'name' => $initialName,
         ]);
 
-        $client->request('POST', "/teams/{$team->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/edit", [
             'team' => [
                 '_token' => 'not a token',
                 'name' => $newName,
@@ -341,7 +342,7 @@ class TeamsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/teams/{$team->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/edit", [
             'team' => [
                 '_token' => $this->generateCsrfToken($client, 'team'),
                 'name' => $newName,
@@ -366,7 +367,7 @@ class TeamsControllerTest extends WebTestCase
 
         $this->clearEntityManager();
 
-        $client->request('POST', "/teams/{$team->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete team'),
         ]);
 
@@ -395,7 +396,7 @@ class TeamsControllerTest extends WebTestCase
 
         $this->clearEntityManager();
 
-        $client->request('POST', "/teams/{$team->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/deletion", [
             '_csrf_token' => 'not a token',
         ]);
 
@@ -428,7 +429,7 @@ class TeamsControllerTest extends WebTestCase
         $this->clearEntityManager();
 
         $client->catchExceptions(false);
-        $client->request('POST', "/teams/{$team->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete team'),
         ]);
     }

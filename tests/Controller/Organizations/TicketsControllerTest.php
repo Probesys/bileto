@@ -19,6 +19,7 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
@@ -47,7 +48,7 @@ class TicketsControllerTest extends WebTestCase
             'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="ticket-item"]', 'My ticket');
@@ -68,7 +69,7 @@ class TicketsControllerTest extends WebTestCase
             'status' => Factory::faker()->randomElement(Ticket::FINISHED_STATUSES),
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('[data-test="ticket-item"]');
@@ -96,7 +97,7 @@ class TicketsControllerTest extends WebTestCase
             'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?view=unassigned");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets?view=unassigned");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="ticket-item"]', 'Ticket to assign');
@@ -132,7 +133,10 @@ class TicketsControllerTest extends WebTestCase
             'status' => Factory::faker()->randomElement(Ticket::OPEN_STATUSES),
         ]);
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets?view=owned&sort=title-asc");
+        $client->request(
+            Request::METHOD_GET,
+            "/organizations/{$organization->getUid()}/tickets?view=owned&sort=title-asc"
+        );
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="ticket-item"]:nth-child(1)', 'Ticket assigned to user');
@@ -152,7 +156,7 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets");
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -169,7 +173,7 @@ class TicketsControllerTest extends WebTestCase
             'orga:update:tickets:priority',
         ], $organization->object());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets/new");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New ticket');
@@ -185,7 +189,7 @@ class TicketsControllerTest extends WebTestCase
         $organization = OrganizationFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets/new");
     }
 
     public function testPostCreateCreatesATicketAndRedirects(): void
@@ -215,7 +219,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $requester->getUid(),
@@ -276,7 +280,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -308,7 +312,7 @@ class TicketsControllerTest extends WebTestCase
             'endAt' => Time::fromNow(1, 'week'),
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -336,7 +340,7 @@ class TicketsControllerTest extends WebTestCase
             'message' => null,
         ]);
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -384,7 +388,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -419,7 +423,7 @@ class TicketsControllerTest extends WebTestCase
         $title = 'My ticket';
         $messageContent = 'My message';
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -447,7 +451,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/organizations/{$organization->getUid()}/tickets/new");
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets/new");
         $crawler = $client->submitForm('form-create-ticket-submit', [
             'title' => $title,
             'message' => $messageContent,
@@ -499,7 +503,7 @@ class TicketsControllerTest extends WebTestCase
         $title = 'My ticket';
         $messageContent = 'My message';
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -546,7 +550,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -595,7 +599,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -634,7 +638,7 @@ class TicketsControllerTest extends WebTestCase
         $title = 'My ticket';
         $messageContent = 'My message';
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $requester->getUid(),
@@ -666,7 +670,7 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -699,7 +703,7 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -732,7 +736,7 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -765,7 +769,7 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => 'not an uid',
@@ -798,7 +802,7 @@ class TicketsControllerTest extends WebTestCase
 
         $this->assertSame(0, TicketFactory::count());
 
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => 'not the token',
             'title' => $title,
             'requesterUid' => $user->getUid(),
@@ -823,7 +827,7 @@ class TicketsControllerTest extends WebTestCase
         $messageContent = 'My message';
 
         $client->catchExceptions(false);
-        $client->request('POST', "/organizations/{$organization->getUid()}/tickets/new", [
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
             'title' => $title,
             'requesterUid' => $user->getUid(),

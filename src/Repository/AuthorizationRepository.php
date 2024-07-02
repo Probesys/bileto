@@ -23,11 +23,6 @@ use Doctrine\Persistence\ManagerRegistry;
  * @phpstan-type Scope 'any'|Organization
  *
  * @extends ServiceEntityRepository<Authorization>
- *
- * @method Authorization|null find($id, $lockMode = null, $lockVersion = null)
- * @method Authorization|null findOneBy(array $criteria, array $orderBy = null)
- * @method Authorization[]    findAll()
- * @method Authorization[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class AuthorizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {

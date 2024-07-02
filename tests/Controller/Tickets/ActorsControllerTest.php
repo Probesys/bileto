@@ -12,6 +12,7 @@ use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -39,7 +40,7 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => $assignee,
         ]);
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}/actors/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/actors/edit");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit the actors');
@@ -63,7 +64,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/tickets/{$ticket->getUid()}/actors/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/actors/edit");
     }
 
     public function testGetEditFailsIfAccessToTicketIsForbidden(): void
@@ -84,7 +85,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', "/tickets/{$ticket->getUid()}/actors/edit");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/actors/edit");
     }
 
     public function testPostUpdateSavesTicketAndRedirects(): void
@@ -109,7 +110,7 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => null,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'teamUid' => $team->getUid(),
@@ -139,7 +140,7 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => null,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'assigneeUid' => '',
@@ -169,7 +170,7 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => $user,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'assigneeUid' => $assignee->getUid(),
@@ -206,7 +207,7 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => null,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'teamUid' => $newTeam->getUid(),
@@ -241,7 +242,7 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => null,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'teamUid' => $team->getUid(),
@@ -270,7 +271,7 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => null,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'assigneeUid' => $user->getUid(),
@@ -300,7 +301,7 @@ class ActorsControllerTest extends WebTestCase
             'assignee' => null,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => 'not the token',
             'requesterUid' => $requester->getUid(),
             'assigneeUid' => $assignee->getUid(),
@@ -332,7 +333,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'assigneeUid' => $assignee->getUid(),
@@ -359,7 +360,7 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/actors/edit", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
             'requesterUid' => $requester->getUid(),
             'assigneeUid' => $assignee->getUid(),

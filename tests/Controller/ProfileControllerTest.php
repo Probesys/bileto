@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -26,7 +27,7 @@ class ProfileControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->object());
 
-        $client->request('GET', '/profile');
+        $client->request(Request::METHOD_GET, '/profile');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Profile');
@@ -36,7 +37,7 @@ class ProfileControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/profile');
+        $client->request(Request::METHOD_GET, '/profile');
 
         $this->assertResponseRedirects('/login', 302);
     }
@@ -54,7 +55,7 @@ class ProfileControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('GET', '/profile');
+        $client->request(Request::METHOD_GET, '/profile');
         $crawler = $client->submitForm('form-update-profile-submit', [
             'name' => $newName,
             'email' => $newEmail,
@@ -78,7 +79,7 @@ class ProfileControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/profile', [
+        $client->request(Request::METHOD_POST, '/profile', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
             'currentPassword' => $initialPassword,
             'newPassword' => $newPassword,
@@ -103,7 +104,7 @@ class ProfileControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/profile', [
+        $client->request(Request::METHOD_POST, '/profile', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
             'name' => $newName,
             'email' => $newEmail,
@@ -128,7 +129,7 @@ class ProfileControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/profile', [
+        $client->request(Request::METHOD_POST, '/profile', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
             'name' => $newName,
             'email' => $newEmail,
@@ -152,7 +153,7 @@ class ProfileControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/profile', [
+        $client->request(Request::METHOD_POST, '/profile', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
             'currentPassword' => 'not the password',
             'newPassword' => $newPassword,
@@ -181,7 +182,7 @@ class ProfileControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/profile', [
+        $client->request(Request::METHOD_POST, '/profile', [
             '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
             'name' => $newName,
             'email' => $newEmail,
@@ -209,7 +210,7 @@ class ProfileControllerTest extends WebTestCase
         ]);
         $client->loginUser($user->object());
 
-        $client->request('POST', '/profile', [
+        $client->request(Request::METHOD_POST, '/profile', [
             '_csrf_token' => 'not the token',
             'name' => $newName,
             'email' => $newEmail,

@@ -14,11 +14,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<MessageDocument>
- *
- * @method MessageDocument|null find($id, $lockMode = null, $lockVersion = null)
- * @method MessageDocument|null findOneBy(array $criteria, array $orderBy = null)
- * @method MessageDocument[]    findAll()
- * @method MessageDocument[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class MessageDocumentRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {

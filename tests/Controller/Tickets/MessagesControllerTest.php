@@ -17,6 +17,7 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
@@ -45,7 +46,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('GET', "/tickets/{$ticket->getUid()}");
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
         $crawler = $client->submitForm('form-create-message-submit', [
             'message' => $messageContent,
         ]);
@@ -88,7 +89,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'answerType' => 'confidential',
@@ -118,7 +119,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
         ]);
@@ -144,7 +145,7 @@ class MessagesControllerTest extends WebTestCase
             'message' => null,
         ]);
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'messageDocumentUids' => [
@@ -175,7 +176,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
         $messageContent = 'My message';
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'timeSpent' => 20,
@@ -207,7 +208,7 @@ class MessagesControllerTest extends WebTestCase
         $ticket->addContract($contract->object());
         $messageContent = 'My message';
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'timeSpent' => 10,
@@ -240,7 +241,7 @@ class MessagesControllerTest extends WebTestCase
         $ticket->addContract($contract->object());
         $messageContent = 'My message';
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'timeSpent' => 80,
@@ -272,7 +273,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
         ]);
@@ -298,7 +299,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
         ]);
@@ -325,7 +326,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'answerType' => 'solution',
@@ -361,7 +362,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(1, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'answerType' => 'solution',
@@ -394,7 +395,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'answerType' => 'solution',
@@ -420,7 +421,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'answerType' => 'solution',
@@ -451,7 +452,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
         $messageContent = 'My message';
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'answerType' => 'solution refusal',
@@ -483,7 +484,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
         $messageContent = 'My message';
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'answerType' => 'solution approval',
@@ -511,7 +512,7 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
         ]);
@@ -531,7 +532,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
         $messageContent = 'My message';
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
             'answerType' => 'confidential',
@@ -555,7 +556,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
         $messageContent = 'My message';
 
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => 'not the token',
             'message' => $messageContent,
         ]);
@@ -577,7 +578,7 @@ class MessagesControllerTest extends WebTestCase
         $messageContent = 'My message';
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
         ]);
@@ -595,7 +596,7 @@ class MessagesControllerTest extends WebTestCase
         $messageContent = 'My message';
 
         $client->catchExceptions(false);
-        $client->request('POST', "/tickets/{$ticket->getUid()}/messages/new", [
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
             'message' => $messageContent,
         ]);

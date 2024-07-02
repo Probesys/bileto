@@ -16,6 +16,7 @@ use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\TeamAuthorizationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -34,7 +35,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
 
-        $client->request('GET', "/users/{$user->getUid()}/authorizations/new");
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New authorization');
@@ -47,7 +48,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:*']);
 
-        $client->request('GET', "/users/{$user->getUid()}/authorizations/new");
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('#role', 'Super-admin');
@@ -62,7 +63,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', "/users/{$user->getUid()}/authorizations/new");
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
     }
 
     public function testPostCreateGrantsAdminAuthorizationAndRedirects(): void
@@ -78,7 +79,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(1, AuthorizationFactory::count());
 
-        $client->request('GET', "/users/{$holder->getUid()}/authorizations/new");
+        $client->request(Request::METHOD_GET, "/users/{$holder->getUid()}/authorizations/new");
         $crawler = $client->submitForm('form-create-authorization-submit', [
             'role' => $role->getUid(),
         ]);
@@ -105,7 +106,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(1, AuthorizationFactory::count());
 
-        $client->request('GET', "/users/{$holder->getUid()}/authorizations/new");
+        $client->request(Request::METHOD_GET, "/users/{$holder->getUid()}/authorizations/new");
         $crawler = $client->submitForm('form-create-authorization-submit', [
             'role' => $role->getUid(),
             'organization' => $organization->getUid(),
@@ -135,7 +136,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $roleRepository = $entityManager->getRepository(Role::class);
         $superRole = $roleRepository->findOrCreateSuperRole();
 
-        $client->request('POST', "/users/{$holder->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
             'role' => $superRole->getUid(),
         ]);
@@ -156,7 +157,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $holder = UserFactory::createOne();
 
-        $client->request('POST', "/users/{$holder->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
             'role' => 'not a uid',
         ]);
@@ -180,7 +181,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $roleRepository = $entityManager->getRepository(Role::class);
         $superRole = $roleRepository->findOrCreateSuperRole();
 
-        $client->request('POST', "/users/{$holder->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
             'role' => $superRole->getUid(),
         ]);
@@ -200,7 +201,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'type' => 'admin',
         ]);
 
-        $client->request('POST', "/users/{$holder->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
             '_csrf_token' => 'not a token',
             'role' => $role->getUid(),
         ]);
@@ -221,7 +222,7 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/users/{$holder->getUid()}/authorizations/new", [
+        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
             '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
             'role' => $role->getUid(),
         ]);
@@ -242,7 +243,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => $role,
         ]);
 
-        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
@@ -265,7 +266,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => $role,
         ]);
 
-        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
@@ -288,7 +289,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => $role,
         ]);
 
-        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
@@ -309,7 +310,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:*']);
         $authorization = AuthorizationFactory::last();
 
-        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
@@ -339,7 +340,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'teamAuthorization' => $teamAuthorization,
         ]);
 
-        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
 
@@ -367,7 +368,7 @@ class AuthorizationsControllerTest extends WebTestCase
             'role' => $role,
         ]);
 
-        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
             '_csrf_token' => 'not a token',
         ]);
 
@@ -394,7 +395,7 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/authorizations/{$authorization->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
         ]);
     }

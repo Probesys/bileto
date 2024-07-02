@@ -12,6 +12,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -39,7 +40,7 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
 
-        $client->request('GET', '/users');
+        $client->request(Request::METHOD_GET, '/users');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Users');
@@ -57,7 +58,7 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/users');
+        $client->request(Request::METHOD_GET, '/users');
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -67,7 +68,7 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
 
-        $client->request('GET', '/users/new');
+        $client->request(Request::METHOD_GET, '/users/new');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New user');
@@ -82,7 +83,7 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/users/new');
+        $client->request(Request::METHOD_GET, '/users/new');
     }
 
     public function testPostCreateCreatesTheUserAndRedirects(): void
@@ -100,7 +101,7 @@ class UsersControllerTest extends WebTestCase
 
         $this->assertSame(1, UserFactory::count());
 
-        $client->request('GET', '/users/new');
+        $client->request(Request::METHOD_GET, '/users/new');
         $crawler = $client->submitForm('form-create-user-submit', [
             'email' => $email,
             'name' => $name,
@@ -133,7 +134,7 @@ class UsersControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:users']);
         $name = 'Alix Pataquès';
 
-        $client->request('POST', '/users/new', [
+        $client->request(Request::METHOD_POST, '/users/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
             'email' => $email,
             'name' => $name,
@@ -155,7 +156,7 @@ class UsersControllerTest extends WebTestCase
         $email = '';
         $name = 'Alix Pataquès';
 
-        $client->request('POST', '/users/new', [
+        $client->request(Request::METHOD_POST, '/users/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
             'email' => $email,
             'name' => $name,
@@ -174,7 +175,7 @@ class UsersControllerTest extends WebTestCase
         $email = 'not an email';
         $name = 'Alix Pataquès';
 
-        $client->request('POST', '/users/new', [
+        $client->request(Request::METHOD_POST, '/users/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
             'email' => $email,
             'name' => $name,
@@ -193,7 +194,7 @@ class UsersControllerTest extends WebTestCase
         $email = 'alix@example.com';
         $name = 'Alix Pataquès';
 
-        $client->request('POST', '/users/new', [
+        $client->request(Request::METHOD_POST, '/users/new', [
             '_csrf_token' => 'not a token',
             'email' => $email,
             'name' => $name,
@@ -214,7 +215,7 @@ class UsersControllerTest extends WebTestCase
         $name = 'Alix Pataquès';
 
         $client->catchExceptions(false);
-        $client->request('POST', '/users/new', [
+        $client->request(Request::METHOD_POST, '/users/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
             'email' => $email,
             'name' => $name,
@@ -228,7 +229,7 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
 
-        $client->request('GET', "/users/{$user->getUid()}");
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', $user->getDisplayName());
@@ -243,7 +244,7 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', "/users/{$user->getUid()}");
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}");
     }
 
     public function testGetEditRendersCorrectly(): void
@@ -253,7 +254,7 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:users']);
 
-        $client->request('GET', "/users/{$user->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/edit");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit a user');
@@ -268,7 +269,7 @@ class UsersControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', "/users/{$user->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/edit");
     }
 
     public function testPostUpdateSavesTheUser(): void
@@ -294,7 +295,7 @@ class UsersControllerTest extends WebTestCase
             'organization' => $oldOrganization,
         ]);
 
-        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
             'email' => $newEmail,
             'name' => $newName,
@@ -333,7 +334,7 @@ class UsersControllerTest extends WebTestCase
             'organization' => $oldOrganization,
         ]);
 
-        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
             'email' => $newEmail,
             'name' => $newName,
@@ -375,7 +376,7 @@ class UsersControllerTest extends WebTestCase
             'ldapIdentifier' => $oldLdapIdentifier,
         ]);
 
-        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
             'email' => $newEmail,
             'name' => $newName,
@@ -415,7 +416,7 @@ class UsersControllerTest extends WebTestCase
             'organization' => $oldOrganization,
         ]);
 
-        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
             'email' => $newEmail,
             'name' => $newName,
@@ -454,7 +455,7 @@ class UsersControllerTest extends WebTestCase
             'organization' => $oldOrganization,
         ]);
 
-        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
             'email' => $newEmail,
             'name' => $newName,
@@ -493,7 +494,7 @@ class UsersControllerTest extends WebTestCase
             'organization' => $oldOrganization,
         ]);
 
-        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             '_csrf_token' => 'not a token',
             'email' => $newEmail,
             'name' => $newName,
@@ -532,7 +533,7 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/users/{$otherUser->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
             'email' => $newEmail,
             'name' => $newName,

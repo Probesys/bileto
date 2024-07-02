@@ -14,6 +14,7 @@ use App\Tests\Factory\MailboxEmailFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -39,7 +40,7 @@ class MailboxesControllerTest extends WebTestCase
             'name' => 'Mailbox 1',
         ]);
 
-        $client->request('GET', '/mailboxes');
+        $client->request(Request::METHOD_GET, '/mailboxes');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Mailboxes');
@@ -57,7 +58,7 @@ class MailboxesControllerTest extends WebTestCase
             'lastError' => 'unknown sender',
         ]);
 
-        $client->request('GET', '/mailboxes');
+        $client->request(Request::METHOD_GET, '/mailboxes');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="mailbox-email-item"]', 'unknown sender');
@@ -72,7 +73,7 @@ class MailboxesControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/mailboxes');
+        $client->request(Request::METHOD_GET, '/mailboxes');
     }
 
     public function testGetNewRendersCorrectly(): void
@@ -82,7 +83,7 @@ class MailboxesControllerTest extends WebTestCase
         $client->loginUser($user->object());
         $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
 
-        $client->request('GET', '/mailboxes/new');
+        $client->request(Request::METHOD_GET, '/mailboxes/new');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New mailbox');
@@ -97,7 +98,7 @@ class MailboxesControllerTest extends WebTestCase
         $client->loginUser($user->object());
 
         $client->catchExceptions(false);
-        $client->request('GET', '/mailboxes/new');
+        $client->request(Request::METHOD_GET, '/mailboxes/new');
     }
 
     public function testPostCreateCreatesTheMailboxAndRedirects(): void
@@ -118,7 +119,7 @@ class MailboxesControllerTest extends WebTestCase
 
         $this->assertSame(0, MailboxFactory::count());
 
-        $client->request('GET', '/mailboxes/new');
+        $client->request(Request::METHOD_GET, '/mailboxes/new');
         $crawler = $client->submitForm('form-create-mailbox-submit', [
             'name' => $name,
             'host' => $host,
@@ -157,7 +158,7 @@ class MailboxesControllerTest extends WebTestCase
         $password = 'secret';
         $folder = 'INBOX';
 
-        $client->request('POST', '/mailboxes/new', [
+        $client->request(Request::METHOD_POST, '/mailboxes/new', [
             '_csrf_token' => 'not a token',
             'name' => $name,
             'host' => $host,
@@ -188,7 +189,7 @@ class MailboxesControllerTest extends WebTestCase
         $password = 'secret';
         $folder = 'INBOX';
 
-        $client->request('POST', '/mailboxes/new', [
+        $client->request(Request::METHOD_POST, '/mailboxes/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create mailbox'),
             'name' => $name,
             'host' => $host,
@@ -221,7 +222,7 @@ class MailboxesControllerTest extends WebTestCase
         $folder = 'INBOX';
 
         $client->catchExceptions(false);
-        $client->request('POST', '/mailboxes/new', [
+        $client->request(Request::METHOD_POST, '/mailboxes/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create mailbox'),
             'name' => $name,
             'host' => $host,
@@ -241,7 +242,7 @@ class MailboxesControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
         $mailbox = MailboxFactory::createOne();
 
-        $client->request('GET', "/mailboxes/{$mailbox->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/mailboxes/{$mailbox->getUid()}/edit");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit a mailbox');
@@ -257,7 +258,7 @@ class MailboxesControllerTest extends WebTestCase
         $mailbox = MailboxFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/mailboxes/{$mailbox->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/mailboxes/{$mailbox->getUid()}/edit");
     }
 
     public function testPostUpdateSavesTheMailboxAndRedirects(): void
@@ -272,7 +273,7 @@ class MailboxesControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update mailbox'),
             'name' => $newName,
             'host' => 'localhost',
@@ -301,7 +302,7 @@ class MailboxesControllerTest extends WebTestCase
             'password' => $password,
         ]);
 
-        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update mailbox'),
             'name' => 'My mailbox',
             'host' => 'localhost',
@@ -329,7 +330,7 @@ class MailboxesControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update mailbox'),
             'name' => $newName,
             'host' => 'localhost',
@@ -357,7 +358,7 @@ class MailboxesControllerTest extends WebTestCase
             'name' => $oldName,
         ]);
 
-        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/edit", [
             '_csrf_token' => 'not a token',
             'name' => $newName,
             'host' => 'localhost',
@@ -387,7 +388,7 @@ class MailboxesControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update mailbox'),
             'name' => $newName,
             'host' => 'localhost',
@@ -412,7 +413,7 @@ class MailboxesControllerTest extends WebTestCase
 
         $this->clearEntityManager();
 
-        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete mailbox'),
         ]);
 
@@ -429,7 +430,7 @@ class MailboxesControllerTest extends WebTestCase
         $this->grantAdmin($user->object(), ['admin:manage:mailboxes']);
         $mailbox = MailboxFactory::createOne();
 
-        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/deletion", [
             '_csrf_token' => 'not the token',
         ]);
 
@@ -449,7 +450,7 @@ class MailboxesControllerTest extends WebTestCase
         $mailbox = MailboxFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('POST', "/mailboxes/{$mailbox->getUid()}/deletion", [
+        $client->request(Request::METHOD_POST, "/mailboxes/{$mailbox->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete mailbox'),
         ]);
     }

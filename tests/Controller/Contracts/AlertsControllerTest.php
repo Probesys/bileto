@@ -12,6 +12,7 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -31,7 +32,7 @@ class AlertsControllerTest extends WebTestCase
         $this->grantOrga($user->object(), ['orga:manage:contracts']);
         $contract = ContractFactory::createOne();
 
-        $client->request('GET', "/contracts/{$contract->getUid()}/alerts/edit");
+        $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/alerts/edit");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Set up contract alerts');
@@ -47,7 +48,7 @@ class AlertsControllerTest extends WebTestCase
         $contract = ContractFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/contracts/{$contract->getUid()}/alerts/edit");
+        $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/alerts/edit");
     }
 
     public function testPostUpdateSavesTheAlerts(): void
@@ -63,7 +64,7 @@ class AlertsControllerTest extends WebTestCase
             'dateAlert' => 0,
         ]);
 
-        $client->request('POST', "/contracts/{$contract->getUid()}/alerts/edit", [
+        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/alerts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update contract alerts'),
             'hoursAlert' => 80,
             'dateAlert' => 300,
@@ -88,7 +89,7 @@ class AlertsControllerTest extends WebTestCase
             'dateAlert' => 0,
         ]);
 
-        $client->request('POST', "/contracts/{$contract->getUid()}/alerts/edit", [
+        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/alerts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update contract alerts'),
             'hoursAlert' => -10,
             'dateAlert' => -10,
@@ -114,7 +115,7 @@ class AlertsControllerTest extends WebTestCase
             'dateAlert' => 0,
         ]);
 
-        $client->request('POST', "/contracts/{$contract->getUid()}/alerts/edit", [
+        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/alerts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update contract alerts'),
             'hoursAlert' => 105,
             'dateAlert' => 400,
@@ -140,7 +141,7 @@ class AlertsControllerTest extends WebTestCase
             'dateAlert' => 0,
         ]);
 
-        $client->request('POST', "/contracts/{$contract->getUid()}/alerts/edit", [
+        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/alerts/edit", [
             '_csrf_token' => 'not the token',
             'hoursAlert' => 80,
             'dateAlert' => 300,
@@ -168,7 +169,7 @@ class AlertsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/contracts/{$contract->getUid()}/alerts/edit", [
+        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/alerts/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update contract alerts'),
             'hoursAlert' => 80,
             'dateAlert' => 300,

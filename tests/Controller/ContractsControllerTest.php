@@ -15,6 +15,7 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
 use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -45,7 +46,7 @@ class ContractsControllerTest extends WebTestCase
             'endAt' => $endAt2,
         ]);
 
-        $client->request('GET', '/contracts');
+        $client->request(Request::METHOD_GET, '/contracts');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(1)', 'My contract 2');
@@ -86,7 +87,7 @@ class ContractsControllerTest extends WebTestCase
             'endAt' => Utils\Time::fromNow(1, 'months'),
         ]);
 
-        $crawler = $client->request('GET', '/contracts');
+        $crawler = $client->request(Request::METHOD_GET, '/contracts');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="contract-item"]', 'My contract 1');
@@ -107,7 +108,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('GET', '/contracts');
+        $client->request(Request::METHOD_GET, '/contracts');
     }
 
     public function testGetEditRendersCorrectly(): void
@@ -118,7 +119,7 @@ class ContractsControllerTest extends WebTestCase
         $this->grantOrga($user->object(), ['orga:manage:contracts']);
         $contract = ContractFactory::createOne();
 
-        $client->request('GET', "/contracts/{$contract->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/edit");
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit a contract');
@@ -134,7 +135,7 @@ class ContractsControllerTest extends WebTestCase
         $contract = ContractFactory::createOne();
 
         $client->catchExceptions(false);
-        $client->request('GET', "/contracts/{$contract->getUid()}/edit");
+        $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/edit");
     }
 
     public function testPostUpdateSavesTheContract(): void
@@ -152,7 +153,7 @@ class ContractsControllerTest extends WebTestCase
             'maxHours' => $oldMaxHours,
         ]);
 
-        $client->request('POST', "/contracts/{$contract->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/edit", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => $newName,
@@ -185,7 +186,7 @@ class ContractsControllerTest extends WebTestCase
             'contract' => $contract,
         ]);
 
-        $response = $client->request('POST', "/contracts/{$contract->getUid()}/edit", [
+        $response = $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/edit", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => $newName,
@@ -217,7 +218,7 @@ class ContractsControllerTest extends WebTestCase
             'maxHours' => $oldMaxHours,
         ]);
 
-        $client->request('POST', "/contracts/{$contract->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/edit", [
             'contract' => [
                 '_token' => 'not a token',
                 'name' => $newName,
@@ -248,7 +249,7 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $client->catchExceptions(false);
-        $client->request('POST', "/contracts/{$contract->getUid()}/edit", [
+        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/edit", [
             'contract' => [
                 '_token' => $this->generateCsrfToken($client, 'contract'),
                 'name' => $newName,
