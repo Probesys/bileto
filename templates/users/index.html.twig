@@ -33,9 +33,11 @@
         <div class="flow">
             <div class="cols cols--center flow">
                 <div class="col--extend">
-                    <p class="text--secondary">
-                        {{ 'users.index.number' | trans({ count: users|length }) }}
-                    </p>
+                    {% if users %}
+                        <p class="text--secondary">
+                            {{ 'users.index.number' | trans({ count: users|length }) }}
+                        </p>
+                    {% endif %}
                 </div>
 
                 <a href="{{ path('new user') }}" class="button button--primary button--uppercase">
@@ -44,33 +46,43 @@
                 </a>
             </div>
 
-            <ul class="list--padded list--border list--nostyle">
-                {% for user in users %}
-                    <li class="cols cols--center flow flow--small" data-test="user-item">
-                        <span class="col--extend flow flow--small">
-                            <div class="list__item-title">
-                                <a href="{{ path('user', { uid: user.uid }) }}">
-                                    {{ user.displayName }}
+            {% if users %}
+                <ul class="list--padded list--border list--nostyle">
+                    {% for user in users %}
+                        <li class="cols cols--center flow flow--small" data-test="user-item">
+                            <span class="col--extend flow flow--small">
+                                <div class="list__item-title">
+                                    <a href="{{ path('user', { uid: user.uid }) }}">
+                                        {{ user.displayName }}
 
-                                    {% if user == app.user %}
-                                        ({{ 'users.yourself' | trans }})
-                                    {% endif %}
-                                </a>
-                            </div>
+                                        {% if user == app.user %}
+                                            ({{ 'users.yourself' | trans }})
+                                        {% endif %}
+                                    </a>
+                                </div>
 
-                            <div class="text--small text--wrap">
-                                {{ user.email }}
-                            </div>
-                        </span>
-
-                        <div class="col--noshrink">
-                            <span class="badge badge--grey">
-                                {{ 'users.index.authorizations' | trans({ count: user.authorizations|length }) }}
+                                <div class="text--small text--wrap">
+                                    {{ user.email }}
+                                </div>
                             </span>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
+
+                            <div class="col--noshrink">
+                                <span class="badge badge--grey">
+                                    {{ 'users.index.authorizations' | trans({ count: user.authorizations|length }) }}
+                                </span>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'users.index.no_users' | trans }}
+                    </p>
+                </div>
+            {% endif %}
         </div>
     </main>
 {% endblock %}
