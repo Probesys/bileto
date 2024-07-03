@@ -6,6 +6,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Authorization;
 use App\Entity\Organization;
 use App\Entity\User;
 use App\Uid\UidGeneratorInterface;
@@ -55,17 +56,19 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
     public function findAuthorizedOrganizations(User $user): array
     {
         $entityManager = $this->getEntityManager();
+        /** @var AuthorizationRepository */
+        $authorizationRepository = $entityManager->getRepository(Authorization::class);
+        $authorizations = $authorizationRepository->getOrgaAuthorizationsFor($user, scope: 'any');
 
-        $query = $entityManager->createQuery(<<<SQL
-            SELECT IDENTITY(a.organization)
-            FROM App\Entity\Authorization a
-            JOIN a.role r
-            WHERE a.holder = :user
-            AND (r.type = 'user' OR r.type = 'agent')
-        SQL);
-        $query->setParameter('user', $user);
+        $authorizedOrgaIds = array_map(function ($authorization): ?int {
+            $organization = $authorization->getOrganization();
 
-        $authorizedOrgaIds = $query->getSingleColumnResult();
+            if ($organization) {
+                return $organization->getId();
+            } else {
+                return null;
+            }
+        }, $authorizations);
 
         if (in_array(null, $authorizedOrgaIds)) {
             // If "null" is returned, it means that an authorization is applied globally.
