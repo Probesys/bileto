@@ -7,7 +7,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\TeamAuthorization;
-use App\Utils\Random;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -21,7 +20,6 @@ final class TeamAuthorizationFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            'uid' => Random::hex(20),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'role' => RoleFactory::new(),
             'team' => TeamFactory::new(),

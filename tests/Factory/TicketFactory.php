@@ -7,7 +7,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Ticket;
-use App\Utils\Random;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -22,7 +21,6 @@ final class TicketFactory extends PersistentProxyObjectFactory
     {
         return [
             'title' => self::faker()->text(),
-            'uid' => Random::hex(20),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'createdBy' => UserFactory::new(),
             'requester' => UserFactory::new(),

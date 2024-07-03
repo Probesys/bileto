@@ -7,7 +7,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\User;
-use App\Utils\Random;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -28,7 +27,6 @@ final class UserFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            'uid' => Random::hex(20),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'email' => self::faker()->unique()->safeEmail(),
             'password' => self::faker()->text(),

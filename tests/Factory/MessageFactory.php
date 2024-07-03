@@ -8,7 +8,6 @@ namespace App\Tests\Factory;
 
 use App\Entity\Message;
 use App\Repository\MessageRepository;
-use App\Utils\Random;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -22,7 +21,6 @@ final class MessageFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            'uid' => Random::hex(20),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'createdBy' => UserFactory::new(),
             'content' => self::faker()->text(),

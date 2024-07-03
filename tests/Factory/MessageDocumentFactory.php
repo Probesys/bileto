@@ -7,7 +7,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\MessageDocument;
-use App\Utils\Random;
 use Symfony\Component\Mime\MimeTypes;
 use Zenstruck\Foundry\Object\Instantiator;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
@@ -28,7 +27,6 @@ final class MessageDocumentFactory extends PersistentProxyObjectFactory
         $mimetype = "{$mimetype}/{$mimesubtype}";
         $extension = MimeTypes::getDefault()->getExtensions($mimetype)[0] ?? 'txt';
         return [
-            'uid' => Random::hex(20),
             'name' => self::faker()->words(3, true),
             'filename' => $hash . '.' . $extension,
             'mimetype' => $mimetype,

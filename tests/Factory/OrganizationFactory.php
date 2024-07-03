@@ -7,7 +7,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Organization;
-use App\Utils\Random;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -21,7 +20,6 @@ final class OrganizationFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            'uid' => Random::hex(20),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'name' => self::faker()->words(3, true),
         ];

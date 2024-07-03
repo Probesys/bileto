@@ -7,7 +7,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Contract;
-use App\Utils\Random;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -25,7 +24,6 @@ final class ContractFactory extends PersistentProxyObjectFactory
         $endAt = $startAt->modify("+{$duration} days");
 
         return [
-            'uid' => Random::hex(20),
             'organization' => OrganizationFactory::new(),
             'name' => self::faker()->words(3, true),
             'startAt' => $startAt,

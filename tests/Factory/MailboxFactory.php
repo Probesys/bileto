@@ -8,7 +8,6 @@ namespace App\Tests\Factory;
 
 use App\Entity\Mailbox;
 use App\Security\Encryptor;
-use App\Utils\Random;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -28,7 +27,6 @@ final class MailboxFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            'uid' => Random::hex(20),
             'name' => self::faker()->words(3, true),
             'host' => self::faker()->domainName(),
             'protocol' => 'imap',

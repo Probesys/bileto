@@ -7,7 +7,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\TimeSpent;
-use App\Utils\Random;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -21,7 +20,6 @@ final class TimeSpentFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            'uid' => Random::hex(20),
             'ticket' => TicketFactory::new(),
             'time' => self::faker()->numberBetween(1, 100),
             'realTime' => self::faker()->numberBetween(1, 100),
