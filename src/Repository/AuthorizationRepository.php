@@ -14,7 +14,6 @@ use App\Entity\TeamAuthorization;
 use App\Entity\User;
 use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
-use App\Utils\Time;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -105,22 +104,13 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
      */
     public function getAuthorizations(string $authorizationType, User $user, mixed $scope): array
     {
-        $cacheKey = self::getCacheKey($authorizationType, $user, $scope);
-        if (isset($this->cacheAuthorizations[$cacheKey])) {
-            return $this->cacheAuthorizations[$cacheKey];
-        }
-
         if ($authorizationType === 'orga' && $scope !== null) {
-            $authorizations = $this->getOrgaAuthorizationsFor($user, $scope);
-            $this->cacheAuthorizations[$cacheKey] = $authorizations;
+            return $this->getOrgaAuthorizationsFor($user, $scope);
         } elseif ($authorizationType === 'admin' && $scope === null) {
-            $authorizations = $this->getAdminAuthorizationsFor($user);
-            $this->cacheAuthorizations[$cacheKey] = $authorizations;
+            return $this->getAdminAuthorizationsFor($user);
         } else {
             throw new \DomainException('Given authorization type and scope are not supported together');
         }
-
-        return $authorizations;
     }
 
     /**
@@ -128,18 +118,13 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
      */
     public function getAdminAuthorizationsFor(User $user): array
     {
-        $entityManager = $this->getEntityManager();
+        $authorizations = $this->loadUserAuthorizations($user);
 
-        $query = $entityManager->createQuery(<<<SQL
-            SELECT a, r
-            FROM App\Entity\Authorization a
-            JOIN a.role r
-            WHERE a.holder = :user
-            AND (r.type = 'admin' OR r.type = 'super')
-        SQL);
-        $query->setParameter('user', $user);
-
-        return $query->getResult();
+        return array_filter($authorizations, function ($authorization): bool {
+            $role = $authorization->getRole();
+            $roleType = $role->getType();
+            return $roleType === 'admin' || $roleType === 'super';
+        });
     }
 
     /**
@@ -148,44 +133,49 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
      */
     public function getOrgaAuthorizationsFor(User $user, mixed $scope): array
     {
-        $entityManager = $this->getEntityManager();
+        $authorizations = $this->loadUserAuthorizations($user);
 
-        $queryBuilder = $entityManager->createQueryBuilder();
-        $queryBuilder->select(['a', 'r']);
-        $queryBuilder->from('App\Entity\Authorization', 'a');
-        $queryBuilder->join('a.role', 'r');
-        $queryBuilder->where('a.holder = :user');
-        $queryBuilder->andWhere("r.type = 'user' OR r.type = 'agent'");
+        return array_filter($authorizations, function ($authorization) use ($scope): bool {
+            $role = $authorization->getRole();
+            $roleType = $role->getType();
+            $correctType = $roleType === 'user' || $roleType === 'agent';
 
-        $queryBuilder->setParameter('user', $user);
+            if ($scope instanceof Organization) {
+                $authOrganization = $authorization->getOrganization();
+                $correctScope = (
+                    $authOrganization === null ||
+                    $authOrganization->getId() === $scope->getId()
+                );
+            } else {
+                $correctScope = true;
+            }
 
-        if ($scope instanceof Organization) {
-            $queryBuilder->andWhere('a.organization = :organization OR a.organization IS NULL');
-            $queryBuilder->setParameter('organization', $scope);
-        }
-
-        $query = $queryBuilder->getQuery();
-        return $query->getResult();
+            return $correctType && $correctScope;
+        });
     }
 
     /**
-     * @param AuthorizationType $authorizationType
-     * @param ?Scope $scope
+     * @return Authorization[]
      */
-    private static function getCacheKey(string $authorizationType, User $user, mixed $scope): string
+    public function loadUserAuthorizations(User $user): array
     {
-        $baseKey = "{$authorizationType}.{$user->getId()}";
+        $keyCache = $user->getUid();
 
-        if ($scope === 'any') {
-            $baseKey .= '.any';
-        } elseif ($scope instanceof Organization) {
-            $baseKey .= ".{$scope->getId()}";
-        } elseif ($scope === null) {
-            $baseKey .= '.null';
-        } else {
-            throw new \DomainException('The given scope is not supported');
+        if (!isset($this->cacheAuthorizations[$keyCache])) {
+            $entityManager = $this->getEntityManager();
+
+            $query = $entityManager->createQuery(<<<SQL
+                SELECT a, r, o
+                FROM App\Entity\Authorization a
+                JOIN a.role r
+                LEFT JOIN a.organization o
+                WHERE a.holder = :user
+            SQL);
+            $query->setParameter('user', $user);
+
+            $this->cacheAuthorizations[$keyCache] = $query->getResult();
         }
 
-        return hash('sha256', $baseKey);
+        return $this->cacheAuthorizations[$keyCache];
     }
 }
