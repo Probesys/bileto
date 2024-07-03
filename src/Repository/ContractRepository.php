@@ -34,8 +34,10 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager->createQuery(<<<SQL
-            SELECT c
+            SELECT c, t, ts
             FROM App\Entity\Contract c
+            LEFT JOIN c.tickets t
+            LEFT JOIN c.timeSpents ts
             WHERE c.organization = :organization
             ORDER BY c.endAt DESC, c.name
         SQL);
@@ -55,16 +57,19 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
         $now = Utils\Time::now();
 
         $query = $entityManager->createQuery(<<<SQL
-            SELECT c
+            SELECT c, t, ts
             FROM App\Entity\Contract c
+            LEFT JOIN c.tickets t
             LEFT JOIN c.timeSpents ts
 
             WHERE c.startAt <= :now
             AND :now < c.endAt
             AND c.organization IN (:organizations)
-
-            GROUP BY c.id
-            HAVING c.maxHours > (COALESCE(SUM(ts.time), 0) / 60.0)
+            AND c.maxHours > (
+                SELECT (COALESCE(SUM(ts2.time), 0) / 60.0)
+                FROM App\Entity\TimeSpent ts2
+                WHERE ts2.contract = c
+            )
 
             ORDER BY c.endAt DESC, c.name
         SQL);
