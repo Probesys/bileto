@@ -16,7 +16,7 @@
         "ext-zip": "*",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
-        "doctrine/orm": "^2.13",
+        "doctrine/orm": "^3.2",
         "symfony/asset": "7.1.*",
         "symfony/console": "7.1.*",
         "symfony/doctrine-bridge": "7.1.*",

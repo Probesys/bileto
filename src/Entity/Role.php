@@ -128,7 +128,7 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
     private ?string $type = null;
 
     /** @var string[] $permissions */
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column]
     #[Assert\All([
         new Assert\NotBlank(),
     ])]
