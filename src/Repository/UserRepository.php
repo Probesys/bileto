@@ -66,6 +66,22 @@ class UserRepository extends ServiceEntityRepository implements
     /**
      * @return User[]
      */
+    public function findAllWithAuthorizations(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT u, a
+            FROM App\Entity\User u
+            LEFT JOIN u.authorizations a
+        SQL);
+
+        return $query->getResult();
+    }
+
+    /**
+     * @return User[]
+     */
     public function findLike(string $value): array
     {
         $entityManager = $this->getEntityManager();

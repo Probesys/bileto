@@ -32,7 +32,7 @@ class UsersController extends BaseController
     {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        $users = $userRepository->findAll();
+        $users = $userRepository->findAllWithAuthorizations();
         $userSorter->sort($users);
 
         return $this->render('users/index.html.twig', [
