@@ -31,6 +31,8 @@ doctrine:
         dql:
             string_functions:
                 JSON_CONTAINS: App\Doctrine\Functions\JsonContains
+        controller_resolver:
+            auto_mapping: true
 
 when@test:
     doctrine:
