@@ -44,7 +44,7 @@
         "twig/inky-extra": "^3.6",
         "twig/markdown-extra": "^3.6",
         "twig/twig": "^2.12|^3.0",
-        "webklex/php-imap": "^5.2"
+        "webklex/php-imap": "dev-master#6d999438d29ed0bb920cd897b200a3a5fd6b6380"
     },
     "suggest": {
         "ext-pdo_mysql": "*",
