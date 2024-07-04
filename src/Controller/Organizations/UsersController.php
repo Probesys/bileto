@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UsersController extends BaseController
 {
-    #[Route('/organizations/{uid}/users', name: 'organization users', methods: ['GET', 'HEAD'])]
+    #[Route('/organizations/{uid:organization}/users', name: 'organization users', methods: ['GET', 'HEAD'])]
     public function index(
         Organization $organization,
         ActorsLister $actorsLister,

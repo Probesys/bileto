@@ -23,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AuthorizationsController extends BaseController
 {
-    #[Route('/users/{uid}/authorizations/new', name: 'new user authorization', methods: ['GET', 'HEAD'])]
+    #[Route('/users/{uid:holder}/authorizations/new', name: 'new user authorization', methods: ['GET', 'HEAD'])]
     public function new(
         User $holder,
         Request $request,
@@ -59,7 +59,7 @@ class AuthorizationsController extends BaseController
         ]);
     }
 
-    #[Route('/users/{uid}/authorizations/new', name: 'create user authorization', methods: ['POST'])]
+    #[Route('/users/{uid:holder}/authorizations/new', name: 'create user authorization', methods: ['POST'])]
     public function create(
         User $holder,
         Request $request,
@@ -148,7 +148,7 @@ class AuthorizationsController extends BaseController
         ]);
     }
 
-    #[Route('/authorizations/{uid}/deletion', name: 'delete user authorization', methods: ['POST'])]
+    #[Route('/authorizations/{uid:authorization}/deletion', name: 'delete user authorization', methods: ['POST'])]
     public function delete(
         Authorization $authorization,
         Request $request,

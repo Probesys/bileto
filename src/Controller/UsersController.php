@@ -130,7 +130,7 @@ class UsersController extends BaseController
         return $this->redirectToRoute('new user authorization', $parameters);
     }
 
-    #[Route('/users/{uid}', name: 'user', methods: ['GET', 'HEAD'])]
+    #[Route('/users/{uid:user}', name: 'user', methods: ['GET', 'HEAD'])]
     public function show(
         User $user,
         AuthorizationRepository $authorizationRepository,
@@ -153,7 +153,7 @@ class UsersController extends BaseController
         ]);
     }
 
-    #[Route('/users/{uid}/edit', name: 'edit user', methods: ['GET', 'HEAD'])]
+    #[Route('/users/{uid:user}/edit', name: 'edit user', methods: ['GET', 'HEAD'])]
     public function edit(
         User $user,
         OrganizationRepository $organizationRepository,
@@ -180,7 +180,7 @@ class UsersController extends BaseController
         ]);
     }
 
-    #[Route('/users/{uid}/edit', name: 'update user', methods: ['POST'])]
+    #[Route('/users/{uid:user}/edit', name: 'update user', methods: ['POST'])]
     public function update(
         User $user,
         Request $request,

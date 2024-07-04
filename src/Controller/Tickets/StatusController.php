@@ -18,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StatusController extends BaseController
 {
-    #[Route('/tickets/{uid}/status/edit', name: 'edit ticket status', methods: ['GET', 'HEAD'])]
+    #[Route('/tickets/{uid:ticket}/status/edit', name: 'edit ticket status', methods: ['GET', 'HEAD'])]
     public function edit(Ticket $ticket): Response
     {
         $organization = $ticket->getOrganization();
@@ -40,7 +40,7 @@ class StatusController extends BaseController
         ]);
     }
 
-    #[Route('/tickets/{uid}/status/edit', name: 'update ticket status', methods: ['POST'])]
+    #[Route('/tickets/{uid:ticket}/status/edit', name: 'update ticket status', methods: ['POST'])]
     public function update(
         Ticket $ticket,
         Request $request,

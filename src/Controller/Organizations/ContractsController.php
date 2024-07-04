@@ -19,7 +19,6 @@ use App\Repository\TimeSpentRepository;
 use App\Security\Authorizer;
 use App\Service\ContractTimeAccounting;
 use App\Utils;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,7 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContractsController extends BaseController
 {
-    #[Route('/organizations/{uid}/contracts', name: 'organization contracts', methods: ['GET', 'HEAD'])]
+    #[Route('/organizations/{uid:organization}/contracts', name: 'organization contracts', methods: ['GET', 'HEAD'])]
     public function index(
         Request $request,
         Organization $organization,
@@ -55,7 +54,11 @@ class ContractsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid}/contracts/new', name: 'new organization contract', methods: ['GET', 'HEAD'])]
+    #[Route(
+        '/organizations/{uid:organization}/contracts/new',
+        name: 'new organization contract',
+        methods: ['GET', 'HEAD']
+    )]
     public function new(
         Organization $organization,
         Request $request,
@@ -86,7 +89,7 @@ class ContractsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid}/contracts/new', name: 'create organization contract', methods: ['POST'])]
+    #[Route('/organizations/{uid:organization}/contracts/new', name: 'create organization contract', methods: ['POST'])]
     public function create(
         Organization $organization,
         Request $request,

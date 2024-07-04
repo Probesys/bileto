@@ -15,7 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MailboxEmailsController extends BaseController
 {
-    #[Route('/mailbox-emails/{uid}/deletion', name: 'delete mailbox email', methods: ['POST'])]
+    #[Route('/mailbox-emails/{uid:mailboxEmail}/deletion', name: 'delete mailbox email', methods: ['POST'])]
     public function delete(
         MailboxEmail $mailboxEmail,
         Request $request,

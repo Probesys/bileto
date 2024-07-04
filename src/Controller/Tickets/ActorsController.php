@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ActorsController extends BaseController
 {
-    #[Route('/tickets/{uid}/actors/edit', name: 'edit ticket actors', methods: ['GET', 'HEAD'])]
+    #[Route('/tickets/{uid:ticket}/actors/edit', name: 'edit ticket actors', methods: ['GET', 'HEAD'])]
     public function edit(
         Ticket $ticket,
         ActorsLister $actorsLister,
@@ -62,7 +62,7 @@ class ActorsController extends BaseController
         ]);
     }
 
-    #[Route('/tickets/{uid}/actors/edit', name: 'update ticket actors', methods: ['POST'])]
+    #[Route('/tickets/{uid:ticket}/actors/edit', name: 'update ticket actors', methods: ['POST'])]
     public function update(
         Ticket $ticket,
         Request $request,

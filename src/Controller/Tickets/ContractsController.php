@@ -22,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContractsController extends BaseController
 {
-    #[Route('/tickets/{uid}/contracts/edit', name: 'edit ticket contracts', methods: ['GET', 'HEAD'])]
+    #[Route('/tickets/{uid:ticket}/contracts/edit', name: 'edit ticket contracts', methods: ['GET', 'HEAD'])]
     public function edit(
         Ticket $ticket,
         ContractRepository $contractRepository,
@@ -47,7 +47,7 @@ class ContractsController extends BaseController
         ]);
     }
 
-    #[Route('/tickets/{uid}/contracts/edit', name: 'update ticket contracts', methods: ['POST'])]
+    #[Route('/tickets/{uid:ticket}/contracts/edit', name: 'update ticket contracts', methods: ['POST'])]
     public function update(
         Ticket $ticket,
         Request $request,

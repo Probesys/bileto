@@ -38,7 +38,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TicketsController extends BaseController
 {
-    #[Route('/organizations/{uid}/tickets', name: 'organization tickets', methods: ['GET', 'HEAD'])]
+    #[Route('/organizations/{uid:organization}/tickets', name: 'organization tickets', methods: ['GET', 'HEAD'])]
     public function index(
         Organization $organization,
         Request $request,
@@ -119,7 +119,7 @@ class TicketsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid}/tickets/new', name: 'new organization ticket', methods: ['GET', 'HEAD'])]
+    #[Route('/organizations/{uid:organization}/tickets/new', name: 'new organization ticket', methods: ['GET', 'HEAD'])]
     public function new(
         Organization $organization,
         ActorsLister $actorsLister,
@@ -152,7 +152,7 @@ class TicketsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid}/tickets/new', name: 'create organization ticket', methods: ['POST'])]
+    #[Route('/organizations/{uid:organization}/tickets/new', name: 'create organization ticket', methods: ['POST'])]
     public function create(
         Organization $organization,
         Request $request,

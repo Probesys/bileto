@@ -16,7 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AlertsController extends BaseController
 {
-    #[Route('/contracts/{uid}/alerts/edit', name: 'edit contract alerts', methods: ['GET', 'HEAD'])]
+    #[Route('/contracts/{uid:contract}/alerts/edit', name: 'edit contract alerts', methods: ['GET', 'HEAD'])]
     public function edit(
         Contract $contract,
     ): Response {
@@ -32,7 +32,7 @@ class AlertsController extends BaseController
         ]);
     }
 
-    #[Route('/contracts/{uid}/alerts/edit', name: 'update contract alerts', methods: ['POST'])]
+    #[Route('/contracts/{uid:contract}/alerts/edit', name: 'update contract alerts', methods: ['POST'])]
     public function update(
         Contract $contract,
         Request $request,

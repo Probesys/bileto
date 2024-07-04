@@ -54,7 +54,7 @@ class ContractsController extends BaseController
         ]);
     }
 
-    #[Route('/contracts/{uid}', name: 'contract', methods: ['GET', 'HEAD'])]
+    #[Route('/contracts/{uid:contract}', name: 'contract', methods: ['GET', 'HEAD'])]
     public function show(Contract $contract): Response
     {
         $organization = $contract->getOrganization();
@@ -67,7 +67,7 @@ class ContractsController extends BaseController
         ]);
     }
 
-    #[Route('/contracts/{uid}/edit', name: 'edit contract', methods: ['GET', 'HEAD'])]
+    #[Route('/contracts/{uid:contract}/edit', name: 'edit contract', methods: ['GET', 'HEAD'])]
     public function edit(
         Contract $contract,
     ): Response {
@@ -84,7 +84,7 @@ class ContractsController extends BaseController
         ]);
     }
 
-    #[Route('/contracts/{uid}/edit', name: 'update contract', methods: ['POST'])]
+    #[Route('/contracts/{uid:contract}/edit', name: 'update contract', methods: ['POST'])]
     public function update(
         Contract $contract,
         Request $request,

@@ -71,7 +71,7 @@ class TeamsController extends BaseController
         ]);
     }
 
-    #[Route('/teams/{uid}', name: 'team', methods: ['GET', 'HEAD'])]
+    #[Route('/teams/{uid:team}', name: 'team', methods: ['GET', 'HEAD'])]
     public function show(
         Team $team,
         UserSorter $userSorter,
@@ -92,7 +92,7 @@ class TeamsController extends BaseController
         ]);
     }
 
-    #[Route('/teams/{uid}/edit', name: 'edit team', methods: ['GET', 'HEAD'])]
+    #[Route('/teams/{uid:team}/edit', name: 'edit team', methods: ['GET', 'HEAD'])]
     public function edit(Team $team): Response
     {
         $this->denyAccessUnlessGranted('admin:manage:agents');
@@ -105,7 +105,7 @@ class TeamsController extends BaseController
         ]);
     }
 
-    #[Route('/teams/{uid}/edit', name: 'update team', methods: ['POST'])]
+    #[Route('/teams/{uid:team}/edit', name: 'update team', methods: ['POST'])]
     public function update(
         Team $team,
         Request $request,
@@ -131,7 +131,7 @@ class TeamsController extends BaseController
         ]);
     }
 
-    #[Route('/teams/{uid}/deletion', name: 'delete team', methods: ['POST'])]
+    #[Route('/teams/{uid:team}/deletion', name: 'delete team', methods: ['POST'])]
     public function delete(
         Team $team,
         Request $request,

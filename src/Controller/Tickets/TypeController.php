@@ -18,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TypeController extends BaseController
 {
-    #[Route('/tickets/{uid}/type/edit', name: 'update ticket type', methods: ['POST'])]
+    #[Route('/tickets/{uid:ticket}/type/edit', name: 'update ticket type', methods: ['POST'])]
     public function update(
         Ticket $ticket,
         Request $request,

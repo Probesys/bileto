@@ -172,7 +172,7 @@ class TicketsController extends BaseController
         ]);
     }
 
-    #[Route('/tickets/{uid}', name: 'ticket', methods: ['GET', 'HEAD'])]
+    #[Route('/tickets/{uid:ticket}', name: 'ticket', methods: ['GET', 'HEAD'])]
     public function show(
         Ticket $ticket,
         OrganizationRepository $organizationRepository,

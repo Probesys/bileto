@@ -106,7 +106,11 @@ class MessageDocumentsController extends BaseController
         ]);
     }
 
-    #[Route('/messages/documents/{uid}.{extension}', name: 'message document', methods: ['GET', 'HEAD'])]
+    #[Route(
+        '/messages/documents/{uid:messageDocument}.{extension}',
+        name: 'message document',
+        methods: ['GET', 'HEAD']
+    )]
     public function show(
         MessageDocument $messageDocument,
         string $extension,
@@ -170,7 +174,7 @@ class MessageDocumentsController extends BaseController
         );
     }
 
-    #[Route('/messages/documents/{uid}/deletion', name: 'delete message document', methods: ['POST'])]
+    #[Route('/messages/documents/{uid:messageDocument}/deletion', name: 'delete message document', methods: ['POST'])]
     public function delete(
         MessageDocument $messageDocument,
         Request $request,

@@ -18,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriorityController extends BaseController
 {
-    #[Route('/tickets/{uid}/priority/edit', name: 'edit ticket priority', methods: ['GET', 'HEAD'])]
+    #[Route('/tickets/{uid:ticket}/priority/edit', name: 'edit ticket priority', methods: ['GET', 'HEAD'])]
     public function edit(Ticket $ticket): Response
     {
         $organization = $ticket->getOrganization();
@@ -39,7 +39,7 @@ class PriorityController extends BaseController
         ]);
     }
 
-    #[Route('/tickets/{uid}/priority/edit', name: 'update ticket priority', methods: ['POST'])]
+    #[Route('/tickets/{uid:ticket}/priority/edit', name: 'update ticket priority', methods: ['POST'])]
     public function update(
         Ticket $ticket,
         Request $request,

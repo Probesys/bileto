@@ -22,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AgentsController extends BaseController
 {
-    #[Route('/teams/{uid}/agents/new', name: 'new team agent', methods: ['GET', 'HEAD'])]
+    #[Route('/teams/{uid:team}/agents/new', name: 'new team agent', methods: ['GET', 'HEAD'])]
     public function new(
         Team $team,
         ActorsLister $actorsLister,
@@ -41,7 +41,7 @@ class AgentsController extends BaseController
         ]);
     }
 
-    #[Route('/teams/{uid}/agents/new', name: 'add team agent', methods: ['POST'])]
+    #[Route('/teams/{uid:team}/agents/new', name: 'add team agent', methods: ['POST'])]
     public function add(
         Team $team,
         Request $request,
@@ -103,7 +103,7 @@ class AgentsController extends BaseController
         ]);
     }
 
-    #[Route('/teams/{uid}/agents/deletion', name: 'remove team agent', methods: ['POST'])]
+    #[Route('/teams/{uid:team}/agents/deletion', name: 'remove team agent', methods: ['POST'])]
     public function remove(
         Team $team,
         Request $request,

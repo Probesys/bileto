@@ -163,7 +163,7 @@ class RolesController extends BaseController
         return $this->redirectToRoute('roles');
     }
 
-    #[Route('/roles/{uid}/edit', name: 'edit role', methods: ['GET', 'HEAD'])]
+    #[Route('/roles/{uid:role}/edit', name: 'edit role', methods: ['GET', 'HEAD'])]
     public function edit(Role $role): Response
     {
         $this->denyAccessUnlessGranted('admin:manage:roles');
@@ -182,7 +182,7 @@ class RolesController extends BaseController
         ]);
     }
 
-    #[Route('/roles/{uid}/edit', name: 'update role', methods: ['POST'])]
+    #[Route('/roles/{uid:role}/edit', name: 'update role', methods: ['POST'])]
     public function update(
         Role $role,
         Request $request,
@@ -266,7 +266,7 @@ class RolesController extends BaseController
         return $this->redirectToRoute('roles');
     }
 
-    #[Route('/roles/{uid}/deletion', name: 'delete role', methods: ['POST'])]
+    #[Route('/roles/{uid:role}/deletion', name: 'delete role', methods: ['POST'])]
     public function delete(
         Role $role,
         Request $request,

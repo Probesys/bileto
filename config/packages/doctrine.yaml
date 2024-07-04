@@ -30,7 +30,7 @@ doctrine:
             string_functions:
                 JSON_CONTAINS: App\Doctrine\Functions\JsonContains
         controller_resolver:
-            auto_mapping: true
+            auto_mapping: false
 
 when@test:
     doctrine:

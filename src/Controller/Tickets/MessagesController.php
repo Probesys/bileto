@@ -33,7 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessagesController extends BaseController
 {
-    #[Route('/tickets/{uid}/messages/new', name: 'create ticket message', methods: ['POST'])]
+    #[Route('/tickets/{uid:ticket}/messages/new', name: 'create ticket message', methods: ['POST'])]
     public function create(
         Ticket $ticket,
         Request $request,

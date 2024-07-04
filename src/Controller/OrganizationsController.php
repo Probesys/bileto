@@ -77,7 +77,7 @@ class OrganizationsController extends BaseController
         return $this->redirectToRoute('organizations');
     }
 
-    #[Route('/organizations/{uid}', name: 'organization', methods: ['GET', 'HEAD'])]
+    #[Route('/organizations/{uid:organization}', name: 'organization', methods: ['GET', 'HEAD'])]
     public function show(
         Organization $organization,
         Authorizer $authorizer,
@@ -89,7 +89,7 @@ class OrganizationsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid}/settings', name: 'organization settings', methods: ['GET', 'HEAD'])]
+    #[Route('/organizations/{uid:organization}/settings', name: 'organization settings', methods: ['GET', 'HEAD'])]
     public function settings(Organization $organization): Response
     {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
@@ -102,7 +102,7 @@ class OrganizationsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid}/settings', name: 'update organization', methods: ['POST'])]
+    #[Route('/organizations/{uid:organization}/settings', name: 'update organization', methods: ['POST'])]
     public function update(
         Organization $organization,
         Request $request,
@@ -133,7 +133,7 @@ class OrganizationsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid}/deletion', name: 'delete organization', methods: ['POST'])]
+    #[Route('/organizations/{uid:organization}/deletion', name: 'delete organization', methods: ['POST'])]
     public function delete(
         Organization $organization,
         Request $request,

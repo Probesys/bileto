@@ -152,7 +152,7 @@ class MailboxesController extends BaseController
         return $this->redirectToRoute('mailboxes');
     }
 
-    #[Route('/mailboxes/{uid}/edit', name: 'edit mailbox', methods: ['GET', 'HEAD'])]
+    #[Route('/mailboxes/{uid:mailbox}/edit', name: 'edit mailbox', methods: ['GET', 'HEAD'])]
     public function edit(Mailbox $mailbox): Response
     {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
@@ -169,7 +169,7 @@ class MailboxesController extends BaseController
         ]);
     }
 
-    #[Route('/mailboxes/{uid}/edit', name: 'update mailbox', methods: ['POST'])]
+    #[Route('/mailboxes/{uid:mailbox}/edit', name: 'update mailbox', methods: ['POST'])]
     public function update(
         Mailbox $mailbox,
         Request $request,
@@ -264,7 +264,7 @@ class MailboxesController extends BaseController
         ]);
     }
 
-    #[Route('/mailboxes/{uid}/test', name: 'test mailbox', methods: ['POST'])]
+    #[Route('/mailboxes/{uid:mailbox}/test', name: 'test mailbox', methods: ['POST'])]
     public function test(
         Request $request,
         Mailbox $mailbox,
@@ -339,7 +339,7 @@ class MailboxesController extends BaseController
         return $this->redirectToRoute('mailboxes');
     }
 
-    #[Route('/mailboxes/{uid}/deletion', name: 'delete mailbox', methods: ['POST'])]
+    #[Route('/mailboxes/{uid:mailbox}/deletion', name: 'delete mailbox', methods: ['POST'])]
     public function delete(
         Mailbox $mailbox,
         Request $request,
