@@ -10,6 +10,7 @@ use App\Controller\BaseController;
 use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
+use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
@@ -172,12 +173,19 @@ class TicketsController extends BaseController
         ]);
     }
 
-    #[Route('/tickets/{uid:ticket}', name: 'ticket', methods: ['GET', 'HEAD'])]
+    #[Route('/tickets/{uid:ticketUid}', name: 'ticket', methods: ['GET', 'HEAD'])]
     public function show(
-        Ticket $ticket,
+        string $ticketUid,
+        TicketRepository $ticketRepository,
         OrganizationRepository $organizationRepository,
         TicketTimeline $ticketTimeline,
     ): Response {
+        $ticket = $ticketRepository->findOneByUidWithAssociations($ticketUid);
+
+        if (!$ticket) {
+            throw $this->createNotFoundException('The ticket does not exist.');
+        }
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 

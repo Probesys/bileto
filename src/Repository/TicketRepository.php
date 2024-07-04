@@ -30,6 +30,44 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
         parent::__construct($registry, Ticket::class);
     }
 
+    public function findOneByUidWithAssociations(string $uid): ?Ticket
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT
+                t,
+                t_createdBy,
+                t_updatedBy,
+                t_requester,
+                t_assignee,
+                t_team,
+                t_organization,
+                t_messages,
+                m_documents,
+                t_solution,
+                t_contracts,
+                t_timeSpents
+            FROM App\Entity\Ticket t
+            LEFT JOIN t.createdBy t_createdBy
+            LEFT JOIN t.updatedBy t_updatedBy
+            LEFT JOIN t.requester t_requester
+            LEFT JOIN t.assignee t_assignee
+            LEFT JOIN t.team t_team
+            LEFT JOIN t.organization t_organization
+            LEFT JOIN t.messages t_messages
+            LEFT JOIN t_messages.messageDocuments m_documents
+            LEFT JOIN t.solution t_solution
+            LEFT JOIN t.contracts t_contracts
+            LEFT JOIN t.timeSpents t_timeSpents
+            WHERE t.uid = :uid
+        SQL);
+
+        $query->setParameter('uid', $uid);
+
+        return $query->getOneOrNullResult();
+    }
+
     /**
      * @return Ticket[]
      */
