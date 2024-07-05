@@ -32,8 +32,6 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
-    public const MAX_DEPTH = 3;
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
