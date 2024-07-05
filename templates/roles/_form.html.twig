@@ -4,90 +4,72 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% if mode == 'new' %}
-    {% set formAction = path('create role', { type: type }) %}
-    {% set csrfToken = csrf_token('create role') %}
-    {% set label = 'roles.new.submit' | trans %}
-{% elseif mode == 'edit' %}
-    {% set formAction = path('update role', { uid: role.uid }) %}
-    {% set csrfToken = csrf_token('update role') %}
-    {% set label = 'forms.save_changes' | trans %}
-{% endif %}
-
-<form action="{{ formAction }}" method="post" class="form--standard">
-    {% if error %}
-        {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-    {% endif %}
+{{ form_start(form, { attr: {
+    'class': 'form--standard',
+}}) }}
+    {{ form_errors(form) }}
 
     <div class="flow flow--small">
-        <label for="name">
+        <label for="{{ field_id(form.name) }}">
             {{ 'roles.name' | trans }}
+
             <small class="text--secondary">
                 {{ 'forms.max_chars' | trans({ number: 50 }) }}
             </small>
         </label>
 
-        {% if errors.name is defined %}
-            <p class="form__error" role="alert" id="name-error">
-                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                {{ errors.name }}
-            </p>
-        {% endif %}
+        {{ form_errors(form.name) }}
 
         <input
             type="text"
-            id="name"
-            name="name"
-            value="{{ name }}"
+            id="{{ field_id(form.name) }}"
+            name="{{ field_name(form.name) }}"
+            value="{{ field_value(form.name) }}"
             required
-            autofocus
             maxlength="50"
-            {% if errors.name is defined %}
+            {% if field_has_errors(form.name) %}
                 aria-invalid="true"
-                aria-errormessage="name-error"
+                aria-errormessage="{{ field_id(form.name, 'error') }}"
             {% endif %}
         />
     </div>
 
     <div class="flow flow--small">
-        <label for="description">
+        <label for="{{ field_id(form.description) }}">
             {{ 'roles.description' | trans }}
+
             <small class="text--secondary">
                 {{ 'forms.max_chars' | trans({ number: 255 }) }}
             </small>
         </label>
 
-        {% if errors.description is defined %}
-            <p class="form__error" role="alert" id="description-error">
-                <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                {{ errors.description }}
-            </p>
-        {% endif %}
+        {{ form_errors(form.description) }}
 
         <input
             type="text"
-            id="description"
-            name="description"
-            value="{{ description }}"
+            id="{{ field_id(form.description) }}"
+            name="{{ field_name(form.description) }}"
+            value="{{ field_value(form.description) }}"
             required
             maxlength="255"
-            {% if errors.description is defined %}
+            {% if field_has_errors(form.description) %}
                 aria-invalid="true"
-                aria-errormessage="description-error"
+                aria-errormessage="{{ field_id(form.description, 'error') }}"
             {% endif %}
         />
     </div>
 
-    {% if type == 'user' %}
+    {% if form.isDefault is defined %}
         <div>
+            {{ form_errors(form.isDefault) }}
             <input
                 type="checkbox"
-                id="is-default"
-                name="isDefault"
-                {{ isDefault ? 'checked' }}
+                id="{{ field_id(form.isDefault) }}"
+                name="{{ field_name(form.isDefault) }}"
+                {{ form.isDefault.vars.checked ? 'checked' }}
             />
 
-            <label for="is-default">
+            <label for="{{ field_id(form.isDefault) }}">
                 {{ 'roles.is_default' | trans }}
             </label>
         </div>
@@ -95,6 +77,8 @@
 
     <fieldset class="flow flow--large" data-controller="checkboxes">
         <legend>{{ 'roles.permissions' | trans }}</legend>
+
+        {{ form_errors(form.permissions) }}
 
         <div>
             <button
@@ -119,23 +103,30 @@
         </div>
 
         <div class="flow">
-            {% for permission in assignablePermissions %}
-                <div>
-                    <input
-                        type="checkbox"
-                        id="{{ permission }}"
-                        name="permissions[]"
-                        value="{{ permission }}"
-                        {{ permission in permissions ? 'checked' }}
-                    />
+            {% for permission in form.permissions %}
+                {% if field_value(permission) != 'admin:see' and field_value(permission) != 'orga:see' %}
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="{{ field_id(permission) }}"
+                            name="{{ field_name(permission) }}"
+                            value="{{ field_value(permission) }}"
+                            {{ field_value(permission) in field_value(form.permissions) ? 'checked' }}
+                        />
 
-                    <label for="{{ permission }}">
-                        {{ permission | rolePermissionToLabel | trans }}
-                    </label>
-                </div>
+                        <label for="{{ field_id(permission) }}">
+                            {{ field_value(permission) | rolePermissionToLabel | trans }}
+                        </label>
+                    </div>
+                {% else %}
+                    {# Don't display admin:see and orga:see checkboxes as they
+                     # are inherent in the orga/admin roles and are added manually
+                     # when sanitizing the permissions in the form. #}
+                    <!-- {{ field_name(permission) }} -->
+                {% endif %}
             {% endfor %}
 
-            {% if type == 'agent' %}
+            {% if field_value(form.type) == 'agent' %}
                 {# This permission is inherent in the agent roles and cannot
                  # be unset. In fact, it doesn't even exist as a permission in the
                  # code, it is only implied by the type of the role.
@@ -161,10 +152,7 @@
 
     <div class="form__actions">
         <button id="form-save-role-submit" class="button--primary" type="submit">
-            {{ label }}
+            {{ submit_label }}
         </button>
     </div>
-
-    <input type="hidden" name="type" value="{{ type }}">
-    <input type="hidden" name="_csrf_token" value="{{ csrfToken }}">
-</form>
+{{ form_end(form) }}

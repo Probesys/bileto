@@ -143,6 +143,8 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
 
     public function __construct()
     {
+        $this->name = '';
+        $this->description = '';
         $this->authorizations = new ArrayCollection();
     }
 
@@ -207,20 +209,20 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
     public static function sanitizePermissions(string $type, array $permissions): array
     {
         $availablePermissions = self::PERMISSIONS[$type] ?? [];
-        // We use array_values to reindex the returned array.
-        return array_values(array_intersect($availablePermissions, $permissions));
-    }
+        $permissions = array_intersect($availablePermissions, $permissions);
 
-    /**
-     * @return string[]
-     */
-    public static function assignablePermissions(string $type): array
-    {
-        return array_diff(
-            Role::PERMISSIONS[$type],
-            // Don't return these permissions as they are implicit to the roles.
-            ['orga:see', 'admin:see'],
-        );
+        // We use array_values to reindex the returned array.
+        $permissions = array_values($permissions);
+
+        if ($type === 'admin' && !in_array('admin:see', $permissions)) {
+            $permissions[] = 'admin:see';
+        } elseif ($type === 'agent' && !in_array('orga:see', $permissions)) {
+            $permissions[] = 'orga:see';
+        } elseif ($type === 'user' && !in_array('orga:see', $permissions)) {
+            $permissions[] = 'orga:see';
+        }
+
+        return $permissions;
     }
 
     public function hasPermission(string $permission): bool

@@ -7,6 +7,7 @@
 namespace App\Controller;
 
 use App\Entity\Role;
+use App\Form;
 use App\Repository\RoleRepository;
 use App\Service\Sorter\RoleSorter;
 use App\Utils\ConstraintErrorsFormatter;
@@ -57,22 +58,26 @@ class RolesController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
-        /** @var string $type */
+        /** @var string */
         $type = $request->query->get('type', 'user');
 
         if (!in_array($type, Role::TYPES) || $type === 'super') {
             $type = 'user';
         }
 
+        $role = new Role();
+
         $defaultRole = $roleRepository->findDefault();
+        if ($type === 'user' && !$defaultRole) {
+            $role->setIsDefault(true);
+        }
+
+        $form = $this->createForm(Form\Type\RoleType::class, $role, [
+            'type' => $type,
+        ]);
 
         return $this->render('roles/new.html.twig', [
-            'type' => $type,
-            'name' => '',
-            'description' => '',
-            'permissions' => [],
-            'isDefault' => $type === 'user' && !$defaultRole,
-            'assignablePermissions' => Role::assignablePermissions($type),
+            'form' => $form,
         ]);
     }
 
@@ -85,75 +90,25 @@ class RolesController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        /** @var string $type */
-        $type = $request->request->get('type', 'user');
-
-        /** @var string $name */
-        $name = $request->request->get('name', '');
-
-        /** @var string $description */
-        $description = $request->request->get('description', '');
-
-        /** @var string[] $permissions */
-        $permissions = $request->request->all('permissions');
-
-        $isDefault = $request->request->getBoolean('isDefault');
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
+        $data = $request->request->all('role');
+        $type = $data['type'] ?? 'user';
 
         if (!in_array($type, Role::TYPES) || $type === 'super') {
             $type = 'user';
         }
 
-        if ($type === 'admin' && !in_array('admin:see', $permissions)) {
-            $permissions[] = 'admin:see';
-        } elseif (
-            ($type === 'user' || $type === 'agent') &&
-            !in_array('orga:see', $permissions)
-        ) {
-            $permissions[] = 'orga:see';
-        }
+        $form = $this->createForm(Form\Type\RoleType::class, options: [
+            'type' => $type,
+        ]);
+        $form->handleRequest($request);
 
-        if ($type !== 'user') {
-            $isDefault = false;
-        }
-
-        if (!$this->isCsrfTokenValid('create role', $csrfToken)) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->renderBadRequest('roles/new.html.twig', [
-                'type' => $type,
-                'name' => $name,
-                'description' => $description,
-                'permissions' => $permissions,
-                'isDefault' => $isDefault,
-                'assignablePermissions' => Role::assignablePermissions($type),
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'form' => $form,
             ]);
         }
 
-        $role = new Role();
-        $role->setName($name);
-        $role->setDescription($description);
-        $role->setType($type);
-        $role->setPermissions($permissions);
-        $role->setIsDefault($isDefault);
-
-        $errors = $validator->validate($role);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('roles/new.html.twig', [
-                'type' => $type,
-                'name' => $name,
-                'description' => $description,
-                'permissions' => $permissions,
-                'isDefault' => $isDefault,
-                'assignablePermissions' => Role::assignablePermissions($type),
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
+        $role = $form->getData();
         $roleRepository->save($role, true);
 
         if ($role->isDefault() && $role->getType() === 'user') {
@@ -172,13 +127,13 @@ class RolesController extends BaseController
             throw $this->createNotFoundException('Super Role object cannot be loaded.');
         }
 
+        $form = $this->createForm(Form\Type\RoleType::class, $role, [
+            'type' => $role->getType(),
+        ]);
+
         return $this->render('roles/edit.html.twig', [
             'role' => $role,
-            'name' => $role->getName(),
-            'description' => $role->getDescription(),
-            'permissions' => $role->getPermissions(),
-            'isDefault' => $role->isDefault(),
-            'assignablePermissions' => Role::assignablePermissions($role->getType()),
+            'form' => $form,
         ]);
     }
 
@@ -196,67 +151,19 @@ class RolesController extends BaseController
             throw $this->createNotFoundException('Super Role object cannot be loaded.');
         }
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
+        $form = $this->createForm(Form\Type\RoleType::class, $role, options: [
+            'type' => $role->getType(),
+        ]);
+        $form->handleRequest($request);
 
-        /** @var string $name */
-        $name = $request->request->get('name', '');
-
-        /** @var string $description */
-        $description = $request->request->get('description', '');
-
-        /** @var string[] $permissions */
-        $permissions = $request->request->all('permissions');
-
-        $isDefault = $request->request->getBoolean('isDefault');
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        $type = $role->getType();
-        if ($type === 'admin' && !in_array('admin:see', $permissions)) {
-            $permissions[] = 'admin:see';
-        } elseif (
-            ($type === 'user' || $type === 'agent') &&
-            !in_array('orga:see', $permissions)
-        ) {
-            $permissions[] = 'orga:see';
-        }
-
-        if ($type !== 'user') {
-            $isDefault = false;
-        }
-
-        if (!$this->isCsrfTokenValid('update role', $csrfToken)) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->renderBadRequest('roles/edit.html.twig', [
                 'role' => $role,
-                'name' => $name,
-                'description' => $description,
-                'permissions' => $permissions,
-                'isDefault' => $isDefault,
-                'assignablePermissions' => Role::assignablePermissions($type),
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'form' => $form,
             ]);
         }
 
-        $role->setName($name);
-        $role->setDescription($description);
-        $role->setPermissions($permissions);
-        $role->setIsDefault($isDefault);
-
-        $errors = $validator->validate($role);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('roles/edit.html.twig', [
-                'role' => $role,
-                'name' => $name,
-                'description' => $description,
-                'permissions' => $permissions,
-                'isDefault' => $isDefault,
-                'assignablePermissions' => Role::assignablePermissions($type),
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
+        $role = $form->getData();
         $roleRepository->save($role, true);
 
         if ($role->isDefault() && $role->getType() === 'user') {

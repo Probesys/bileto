@@ -8,11 +8,11 @@
 
 {% set currentMenu = 'roles' %}
 
-{% if type == 'admin' %}
+{% if field_value(form.type) == 'admin' %}
     {% set pageTitle = 'roles.new.title.admin' | trans %}
-{% elseif type == 'agent' %}
+{% elseif field_value(form.type) == 'agent' %}
     {% set pageTitle = 'roles.new.title.agent' | trans %}
-{% elseif type == 'user' %}
+{% elseif field_value(form.type) == 'user' %}
     {% set pageTitle = 'roles.new.title.user' | trans %}
 {% endif %}
 
@@ -43,7 +43,10 @@
         <h1>{{ pageTitle }}</h1>
 
         <div class="panel">
-            {{ include('roles/_role_form.html.twig', { mode: 'new' }) }}
+            {{ include('roles/_form.html.twig', {
+                form: form,
+                submit_label: 'roles.new.submit' | trans,
+             }, with_context = false) }}
         </div>
     </main>
 {% endblock %}

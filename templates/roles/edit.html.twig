@@ -10,11 +10,11 @@
 
 {% set type = role.type %}
 
-{% if type == 'admin' %}
+{% if field_value(form.type) == 'admin' %}
     {% set pageTitle = 'roles.edit.title.admin' | trans %}
-{% elseif type == 'agent' %}
+{% elseif field_value(form.type) == 'agent' %}
     {% set pageTitle = 'roles.edit.title.agent' | trans %}
-{% elseif type == 'user' %}
+{% elseif field_value(form.type) == 'user' %}
     {% set pageTitle = 'roles.edit.title.user' | trans %}
 {% endif %}
 
@@ -45,7 +45,10 @@
         <h1>{{ pageTitle }}</h1>
 
         <div class="panel">
-            {{ include('roles/_role_form.html.twig', { mode: 'edit' }) }}
+            {{ include('roles/_form.html.twig', {
+                form: form,
+                submit_label: 'forms.save_changes' | trans,
+             }, with_context = false) }}
         </div>
 
         <div class="panel">
