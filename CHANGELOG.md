@@ -1,5 +1,70 @@
 # Changelog of Bileto
 
+## 2024-07-05 - 0.9.0-beta
+
+This is our first beta version! 🥳
+Bileto is still not ready for production, but it's closer.
+I hope you like the new design :)
+
+### Security
+
+- Don't use the `Reply-To` header to get the requester ([06af973](https://github.com/Probesys/bileto/commit/06af973))
+
+### New
+
+- Allow to associate organizations to email domains ([7e14501](https://github.com/Probesys/bileto/commit/7e14501))
+- Allow to define a default user role ([86a2a40](https://github.com/Probesys/bileto/commit/86a2a40))
+- Add a page to list all the ongoing contracts ([7f8f683](https://github.com/Probesys/bileto/commit/7f8f683))
+- Allow to assign tickets and unaccounted times on contract (re)newal ([e7cc7a4](https://github.com/Probesys/bileto/commit/e7cc7a4))
+- Add the list of users in organizations ([4fe3fc7](https://github.com/Probesys/bileto/commit/4fe3fc7))
+- Add a page to display information about users ([949ba1c](https://github.com/Probesys/bileto/commit/949ba1c))
+
+### Improvements
+
+- Integrate the new design ([742bb28](https://github.com/Probesys/bileto/commit/742bb28), [46f9ee8](https://github.com/Probesys/bileto/commit/46f9ee8), [0c08313](https://github.com/Probesys/bileto/commit/0c08313), [0bb0b24](https://github.com/Probesys/bileto/commit/0bb0b24), [0babc9b](https://github.com/Probesys/bileto/commit/0babc9b), [77f5dbd](https://github.com/Probesys/bileto/commit/77f5dbd), [2e0a06f](https://github.com/Probesys/bileto/commit/2e0a06f), [fba1c2c](https://github.com/Probesys/bileto/commit/fba1c2c), [9a22326](https://github.com/Probesys/bileto/commit/9a22326), [3f1fb31](https://github.com/Probesys/bileto/commit/3f1fb31), [e54bc34](https://github.com/Probesys/bileto/commit/e54bc34), [a2d14b2](https://github.com/Probesys/bileto/commit/a2d14b2), [07570a1](https://github.com/Probesys/bileto/commit/07570a1), [585f3ce](https://github.com/Probesys/bileto/commit/585f3ce), [176836d](https://github.com/Probesys/bileto/commit/176836d), [53b2272](https://github.com/Probesys/bileto/commit/53b2272))
+- Improve performance when fetching from the database ([9f5ce7b](https://github.com/Probesys/bileto/commit/9f5ce7b), [0c18fd5](https://github.com/Probesys/bileto/commit/0c18fd5))
+- Enable the TinyMCE autosave plugin ([50adef8](https://github.com/Probesys/bileto/commit/50adef8))
+- Redirect to user page after creation ([09d3bf1](https://github.com/Probesys/bileto/commit/09d3bf1))
+- Reword some advanced search syntax explanations ([040e49c](https://github.com/Probesys/bileto/commit/040e49c))
+
+### Bug fixes
+
+- Fix deletion of organizations ([63b3563](https://github.com/Probesys/bileto/commit/63b3563))
+- Fix the days diff on the ticket page ([96ba9cf](https://github.com/Probesys/bileto/commit/96ba9cf))
+- Add a space before unit in the "hours consumed" label ([39ff01e](https://github.com/Probesys/bileto/commit/39ff01e))
+- Activate TinyMCE with "gpl" license ([763d15f](https://github.com/Probesys/bileto/commit/763d15f))
+- Fix the button--icon height on Webkit ([d8a3cfa](https://github.com/Probesys/bileto/commit/d8a3cfa))
+
+### Technical
+
+- Update the Composer dependencies ([fc90087](https://github.com/Probesys/bileto/commit/fc90087), [120d018](https://github.com/Probesys/bileto/commit/120d018), [a572491](https://github.com/Probesys/bileto/commit/a572491), [770eb06](https://github.com/Probesys/bileto/commit/770eb06), [fa0fb13](https://github.com/Probesys/bileto/commit/fa0fb13), [0ce833c](https://github.com/Probesys/bileto/commit/0ce833c), [29f0702](https://github.com/Probesys/bileto/commit/29f0702), [6fca2d6](https://github.com/Probesys/bileto/commit/6fca2d6), [6f4468f](https://github.com/Probesys/bileto/commit/6f4468f), [e6be6e0](https://github.com/Probesys/bileto/commit/e6be6e0))
+- Remove the old PostgreSQL sequences ([33acdbb](https://github.com/Probesys/bileto/commit/33acdbb))
+
+### Developers
+
+- Remind developers to check changes in Firefox and Chrome ([06e9fc0](https://github.com/Probesys/bileto/commit/06e9fc0))
+- Refactor the role form with Symfony Form ([4ef39dc](https://github.com/Probesys/bileto/commit/4ef39dc))
+- Make Doctrine entities mapping explicit ([56f709c](https://github.com/Probesys/bileto/commit/56f709c))
+- Make deprecation warnings more verbose in PHPUnit ([6d02919](https://github.com/Probesys/bileto/commit/6d02919))
+- Remove uid from the entities factories ([4a35802](https://github.com/Probesys/bileto/commit/4a35802))
+- Lint migrations with PHPCS ([642a93b](https://github.com/Probesys/bileto/commit/642a93b))
+- Fix deprecations for Foundry 2 ([6aba189](https://github.com/Probesys/bileto/commit/6aba189))
+- Provide phpstan-doctrine package ([6d36ef7](https://github.com/Probesys/bileto/commit/6d36ef7))
+- Refactor creation of users with a `UserCreator` service ([37efa0e](https://github.com/Probesys/bileto/commit/37efa0e))
+- Improve the development seeds ([b840e96](https://github.com/Probesys/bileto/commit/b840e96))
+- Provide an `Email` class to extract domains ([a2318f6](https://github.com/Probesys/bileto/commit/a2318f6))
+- Provide a `Url` class to sanitize domains ([a5d7dcd](https://github.com/Probesys/bileto/commit/a5d7dcd))
+- Provide a DQL `JSON_CONTAINS` function ([e8988c1](https://github.com/Probesys/bileto/commit/e8988c1))
+- Provide the `input-texts` component ([7dfedcc](https://github.com/Probesys/bileto/commit/7dfedcc))
+- Extract a `button--discreet-alt` button ([b8ffd2b](https://github.com/Probesys/bileto/commit/b8ffd2b))
+- Fix Doctrine deprecation warning about ordering ([2310c67](https://github.com/Probesys/bileto/commit/2310c67))
+- Give all agent permissions to technicians in dev environment ([2e50007](https://github.com/Probesys/bileto/commit/2e50007))
+- Merge CSS tickets files in `custom/tickets.css` ([9a29d19](https://github.com/Probesys/bileto/commit/9a29d19))
+- Rename `.row` classes in `.cols` ([8e14a1b](https://github.com/Probesys/bileto/commit/8e14a1b))
+- Set id on "UI select" of multiselect actors ([d1cc409](https://github.com/Probesys/bileto/commit/d1cc409))
+- Provide the accordion component ([6e4dd2f](https://github.com/Probesys/bileto/commit/6e4dd2f))
+- Introduce the CSS class `widget--small` ([9077d7e](https://github.com/Probesys/bileto/commit/9077d7e))
+
 ## 2024-05-07 - 0.8.0-alpha
 
 ### Migration notes
