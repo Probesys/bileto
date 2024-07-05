@@ -119,15 +119,9 @@ class UsersController extends BaseController
             ]);
         }
 
-        $parameters = [
+        return $this->redirectToRoute('user', [
             'uid' => $newUser->getUid(),
-        ];
-
-        if ($organization !== null) {
-            $parameters['orga'] = $organization->getUid();
-        }
-
-        return $this->redirectToRoute('new user authorization', $parameters);
+        ]);
     }
 
     #[Route('/users/{uid:user}', name: 'user', methods: ['GET', 'HEAD'])]
