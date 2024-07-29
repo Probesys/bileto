@@ -56,24 +56,22 @@
             {% if mailboxes|length > 0 %}
                 <ul class="list--padded list--border list--nostyle">
                     {% for mailbox in mailboxes %}
-                        <li class="flow flow--small" data-test="mailbox-item">
-                            <div class="cols">
-                                <span class="col--extend">
-                                    {% if mailbox.lastError %}
-                                        <span class="text--error">
-                                            {{ icon('circle-exclamation-error') }}
-                                            {{ mailbox.name }}
-                                            {{ 'mailboxes.index.error' | trans }}
-                                        </span>
-                                    {% else %}
+                        <li class="cols flow flow--small" data-test="mailbox-item">
+                            <span class="col--extend">
+                                {% if mailbox.lastError %}
+                                    <span class="text--error">
+                                        {{ icon('circle-exclamation-error') }}
                                         {{ mailbox.name }}
-                                    {% endif %}
-                                </span>
+                                        {{ 'mailboxes.index.error' | trans }}
+                                    </span>
+                                {% else %}
+                                    {{ mailbox.name }}
+                                {% endif %}
+                            </span>
 
-                                <a href="{{ path('edit mailbox', { uid: mailbox.uid }) }}">
-                                    {{ 'mailboxes.index.edit' | trans }}
-                                </a>
-                            </div>
+                            <a href="{{ path('edit mailbox', { uid: mailbox.uid }) }}">
+                                {{ 'mailboxes.index.edit' | trans }}
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>
