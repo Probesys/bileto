@@ -35,6 +35,7 @@ new TranslatableMessage('roles.permissions.orga.see.tickets.time_spent');
 new TranslatableMessage('roles.permissions.orga.see.users');
 new TranslatableMessage('roles.permissions.orga.update.tickets.actors');
 new TranslatableMessage('roles.permissions.orga.update.tickets.contracts');
+new TranslatableMessage('roles.permissions.orga.update.tickets.labels');
 new TranslatableMessage('roles.permissions.orga.update.tickets.priority');
 new TranslatableMessage('roles.permissions.orga.update.tickets.status');
 new TranslatableMessage('roles.permissions.orga.update.tickets.title');

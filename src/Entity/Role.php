@@ -63,6 +63,7 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
             'orga:see:users',
             'orga:update:tickets:actors',
             'orga:update:tickets:contracts',
+            'orga:update:tickets:labels',
             'orga:update:tickets:priority',
             'orga:update:tickets:status',
             'orga:update:tickets:title',
