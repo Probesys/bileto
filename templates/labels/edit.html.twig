@@ -1,0 +1,72 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'admin.html.twig' %}
+
+{% set currentMenu = 'labels' %}
+
+{% block title %}{{ 'labels.edit.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('admin') }}">
+            {{ 'admin.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('labels') }}">
+            {{ 'labels.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'labels.edit.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'labels.edit.title' | trans }}</h1>
+
+        <div class="panel">
+            {{ include('labels/_form.html.twig', {
+                'form': form,
+                'submit_label': 'forms.save_changes' | trans,
+            }) }}
+        </div>
+
+        <div class="panel">
+            <form action="{{ path('delete label', { uid: label.uid }) }}" method="post" class="form--standard">
+                <h2>{{ 'labels.deletion.title' | trans }}</h2>
+
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'warning',
+                    title: 'common.caution' | trans,
+                    message: 'labels.deletion.going_delete' | trans({ label: label.name }),
+                }, with_context = false) }}
+
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
+
+                <div class="form__actions">
+                    <button
+                        class="button--primary"
+                        type="submit"
+                        data-turbo-confirm="{{ 'labels.deletion.confirm' | trans }}"
+                    >
+                        {{ 'labels.deletion.submit' | trans }}
+                    </button>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete label') }}">
+            </form>
+        </div>
+    </main>
+{% endblock %}

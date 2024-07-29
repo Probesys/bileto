@@ -1,0 +1,44 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'admin.html.twig' %}
+
+{% set currentMenu = 'labels' %}
+
+{% block title %}{{ 'labels.new.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('admin') }}">
+            {{ 'admin.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('labels') }}">
+            {{ 'labels.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'labels.new.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'labels.new.title' | trans }}</h1>
+
+        <div class="panel">
+            {{ include('labels/_form.html.twig', {
+                form: form,
+                submit_label: 'labels.new.submit' | trans,
+             }, with_context = false) }}
+        </div>
+    </main>
+{% endblock %}

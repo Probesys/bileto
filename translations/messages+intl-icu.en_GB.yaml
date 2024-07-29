@@ -123,6 +123,20 @@ hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_hour} other {#
 hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
+labels.deletion.confirm: 'Are you sure that you want to delete this label?'
+labels.deletion.going_delete: 'You’re going to delete the “{label}” label. This label will be removed from the relevant tickets.'
+labels.deletion.submit: 'Delete the label'
+labels.deletion.title: Deletion
+labels.description: Description
+labels.edit.title: 'Edit a label'
+labels.index.edit: Edit
+labels.index.new_label: 'New label'
+labels.index.none: 'No labels'
+labels.index.number: '{count, plural, =0 {No labels} one {1 label} other {# labels}}'
+labels.index.title: Labels
+labels.name: Name
+labels.new.submit: 'Create the label'
+labels.new.title: 'New label'
 layout.activate_javascript: 'You need to activate the JavaScript in order to use Bileto.'
 layout.breadcrumb: Breadcrumb
 layout.contracts: Contracts
@@ -233,6 +247,7 @@ roles.new.title.user: 'New user role'
 roles.permissions: Permissions
 roles.permissions.admin.create.organizations: 'Create the organizations'
 roles.permissions.admin.manage.agents: 'Manage the agents'
+roles.permissions.admin.manage.labels: 'Manage the labels'
 roles.permissions.admin.manage.mailboxes: 'Manage the mailboxes'
 roles.permissions.admin.manage.roles: 'Manage the roles'
 roles.permissions.admin.manage.users: 'Manage the users'

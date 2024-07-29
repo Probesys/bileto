@@ -19,6 +19,7 @@ class AdminController extends BaseController
 
         $permissionsToRoutes = [
             'admin:manage:roles' => 'roles',
+            'admin:manage:labels' => 'labels',
             'admin:manage:agents' => 'teams',
             'admin:manage:users' => 'users',
             'admin:manage:mailboxes' => 'mailboxes',
