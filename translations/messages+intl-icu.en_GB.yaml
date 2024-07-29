@@ -123,6 +123,10 @@ hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_hour} other {#
 hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
+labels.deletion.confirm: 'Are you sure that you want to delete this label?'
+labels.deletion.going_delete: 'You’re going to delete the “{label}” label. This label will be removed from the relevant tickets.'
+labels.deletion.submit: 'Delete the label'
+labels.deletion.title: Deletion
 labels.description: Description
 labels.edit.title: 'Edit a label'
 labels.index.edit: Edit

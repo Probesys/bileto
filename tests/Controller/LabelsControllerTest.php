@@ -334,4 +334,55 @@ class LabelsControllerTest extends WebTestCase
             ],
         ]);
     }
+
+    public function testPostDeleteRemovesTheLabelAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:labels']);
+        $label = LabelFactory::createOne();
+
+        $this->clearEntityManager();
+
+        $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete label'),
+        ]);
+
+        $this->assertResponseRedirects('/labels', 302);
+        LabelFactory::assert()->notExists(['id' => $label->getId()]);
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:labels']);
+        $label = LabelFactory::createOne();
+
+        $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/deletion", [
+            '_csrf_token' => 'not the token',
+        ]);
+
+        $this->assertResponseRedirects("/labels/{$label->getUid()}/edit", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        LabelFactory::assert()->exists(['id' => $label->getId()]);
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $label = LabelFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete label'),
+        ]);
+    }
 }

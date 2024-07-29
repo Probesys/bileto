@@ -13,6 +13,7 @@ use App\Service\Sorter\LabelSorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LabelsController extends BaseController
 {
@@ -98,6 +99,27 @@ class LabelsController extends BaseController
 
         $label = $form->getData();
         $labelRepository->save($label, true);
+
+        return $this->redirectToRoute('labels');
+    }
+
+    #[Route('/labels/{uid:label}/deletion', name: 'delete label', methods: ['POST'])]
+    public function delete(
+        Label $label,
+        Request $request,
+        LabelRepository $labelRepository,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:labels');
+
+        $csrfToken = $request->request->getString('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('delete label', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            return $this->redirectToRoute('edit label', ['uid' => $label->getUid()]);
+        }
+
+        $labelRepository->remove($label, true);
 
         return $this->redirectToRoute('labels');
     }

@@ -123,6 +123,10 @@ hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_heure} other {
 hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
+labels.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette étiquette\_?"
+labels.deletion.going_delete: "Vous êtes sur le point de supprimer l’étiquette «\_{label}\_». Cette étiquette sera enlevée des tickets correspondants."
+labels.deletion.submit: 'Supprimer l’étiquette'
+labels.deletion.title: Suppression
 labels.description: Description
 labels.edit.title: 'Modifier une étiquette'
 labels.index.edit: Modifier

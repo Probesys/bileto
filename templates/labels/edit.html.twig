@@ -40,5 +40,33 @@
                 'submit_label': 'forms.save_changes' | trans,
             }) }}
         </div>
+
+        <div class="panel">
+            <form action="{{ path('delete label', { uid: label.uid }) }}" method="post" class="form--standard">
+                <h2>{{ 'labels.deletion.title' | trans }}</h2>
+
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'warning',
+                    title: 'common.caution' | trans,
+                    message: 'labels.deletion.going_delete' | trans({ label: label.name }),
+                }, with_context = false) }}
+
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
+
+                <div class="form__actions">
+                    <button
+                        class="button--primary"
+                        type="submit"
+                        data-turbo-confirm="{{ 'labels.deletion.confirm' | trans }}"
+                    >
+                        {{ 'labels.deletion.submit' | trans }}
+                    </button>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete label') }}">
+            </form>
+        </div>
     </main>
 {% endblock %}
