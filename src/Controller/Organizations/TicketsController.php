@@ -11,6 +11,7 @@ use App\Entity\Message;
 use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Repository\ContractRepository;
+use App\Repository\LabelRepository;
 use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TeamRepository;
@@ -21,6 +22,7 @@ use App\SearchEngine\TicketFilter;
 use App\SearchEngine\TicketSearcher;
 use App\Security\Authorizer;
 use App\Service\ActorsLister;
+use App\Service\Sorter\LabelSorter;
 use App\Service\Sorter\TeamSorter;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
@@ -123,8 +125,10 @@ class TicketsController extends BaseController
     public function new(
         Organization $organization,
         ActorsLister $actorsLister,
+        LabelRepository $labelRepository,
         OrganizationRepository $organizationRepository,
         TeamRepository $teamRepository,
+        LabelSorter $labelSorter,
         TeamSorter $teamSorter,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
@@ -133,6 +137,9 @@ class TicketsController extends BaseController
         $agents = $actorsLister->findByOrganization($organization, roleType: 'agent');
         $teams = $teamRepository->findByOrganization($organization);
         $teamSorter->sort($teams);
+
+        $allLabels = $labelRepository->findAll();
+        $labelSorter->sort($allLabels);
 
         return $this->render('organizations/tickets/new.html.twig', [
             'organization' => $organization,
@@ -149,6 +156,8 @@ class TicketsController extends BaseController
             'allUsers' => $allUsers,
             'teams' => $teams,
             'agents' => $agents,
+            'allLabels' => $allLabels,
+            'labelUids' => [],
         ]);
     }
 
@@ -157,12 +166,14 @@ class TicketsController extends BaseController
         Organization $organization,
         Request $request,
         ContractRepository $contractRepository,
+        LabelRepository $labelRepository,
         MessageRepository $messageRepository,
         OrganizationRepository $organizationRepository,
         TeamRepository $teamRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
         ActorsLister $actorsLister,
+        LabelSorter $labelSorter,
         TeamSorter $teamSorter,
         Authorizer $authorizer,
         ValidatorInterface $validator,
@@ -219,6 +230,13 @@ class TicketsController extends BaseController
             $priority = Ticket::DEFAULT_WEIGHT;
         }
 
+        if ($authorizer->isGranted('orga:update:tickets:labels', $organization)) {
+            /** @var string[] */
+            $labelUids = $request->request->all('labels');
+        } else {
+            $labelUids = [];
+        }
+
         if ($authorizer->isGranted('orga:update:tickets:status', $organization)) {
             $isResolved = $request->request->getBoolean('isResolved', false);
         } else {
@@ -232,6 +250,9 @@ class TicketsController extends BaseController
         $agents = $actorsLister->findByOrganization($organization, roleType: 'agent');
         $teams = $teamRepository->findByOrganization($organization);
         $teamSorter->sort($teams);
+
+        $allLabels = $labelRepository->findAll();
+        $labelSorter->sort($allLabels);
 
         $requester = ArrayHelper::find($allUsers, function ($user) use ($requesterUid): bool {
             return $user->getUid() === $requesterUid;
@@ -252,6 +273,10 @@ class TicketsController extends BaseController
             });
         }
 
+        $labels = $labelRepository->findBy([
+            'uid' => $labelUids,
+        ]);
+
         if (!$this->isCsrfTokenValid('create organization ticket', $csrfToken)) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                 'organization' => $organization,
@@ -268,6 +293,8 @@ class TicketsController extends BaseController
                 'allUsers' => $allUsers,
                 'teams' => $teams,
                 'agents' => $agents,
+                'allLabels' => $allLabels,
+                'labelUids' => $labelUids,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -281,6 +308,7 @@ class TicketsController extends BaseController
         $ticket->setOrganization($organization);
         $ticket->setRequester($requester);
         $ticket->setTeam($team);
+        $ticket->setLabels($labels);
 
         $errors = $validator->validate($ticket);
         if (count($errors) > 0) {
@@ -299,6 +327,8 @@ class TicketsController extends BaseController
                 'allUsers' => $allUsers,
                 'teams' => $teams,
                 'agents' => $agents,
+                'allLabels' => $allLabels,
+                'labelUids' => $labelUids,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }
@@ -326,6 +356,8 @@ class TicketsController extends BaseController
                 'allUsers' => $allUsers,
                 'teams' => $teams,
                 'agents' => $agents,
+                'allLabels' => $allLabels,
+                'labelUids' => $labelUids,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }

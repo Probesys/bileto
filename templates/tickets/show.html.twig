@@ -281,6 +281,30 @@
 
                     <div class="ticket__info-separator"></div>
 
+                    <div class="flow">
+                        <div class="cols cols--center cols--always flow">
+                            <h2 class="col--extend">
+                                {{ 'tickets.labels' | trans }}
+                            </h2>
+                        </div>
+
+                        {% if ticket.labels is not empty %}
+                            <ul class="list--nostyle">
+                                {% for label in ticket.labels %}
+                                    <li class="badge badge--grey">
+                                        {{ label.name }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text--secondary">
+                                {{ 'tickets.labels.none' | trans }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="ticket__info-separator"></div>
+
                     {% if is_granted('orga:see:tickets:contracts', organization) %}
                         <div class="flow">
                             <div class="cols cols--center cols--always flow">

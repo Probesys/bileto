@@ -10,6 +10,7 @@ use App\Entity\Organization;
 use App\Entity\Ticket;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
+use App\Tests\Factory\LabelFactory;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\MessageDocumentFactory;
 use App\Tests\Factory\OrganizationFactory;
@@ -406,6 +407,43 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame('in_progress', $ticket->getStatus());
         $this->assertSame($team->getId(), $ticket->getTeam()->getId());
         $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());
+    }
+
+    public function testPostCreateCanSetLabels(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets',
+            'orga:update:tickets:labels',
+        ], $organization->_real());
+        list(
+            $label1,
+            $label2,
+        ) = LabelFactory::createMany(2);
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'message' => $messageContent,
+            'labels' => [$label2->getUid()],
+        ]);
+
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticketLabels = $ticket->getLabels();
+        $this->assertSame(1, count($ticketLabels));
+        $this->assertSame($label2->getUid(), $ticketLabels[0]->getUid());
     }
 
     public function testPostCreateCanMarkATicketAsResolved(): void

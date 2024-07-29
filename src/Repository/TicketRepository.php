@@ -47,7 +47,8 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
                 m_documents,
                 t_solution,
                 t_contracts,
-                t_timeSpents
+                t_timeSpents,
+                t_labels
             FROM App\Entity\Ticket t
             LEFT JOIN t.createdBy t_createdBy
             LEFT JOIN t.updatedBy t_updatedBy
@@ -60,6 +61,7 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
             LEFT JOIN t.solution t_solution
             LEFT JOIN t.contracts t_contracts
             LEFT JOIN t.timeSpents t_timeSpents
+            LEFT JOIN t.labels t_labels
             WHERE t.uid = :uid
         SQL);
 

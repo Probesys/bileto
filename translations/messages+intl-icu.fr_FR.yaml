@@ -368,6 +368,8 @@ tickets.index.title.to_assign: 'Tickets à attribuer'
 tickets.index.title.your_tickets: 'Vos tickets'
 tickets.index.views.title: 'Vos vues'
 tickets.involves: Concerne
+tickets.labels: Étiquettes
+tickets.labels.none: 'Aucune étiquette'
 tickets.list.incident_opened_on: 'Incident ouvert le <time datetime="{dateIso}">{date}</time>'
 tickets.list.incident_updated_on: 'Incident mis à jour le <time datetime="{dateIso}">{date}</time>'
 tickets.list.request_opened_on: 'Requête ouverte le <time datetime="{dateIso}">{date}</time>'
