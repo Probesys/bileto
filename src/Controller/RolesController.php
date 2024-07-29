@@ -10,12 +10,9 @@ use App\Entity\Role;
 use App\Form;
 use App\Repository\RoleRepository;
 use App\Service\Sorter\RoleSorter;
-use App\Utils\ConstraintErrorsFormatter;
-use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RolesController extends BaseController
@@ -85,8 +82,6 @@ class RolesController extends BaseController
     public function create(
         Request $request,
         RoleRepository $roleRepository,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
@@ -142,8 +137,6 @@ class RolesController extends BaseController
         Role $role,
         Request $request,
         RoleRepository $roleRepository,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
