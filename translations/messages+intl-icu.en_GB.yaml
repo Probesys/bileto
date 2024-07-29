@@ -233,6 +233,7 @@ roles.new.title.user: 'New user role'
 roles.permissions: Permissions
 roles.permissions.admin.create.organizations: 'Create the organizations'
 roles.permissions.admin.manage.agents: 'Manage the agents'
+roles.permissions.admin.manage.labels: 'Manage the labels'
 roles.permissions.admin.manage.mailboxes: 'Manage the mailboxes'
 roles.permissions.admin.manage.roles: 'Manage the roles'
 roles.permissions.admin.manage.users: 'Manage the users'

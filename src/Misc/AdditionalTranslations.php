@@ -16,6 +16,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 // See App\Twig\RolePermissionExtension
 new TranslatableMessage('roles.permissions.admin.create.organizations');
 new TranslatableMessage('roles.permissions.admin.manage.agents');
+new TranslatableMessage('roles.permissions.admin.manage.labels');
 new TranslatableMessage('roles.permissions.admin.manage.mailboxes');
 new TranslatableMessage('roles.permissions.admin.manage.roles');
 new TranslatableMessage('roles.permissions.admin.manage.users');
