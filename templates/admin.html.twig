@@ -55,6 +55,18 @@
                 </li>
             {% endif %}
 
+            {% if is_granted('admin:manage:labels') %}
+                <li class="submenu__item">
+                    <a
+                        class="submenu__anchor"
+                        href="{{ path('labels') }}"
+                        {{ currentMenu == 'labels' ? 'aria-current="page"' }}
+                    >
+                        {{ 'labels.index.title' | trans }}
+                    </a>
+                </li>
+            {% endif %}
+
             {% if is_granted('admin:manage:agents') %}
                 <li class="submenu__item">
                     <a

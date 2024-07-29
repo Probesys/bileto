@@ -123,6 +123,14 @@ hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_heure} other {
 hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
+labels.description: Description
+labels.index.new_label: 'Nouvelle étiquette'
+labels.index.none: 'Aucune étiquette'
+labels.index.number: '{count, plural, =0 {Aucune étiquette} one {1 étiquette} other {# étiquettes}}'
+labels.index.title: Étiquettes
+labels.name: Nom
+labels.new.submit: 'Créer l’étiquette'
+labels.new.title: 'Nouvelle étiquette'
 layout.activate_javascript: 'Vous devez activer le JavaScript pour utiliser Bileto.'
 layout.breadcrumb: 'Fil d’Ariane'
 layout.contracts: Contrats

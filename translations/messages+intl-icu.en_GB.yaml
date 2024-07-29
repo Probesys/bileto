@@ -123,6 +123,14 @@ hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_hour} other {#
 hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
+labels.description: Description
+labels.index.new_label: 'New label'
+labels.index.none: 'No labels'
+labels.index.number: '{count, plural, =0 {No labels} one {1 label} other {# labels}}'
+labels.index.title: Labels
+labels.name: Name
+labels.new.submit: 'Create the label'
+labels.new.title: 'New label'
 layout.activate_javascript: 'You need to activate the JavaScript in order to use Bileto.'
 layout.breadcrumb: Breadcrumb
 layout.contracts: Contracts
