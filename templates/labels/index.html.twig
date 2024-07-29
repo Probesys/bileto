@@ -57,6 +57,10 @@
                             <p class="col--extend text--secondary">
                                 {{ label.description }}
                             </p>
+
+                            <a href="{{ path('edit label', { uid: label.uid }) }}">
+                                {{ 'labels.index.edit' | trans }}
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>

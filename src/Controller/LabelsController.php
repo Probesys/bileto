@@ -64,4 +64,41 @@ class LabelsController extends BaseController
 
         return $this->redirectToRoute('labels');
     }
+
+    #[Route('/labels/{uid:label}/edit', name: 'edit label', methods: ['GET', 'HEAD'])]
+    public function edit(Label $label): Response
+    {
+        $this->denyAccessUnlessGranted('admin:manage:labels');
+
+        $form = $this->createForm(Form\Type\LabelType::class, $label);
+
+        return $this->render('labels/edit.html.twig', [
+            'label' => $label,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/labels/{uid:label}/edit', name: 'update label', methods: ['POST'])]
+    public function update(
+        Label $label,
+        Request $request,
+        LabelRepository $labelRepository,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:labels');
+
+        $form = $this->createForm(Form\Type\LabelType::class, $label);
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->renderBadRequest('labels/edit.html.twig', [
+                'label' => $label,
+                'form' => $form,
+            ]);
+        }
+
+        $label = $form->getData();
+        $labelRepository->save($label, true);
+
+        return $this->redirectToRoute('labels');
+    }
 }

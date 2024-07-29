@@ -196,4 +196,142 @@ class LabelsControllerTest extends WebTestCase
             ],
         ]);
     }
+
+    public function testGetEditRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:labels']);
+        $label = LabelFactory::createOne();
+
+        $client->request(Request::METHOD_GET, "/labels/{$label->getUid()}/edit");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Edit a label');
+    }
+
+    public function testGetEditFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $label = LabelFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/labels/{$label->getUid()}/edit");
+    }
+
+    public function testPostUpdateSavesTheLabelAndRedirects(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:labels']);
+        $initialName = 'label';
+        $newName = 'My label';
+        $initialDescription = 'description';
+        $newDescription = 'My description';
+        $label = LabelFactory::createOne([
+            'name' => $initialName,
+            'description' => $initialDescription,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/edit", [
+            'label' => [
+                '_token' => $this->generateCsrfToken($client, 'label'),
+                'name' => $newName,
+                'description' => $newDescription,
+                'color' => '#e0e1e6',
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/labels', 302);
+        $label->_refresh();
+        $this->assertSame($newName, $label->getName());
+        $this->assertSame($newDescription, $label->getDescription());
+    }
+
+    public function testPostUpdateFailsIfNameIsAlreadyUsed(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:labels']);
+        $initialName = 'label';
+        $newName = 'My label';
+        $label = LabelFactory::createOne([
+            'name' => $initialName,
+        ]);
+        LabelFactory::createOne([
+            'name' => $newName,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/edit", [
+            'label' => [
+                '_token' => $this->generateCsrfToken($client, 'label'),
+                'name' => $newName,
+                'color' => '#e0e1e6',
+            ],
+        ]);
+
+        $this->assertSelectorTextContains(
+            '#label_name-error',
+            'Enter a different name, a label already has this name',
+        );
+        $this->clearEntityManager();
+        $label->_refresh();
+        $this->assertSame($initialName, $label->getName());
+    }
+
+    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:labels']);
+        $initialName = 'label';
+        $newName = 'My label';
+        $label = LabelFactory::createOne([
+            'name' => $initialName,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/edit", [
+            'label' => [
+                '_token' => 'not a token',
+                'name' => $newName,
+                'color' => '#e0e1e6',
+            ],
+        ]);
+
+        $this->assertSelectorTextContains('#label-error', 'The security token is invalid');
+        $this->clearEntityManager();
+        $label->_refresh();
+        $this->assertSame($initialName, $label->getName());
+    }
+
+    public function testPostUpdateFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $initialName = 'label';
+        $newName = 'My label';
+        $label = LabelFactory::createOne([
+            'name' => $initialName,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/edit", [
+            'label' => [
+                '_token' => $this->generateCsrfToken($client, 'label'),
+                'name' => $newName,
+                'color' => '#e0e1e6',
+            ],
+        ]);
+    }
 }

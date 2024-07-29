@@ -124,6 +124,8 @@ hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
 labels.description: Description
+labels.edit.title: 'Edit a label'
+labels.index.edit: Edit
 labels.index.new_label: 'New label'
 labels.index.none: 'No labels'
 labels.index.number: '{count, plural, =0 {No labels} one {1 label} other {# labels}}'
