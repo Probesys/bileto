@@ -145,11 +145,16 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     )]
     private Collection $timeSpents;
 
+    /** @var Collection<int, Label> */
+    #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'tickets')]
+    private Collection $labels;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
         $this->contracts = new ArrayCollection();
         $this->timeSpents = new ArrayCollection();
+        $this->labels = new ArrayCollection();
     }
 
     public function getType(): ?string
@@ -553,5 +558,29 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         }
 
         return md5("{$this->title}-{$organization}-{$createdAt}");
+    }
+
+    /**
+     * @return Collection<int, Label>
+     */
+    public function getLabels(): Collection
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @param Label[] $labels
+     */
+    public function setLabels(array $labels): static
+    {
+        foreach ($this->labels as $label) {
+            $this->labels->removeElement($label);
+        }
+
+        foreach ($labels as $label) {
+            $this->labels->add($label);
+        }
+
+        return $this;
     }
 }
