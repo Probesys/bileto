@@ -46,6 +46,16 @@
                             {% endif %}
                         {% endif %}
                     </p>
+
+                    {% if ticket.labels %}
+                        <ul class="list--nostyle text--small">
+                            {% for label in ticket.labels %}
+                                <li class="badge badge--grey">
+                                    {{ label.name }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
             </div>
 
