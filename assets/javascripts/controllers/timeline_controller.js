@@ -19,6 +19,6 @@ export default class extends Controller {
             return;
         }
 
-        this.element.style.setProperty('--timeline-bar-height', lastElement.offsetTop + 'px');
+        this.element.style.setProperty('--timeline-bar-height', lastElement.offsetTop + 10 + 'px');
     }
 }
