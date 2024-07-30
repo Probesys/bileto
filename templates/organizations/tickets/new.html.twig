@@ -37,7 +37,8 @@
 {% block body %}
     {% set canUpdateActors = is_granted('orga:update:tickets:actors', organization) %}
     {% set canUpdatePriority = is_granted('orga:update:tickets:priority', organization) %}
-    {% set agentLayout = canUpdateActors or canUpdatePriority %}
+    {% set canUpdateLabels = is_granted('orga:update:tickets:labels', organization) and allLabels is not empty %}
+    {% set agentLayout = canUpdateActors or canUpdatePriority or canUpdateLabels %}
 
     <main class="layout__body {{ agentLayout ? 'layout__body--extend' }}">
         <h1>{{ 'tickets.new.title' | trans }}</h1>
@@ -301,6 +302,44 @@
                                                 </option>
                                             </select>
                                         </div>
+                                    </div>
+                                </details>
+                            {% endif %}
+
+                            {% if canUpdateLabels %}
+                                {% set mustOpenAccordion = labelUids is not empty %}
+
+                                <details class="accordion" {{ mustOpenAccordion ? 'open' }}>
+                                    <summary class="accordion__title">
+                                        {{ 'tickets.labels' | trans }}
+                                    </summary>
+
+                                    <div class="accordion__body flow">
+                                        {% for label in allLabels %}
+                                            <div>
+                                                <input
+                                                    type="checkbox"
+                                                    id="labels-{{ label.uid }}"
+                                                    name="labels[]"
+                                                    value="{{ label.uid }}"
+                                                    {{ label.uid in labelUids ? 'checked' }}
+                                                />
+
+                                                <label for="labels-{{ label.uid }}">
+                                                    <span>
+                                                        <span class="badge badge--grey">
+                                                            {{ label.name }}
+                                                        </span>
+
+                                                        {% if label.description %}
+                                                            <span class="text--small text--secondary">
+                                                                {{ label.description }}
+                                                            </span>
+                                                        {% endif %}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 </details>
                             {% endif %}

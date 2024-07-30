@@ -11,6 +11,8 @@ use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\LabelRepository;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -74,11 +76,16 @@ class Label implements MonitorableEntityInterface, UidEntityInterface
     )]
     private ?string $color = null;
 
+    /** @var Collection<int, Ticket> */
+    #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'labels')]
+    private Collection $tickets;
+
     public function __construct()
     {
         $this->name = '';
         $this->description = '';
         $this->color = '#e0e1e6';
+        $this->tickets = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -115,5 +122,13 @@ class Label implements MonitorableEntityInterface, UidEntityInterface
         $this->color = $color;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
     }
 }

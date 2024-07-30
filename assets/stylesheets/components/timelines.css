@@ -70,6 +70,7 @@
         content: " ";
 
         position: absolute;
+        top: 50%;
         left: calc(var(--timeline-icons-col-width) / 2 - var(--bullet-size) / 2);
 
         display: block;
@@ -78,6 +79,8 @@
 
         background-color: var(--color-primary12);
         border-radius: 50%;
+
+        transform: translateY(-50%);
     }
 }
 

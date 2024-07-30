@@ -281,6 +281,45 @@
 
                     <div class="ticket__info-separator"></div>
 
+                    <div class="flow">
+                        <div class="cols cols--center cols--always flow">
+                            <h2 class="col--extend">
+                                {{ 'tickets.labels' | trans }}
+                            </h2>
+
+                            {% if is_granted('orga:update:tickets:labels', organization) %}
+                                <button
+                                    class="button--icon button--discreet"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket labels', { uid: ticket.uid }) }}"
+                                >
+                                    {{ icon('pen-to-square') }}
+
+                                    <span class="sr-only">
+                                        {{ 'tickets.labels.edit.title' | trans }}
+                                    </span>
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        {% if ticket.labels is not empty %}
+                            <ul class="list--nostyle">
+                                {% for label in ticket.labels %}
+                                    <li class="badge badge--grey">
+                                        {{ label.name }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text--secondary">
+                                {{ 'tickets.labels.none' | trans }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="ticket__info-separator"></div>
+
                     {% if is_granted('orga:see:tickets:contracts', organization) %}
                         <div class="flow">
                             <div class="cols cols--center cols--always flow">

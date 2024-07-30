@@ -1,0 +1,45 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'tickets.labels.edit.title' | trans }}{% endblock %}
+
+{% block body %}
+    {{ form_start(form, {
+        action: path('update ticket labels', { uid: ticket.uid }),
+        attr: {
+            'class': 'form--standard',
+            'data-turbo-preserve-scroll': true,
+        },
+    }) }}
+        {{ form_errors(form) }}
+
+        <div class="flow">
+            {% for label in form.labels %}
+                <div>
+                    <input
+                        type="checkbox"
+                        id="{{ field_id(label) }}"
+                        name="{{ field_name(label) }}"
+                        value="{{ field_value(label) }}"
+                        {{ field_value(label) in field_value(form.labels) ? 'checked' }}
+                    />
+
+                    <label for="{{ field_id(label) }}">
+                        {{ field_label(label) | raw }}
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form__actions">
+            <button class="button--primary" type="submit">
+                {{ 'forms.save_changes' | trans }}
+            </button>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}
