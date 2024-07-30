@@ -10,6 +10,7 @@ use App\Entity\Ticket;
 use App\Entity\User;
 use App\SearchEngine;
 use App\Tests\AuthorizationHelper;
+use App\Tests\Factory\LabelFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\Before;
@@ -454,6 +455,24 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(1, $parameters['q0p0']);
     }
 
+    public function testBuildQueryWithQualifierLabel(): void
+    {
+        $label = LabelFactory::createOne([
+            'name' => 'Foo',
+        ]);
+        $query = SearchEngine\Query::fromString('label:foo');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $expectedDql = 't.id IN (';
+        $expectedDql .= 'SELECT sub_t0.id FROM App\Entity\Ticket sub_t0 ';
+        $expectedDql .= 'INNER JOIN sub_t0.labels sub_t0_labels ';
+        $expectedDql .= 'WHERE sub_t0_labels.id = :q0p0';
+        $expectedDql .= ')';
+        $this->assertSame($expectedDql, $dql);
+        $this->assertSame($label->getId(), $parameters['q0p0']);
+    }
+
     public function testBuildQueryWithQualifierUid(): void
     {
         $query = SearchEngine\Query::fromString('uid:abcde');
@@ -550,6 +569,18 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertTrue(empty($parameters));
     }
 
+    public function testBuildQueryWithQualifierNoLabel(): void
+    {
+        $query = SearchEngine\Query::fromString('no:label');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            t.labels IS EMPTY
+            SQL, $dql);
+        $this->assertTrue(empty($parameters));
+    }
+
     public function testBuildQueryWithQualifierHasAssignee(): void
     {
         $query = SearchEngine\Query::fromString('has:assignee');
@@ -582,6 +613,18 @@ class TicketQueryBuilderTest extends WebTestCase
 
         $this->assertSame(<<<SQL
             t.contracts IS NOT EMPTY
+            SQL, $dql);
+        $this->assertTrue(empty($parameters));
+    }
+
+    public function testBuildQueryWithQualifierHasLabel(): void
+    {
+        $query = SearchEngine\Query::fromString('has:label');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            t.labels IS NOT EMPTY
             SQL, $dql);
         $this->assertTrue(empty($parameters));
     }

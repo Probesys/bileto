@@ -11,6 +11,7 @@ use App\SearchEngine\Query;
 use App\SearchEngine\TicketSearcher;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
+use App\Tests\Factory\LabelFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TicketFactory;
@@ -315,6 +316,120 @@ class TicketSearcherTest extends WebTestCase
         ]);
 
         $query = Query::fromString('no:contract');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanRestrictToAGivenLabel(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $label1 = LabelFactory::createOne([
+            'name' => 'Foo',
+        ]);
+        $label2 = LabelFactory::createOne([
+            'name' => 'Bar',
+        ]);
+        $ticket1 = TicketFactory::createOne([
+            'assignee' => $user,
+            'labels' => [$label1],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'assignee' => $user,
+            'labels' => [$label2],
+        ]);
+
+        $query = Query::fromString('label:foo');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanExcludeAGivenLabel(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $label1 = LabelFactory::createOne([
+            'name' => 'Foo',
+        ]);
+        $label2 = LabelFactory::createOne([
+            'name' => 'Bar',
+        ]);
+        $ticket1 = TicketFactory::createOne([
+            'assignee' => $user,
+            'labels' => [$label1],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'assignee' => $user,
+            'labels' => [$label2],
+        ]);
+
+        $query = Query::fromString('-label:foo');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanGetTicketsWithLabels(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $label = LabelFactory::createOne([
+            'name' => 'Foo',
+        ]);
+        $ticket1 = TicketFactory::createOne([
+            'assignee' => $user,
+            'labels' => [$label],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'assignee' => $user,
+            'labels' => [],
+        ]);
+
+        $query = Query::fromString('has:label');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanGetTicketsWithoutLabels(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $label = LabelFactory::createOne([
+            'name' => 'Foo',
+        ]);
+        $ticket1 = TicketFactory::createOne([
+            'assignee' => $user,
+            'labels' => [$label],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'assignee' => $user,
+            'labels' => [],
+        ]);
+
+        $query = Query::fromString('no:label');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
