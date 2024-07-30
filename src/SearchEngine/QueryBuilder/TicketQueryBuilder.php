@@ -6,12 +6,10 @@
 
 namespace App\SearchEngine\QueryBuilder;
 
-use App\Entity\Ticket;
-use App\Entity\User;
-use App\Repository\OrganizationRepository;
-use App\Repository\UserRepository;
-use App\SearchEngine\Query;
-use App\Utils\ArrayHelper;
+use App\Entity;
+use App\Repository;
+use App\SearchEngine;
+use App\Utils;
 use Doctrine\ORM;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -22,28 +20,16 @@ class TicketQueryBuilder
 
     private int $querySequence;
 
-    private OrganizationRepository $organizationRepository;
-
-    private UserRepository $userRepository;
-
-    private Security $security;
-
-    private ORM\EntityManagerInterface $entityManager;
-
     public function __construct(
-        UserRepository $userRepository,
-        OrganizationRepository $organizationRepository,
-        Security $security,
-        ORM\EntityManagerInterface $entityManager,
+        private Repository\UserRepository $userRepository,
+        private Repository\OrganizationRepository $organizationRepository,
+        private Security $security,
+        private ORM\EntityManagerInterface $entityManager,
     ) {
-        $this->security = $security;
-        $this->userRepository = $userRepository;
-        $this->organizationRepository = $organizationRepository;
-        $this->entityManager = $entityManager;
     }
 
     /**
-     * @param Query[] $queries
+     * @param SearchEngine\Query[] $queries
      */
     public function create(array $queries): ORM\QueryBuilder
     {
@@ -53,12 +39,12 @@ class TicketQueryBuilder
         $queryBuilder->distinct();
 
         if ($this->mustIncludeContracts($queries)) {
-            $queryBuilder->leftJoin('t.contracts', 'c');
+            $queryBuilder->leftJoin('t.contracts', 't_contracts');
         }
 
         if ($this->mustIncludeTeamAgents($queries)) {
-            $queryBuilder->leftJoin('t.team', 'tea'); // "tea" for TEAm
-            $queryBuilder->leftJoin('tea.agents', 'tag'); // "tag" for Team AGents
+            $queryBuilder->leftJoin('t.team', 't_team');
+            $queryBuilder->leftJoin('t_team.agents', 't_agents');
         }
 
         foreach ($queries as $sequence => $query) {
@@ -77,7 +63,7 @@ class TicketQueryBuilder
     /**
      * @return array{string, array<string, mixed>}
      */
-    public function buildQuery(Query $query, int $querySequence = 0): array
+    public function buildQuery(SearchEngine\Query $query, int $querySequence = 0): array
     {
         $this->parameters = [];
         $this->querySequence = $querySequence;
@@ -93,7 +79,7 @@ class TicketQueryBuilder
         return [$where, $parameters];
     }
 
-    private function buildWhere(Query $query): string
+    private function buildWhere(SearchEngine\Query $query): string
     {
         $where = '';
 
@@ -124,7 +110,7 @@ class TicketQueryBuilder
         return $where;
     }
 
-    private function buildTextExpr(Query\Condition $condition): string
+    private function buildTextExpr(SearchEngine\Query\Condition $condition): string
     {
         $value = $condition->getValue();
 
@@ -158,7 +144,7 @@ class TicketQueryBuilder
         }
     }
 
-    private function buildQualifierExpr(Query\Condition $condition): string
+    private function buildQualifierExpr(SearchEngine\Query\Condition $condition): string
     {
         $qualifier = $condition->getQualifier();
         $value = $condition->getValue();
@@ -172,7 +158,7 @@ class TicketQueryBuilder
         } elseif ($qualifier === 'involves') {
             $value = $this->processActorQualifier($value);
             $assigneeWhere = $this->buildExpr('t.assignee', $value, false);
-            $teamWhere = $this->buildExpr('tag.id', $value, false);
+            $teamWhere = $this->buildExpr('t_agents.id', $value, false);
             $requesterWhere = $this->buildExpr('t.requester', $value, false);
             $where = "{$assigneeWhere} OR {$teamWhere} OR {$requesterWhere}";
             if ($condition->not()) {
@@ -193,7 +179,7 @@ class TicketQueryBuilder
             return $this->buildExpr('t.' . $qualifier, $value, $condition->not());
         } elseif ($qualifier === 'contract') {
             $value = $this->processContractQualifier($value);
-            return $this->buildExpr('c.id', $value, $condition->not());
+            return $this->buildExpr('t_contracts.id', $value, $condition->not());
         } elseif ($qualifier === 'no' && ($value === 'assignee' || $value === 'solution')) {
             return $this->buildExpr('t.' . $value, null, $condition->not());
         } elseif ($qualifier === 'has' && ($value === 'assignee' || $value === 'solution')) {
@@ -206,7 +192,7 @@ class TicketQueryBuilder
         }
     }
 
-    private function buildQueryExpr(Query\Condition $condition): string
+    private function buildQueryExpr(SearchEngine\Query\Condition $condition): string
     {
         $subQuery = $condition->getQuery();
 
@@ -270,9 +256,9 @@ class TicketQueryBuilder
 
         foreach ($value as $v) {
             if ($v === 'open') {
-                $valuesToReturn = array_merge($valuesToReturn, Ticket::OPEN_STATUSES);
+                $valuesToReturn = array_merge($valuesToReturn, Entity\Ticket::OPEN_STATUSES);
             } elseif ($v === 'finished') {
-                $valuesToReturn = array_merge($valuesToReturn, Ticket::FINISHED_STATUSES);
+                $valuesToReturn = array_merge($valuesToReturn, Entity\Ticket::FINISHED_STATUSES);
             } else {
                 $valuesToReturn[] = $v;
             }
@@ -303,7 +289,7 @@ class TicketQueryBuilder
             if ($id !== null) {
                 $ids = [$id];
             } elseif ($v === '@me') {
-                /** @var User $currentUser */
+                /** @var Entity\User $currentUser */
                 $currentUser = $this->security->getUser();
                 $ids = [$currentUser->getId()];
             } else {
@@ -415,28 +401,28 @@ class TicketQueryBuilder
     }
 
     /**
-     * @param Query[] $queries
+     * @param SearchEngine\Query[] $queries
      */
     private function mustIncludeContracts(array $queries): bool
     {
-        return ArrayHelper::any($queries, function ($query): bool {
+        return Utils\ArrayHelper::any($queries, function ($query): bool {
             return $this->includesQualifier($query, 'contract');
         });
     }
 
     /**
-     * @param Query[] $queries
+     * @param SearchEngine\Query[] $queries
      */
     private function mustIncludeTeamAgents(array $queries): bool
     {
-        return ArrayHelper::any($queries, function ($query): bool {
+        return Utils\ArrayHelper::any($queries, function ($query): bool {
             return $this->includesQualifier($query, 'involves');
         });
     }
 
-    private function includesQualifier(Query $query, string $qualifier): bool
+    private function includesQualifier(SearchEngine\Query $query, string $qualifier): bool
     {
-        return ArrayHelper::any($query->getConditions(), function ($condition) use ($qualifier): bool {
+        return Utils\ArrayHelper::any($query->getConditions(), function ($condition) use ($qualifier): bool {
             return (
                 ($condition->isQualifierCondition() && $condition->getQualifier() === $qualifier) ||
                 ($condition->isQueryCondition() && $this->includesQualifier($condition->getQuery(), $qualifier))

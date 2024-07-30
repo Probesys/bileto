@@ -68,7 +68,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
         $dql = $queryBuilder->getDQL();
         $this->assertStringContainsString('LEFT JOIN t.team', $dql);
-        $this->assertStringContainsString('LEFT JOIN tea.agents', $dql);
+        $this->assertStringContainsString('LEFT JOIN t_team.agents', $dql);
     }
 
     public function testBuildQueryWithText(): void
@@ -343,7 +343,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            (t.assignee = :q0p0 OR tag.id = :q0p1 OR t.requester = :q0p2)
+            (t.assignee = :q0p0 OR t_agents.id = :q0p1 OR t.requester = :q0p2)
             SQL, $dql);
         $this->assertSame($alix->getId(), $parameters['q0p0']);
         $this->assertSame($alix->getId(), $parameters['q0p1']);
@@ -359,7 +359,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            NOT (t.assignee = :q0p0 OR tag.id = :q0p1 OR t.requester = :q0p2)
+            NOT (t.assignee = :q0p0 OR t_agents.id = :q0p1 OR t.requester = :q0p2)
             SQL, $dql);
         $this->assertSame($alix->getId(), $parameters['q0p0']);
         $this->assertSame($alix->getId(), $parameters['q0p1']);
