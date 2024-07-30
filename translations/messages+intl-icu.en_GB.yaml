@@ -369,6 +369,7 @@ tickets.index.title.your_tickets: 'Your tickets'
 tickets.index.views.title: 'Vos vues'
 tickets.involves: Involves
 tickets.labels: Labels
+tickets.labels.edit.title: 'Edit the labels'
 tickets.labels.none: 'No label'
 tickets.list.incident_opened_on: 'Incident opened on <time datetime="{dateIso}">{date}</time>'
 tickets.list.incident_updated_on: 'Incident updated on <time datetime="{dateIso}">{date}</time>'
