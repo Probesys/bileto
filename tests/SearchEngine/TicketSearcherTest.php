@@ -245,6 +245,32 @@ class TicketSearcherTest extends WebTestCase
         $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
     }
 
+    public function testGetTicketsCanExcludeAGivenContract(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $contract1 = ContractFactory::createOne();
+        $contract2 = ContractFactory::createOne();
+        $ticket1 = TicketFactory::createOne([
+            'assignee' => $user,
+            'contracts' => [$contract1],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'assignee' => $user,
+            'contracts' => [$contract2],
+        ]);
+
+        $query = Query::fromString('NOT contract:#' . $contract1->getId());
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
+    }
+
     public function testGetTicketsReturnsTicketMatchingAQuery(): void
     {
         $client = static::createClient();

@@ -50,16 +50,6 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertStringNotContainsString('LEFT JOIN t.team', $dql);
     }
 
-    public function testCreateWithContract(): void
-    {
-        $query = SearchEngine\Query::fromString('(contract:#1)');
-
-        $queryBuilder = $this->ticketQueryBuilder->create([$query]);
-
-        $dql = $queryBuilder->getDQL();
-        $this->assertStringContainsString('LEFT JOIN t.contracts', $dql);
-    }
-
     public function testCreateWithInvolves(): void
     {
         $query = SearchEngine\Query::fromString('involves:@me');
@@ -455,9 +445,12 @@ class TicketQueryBuilderTest extends WebTestCase
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
-        $this->assertSame(<<<SQL
-            c.id = :q0p0
-            SQL, $dql);
+        $expectedDql = 't.id IN (';
+        $expectedDql .= 'SELECT sub_t0.id FROM App\Entity\Ticket sub_t0 ';
+        $expectedDql .= 'INNER JOIN sub_t0.contracts sub_t0_contracts ';
+        $expectedDql .= 'WHERE sub_t0_contracts.id = :q0p0';
+        $expectedDql .= ')';
+        $this->assertSame($expectedDql, $dql);
         $this->assertSame(1, $parameters['q0p0']);
     }
 
