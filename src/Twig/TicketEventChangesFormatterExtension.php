@@ -6,11 +6,8 @@
 
 namespace App\Twig;
 
-use App\Entity\EntityEvent;
-use App\Entity\User;
-use App\Repository\ContractRepository;
-use App\Repository\TeamRepository;
-use App\Repository\UserRepository;
+use App\Entity;
+use App\Repository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -18,9 +15,10 @@ use Twig\TwigFilter;
 class TicketEventChangesFormatterExtension extends AbstractExtension
 {
     public function __construct(
-        private ContractRepository $contractRepository,
-        private TeamRepository $teamRepository,
-        private UserRepository $userRepository,
+        private Repository\ContractRepository $contractRepository,
+        private Repository\LabelRepository $labelRepository,
+        private Repository\TeamRepository $teamRepository,
+        private Repository\UserRepository $userRepository,
         private TranslatorInterface $translator,
     ) {
     }
@@ -32,7 +30,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
         ];
     }
 
-    public function formatTicketChanges(EntityEvent $event, string $field): string
+    public function formatTicketChanges(Entity\EntityEvent $event, string $field): string
     {
         $user = $event->getCreatedBy();
         $changes = $event->getChanges();
@@ -61,6 +59,8 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             return $this->formatSolutionChanges($user, $fieldChanges);
         } elseif ($field === 'ongoingContract') {
             return $this->formatOngoingContractChanges($user, $fieldChanges);
+        } elseif ($field === 'labels') {
+            return $this->formatLabelsChanges($user, $fieldChanges);
         } else {
             return $this->formatChanges($user, $field, $fieldChanges);
         }
@@ -69,7 +69,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param string[] $changes
      */
-    private function formatTitleChanges(User $user, array $changes): string
+    private function formatTitleChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
         $oldValue = $this->escape($changes[0] ?? '');
@@ -88,7 +88,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param string[] $changes
      */
-    private function formatStatusChanges(User $user, array $changes): string
+    private function formatStatusChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
         $oldValue = $this->translator->trans('tickets.status.' . $changes[0]);
@@ -106,7 +106,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param string[] $changes
      */
-    private function formatTypeChanges(User $user, array $changes): string
+    private function formatTypeChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
 
@@ -128,7 +128,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param string[] $changes
      */
-    private function formatPriorityChanges(User $user, string $field, array $changes): string
+    private function formatPriorityChanges(Entity\User $user, string $field, array $changes): string
     {
         $parameters = [
             'username' => $this->escape($user->getDisplayName()),
@@ -151,7 +151,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param array<?int> $changes
      */
-    private function formatAssigneeChanges(User $user, array $changes): string
+    private function formatAssigneeChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
 
@@ -194,7 +194,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param int[] $changes
      */
-    private function formatRequesterChanges(User $user, array $changes): string
+    private function formatRequesterChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
         $oldRequester = $this->userRepository->find($changes[0]);
@@ -215,7 +215,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param array<?int> $changes
      */
-    private function formatTeamChanges(User $user, array $changes): string
+    private function formatTeamChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
 
@@ -278,7 +278,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param array<?int> $changes
      */
-    private function formatSolutionChanges(User $user, array $changes): string
+    private function formatSolutionChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
 
@@ -303,7 +303,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param array<?int> $changes
      */
-    private function formatOngoingContractChanges(User $user, array $changes): string
+    private function formatOngoingContractChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
 
@@ -344,9 +344,66 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     }
 
     /**
+     * @param array<int[]> $changes
+     */
+    private function formatLabelsChanges(Entity\User $user, array $changes): string
+    {
+        $username = $this->escape($user->getDisplayName());
+
+        $removedLabelsIds = array_diff($changes[0], $changes[1]);
+        $addedLabelsIds = array_diff($changes[1], $changes[0]);
+
+        $removedLabels = $this->labelRepository->findBy([
+          'id' => $removedLabelsIds,
+        ]);
+        $addedLabels = $this->labelRepository->findBy([
+          'id' => $addedLabelsIds,
+        ]);
+
+        $removed = array_map(function ($label): string {
+            $name = $this->escape($label->getName());
+            return "<span class=\"badge badge--grey\">{$name}</span>";
+        }, $removedLabels);
+        $removed = implode(', ', $removed);
+
+        $added = array_map(function ($label): string {
+            $name = $this->escape($label->getName());
+            return "<span class=\"badge badge--grey\">{$name}</span>";
+        }, $addedLabels);
+        $added = implode(', ', $added);
+
+        if (empty($removedLabelsIds)) {
+            return $this->translator->trans(
+                'tickets.events.labels.added',
+                [
+                    'username' => $username,
+                    'added' => $added,
+                ],
+            );
+        } elseif (empty($addedLabelsIds)) {
+            return $this->translator->trans(
+                'tickets.events.labels.removed',
+                [
+                    'username' => $username,
+                    'removed' => $removed,
+                ],
+            );
+        } else {
+            return $this->translator->trans(
+                'tickets.events.labels.added_and_removed',
+                [
+                    'username' => $username,
+                    'added' => $added,
+                    'removed' => $removed,
+                ],
+            );
+        }
+    }
+
+    /**
      * @param mixed[] $changes
      */
-    private function formatChanges(User $user, string $field, array $changes): string
+    private function formatChanges(Entity\User $user, string $field, array $changes): string
     {
         $parameters = [
             'username' => $this->escape($user->getDisplayName()),
