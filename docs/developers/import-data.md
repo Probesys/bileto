@@ -80,6 +80,7 @@ The data is stored in a ZIP archive. It contains several files:
   - id: string (unique)
   - name: string (unique, not empty, max 50 chars)
   - description: string, optional (max 250 chars)
+  - color: string, optional (must be `grey`, `primary`, `blue`, `green`, `orange`, or `red`)
 
 It also contains a `tickets/` folder where each file corresponds to a ticket. For clarity reasons, the files can be put in sub-folders. Sub-folders have no meaning to the command, but can help to group tickets by organizations for instance. The name of the files doesn't matter, but they have to contain JSON objects:
 
