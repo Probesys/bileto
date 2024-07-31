@@ -9,6 +9,7 @@ namespace App\Tests\Service\DataImporter;
 use App\Service\DataImporter\DataImporter;
 use App\Service\DataImporter\DataImporterError;
 use App\Tests\Factory\ContractFactory;
+use App\Tests\Factory\LabelFactory;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\MessageDocumentFactory;
 use App\Tests\Factory\OrganizationFactory;
@@ -748,6 +749,116 @@ class DataImporterTest extends WebTestCase
         $this->assertSame(0, ContractFactory::count());
     }
 
+    public function testImportLabels(): void
+    {
+        $labels = [
+            [
+                'id' => '1',
+                'name' => 'My label',
+                'description' => 'My description',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            labels: $labels,
+        ));
+
+        $this->assertSame(1, LabelFactory::count());
+        $label = LabelFactory::last();
+        $this->assertSame('My label', $label->getName());
+        $this->assertSame('My description', $label->getDescription());
+    }
+
+    public function testImportLabelsKeepsExistingLabelsInDatabase(): void
+    {
+        $existingLabel = LabelFactory::createOne([
+            'name' => 'My label',
+            'description' => 'My description',
+        ]);
+
+        $labels = [
+            [
+                'id' => '1',
+                'name' => 'My label',
+                'description' => 'Another description',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            labels: $labels,
+        ));
+
+        $this->assertSame(1, LabelFactory::count());
+        $label = LabelFactory::last();
+        $this->assertSame('My label', $label->getName());
+        $this->assertSame('My description', $label->getDescription());
+        $this->assertSame($existingLabel->getUid(), $label->getUid());
+    }
+
+    public function testImportLabelsFailsIfIdIsDuplicatedInFile(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Label 1 error: id is duplicated');
+
+        $labels = [
+            [
+                'id' => '1',
+                'name' => 'My label 1',
+            ],
+            [
+                'id' => '1',
+                'name' => 'My label 2',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            labels: $labels,
+        ));
+
+        $this->assertSame(0, LabelFactory::count());
+    }
+
+    public function testImportLabelsFailsIfNameIsDuplicatedInFile(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Label 2 error: duplicates id 1');
+
+        $labels = [
+            [
+                'id' => '1',
+                'name' => 'My label',
+            ],
+            [
+                'id' => '2',
+                'name' => 'My label',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            labels: $labels,
+        ));
+
+        $this->assertSame(0, LabelFactory::count());
+    }
+
+    public function testImportLabelsFailsIfLabelIsInvalid(): void
+    {
+        $this->expectExceptionMessage('Label 1 error: Enter a name.');
+
+        $labels = [
+            [
+                'id' => '1',
+                'name' => '',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            labels: $labels,
+        ));
+
+        $this->assertSame(0, LabelFactory::count());
+    }
+
     public function testImportTickets(): void
     {
         $organizations = [
@@ -776,6 +887,12 @@ class DataImporterTest extends WebTestCase
                 'organizationId' => '1',
             ],
         ];
+        $labels = [
+            [
+                'id' => '1',
+                'name' => 'My label',
+            ],
+        ];
         $tickets = [
             [
                 'id' => '1',
@@ -792,6 +909,7 @@ class DataImporterTest extends WebTestCase
                 'organizationId' => '1',
                 'solutionId' => '2',
                 'contractIds' => ['1'],
+                'labelIds' => ['1'],
                 'timeSpents' => [
                     [
                         'createdAt' => '2024-04-25T18:00:00+00:00',
@@ -826,6 +944,7 @@ class DataImporterTest extends WebTestCase
             organizations: $organizations,
             users: $users,
             contracts: $contracts,
+            labels: $labels,
             tickets: $tickets,
         ));
 
@@ -850,6 +969,9 @@ class DataImporterTest extends WebTestCase
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame('My contract', $contracts[0]->getName());
+        $labels = $ticket->getLabels();
+        $this->assertSame(1, count($labels));
+        $this->assertSame('My label', $labels[0]->getName());
         $timeSpents = $ticket->getTimeSpents();
         $this->assertSame(1, count($timeSpents));
         $this->assertSame(1714068000, $timeSpents[0]->getCreatedAt()->getTimestamp());
@@ -1288,6 +1410,44 @@ class DataImporterTest extends WebTestCase
                 'requesterId' => '1',
                 'organizationId' => '1',
                 'contractIds' => ['2'],
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            organizations: $organizations,
+            users: $users,
+            tickets: $tickets,
+        ));
+
+        $this->assertSame(0, TicketFactory::count());
+    }
+
+    public function testImportTicketsFailsIfLabelsRefersToUnknownId(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Ticket 1 error: references an unknown label 2');
+
+        $organizations = [
+            [
+                'id' => '1',
+                'name' => 'Foo',
+            ],
+        ];
+        $users = [
+            [
+                'id' => '1',
+                'email' => 'alix@example.com',
+            ],
+        ];
+        $tickets = [
+            [
+                'id' => '1',
+                'createdAt' => '2024-04-25T17:38:00+00:00',
+                'createdById' => '1',
+                'title' => 'It does not work',
+                'requesterId' => '1',
+                'organizationId' => '1',
+                'labelIds' => ['2'],
             ],
         ];
 

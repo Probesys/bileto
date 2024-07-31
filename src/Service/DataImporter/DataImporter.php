@@ -8,6 +8,7 @@ namespace App\Service\DataImporter;
 
 use App\Entity\Authorization;
 use App\Entity\Contract;
+use App\Entity\Label;
 use App\Entity\Message;
 use App\Entity\Organization;
 use App\Entity\Role;
@@ -15,6 +16,7 @@ use App\Entity\Ticket;
 use App\Entity\TimeSpent;
 use App\Entity\User;
 use App\Repository\ContractRepository;
+use App\Repository\LabelRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\RoleRepository;
 use App\Repository\TicketRepository;
@@ -106,6 +108,9 @@ class DataImporter
     /** @var Index<Contract> */
     private Index $indexContracts;
 
+    /** @var Index<Label> */
+    private Index $indexLabels;
+
     /** @var Index<Ticket> */
     private Index $indexTickets;
 
@@ -122,6 +127,7 @@ class DataImporter
 
     public function __construct(
         private ContractRepository $contractRepository,
+        private LabelRepository $labelRepository,
         private OrganizationRepository $organizationRepository,
         private RoleRepository $roleRepository,
         private TicketRepository $ticketRepository,
@@ -186,6 +192,13 @@ class DataImporter
             yield "The file contracts.json is missing, so ignoring contracts.\n";
         }
 
+        $labels = [];
+        if (file_exists("{$tmpPath}/labels.json")) {
+            $labels = FSHelper::readJson("{$tmpPath}/labels.json");
+        } else {
+            yield "The file labels.json is missing, so ignoring labels.\n";
+        }
+
         $tickets = [];
         foreach (FSHelper::recursiveScandir("{$tmpPath}/tickets/") as $ticketFilepath) {
             $tickets[] = FSHelper::readJson($ticketFilepath);
@@ -209,6 +222,7 @@ class DataImporter
                 roles: $roles,
                 users: $users,
                 contracts: $contracts,
+                labels: $labels,
                 tickets: $tickets,
                 documentsPath: $documentsPath,
             );
@@ -232,6 +246,7 @@ class DataImporter
      * @param mixed[] $roles
      * @param mixed[] $users
      * @param mixed[] $contracts
+     * @param mixed[] $labels
      * @param mixed[] $tickets
      * @param string $documentsPath
      *
@@ -242,6 +257,7 @@ class DataImporter
         array $roles = [],
         array $users = [],
         array $contracts = [],
+        array $labels = [],
         array $tickets = [],
         string $documentsPath = '',
     ): \Generator {
@@ -253,6 +269,7 @@ class DataImporter
         $this->indexRoles = new Index();
         $this->indexUsers = new Index();
         $this->indexContracts = new Index();
+        $this->indexLabels = new Index();
         $this->indexTickets = new Index();
         $this->indexMessages = new Index();
         $this->indexMessageToDocuments = new Index();
@@ -261,6 +278,7 @@ class DataImporter
         yield from $this->processRoles($roles);
         yield from $this->processUsers($users);
         yield from $this->processContracts($contracts);
+        yield from $this->processLabels($labels);
         yield from $this->processTickets($tickets);
 
         if ($this->errors) {
@@ -271,6 +289,7 @@ class DataImporter
         yield from $this->saveEntities($this->indexRoles->list());
         yield from $this->saveEntities($this->indexUsers->list());
         yield from $this->saveEntities($this->indexContracts->list());
+        yield from $this->saveEntities($this->indexLabels->list());
         yield from $this->saveEntities($this->indexTickets->list());
         yield from $this->saveMessageDocuments();
     }
@@ -703,6 +722,69 @@ class DataImporter
      *
      * @return \Generator<int, string, void, void>
      */
+    private function processLabels(array $json): \Generator
+    {
+        yield 'Processing labels… ';
+
+        $requiredFields = [
+            'id',
+            'name'
+        ];
+
+        foreach ($json as $jsonLabel) {
+            // Check the structure of the label
+            $error = self::checkStructure($jsonLabel, required: $requiredFields);
+            if ($error) {
+                $this->errors[] = "Labels file contains invalid data: {$error}";
+                continue;
+            }
+
+            $id = strval($jsonLabel['id']);
+            $name = strval($jsonLabel['name']);
+
+            $description = '';
+            if (isset($jsonLabel['description'])) {
+                $description = strval($jsonLabel['description']);
+            }
+
+            // Build the label
+            $label = new Label();
+            $label->setName($name);
+            $label->setDescription($description);
+
+            // Add the label to the index
+            try {
+                $this->indexLabels->add($id, $label, uniqueKey: $name);
+            } catch (IndexError $e) {
+                $this->errors[] = "Label {$id} error: {$e->getMessage()}";
+            }
+        }
+
+        // Load existing values from the database and update the indexes
+        $existingLabels = $this->labelRepository->findAll();
+        foreach ($existingLabels as $label) {
+            $name = $label->getName();
+            $this->indexLabels->refreshUnique($label, uniqueKey: $name);
+        }
+
+        // Validate the labels
+        foreach ($this->indexLabels->list() as $id => $label) {
+            $error = $this->validate($label);
+            if ($error) {
+                $this->errors[] = "Label {$id} error: {$error}";
+            }
+        }
+
+        yield "ok\n";
+    }
+
+    /**
+     * @phpstan-impure
+     *
+     * @param mixed[] $json
+     *
+     * @return \Generator<int, string, void, void>
+     */
     private function processTickets(array $json): \Generator
     {
         yield 'Processing tickets… ';
@@ -771,6 +853,11 @@ class DataImporter
             $contractIds = [];
             if (isset($jsonTicket['contractIds'])) {
                 $contractIds = $jsonTicket['contractIds'];
+            }
+
+            $labelIds = [];
+            if (isset($jsonTicket['labelIds'])) {
+                $labelIds = $jsonTicket['labelIds'];
             }
 
             $timeSpents = [];
@@ -856,6 +943,22 @@ class DataImporter
                 }
             } else {
                 $this->errors[] = "Ticket {$id} error: contractIds: not an array.";
+            }
+
+            if (is_array($labelIds)) {
+                $labels = [];
+                foreach ($labelIds as $labelId) {
+                    $label = $this->indexLabels->get($labelId);
+
+                    if ($label) {
+                        $labels[] = $label;
+                    } else {
+                        $this->errors[] = "Ticket {$id} error: references an unknown label {$labelId}.";
+                    }
+                }
+                $ticket->setLabels($labels);
+            } else {
+                $this->errors[] = "Ticket {$id} error: labelIds: not an array.";
             }
 
             if (is_array($timeSpents)) {

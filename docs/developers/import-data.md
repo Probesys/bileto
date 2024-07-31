@@ -76,6 +76,10 @@ The data is stored in a ZIP archive. It contains several files:
   - timeAccountingUnit: integer, optional (number of minutes, greater than or equal 0)
   - hoursAlert: integer, optional (percent, greater than or equal 0)
   - dateAlert: integer, optional (number of days, greater than or equal 0)
+- `labels.json` an array of labels defined as:
+  - id: string (unique)
+  - name: string (unique, not empty, max 50 chars)
+  - description: string, optional (max 250 chars)
 
 It also contains a `tickets/` folder where each file corresponds to a ticket. For clarity reasons, the files can be put in sub-folders. Sub-folders have no meaning to the command, but can help to group tickets by organizations for instance. The name of the files doesn't matter, but they have to contain JSON objects:
 
@@ -93,6 +97,7 @@ It also contains a `tickets/` folder where each file corresponds to a ticket. Fo
 - organizationId: string (reference to an organization)
 - solutionId: string or null, optional (reference to a message, included in ticket.messages)
 - contractIds: array of string, optional (references to contracts)
+- labelIds: array of string, optional (references to labels)
 - timeSpents: array of, optional:
   - createdAt: datetime
   - createdById: string (reference to a user)
@@ -122,7 +127,7 @@ A file (or folder) can be missing. In this case, it is considered that there is 
 
 When importing the data, some elements may already exist in the database (e.g. users have been imported from LDAP, or the command failed the first time after importing part of the data).
 
-We can easily detect existing data for organizations, roles and users. Indeed, these entities require the uniqueness of a field (name or email). Thus, if we detect that a corresponding entity already exists (using the unique field), we can load the entity from the database to reuse it.
+We can easily detect existing data for organizations, roles, users and labels. Indeed, these entities require the uniqueness of a field (name or email). Thus, if we detect that a corresponding entity already exists (using the unique field), we can load the entity from the database to reuse it.
 
 Contracts and tickets are harder to handle as there is no unique field that could help us to detect existing data. Custom logic can be used though:
 
