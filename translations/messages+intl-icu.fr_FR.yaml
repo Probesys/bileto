@@ -44,11 +44,11 @@ advanced_search_syntax.qualifiers.solution.title: Solution
 advanced_search_syntax.qualifiers.status.example1: "Les tickets avec le statut «\_nouveau\_»"
 advanced_search_syntax.qualifiers.status.example2: "Les tickets avec les statuts «\_nouveau\_» ou «\_en cours\_»"
 advanced_search_syntax.qualifiers.status.title: Statut
-advanced_search_syntax.qualifiers.status.values: "Les valeurs possibles pour «\_<code>status</code>\_» sont\_: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, ainsi que les raccourcis <code>open</code> (incluant les 4 premiers) et <code>finished</code> (incluant les 2 derniers)."
+advanced_search_syntax.qualifiers.status.values: "Les valeurs de statut possibles sont\_: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, ainsi que les raccourcis <code>open</code> (incluant les 4 premiers) et <code>finished</code> (incluant les 2 derniers)."
 advanced_search_syntax.qualifiers.title: 'Rechercher par qualificateurs'
 advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incident\_»"
+advanced_search_syntax.qualifiers.type.example2: "Les tickets de type «\_requête\_»"
 advanced_search_syntax.qualifiers.type.title: Type
-advanced_search_syntax.qualifiers.type.values: "Les valeurs possibles pour «\_type\_» sont\_: <code>incident</code> et <code>request</code>."
 advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
 authorizations.new.global: Global
 authorizations.new.organization_caption: 'L’autorisation peut être limitée à une organisation spécifique, ou appliquée globalement.'
