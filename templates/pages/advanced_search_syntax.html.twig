@@ -9,8 +9,8 @@
 {% block title %}{{ 'advanced_search_syntax.title' | trans }}{% endblock %}
 
 {% block body %}
-    <div class="wrapper wrapper--text wrapper--center flow flow--larger">
-        <div class="flow">
+    <div class="flow flow--larger">
+        <div class="wrapper wrapper--text wrapper--center flow">
             <p>
                 {{ 'advanced_search_syntax.intro1' | trans }}
             </p>
@@ -73,7 +73,7 @@
         <div class="flow flow--large">
             <h2>{{ 'advanced_search_syntax.qualifiers.title' | trans }}</h2>
 
-            <p>
+            <p class="wrapper wrapper--text">
                 {{ 'advanced_search_syntax.qualifiers.description' | trans | raw }}
             </p>
 
@@ -101,7 +101,7 @@
                     </tbody>
                 </table>
 
-                <p>
+                <p class="wrapper wrapper--text">
                     {{ 'advanced_search_syntax.qualifiers.status.values' | trans | raw }}
                 </p>
             </div>
@@ -122,12 +122,13 @@
                             <td><code>type:incident</code></td>
                             <td>{{ 'advanced_search_syntax.qualifiers.type.example1' | trans }}</td>
                         </tr>
+
+                        <tr>
+                            <td><code>type:request</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.type.example2' | trans }}</td>
+                        </tr>
                     </tbody>
                 </table>
-
-                <p>
-                    {{ 'advanced_search_syntax.qualifiers.type.values' | trans | raw }}
-                </p>
             </div>
 
             <div class="flow">
@@ -240,6 +241,46 @@
                         <tr>
                             <td><code>org:probesys</code></td>
                             <td>{{ 'advanced_search_syntax.qualifiers.organization.example1' | trans }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flow">
+                <h3>{{ 'advanced_search_syntax.qualifiers.labels.title' | trans }}</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col--size30">{{ 'advanced_search_syntax.example' | trans }}</th>
+                            <th>{{ 'advanced_search_syntax.description' | trans }}</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td><code>label:bug</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example1' | trans }}</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>label:bug label:"Tickets topic"</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example2' | trans }}</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>label:bug,"Tickets topic"</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example3' | trans }}</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>has:label</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example4' | trans }}</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>no:label</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example5' | trans }}</td>
                         </tr>
                     </tbody>
                 </table>

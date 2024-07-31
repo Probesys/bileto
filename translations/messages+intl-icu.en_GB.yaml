@@ -32,6 +32,12 @@ advanced_search_syntax.qualifiers.actors.example4: 'Tickets without an assigned 
 advanced_search_syntax.qualifiers.actors.example5: 'Tickets with an assigned agent'
 advanced_search_syntax.qualifiers.actors.title: Actors
 advanced_search_syntax.qualifiers.description: 'Qualifiers are special keywords (e.g. <code>status:</code>) that take a value or a comma-separated list of values. They are used to target a particular property.'
+advanced_search_syntax.qualifiers.labels.example1: 'Tickets with the label “Bug” (case insensitive)'
+advanced_search_syntax.qualifiers.labels.example2: 'Tickets with the labels “Bug” and “Tickets topic”'
+advanced_search_syntax.qualifiers.labels.example3: 'Tickets with the labels “Bug” or “Tickets topic”'
+advanced_search_syntax.qualifiers.labels.example4: 'Tickets having at least one label'
+advanced_search_syntax.qualifiers.labels.example5: 'Tickets having no labels'
+advanced_search_syntax.qualifiers.labels.title: Labels
 advanced_search_syntax.qualifiers.organization.example1: 'Tickets from organizations with “probesys” in their name'
 advanced_search_syntax.qualifiers.organization.title: Organizations
 advanced_search_syntax.qualifiers.priority.example1: 'Tickets with “low” urgency'
@@ -44,11 +50,11 @@ advanced_search_syntax.qualifiers.solution.title: Solution
 advanced_search_syntax.qualifiers.status.example1: 'Tickets with the status “new”'
 advanced_search_syntax.qualifiers.status.example2: 'Tickets with the status “new” or “in progress”'
 advanced_search_syntax.qualifiers.status.title: Status
-advanced_search_syntax.qualifiers.status.values: 'The possible values for “status” are: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, as well as the shortcuts <code>open</code> (includes the first 4) and <code>finished</code> (includes the last 2).'
+advanced_search_syntax.qualifiers.status.values: 'The possible values for status are: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, as well as the shortcuts <code>open</code> (includes the first 4) and <code>finished</code> (includes the last 2).'
 advanced_search_syntax.qualifiers.title: 'Search by qualifiers'
 advanced_search_syntax.qualifiers.type.example1: 'Tickets of type “incident”'
+advanced_search_syntax.qualifiers.type.example2: 'Tickets of type “request”'
 advanced_search_syntax.qualifiers.type.title: Type
-advanced_search_syntax.qualifiers.type.values: 'The possible values for “type“ are: <code>incident</code> and <code>request</code>.'
 advanced_search_syntax.title: 'Quick reference for the advanced syntax'
 authorizations.new.global: Global
 authorizations.new.organization_caption: 'The authorization can be limited to a specific organization, or be applied globally.'
@@ -349,6 +355,7 @@ tickets.filters.actors.select: 'Select an actor'
 tickets.filters.actors.title: 'Filter by actors'
 tickets.filters.actors.unselect: Unselect
 tickets.filters.assignee.no: 'Unassigned only'
+tickets.filters.labels.title: 'Filter by labels'
 tickets.filters.priority.title: 'Filter by priority'
 tickets.filters.status.title: 'Filter by status'
 tickets.filters.type.label: 'Type of tickets'

@@ -23,6 +23,7 @@ class TicketQueryBuilder
     private int $querySequence;
 
     public function __construct(
+        private Repository\LabelRepository $labelRepository,
         private Repository\UserRepository $userRepository,
         private Repository\OrganizationRepository $organizationRepository,
         private Security $security,
@@ -182,14 +183,21 @@ class TicketQueryBuilder
         } elseif ($qualifier === 'contract') {
             $value = $this->processContractQualifier($value);
             return $this->buildManyToManyExpr('contracts', $value, $condition->not());
+        } elseif ($qualifier === 'label') {
+            $value = $this->processLabelQualifier($value);
+            return $this->buildManyToManyExpr('labels', $value, $condition->not());
         } elseif ($qualifier === 'no' && ($value === 'assignee' || $value === 'solution')) {
             return $this->buildExpr('t.' . $value, null, $condition->not());
         } elseif ($qualifier === 'no' && $value === 'contract') {
             return $this->buildEmptyExpr('t.contracts', $condition->not());
+        } elseif ($qualifier === 'no' && $value === 'label') {
+            return $this->buildEmptyExpr('t.labels', $condition->not());
         } elseif ($qualifier === 'has' && ($value === 'assignee' || $value === 'solution')) {
             return $this->buildExpr('t.' . $value, null, !$condition->not());
         } elseif ($qualifier === 'has' && $value === 'contract') {
             return $this->buildEmptyExpr('t.contracts', !$condition->not());
+        } elseif ($qualifier === 'has' && $value === 'label') {
+            return $this->buildEmptyExpr('t.labels', !$condition->not());
         } else {
             if (is_array($value)) {
                 $value = implode(',', $value);
@@ -406,6 +414,40 @@ class TicketQueryBuilder
             $id = $this->extractId($v);
             if ($id) {
                 $valuesToReturn[] = $id;
+            } else {
+                $valuesToReturn[] = -1;
+            }
+        }
+
+        if (count($valuesToReturn) === 1) {
+            return $valuesToReturn[0];
+        } else {
+            return $valuesToReturn;
+        }
+    }
+
+    /**
+     * @param string|string[] $values
+     *
+     * @return int|int[]
+     */
+    private function processLabelQualifier(mixed $values): mixed
+    {
+        if (!is_array($values)) {
+            $values = [$values];
+        }
+
+        $valuesToReturn = [];
+
+        foreach ($values as $value) {
+            $labels = $this->labelRepository->findByName($value);
+
+            $ids = array_map(function ($label): int {
+                return $label->getId();
+            }, $labels);
+
+            if ($ids) {
+                $valuesToReturn = array_merge($valuesToReturn, $ids);
             } else {
                 $valuesToReturn[] = -1;
             }

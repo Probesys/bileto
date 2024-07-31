@@ -208,6 +208,30 @@
                     </details>
                 {% endif %}
 
+                <details class="accordion" {{ ticketFilter.anyFilters(['label']) ? 'open' }}>
+                    <summary class="accordion__title">
+                        {{ 'tickets.filters.labels.title' | trans }}
+                    </summary>
+
+                    <div class="accordion__body flow">
+                        {% for label in labels %}
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="filter-label-{{ label.uid }}"
+                                    name="filters[label][]"
+                                    value="{{ label.name }}"
+                                    {{ label.name in ticketFilter.filter('label') ? 'checked' }}
+                                />
+
+                                <label for="filter-label-{{ label.uid }}">
+                                    {{ label.name }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </details>
+
                 <details class="accordion" {{ ticketFilter.anyFilters(['priority', 'urgency', 'impact']) ? 'open' }}>
                     <summary class="accordion__title">
                         {{ 'tickets.filters.priority.title' | trans }}
@@ -413,6 +437,7 @@
             <input type="hidden" name="filters[involves][]" value="" />
             <input type="hidden" name="filters[assignee][]" value="" />
             <input type="hidden" name="filters[requester][]" value="" />
+            <input type="hidden" name="filters[label][]" value="" />
 
             <input type="hidden" name="mode" value="quick">
             <input type="hidden" name="from" value="{{ from }}">

@@ -25,4 +25,22 @@ class LabelRepository extends ServiceEntityRepository implements UidGeneratorInt
     {
         parent::__construct($registry, Label::class);
     }
+
+    /**
+     * @return Label[]
+     */
+    public function findByName(string $name): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT l
+            FROM App\Entity\Label l
+            WHERE LOWER(l.name) = LOWER(:name)
+        SQL);
+
+        $query->setParameter('name', $name);
+
+        return $query->getResult();
+    }
 }

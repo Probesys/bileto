@@ -32,6 +32,12 @@ advanced_search_syntax.qualifiers.actors.example4: 'Les tickets n’ayant pas d�
 advanced_search_syntax.qualifiers.actors.example5: 'Les tickets ayant un agent attribué'
 advanced_search_syntax.qualifiers.actors.title: Acteurs
 advanced_search_syntax.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
+advanced_search_syntax.qualifiers.labels.example1: "Les tickets avec l’étiquette «\_Bug\_» (insensible à la casse)"
+advanced_search_syntax.qualifiers.labels.example2: "Les tickets avec les étiquettes «\_Bug\_» et «\_Tickets topic\_»"
+advanced_search_syntax.qualifiers.labels.example3: "Les tickets avec les étiquettes «\_Bug\_» ou «\_Tickets topic\_»"
+advanced_search_syntax.qualifiers.labels.example4: 'Les tickets ayant au moins une étiquette'
+advanced_search_syntax.qualifiers.labels.example5: 'Les tickets n’ayant aucune étiquette'
+advanced_search_syntax.qualifiers.labels.title: Étiquettes
 advanced_search_syntax.qualifiers.organization.example1: "Les tickets des organisations dont le nom contient «\_probesys\_»"
 advanced_search_syntax.qualifiers.organization.title: Organisations
 advanced_search_syntax.qualifiers.priority.example1: "Les tickets d’urgence «\_basse\_»"
@@ -44,11 +50,11 @@ advanced_search_syntax.qualifiers.solution.title: Solution
 advanced_search_syntax.qualifiers.status.example1: "Les tickets avec le statut «\_nouveau\_»"
 advanced_search_syntax.qualifiers.status.example2: "Les tickets avec les statuts «\_nouveau\_» ou «\_en cours\_»"
 advanced_search_syntax.qualifiers.status.title: Statut
-advanced_search_syntax.qualifiers.status.values: "Les valeurs possibles pour «\_<code>status</code>\_» sont\_: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, ainsi que les raccourcis <code>open</code> (incluant les 4 premiers) et <code>finished</code> (incluant les 2 derniers)."
+advanced_search_syntax.qualifiers.status.values: "Les valeurs de statut possibles sont\_: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, ainsi que les raccourcis <code>open</code> (incluant les 4 premiers) et <code>finished</code> (incluant les 2 derniers)."
 advanced_search_syntax.qualifiers.title: 'Rechercher par qualificateurs'
 advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incident\_»"
+advanced_search_syntax.qualifiers.type.example2: "Les tickets de type «\_requête\_»"
 advanced_search_syntax.qualifiers.type.title: Type
-advanced_search_syntax.qualifiers.type.values: "Les valeurs possibles pour «\_type\_» sont\_: <code>incident</code> et <code>request</code>."
 advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
 authorizations.new.global: Global
 authorizations.new.organization_caption: 'L’autorisation peut être limitée à une organisation spécifique, ou appliquée globalement.'
@@ -349,6 +355,7 @@ tickets.filters.actors.select: 'Sélectionner un acteur'
 tickets.filters.actors.title: 'Filtrer par acteurs'
 tickets.filters.actors.unselect: Désélectionner
 tickets.filters.assignee.no: 'Non attribués seulement'
+tickets.filters.labels.title: 'Filtrer par étiquettes'
 tickets.filters.priority.title: 'Filtrer par priorité'
 tickets.filters.status.title: 'Filtrer par statut'
 tickets.filters.type.label: 'Type des tickets'

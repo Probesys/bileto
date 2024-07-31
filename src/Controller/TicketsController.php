@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\Controller\BaseController;
 use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
+use App\Repository\LabelRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
@@ -17,6 +18,7 @@ use App\SearchEngine\TicketSearcher;
 use App\SearchEngine\Query;
 use App\Security\Authorizer;
 use App\Service\ActorsLister;
+use App\Service\Sorter\LabelSorter;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\TicketTimeline;
 use App\Utils\Pagination;
@@ -32,10 +34,12 @@ class TicketsController extends BaseController
     public function index(
         Request $request,
         AuthorizationRepository $authorizationRepository,
+        LabelRepository $labelRepository,
         OrganizationRepository $orgaRepository,
         UserRepository $userRepository,
         TicketSearcher $ticketSearcher,
         ActorsLister $actorsLister,
+        LabelSorter $labelSorter,
         TranslatorInterface $translator,
     ): Response {
         /** @var \App\Entity\User $user */
@@ -91,6 +95,9 @@ class TicketsController extends BaseController
             $ticketFilter = new TicketFilter();
         }
 
+        $labels = $labelRepository->findAll();
+        $labelSorter->sort($labels);
+
         return $this->render('tickets/index.html.twig', [
             'ticketsPagination' => $ticketsPagination,
             'countToAssign' => $ticketSearcher->countTickets(TicketSearcher::queryUnassigned()),
@@ -104,6 +111,7 @@ class TicketsController extends BaseController
             'finishedStatuses' => Ticket::getStatusesWithLabels('finished'),
             'allUsers' => $actorsLister->findAll(),
             'agents' => $actorsLister->findAll(roleType: 'agent'),
+            'labels' => $labels,
             'errors' => $errors,
         ]);
     }
