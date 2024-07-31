@@ -75,78 +75,80 @@
         </div>
     {% endif %}
 
-    <fieldset class="flow flow--large" data-controller="checkboxes">
+    <fieldset data-controller="checkboxes">
         <legend>{{ 'roles.permissions' | trans }}</legend>
 
-        {{ form_errors(form.permissions) }}
+        <div class="flow flow--large">
+            {{ form_errors(form.permissions) }}
 
-        <div>
-            <button
-                class="button--discreet"
-                type="button"
-                data-checkboxes-target="control"
-                data-checkboxes-control="input[type='checkbox']#check"
-                data-action="checkboxes#execute"
-            >
-                {{ 'roles.permissions.check_all' | trans }}
-            </button>
+            <div>
+                <button
+                    class="button--discreet"
+                    type="button"
+                    data-checkboxes-target="control"
+                    data-checkboxes-control="input[type='checkbox']#check"
+                    data-action="checkboxes#execute"
+                >
+                    {{ 'roles.permissions.check_all' | trans }}
+                </button>
 
-            <button
-                class="button--discreet"
-                type="button"
-                data-checkboxes-target="control"
-                data-checkboxes-control="input[type='checkbox']#uncheck"
-                data-action="checkboxes#execute"
-            >
-                {{ 'roles.permissions.uncheck_all' | trans }}
-            </button>
-        </div>
+                <button
+                    class="button--discreet"
+                    type="button"
+                    data-checkboxes-target="control"
+                    data-checkboxes-control="input[type='checkbox']#uncheck"
+                    data-action="checkboxes#execute"
+                >
+                    {{ 'roles.permissions.uncheck_all' | trans }}
+                </button>
+            </div>
 
-        <div class="flow">
-            {% for permission in form.permissions %}
-                {% if field_value(permission) != 'admin:see' and field_value(permission) != 'orga:see' %}
+            <div class="flow">
+                {% for permission in form.permissions %}
+                    {% if field_value(permission) != 'admin:see' and field_value(permission) != 'orga:see' %}
+                        <div>
+                            <input
+                                type="checkbox"
+                                id="{{ field_id(permission) }}"
+                                name="{{ field_name(permission) }}"
+                                value="{{ field_value(permission) }}"
+                                {{ field_value(permission) in field_value(form.permissions) ? 'checked' }}
+                            />
+
+                            <label for="{{ field_id(permission) }}">
+                                {{ field_value(permission) | rolePermissionToLabel | trans }}
+                            </label>
+                        </div>
+                    {% else %}
+                        {# Don't display admin:see and orga:see checkboxes as they
+                         # are inherent in the orga/admin roles and are added manually
+                         # when sanitizing the permissions in the form. #}
+                        <!-- {{ field_name(permission) }} -->
+                    {% endif %}
+                {% endfor %}
+
+                {% if field_value(form.type) == 'agent' %}
+                    {# This permission is inherent in the agent roles and cannot
+                     # be unset. In fact, it doesn't even exist as a permission in the
+                     # code, it is only implied by the type of the role.
+                     # This checkbox exists only to make it clear that agent
+                     # roles implies that these users can be assigned to tickets.
+                     #}
+
                     <div>
                         <input
                             type="checkbox"
-                            id="{{ field_id(permission) }}"
-                            name="{{ field_name(permission) }}"
-                            value="{{ field_value(permission) }}"
-                            {{ field_value(permission) in field_value(form.permissions) ? 'checked' }}
+                            id="fake:orga:update:tickets:assignee"
+                            disabled
+                            checked
                         />
 
-                        <label for="{{ field_id(permission) }}">
-                            {{ field_value(permission) | rolePermissionToLabel | trans }}
+                        <label for="fake:orga:update:tickets:assignee">
+                            {{ 'roles.permissions.be_assigned_to_tickets' | trans }}
                         </label>
                     </div>
-                {% else %}
-                    {# Don't display admin:see and orga:see checkboxes as they
-                     # are inherent in the orga/admin roles and are added manually
-                     # when sanitizing the permissions in the form. #}
-                    <!-- {{ field_name(permission) }} -->
                 {% endif %}
-            {% endfor %}
-
-            {% if field_value(form.type) == 'agent' %}
-                {# This permission is inherent in the agent roles and cannot
-                 # be unset. In fact, it doesn't even exist as a permission in the
-                 # code, it is only implied by the type of the role.
-                 # This checkbox exists only to make it clear that agent
-                 # roles implies that these users can be assigned to tickets.
-                 #}
-
-                <div>
-                    <input
-                        type="checkbox"
-                        id="fake:orga:update:tickets:assignee"
-                        disabled
-                        checked
-                    />
-
-                    <label for="fake:orga:update:tickets:assignee">
-                        {{ 'roles.permissions.be_assigned_to_tickets' | trans }}
-                    </label>
-                </div>
-            {% endif %}
+            </div>
         </div>
     </fieldset>
 

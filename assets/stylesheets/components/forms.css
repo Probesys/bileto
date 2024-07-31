@@ -265,29 +265,14 @@ select[aria-invalid] {
 
 fieldset {
     min-width: auto;
-    padding-right: var(--space-small);
-    padding-bottom: var(--space-large);
-    padding-left: var(--space-small);
+    padding: var(--form-padding);
 
-    background-color: var(--color-grey2);
-    border: none;
-    border-top: var(--border-width) solid var(--color-grey6);
-    border-bottom: var(--border-width) solid var(--color-grey6);
-}
-
-@media (min-width: 800px) {
-    fieldset {
-        padding-right: var(--space-large);
-        padding-left: var(--space-large);
-
-        border: var(--border-width) solid var(--color-grey6);
-        border-radius: var(--form-border-radius);
-    }
+    background-color: var(--form-background-color);
+    border: var(--border-width) solid var(--form-border-color);
+    border-radius: var(--form-border-radius);
 }
 
 legend {
-    margin-right: auto;
-    margin-left: auto;
     padding-right: 1rem;
     padding-left: 1rem;
 }

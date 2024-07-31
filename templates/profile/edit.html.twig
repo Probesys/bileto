@@ -109,81 +109,83 @@
                 </div>
 
                 {% if not managedByLdap %}
-                    <fieldset class="flow flow--large">
+                    <fieldset>
                         <legend>{{ 'users.password' | trans }}</legend>
 
-                        <p class="form__caption">
-                            {{ 'profile.leave_password' | trans }}
-                        </p>
+                        <div class="flow flow--large">
+                            <p class="form__caption">
+                                {{ 'profile.leave_password' | trans }}
+                            </p>
 
-                        <div class="flow flow--small">
-                            <label for="current-password">
-                                {{ 'profile.current_password' | trans }}
-                            </label>
+                            <div class="flow flow--small">
+                                <label for="current-password">
+                                    {{ 'profile.current_password' | trans }}
+                                </label>
 
-                            {% if errors.password is defined %}
-                                <p class="form__error" role="alert" id="current-password-error">
-                                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                    {{ errors.password }}
-                                </p>
-                            {% endif %}
+                                {% if errors.password is defined %}
+                                    <p class="form__error" role="alert" id="current-password-error">
+                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
+                                        {{ errors.password }}
+                                    </p>
+                                {% endif %}
 
-                            <div class="input-container" data-controller="password">
-                                <input
-                                    type="password"
-                                    id="current-password"
-                                    name="currentPassword"
-                                    autocomplete="current-password"
-                                    data-password-target="input"
-                                    {% if errors.password is defined %}
-                                        aria-invalid="true"
-                                        aria-errormessage="current-password-error"
-                                    {% endif %}
-                                />
+                                <div class="input-container" data-controller="password">
+                                    <input
+                                        type="password"
+                                        id="current-password"
+                                        name="currentPassword"
+                                        autocomplete="current-password"
+                                        data-password-target="input"
+                                        {% if errors.password is defined %}
+                                            aria-invalid="true"
+                                            aria-errormessage="current-password-error"
+                                        {% endif %}
+                                    />
 
-                                <button
-                                    class="button--icon"
-                                    type="button"
-                                    role="switch"
-                                    data-action="password#toggle"
-                                    data-password-target="button"
-                                >
-                                    {{ icon('eye') }}
-                                    {{ icon('eye-slash') }}
-                                    <span class="sr-only">
-                                        {{ 'forms.show_password' | trans }}
-                                    </span>
-                                </button>
+                                    <button
+                                        class="button--icon"
+                                        type="button"
+                                        role="switch"
+                                        data-action="password#toggle"
+                                        data-password-target="button"
+                                    >
+                                        {{ icon('eye') }}
+                                        {{ icon('eye-slash') }}
+                                        <span class="sr-only">
+                                            {{ 'forms.show_password' | trans }}
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="flow flow--small">
-                            <label for="new-password">
-                                {{ 'profile.new_password' | trans }}
-                            </label>
+                            <div class="flow flow--small">
+                                <label for="new-password">
+                                    {{ 'profile.new_password' | trans }}
+                                </label>
 
-                            <div class="input-container" data-controller="password">
-                                <input
-                                    type="password"
-                                    id="new-password"
-                                    name="newPassword"
-                                    autocomplete="new-password"
-                                    data-password-target="input"
-                                />
+                                <div class="input-container" data-controller="password">
+                                    <input
+                                        type="password"
+                                        id="new-password"
+                                        name="newPassword"
+                                        autocomplete="new-password"
+                                        data-password-target="input"
+                                    />
 
-                                <button
-                                    class="button--icon"
-                                    type="button"
-                                    role="switch"
-                                    data-action="password#toggle"
-                                    data-password-target="button"
-                                >
-                                    {{ icon('eye') }}
-                                    {{ icon('eye-slash') }}
-                                    <span class="sr-only">
-                                        {{ 'forms.show_password' | trans }}
-                                    </span>
-                                </button>
+                                    <button
+                                        class="button--icon"
+                                        type="button"
+                                        role="switch"
+                                        data-action="password#toggle"
+                                        data-password-target="button"
+                                    >
+                                        {{ icon('eye') }}
+                                        {{ icon('eye-slash') }}
+                                        <span class="sr-only">
+                                            {{ 'forms.show_password' | trans }}
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </fieldset>
