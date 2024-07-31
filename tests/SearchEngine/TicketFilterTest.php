@@ -142,6 +142,16 @@ class TicketFilterTest extends WebTestCase
         $this->assertSame(['high'], $ticketFilter->getFilter('priority'));
     }
 
+    public function testFromQueryWithLabelConditionsReturnsFilter(): void
+    {
+        $query = Query::fromString('label:foo label:bar');
+
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $this->assertNotNull($ticketFilter);
+        $this->assertSame(['foo', 'bar'], $ticketFilter->getFilter('label'));
+    }
+
     public function testFromQueryWithNotSupportedQualifierConditionReturnsNull(): void
     {
         $query = Query::fromString('org:#1');
@@ -369,6 +379,16 @@ class TicketFilterTest extends WebTestCase
         $textualQuery = $ticketFilter->toTextualQuery();
 
         $this->assertSame('priority:high', $textualQuery);
+    }
+
+    public function testToTextualQueryWithLabel(): void
+    {
+        $query = Query::fromString('label:foo label:"bar baz"');
+        $ticketFilter = TicketFilter::fromQuery($query);
+
+        $textualQuery = $ticketFilter->toTextualQuery();
+
+        $this->assertSame('label:foo label:"bar baz"', $textualQuery);
     }
 
     public function testSetText(): void

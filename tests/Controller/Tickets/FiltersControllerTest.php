@@ -105,6 +105,24 @@ class FiltersControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets?q={$expectedQuery}", 302);
     }
 
+    public function testPostCombineWithLabels(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+
+        $crawler = $client->request(Request::METHOD_POST, '/tickets/filters/combine', [
+            'filters' => [
+                'label' => ['spam', 'egg'],
+            ],
+            'query' => 'label:foo label:bar',
+            'from' => '/tickets',
+        ]);
+
+        $expectedQuery = urlencode('label:spam label:egg');
+        $this->assertResponseRedirects("/tickets?q={$expectedQuery}", 302);
+    }
+
     public function testPostCombineResetsQueryIfInvalid(): void
     {
         $client = static::createClient();

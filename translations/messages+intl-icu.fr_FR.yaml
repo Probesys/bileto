@@ -355,6 +355,7 @@ tickets.filters.actors.select: 'Sélectionner un acteur'
 tickets.filters.actors.title: 'Filtrer par acteurs'
 tickets.filters.actors.unselect: Désélectionner
 tickets.filters.assignee.no: 'Non attribués seulement'
+tickets.filters.labels.title: 'Filtrer par étiquettes'
 tickets.filters.priority.title: 'Filtrer par priorité'
 tickets.filters.status.title: 'Filtrer par statut'
 tickets.filters.type.label: 'Type des tickets'

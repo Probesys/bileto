@@ -18,6 +18,7 @@ class TicketFilter
         'status', 'type',
         'assignee', 'requester', 'involves',
         'urgency', 'impact', 'priority',
+        'label',
     ];
 
     private string $text = '';
@@ -59,25 +60,39 @@ class TicketFilter
         }
 
         foreach ($this->filters as $filter => $values) {
-            if ($this->isActorFilter($filter)) {
-                $actorIds = [];
-
-                foreach ($values as $id) {
-                    if ($id === null) {
-                        $textualQueryParts[] = "no:{$filter}";
-                    } elseif ($id === '@me') {
-                        $actorIds[] = '@me';
-                    } else {
-                        $actorIds[] = "#{$id}";
+            if ($filter === 'label') {
+                foreach ($values as $value) {
+                    if (
+                        is_string($value) &&
+                        str_contains($value, ' ') &&
+                        (!str_starts_with($value, '"') || !str_ends_with($value, '"'))
+                    ) {
+                        $value = '"' . $value . '"';
                     }
+
+                    $textualQueryParts[] = "label:{$value}";
+                }
+            } else {
+                if ($this->isActorFilter($filter)) {
+                    $actorIds = [];
+
+                    foreach ($values as $id) {
+                        if ($id === null) {
+                            $textualQueryParts[] = "no:{$filter}";
+                        } elseif ($id === '@me') {
+                            $actorIds[] = '@me';
+                        } else {
+                            $actorIds[] = "#{$id}";
+                        }
+                    }
+
+                    $values = $actorIds;
                 }
 
-                $values = $actorIds;
-            }
-
-            if ($values) {
-                $values = implode(',', $values);
-                $textualQueryParts[] = "{$filter}:{$values}";
+                if ($values) {
+                    $values = implode(',', $values);
+                    $textualQueryParts[] = "{$filter}:{$values}";
+                }
             }
         }
 
@@ -177,6 +192,17 @@ class TicketFilter
         $this->filters[$filter] = $values;
     }
 
+    /**
+     * @param string[] $values
+     */
+    public function addLabelFilter(array $values): void
+    {
+        $existingValues = $this->filters['label'] ?? [];
+        /** @var string[] */
+        $values = array_merge($existingValues, $values);
+        $this->setFilter('label', $values);
+    }
+
     private function addTextCondition(Query\Condition $condition): void
     {
         $value = $condition->getValue();
@@ -219,7 +245,7 @@ class TicketFilter
         /** @var value-of<self::SUPPORTED_FILTERS> */
         $filter = $filter;
 
-        if (!empty($this->filters[$filter])) {
+        if ($filter !== 'label' && !empty($this->filters[$filter])) {
             throw new \UnexpectedValueException("\"{$filter}\" filter is already set");
         }
 
@@ -229,7 +255,11 @@ class TicketFilter
             $values = [$value];
         }
 
-        $this->setFilter($filter, $values);
+        if ($filter === 'label') {
+            $this->addLabelFilter($values);
+        } else {
+            $this->setFilter($filter, $values);
+        }
     }
 
     public function isSupportedFilter(string $filter): bool

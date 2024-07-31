@@ -355,6 +355,7 @@ tickets.filters.actors.select: 'Select an actor'
 tickets.filters.actors.title: 'Filter by actors'
 tickets.filters.actors.unselect: Unselect
 tickets.filters.assignee.no: 'Unassigned only'
+tickets.filters.labels.title: 'Filter by labels'
 tickets.filters.priority.title: 'Filter by priority'
 tickets.filters.status.title: 'Filter by status'
 tickets.filters.type.label: 'Type of tickets'

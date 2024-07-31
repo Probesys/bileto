@@ -44,10 +44,12 @@ class TicketsController extends BaseController
     public function index(
         Organization $organization,
         Request $request,
+        LabelRepository $labelRepository,
         OrganizationRepository $organizationRepository,
+        UserRepository $userRepository,
         TicketSearcher $ticketSearcher,
         ActorsLister $actorsLister,
-        UserRepository $userRepository,
+        LabelSorter $labelSorter,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see', $organization);
@@ -103,6 +105,9 @@ class TicketsController extends BaseController
             $ticketFilter = new TicketFilter();
         }
 
+        $labels = $labelRepository->findAll();
+        $labelSorter->sort($labels);
+
         return $this->render('organizations/tickets/index.html.twig', [
             'organization' => $organization,
             'ticketsPagination' => $ticketsPagination,
@@ -117,6 +122,7 @@ class TicketsController extends BaseController
             'finishedStatuses' => Ticket::getStatusesWithLabels('finished'),
             'allUsers' => $actorsLister->findByOrganization($organization),
             'agents' => $actorsLister->findByOrganization($organization, roleType: 'agent'),
+            'labels' => $labels,
             'errors' => $errors,
         ]);
     }
