@@ -32,6 +32,12 @@ advanced_search_syntax.qualifiers.actors.example4: 'Les tickets n’ayant pas d�
 advanced_search_syntax.qualifiers.actors.example5: 'Les tickets ayant un agent attribué'
 advanced_search_syntax.qualifiers.actors.title: Acteurs
 advanced_search_syntax.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
+advanced_search_syntax.qualifiers.labels.example1: "Les tickets avec l’étiquette «\_Bug\_» (insensible à la casse)"
+advanced_search_syntax.qualifiers.labels.example2: "Les tickets avec les étiquettes «\_Bug\_» et «\_Tickets topic\_»"
+advanced_search_syntax.qualifiers.labels.example3: "Les tickets avec les étiquettes «\_Bug\_» ou «\_Tickets topic\_»"
+advanced_search_syntax.qualifiers.labels.example4: 'Les tickets ayant au moins une étiquette'
+advanced_search_syntax.qualifiers.labels.example5: 'Les tickets n’ayant aucune étiquette'
+advanced_search_syntax.qualifiers.labels.title: Étiquettes
 advanced_search_syntax.qualifiers.organization.example1: "Les tickets des organisations dont le nom contient «\_probesys\_»"
 advanced_search_syntax.qualifiers.organization.title: Organisations
 advanced_search_syntax.qualifiers.priority.example1: "Les tickets d’urgence «\_basse\_»"

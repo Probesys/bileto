@@ -32,6 +32,12 @@ advanced_search_syntax.qualifiers.actors.example4: 'Tickets without an assigned 
 advanced_search_syntax.qualifiers.actors.example5: 'Tickets with an assigned agent'
 advanced_search_syntax.qualifiers.actors.title: Actors
 advanced_search_syntax.qualifiers.description: 'Qualifiers are special keywords (e.g. <code>status:</code>) that take a value or a comma-separated list of values. They are used to target a particular property.'
+advanced_search_syntax.qualifiers.labels.example1: 'Tickets with the label “Bug” (case insensitive)'
+advanced_search_syntax.qualifiers.labels.example2: 'Tickets with the labels “Bug” and “Tickets topic”'
+advanced_search_syntax.qualifiers.labels.example3: 'Tickets with the labels “Bug” or “Tickets topic”'
+advanced_search_syntax.qualifiers.labels.example4: 'Tickets having at least one label'
+advanced_search_syntax.qualifiers.labels.example5: 'Tickets having no labels'
+advanced_search_syntax.qualifiers.labels.title: Labels
 advanced_search_syntax.qualifiers.organization.example1: 'Tickets from organizations with “probesys” in their name'
 advanced_search_syntax.qualifiers.organization.title: Organizations
 advanced_search_syntax.qualifiers.priority.example1: 'Tickets with “low” urgency'

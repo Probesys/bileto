@@ -245,6 +245,46 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="flow">
+                <h3>{{ 'advanced_search_syntax.qualifiers.labels.title' | trans }}</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col--size30">{{ 'advanced_search_syntax.example' | trans }}</th>
+                            <th>{{ 'advanced_search_syntax.description' | trans }}</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td><code>label:bug</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example1' | trans }}</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>label:bug label:"Tickets topic"</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example2' | trans }}</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>label:bug,"Tickets topic"</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example3' | trans }}</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>has:label</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example4' | trans }}</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>no:label</code></td>
+                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example5' | trans }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="flow">
