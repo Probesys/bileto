@@ -323,21 +323,20 @@
                                                     name="labels[]"
                                                     value="{{ label.uid }}"
                                                     {{ label.uid in labelUids ? 'checked' }}
+                                                    {% if label.description %}
+                                                        aria-describedby="label-{{ label.uid }}-description"
+                                                    {% endif %}
                                                 />
 
-                                                <label for="labels-{{ label.uid }}">
-                                                    <span>
-                                                        <span class="badge badge--grey">
-                                                            {{ label.name }}
-                                                        </span>
-
-                                                        {% if label.description %}
-                                                            <span class="text--small text--secondary">
-                                                                {{ label.description }}
-                                                            </span>
-                                                        {% endif %}
-                                                    </span>
+                                                <label for="labels-{{ label.uid }}" class="badge badge--{{ label.color }}">
+                                                    {{ label.name }}
                                                 </label>
+
+                                                {% if label.description %}
+                                                    <span id="label-{{ label.uid }}-description" class="text--small text--secondary">
+                                                        {{ label.description }}
+                                                    </span>
+                                                {% endif %}
                                             </div>
                                         {% endfor %}
                                     </div>

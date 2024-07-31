@@ -50,7 +50,7 @@
                     {% if ticket.labels %}
                         <ul class="list--nostyle flow flow--inline flow--smaller text--small">
                             {% for label in ticket.labels %}
-                                <li class="badge badge--grey">
+                                <li class="badge badge--{{ label.color }}">
                                     {{ label.name }}
                                 </li>
                             {% endfor %}

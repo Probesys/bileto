@@ -27,11 +27,20 @@
                         name="{{ field_name(label) }}"
                         value="{{ field_value(label) }}"
                         {{ field_value(label) in field_value(form.labels) ? 'checked' }}
+                        {% if label.vars.attr.description %}
+                            aria-describedby="{{ field_id(label, 'description') }}"
+                        {% endif %}
                     />
 
-                    <label for="{{ field_id(label) }}">
-                        {{ field_label(label) | raw }}
+                    <label for="{{ field_id(label) }}" class="badge badge--{{ label.vars.attr.color }}">
+                        {{ field_label(label) }}
                     </label>
+
+                    {% if label.vars.attr.description %}
+                        <span id="{{ field_id(label, 'description') }}" class="text--small text--secondary">
+                            {{ label.vars.attr.description }}
+                        </span>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

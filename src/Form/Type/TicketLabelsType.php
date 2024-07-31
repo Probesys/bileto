@@ -24,17 +24,12 @@ class TicketLabelsType extends AbstractType
                 return $entityRepository->createQueryBuilder('l')
                                         ->orderBy('l.name', 'ASC');
             },
-            'choice_label' => function (Entity\Label $label): string {
-                $labelName = htmlspecialchars($label->getName(), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
-                $labelDescription = htmlspecialchars($label->getDescription(), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
-
-                $htmlLabel = "<span class=\"badge badge--grey\">{$labelName}</span>";
-
-                if ($labelDescription) {
-                    $htmlLabel .= "&nbsp;<span class=\"text--small text--secondary\">{$labelDescription}</span>";
-                }
-
-                return $htmlLabel;
+            'choice_label' => 'name',
+            'choice_attr' => function (Entity\Label $label): array {
+                return [
+                    'description' => $label->getDescription(),
+                    'color' => $label->getColor(),
+                ];
             },
             'expanded' => true,
             'multiple' => true,
