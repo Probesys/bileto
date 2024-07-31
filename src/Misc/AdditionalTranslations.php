@@ -40,3 +40,11 @@ new TranslatableMessage('roles.permissions.orga.update.tickets.priority');
 new TranslatableMessage('roles.permissions.orga.update.tickets.status');
 new TranslatableMessage('roles.permissions.orga.update.tickets.title');
 new TranslatableMessage('roles.permissions.orga.update.tickets.type');
+
+// See templates/labels/_form.html.twig
+new TranslatableMessage('common.colors.grey');
+new TranslatableMessage('common.colors.primary');
+new TranslatableMessage('common.colors.blue');
+new TranslatableMessage('common.colors.green');
+new TranslatableMessage('common.colors.orange');
+new TranslatableMessage('common.colors.red');

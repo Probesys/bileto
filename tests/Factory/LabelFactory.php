@@ -21,7 +21,6 @@ final class LabelFactory extends PersistentProxyObjectFactory
     {
         return [
             'name' => self::faker()->words(3, true),
-            'color' => self::faker()->hexColor(),
         ];
     }
 

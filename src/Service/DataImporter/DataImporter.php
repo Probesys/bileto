@@ -747,10 +747,16 @@ class DataImporter
                 $description = strval($jsonLabel['description']);
             }
 
+            $color = 'grey';
+            if (isset($jsonLabel['color'])) {
+                $color = strval($jsonLabel['color']);
+            }
+
             // Build the label
             $label = new Label();
             $label->setName($name);
             $label->setDescription($description);
+            $label->setColor($color);
 
             // Add the label to the index
             try {

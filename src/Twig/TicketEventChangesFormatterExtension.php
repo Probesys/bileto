@@ -362,13 +362,15 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
 
         $removed = array_map(function ($label): string {
             $name = $this->escape($label->getName());
-            return "<span class=\"badge badge--grey\">{$name}</span>";
+            $color = $this->escape($label->getColor());
+            return "<span class=\"badge badge--{$color}\">{$name}</span>";
         }, $removedLabels);
         $removed = implode(', ', $removed);
 
         $added = array_map(function ($label): string {
             $name = $this->escape($label->getName());
-            return "<span class=\"badge badge--grey\">{$name}</span>";
+            $color = $this->escape($label->getColor());
+            return "<span class=\"badge badge--{$color}\">{$name}</span>";
         }, $addedLabels);
         $added = implode(', ', $added);
 

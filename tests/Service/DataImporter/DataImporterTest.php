@@ -756,6 +756,7 @@ class DataImporterTest extends WebTestCase
                 'id' => '1',
                 'name' => 'My label',
                 'description' => 'My description',
+                'color' => 'primary',
             ],
         ];
 
@@ -767,6 +768,7 @@ class DataImporterTest extends WebTestCase
         $label = LabelFactory::last();
         $this->assertSame('My label', $label->getName());
         $this->assertSame('My description', $label->getDescription());
+        $this->assertSame('primary', $label->getColor());
     }
 
     public function testImportLabelsKeepsExistingLabelsInDatabase(): void

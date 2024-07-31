@@ -50,7 +50,7 @@
                 <ul class="list--padded list--border list--nostyle">
                     {% for label in labels %}
                         <li class="cols cols--baseline flow" data-test="label-item">
-                            <p class="badge badge--grey">
+                            <p class="badge badge--{{ label.color }}">
                                 {{ label.name }}
                             </p>
 

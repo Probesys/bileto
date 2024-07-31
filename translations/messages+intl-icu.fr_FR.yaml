@@ -67,6 +67,12 @@ authorizations.revoke.confirm: "Êtes-vous sûr de vouloir révoquer cette autor
 authorizations.revoke.disabled: 'Vous ne pouvez pas révoquer cette autorisation.'
 common.actions: Actions
 common.caution: "Attention\_!"
+common.colors.blue: Bleu
+common.colors.green: Vert
+common.colors.grey: Gris
+common.colors.primary: Principale
+common.colors.orange: Orange
+common.colors.red: Rouge
 contracts.alerts.edit.date_alert.after: 'jours de la fin du contrat.'
 contracts.alerts.edit.date_alert.before: 'Alerter à'
 contracts.alerts.edit.hours_alert.after: '% des heures seront consommées.'
@@ -129,6 +135,7 @@ hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_heure} other {
 hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
+labels.color: Couleur
 labels.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette étiquette\_?"
 labels.deletion.going_delete: "Vous êtes sur le point de supprimer l’étiquette «\_{label}\_». Cette étiquette sera enlevée des tickets correspondants."
 labels.deletion.submit: 'Supprimer l’étiquette'

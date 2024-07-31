@@ -26,9 +26,10 @@ class LabelType extends AbstractType
             'trim' => true,
         ]);
 
-        $builder->add('color', Type\HiddenType::class, [
-            'data' => '#e0e1e6',
-            'trim' => true,
+        $builder->add('color', Type\ChoiceType::class, [
+            'choices' => Entity\Label::COLORS,
+            'expanded' => true,
+            'multiple' => false,
         ]);
     }
 

@@ -29,6 +29,8 @@ class Label implements MonitorableEntityInterface, UidEntityInterface
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const COLORS = ['grey', 'primary', 'blue', 'green', 'orange', 'red'];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -67,11 +69,8 @@ class Label implements MonitorableEntityInterface, UidEntityInterface
     private ?string $description = null;
 
     #[ORM\Column(length: 7)]
-    #[Assert\NotBlank(
-        message: new TranslatableMessage('label.color.required', [], 'errors'),
-    )]
-    #[Assert\CssColor(
-        formats: Assert\CssColor::HEX_LONG,
+    #[Assert\Choice(
+        choices: self::COLORS,
         message: new TranslatableMessage('label.color.invalid', [], 'errors'),
     )]
     private ?string $color = null;
@@ -84,7 +83,7 @@ class Label implements MonitorableEntityInterface, UidEntityInterface
     {
         $this->name = '';
         $this->description = '';
-        $this->color = '#e0e1e6';
+        $this->color = 'grey';
         $this->tickets = new ArrayCollection();
     }
 

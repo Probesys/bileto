@@ -92,6 +92,7 @@ class LabelsControllerTest extends WebTestCase
         $this->grantAdmin($user->_real(), ['admin:manage:labels']);
         $name = 'My label';
         $description = 'My description';
+        $color = 'primary';
 
         $this->assertSame(0, LabelFactory::count());
 
@@ -100,7 +101,7 @@ class LabelsControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'label'),
                 'name' => $name,
                 'description' => $description,
-                'color' => '#e0e1e6',
+                'color' => $color,
             ],
         ]);
 
@@ -109,6 +110,7 @@ class LabelsControllerTest extends WebTestCase
         $this->assertResponseRedirects('/labels', 302);
         $this->assertSame($name, $label->getName());
         $this->assertSame($description, $label->getDescription());
+        $this->assertSame($color, $label->getColor());
         $this->assertSame(20, strlen($label->getUid()));
     }
 
@@ -127,7 +129,7 @@ class LabelsControllerTest extends WebTestCase
             'label' => [
                 '_token' => $this->generateCsrfToken($client, 'label'),
                 'name' => $name,
-                'color' => '#e0e1e6',
+                'color' => 'grey',
             ],
         ]);
 
@@ -150,11 +152,32 @@ class LabelsControllerTest extends WebTestCase
             'label' => [
                 '_token' => $this->generateCsrfToken($client, 'label'),
                 'name' => $name,
-                'color' => '#e0e1e6',
+                'color' => 'grey',
             ],
         ]);
 
         $this->assertSelectorTextContains('#label_name-error', 'Enter a name');
+        $this->assertSame(0, LabelFactory::count());
+    }
+
+    public function testPostCreateFailsIfColorIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:labels']);
+        $name = 'My label';
+        $color = 'not a color';
+
+        $crawler = $client->request(Request::METHOD_POST, '/labels/new', [
+            'label' => [
+                '_token' => $this->generateCsrfToken($client, 'label'),
+                'name' => $name,
+                'color' => $color,
+            ],
+        ]);
+
+        $this->assertSelectorTextContains('#label_color-error', 'The selected choice is invalid');
         $this->assertSame(0, LabelFactory::count());
     }
 
@@ -170,7 +193,7 @@ class LabelsControllerTest extends WebTestCase
             'label' => [
                 '_token' => 'not a token',
                 'name' => $name,
-                'color' => '#e0e1e6',
+                'color' => 'grey',
             ],
         ]);
 
@@ -192,7 +215,7 @@ class LabelsControllerTest extends WebTestCase
             'label' => [
                 '_token' => $this->generateCsrfToken($client, 'label'),
                 'name' => $name,
-                'color' => '#e0e1e6',
+                'color' => 'grey',
             ],
         ]);
     }
@@ -234,9 +257,12 @@ class LabelsControllerTest extends WebTestCase
         $newName = 'My label';
         $initialDescription = 'description';
         $newDescription = 'My description';
+        $initialColor = 'primary';
+        $newColor = 'red';
         $label = LabelFactory::createOne([
             'name' => $initialName,
             'description' => $initialDescription,
+            'color' => $initialColor,
         ]);
 
         $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/edit", [
@@ -244,7 +270,7 @@ class LabelsControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'label'),
                 'name' => $newName,
                 'description' => $newDescription,
-                'color' => '#e0e1e6',
+                'color' => $newColor,
             ],
         ]);
 
@@ -252,6 +278,7 @@ class LabelsControllerTest extends WebTestCase
         $label->_refresh();
         $this->assertSame($newName, $label->getName());
         $this->assertSame($newDescription, $label->getDescription());
+        $this->assertSame($newColor, $label->getColor());
     }
 
     public function testPostUpdateFailsIfNameIsAlreadyUsed(): void
@@ -273,7 +300,7 @@ class LabelsControllerTest extends WebTestCase
             'label' => [
                 '_token' => $this->generateCsrfToken($client, 'label'),
                 'name' => $newName,
-                'color' => '#e0e1e6',
+                'color' => 'grey',
             ],
         ]);
 
@@ -302,7 +329,7 @@ class LabelsControllerTest extends WebTestCase
             'label' => [
                 '_token' => 'not a token',
                 'name' => $newName,
-                'color' => '#e0e1e6',
+                'color' => 'grey',
             ],
         ]);
 
@@ -330,7 +357,7 @@ class LabelsControllerTest extends WebTestCase
             'label' => [
                 '_token' => $this->generateCsrfToken($client, 'label'),
                 'name' => $newName,
-                'color' => '#e0e1e6',
+                'color' => 'grey',
             ],
         ]);
     }
