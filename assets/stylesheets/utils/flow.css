@@ -25,3 +25,10 @@
 .flow > * + * {
     margin-top: var(--flow-size);
 }
+
+.flow--inline > * {
+    display: inline-block;
+    margin-top: 0;
+    margin-right: var(--flow-size);
+    margin-bottom: var(--flow-size);
+}
