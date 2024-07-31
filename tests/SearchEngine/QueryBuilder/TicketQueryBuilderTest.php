@@ -538,6 +538,18 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertTrue(empty($parameters));
     }
 
+    public function testBuildQueryWithQualifierNoContract(): void
+    {
+        $query = SearchEngine\Query::fromString('no:contract');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            t.contracts IS EMPTY
+            SQL, $dql);
+        $this->assertTrue(empty($parameters));
+    }
+
     public function testBuildQueryWithQualifierHasAssignee(): void
     {
         $query = SearchEngine\Query::fromString('has:assignee');
@@ -558,6 +570,18 @@ class TicketQueryBuilderTest extends WebTestCase
 
         $this->assertSame(<<<SQL
             t.solution IS NOT NULL
+            SQL, $dql);
+        $this->assertTrue(empty($parameters));
+    }
+
+    public function testBuildQueryWithQualifierHasContract(): void
+    {
+        $query = SearchEngine\Query::fromString('has:contract');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            t.contracts IS NOT EMPTY
             SQL, $dql);
         $this->assertTrue(empty($parameters));
     }

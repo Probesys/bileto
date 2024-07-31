@@ -184,8 +184,12 @@ class TicketQueryBuilder
             return $this->buildManyToManyExpr('contracts', $value, $condition->not());
         } elseif ($qualifier === 'no' && ($value === 'assignee' || $value === 'solution')) {
             return $this->buildExpr('t.' . $value, null, $condition->not());
+        } elseif ($qualifier === 'no' && $value === 'contract') {
+            return $this->buildEmptyExpr('t.contracts', $condition->not());
         } elseif ($qualifier === 'has' && ($value === 'assignee' || $value === 'solution')) {
             return $this->buildExpr('t.' . $value, null, !$condition->not());
+        } elseif ($qualifier === 'has' && $value === 'contract') {
+            return $this->buildEmptyExpr('t.contracts', !$condition->not());
         } else {
             if (is_array($value)) {
                 $value = implode(',', $value);
@@ -226,6 +230,18 @@ class TicketQueryBuilder
         } else {
             $key = $this->registerParameter($value);
             return "{$field} = :{$key}";
+        }
+    }
+
+    /**
+     * @param literal-string $field
+     */
+    private function buildEmptyExpr(string $field, bool $not): string
+    {
+        if ($not) {
+            return "{$field} IS NOT EMPTY";
+        } else {
+            return "{$field} IS EMPTY";
         }
     }
 

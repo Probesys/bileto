@@ -271,6 +271,56 @@ class TicketSearcherTest extends WebTestCase
         $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
     }
 
+    public function testGetTicketsCanGetTicketsWithAContract(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $contract = ContractFactory::createOne();
+        $ticket1 = TicketFactory::createOne([
+            'assignee' => $user,
+            'contracts' => [$contract],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'assignee' => $user,
+            'contracts' => [],
+        ]);
+
+        $query = Query::fromString('has:contract');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanGetTicketsWithoutAContract(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $contract = ContractFactory::createOne();
+        $ticket1 = TicketFactory::createOne([
+            'assignee' => $user,
+            'contracts' => [$contract],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'assignee' => $user,
+            'contracts' => [],
+        ]);
+
+        $query = Query::fromString('no:contract');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
+    }
+
     public function testGetTicketsReturnsTicketMatchingAQuery(): void
     {
         $client = static::createClient();
