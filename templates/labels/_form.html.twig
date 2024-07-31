@@ -58,6 +58,32 @@
         />
     </div>
 
+    <fieldset>
+        <legend>{{ 'labels.color' | trans }}</legend>
+
+        <div class="flow flow--small">
+            {{ form_errors(form.color) }}
+
+            <div class="flow flow--inline flow--smaller">
+                {% for color in form.color %}
+                    <span>
+                        <input
+                            type="radio"
+                            id="{{ field_id(color) }}"
+                            name="{{ field_name(color) }}"
+                            value="{{ field_value(color) }}"
+                            {{ field_value(color) == field_value(form.color) ? 'checked' }}
+                        />
+
+                        <label for="{{ field_id(color) }}" class="badge badge--big badge--{{ field_value(color) }}">
+                            {{ ("common.colors." ~ field_value(color)) | trans }}
+                        </label>
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
     <div class="form__actions">
         <button class="button--primary" type="submit">
             {{ submit_label }}

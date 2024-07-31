@@ -67,6 +67,12 @@ authorizations.revoke.confirm: 'Are you sure that you want to revoke this author
 authorizations.revoke.disabled: 'You can’t revoke this authorization.'
 common.actions: Actions
 common.caution: Caution!
+common.colors.blue: Blue
+common.colors.green: Green
+common.colors.grey: Grey
+common.colors.primary: Primary
+common.colors.orange: Orange
+common.colors.red: Red
 contracts.alerts.edit.date_alert.after: 'days before the end of the contract.'
 contracts.alerts.edit.date_alert.before: Alert
 contracts.alerts.edit.hours_alert.after: '% of the hours have been consumed.'
@@ -129,6 +135,7 @@ hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_hour} other {#
 hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
 hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
+labels.color: Color
 labels.deletion.confirm: 'Are you sure that you want to delete this label?'
 labels.deletion.going_delete: 'You’re going to delete the “{label}” label. This label will be removed from the relevant tickets.'
 labels.deletion.submit: 'Delete the label'
