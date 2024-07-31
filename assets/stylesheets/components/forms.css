@@ -172,11 +172,11 @@ input[type="radio"]:checked + label::after {
     content: "";
 
     position: absolute;
-    left: 0.20rem;
 
     width: var(--checkbox-tick-size);
     height: calc(var(--checkbox-tick-size) / 2);
     margin-top: -0.15rem;
+    margin-left: 0.2rem;
 
     border-bottom: var(--checkbox-tick-width) solid var(--checkbox-tick-color);
     border-left: var(--checkbox-tick-width) solid var(--checkbox-tick-color);
