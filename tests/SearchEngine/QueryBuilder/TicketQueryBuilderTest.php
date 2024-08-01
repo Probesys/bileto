@@ -51,17 +51,6 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertStringNotContainsString('LEFT JOIN t.team', $dql);
     }
 
-    public function testCreateWithInvolves(): void
-    {
-        $query = SearchEngine\Query::fromString('involves:@me');
-
-        $queryBuilder = $this->ticketQueryBuilder->create([$query]);
-
-        $dql = $queryBuilder->getDQL();
-        $this->assertStringContainsString('LEFT JOIN t.team', $dql);
-        $this->assertStringContainsString('LEFT JOIN t_team.agents', $dql);
-    }
-
     public function testBuildQueryWithText(): void
     {
         $query = SearchEngine\Query::fromString('Foo');
@@ -333,27 +322,12 @@ class TicketQueryBuilderTest extends WebTestCase
 
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
-        $this->assertSame(<<<SQL
-            (t.assignee = :q0p0 OR t_agents.id = :q0p1 OR t.requester = :q0p2)
-            SQL, $dql);
+        $this->assertStringContainsString('COALESCE(IDENTITY(t.assignee), 0) = :q0p0', $dql);
+        $this->assertStringContainsString('COALESCE(IDENTITY(t.requester), 0) = :q0p1', $dql);
+        $this->assertStringContainsString('COALESCE(IDENTITY(t.team), 0) IN (', $dql);
         $this->assertSame($alix->getId(), $parameters['q0p0']);
         $this->assertSame($alix->getId(), $parameters['q0p1']);
-    }
-
-    public function testBuildQueryWithQualifierInvolvesAndNot(): void
-    {
-        $alix = UserFactory::createOne([
-            'name' => 'Alix Hambourg',
-        ])->_real();
-        $query = SearchEngine\Query::fromString('-involves:alix');
-
-        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
-
-        $this->assertSame(<<<SQL
-            NOT (t.assignee = :q0p0 OR t_agents.id = :q0p1 OR t.requester = :q0p2)
-            SQL, $dql);
-        $this->assertSame($alix->getId(), $parameters['q0p0']);
-        $this->assertSame($alix->getId(), $parameters['q0p1']);
+        $this->assertSame($alix->getId(), $parameters['q0p2']);
     }
 
     public function testBuildQueryWithQualifierOrg(): void
@@ -447,9 +421,9 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $expectedDql = 't.id IN (';
-        $expectedDql .= 'SELECT sub_t0.id FROM App\Entity\Ticket sub_t0 ';
-        $expectedDql .= 'INNER JOIN sub_t0.contracts sub_t0_contracts ';
-        $expectedDql .= 'WHERE sub_t0_contracts.id = :q0p0';
+        $expectedDql .= 'SELECT sub_table_0.id FROM App\Entity\Ticket sub_table_0 ';
+        $expectedDql .= 'INNER JOIN sub_table_0.contracts sub_table_0_contracts ';
+        $expectedDql .= 'WHERE sub_table_0_contracts.id = :q0p0';
         $expectedDql .= ')';
         $this->assertSame($expectedDql, $dql);
         $this->assertSame(1, $parameters['q0p0']);
@@ -465,9 +439,9 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $expectedDql = 't.id IN (';
-        $expectedDql .= 'SELECT sub_t0.id FROM App\Entity\Ticket sub_t0 ';
-        $expectedDql .= 'INNER JOIN sub_t0.labels sub_t0_labels ';
-        $expectedDql .= 'WHERE sub_t0_labels.id = :q0p0';
+        $expectedDql .= 'SELECT sub_table_0.id FROM App\Entity\Ticket sub_table_0 ';
+        $expectedDql .= 'INNER JOIN sub_table_0.labels sub_table_0_labels ';
+        $expectedDql .= 'WHERE sub_table_0_labels.id = :q0p0';
         $expectedDql .= ')';
         $this->assertSame($expectedDql, $dql);
         $this->assertSame($label->getId(), $parameters['q0p0']);

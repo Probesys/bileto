@@ -83,43 +83,6 @@ class TicketSearcherTest extends WebTestCase
         $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
     }
 
-    public function testGetTicketsReturnsTicketWithDistinct(): void
-    {
-        // In the case of a ticket assigned to a team AND an agent of this
-        // team, AND that the team has several agents, AND that there are at
-        // least as many tickets as the maxResults option, some tickets may be
-        // missing without the SQL "distinct" clause.
-
-        $client = static::createClient();
-        $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        list($user, $otherUser) = UserFactory::createMany(2);
-        $client->loginUser($user->_real());
-        $team = TeamFactory::createOne([
-            'agents' => [$user, $otherUser],
-        ]);
-        $organization = OrganizationFactory::createOne();
-        $this->grantTeam($team->_real(), ['orga:see'], $organization->_real());
-        TicketFactory::createOne([
-            'organization' => $organization,
-            'team' => $team,
-            'assignee' => $user,
-        ]);
-        TicketFactory::createOne([
-            'organization' => $organization,
-            'team' => $team,
-            'assignee' => $user,
-        ]);
-
-        $ticketsPagination = $ticketSearcher->getTickets(paginationOptions: [
-            'page' => 0,
-            'maxResults' => 2,
-        ]);
-
-        $this->assertSame(2, $ticketsPagination->count);
-    }
-
     public function testGetTicketsDoesNotReturnTicketNotInvolvingUser(): void
     {
         $client = static::createClient();
@@ -199,18 +162,22 @@ class TicketSearcherTest extends WebTestCase
         $this->assertContains($ticket2->getId(), $ticketIds);
     }
 
-    public function testGetTicketsCanReturnTicketNotInvolvingUserIfAccessIsGiven(): void
+    public function testGetTicketsCanReturnTicketsNotInvolvingUserIfAccessIsGiven(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
         /** @var TicketSearcher $ticketSearcher */
         $ticketSearcher = $container->get(TicketSearcher::class);
         $user = UserFactory::createOne();
+        $otherUser = UserFactory::createOne();
         $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->_real(), ['orga:see:tickets:all'], $organization->_real());
+        $this->grantOrga($user->_real(), ['orga:see:tickets:all']);
         $ticket = TicketFactory::createOne([
             'organization' => $organization,
+            'requester' => $otherUser,
+            'assignee' => null,
+            'team' => null,
         ]);
         $ticketSearcher->setOrganization($organization->_real());
 
@@ -218,6 +185,53 @@ class TicketSearcherTest extends WebTestCase
 
         $this->assertSame(1, $ticketsPagination->count);
         $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanLimitToTicketsNotInvolvingUser(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $otherUser = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see:tickets:all']);
+        $userTeam = TeamFactory::createOne([
+            'agents' => [$user],
+        ]);
+        $ticket1 = TicketFactory::createOne([
+            'organization' => $organization,
+            'requester' => $user,
+            'assignee' => null,
+            'team' => null,
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'organization' => $organization,
+            'requester' => $otherUser,
+            'assignee' => $user,
+            'team' => null,
+        ]);
+        $ticket3 = TicketFactory::createOne([
+            'organization' => $organization,
+            'requester' => $otherUser,
+            'assignee' => null,
+            'team' => $userTeam,
+        ]);
+        $ticket4 = TicketFactory::createOne([
+            'organization' => $organization,
+            'requester' => $otherUser,
+            'assignee' => null,
+            'team' => null,
+        ]);
+        $ticketSearcher->setOrganization($organization->_real());
+
+        $query = Query::fromString('NOT involves:@me');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket4->getId(), $ticketsPagination->items[0]->getId());
     }
 
     public function testGetTicketsCanRestrictToAGivenContract(): void

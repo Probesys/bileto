@@ -39,12 +39,6 @@ class TicketQueryBuilder
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder->select('t');
         $queryBuilder->from('App\Entity\Ticket', 't');
-        $queryBuilder->distinct();
-
-        if ($this->mustIncludeTeamAgents($queries)) {
-            $queryBuilder->leftJoin('t.team', 't_team');
-            $queryBuilder->leftJoin('t_team.agents', 't_agents');
-        }
 
         $this->subBuilderSequence = 0;
 
@@ -160,10 +154,15 @@ class TicketQueryBuilder
             return $this->buildExpr('t.' . $qualifier, $value, $condition->not());
         } elseif ($qualifier === 'involves') {
             $value = $this->processActorQualifier($value);
-            $assigneeWhere = $this->buildExpr('t.assignee', $value, false);
-            $teamWhere = $this->buildExpr('t_agents.id', $value, false);
-            $requesterWhere = $this->buildExpr('t.requester', $value, false);
-            $where = "{$assigneeWhere} OR {$teamWhere} OR {$requesterWhere}";
+
+            $assigneeWhere = $this->buildExpr('COALESCE(IDENTITY(t.assignee), 0)', $value, false);
+            $requesterWhere = $this->buildExpr('COALESCE(IDENTITY(t.requester), 0)', $value, false);
+
+            $subTeamBuilder = $this->buildManyToManyQueryBuilder('App\Entity\Team', 'agents', $value);
+            $teamWhere = "COALESCE(IDENTITY(t.team), 0) IN ({$subTeamBuilder->getDQL()})";
+
+            $where = "{$assigneeWhere} OR {$requesterWhere} OR {$teamWhere}";
+
             if ($condition->not()) {
                 return "NOT ({$where})";
             } else {
@@ -182,10 +181,24 @@ class TicketQueryBuilder
             return $this->buildExpr('t.' . $qualifier, $value, $condition->not());
         } elseif ($qualifier === 'contract') {
             $value = $this->processContractQualifier($value);
-            return $this->buildManyToManyExpr('contracts', $value, $condition->not());
+
+            $subBuilder = $this->buildManyToManyQueryBuilder('App\Entity\Ticket', 'contracts', $value);
+
+            if ($condition->not()) {
+                return "t.id NOT IN ({$subBuilder->getDQL()})";
+            } else {
+                return "t.id IN ({$subBuilder->getDQL()})";
+            }
         } elseif ($qualifier === 'label') {
             $value = $this->processLabelQualifier($value);
-            return $this->buildManyToManyExpr('labels', $value, $condition->not());
+
+            $subBuilder = $this->buildManyToManyQueryBuilder('App\Entity\Ticket', 'labels', $value);
+
+            if ($condition->not()) {
+                return "t.id NOT IN ({$subBuilder->getDQL()})";
+            } else {
+                return "t.id IN ({$subBuilder->getDQL()})";
+            }
         } elseif ($qualifier === 'no' && ($value === 'assignee' || $value === 'solution')) {
             return $this->buildExpr('t.' . $value, null, $condition->not());
         } elseif ($qualifier === 'no' && $value === 'contract') {
@@ -256,24 +269,6 @@ class TicketQueryBuilder
     /**
      * @param literal-string $field
      */
-    private function buildManyToManyExpr(string $field, mixed $value, bool $not): string
-    {
-        list ($subBuilderName, $subBuilder) = $this->createSubBuilder();
-        $subBuilder->innerJoin("{$subBuilderName}.{$field}", "{$subBuilderName}_{$field}");
-
-        $expr = $this->buildExpr("{$subBuilderName}_{$field}.id", $value, false);
-        $subBuilder->where($expr);
-
-        if ($not) {
-            return "t.id NOT IN ({$subBuilder->getDQL()})";
-        } else {
-            return "t.id IN ({$subBuilder->getDQL()})";
-        }
-    }
-
-    /**
-     * @param literal-string $field
-     */
     private function buildExprLike(string $field, string $value, bool $not): string
     {
         $value = mb_strtolower($value);
@@ -283,6 +278,21 @@ class TicketQueryBuilder
         } else {
             return "LOWER({$field}) LIKE :{$key}";
         }
+    }
+
+    /**
+     * @param class-string $entity
+     * @param literal-string $field
+     */
+    private function buildManyToManyQueryBuilder(string $entity, string $field, mixed $value): ORM\QueryBuilder
+    {
+        list ($subBuilderName, $subBuilder) = $this->createSubBuilder($entity);
+        $subBuilder->innerJoin("{$subBuilderName}.{$field}", "{$subBuilderName}_{$field}");
+
+        $expr = $this->buildExpr("{$subBuilderName}_{$field}.id", $value, false);
+        $subBuilder->where($expr);
+
+        return $subBuilder;
     }
 
     /**
@@ -479,37 +489,19 @@ class TicketQueryBuilder
     }
 
     /**
-     * @param SearchEngine\Query[] $queries
-     */
-    private function mustIncludeTeamAgents(array $queries): bool
-    {
-        return Utils\ArrayHelper::any($queries, function ($query): bool {
-            return $this->includesQualifier($query, 'involves');
-        });
-    }
-
-    private function includesQualifier(SearchEngine\Query $query, string $qualifier): bool
-    {
-        return Utils\ArrayHelper::any($query->getConditions(), function ($condition) use ($qualifier): bool {
-            return (
-                ($condition->isQualifierCondition() && $condition->getQualifier() === $qualifier) ||
-                ($condition->isQueryCondition() && $this->includesQualifier($condition->getQuery(), $qualifier))
-            );
-        });
-    }
-
-    /**
+     * @param class-string $entity
+     *
      * @return array{literal-string, ORM\QueryBuilder}
      */
-    private function createSubBuilder(): array
+    private function createSubBuilder(string $entity): array
     {
         /** @var literal-string */
-        $subBuilderName = "sub_t{$this->subBuilderSequence}";
+        $subBuilderName = "sub_table_{$this->subBuilderSequence}";
         $this->subBuilderSequence += 1;
 
         $subBuilder = $this->entityManager->createQueryBuilder();
         $subBuilder->select("{$subBuilderName}.id");
-        $subBuilder->from('App\Entity\Ticket', $subBuilderName);
+        $subBuilder->from($entity, $subBuilderName);
 
         return [$subBuilderName, $subBuilder];
     }
