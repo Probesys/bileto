@@ -147,6 +147,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
 
     /** @var Collection<int, Label> */
     #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'tickets')]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     private Collection $labels;
 
     public function __construct()
