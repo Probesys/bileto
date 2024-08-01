@@ -234,6 +234,37 @@ class TicketSearcherTest extends WebTestCase
         $this->assertSame($ticket4->getId(), $ticketsPagination->items[0]->getId());
     }
 
+    public function testGetTicketsCanLimitToTicketsNotAssignedToUser(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $otherUser = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = OrganizationFactory::createOne();
+        $ticket1 = TicketFactory::createOne([
+            'requester' => $user,
+            'assignee' => null,
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'requester' => $user,
+            'assignee' => $otherUser,
+        ]);
+        $ticket3 = TicketFactory::createOne([
+            'requester' => $user,
+            'assignee' => $user,
+        ]);
+
+        $query = Query::fromString('NOT assignee:@me');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(2, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
+        $this->assertSame($ticket2->getId(), $ticketsPagination->items[1]->getId());
+    }
+
     public function testGetTicketsCanRestrictToAGivenContract(): void
     {
         $client = static::createClient();

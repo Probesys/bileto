@@ -151,7 +151,8 @@ class TicketQueryBuilder
             return $this->buildExpr('t.status', $value, $condition->not());
         } elseif ($qualifier === 'assignee' || $qualifier === 'requester') {
             $value = $this->processActorQualifier($value);
-            return $this->buildExpr('t.' . $qualifier, $value, $condition->not());
+            $field = "COALESCE(IDENTITY(t.{$qualifier}), 0)";
+            return $this->buildExpr($field, $value, $condition->not());
         } elseif ($qualifier === 'involves') {
             $value = $this->processActorQualifier($value);
 

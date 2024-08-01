@@ -236,7 +236,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            t.assignee = :q0p0
+            COALESCE(IDENTITY(t.assignee), 0) = :q0p0
             SQL, $dql);
         $this->assertSame($alix->getId(), $parameters['q0p0']);
     }
@@ -251,7 +251,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            t.assignee = :q0p0
+            COALESCE(IDENTITY(t.assignee), 0) = :q0p0
             SQL, $dql);
         $this->assertSame($alix->getId(), $parameters['q0p0']);
     }
@@ -263,7 +263,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            t.assignee = :q0p0
+            COALESCE(IDENTITY(t.assignee), 0) = :q0p0
             SQL, $dql);
         $this->assertSame($this->currentUser->getId(), $parameters['q0p0']);
     }
@@ -278,7 +278,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            t.assignee IN (:q0p0)
+            COALESCE(IDENTITY(t.assignee), 0) IN (:q0p0)
             SQL, $dql);
         $this->assertSame(
             [$alix->getId(), $this->currentUser->getId()],
@@ -293,7 +293,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            t.assignee = :q0p0
+            COALESCE(IDENTITY(t.assignee), 0) = :q0p0
             SQL, $dql);
         $this->assertSame(-1, $parameters['q0p0']);
     }
@@ -308,7 +308,7 @@ class TicketQueryBuilderTest extends WebTestCase
         list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
 
         $this->assertSame(<<<SQL
-            t.requester = :q0p0
+            COALESCE(IDENTITY(t.requester), 0) = :q0p0
             SQL, $dql);
         $this->assertSame($alix->getId(), $parameters['q0p0']);
     }
