@@ -269,6 +269,8 @@ class UsersController extends BaseController
 
         $userRepository->save($user, true);
 
-        return $this->redirectToRoute('users');
+        return $this->redirectToRoute('user', [
+            'uid' => $user->getUid(),
+        ]);
     }
 }

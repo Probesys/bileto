@@ -302,7 +302,7 @@ class UsersControllerTest extends WebTestCase
             'organization' => $newOrganization->getUid(),
         ]);
 
-        $this->assertResponseRedirects('/users', 302);
+        $this->assertResponseRedirects("/users/{$otherUser->getUid()}", 302);
         $otherUser->_refresh();
         $this->assertSame($newEmail, $otherUser->getEmail());
         $this->assertSame($newName, $otherUser->getName());
@@ -341,7 +341,7 @@ class UsersControllerTest extends WebTestCase
             'organization' => $newOrganization->getUid(),
         ]);
 
-        $this->assertResponseRedirects('/users', 302);
+        $this->assertResponseRedirects("/users/{$otherUser->getUid()}", 302);
         $otherUser->_refresh();
         $this->assertSame($newEmail, $otherUser->getEmail());
         $this->assertSame($newName, $otherUser->getName());
@@ -384,7 +384,7 @@ class UsersControllerTest extends WebTestCase
             'ldapIdentifier' => $newLdapIdentifier,
         ]);
 
-        $this->assertResponseRedirects('/users', 302);
+        $this->assertResponseRedirects("/users/{$otherUser->getUid()}", 302);
         $otherUser->_refresh();
         $this->assertSame($oldEmail, $otherUser->getEmail());
         $this->assertSame($oldName, $otherUser->getName());
@@ -423,7 +423,7 @@ class UsersControllerTest extends WebTestCase
             'organization' => '',
         ]);
 
-        $this->assertResponseRedirects('/users', 302);
+        $this->assertResponseRedirects("/users/{$otherUser->getUid()}", 302);
         $otherUser->_refresh();
         $this->assertSame($newEmail, $otherUser->getEmail());
         $this->assertSame($newName, $otherUser->getName());
