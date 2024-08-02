@@ -12,6 +12,8 @@ use App\Entity\Label;
 use App\Entity\Message;
 use App\Entity\Organization;
 use App\Entity\Role;
+use App\Entity\Team;
+use App\Entity\TeamAuthorization;
 use App\Entity\Ticket;
 use App\Entity\TimeSpent;
 use App\Entity\User;
@@ -19,6 +21,7 @@ use App\Repository\ContractRepository;
 use App\Repository\LabelRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\RoleRepository;
+use App\Repository\TeamRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Service\MessageDocumentStorage;
@@ -105,6 +108,9 @@ class DataImporter
     /** @var Index<User> */
     private Index $indexUsers;
 
+    /** @var Index<Team> */
+    private Index $indexTeams;
+
     /** @var Index<Contract> */
     private Index $indexContracts;
 
@@ -130,6 +136,7 @@ class DataImporter
         private LabelRepository $labelRepository,
         private OrganizationRepository $organizationRepository,
         private RoleRepository $roleRepository,
+        private TeamRepository $teamRepository,
         private TicketRepository $ticketRepository,
         private UserRepository $userRepository,
         private EntityManagerInterface $entityManager,
@@ -185,6 +192,13 @@ class DataImporter
             yield "The file users.json is missing, so ignoring users.\n";
         }
 
+        $teams = [];
+        if (file_exists("{$tmpPath}/teams.json")) {
+            $teams = FSHelper::readJson("{$tmpPath}/teams.json");
+        } else {
+            yield "The file teams.json is missing, so ignoring teams.\n";
+        }
+
         $contracts = [];
         if (file_exists("{$tmpPath}/contracts.json")) {
             $contracts = FSHelper::readJson("{$tmpPath}/contracts.json");
@@ -221,6 +235,7 @@ class DataImporter
                 organizations: $organizations,
                 roles: $roles,
                 users: $users,
+                teams: $teams,
                 contracts: $contracts,
                 labels: $labels,
                 tickets: $tickets,
@@ -245,6 +260,7 @@ class DataImporter
      * @param mixed[] $organizations
      * @param mixed[] $roles
      * @param mixed[] $users
+     * @param mixed[] $teams
      * @param mixed[] $contracts
      * @param mixed[] $labels
      * @param mixed[] $tickets
@@ -256,6 +272,7 @@ class DataImporter
         array $organizations = [],
         array $roles = [],
         array $users = [],
+        array $teams = [],
         array $contracts = [],
         array $labels = [],
         array $tickets = [],
@@ -268,6 +285,7 @@ class DataImporter
         $this->indexOrganizations = new Index();
         $this->indexRoles = new Index();
         $this->indexUsers = new Index();
+        $this->indexTeams = new Index();
         $this->indexContracts = new Index();
         $this->indexLabels = new Index();
         $this->indexTickets = new Index();
@@ -277,6 +295,7 @@ class DataImporter
         yield from $this->processOrganizations($organizations);
         yield from $this->processRoles($roles);
         yield from $this->processUsers($users);
+        yield from $this->processTeams($teams);
         yield from $this->processContracts($contracts);
         yield from $this->processLabels($labels);
         yield from $this->processTickets($tickets);
@@ -288,6 +307,7 @@ class DataImporter
         yield from $this->saveEntities($this->indexOrganizations->list());
         yield from $this->saveEntities($this->indexRoles->list());
         yield from $this->saveEntities($this->indexUsers->list());
+        yield from $this->saveEntities($this->indexTeams->list());
         yield from $this->saveEntities($this->indexContracts->list());
         yield from $this->saveEntities($this->indexLabels->list());
         yield from $this->saveEntities($this->indexTickets->list());
@@ -463,7 +483,7 @@ class DataImporter
         ];
 
         foreach ($json as $jsonUser) {
-            // Check the structure of the role
+            // Check the structure of the user
             $error = self::checkStructure($jsonUser, required: $requiredFields);
             if ($error) {
                 $this->errors[] = "Users file contains invalid data: {$error}";
@@ -602,6 +622,130 @@ class DataImporter
 
             // Add the authorization to the user
             $user->addAuthorization($authorization);
+        }
+    }
+
+    /**
+     * @phpstan-impure
+     *
+     * @param mixed[] $json
+     *
+     * @return \Generator<int, string, void, void>
+     */
+    private function processTeams(array $json): \Generator
+    {
+        yield 'Processing teams… ';
+
+        $requiredFields = [
+            'id',
+            'name',
+        ];
+
+        foreach ($json as $jsonTeam) {
+            // Check the structure of the team
+            $error = self::checkStructure($jsonTeam, required: $requiredFields);
+            if ($error) {
+                $this->errors[] = "Teams file contains invalid data: {$error}";
+                continue;
+            }
+
+            $id = strval($jsonTeam['id']);
+            $name = strval($jsonTeam['name']);
+
+            $teamAuthorizations = [];
+            if (isset($jsonTeam['teamAuthorizations'])) {
+                $teamAuthorizations = $jsonTeam['teamAuthorizations'];
+            }
+
+            // Build the team
+            $team = new Team();
+            $team->setName($name);
+
+            // Check and set references
+            if (is_array($teamAuthorizations)) {
+                $this->processTeamAuthorizations($id, $team, $teamAuthorizations);
+            } else {
+                $this->errors[] = "Team {$id} error: teamAuthorizations: not an array.";
+            }
+
+            // Add the team to the index
+            try {
+                $this->indexTeams->add($id, $team, uniqueKey: $name);
+            } catch (IndexError $e) {
+                $this->errors[] = "Team {$id} error: {$e->getMessage()}";
+            }
+        }
+
+        // Load existing values from the database and update the indexes
+        $existingTeams = $this->teamRepository->findAll();
+        foreach ($existingTeams as $team) {
+            $name = $team->getName();
+            $this->indexTeams->refreshUnique($team, uniqueKey: $name);
+        }
+
+        // Validate the teams
+        foreach ($this->indexTeams->list() as $id => $team) {
+            $error = $this->validate($team);
+            if ($error) {
+                $this->errors[] = "Team {$id} error: {$error}";
+            }
+        }
+
+        yield "ok\n";
+    }
+
+    /**
+     * @phpstan-impure
+     *
+     * @param mixed[] $json
+     */
+    private function processTeamAuthorizations(string $teamId, Team $team, array $json): void
+    {
+        $requiredFields = [
+            'roleId',
+        ];
+
+        foreach ($json as $jsonTeamAuthorization) {
+            // Check the structure of the teamAuthorization
+            $error = self::checkStructure($jsonTeamAuthorization, required: $requiredFields);
+            if ($error) {
+                $this->errors[] = "Team {$teamId} error: teamAuthorizations: {$error}";
+                continue;
+            }
+
+            $roleId = strval($jsonTeamAuthorization['roleId']);
+
+            $organizationId = null;
+            if (isset($jsonTeamAuthorization['organizationId'])) {
+                $organizationId = strval($jsonTeamAuthorization['organizationId']);
+            }
+
+            // Build the authorization
+            $teamAuthorization = new TeamAuthorization();
+
+            // Check and set references
+            $role = $this->indexRoles->get($roleId);
+
+            if ($role) {
+                $teamAuthorization->setRole($role);
+            } else {
+                $this->errors[] = "Team {$teamId} error: teamAuthorizations: "
+                                . "references an unknown role {$roleId}";
+            }
+
+            if ($organizationId) {
+                $organization = $this->indexOrganizations->get($organizationId);
+
+                if ($organization) {
+                    $teamAuthorization->setOrganization($organization);
+                } else {
+                    $this->errors[] = "Team {$teamId} error: teamAuthorizations: "
+                                    . "references an unknown organization {$organizationId}";
+                }
+            }
+
+            // Add the authorization to the team
+            $team->addTeamAuthorization($teamAuthorization);
         }
     }
 

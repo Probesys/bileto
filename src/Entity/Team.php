@@ -64,7 +64,11 @@ class Team implements MonitorableEntityInterface, UidEntityInterface
     private Collection $agents;
 
     /** @var Collection<int, TeamAuthorization> */
-    #[ORM\OneToMany(mappedBy: 'team', targetEntity: TeamAuthorization::class)]
+    #[ORM\OneToMany(
+        mappedBy: 'team',
+        targetEntity: TeamAuthorization::class,
+        cascade: ['persist'],
+    )]
     private Collection $teamAuthorizations;
 
     public function __construct()
@@ -131,5 +135,15 @@ class Team implements MonitorableEntityInterface, UidEntityInterface
     public function getTeamAuthorizations(): Collection
     {
         return $this->teamAuthorizations;
+    }
+
+    public function addTeamAuthorization(TeamAuthorization $teamAuthorization): static
+    {
+        if (!$this->teamAuthorizations->contains($teamAuthorization)) {
+            $this->teamAuthorizations->add($teamAuthorization);
+            $teamAuthorization->setTeam($this);
+        }
+
+        return $this;
     }
 }

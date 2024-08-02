@@ -14,6 +14,7 @@ use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\MessageDocumentFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\RoleFactory;
+use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\Before;
@@ -568,6 +569,206 @@ class DataImporterTest extends WebTestCase
         ));
 
         $this->assertSame(0, UserFactory::count());
+    }
+
+    public function testImportTeams(): void
+    {
+        $organizations = [
+            [
+                'id' => '1',
+                'name' => 'My organization',
+            ],
+        ];
+        $roles = [
+            [
+                'id' => '1',
+                'name' => 'My role',
+                'description' => 'Role description',
+                'type' => 'agent',
+            ],
+        ];
+        $users = [
+            [
+                'id' => '1',
+                'email' => 'alix@example.com',
+            ],
+        ];
+        $teams = [
+            [
+                'id' => '1',
+                'name' => 'My team',
+                'teamAuthorizations' => [
+                    [
+                        'roleId' => '1',
+                        'organizationId' => '1',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            organizations: $organizations,
+            roles: $roles,
+            users: $users,
+            teams: $teams,
+        ));
+
+        $this->assertSame(1, TeamFactory::count());
+        $team = TeamFactory::last();
+        $this->assertSame('My team', $team->getName());
+        $teamAuthorizations = $team->getTeamAuthorizations();
+        $this->assertSame(1, count($teamAuthorizations));
+        $authOrganization = $teamAuthorizations[0]->getOrganization();
+        $authRole = $teamAuthorizations[0]->getRole();
+        $this->assertNotNull($authOrganization);
+        $this->assertSame('My organization', $authOrganization->getName());
+        $this->assertSame('My role', $authRole->getName());
+    }
+
+    public function testImportTeamsKeepsExistingTeamsInDatabase(): void
+    {
+        $existingTeam = TeamFactory::createOne([
+            'name' => 'My team',
+        ]);
+
+        $teams = [
+            [
+                'id' => '1',
+                'name' => 'My team',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            teams: $teams,
+        ));
+
+        $this->assertSame(1, TeamFactory::count());
+        $team = TeamFactory::last();
+        $this->assertSame($existingTeam->getUid(), $team->getUid());
+    }
+
+    public function testImportTeamsFailsIfIdIsDuplicatedInFile(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Team 1 error: id is duplicated');
+
+        $teams = [
+            [
+                'id' => '1',
+                'name' => 'My team 1',
+            ],
+            [
+                'id' => '1',
+                'name' => 'My team 2',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            teams: $teams,
+        ));
+
+        $this->assertSame(0, TeamFactory::count());
+    }
+
+    public function testImportTeamsFailsIfNameIsDuplicatedInFile(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Team 2 error: duplicates id 1');
+
+        $teams = [
+            [
+                'id' => '1',
+                'name' => 'My team',
+            ],
+            [
+                'id' => '2',
+                'name' => 'My team',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            teams: $teams,
+        ));
+
+        $this->assertSame(0, TeamFactory::count());
+    }
+
+    public function testImportTeamsFailsIfNameIsInvalid(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Team 1 error: Enter a name');
+
+        $teams = [
+            [
+                'id' => '1',
+                'name' => '',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            teams: $teams,
+        ));
+
+        $this->assertSame(0, TeamFactory::count());
+    }
+
+    public function testImportTeamsFailsIfTeamAuthorizationRefersToUnknownRole(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Team 1 error: teamAuthorizations: references an unknown role 1');
+
+        $teams = [
+            [
+                'id' => '1',
+                'name' => 'My team',
+                'teamAuthorizations' => [
+                    [
+                        'roleId' => '1',
+                        'organizationId' => null,
+                    ],
+                ],
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            teams: $teams,
+        ));
+
+        $this->assertSame(0, TeamFactory::count());
+    }
+
+    public function testImportTeamsFailsIfTeamAuthorizationRefersToUnknownOrganization(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Team 1 error: teamAuthorizations: references an unknown organization 1');
+
+        $roles = [
+            [
+                'id' => '1',
+                'name' => 'My role',
+                'description' => 'Role description',
+                'type' => 'agent',
+            ],
+        ];
+        $teams = [
+            [
+                'id' => '1',
+                'name' => 'My team',
+                'teamAuthorizations' => [
+                    [
+                        'roleId' => '1',
+                        'organizationId' => '1',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            roles: $roles,
+            teams: $teams,
+        ));
+
+        $this->assertSame(0, TeamFactory::count());
     }
 
     public function testImportContracts(): void

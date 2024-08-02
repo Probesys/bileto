@@ -55,7 +55,7 @@ The data is stored in a ZIP archive. It contains several files:
   - name: string (unique, not empty, max 50 chars)
   - description: string (not empty, max 255 chars)
   - type: string (must be `super`, `admin`, `agent`, or `user`, `super` must be unique)
-  - permissions: array of string, optional (see `Role::PERMISSIONS` for the list of valid strings)
+  - permissions: array of strings, optional (see `Role::PERMISSIONS` for the list of valid strings)
 - `users.json` an array of users defined as:
   - id: string (unique)
   - email: string (unique, not empty, valid email)
@@ -64,6 +64,12 @@ The data is stored in a ZIP archive. It contains several files:
   - ldapIdentifier: string or null, optional
   - organizationId: string or null, optional (reference to an organization)
   - authorizations: array of, optional:
+    - roleId: string (reference to a role)
+    - organizationId: string or null (reference to an organization)
+- `teams.json` an array of teams defined as:
+  - id: string (unique)
+  - name: string (unique, not empty, max 50 chars)
+  - teamAuthorizations: array of, optional:
     - roleId: string (reference to a role)
     - organizationId: string or null (reference to an organization)
 - `contracts.json` an array of contracts defined as:
@@ -98,8 +104,8 @@ It also contains a `tickets/` folder where each file corresponds to a ticket. Fo
 - assigneeId: string or null, optional (reference to a user)
 - organizationId: string (reference to an organization)
 - solutionId: string or null, optional (reference to a message, included in ticket.messages)
-- contractIds: array of string, optional (references to contracts)
-- labelIds: array of string, optional (references to labels)
+- contractIds: array of strings, optional (references to contracts)
+- labelIds: array of strings, optional (references to labels)
 - timeSpents: array of, optional:
   - createdAt: datetime
   - createdById: string (reference to a user)
@@ -129,7 +135,7 @@ A file (or folder) can be missing. In this case, it is considered that there is 
 
 When importing the data, some elements may already exist in the database (e.g. users have been imported from LDAP, or the command failed the first time after importing part of the data).
 
-We can easily detect existing data for organizations, roles, users and labels. Indeed, these entities require the uniqueness of a field (name or email). Thus, if we detect that a corresponding entity already exists (using the unique field), we can load the entity from the database to reuse it.
+We can easily detect existing data for organizations, roles, users, teams and labels. Indeed, these entities require the uniqueness of a field (name or email). Thus, if we detect that a corresponding entity already exists (using the unique field), we can load the entity from the database to reuse it.
 
 Contracts and tickets are harder to handle as there is no unique field that could help us to detect existing data. Custom logic can be used though:
 
