@@ -17,6 +17,7 @@
 
 - [ ] code is manually tested
 - [ ] permissions / authorizations are verified
+- [ ] data can be imported correctly
 - [ ] interface works on both mobiles and big screens
 - [ ] interface works in both light and dark modes
 - [ ] interface works on both Firefox and Chrome

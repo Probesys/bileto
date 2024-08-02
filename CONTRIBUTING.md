@@ -83,6 +83,12 @@ Bileto is based on a custom system of roles.
 This system is explained in the document [“Roles & permissions”](/docs/developers/roles.md).
 This item reminds you to put the required actions behind an authorization.
 
+#### “Data can be imported correctly”
+
+When new entities or fields are created, we need to consider making this data importable by [the `DataImporter` service](/src/Service/DataImporter/DataImporter.php).
+However, not all data needs to be imported.
+If fields are changed or removed, the service needs to be adjusted as well.
+
 #### “Interface works on both mobile and big screen”
 
 We want Bileto to work on desktop and mobiles.
