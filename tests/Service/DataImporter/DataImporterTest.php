@@ -55,6 +55,7 @@ class DataImporterTest extends WebTestCase
             [
                 'id' => '1',
                 'name' => 'Foo',
+                'domains' => ['example.org', '*'],
             ],
         ];
 
@@ -63,6 +64,7 @@ class DataImporterTest extends WebTestCase
         $this->assertSame(1, OrganizationFactory::count());
         $organization = OrganizationFactory::last();
         $this->assertSame('Foo', $organization->getName());
+        $this->assertEquals(['example.org', '*'], $organization->getDomains());
     }
 
     public function testImportOrganizationsKeepsExistingOrganizationsInDatabase(): void
@@ -136,6 +138,46 @@ class DataImporterTest extends WebTestCase
             [
                 'id' => '1',
                 'name' => '',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(organizations: $organizations));
+
+        $this->assertSame(0, OrganizationFactory::count());
+    }
+
+    public function testImportOrganizationsFailsIfDomainsAreDuplicated(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Organization 1 error: The domain example.org is already used');
+
+        $exisitingOrganization = OrganizationFactory::createOne([
+            'domains' => ['example.org'],
+        ]);
+
+        $organizations = [
+            [
+                'id' => '1',
+                'name' => 'Foo',
+                'domains' => ['example.org'],
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(organizations: $organizations));
+
+        $this->assertSame(0, OrganizationFactory::count());
+    }
+
+    public function testImportOrganizationsFailsIfDomainsAreInvalid(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Organization 1 error: The domain not a domain is invalid');
+
+        $organizations = [
+            [
+                'id' => '1',
+                'name' => 'Foo',
+                'domains' => ['not a domain'],
             ],
         ];
 

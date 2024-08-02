@@ -321,9 +321,20 @@ class DataImporter
             $id = strval($jsonOrganization['id']);
             $name = strval($jsonOrganization['name']);
 
+            $domains = [];
+            if (isset($jsonOrganization['domains'])) {
+                $domains = $jsonOrganization['domains'];
+            }
+
             // Build the organization
             $organization = new Organization();
             $organization->setName($name);
+
+            if (is_array($domains)) {
+                $organization->setDomains($domains);
+            } else {
+                $this->errors[] = "Organization {$id} error: domains: not an array.";
+            }
 
             // Add the organization to the index
             try {

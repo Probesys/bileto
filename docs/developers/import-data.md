@@ -49,6 +49,7 @@ The data is stored in a ZIP archive. It contains several files:
 - `organizations.json` an array of organizations defined as:
   - id: string (unique)
   - name: string (unique, not empty, max 255 chars)
+  - domains: array of strings (each must be unique and valid domains)
 - `roles.json` an array of roles defined as:
   - id: string (unique)
   - name: string (unique, not empty, max 50 chars)
