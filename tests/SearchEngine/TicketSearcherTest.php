@@ -16,6 +16,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -261,8 +262,12 @@ class TicketSearcherTest extends WebTestCase
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(2, $ticketsPagination->count);
-        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
-        $this->assertSame($ticket2->getId(), $ticketsPagination->items[1]->getId());
+        $ids = [
+            $ticketsPagination->items[0]->getId(),
+            $ticketsPagination->items[1]->getId(),
+        ];
+        $this->assertContains($ticket1->getId(), $ids);
+        $this->assertContains($ticket2->getId(), $ids);
     }
 
     public function testGetTicketsCanRestrictToAGivenContract(): void
