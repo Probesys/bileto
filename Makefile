@@ -124,7 +124,7 @@ icons: ## Build the icons asset
 
 .PHONY: test
 test: ## Run the test suite
-	$(PHP) ./bin/phpunit \
+	$(PHP) ./vendor/bin/phpunit \
 		-c .phpunit.xml.dist \
 		--testdox \
 		$(COVERAGE) \
