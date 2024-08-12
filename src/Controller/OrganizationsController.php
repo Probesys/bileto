@@ -7,7 +7,7 @@
 namespace App\Controller;
 
 use App\Entity\Organization;
-use App\Form\Type\OrganizationType;
+use App\Form;
 use App\Repository\OrganizationRepository;
 use App\Security\Authorizer;
 use App\Service\Sorter\OrganizationSorter;
@@ -45,7 +45,7 @@ class OrganizationsController extends BaseController
         $this->denyAccessUnlessGranted('admin:create:organizations');
 
         $organization = new Organization();
-        $form = $this->createForm(OrganizationType::class, $organization);
+        $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
 
         return $this->render('organizations/new.html.twig', [
             'form' => $form,
@@ -61,7 +61,7 @@ class OrganizationsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:create:organizations');
 
-        $form = $this->createForm(OrganizationType::class);
+        $form = $this->createNamedForm('organization', Form\OrganizationForm::class);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
@@ -94,7 +94,7 @@ class OrganizationsController extends BaseController
     {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
 
-        $form = $this->createForm(OrganizationType::class, $organization);
+        $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
 
         return $this->render('organizations/settings.html.twig', [
             'organization' => $organization,
@@ -112,7 +112,7 @@ class OrganizationsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
 
-        $form = $this->createForm(OrganizationType::class, $organization);
+        $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {

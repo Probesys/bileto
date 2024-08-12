@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Form\Type;
+namespace App\Form;
 
 use App\Entity;
 use Symfony\Component\Form\AbstractType;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RoleType extends AbstractType
+class RoleForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

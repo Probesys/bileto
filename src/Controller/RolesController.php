@@ -69,7 +69,7 @@ class RolesController extends BaseController
             $role->setIsDefault(true);
         }
 
-        $form = $this->createForm(Form\Type\RoleType::class, $role, [
+        $form = $this->createNamedForm('role', Form\RoleForm::class, $role, [
             'type' => $type,
         ]);
 
@@ -92,7 +92,7 @@ class RolesController extends BaseController
             $type = 'user';
         }
 
-        $form = $this->createForm(Form\Type\RoleType::class, options: [
+        $form = $this->createNamedForm('role', Form\RoleForm::class, options: [
             'type' => $type,
         ]);
         $form->handleRequest($request);
@@ -122,7 +122,7 @@ class RolesController extends BaseController
             throw $this->createNotFoundException('Super Role object cannot be loaded.');
         }
 
-        $form = $this->createForm(Form\Type\RoleType::class, $role, [
+        $form = $this->createNamedForm('role', Form\RoleForm::class, $role, [
             'type' => $role->getType(),
         ]);
 
@@ -144,7 +144,7 @@ class RolesController extends BaseController
             throw $this->createNotFoundException('Super Role object cannot be loaded.');
         }
 
-        $form = $this->createForm(Form\Type\RoleType::class, $role, options: [
+        $form = $this->createNamedForm('role', Form\RoleForm::class, $role, options: [
             'type' => $role->getType(),
         ]);
         $form->handleRequest($request);

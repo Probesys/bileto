@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Form\Type;
+namespace App\Form;
 
 use App\Entity;
 use App\Utils;
@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ContractType extends AbstractType
+class ContractForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

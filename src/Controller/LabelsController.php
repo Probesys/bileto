@@ -37,7 +37,7 @@ class LabelsController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:labels');
 
         $label = new Label();
-        $form = $this->createForm(Form\Type\LabelType::class, $label);
+        $form = $this->createNamedForm('label', Form\LabelForm::class, $label);
 
         return $this->render('labels/new.html.twig', [
             'form' => $form,
@@ -51,7 +51,7 @@ class LabelsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:labels');
 
-        $form = $this->createForm(Form\Type\LabelType::class);
+        $form = $this->createNamedForm('label', Form\LabelForm::class);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
@@ -71,7 +71,7 @@ class LabelsController extends BaseController
     {
         $this->denyAccessUnlessGranted('admin:manage:labels');
 
-        $form = $this->createForm(Form\Type\LabelType::class, $label);
+        $form = $this->createNamedForm('label', Form\LabelForm::class, $label);
 
         return $this->render('labels/edit.html.twig', [
             'label' => $label,
@@ -87,7 +87,7 @@ class LabelsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:labels');
 
-        $form = $this->createForm(Form\Type\LabelType::class, $label);
+        $form = $this->createNamedForm('label', Form\LabelForm::class, $label);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {

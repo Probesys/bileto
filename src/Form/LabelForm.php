@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Form\Type;
+namespace App\Form;
 
 use App\Entity;
 use Symfony\Component\Form\AbstractType;
@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TeamType extends AbstractType
+class LabelForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -20,13 +20,24 @@ class TeamType extends AbstractType
             'empty_data' => '',
             'trim' => true,
         ]);
+
+        $builder->add('description', Type\TextType::class, [
+            'empty_data' => '',
+            'trim' => true,
+        ]);
+
+        $builder->add('color', Type\ChoiceType::class, [
+            'choices' => Entity\Label::COLORS,
+            'expanded' => true,
+            'multiple' => false,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Entity\Team::class,
-            'csrf_token_id' => 'team',
+            'data_class' => Entity\Label::class,
+            'csrf_token_id' => 'label',
             'csrf_message' => 'csrf.invalid',
         ]);
     }

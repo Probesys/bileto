@@ -7,7 +7,7 @@
 namespace App\Controller;
 
 use App\Entity\Team;
-use App\Form\Type\TeamType;
+use App\Form;
 use App\Repository\TeamRepository;
 use App\Service\Sorter\AuthorizationSorter;
 use App\Service\Sorter\TeamSorter;
@@ -40,7 +40,7 @@ class TeamsController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         $team = new Team();
-        $form = $this->createForm(TeamType::class, $team);
+        $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
 
         return $this->render('teams/new.html.twig', [
             'form' => $form,
@@ -54,7 +54,7 @@ class TeamsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
-        $form = $this->createForm(TeamType::class);
+        $form = $this->createNamedForm('team', Form\TeamForm::class);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
@@ -97,7 +97,7 @@ class TeamsController extends BaseController
     {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
-        $form = $this->createForm(TeamType::class, $team);
+        $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
 
         return $this->render('teams/edit.html.twig', [
             'team' => $team,
@@ -113,7 +113,7 @@ class TeamsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
-        $form = $this->createForm(TeamType::class, $team);
+        $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {

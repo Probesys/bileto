@@ -30,7 +30,7 @@ class LabelsController extends BaseController
             $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
         }
 
-        $form = $this->createForm(Form\Type\TicketLabelsType::class, $ticket);
+        $form = $this->createNamedForm('ticket_labels', Form\Ticket\LabelsForm::class, $ticket);
 
         return $this->render('tickets/labels/edit.html.twig', [
             'ticket' => $ticket,
@@ -58,7 +58,7 @@ class LabelsController extends BaseController
         $initialLabels = $ticket->getLabels()->toArray();
         $initialLabelsIds = array_map(fn (Entity\Label $label): int => $label->getId(), $initialLabels);
 
-        $form = $this->createForm(Form\Type\TicketLabelsType::class, $ticket);
+        $form = $this->createNamedForm('ticket_labels', Form\Ticket\LabelsForm::class, $ticket);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {

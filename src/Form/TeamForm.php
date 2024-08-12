@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Form\Type;
+namespace App\Form;
 
 use App\Entity;
 use Symfony\Component\Form\AbstractType;
@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OrganizationType extends AbstractType
+class TeamForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -20,21 +20,13 @@ class OrganizationType extends AbstractType
             'empty_data' => '',
             'trim' => true,
         ]);
-        $builder->add('domains', Type\CollectionType::class, [
-            'entry_type' => Type\TextType::class,
-            'entry_options' => [
-                'trim' => true,
-            ],
-            'allow_add' => true,
-            'allow_delete' => true,
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Entity\Organization::class,
-            'csrf_token_id' => 'organization',
+            'data_class' => Entity\Team::class,
+            'csrf_token_id' => 'team',
             'csrf_message' => 'csrf.invalid',
         ]);
     }

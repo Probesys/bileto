@@ -7,6 +7,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
@@ -38,5 +39,10 @@ class BaseController extends AbstractController
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    protected function createNamedForm(string $name, string $type, mixed $data = null, array $options = []): FormInterface
+    {
+        return $this->container->get('form.factory')->createNamed($name, $type, $data, $options);
     }
 }

@@ -8,7 +8,7 @@ namespace App\Controller;
 
 use App\Controller\BaseController;
 use App\Entity\Contract;
-use App\Form\Type\ContractType;
+use App\Form;
 use App\Repository\ContractRepository;
 use App\Repository\OrganizationRepository;
 use App\Security\Authorizer;
@@ -75,7 +75,7 @@ class ContractsController extends BaseController
 
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $form = $this->createForm(ContractType::class, $contract);
+        $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract);
 
         return $this->render('contracts/edit.html.twig', [
             'organization' => $organization,
@@ -95,7 +95,7 @@ class ContractsController extends BaseController
 
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $form = $this->createForm(ContractType::class, $contract);
+        $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {

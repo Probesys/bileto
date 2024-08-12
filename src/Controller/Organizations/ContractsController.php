@@ -10,7 +10,7 @@ use App\Controller\BaseController;
 use App\Entity\Contract;
 use App\Entity\EntityEvent;
 use App\Entity\Organization;
-use App\Form\Type\ContractType;
+use App\Form;
 use App\Repository\ContractRepository;
 use App\Repository\EntityEventRepository;
 use App\Repository\OrganizationRepository;
@@ -81,7 +81,7 @@ class ContractsController extends BaseController
             $contract = new Contract();
         }
 
-        $form = $this->createForm(ContractType::class, $contract);
+        $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract);
 
         return $this->render('organizations/contracts/new.html.twig', [
             'organization' => $organization,
@@ -103,7 +103,7 @@ class ContractsController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $form = $this->createForm(ContractType::class);
+        $form = $this->createNamedForm('contract', Form\ContractForm::class);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
