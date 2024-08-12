@@ -7,7 +7,7 @@
 namespace App\Tests\Service;
 
 use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Service\ValidationException;
 use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\RoleFactory;
@@ -152,7 +152,7 @@ class UserCreatorTest extends WebTestCase
 
     public function testCreateFailsOnError(): void
     {
-        $this->expectException(UserCreatorException::class);
+        $this->expectException(ValidationException::class);
 
         $email = 'not an email';
 

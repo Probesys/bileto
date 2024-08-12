@@ -10,7 +10,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Ldap;
 use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Service\ValidationException;
 use App\Utils\ConstraintErrorsFormatter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -126,7 +126,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
                         name: $ldapUser->getName(),
                         ldapIdentifier: $ldapUser->getLdapIdentifier(),
                     );
-                } catch (UserCreatorException $e) {
+                } catch (ValidationException $e) {
                     $errors = implode(' ', ConstraintErrorsFormatter::format($e->getErrors()));
                     $this->logger->error("Can't create LDAP user: {$errors}");
 

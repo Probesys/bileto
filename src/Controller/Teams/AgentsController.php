@@ -13,7 +13,7 @@ use App\Repository\UserRepository;
 use App\Service\ActorsLister;
 use App\Service\TeamService;
 use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Service\ValidationException;
 use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -86,7 +86,7 @@ class AgentsController extends BaseController
                     email: $agentEmail,
                     locale: $currentUser->getLocale(),
                 );
-            } catch (UserCreatorException $e) {
+            } catch (ValidationException $e) {
                 return $this->renderBadRequest('teams/agents/new.html.twig', [
                     'team' => $team,
                     'agents' => $agents,

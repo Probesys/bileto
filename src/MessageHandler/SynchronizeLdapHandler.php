@@ -11,7 +11,7 @@ use App\Message\SynchronizeLdap;
 use App\Repository\UserRepository;
 use App\Service\Ldap;
 use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Service\ValidationException;
 use App\Utils\ConstraintErrorsFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -74,7 +74,7 @@ class SynchronizeLdapHandler
                     );
 
                     $countCreated += 1;
-                } catch (UserCreatorException $e) {
+                } catch (ValidationException $e) {
                     $errors = ConstraintErrorsFormatter::format($e->getErrors());
                 }
             }

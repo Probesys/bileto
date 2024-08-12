@@ -26,7 +26,7 @@ use App\Security\Encryptor;
 use App\Service\MessageDocumentStorage;
 use App\Service\MessageDocumentStorageError;
 use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Service\ValidationException;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
 use App\Utils;
@@ -78,7 +78,7 @@ class CreateTicketsFromMailboxEmailsHandler
             if (!$requester && $domainOrganization) {
                 try {
                     $requester = $this->userCreator->create(email: $senderEmail);
-                } catch (UserCreatorException $e) {
+                } catch (ValidationException $e) {
                     $errors = Utils\ConstraintErrorsFormatter::format($e->getErrors());
                     $errors = implode(' ', $errors);
                     $this->markError($mailboxEmail, 'cannot create sender: ' . $errors);

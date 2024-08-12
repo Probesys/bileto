@@ -6,7 +6,7 @@ Instead, you must use the [`UserCreator` service](/src/Service/UserCreator.php):
 
 ```php
 use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Service\ValidationException;
 
 public function createUser(UserCreator $userCreator)
 {
@@ -20,7 +20,7 @@ public function createUser(UserCreator $userCreator)
             name: $name,
             password: $password,
         );
-    } catch (UserCreatorException $e) {
+    } catch (ValidationException $e) {
         $errors = $e->getErrors();
         // Do something with the errors, such as displaying them in a form.
     }

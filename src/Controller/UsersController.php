@@ -14,7 +14,7 @@ use App\Service\Sorter\AuthorizationSorter;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\Sorter\UserSorter;
 use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Service\ValidationException;
 use App\Utils\ConstraintErrorsFormatter;
 use App\Utils\Time;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -109,7 +109,7 @@ class UsersController extends BaseController
                 locale: $user->getLocale(),
                 organization: $organization,
             );
-        } catch (UserCreatorException $e) {
+        } catch (ValidationException $e) {
             return $this->renderBadRequest('users/new.html.twig', [
                 'organizations' => $organizations,
                 'email' => $email,

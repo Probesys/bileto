@@ -10,7 +10,7 @@ use App\Entity;
 use App\Repository\RoleRepository;
 use App\Repository\AuthorizationRepository;
 use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Service\ValidationException;
 use App\Utils\Time;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -76,7 +76,7 @@ class CreateCommand extends Command
                 email: $email,
                 password: $password,
             );
-        } catch (UserCreatorException $e) {
+        } catch (ValidationException $e) {
             $output = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
             foreach ($e->getErrors() as $error) {
                 $output->writeln($error->getMessage());

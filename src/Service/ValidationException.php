@@ -1,14 +1,18 @@
 <?php
 
+// This file is part of Bileto.
+// Copyright 2022-2024 Probesys
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 namespace App\Service;
 
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class UserCreatorException extends \RuntimeException
+class ValidationException extends \RuntimeException
 {
     public function __construct(
         private ConstraintViolationListInterface $errors,
-        string $message = '',
+        string $message = 'The entity cannot be saved because of validation constraint(s).',
         int $code = 0,
     ) {
         parent::__construct($message, $code);

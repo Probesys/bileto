@@ -51,7 +51,7 @@ class UserCreator
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
-            throw new UserCreatorException($errors);
+            throw new ValidationException($errors);
         }
 
         $this->userRepository->save($user, $flush);
