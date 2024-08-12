@@ -657,7 +657,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertNull($ticket->getAssignee());
     }
 
-    public function testPostCreateFailsIfRequesterIsNotInOrganization(): void
+    public function testPostCreateDefaultsToUserIfRequesterIsNotInOrganization(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
         $client = static::createClient();
@@ -684,9 +684,10 @@ class TicketsControllerTest extends WebTestCase
             'message' => $messageContent,
         ]);
 
-        $this->assertSame(0, TicketFactory::count());
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+        $ticket = TicketFactory::last();
+        $this->assertSame($user->getId(), $ticket->getRequester()->getId());
     }
 
     public function testPostCreateFailsIfTitleIsEmpty(): void
@@ -786,39 +787,6 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame(0, TicketFactory::count());
         $this->assertSame(0, MessageFactory::count());
         $this->assertSelectorTextContains('#message-error', 'Enter a message');
-    }
-
-    public function testPostCreateFailsIfRequesterIsInvalid(): void
-    {
-        $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets',
-            'orga:update:tickets:status',
-            'orga:update:tickets:type',
-            'orga:update:tickets:actors',
-            'orga:update:tickets:priority',
-        ], $organization->_real());
-        $title = 'My ticket';
-        $messageContent = 'My message';
-
-        $this->assertSame(0, TicketFactory::count());
-
-        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
-            'title' => $title,
-            'requesterUid' => 'not an uid',
-            'message' => $messageContent,
-        ]);
-
-        Time::unfreeze();
-        $this->assertSame(0, TicketFactory::count());
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void

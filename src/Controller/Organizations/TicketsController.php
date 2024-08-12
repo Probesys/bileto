@@ -24,6 +24,8 @@ use App\Security\Authorizer;
 use App\Service\ActorsLister;
 use App\Service\Sorter\LabelSorter;
 use App\Service\Sorter\TeamSorter;
+use App\Service\TicketService;
+use App\Service\ValidationException;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
 use App\Utils\ArrayHelper;
@@ -171,94 +173,41 @@ class TicketsController extends BaseController
     public function create(
         Organization $organization,
         Request $request,
-        ContractRepository $contractRepository,
         LabelRepository $labelRepository,
         MessageRepository $messageRepository,
         OrganizationRepository $organizationRepository,
         TeamRepository $teamRepository,
         TicketRepository $ticketRepository,
         UserRepository $userRepository,
-        ActorsLister $actorsLister,
-        LabelSorter $labelSorter,
-        TeamSorter $teamSorter,
-        Authorizer $authorizer,
-        ValidatorInterface $validator,
-        HtmlSanitizerInterface $appMessageSanitizer,
+        TicketService $ticketService,
         TranslatorInterface $translator,
-        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
 
-        /** @var \App\Entity\User $user */
+        /** @var \App\Entity\User */
         $user = $this->getUser();
 
-        /** @var string $title */
-        $title = $request->request->get('title', '');
+        $title = $request->request->getString('title', '');
+        $messageContent = $request->request->getString('message', '');
+        $requesterUid = $request->request->getString('requesterUid', '');
+        $teamUid = $request->request->getString('teamUid', '');
+        $assigneeUid = $request->request->getString('assigneeUid', '');
+        $type = $request->request->getString('type', Ticket::DEFAULT_TYPE);
+        $urgency = $request->request->getString('urgency', Ticket::DEFAULT_WEIGHT);
+        $impact = $request->request->getString('impact', Ticket::DEFAULT_WEIGHT);
+        $priority = $request->request->getString('priority', Ticket::DEFAULT_WEIGHT);
+        /** @var string[] */
+        $labelUids = $request->request->all('labels');
+        $isResolved = $request->request->getBoolean('isResolved', false);
 
-        /** @var string $messageContent */
-        $messageContent = $request->request->get('message', '');
-        $messageContent = $appMessageSanitizer->sanitize($messageContent);
+        $csrfToken = $request->request->getString('_csrf_token', '');
 
-        if ($authorizer->isGranted('orga:update:tickets:type', $organization)) {
-            /** @var string $type */
-            $type = $request->request->get('type', Ticket::DEFAULT_TYPE);
-        } else {
-            $type = Ticket::DEFAULT_TYPE;
-        }
+        $ticketService->setOrganization($organization);
 
-        if ($authorizer->isGranted('orga:update:tickets:actors', $organization)) {
-            /** @var string $requesterUid */
-            $requesterUid = $request->request->get('requesterUid', '');
-
-            /** @var string $teamUid */
-            $teamUid = $request->request->get('teamUid', '');
-
-            /** @var string $assigneeUid */
-            $assigneeUid = $request->request->get('assigneeUid', '');
-        } else {
-            $requesterUid = $user->getUid();
-            $assigneeUid = '';
-            $teamUid = '';
-        }
-
-        if ($authorizer->isGranted('orga:update:tickets:priority', $organization)) {
-            /** @var string $urgency */
-            $urgency = $request->request->get('urgency', Ticket::DEFAULT_WEIGHT);
-
-            /** @var string $impact */
-            $impact = $request->request->get('impact', Ticket::DEFAULT_WEIGHT);
-
-            /** @var string $priority */
-            $priority = $request->request->get('priority', Ticket::DEFAULT_WEIGHT);
-        } else {
-            $urgency = Ticket::DEFAULT_WEIGHT;
-            $impact = Ticket::DEFAULT_WEIGHT;
-            $priority = Ticket::DEFAULT_WEIGHT;
-        }
-
-        if ($authorizer->isGranted('orga:update:tickets:labels', $organization)) {
-            /** @var string[] */
-            $labelUids = $request->request->all('labels');
-        } else {
-            $labelUids = [];
-        }
-
-        if ($authorizer->isGranted('orga:update:tickets:status', $organization)) {
-            $isResolved = $request->request->getBoolean('isResolved', false);
-        } else {
-            $isResolved = false;
-        }
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        $allUsers = $actorsLister->findByOrganization($organization);
-        $agents = $actorsLister->findByOrganization($organization, roleType: 'agent');
-        $teams = $teamRepository->findByOrganization($organization);
-        $teamSorter->sort($teams);
-
-        $allLabels = $labelRepository->findAll();
-        $labelSorter->sort($allLabels);
+        $allUsers = $ticketService->getAllUsers();
+        $teams = $ticketService->getTeams();
+        $agents = $ticketService->getAgents();
+        $allLabels = $ticketService->getLabels();
 
         $requester = ArrayHelper::find($allUsers, function ($user) use ($requesterUid): bool {
             return $user->getUid() === $requesterUid;
@@ -305,19 +254,24 @@ class TicketsController extends BaseController
             ]);
         }
 
-        $ticket = new Ticket();
-        $ticket->setTitle($title);
-        $ticket->setType($type);
-        $ticket->setUrgency($urgency);
-        $ticket->setImpact($impact);
-        $ticket->setPriority($priority);
-        $ticket->setOrganization($organization);
-        $ticket->setRequester($requester);
-        $ticket->setTeam($team);
-        $ticket->setLabels($labels);
-
-        $errors = $validator->validate($ticket);
-        if (count($errors) > 0) {
+        try {
+            $ticket = $ticketService->createTicket(
+                $user,
+                $title,
+                $messageContent,
+                organization: $organization,
+                requester: $requester,
+                team: $team,
+                assignee: $assignee,
+                type: $type,
+                via: 'webapp',
+                urgency: $urgency,
+                impact: $impact,
+                priority: $priority,
+                labels: $labels,
+                isResolved: $isResolved,
+            );
+        } catch (ValidationException $e) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [
                 'organization' => $organization,
                 'title' => $title,
@@ -335,60 +289,8 @@ class TicketsController extends BaseController
                 'agents' => $agents,
                 'allLabels' => $allLabels,
                 'labelUids' => $labelUids,
-                'errors' => ConstraintErrorsFormatter::format($errors),
+                'errors' => ConstraintErrorsFormatter::format($e->getErrors()),
             ]);
-        }
-
-        $message = new Message();
-        $message->setContent($messageContent);
-        $message->setTicket($ticket);
-        $message->setIsConfidential(false);
-        $message->setVia('webapp');
-
-        $errors = $validator->validate($message);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('organizations/tickets/new.html.twig', [
-                'organization' => $organization,
-                'title' => $title,
-                'message' => $messageContent,
-                'type' => $type,
-                'requesterUid' => $requesterUid,
-                'teamUid' => $teamUid,
-                'assigneeUid' => $assigneeUid,
-                'isResolved' => $isResolved,
-                'urgency' => $urgency,
-                'impact' => $impact,
-                'priority' => $priority,
-                'allUsers' => $allUsers,
-                'teams' => $teams,
-                'agents' => $agents,
-                'allLabels' => $allLabels,
-                'labelUids' => $labelUids,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
-        $ticketRepository->save($ticket, true);
-        $messageRepository->save($message, true);
-
-        $ticketEvent = new TicketEvent($ticket);
-        $eventDispatcher->dispatch($ticketEvent, TicketEvent::CREATED);
-
-        $messageEvent = new MessageEvent($message);
-        $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
-
-        if ($assignee) {
-            $ticket->setAssignee($assignee);
-            $ticketRepository->save($ticket, true);
-
-            $eventDispatcher->dispatch($ticketEvent, TicketEvent::ASSIGNED);
-        }
-
-        if ($isResolved) {
-            $ticket->setStatus('resolved');
-            $ticketRepository->save($ticket, true);
-
-            $eventDispatcher->dispatch($ticketEvent, TicketEvent::RESOLVED);
         }
 
         return $this->redirectToRoute('ticket', [
