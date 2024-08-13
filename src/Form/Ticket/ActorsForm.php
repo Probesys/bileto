@@ -38,6 +38,11 @@ class ActorsForm extends AbstractType
                 'organization' => $organization,
                 'roleType' => 'agent',
             ]);
+
+            $form->add('observers', Type\ActorType::class, [
+                'organization' => $organization,
+                'multiple' => true,
+            ]);
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {

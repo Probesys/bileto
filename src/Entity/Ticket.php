@@ -117,6 +117,10 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Team $team = null;
 
+    /** @var Collection<int, User> */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    private Collection $observers;
+
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Organization $organization = null;
@@ -156,6 +160,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         $this->contracts = new ArrayCollection();
         $this->timeSpents = new ArrayCollection();
         $this->labels = new ArrayCollection();
+        $this->observers = new ArrayCollection();
     }
 
     public function getType(): ?string
@@ -356,6 +361,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
             $this->createdBy->getId() === $userId ||
             ($this->requester && $this->requester->getId() === $userId) ||
             ($this->assignee && $this->assignee->getId() === $userId) ||
+            $this->observers->contains($user) ||
             ($this->team && $this->team->hasAgent($user))
         );
     }
@@ -581,6 +587,30 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         foreach ($labels as $label) {
             $this->labels->add($label);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getObservers(): Collection
+    {
+        return $this->observers;
+    }
+
+    public function addObserver(User $observer): static
+    {
+        if (!$this->observers->contains($observer)) {
+            $this->observers->add($observer);
+        }
+
+        return $this;
+    }
+
+    public function removeObserver(User $observer): static
+    {
+        $this->observers->removeElement($observer);
 
         return $this;
     }

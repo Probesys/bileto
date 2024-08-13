@@ -7,11 +7,9 @@
 namespace App\Controller\Tickets;
 
 use App\Controller\BaseController;
-use App\Entity\Ticket;
+use App\Entity;
 use App\Form;
-use App\Repository\TeamRepository;
-use App\Repository\TicketRepository;
-use App\Repository\UserRepository;
+use App\Repository;
 use App\Service\ActorsLister;
 use App\Service\Sorter\TeamSorter;
 use App\TicketActivity\TicketEvent;
@@ -27,16 +25,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ActorsController extends BaseController
 {
     #[Route('/tickets/{uid:ticket}/actors/edit', name: 'edit ticket actors', methods: ['GET', 'HEAD'])]
-    public function edit(
-        Ticket $ticket,
-        ActorsLister $actorsLister,
-        TeamSorter $teamSorter,
-        TeamRepository $teamRepository,
-    ): Response {
+    public function edit(Entity\Ticket $ticket): Response
+    {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
 
-        /** @var \App\Entity\User */
+        /** @var Entity\User */
         $user = $this->getUser();
 
         if (!$ticket->hasActor($user)) {
@@ -53,28 +47,25 @@ class ActorsController extends BaseController
 
     #[Route('/tickets/{uid:ticket}/actors/edit', name: 'update ticket actors', methods: ['POST'])]
     public function update(
-        Ticket $ticket,
+        Entity\Ticket $ticket,
         Request $request,
-        TeamRepository $teamRepository,
-        TicketRepository $ticketRepository,
-        UserRepository $userRepository,
-        ActorsLister $actorsLister,
-        TeamSorter $teamSorter,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
+        Repository\TicketRepository $ticketRepository,
+        Repository\EntityEventRepository $entityEventRepository,
         EventDispatcherInterface $eventDispatcher,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
 
-        /** @var \App\Entity\User */
+        /** @var Entity\User */
         $user = $this->getUser();
 
         if (!$ticket->hasActor($user)) {
             $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
         }
 
-        $previousAssignee = $ticket->getAssignee();
+        $initialObservers = $ticket->getObservers()->toArray();
+        $initialObserversIds = array_map(fn (Entity\User $observer): int => $observer->getId(), $initialObservers);
+        $initialAssignee = $ticket->getAssignee();
 
         $form = $this->createNamedForm('ticket_actors', Form\Ticket\ActorsForm::class, $ticket);
         $form->handleRequest($request);
@@ -89,11 +80,28 @@ class ActorsController extends BaseController
         $ticket = $form->getData();
         $ticketRepository->save($ticket, true);
 
+        $newObservers = $ticket->getObservers()->toArray();
+        $newObserversIds = array_map(fn (Entity\User $observer): int => $observer->getId(), $newObservers);
         $newAssignee = $ticket->getAssignee();
 
-        if ($previousAssignee != $newAssignee) {
+        if ($initialAssignee != $newAssignee) {
             $ticketEvent = new TicketEvent($ticket);
             $eventDispatcher->dispatch($ticketEvent, TicketEvent::ASSIGNED);
+        }
+
+        // Log changes to the observers field manually, as we cannot log
+        // these automatically with the EntityActivitySubscriber (i.e. ManyToMany
+        // relationships cannot be handled easily).
+        if ($initialObserversIds != $newObserversIds) {
+            $changes = [
+                $initialObserversIds,
+                $newObserversIds,
+            ];
+
+            $entityEvent = Entity\EntityEvent::initUpdate($ticket, [
+                'observers' => $changes,
+            ]);
+            $entityEventRepository->save($entityEvent, true);
         }
 
         return $this->redirectToRoute('ticket', [

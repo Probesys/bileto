@@ -153,6 +153,16 @@ class TicketQueryBuilder
             $value = $this->processActorQualifier($value);
             $field = "COALESCE(IDENTITY(t.{$qualifier}), 0)";
             return $this->buildExpr($field, $value, $condition->not());
+        } elseif ($qualifier === 'observer') {
+            $value = $this->processActorQualifier($value);
+
+            $subBuilder = $this->buildManyToManyQueryBuilder('App\Entity\Ticket', 'observers', $value);
+
+            if ($condition->not()) {
+                return "t.id NOT IN ({$subBuilder->getDQL()})";
+            } else {
+                return "t.id IN ({$subBuilder->getDQL()})";
+            }
         } elseif ($qualifier === 'involves') {
             $value = $this->processActorQualifier($value);
 
@@ -162,7 +172,10 @@ class TicketQueryBuilder
             $subTeamBuilder = $this->buildManyToManyQueryBuilder('App\Entity\Team', 'agents', $value);
             $teamWhere = "COALESCE(IDENTITY(t.team), 0) IN ({$subTeamBuilder->getDQL()})";
 
-            $where = "{$assigneeWhere} OR {$requesterWhere} OR {$teamWhere}";
+            $subObserversBuilder = $this->buildManyToManyQueryBuilder('App\Entity\Ticket', 'observers', $value);
+            $observersWhere = "t.id IN ({$subObserversBuilder->getDQL()})";
+
+            $where = "{$assigneeWhere} OR {$requesterWhere} OR {$teamWhere} OR {$observersWhere}";
 
             if ($condition->not()) {
                 return "NOT ({$where})";

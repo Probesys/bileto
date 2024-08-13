@@ -84,6 +84,24 @@ class TicketSearcherTest extends WebTestCase
         $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
     }
 
+    public function testGetTicketsReturnsTicketWithUserAsObserver(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $ticket = TicketFactory::createOne([
+            'observers' => [$user],
+        ]);
+
+        $ticketsPagination = $ticketSearcher->getTickets();
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
+    }
+
     public function testGetTicketsDoesNotReturnTicketNotInvolvingUser(): void
     {
         $client = static::createClient();
@@ -268,6 +286,29 @@ class TicketSearcherTest extends WebTestCase
         ];
         $this->assertContains($ticket1->getId(), $ids);
         $this->assertContains($ticket2->getId(), $ids);
+    }
+
+    public function testGetTicketsCanLimitToTicketsObservedByUser(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = OrganizationFactory::createOne();
+        $ticket1 = TicketFactory::createOne([
+            'observers' => [],
+        ]);
+        $ticket2 = TicketFactory::createOne([
+            'observers' => [$user],
+        ]);
+
+        $query = Query::fromString('observer:@me');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
     }
 
     public function testGetTicketsCanRestrictToAGivenContract(): void
