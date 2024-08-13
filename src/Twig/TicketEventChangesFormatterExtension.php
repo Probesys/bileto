@@ -61,6 +61,8 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             return $this->formatOngoingContractChanges($user, $fieldChanges);
         } elseif ($field === 'labels') {
             return $this->formatLabelsChanges($user, $fieldChanges);
+        } elseif ($field === 'observers') {
+            return $this->formatObserversChanges($user, $fieldChanges);
         } else {
             return $this->formatChanges($user, $field, $fieldChanges);
         }
@@ -393,6 +395,61 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
         } else {
             return $this->translator->trans(
                 'tickets.events.labels.added_and_removed',
+                [
+                    'username' => $username,
+                    'added' => $added,
+                    'removed' => $removed,
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param array<int[]> $changes
+     */
+    private function formatObserversChanges(Entity\User $user, array $changes): string
+    {
+        $username = $this->escape($user->getDisplayName());
+
+        $removedObserversIds = array_diff($changes[0], $changes[1]);
+        $addedObserversIds = array_diff($changes[1], $changes[0]);
+
+        $removedObservers = $this->userRepository->findBy([
+          'id' => $removedObserversIds,
+        ]);
+        $addedObservers = $this->userRepository->findBy([
+          'id' => $addedObserversIds,
+        ]);
+
+        $removed = array_map(function ($user): string {
+            return $this->escape($user->getDisplayName());
+        }, $removedObservers);
+        $removed = implode(', ', $removed);
+
+        $added = array_map(function ($user): string {
+            return $this->escape($user->getDisplayName());
+        }, $addedObservers);
+        $added = implode(', ', $added);
+
+        if (empty($removedObserversIds)) {
+            return $this->translator->trans(
+                'tickets.events.observers.added',
+                [
+                    'username' => $username,
+                    'added' => $added,
+                ],
+            );
+        } elseif (empty($addedObserversIds)) {
+            return $this->translator->trans(
+                'tickets.events.observers.removed',
+                [
+                    'username' => $username,
+                    'removed' => $removed,
+                ],
+            );
+        } else {
+            return $this->translator->trans(
+                'tickets.events.observers.added_and_removed',
                 [
                     'username' => $username,
                     'added' => $added,
