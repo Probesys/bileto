@@ -153,6 +153,16 @@ class TicketQueryBuilder
             $value = $this->processActorQualifier($value);
             $field = "COALESCE(IDENTITY(t.{$qualifier}), 0)";
             return $this->buildExpr($field, $value, $condition->not());
+        } elseif ($qualifier === 'observer') {
+            $value = $this->processActorQualifier($value);
+
+            $subBuilder = $this->buildManyToManyQueryBuilder('App\Entity\Ticket', 'observers', $value);
+
+            if ($condition->not()) {
+                return "t.id NOT IN ({$subBuilder->getDQL()})";
+            } else {
+                return "t.id IN ({$subBuilder->getDQL()})";
+            }
         } elseif ($qualifier === 'involves') {
             $value = $this->processActorQualifier($value);
 
