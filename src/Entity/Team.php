@@ -99,6 +99,17 @@ class Team implements MonitorableEntityInterface, UidEntityInterface
     }
 
     /**
+     * @return int[]
+     */
+    public function getAgentsIds(): array
+    {
+        return array_map(function ($agent): ?int {
+            return $agent->getId();
+        }, $this->agents->toArray());
+    }
+
+    /**
+     * @deprecated
      * @return string[]
      */
     public function getAgentsUids(): array

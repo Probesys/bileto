@@ -9,45 +9,40 @@
 {% block title %}{{ 'tickets.actors.edit.title' | trans }}{% endblock %}
 
 {% block body %}
-    <form
-        action="{{ path('update ticket actors', {'uid': ticket.uid}) }}"
-        method="post"
-        class="form--standard"
-        data-turbo-preserve-scroll
-        data-controller="form-ticket-actors"
-    >
-        {% if error %}
-            {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-        {% endif %}
+    {{ form_start(form, {
+        action: path('update ticket actors', { uid: ticket.uid }),
+        attr: {
+            'class': 'form--standard',
+            'data-turbo-preserve-scroll': true,
+            'data-controller': 'form-ticket-actors',
+        },
+    }) }}
+        {{ form_errors(form) }}
 
         <div class="flow flow--small">
-            <label for="requester">
-                {{ icon('user') }}
+            <label for="{{ field_id(form.requester) }}">
                 {{ 'tickets.requester' | trans }}
             </label>
 
-            {% if errors.requester is defined %}
-                <p class="form__error" role="alert" id="requester-error">
-                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                    {{ errors.requester }}
-                </p>
-            {% endif %}
+            {{ form_errors(form.requester) }}
 
             <select
-                id="requester"
-                name="requesterUid"
+                id="{{ field_id(form.requester) }}"
+                name="{{ field_name(form.requester) }}"
                 required
-                {% if errors.requester is defined %}
-                    autofocus
+                {% if field_has_errors(form.requester) %}
                     aria-invalid="true"
-                    aria-errormessage="requester-error"
+                    aria-errormessage="{{ field_id(form.requester, 'error') }}"
                 {% endif %}
             >
-                {% for user in allUsers %}
-                    <option value="{{ user.uid }}" {{ user.uid == requesterUid ? 'selected' }}>
-                        {{ user.displayName }}
+                {% for choice in form.requester.vars.choices %}
+                    <option
+                        value="{{ choice.value }}"
+                        {{ choice.value == field_value(form.requester) ? 'selected' }}
+                    >
+                        {{ choice.label }}
 
-                        {% if user.id == app.user.id %}
+                        {% if choice.value == app.user.id %}
                             ({{ 'users.yourself' | trans }})
                         {% endif %}
                     </option>
@@ -55,29 +50,24 @@
             </select>
         </div>
 
-        {% if teams %}
+        {% if form.team.vars.choices|length > 0 %}
             <div class="flow flow--small">
-                <label for="team">
+                <label for="{{ field_id(form.team) }}">
                     {{ 'tickets.team' | trans }}
+
                     <small class="text--secondary">
                         {{ 'forms.optional' | trans }}
                     </small>
                 </label>
 
-                {% if errors.team is defined %}
-                    <p class="form__error" role="alert" id="team-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.team }}
-                    </p>
-                {% endif %}
+                {{ form_errors(form.team) }}
 
                 <select
-                    id="team"
-                    name="teamUid"
-                    {% if errors.team is defined %}
-                        autofocus
+                    id="{{ field_id(form.team) }}"
+                    name="{{ field_name(form.team) }}"
+                    {% if field_has_errors(form.team) %}
                         aria-invalid="true"
-                        aria-errormessage="team-error"
+                        aria-errormessage="{{ field_id(form.team, 'error') }}"
                     {% endif %}
                     data-form-ticket-actors-target="teams"
                     data-action="form-ticket-actors#refreshAssignees"
@@ -86,41 +76,38 @@
                         {{ 'tickets.team.none' | trans }}
                     </option>
 
-                    {% for team in teams %}
+                    {% for choice in form.team.vars.choices %}
                         <option
-                            value="{{ team.uid }}" {{ team.uid == teamUid ? 'selected' }}
-                            data-agents-uids="{{ team.agentsUids | json_encode }}"
+                            value="{{ choice.value }}"
+                            {{ choice.value == field_value(form.team) ? 'selected' }}
+                            data-agents-ids="{{ choice.attr.agentsIds }}"
                         >
-                            {{ team.name }}
+                            {{ choice.label }}
                         </option>
                     {% endfor %}
                 </select>
             </div>
+        {% else %}
+            <!-- {{ field_name(form.team) }} -->
         {% endif %}
 
         <div class="flow flow--small">
-            <label for="assignee">
-                {{ icon('headset') }}
+            <label for="{{ field_id(form.assignee) }}">
                 {{ 'tickets.assignee' | trans }}
+
                 <small class="text--secondary">
                     {{ 'forms.optional' | trans }}
                 </small>
             </label>
 
-            {% if errors.assignee is defined %}
-                <p class="form__error" role="alert" id="assignee-error">
-                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                    {{ errors.assignee }}
-                </p>
-            {% endif %}
+            {{ form_errors(form.assignee) }}
 
             <select
-                id="assignee"
-                name="assigneeUid"
-                {% if errors.assignee is defined %}
-                    autofocus
+                id="{{ field_id(form.assignee) }}"
+                name="{{ field_name(form.assignee) }}"
+                {% if field_has_errors(form.assignee) %}
                     aria-invalid="true"
-                    aria-errormessage="assignee-error"
+                    aria-errormessage="{{ field_id(form.assignee, 'error') }}"
                 {% endif %}
                 data-form-ticket-actors-target="assignees"
             >
@@ -128,11 +115,14 @@
                     {{ 'tickets.unassigned' | trans }}
                 </option>
 
-                {% for user in agents %}
-                    <option value="{{ user.uid }}" {{ user.uid == assigneeUid ? 'selected' }}>
-                        {{ user.displayName }}
+                {% for choice in form.assignee.vars.choices %}
+                    <option
+                        value="{{ choice.value }}"
+                        {{ choice.value == field_value(form.assignee) ? 'selected' }}
+                    >
+                        {{ choice.label }}
 
-                        {% if user.id == app.user.id %}
+                        {% if choice.value == app.user.id %}
                             ({{ 'users.yourself' | trans }})
                         {% endif %}
                     </option>
@@ -141,11 +131,9 @@
         </div>
 
         <div class="form__actions">
-            <button id="form-update-actors-submit" class="button--primary" type="submit">
+            <button class="button--primary" type="submit">
                 {{ 'forms.save_changes' | trans }}
             </button>
         </div>
-
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
-    </form>
+    {{ form_end(form) }}
 {% endblock %}

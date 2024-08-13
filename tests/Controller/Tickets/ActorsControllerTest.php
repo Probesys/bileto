@@ -113,10 +113,12 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterUid' => $requester->getUid(),
-            'teamUid' => $team->getUid(),
-            'assigneeUid' => $assignee->getUid(),
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'team' => $team->getId(),
+                'assignee' => $assignee->getId(),
+            ],
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
@@ -143,118 +145,16 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterUid' => $requester->getUid(),
-            'assigneeUid' => '',
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'assignee' => '',
+            ],
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticket->_refresh();
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
-        $this->assertNull($ticket->getAssignee());
-    }
-
-    public function testPostUpdateSetsNullIfAssigneeIsNotAgent(): void
-    {
-        $client = static::createClient();
-        list(
-            $user,
-            $requester,
-            $assignee,
-        ) = UserFactory::createMany(3);
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->_real(), ['orga:create:tickets'], type: 'user');
-        $ticket = TicketFactory::createOne([
-            'createdBy' => $user,
-            'requester' => null,
-            'assignee' => $user,
-        ]);
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterUid' => $requester->getUid(),
-            'assigneeUid' => $assignee->getUid(),
-        ]);
-
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->_refresh();
-        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
-        $this->assertNull($ticket->getAssignee());
-    }
-
-    public function testPostUpdateSetsNullIfTeamNotAuthorizedInOrga(): void
-    {
-        $client = static::createClient();
-        list(
-            $user,
-            $requester,
-            $assignee,
-        ) = UserFactory::createMany(3);
-        $client->loginUser($user->_real());
-        $initialTeam = TeamFactory::createOne([
-            'agents' => [$assignee],
-        ]);
-        $newTeam = TeamFactory::createOne([
-            'agents' => [$assignee],
-        ]);
-        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
-        $this->grantTeam($initialTeam->_real(), ['orga:create:tickets']);
-        $ticket = TicketFactory::createOne([
-            'createdBy' => $user,
-            'requester' => null,
-            'team' => $initialTeam,
-            'assignee' => null,
-        ]);
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterUid' => $requester->getUid(),
-            'teamUid' => $newTeam->getUid(),
-            'assigneeUid' => $assignee->getUid(),
-        ]);
-
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->_refresh();
-        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
-        $this->assertNull($ticket->getTeam());
-        $this->assertSame($assignee->getUid(), $ticket->getAssignee()->getUid());
-    }
-
-    public function testPostUpdateSetsNullIfAgentIsNotInTeam(): void
-    {
-        $client = static::createClient();
-        list(
-            $user,
-            $requester,
-            $assignee,
-        ) = UserFactory::createMany(3);
-        $client->loginUser($user->_real());
-        $team = TeamFactory::createOne();
-        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
-        $this->grantTeam($team->_real(), ['orga:create:tickets']);
-        $ticket = TicketFactory::createOne([
-            'createdBy' => $user,
-            'requester' => null,
-            'team' => null,
-            'assignee' => null,
-        ]);
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterUid' => $requester->getUid(),
-            'teamUid' => $team->getUid(),
-            'assigneeUid' => $assignee->getUid(),
-        ]);
-
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->_refresh();
-        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
-        $this->assertSame($team->getUid(), $ticket->getTeam()->getUid());
         $this->assertNull($ticket->getAssignee());
     }
 
@@ -274,15 +174,134 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterUid' => $requester->getUid(),
-            'assigneeUid' => $user->getUid(),
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'assignee' => $user->getId(),
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#requester-error', 'Select a user from the list');
         $this->clearEntityManager();
+
+        $this->assertSelectorTextContains('#ticket_actors_requester-error', 'The selected choice is invalid.');
         $ticket->_refresh();
         $this->assertNull($ticket->getRequester());
+        $this->assertNull($ticket->getAssignee());
+    }
+
+    public function testPostUpdateFailsIfAssigneeIsNotAgent(): void
+    {
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->_real(), ['orga:create:tickets'], type: 'user');
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => $user,
+            'assignee' => $user,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'assignee' => $assignee->getId(),
+            ],
+        ]);
+
+        $this->clearEntityManager();
+
+        $this->assertSelectorTextContains('#ticket_actors_assignee-error', 'The selected choice is invalid');
+        $ticket->_refresh();
+        $this->assertSame($user->getUid(), $ticket->getRequester()->getUid());
+        $this->assertSame($user->getUid(), $ticket->getAssignee()->getUid());
+    }
+
+    public function testPostUpdateFailsIfAssigneeIsNotInTeam(): void
+    {
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->_real());
+        $team = TeamFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
+        $this->grantTeam($team->_real(), ['orga:create:tickets']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => $user,
+            'team' => null,
+            'assignee' => null,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'team' => $team->getId(),
+                'assignee' => $assignee->getId(),
+            ],
+        ]);
+
+        $this->clearEntityManager();
+
+        $this->assertSelectorTextContains('#ticket_actors_assignee-error', 'The selected choice is invalid');
+        $ticket->_refresh();
+        $this->assertSame($user->getUid(), $ticket->getRequester()->getUid());
+        $this->assertNull($ticket->getTeam());
+        $this->assertNull($ticket->getAssignee());
+    }
+
+    public function testPostUpdateFailsIfTeamNotAuthorizedInOrga(): void
+    {
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->_real());
+        $initialTeam = TeamFactory::createOne([
+            'agents' => [$assignee],
+        ]);
+        $newTeam = TeamFactory::createOne([
+            'agents' => [$assignee],
+        ]);
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantTeam($initialTeam->_real(), ['orga:create:tickets']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => $user,
+            'team' => $initialTeam,
+            'assignee' => null,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'team' => $newTeam->getId(),
+                'assignee' => $assignee->getId(),
+            ],
+        ]);
+
+        $this->clearEntityManager();
+
+        $this->assertSelectorTextContains('#ticket_actors_team-error', 'The selected choice is invalid');
+        $ticket->_refresh();
+        $this->assertSame($user->getUid(), $ticket->getRequester()->getUid());
+        $this->assertSame($initialTeam->getUid(), $ticket->getTeam()->getUid());
         $this->assertNull($ticket->getAssignee());
     }
 
@@ -305,12 +324,16 @@ class ActorsControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => 'not the token',
-            'requesterUid' => $requester->getUid(),
-            'assigneeUid' => $assignee->getUid(),
+            'ticket_actors' => [
+                '_token' => 'not the token',
+                'requester' => $requester->getId(),
+                'assignee' => $assignee->getId(),
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->clearEntityManager();
+
+        $this->assertSelectorTextContains('#ticket_actors-error', 'The security token is invalid');
         $ticket->_refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());
@@ -337,9 +360,11 @@ class ActorsControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterUid' => $requester->getUid(),
-            'assigneeUid' => $assignee->getUid(),
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'assignee' => $assignee->getId(),
+            ],
         ]);
     }
 
@@ -364,9 +389,11 @@ class ActorsControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket actors'),
-            'requesterUid' => $requester->getUid(),
-            'assigneeUid' => $assignee->getUid(),
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'assignee' => $assignee->getId(),
+            ],
         ]);
     }
 }

@@ -41,8 +41,15 @@ class BaseController extends AbstractController
         }
     }
 
-    protected function createNamedForm(string $name, string $type, mixed $data = null, array $options = []): FormInterface
-    {
+    /**
+     * @param array<string, mixed> $options
+     */
+    protected function createNamedForm(
+        string $name,
+        string $type,
+        mixed $data = null,
+        array $options = [],
+    ): FormInterface {
         return $this->container->get('form.factory')->createNamed($name, $type, $data, $options);
     }
 }

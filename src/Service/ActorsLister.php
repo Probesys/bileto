@@ -15,6 +15,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class ActorsLister
 {
+    public const VALID_ROLE_TYPES = ['any', 'user', 'agent'];
+
     public function __construct(
         private OrganizationRepository $orgaRepository,
         private UserRepository $userRepository,
@@ -24,7 +26,7 @@ class ActorsLister
     }
 
     /**
-     * @param 'any'|'user'|'agent' $roleType
+     * @param value-of<self::VALID_ROLE_TYPES> $roleType
      *
      * @return User[]
      */
@@ -44,7 +46,7 @@ class ActorsLister
     }
 
     /**
-     * @param 'any'|'user'|'agent' $roleType
+     * @param value-of<self::VALID_ROLE_TYPES> $roleType
      *
      * @return User[]
      */
@@ -61,7 +63,7 @@ class ActorsLister
 
     /**
      * @param int[] $organizationIds
-     * @param 'any'|'user'|'agent' $roleType
+     * @param value-of<self::VALID_ROLE_TYPES> $roleType
      *
      * @return User[]
      */

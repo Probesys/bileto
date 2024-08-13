@@ -29,7 +29,10 @@ export default class extends Controller {
             return;
         }
 
-        const teamAgentsUids = JSON.parse(selectedTeamOption.dataset.agentsUids);
+        const agentsIds = selectedTeamOption.dataset.agentsIds;
+        const agentsUids = selectedTeamOption.dataset.agentsUids;
+
+        const teamAgentsIds = JSON.parse(agentsIds ? agentsIds : agentsUids);
 
         for (const option of this.assigneesTarget.options) {
             if (option.value === '') {
@@ -37,7 +40,7 @@ export default class extends Controller {
                 continue;
             }
 
-            if (teamAgentsUids.includes(option.value)) {
+            if (teamAgentsIds.includes(option.value)) {
                 option.hidden = false;
             } else {
                 option.hidden = true;

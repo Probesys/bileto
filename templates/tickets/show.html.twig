@@ -215,8 +215,10 @@
                                             class="form--inline"
                                             data-turbo-preserve-scroll
                                         >
-                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket actors') }}">
-                                            <input type="hidden" name="assigneeUid" value="{{ app.user.uid }}">
+                                            <input type="hidden" name="ticket_actors[_token]" value="{{ csrf_token('ticket actors') }}">
+                                            <input type="hidden" name="ticket_actors[requester]" value="{{ ticket.requester.id }}">
+                                            <input type="hidden" name="ticket_actors[team]" value="{{ ticket.team ? ticket.team.id }}">
+                                            <input type="hidden" name="ticket_actors[assignee]" value="{{ app.user.id }}">
 
                                             →
                                             <button id="form-self-assign-submit" class="button--anchor" type="submit">

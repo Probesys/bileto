@@ -7,7 +7,6 @@
 namespace App\Form\Type;
 
 use App\Entity;
-use App\Repository;
 use App\Service;
 use Symfony\Bridge\Doctrine\Form\Type;
 use Symfony\Component\Form\AbstractType;
@@ -16,40 +15,46 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LabelType extends AbstractType
+class ActorType extends AbstractType
 {
     public function __construct(
-        private Repository\LabelRepository $labelRepository,
-        private Service\Sorter\LabelSorter $labelSorter,
+        private Service\ActorsLister $actorsLister,
     ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'class' => Entity\Label::class,
+            'class' => Entity\User::class,
 
             'choice_loader' => function (Options $options): ChoiceLoaderInterface {
+                $organization = $options['organization'];
+                $roleType = $options['roleType'];
+
+                $vary = [$organization, $roleType];
+
                 return ChoiceList::lazy(
                     $this,
-                    function () {
-                        $labels = $this->labelRepository->findAll();
-                        $this->labelSorter->sort($labels);
-                        return $labels;
+                    function () use ($organization, $roleType): array {
+                        if ($organization) {
+                            return $this->actorsLister->findByOrganization($organization, $roleType);
+                        } else {
+                            return $this->actorsLister->findAll($roleType);
+                        }
                     },
+                    $vary,
                 );
             },
 
-            'choice_label' => 'name',
+            'choice_label' => 'displayName',
             'choice_value' => 'id',
 
-            'choice_attr' => function (Entity\Label $label): array {
-                return [
-                    'description' => $label->getDescription(),
-                    'color' => $label->getColor(),
-                ];
-            },
+            'organization' => null,
+            'roleType' => 'any',
         ]);
+
+        $resolver->setAllowedTypes('organization', [Entity\Organization::class, null]);
+        $resolver->setAllowedValues('roleType', Service\ActorsLister::VALID_ROLE_TYPES);
     }
 
     public function getParent(): string
