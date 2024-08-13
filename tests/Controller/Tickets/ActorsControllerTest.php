@@ -97,19 +97,24 @@ class ActorsControllerTest extends WebTestCase
             $user,
             $requester,
             $assignee,
-        ) = UserFactory::createMany(3);
+            $observer1,
+            $observer2,
+        ) = UserFactory::createMany(5);
         $client->loginUser($user->_real());
         $team = TeamFactory::createOne([
             'agents' => [$assignee],
         ]);
         $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($observer1->_real(), ['orga:see']);
+        $this->grantOrga($observer2->_real(), ['orga:see']);
         $this->grantTeam($team->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => null,
             'team' => null,
             'assignee' => null,
+            'observers' => [],
         ]);
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
@@ -118,6 +123,7 @@ class ActorsControllerTest extends WebTestCase
                 'requester' => $requester->getId(),
                 'team' => $team->getId(),
                 'assignee' => $assignee->getId(),
+                'observers' => [$observer1->getId(), $observer2->getId()],
             ],
         ]);
 
@@ -126,6 +132,12 @@ class ActorsControllerTest extends WebTestCase
         $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
         $this->assertSame($team->getUid(), $ticket->getTeam()->getUid());
         $this->assertSame($assignee->getUid(), $ticket->getAssignee()->getUid());
+        $observers = $ticket->getObservers();
+        $this->assertSame(2, count($observers));
+        $this->assertEqualsCanonicalizing(
+            [$observer1->getId(), $observer2->getId()],
+            [$observers[0]->getId(), $observers[1]->getId()],
+        );
     }
 
     public function testPostUpdateAcceptsEmptyAssignee(): void
@@ -187,6 +199,40 @@ class ActorsControllerTest extends WebTestCase
         $ticket->_refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());
+    }
+
+    public function testPostUpdateFailsIfObserverIsNotInOrganization(): void
+    {
+        $client = static::createClient();
+        list(
+            $user,
+            $observer,
+        ) = UserFactory::createMany(2);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => null,
+            'assignee' => null,
+            'observers' => [],
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $user->getId(),
+                'assignee' => $user->getId(),
+                'observers' => [$observer->getId()],
+            ],
+        ]);
+
+        $this->clearEntityManager();
+
+        $this->assertSelectorTextContains('#ticket_actors_observers-error', 'The selected choice is invalid.');
+        $ticket->_refresh();
+        $this->assertNull($ticket->getRequester());
+        $this->assertNull($ticket->getAssignee());
+        $this->assertSame(0, count($ticket->getObservers()));
     }
 
     public function testPostUpdateFailsIfAssigneeIsNotAgent(): void

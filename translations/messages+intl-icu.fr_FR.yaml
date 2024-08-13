@@ -73,6 +73,8 @@ common.colors.grey: Gris
 common.colors.primary: Principale
 common.colors.orange: Orange
 common.colors.red: Rouge
+common.join.and: ' et '
+common.join.glue: ', '
 contracts.alerts.edit.date_alert.after: 'jours de la fin du contrat.'
 contracts.alerts.edit.date_alert.before: 'Alerter à'
 contracts.alerts.edit.hours_alert.after: '% des heures seront consommées.'
@@ -397,6 +399,9 @@ tickets.new.mark_as_resolved: 'Ticket déjà résolu'
 tickets.new.submit: 'Créer le ticket'
 tickets.new.submit_orga_choice: 'Créer un ticket'
 tickets.new.title: 'Nouveau ticket'
+tickets.observers: Observateurs
+tickets.observers.select: 'Sélectionner un observateur'
+tickets.observers.unselect: Désélectionner
 tickets.priority: Priorité
 tickets.priority.edit.title: 'Modifier la priorité'
 tickets.priority.high: Haute
@@ -430,6 +435,8 @@ tickets.show.message.solution: Solution
 tickets.show.message.via_email: 'Ce message a été envoyé par email'
 tickets.show.minutes: minutes
 tickets.show.number_messages: "{count, plural, =0 {Aucun\_message} one {1\_message} other {#\_messages}}"
+tickets.show.observers: "Observateurs\_:"
+tickets.show.observers.none: Aucun
 tickets.show.opened_incident: 'a ouvert cet <strong>incident</strong>'
 tickets.show.opened_on: 'le {date}'
 tickets.show.opened_request: 'a ouvert cette <strong>demande</strong>'
