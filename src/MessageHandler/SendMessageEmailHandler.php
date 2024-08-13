@@ -50,12 +50,19 @@ class SendMessageEmailHandler
 
         $author = $message->getCreatedBy();
         $requester = $ticket->getRequester();
+        $observers = $ticket->getObservers();
         $assignee = $ticket->getAssignee();
 
         $recipients = [];
 
         if ($requester !== $author) {
             $recipients[] = $requester->getEmail();
+        }
+
+        foreach ($observers as $observer) {
+            if ($observer !== $author) {
+                $recipients[] = $observer->getEmail();
+            }
         }
 
         if ($assignee && $assignee !== $author) {
