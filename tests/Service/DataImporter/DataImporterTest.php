@@ -1121,6 +1121,10 @@ class DataImporterTest extends WebTestCase
                 'id' => '2',
                 'email' => 'benedict@example.com',
             ],
+            [
+                'id' => '3',
+                'email' => 'charlie@example.com',
+            ],
         ];
         $contracts = [
             [
@@ -1151,6 +1155,7 @@ class DataImporterTest extends WebTestCase
                 'priority' => 'medium',
                 'requesterId' => '1',
                 'assigneeId' => '2',
+                'observerIds' => ['3'],
                 'organizationId' => '1',
                 'solutionId' => '2',
                 'contractIds' => ['1'],
@@ -1211,6 +1216,9 @@ class DataImporterTest extends WebTestCase
         $this->assertSame('alix@example.com', $requester->getEmail());
         $assignee = $ticket->getAssignee();
         $this->assertSame('benedict@example.com', $assignee->getEmail());
+        $observers = $ticket->getObservers();
+        $this->assertSame(1, count($observers));
+        $this->assertSame('charlie@example.com', $observers[0]->getEmail());
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame('My contract', $contracts[0]->getName());
@@ -1617,6 +1625,44 @@ class DataImporterTest extends WebTestCase
                 'requesterId' => '1',
                 'assigneeId' => '2',
                 'organizationId' => '1',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            organizations: $organizations,
+            users: $users,
+            tickets: $tickets,
+        ));
+
+        $this->assertSame(0, TicketFactory::count());
+    }
+
+    public function testImportTicketsFailsIfObserversRefersToUnknownId(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Ticket 1 error: references an unknown observer 2');
+
+        $organizations = [
+            [
+                'id' => '1',
+                'name' => 'Foo',
+            ],
+        ];
+        $users = [
+            [
+                'id' => '1',
+                'email' => 'alix@example.com',
+            ],
+        ];
+        $tickets = [
+            [
+                'id' => '1',
+                'createdAt' => '2024-04-25T17:38:00+00:00',
+                'createdById' => '1',
+                'title' => 'It does not work',
+                'requesterId' => '1',
+                'organizationId' => '1',
+                'observerIds' => ['2'],
             ],
         ];
 

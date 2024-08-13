@@ -1004,6 +1004,11 @@ class DataImporter
                 $assigneeId = strval($jsonTicket['assigneeId']);
             }
 
+            $observerIds = [];
+            if (isset($jsonTicket['observerIds'])) {
+                $observerIds = $jsonTicket['observerIds'];
+            }
+
             $organizationId = strval($jsonTicket['organizationId']);
 
             $solutionId = null;
@@ -1090,6 +1095,20 @@ class DataImporter
                 } else {
                     $this->errors[] = "Ticket {$id} error: references an unknown assignee user {$assigneeId}.";
                 }
+            }
+
+            if (is_array($observerIds)) {
+                foreach ($observerIds as $observerId) {
+                    $observer = $this->indexUsers->get($observerId);
+
+                    if ($observer) {
+                        $ticket->addObserver($observer);
+                    } else {
+                        $this->errors[] = "Ticket {$id} error: references an unknown observer {$observerId}.";
+                    }
+                }
+            } else {
+                $this->errors[] = "Ticket {$id} error: observerIds: not an array.";
             }
 
             if (is_array($contractIds)) {

@@ -101,6 +101,7 @@ It also contains a `tickets/` folder where each file corresponds to a ticket. Fo
 - impact: string, optional (must be `low`, `medium`, or `high`)
 - priority: string, optional (must be `low`, `medium`, or `high`)
 - requesterId: string (reference to a user)
+- observerIds: array of strings, optional (references to users)
 - assigneeId: string or null, optional (reference to a user)
 - organizationId: string (reference to an organization)
 - solutionId: string or null, optional (reference to a message, included in ticket.messages)
