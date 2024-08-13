@@ -84,6 +84,24 @@ class TicketSearcherTest extends WebTestCase
         $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
     }
 
+    public function testGetTicketsReturnsTicketWithUserAsObserver(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var TicketSearcher $ticketSearcher */
+        $ticketSearcher = $container->get(TicketSearcher::class);
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $ticket = TicketFactory::createOne([
+            'observers' => [$user],
+        ]);
+
+        $ticketsPagination = $ticketSearcher->getTickets();
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket->getId(), $ticketsPagination->items[0]->getId());
+    }
+
     public function testGetTicketsDoesNotReturnTicketNotInvolvingUser(): void
     {
         $client = static::createClient();

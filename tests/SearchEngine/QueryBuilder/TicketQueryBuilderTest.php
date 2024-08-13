@@ -328,6 +328,7 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame($alix->getId(), $parameters['q0p0']);
         $this->assertSame($alix->getId(), $parameters['q0p1']);
         $this->assertSame($alix->getId(), $parameters['q0p2']);
+        $this->assertSame($alix->getId(), $parameters['q0p3']);
     }
 
     public function testBuildQueryWithQualifierOrg(): void

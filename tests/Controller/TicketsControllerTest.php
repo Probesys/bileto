@@ -179,6 +179,22 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
     }
 
+    public function testGetShowRendersCorrectlyIfUserIsObserverOfTheTicket(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $ticket = TicketFactory::createOne([
+            'title' => 'My ticket',
+            'observers' => [$user],
+        ]);
+
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', "#{$ticket->getId()} My ticket");
+    }
+
     public function testGetShowRendersCorrectlyIfAccessIsGranted(): void
     {
         $client = static::createClient();
