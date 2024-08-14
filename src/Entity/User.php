@@ -119,6 +119,10 @@ class User implements
     #[ORM\ManyToMany(targetEntity: Team::class, mappedBy: 'agents')]
     private Collection $teams;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Token $resetPasswordToken = null;
+
     public function __construct()
     {
         $this->password = '';
@@ -300,5 +304,17 @@ class User implements
     public function getTeams(): Collection
     {
         return $this->teams;
+    }
+
+    public function getResetPasswordToken(): ?Token
+    {
+        return $this->resetPasswordToken;
+    }
+
+    public function setResetPasswordToken(?Token $resetPasswordToken): static
+    {
+        $this->resetPasswordToken = $resetPasswordToken;
+
+        return $this;
     }
 }
