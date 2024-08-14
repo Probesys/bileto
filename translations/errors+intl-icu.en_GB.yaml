@@ -36,6 +36,7 @@ organization.domains.invalid: 'The domain {domain} is invalid, enter a valid dom
 organization.name.already_used: 'Enter a different name, an organization already has this name.'
 organization.name.max_chars: 'Enter a name of less than {limit} characters.'
 organization.name.required: 'Enter a name.'
+organization.observers.not_authorized: 'The user is not authorized to access this organization.'
 role.description.max_chars: 'Enter a description of less than {limit} characters.'
 role.description.required: 'Enter a description.'
 role.name.already_used: 'Enter a different name, a role already has this name.'

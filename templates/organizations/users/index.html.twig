@@ -51,7 +51,7 @@
 
                     {% for user in users %}
                         <li class="cols cols--center flow flow--small" data-test="user-item">
-                            <span class="col--extend flow flow--small">
+                            <div class="col--extend flow flow--small">
                                 <div class="list__item-title">
                                     {% if canManageUsers %}
                                         <a href="{{ path('user', { uid: user.uid }) }}">
@@ -73,7 +73,31 @@
                                 <div class="text--small text--wrap">
                                     {{ user.email }}
                                 </div>
-                            </span>
+                            </div>
+
+                            {% if is_granted('orga:update:tickets:actors', organization) %}
+                                <form
+                                    method="POST"
+                                    action="{{ path('switch organization observer', { uid: organization.uid, uidUser: user.uid }) }}"
+                                    data-turbo-preserve-scroll
+                                >
+                                    {% if organization.hasObserver(user) %}
+                                        <button type="submit">
+                                            {{ 'organizations.observers.remove_user' | trans }}
+                                        </button>
+                                    {% else %}
+                                        <button
+                                            type="submit"
+                                            class="button--discreet"
+                                            data-turbo-confirm="{{ "organizations.observers.confirm_add_user" | trans }}"
+                                        >
+                                            {{ 'organizations.observers.add_user' | trans }}
+                                        </button>
+                                    {% endif %}
+
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('switch organization observer') }}">
+                                </form>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>

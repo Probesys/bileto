@@ -36,6 +36,7 @@ organization.domains.invalid: 'Le domaine {domain} est invalide, saisissez un do
 organization.name.already_used: 'Saisissez un nom différent, une organisation porte déjà ce même nom.'
 organization.name.max_chars: 'Saisissez un nom de moins de {limit} caractères.'
 organization.name.required: 'Saisissez un nom.'
+organization.observers.not_authorized: 'L’utilisateur n’est pas autorisé à accéder à cette organisation.'
 role.description.max_chars: 'Saisissez une description de moins de {limit} caractères.'
 role.description.required: 'Saisissez une description.'
 role.name.already_used: 'Saisissez un nom différent, un rôle porte déjà ce même nom.'

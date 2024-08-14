@@ -84,12 +84,17 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
     ])]
     private array $domains = [];
 
+    /** @var Collection<int, User> */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    private Collection $observers;
+
     public function __construct()
     {
         $this->name = '';
         $this->tickets = new ArrayCollection();
         $this->authorizations = new ArrayCollection();
         $this->teamAuthorizations = new ArrayCollection();
+        $this->observers = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -174,6 +179,35 @@ class Organization implements MonitorableEntityInterface, UidEntityInterface
         $domains = array_values($domains);
 
         $this->domains = $domains;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getObservers(): Collection
+    {
+        return $this->observers;
+    }
+
+    public function hasObserver(User $observer): bool
+    {
+        return $this->observers->contains($observer);
+    }
+
+    public function addObserver(User $observer): static
+    {
+        if (!$this->observers->contains($observer)) {
+            $this->observers->add($observer);
+        }
+
+        return $this;
+    }
+
+    public function removeObserver(User $observer): static
+    {
+        $this->observers->removeElement($observer);
 
         return $this;
     }

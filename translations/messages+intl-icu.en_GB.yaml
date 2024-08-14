@@ -221,6 +221,9 @@ organizations.index.title: Organizations
 organizations.name: Name
 organizations.new.submit: 'Create the organization'
 organizations.new.title: 'New organization'
+organizations.observers.add_user: 'Add to observers'
+organizations.observers.confirm_add_user: 'By adding this user to the organization’s observers, you give him access to all future tickets opened in the organization. Can you confirm?'
+organizations.observers.remove_user: 'Remove from observers'
 organizations.settings.deletion.confirm: 'Are you sure that you want to delete this organization?'
 organizations.settings.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and contracts.'
 organizations.settings.deletion.submit: 'Delete the organization'
