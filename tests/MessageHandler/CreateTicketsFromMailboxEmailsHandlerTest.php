@@ -111,6 +111,36 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($ongoingContract->getId(), $ticketContract->getId());
     }
 
+    public function testInvokeCreatesATicketAndCanAttachOrganizationObservers(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $observer = UserFactory::createOne();
+        $organization = OrganizationFactory::createOne([
+            'observers' => [$observer],
+        ]);
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+        ]);
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $ticket = TicketFactory::first();
+        $ticketObservers = $ticket->getObservers();
+        $this->assertSame(1, count($ticketObservers));
+        $this->assertSame($observer->getUid(), $ticketObservers[0]->getUid());
+    }
+
     public function testInvokeAnswersToTicketIfTicketIdIsGiven(): void
     {
         $container = static::getContainer();

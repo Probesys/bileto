@@ -136,6 +136,10 @@ class CreateTicketsFromMailboxEmailsHandler
                 $ticket->setOrganization($requesterOrganization);
                 $ticket->setRequester($requester);
 
+                foreach ($requesterOrganization->getObservers() as $observer) {
+                    $ticket->addObserver($observer);
+                }
+
                 $this->ticketRepository->save($ticket, true);
                 $isNewTicket = true;
             }
