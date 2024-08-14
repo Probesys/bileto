@@ -1334,8 +1334,7 @@ class DataImporterTest extends WebTestCase
                 ],
             ],
         ];
-        $documentsPath = sys_get_temp_dir() . '/documents';
-        @mkdir($documentsPath);
+        $documentsPath = $this->createDocumentsFolder();
         $content = 'My bug';
         $hash = hash('sha256', $content);
         file_put_contents($documentsPath . '/bug.txt', $content);
@@ -2058,9 +2057,11 @@ class DataImporterTest extends WebTestCase
                 ],
             ],
         ];
-        $documentsPath = sys_get_temp_dir() . '/documents';
-        @mkdir($documentsPath);
-        @unlink($documentsPath . '/bug.txt');
+        $documentsPath = $this->createDocumentsFolder();
+        $filepath = "{$documentsPath}/bug.txt";
+        if (file_exists($filepath)) {
+            unlink($filepath);
+        }
 
         $this->processGenerator($this->dataImporter->import(
             organizations: $organizations,
@@ -2071,5 +2072,16 @@ class DataImporterTest extends WebTestCase
 
         $this->assertSame(0, MessageFactory::count());
         $this->assertSame(0, MessageDocumentFactory::count());
+    }
+
+    private function createDocumentsFolder(): string
+    {
+        $documentsPath = sys_get_temp_dir() . '/documents';
+
+        if (!is_dir($documentsPath)) {
+            mkdir($documentsPath);
+        }
+
+        return $documentsPath;
     }
 }
