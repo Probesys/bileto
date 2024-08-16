@@ -14,6 +14,7 @@ Dedicated to the backend:
 - [How to paginate the entities](/docs/developers/pagination.md)
 - [Working with the tickets' events](/docs/developers/tickets-events.md)
 - [Importing data](/docs/developers/import-data.md)
+- [Cleaning data](/docs/developers/clean-data.md)
 
 Dedicated to the frontend:
 
