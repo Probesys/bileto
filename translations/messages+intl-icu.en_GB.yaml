@@ -175,6 +175,8 @@ layout.skip_to_main_content: 'Skip to main content'
 layout.tickets: Tickets
 login.intro: 'Manage your support<br><b>with ease</b>'
 login.forgot_password: 'Forgot your password?'
+login.password_changed.message: 'Your password has been changed. All you have to do now is log in.'
+login.password_changed.title: 'Password changed'
 login.remember_me: 'Remember me'
 login.submit: Login
 login.title: 'Log in'
@@ -236,6 +238,10 @@ organizations.settings.deletion.title: 'Delete an organization'
 organizations.settings.title: Settings
 pagination.next: Next
 pagination.previous: Previous
+passwords.edit.form.password: 'New password'
+passwords.edit.form.submit: 'Change the password'
+passwords.edit.short: 'You are about to change the password for the account <strong>alix@example.com</strong>. '
+passwords.edit.title: 'Changing password'
 passwords.reset.form.email: 'Email address'
 passwords.reset.form.submit: 'Send reset email'
 passwords.reset.sent.message: 'We have just sent you an email containing a link to reset your password. If you haven’t received it in a few minutes, please check your spam folder.'

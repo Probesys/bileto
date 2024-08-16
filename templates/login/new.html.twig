@@ -67,6 +67,14 @@
                         {{ 'login.title' | trans }}
                     </h1>
 
+                    {% if app.flashes('password_changed') %}
+                        {{ include('alerts/_alert.html.twig', {
+                            type: 'success',
+                            title: 'login.password_changed.title' | trans,
+                            message: 'login.password_changed.message' | trans,
+                        }, with_context = false) }}
+                    {% endif %}
+
                     <form action="{{ path('login') }}" method="post" class="flow flow--large" data-turbo="false">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 

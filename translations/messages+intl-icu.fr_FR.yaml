@@ -175,6 +175,8 @@ layout.skip_to_main_content: 'Accéder au contenu principal'
 layout.tickets: Tickets
 login.intro: 'Gérez votre support<br><b>en toute simplicité</b>'
 login.forgot_password: "Mot de passe oublié\_?"
+login.password_changed.message: 'Votre mot de passe a bien été changé. Vous n’avez plus qu’à vous connecter.'
+login.password_changed.title: 'Mot de passe changé'
 login.remember_me: 'Se souvenir de moi'
 login.submit: 'Se connecter'
 login.title: Connexion
@@ -236,6 +238,10 @@ organizations.settings.deletion.title: Suppression
 organizations.settings.title: Gestion
 pagination.next: Suivant
 pagination.previous: Précédent
+passwords.edit.form.password: 'Nouveau mot de passe'
+passwords.edit.form.submit: 'Changer le mot de passe'
+passwords.edit.short: 'Vous êtes sur le point de changer le mot de passe du compte <strong>{email}</strong>.'
+passwords.edit.title: 'Changement de mot de passe'
 passwords.reset.form.email: 'Adresse email'
 passwords.reset.form.submit: 'Envoyer le mail de réinitialisation'
 passwords.reset.sent.message: 'Nous venons de vous envoyer un email contenant un lien pour réinitialiser votre mot de passe. Si vous ne l’avez pas reçu d’ici quelques minutes, veuillez vérifier vos spams.'

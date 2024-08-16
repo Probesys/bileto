@@ -130,6 +130,22 @@ class UserRepository extends ServiceEntityRepository implements
         return $query->getResult();
     }
 
+    public function findOneByResetPasswordToken(string $token): ?User
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT u
+            FROM App\Entity\User u
+            INNER JOIN u.resetPasswordToken t
+            WHERE t.value = :token
+        SQL);
+
+        $query->setParameter('token', $token);
+
+        return $query->getOneOrNullResult();
+    }
+
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */

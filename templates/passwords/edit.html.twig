@@ -1,0 +1,89 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'edit password' %}
+
+{% block title %}{{ 'passwords.edit.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'passwords.edit.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <div class="flow flow--large text--center">
+            <h1>{{ 'passwords.edit.title' | trans }}</h1>
+
+            <p class="wrapper wrapper--text wrapper--center">
+                {{ 'passwords.edit.short' | trans({ email: user.email }) | raw }}
+            </p>
+        </div>
+
+        <div class="panel">
+            <div class="wrapper wrapper--text wrapper--center flow flow--large">
+                {{ form_start(form, { attr: {
+                    'class': 'form--standard',
+                }}) }}
+                    {{ form_errors(form) }}
+
+                    <div class="flow flow--small">
+                        <label for="{{ field_id(form.plainPassword) }}">
+                            {{ 'passwords.edit.form.password' | trans }}
+                        </label>
+
+                        {{ form_errors(form.plainPassword) }}
+
+                        <div class="input-container" data-controller="password">
+                            <input
+                                type="password"
+                                id="{{ field_id(form.plainPassword) }}"
+                                name="{{ field_name(form.plainPassword) }}"
+                                value="{{ field_value(form.plainPassword) }}"
+                                required
+                                autocomplete="new-password"
+                                {% if field_has_errors(form.plainPassword) %}
+                                    aria-invalid="true"
+                                    aria-errormessage="{{ field_id(form.plainPassword, 'error') }}"
+                                {% endif %}
+                                data-password-target="input"
+                            />
+
+                            <button
+                                class="button--icon"
+                                type="button"
+                                role="switch"
+                                data-action="password#toggle"
+                                data-password-target="button"
+                            >
+                                {{ icon('eye') }}
+                                {{ icon('eye-slash') }}
+                                <span class="sr-only">
+                                    {{ 'forms.show_password' | trans }}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form__actions">
+                        <button class="button--primary" type="submit">
+                            {{ 'passwords.edit.form.submit' | trans }}
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </main>
+{% endblock %}
