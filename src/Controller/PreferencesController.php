@@ -7,8 +7,8 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Service;
 use App\Utils\ConstraintErrorsFormatter;
-use App\Utils\Locales;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -28,7 +28,7 @@ class PreferencesController extends BaseController
         return $this->render('preferences/edit.html.twig', [
             'colorScheme' => $user->getColorScheme(),
             'locale' => $user->getLocale(),
-            'availableLanguages' => Locales::getSupportedLanguages(),
+            'availableLanguages' => Service\Locales::SUPPORTED_LOCALES,
         ]);
     }
 
@@ -56,7 +56,7 @@ class PreferencesController extends BaseController
             return $this->renderBadRequest('preferences/edit.html.twig', [
                 'colorScheme' => $colorScheme,
                 'locale' => $locale,
-                'availableLanguages' => Locales::getSupportedLanguages(),
+                'availableLanguages' => Service\Locales::SUPPORTED_LOCALES,
                 'error' => $translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
@@ -71,7 +71,7 @@ class PreferencesController extends BaseController
             return $this->renderBadRequest('preferences/edit.html.twig', [
                 'colorScheme' => $colorScheme,
                 'locale' => $locale,
-                'availableLanguages' => Locales::getSupportedLanguages(),
+                'availableLanguages' => Service\Locales::SUPPORTED_LOCALES,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
         }

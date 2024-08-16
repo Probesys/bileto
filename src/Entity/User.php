@@ -9,9 +9,9 @@ namespace App\Entity;
 use App\ActivityMonitor\MonitorableEntityInterface;
 use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\UserRepository;
+use App\Service;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
-use App\Utils\Locales;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -79,15 +79,15 @@ class User implements
     )]
     private ?string $colorScheme = 'auto';
 
-    #[ORM\Column(length: 5, options: ['default' => Locales::DEFAULT_LOCALE])]
+    #[ORM\Column(length: 5, options: ['default' => 'en_GB'])]
     #[Assert\NotBlank(
         message: new TranslatableMessage('user.language.required', [], 'errors'),
     )]
     #[Assert\Choice(
-        choices: Locales::SUPPORTED_LOCALES,
+        callback: [Service\Locales::class, 'getSupportedLocalesCodes'],
         message: new TranslatableMessage('user.language.invalid', [], 'errors'),
     )]
-    private ?string $locale = Locales::DEFAULT_LOCALE;
+    private ?string $locale = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\Length(
@@ -126,6 +126,7 @@ class User implements
     public function __construct()
     {
         $this->password = '';
+        $this->locale = 'en_GB';
         $this->authorizations = new ArrayCollection();
         $this->teams = new ArrayCollection();
     }

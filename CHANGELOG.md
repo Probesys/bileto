@@ -1,5 +1,11 @@
 # Changelog of Bileto
 
+## unreleased
+
+### Migration notes
+
+You can now change the default locale globally by setting the `APP_DEFAULT_LOCALE` in your env file.
+
 ## 2024-07-05 - 0.9.0-beta
 
 This is our first beta version! 🥳

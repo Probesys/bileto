@@ -4,21 +4,35 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\Utils;
+namespace App\Tests\Service;
 
-use App\Utils\Locales;
+use App\Service\Locales;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class LocalesTest extends TestCase
+class LocalesTest extends WebTestCase
 {
+    private Locales $locales;
+
+    #[Before]
+    public function setupTest(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var Locales */
+        $locales = $container->get(Locales::class);
+        $this->locales = $locales;
+    }
+
     /**
      * @param string[] $requestedLocales
      */
     #[DataProvider('englishRequestedLocale')]
     public function testGetBestWithEnglish(array $requestedLocales): void
     {
-        $locale = Locales::getBest($requestedLocales);
+        $locale = $this->locales->getBest($requestedLocales);
 
         $this->assertSame('en_GB', $locale);
     }
@@ -29,7 +43,7 @@ class LocalesTest extends TestCase
     #[DataProvider('frenchRequestedLocale')]
     public function testGetBestWithFrench(array $requestedLocales): void
     {
-        $locale = Locales::getBest($requestedLocales);
+        $locale = $this->locales->getBest($requestedLocales);
 
         $this->assertSame('fr_FR', $locale);
     }

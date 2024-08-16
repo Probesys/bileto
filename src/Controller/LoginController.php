@@ -6,7 +6,7 @@
 
 namespace App\Controller;
 
-use App\Utils\Locales;
+use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -28,7 +28,7 @@ class LoginController extends BaseController
 
         return $this->render('login/new.html.twig', [
             'last_identifier' => $lastIdentifier,
-            'availableLanguages' => Locales::getSupportedLanguages(),
+            'availableLanguages' => Service\Locales::SUPPORTED_LOCALES,
             'error' => $error,
         ]);
     }

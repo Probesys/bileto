@@ -6,18 +6,17 @@
 
 namespace App\Service\Sorter;
 
-use App\Utils\Locales;
+use App\Service;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class LocaleSorter
 {
-    private RequestStack $requestStack;
-
     private ?\Collator $collator = null;
 
-    public function __construct(RequestStack $requestStack)
-    {
-        $this->requestStack = $requestStack;
+    public function __construct(
+        private RequestStack $requestStack,
+        private Service\Locales $locales,
+    ) {
     }
 
     protected function getCollator(): \Collator
@@ -28,7 +27,7 @@ class LocaleSorter
             if ($currentRequest) {
                 $locale = $currentRequest->getLocale();
             } else {
-                $locale = Locales::DEFAULT_LOCALE;
+                $locale = $this->locales->getDefaultLocale();
             }
 
             $this->collator = new \Collator($locale);

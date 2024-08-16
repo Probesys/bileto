@@ -6,17 +6,11 @@
 
 namespace App\Command;
 
-use App\Entity\Role;
-use App\Repository\AuthorizationRepository;
-use App\Repository\MailboxRepository;
-use App\Repository\MessageRepository;
-use App\Repository\OrganizationRepository;
-use App\Repository\RoleRepository;
-use App\Repository\TicketRepository;
-use App\Repository\UserRepository;
-use App\Security\Encryptor;
-use App\Utils\Random;
-use App\Utils\Time;
+use App\Entity;
+use App\Repository;
+use App\Security;
+use App\Service;
+use App\Utils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -34,14 +28,15 @@ class SeedsCommand extends Command
     public function __construct(
         private string $environment,
         private EntityManagerInterface $entityManager,
-        private AuthorizationRepository $authorizationRepository,
-        private MailboxRepository $mailboxRepository,
-        private MessageRepository $messageRepository,
-        private OrganizationRepository $orgaRepository,
-        private RoleRepository $roleRepository,
-        private TicketRepository $ticketRepository,
-        private UserRepository $userRepository,
-        private Encryptor $encryptor,
+        private Repository\AuthorizationRepository $authorizationRepository,
+        private Repository\MailboxRepository $mailboxRepository,
+        private Repository\MessageRepository $messageRepository,
+        private Repository\OrganizationRepository $orgaRepository,
+        private Repository\RoleRepository $roleRepository,
+        private Repository\TicketRepository $ticketRepository,
+        private Repository\UserRepository $userRepository,
+        private Security\Encryptor $encryptor,
+        private Service\Locales $locales,
         private UserPasswordHasherInterface $passwordHasher,
     ) {
         parent::__construct();
@@ -59,7 +54,7 @@ class SeedsCommand extends Command
         if ($this->environment === 'dev') {
             // In dev, give all "agent" permissions to technicians so it's
             // easier to work with.
-            $techPermissions = Role::PERMISSIONS['agent'];
+            $techPermissions = Entity\Role::PERMISSIONS['agent'];
         } else {
             $techPermissions = [
                 'orga:create:tickets',
@@ -147,6 +142,7 @@ class SeedsCommand extends Command
             ], [
                 'name' => 'Alix Hambourg',
                 'organization' => $orgaProbesys,
+                'locale' => $this->locales->getDefaultLocale(),
             ]);
 
             $userBenedict = $this->userRepository->findOneOrCreateBy([
@@ -154,6 +150,7 @@ class SeedsCommand extends Command
             ], [
                 'name' => 'Benedict Aphone',
                 'organization' => $orgaProbesys,
+                'locale' => $this->locales->getDefaultLocale(),
             ]);
 
             $userCharlie = $this->userRepository->findOneOrCreateBy([
@@ -161,6 +158,7 @@ class SeedsCommand extends Command
             ], [
                 'name' => 'Charlie Gature',
                 'organization' => $orgaFriendlyCoop,
+                'locale' => $this->locales->getDefaultLocale(),
                 'ldapIdentifier' => 'charlie',
             ]);
 
@@ -226,7 +224,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketEmails,
-                'createdAt' => Time::ago(1, 'day'),
+                'createdAt' => Utils\Time::ago(1, 'day'),
                 'createdBy' => $userCharlie,
                 'via' => 'webapp',
             ]);
@@ -237,7 +235,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => true,
                 'ticket' => $ticketEmails,
-                'createdAt' => Time::ago(10, 'hours'),
+                'createdAt' => Utils\Time::ago(10, 'hours'),
                 'createdBy' => $userAlix,
                 'via' => 'webapp',
             ]);
@@ -248,7 +246,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketEmails,
-                'createdAt' => Time::ago(9, 'hours'),
+                'createdAt' => Utils\Time::ago(9, 'hours'),
                 'createdBy' => $userAlix,
                 'via' => 'webapp',
             ]);
@@ -273,7 +271,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketUpdate,
-                'createdAt' => Time::ago(5, 'days'),
+                'createdAt' => Utils\Time::ago(5, 'days'),
                 'createdBy' => $userCharlie,
                 'via' => 'webapp',
             ]);
@@ -284,7 +282,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketUpdate,
-                'createdAt' => Time::now(),
+                'createdAt' => Utils\Time::now(),
                 'createdBy' => $userAlix,
                 'via' => 'webapp',
             ]);
@@ -311,7 +309,7 @@ class SeedsCommand extends Command
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketFilter,
-                'createdAt' => Time::ago(42, 'days'),
+                'createdAt' => Utils\Time::ago(42, 'days'),
                 'createdBy' => $userBenedict,
                 'via' => 'webapp',
             ]);

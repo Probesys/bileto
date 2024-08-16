@@ -4,34 +4,58 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Utils;
+namespace App\Service;
+
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class Locales
 {
-    public const DEFAULT_LOCALE = 'en_GB';
+    public const SUPPORTED_LOCALES = [
+        'en_GB' => 'English',
+        'fr_FR' => 'Français',
+    ];
 
-    public const SUPPORTED_LOCALES = ['en_GB', 'fr_FR'];
+    /** @var key-of<self::SUPPORTED_LOCALES> */
+    private string $defaultLocale;
 
     /**
-     * @return array<string, string>
+     * @return array<key-of<self::SUPPORTED_LOCALES>>
      */
-    public static function getSupportedLanguages(): array
+    public static function getSupportedLocalesCodes(): array
     {
-        return [
-            'en_GB' => 'English',
-            'fr_FR' => 'Français',
-        ];
+        return array_keys(self::SUPPORTED_LOCALES);
     }
 
-    public static function isAvailable(string $locale): bool
+    public function __construct(
+        #[Autowire(env: 'default::APP_DEFAULT_LOCALE')]
+        ?string $defaultLocale,
+    ) {
+        if ($defaultLocale && $this->isAvailable($defaultLocale)) {
+            /** @var key-of<self::SUPPORTED_LOCALES> */
+            $defaultLocale = $defaultLocale;
+            $this->defaultLocale = $defaultLocale;
+        } else {
+            $this->defaultLocale = 'en_GB';
+        }
+    }
+
+    /**
+     * @return key-of<self::SUPPORTED_LOCALES>
+     */
+    public function getDefaultLocale(): string
     {
-        return in_array($locale, self::SUPPORTED_LOCALES);
+        return $this->defaultLocale;
+    }
+
+    public function isAvailable(string $locale): bool
+    {
+        return isset(self::SUPPORTED_LOCALES[$locale]);
     }
 
     /**
      * @param string[] $requestedLocales
      */
-    public static function getBest(array $requestedLocales): string
+    public function getBest(array $requestedLocales): string
     {
         // First, look for an exact match in the supported locales:
         foreach ($requestedLocales as $locale) {
@@ -43,7 +67,7 @@ class Locales
         // Then, create an array to match "super" locales (e.g. en) to
         // supported country locales (e.g. en_GB):
         $supersToLocales = [];
-        foreach (self::SUPPORTED_LOCALES as $locale) {
+        foreach (self::SUPPORTED_LOCALES as $locale => $localeName) {
             $splitLocale = explode('_', $locale, 2);
             if (count($splitLocale) < 2) {
                 continue;
@@ -71,6 +95,6 @@ class Locales
 
         // Bileto doesn't support the requested locales, let's return the
         // default one.
-        return self::DEFAULT_LOCALE;
+        return self::getDefaultLocale();
     }
 }

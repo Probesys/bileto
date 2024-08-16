@@ -6,12 +6,9 @@
 
 namespace App\Service;
 
-use App\Entity\Organization;
-use App\Entity\User;
-use App\Repository\AuthorizationRepository;
-use App\Repository\OrganizationRepository;
-use App\Repository\RoleRepository;
-use App\Repository\UserRepository;
+use App\Entity;
+use App\Repository;
+use App\Service;
 use App\Utils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -19,10 +16,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserCreator
 {
     public function __construct(
-        private AuthorizationRepository $authorizationRepository,
-        private OrganizationRepository $organizationRepository,
-        private RoleRepository $roleRepository,
-        private UserRepository $userRepository,
+        private Repository\AuthorizationRepository $authorizationRepository,
+        private Repository\OrganizationRepository $organizationRepository,
+        private Repository\RoleRepository $roleRepository,
+        private Repository\UserRepository $userRepository,
+        private Service\Locales $locales,
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $passwordHasher,
     ) {
@@ -32,12 +30,16 @@ class UserCreator
         string $email,
         string $name = '',
         string $password = '',
-        string $locale = Utils\Locales::DEFAULT_LOCALE,
+        string $locale = '',
         ?string $ldapIdentifier = null,
-        ?Organization $organization = null,
+        ?Entity\Organization $organization = null,
         bool $flush = true,
-    ): User {
-        $user = new User();
+    ): Entity\User {
+        if ($locale === '') {
+            $locale = $this->locales->getDefaultLocale();
+        }
+
+        $user = new Entity\User();
         $user->setEmail($email);
         $user->setName($name);
         $user->setLocale($locale);

@@ -6,7 +6,7 @@
 
 namespace App\Controller;
 
-use App\Utils\Locales;
+use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,6 +19,7 @@ class SessionController extends BaseController
     public function updateLocale(
         Request $request,
         RequestStack $requestStack,
+        Service\Locales $locales,
     ): Response {
         /** @var string $locale */
         $locale = $request->request->get('locale', $request->getLocale());
@@ -33,7 +34,7 @@ class SessionController extends BaseController
             return $this->redirectToRoute($from);
         }
 
-        if (!Locales::isAvailable($locale)) {
+        if (!$locales->isAvailable($locale)) {
             return $this->redirectToRoute($from);
         }
 

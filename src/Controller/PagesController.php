@@ -10,8 +10,8 @@ use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\SearchEngine\TicketSearcher;
+use App\Service;
 use App\Service\Sorter\OrganizationSorter;
-use App\Utils\Locales;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -47,7 +47,7 @@ class PagesController extends BaseController
 
         return $this->render('pages/about.html.twig', [
             'version' => $version,
-            'availableLanguages' => Locales::getSupportedLanguages(),
+            'availableLanguages' => Service\Locales::SUPPORTED_LOCALES,
         ]);
     }
 
