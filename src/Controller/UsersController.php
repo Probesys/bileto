@@ -6,29 +6,19 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Repository\AuthorizationRepository;
-use App\Repository\OrganizationRepository;
-use App\Repository\UserRepository;
-use App\Service\Sorter\AuthorizationSorter;
-use App\Service\Sorter\OrganizationSorter;
-use App\Service\Sorter\UserSorter;
-use App\Service\UserCreator;
-use App\Service\UserCreatorException;
-use App\Utils\ConstraintErrorsFormatter;
-use App\Utils\Time;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use App\Entity;
+use App\Form;
+use App\Repository;
+use App\Service;
+use App\Service\Sorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UsersController extends BaseController
 {
     #[Route('/users', name: 'users', methods: ['GET', 'HEAD'])]
-    public function index(UserRepository $userRepository, UserSorter $userSorter): Response
+    public function index(Repository\UserRepository $userRepository, Sorter\UserSorter $userSorter): Response
     {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -41,96 +31,46 @@ class UsersController extends BaseController
     }
 
     #[Route('/users/new', name: 'new user', methods: ['GET', 'HEAD'])]
-    public function new(
-        OrganizationRepository $organizationRepository,
-        OrganizationSorter $organizationSorter,
-    ): Response {
+    public function new(): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        $organizations = $organizationRepository->findAll();
-        $organizationSorter->sort($organizations);
+        $user = new Entity\User();
+        $form = $this->createNamedForm('user', Form\UserForm::class, $user);
 
         return $this->render('users/new.html.twig', [
-            'organizations' => $organizations,
-            'email' => '',
-            'name' => '',
-            'organizationUid' => '',
+            'form' => $form,
         ]);
     }
 
     #[Route('/users/new', name: 'create user', methods: ['POST'])]
-    public function create(
-        Request $request,
-        OrganizationRepository $organizationRepository,
-        OrganizationSorter $organizationSorter,
-        UserCreator $userCreator,
-        TranslatorInterface $translator,
-    ): Response {
+    public function create(Request $request, Service\UserCreator $userCreator): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
+        $user = new Entity\User();
+        $form = $this->createNamedForm('user', Form\UserForm::class, $user);
+        $form->handleRequest($request);
 
-        /** @var string $email */
-        $email = $request->request->get('email', '');
-
-        /** @var string $name */
-        $name = $request->request->get('name', '');
-
-        /** @var string $password */
-        $password = $request->request->get('password', '');
-
-        /** @var string $organizationUid */
-        $organizationUid = $request->request->get('organization', '');
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        $organizations = $organizationRepository->findAll();
-        $organizationSorter->sort($organizations);
-
-        if (!$this->isCsrfTokenValid('create user', $csrfToken)) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->renderBadRequest('users/new.html.twig', [
-                'organizations' => $organizations,
-                'email' => $email,
-                'name' => $name,
-                'organizationUid' => $organizationUid,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'form' => $form,
             ]);
         }
 
-        $organization = $organizationRepository->findOneBy(['uid' => $organizationUid]);
-
-        try {
-            $newUser = $userCreator->create(
-                email: $email,
-                name: $name,
-                password: $password,
-                locale: $user->getLocale(),
-                organization: $organization,
-            );
-        } catch (UserCreatorException $e) {
-            return $this->renderBadRequest('users/new.html.twig', [
-                'organizations' => $organizations,
-                'email' => $email,
-                'name' => $name,
-                'organizationUid' => $organizationUid,
-                'errors' => ConstraintErrorsFormatter::format($e->getErrors()),
-            ]);
-        }
+        $user = $form->getData();
+        $userCreator->createUser($user);
 
         return $this->redirectToRoute('user', [
-            'uid' => $newUser->getUid(),
+            'uid' => $user->getUid(),
         ]);
     }
 
     #[Route('/users/{uid:user}', name: 'user', methods: ['GET', 'HEAD'])]
     public function show(
-        User $user,
-        AuthorizationRepository $authorizationRepository,
-        AuthorizationSorter $authorizationSorter,
-        #[Autowire(env: 'bool:LDAP_ENABLED')]
-        bool $ldapEnabled,
+        Entity\User $user,
+        Repository\AuthorizationRepository $authorizationRepository,
+        Sorter\AuthorizationSorter $authorizationSorter,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
@@ -141,132 +81,42 @@ class UsersController extends BaseController
 
         return $this->render('users/show.html.twig', [
             'user' => $user,
-            'ldapEnabled' => $ldapEnabled,
-            'managedByLdap' => $ldapEnabled && $user->getAuthType() === 'ldap',
             'authorizations' => $authorizations,
         ]);
     }
 
     #[Route('/users/{uid:user}/edit', name: 'edit user', methods: ['GET', 'HEAD'])]
-    public function edit(
-        User $user,
-        OrganizationRepository $organizationRepository,
-        OrganizationSorter $organizationSorter,
-        #[Autowire(env: 'bool:LDAP_ENABLED')]
-        bool $ldapEnabled,
-    ): Response {
+    public function edit(Entity\User $user): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        $organizations = $organizationRepository->findAll();
-        $organizationSorter->sort($organizations);
-
-        $userOrganization = $user->getOrganization();
+        $form = $this->createNamedForm('user', Form\UserForm::class, $user);
 
         return $this->render('users/edit.html.twig', [
             'user' => $user,
-            'organizations' => $organizations,
-            'email' => $user->getEmail(),
-            'name' => $user->getName(),
-            'organizationUid' => $userOrganization ? $userOrganization->getUid() : '',
-            'ldapIdentifier' => $user->getLdapIdentifier(),
-            'ldapEnabled' => $ldapEnabled,
-            'managedByLdap' => $ldapEnabled && $user->getAuthType() === 'ldap',
+            'form' => $form,
         ]);
     }
 
     #[Route('/users/{uid:user}/edit', name: 'update user', methods: ['POST'])]
     public function update(
-        User $user,
+        Entity\User $user,
         Request $request,
-        UserRepository $userRepository,
-        OrganizationRepository $organizationRepository,
-        OrganizationSorter $organizationSorter,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
-        UserPasswordHasherInterface $passwordHasher,
-        #[Autowire(env: 'bool:LDAP_ENABLED')]
-        bool $ldapEnabled,
+        Repository\UserRepository $userRepository,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        /** @var string $email */
-        $email = $request->request->get('email', '');
+        $form = $this->createNamedForm('user', Form\UserForm::class, $user);
+        $form->handleRequest($request);
 
-        /** @var string $name */
-        $name = $request->request->get('name', '');
-
-        /** @var string $password */
-        $password = $request->request->get('password', '');
-
-        /** @var string $ldapIdentifier */
-        $ldapIdentifier = $request->request->get('ldapIdentifier', '');
-
-        if ($ldapIdentifier === '') {
-            $ldapIdentifier = null;
-        }
-
-        /** @var string $organizationUid */
-        $organizationUid = $request->request->get('organization', '');
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        $organizations = $organizationRepository->findAll();
-        $organizationSorter->sort($organizations);
-
-        $managedByLdap = $ldapEnabled && $user->getAuthType() === 'ldap';
-
-        if ($managedByLdap) {
-            // If the user is managed by LDAP, these fields cannot be changed.
-            $email = $user->getEmail();
-            $name = $user->getName();
-            $password = '';
-        }
-
-        if (!$this->isCsrfTokenValid('update user', $csrfToken)) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->renderBadRequest('users/edit.html.twig', [
                 'user' => $user,
-                'organizations' => $organizations,
-                'email' => $email,
-                'name' => $name,
-                'organizationUid' => $organizationUid,
-                'ldapIdentifier' => $ldapIdentifier,
-                'ldapEnabled' => $ldapEnabled,
-                'managedByLdap' => $managedByLdap,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'form' => $form,
             ]);
         }
 
-        $organization = $organizationRepository->findOneBy(['uid' => $organizationUid]);
-
-        $user->setEmail($email);
-        $user->setName($name);
-        $user->setOrganization($organization);
-
-        if ($ldapEnabled) {
-            $user->setLdapIdentifier($ldapIdentifier);
-        }
-
-        if ($password !== '') {
-            $hashedPassword = $passwordHasher->hashPassword($user, $password);
-            $user->setPassword($hashedPassword);
-        }
-
-        $errors = $validator->validate($user);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('users/edit.html.twig', [
-                'user' => $user,
-                'organizations' => $organizations,
-                'email' => $email,
-                'name' => $name,
-                'organizationUid' => $organizationUid,
-                'ldapIdentifier' => $ldapIdentifier,
-                'ldapEnabled' => $ldapEnabled,
-                'managedByLdap' => $managedByLdap,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
+        $user = $form->getData();
         $userRepository->save($user, true);
 
         return $this->redirectToRoute('user', [

@@ -103,12 +103,14 @@ class UsersControllerTest extends WebTestCase
 
         $this->assertSame(1, UserFactory::count());
 
-        $client->request(Request::METHOD_GET, '/users/new');
-        $crawler = $client->submitForm('form-create-user-submit', [
-            'email' => $email,
-            'name' => $name,
-            'password' => $password,
-            'organization' => $organization->getUid(),
+        $client->request(Request::METHOD_POST, '/users/new', [
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $email,
+                'name' => $name,
+                'plainPassword' => $password,
+                'organization' => $organization->getId(),
+            ],
         ]);
 
         $this->assertSame(2, UserFactory::count());
@@ -134,13 +136,15 @@ class UsersControllerTest extends WebTestCase
         $name = 'Alix Pataquès';
 
         $client->request(Request::METHOD_POST, '/users/new', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
-            'email' => $email,
-            'name' => $name,
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $email,
+                'name' => $name,
+            ],
         ]);
 
         $this->assertSelectorTextContains(
-            '#email-error',
+            '#user_email-error',
             'Enter a different email address, this one is already in use',
         );
         $this->assertSame(1, UserFactory::count());
@@ -156,12 +160,14 @@ class UsersControllerTest extends WebTestCase
         $name = 'Alix Pataquès';
 
         $client->request(Request::METHOD_POST, '/users/new', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
-            'email' => $email,
-            'name' => $name,
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $email,
+                'name' => $name,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#email-error', 'Enter an email address');
+        $this->assertSelectorTextContains('#user_email-error', 'Enter an email address');
         $this->assertSame(1, UserFactory::count());
     }
 
@@ -175,12 +181,14 @@ class UsersControllerTest extends WebTestCase
         $name = 'Alix Pataquès';
 
         $client->request(Request::METHOD_POST, '/users/new', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
-            'email' => $email,
-            'name' => $name,
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $email,
+                'name' => $name,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#email-error', 'Enter a valid email address');
+        $this->assertSelectorTextContains('#user_email-error', 'Enter a valid email address');
         $this->assertSame(1, UserFactory::count());
     }
 
@@ -194,12 +202,14 @@ class UsersControllerTest extends WebTestCase
         $name = 'Alix Pataquès';
 
         $client->request(Request::METHOD_POST, '/users/new', [
-            '_csrf_token' => 'not a token',
-            'email' => $email,
-            'name' => $name,
+            'user' => [
+                '_token' => 'not a token',
+                'email' => $email,
+                'name' => $name,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->assertSelectorTextContains('#user-error', 'The security token is invalid');
         $this->assertSame(1, UserFactory::count());
     }
 
@@ -215,9 +225,11 @@ class UsersControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, '/users/new', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user'),
-            'email' => $email,
-            'name' => $name,
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $email,
+                'name' => $name,
+            ],
         ]);
     }
 
@@ -295,11 +307,13 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
-            'email' => $newEmail,
-            'name' => $newName,
-            'password' => $newPassword,
-            'organization' => $newOrganization->getUid(),
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $newEmail,
+                'name' => $newName,
+                'plainPassword' => $newPassword,
+                'organization' => $newOrganization->getId(),
+            ]
         ]);
 
         $this->assertResponseRedirects("/users/{$otherUser->getUid()}", 302);
@@ -334,11 +348,13 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
-            'email' => $newEmail,
-            'name' => $newName,
-            'password' => $newPassword,
-            'organization' => $newOrganization->getUid(),
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $newEmail,
+                'name' => $newName,
+                'plainPassword' => $newPassword,
+                'organization' => $newOrganization->getId(),
+            ],
         ]);
 
         $this->assertResponseRedirects("/users/{$otherUser->getUid()}", 302);
@@ -376,12 +392,15 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
-            'email' => $newEmail,
-            'name' => $newName,
-            'password' => $newPassword,
-            'organization' => $newOrganization->getUid(),
-            'ldapIdentifier' => $newLdapIdentifier,
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $newEmail,
+                'name' => $newName,
+                // Don't pass the password as Symfony Form will complain about extra field.
+                // 'plainPassword' => $newPassword,
+                'organization' => $newOrganization->getId(),
+                'ldapIdentifier' => $newLdapIdentifier,
+            ],
         ]);
 
         $this->assertResponseRedirects("/users/{$otherUser->getUid()}", 302);
@@ -416,11 +435,13 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
-            'email' => $newEmail,
-            'name' => $newName,
-            'password' => $newPassword,
-            'organization' => '',
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $newEmail,
+                'name' => $newName,
+                'plainPassword' => $newPassword,
+                'organization' => '',
+            ],
         ]);
 
         $this->assertResponseRedirects("/users/{$otherUser->getUid()}", 302);
@@ -455,14 +476,16 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
-            'email' => $newEmail,
-            'name' => $newName,
-            'password' => $newPassword,
-            'organization' => $newOrganization->getUid(),
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $newEmail,
+                'name' => $newName,
+                'plainPassword' => $newPassword,
+                'organization' => $newOrganization->getId(),
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#email-error', 'Enter a valid email address');
+        $this->assertSelectorTextContains('#user_email-error', 'Enter a valid email address');
         $this->clearEntityManager();
         $otherUser->_refresh();
         $this->assertSame($oldEmail, $otherUser->getEmail());
@@ -495,14 +518,18 @@ class UsersControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
-            '_csrf_token' => 'not a token',
-            'email' => $newEmail,
-            'name' => $newName,
-            'password' => $newPassword,
-            'organization' => $newOrganization->getUid(),
+            'user' => [
+                '_token' => 'not a token',
+                'email' => $newEmail,
+                'name' => $newName,
+                'plainPassword' => $newPassword,
+                'organization' => $newOrganization->getId(),
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->clearEntityManager();
+
+        $this->assertSelectorTextContains('#user-error', 'The security token is invalid');
         $otherUser->_refresh();
         $this->assertSame($oldEmail, $otherUser->getEmail());
         $this->assertSame($oldName, $otherUser->getName());
@@ -534,11 +561,13 @@ class UsersControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update user'),
-            'email' => $newEmail,
-            'name' => $newName,
-            'password' => $newPassword,
-            'organization' => $newOrganization->getUid(),
+            'user' => [
+                '_token' => $this->generateCsrfToken($client, 'user'),
+                'email' => $newEmail,
+                'name' => $newName,
+                'plainPassword' => $newPassword,
+                'organization' => $newOrganization->getId(),
+            ],
         ]);
     }
 }

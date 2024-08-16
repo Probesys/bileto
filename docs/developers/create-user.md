@@ -27,5 +27,7 @@ public function createUser(UserCreator $userCreator)
 }
 ```
 
+If you already have a User entity, call `$userCreator->createUser($user)` instead.
+
 The service automatically flushes the changes so Doctine writes the user to the database immediately.
-If you want to delay the flush, you can pass `flush: false` to the method.
+If you want to delay the flush, you can pass `flush: false` to the methods.

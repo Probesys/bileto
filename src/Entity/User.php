@@ -125,6 +125,8 @@ class User implements
 
     public function __construct()
     {
+        $this->name = '';
+        $this->email = '';
         $this->password = '';
         $this->locale = 'en_GB';
         $this->ldapIdentifier = '';

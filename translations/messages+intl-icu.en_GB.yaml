@@ -506,12 +506,13 @@ users.color_scheme: 'Color scheme'
 users.color_scheme.auto: Auto
 users.color_scheme.dark: Dark
 users.color_scheme.light: Light
-users.edit.ldap.information: Information
-users.edit.ldap.managed: 'You can’t change some information because this account is managed by LDAP.'
-users.edit.leave_password_empty: 'Leave blank to keep the current password.'
-users.edit.organization_caption: 'The tickets opened by email by this user will be attached to this organization.'
 users.edit.title: 'Edit a user'
 users.email: 'Email address'
+users.form.ldap.information: Information
+users.form.ldap.managed: 'You can’t change some information because this account is managed by LDAP.'
+users.form.organization_caption: 'The tickets opened by email by this user will be attached to this organization.'
+users.form.password.empty_keep_current: 'Leave blank to keep the current password.'
+users.form.password.empty_prevent_login: 'Leave blank to prevent this user from logging in.'
 users.identifier: 'Email address or identifier'
 users.index.authorizations: '{count, plural, =0 {No authorizations} one {1 authorization} other {# authorizations}}'
 users.index.no_users: 'No users'
@@ -522,8 +523,6 @@ users.language: Language
 users.ldap_identifier: 'LDAP identifier'
 users.n_others: '{number, plural, =0 {no other} one {1 other} other {# other}}'
 users.name: Name
-users.new.leave_password_empty: '(leave empty to forbid login)'
-users.new.organization_caption: 'The tickets opened by email by this user will be attached to this organization.'
 users.new.submit: 'Create the user'
 users.new.title: 'New user'
 users.no_organization_authorization: 'This user cannot create tickets in their organisation by default. Remember to <a href="{path}">give this user the appropriate authorization.</a>'

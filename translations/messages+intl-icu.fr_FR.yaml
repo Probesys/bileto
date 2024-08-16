@@ -506,12 +506,13 @@ users.color_scheme: 'Schéma de couleurs'
 users.color_scheme.auto: Auto
 users.color_scheme.dark: Sombre
 users.color_scheme.light: Clair
-users.edit.ldap.information: Information
-users.edit.ldap.managed: 'Certaines informations ne sont pas modifiables car ce compte est géré avec LDAP.'
-users.edit.leave_password_empty: 'Laissez vide pour conserver le mot de passe actuel.'
-users.edit.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
 users.edit.title: 'Modifier un utilisateur'
 users.email: 'Adresse email'
+users.form.ldap.information: Information
+users.form.ldap.managed: 'Certaines informations ne sont pas modifiables car ce compte est géré avec LDAP.'
+users.form.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
+users.form.password.empty_keep_current: 'Laissez vide pour conserver le mot de passe actuel.'
+users.form.password.empty_prevent_login: 'Laissez vide pour empêcher cet utilisateur de se connecter.'
 users.identifier: 'Adresse email ou identifiant'
 users.index.authorizations: '{count, plural, =0 {Aucune autorisation} one {1 autorisation} other {# autorisations}}'
 users.index.new_user: 'Nouvel utilisateur'
@@ -522,8 +523,6 @@ users.language: Langue
 users.ldap_identifier: 'Identifiant LDAP'
 users.n_others: '{number, plural, =0 {aucun autre} one {1 autre} other {# autres}}'
 users.name: Nom
-users.new.leave_password_empty: '(laissez vide pour empêcher la connexion)'
-users.new.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
 users.new.submit: 'Créer l’utilisateur'
 users.new.title: 'Nouvel utilisateur'
 users.no_organization_authorization: 'Cet utilisateur ne peut pas créer de tickets dans son organisation par défaut. Pensez à lui <a href="{path}">donner une autorisation correspondante.</a>'

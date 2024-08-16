@@ -70,7 +70,7 @@
                         {{ 'users.show.name' | trans({ name: user.name }) }}
                     </p>
 
-                    {% if ldapEnabled %}
+                    {% if user.ldapIdentifier %}
                         <p>
                             {{ 'users.show.ldap_identifier' | trans({ identifier: user.ldapIdentifier }) }}
                         </p>
