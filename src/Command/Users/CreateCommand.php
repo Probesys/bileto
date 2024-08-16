@@ -6,12 +6,8 @@
 
 namespace App\Command\Users;
 
-use App\Entity;
-use App\Repository\RoleRepository;
-use App\Repository\AuthorizationRepository;
-use App\Service\UserCreator;
-use App\Service\UserCreatorException;
-use App\Utils\Time;
+use App\Repository;
+use App\Service;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -28,9 +24,10 @@ use Doctrine\Persistence\ManagerRegistry;
 class CreateCommand extends Command
 {
     public function __construct(
-        private RoleRepository $roleRepository,
-        private AuthorizationRepository $authorizationRepository,
-        private UserCreator $userCreator,
+        private Repository\AuthorizationRepository $authorizationRepository,
+        private Repository\RoleRepository $roleRepository,
+        private Service\Locales $locales,
+        private Service\UserCreator $userCreator,
     ) {
         parent::__construct();
     }
@@ -38,8 +35,26 @@ class CreateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('email', '', InputOption::VALUE_OPTIONAL, 'The email of the user.')
-            ->addOption('password', '', InputOption::VALUE_OPTIONAL, 'The password of the user.')
+            ->addOption(
+                'email',
+                '',
+                InputOption::VALUE_OPTIONAL,
+                'The email of the user.'
+            )
+            ->addOption(
+                'password',
+                '',
+                InputOption::VALUE_OPTIONAL,
+                'The password of the user.'
+            )
+            ->addOption(
+                'locale',
+                '',
+                InputOption::VALUE_OPTIONAL,
+                'The locale of the user.',
+                $this->locales->getDefaultLocale(),
+                Service\Locales::getSupportedLocalesCodes(),
+            )
         ;
     }
 
@@ -70,13 +85,15 @@ class CreateCommand extends Command
     {
         $email = trim($input->getOption('email'));
         $password = $input->getOption('password');
+        $locale = $input->getOption('locale');
 
         try {
             $user = $this->userCreator->create(
                 email: $email,
                 password: $password,
+                locale: $locale,
             );
-        } catch (UserCreatorException $e) {
+        } catch (Service\UserCreatorException $e) {
             $output = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
             foreach ($e->getErrors() as $error) {
                 $output->writeln($error->getMessage());

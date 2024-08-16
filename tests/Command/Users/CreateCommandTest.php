@@ -43,7 +43,7 @@ class CreateCommandTest extends KernelTestCase
         $this->assertNotNull($user);
         $this->assertSame($email, $user->getEmail());
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $password));
-        $this->assertSame(['ROLE_USER'], $user->getRoles());
+        $this->assertSame('en_GB', $user->getLocale());
         $this->assertSame(20, strlen($user->getUid()));
         // It should also give the "super-admin" permissions to the user.
         $authorization = AuthorizationFactory::first();
@@ -57,12 +57,14 @@ class CreateCommandTest extends KernelTestCase
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $email = 'alix@example.com';
         $password = 'secret';
+        $locale = 'fr_FR';
 
         $this->assertSame(0, UserFactory::count());
 
         $tester = self::executeCommand('app:users:create', [
             '--email' => $email,
             '--password' => $password,
+            '--locale' => $locale,
         ]);
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode(), $tester->getDisplay());
@@ -74,7 +76,7 @@ class CreateCommandTest extends KernelTestCase
         $this->assertNotNull($user);
         $this->assertSame($email, $user->getEmail());
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $password));
-        $this->assertSame(['ROLE_USER'], $user->getRoles());
+        $this->assertSame($locale, $user->getLocale());
         $this->assertSame(20, strlen($user->getUid()));
     }
 
@@ -142,5 +144,26 @@ class CreateCommandTest extends KernelTestCase
             $tester->getErrorOutput()
         );
         $this->assertSame(1, UserFactory::count());
+    }
+
+    public function testExecuteFailsIfLocaleIsInvalid(): void
+    {
+        /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
+        $passwordHasher = self::getContainer()->get('security.user_password_hasher');
+        $email = 'alix@example.com';
+        $password = 'secret';
+        $locale = 'not a locale';
+
+        $this->assertSame(0, UserFactory::count());
+
+        $tester = self::executeCommand('app:users:create', [
+            '--email' => $email,
+            '--password' => $password,
+            '--locale' => $locale,
+        ]);
+
+        $this->assertSame(Command::INVALID, $tester->getStatusCode(), $tester->getDisplay());
+        $this->assertSame("Select a language from the list.\n", $tester->getErrorOutput());
+        $this->assertSame(0, UserFactory::count());
     }
 }
