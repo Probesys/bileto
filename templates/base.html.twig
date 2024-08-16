@@ -129,7 +129,7 @@
                                 </button>
                             {% endif %}
 
-                            <ul class="layout__header-navigation list--nostyle">
+                            <ul class="layout__header-navigation list--nostyle {{ not app.user ? 'no-mobile' }}">
                                 <li class="no-mobile">
                                     <a
                                         class="layout__header-home"
