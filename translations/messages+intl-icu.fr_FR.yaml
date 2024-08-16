@@ -114,6 +114,10 @@ contracts.status: Statut
 contracts.status.coming: 'À venir'
 contracts.status.finished: Terminé
 contracts.status.ongoing: 'En cours'
+emails.reset_password.expiration: 'Si vous ne l’utilisez pas avant, ce lien expirera dans 2 heures.'
+emails.reset_password.intro: 'Vous recevez cet email car une demande de réinialisation de mot de passe a été faite pour votre compte.'
+emails.reset_password.reset: 'Réinitialiser votre mot de passe'
+emails.reset_password.subject: 'Réinitialisez votre mot de passe Bileto'
 errors.404.description: 'La page demandée n’a pas été trouvée. Vérifiez qu’il n’y a pas de faute dans l’URL.'
 errors.404.title: "Page non trouvée\_!"
 errors.back_home: 'Retour à la page d’accueil'
@@ -170,6 +174,9 @@ layout.scroll_to_top: 'Défiler en haut'
 layout.skip_to_main_content: 'Accéder au contenu principal'
 layout.tickets: Tickets
 login.intro: 'Gérez votre support<br><b>en toute simplicité</b>'
+login.forgot_password: "Mot de passe oublié\_?"
+login.password_changed.message: 'Votre mot de passe a bien été changé. Vous n’avez plus qu’à vous connecter.'
+login.password_changed.title: 'Mot de passe changé'
 login.remember_me: 'Se souvenir de moi'
 login.submit: 'Se connecter'
 login.title: Connexion
@@ -231,6 +238,16 @@ organizations.settings.deletion.title: Suppression
 organizations.settings.title: Gestion
 pagination.next: Suivant
 pagination.previous: Précédent
+passwords.edit.form.password: 'Nouveau mot de passe'
+passwords.edit.form.submit: 'Changer le mot de passe'
+passwords.edit.short: 'Vous êtes sur le point de changer le mot de passe du compte <strong>{email}</strong>.'
+passwords.edit.title: 'Changement de mot de passe'
+passwords.reset.form.email: 'Adresse email'
+passwords.reset.form.submit: 'Envoyer le mail de réinitialisation'
+passwords.reset.sent.message: 'Nous venons de vous envoyer un email contenant un lien pour réinitialiser votre mot de passe. Si vous ne l’avez pas reçu d’ici quelques minutes, veuillez vérifier vos spams.'
+passwords.reset.sent.title: 'Email envoyé'
+passwords.reset.short: 'Saisissez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.'
+passwords.reset.title: 'Réinitialisation de votre mot de passe'
 preferences.title: Préférences
 profile.current_password: 'Mot de passe actuel'
 profile.ldap.information: Information

@@ -1,0 +1,79 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'reset password' %}
+
+{% block title %}{{ 'passwords.reset.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'passwords.reset.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <div class="flow flow--large text--center">
+            <h1>{{ 'passwords.reset.title' | trans }}</h1>
+
+            <p class="wrapper wrapper--text wrapper--center">
+                {{ 'passwords.reset.short' | trans }}
+            </p>
+        </div>
+
+        <div class="panel">
+            <div class="wrapper wrapper--text wrapper--center flow flow--large">
+                {% if emailSent %}
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'info',
+                        title: 'passwords.reset.sent.title' | trans,
+                        message: 'passwords.reset.sent.message' | trans,
+                    }, with_context = false) }}
+                {% else %}
+                    {{ form_start(form, { attr: {
+                        'class': 'form--standard',
+                    }}) }}
+                        {{ form_errors(form) }}
+
+                        <div class="flow flow--small">
+                            <label for="{{ field_id(form.user) }}">
+                                {{ 'passwords.reset.form.email' | trans }}
+                            </label>
+
+                            {{ form_errors(form.user) }}
+
+                            <input
+                                type="email"
+                                id="{{ field_id(form.user) }}"
+                                name="{{ field_name(form.user) }}"
+                                value="{{ field_value(form.user) }}"
+                                required
+                                {% if field_has_errors(form.user) %}
+                                    aria-invalid="true"
+                                    aria-errormessage="{{ field_id(form.user, 'error') }}"
+                                {% endif %}
+                            />
+                        </div>
+
+                        <div class="form__actions">
+                            <button class="button--primary" type="submit">
+                                {{ 'passwords.reset.form.submit' | trans }}
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock %}
