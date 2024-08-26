@@ -38,7 +38,10 @@ class TicketTimeline
 
         $timeline->addItems($messages);
 
-        if ($this->authorizer->isGranted('orga:see:tickets:time_spent', $organization)) {
+        if (
+            $this->authorizer->isGranted('orga:see:tickets:time_spent:accounted', $organization) ||
+            $this->authorizer->isGranted('orga:see:tickets:time_spent:real', $organization)
+        ) {
             $timeSpents = $ticket->getTimeSpents()->getValues();
             $timeline->addItems($timeSpents);
         }
