@@ -30,6 +30,7 @@ final class UserFactory extends PersistentProxyObjectFactory
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'email' => self::faker()->unique()->safeEmail(),
             'password' => self::faker()->text(),
+            'locale' => 'en_GB',
         ];
     }
 

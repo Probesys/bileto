@@ -128,7 +128,7 @@ class User implements
         $this->name = '';
         $this->email = '';
         $this->password = '';
-        $this->locale = 'en_GB';
+        $this->locale = '';
         $this->ldapIdentifier = '';
         $this->authorizations = new ArrayCollection();
         $this->teams = new ArrayCollection();

@@ -28,6 +28,16 @@ class UserCreator
 
     public function createUser(Entity\User $user, bool $flush = true): void
     {
+        if ($user->getLocale() === '') {
+            $defaultLocale = $this->locales->getDefaultLocale();
+            $user->setLocale($defaultLocale);
+        }
+
+        $errors = $this->validator->validate($user);
+        if (count($errors) > 0) {
+            throw new UserCreatorException($errors);
+        }
+
         $this->userRepository->save($user, $flush);
 
         $defaultRole = $this->roleRepository->findDefault();
@@ -60,10 +70,6 @@ class UserCreator
         ?Entity\Organization $organization = null,
         bool $flush = true,
     ): Entity\User {
-        if ($locale === '') {
-            $locale = $this->locales->getDefaultLocale();
-        }
-
         $user = new Entity\User();
         $user->setEmail($email);
         $user->setName($name);
@@ -74,11 +80,6 @@ class UserCreator
         if ($password !== '') {
             $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
             $user->setPassword($hashedPassword);
-        }
-
-        $errors = $this->validator->validate($user);
-        if (count($errors) > 0) {
-            throw new UserCreatorException($errors);
         }
 
         $this->createUser($user, $flush);

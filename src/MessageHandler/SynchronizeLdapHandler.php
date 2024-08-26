@@ -65,13 +65,10 @@ class SynchronizeLdapHandler
                     $countUpdated += 1;
                 }
             } else {
+                $user = $ldapUser;
+
                 try {
-                    $user = $this->userCreator->create(
-                        email: $ldapUser->getEmail(),
-                        name: $ldapUser->getName(),
-                        ldapIdentifier: $ldapUser->getLdapIdentifier(),
-                        flush: false,
-                    );
+                    $this->userCreator->createUser($user, flush: false);
 
                     $countCreated += 1;
                 } catch (UserCreatorException $e) {

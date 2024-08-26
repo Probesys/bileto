@@ -24,8 +24,7 @@ use App\Repository\RoleRepository;
 use App\Repository\TeamRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
-use App\Service\MessageDocumentStorage;
-use App\Service\MessageDocumentStorageError;
+use App\Service;
 use App\Uid\UidEntityInterface;
 use App\Utils\FSHelper;
 use App\Utils\Time;
@@ -142,7 +141,8 @@ class DataImporter
         private EntityManagerInterface $entityManager,
         private ValidatorInterface $validator,
         private HtmlSanitizerInterface $appMessageSanitizer,
-        private MessageDocumentStorage $messageDocumentStorage,
+        private Service\MessageDocumentStorage $messageDocumentStorage,
+        private Service\Locales $locales,
     ) {
     }
 
@@ -482,6 +482,8 @@ class DataImporter
             'email',
         ];
 
+        $defaultLocale = $this->locales->getDefaultLocale();
+
         foreach ($json as $jsonUser) {
             // Check the structure of the user
             $error = self::checkStructure($jsonUser, required: $requiredFields);
@@ -496,7 +498,7 @@ class DataImporter
             if (isset($jsonUser['name'])) {
                 $name = strval($jsonUser['name']);
             }
-            $locale = null;
+            $locale = $defaultLocale;
             if (isset($jsonUser['locale'])) {
                 $locale = strval($jsonUser['locale']);
             }
@@ -517,11 +519,9 @@ class DataImporter
             // Build the user
             $user = new User();
             $user->setEmail($email);
+            $user->setLocale($locale);
             if ($name) {
                 $user->setName($name);
-            }
-            if ($locale) {
-                $user->setLocale($locale);
             }
             if ($ldapIdentifier) {
                 $user->setLdapIdentifier($ldapIdentifier);
@@ -1509,7 +1509,7 @@ class DataImporter
 
                 try {
                     $messageDocument = $this->messageDocumentStorage->store($file, $filename);
-                } catch (MessageDocumentStorageError $e) {
+                } catch (Service\MessageDocumentStorageError $e) {
                     $hasErrors = true;
                     yield "Cannot store the file {$filename}: {$e->getMessage()}\n";
                     continue;

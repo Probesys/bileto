@@ -120,12 +120,10 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
             $ldapUser = $this->ldap->searchUser($identifier);
 
             if ($ldapUser) {
+                $user = $ldapUser;
+
                 try {
-                    $user = $this->userCreator->create(
-                        email: $ldapUser->getEmail(),
-                        name: $ldapUser->getName(),
-                        ldapIdentifier: $ldapUser->getLdapIdentifier(),
-                    );
+                    $this->userCreator->createUser($user);
                 } catch (UserCreatorException $e) {
                     $errors = implode(' ', ConstraintErrorsFormatter::format($e->getErrors()));
                     $this->logger->error("Can't create LDAP user: {$errors}");

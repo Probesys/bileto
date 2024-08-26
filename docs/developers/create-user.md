@@ -8,7 +8,7 @@ Instead, you must use the [`UserCreator` service](/src/Service/UserCreator.php):
 use App\Service\UserCreator;
 use App\Service\UserCreatorException;
 
-public function createUser(UserCreator $userCreator)
+public function myController(UserCreator $userCreator)
 {
     $email = 'alix@example.com';
     $name = 'Alix Hambourg';
@@ -24,10 +24,14 @@ public function createUser(UserCreator $userCreator)
         $errors = $e->getErrors();
         // Do something with the errors, such as displaying them in a form.
     }
+
+    // or if you already have a User entity object
+    try {
+        $userCreator->createUser($user);
+    } catch (UserCreatorException $e) {
+    }
 }
 ```
-
-If you already have a User entity, call `$userCreator->createUser($user)` instead.
 
 The service automatically flushes the changes so Doctine writes the user to the database immediately.
 If you want to delay the flush, you can pass `flush: false` to the methods.
