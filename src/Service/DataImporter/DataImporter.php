@@ -6,29 +6,11 @@
 
 namespace App\Service\DataImporter;
 
-use App\Entity\Authorization;
-use App\Entity\Contract;
-use App\Entity\Label;
-use App\Entity\Message;
-use App\Entity\Organization;
-use App\Entity\Role;
-use App\Entity\Team;
-use App\Entity\TeamAuthorization;
-use App\Entity\Ticket;
-use App\Entity\TimeSpent;
-use App\Entity\User;
-use App\Repository\ContractRepository;
-use App\Repository\LabelRepository;
-use App\Repository\OrganizationRepository;
-use App\Repository\RoleRepository;
-use App\Repository\TeamRepository;
-use App\Repository\TicketRepository;
-use App\Repository\UserRepository;
+use App\Entity;
+use App\Repository;
 use App\Service;
-use App\Uid\UidEntityInterface;
-use App\Utils\FSHelper;
-use App\Utils\Time;
-use App\Utils\ConstraintErrorsFormatter;
+use App\Uid;
+use App\Utils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File;
@@ -98,28 +80,28 @@ class DataImporter
 
     private string $documentsPath = '';
 
-    /** @var Index<Organization> */
+    /** @var Index<Entity\Organization> */
     private Index $indexOrganizations;
 
-    /** @var Index<Role> */
+    /** @var Index<Entity\Role> */
     private Index $indexRoles;
 
-    /** @var Index<User> */
+    /** @var Index<Entity\User> */
     private Index $indexUsers;
 
-    /** @var Index<Team> */
+    /** @var Index<Entity\Team> */
     private Index $indexTeams;
 
-    /** @var Index<Contract> */
+    /** @var Index<Entity\Contract> */
     private Index $indexContracts;
 
-    /** @var Index<Label> */
+    /** @var Index<Entity\Label> */
     private Index $indexLabels;
 
-    /** @var Index<Ticket> */
+    /** @var Index<Entity\Ticket> */
     private Index $indexTickets;
 
-    /** @var Index<Message> */
+    /** @var Index<Entity\Message> */
     private Index $indexMessages;
 
     /**
@@ -131,13 +113,13 @@ class DataImporter
     private Index $indexMessageToDocuments;
 
     public function __construct(
-        private ContractRepository $contractRepository,
-        private LabelRepository $labelRepository,
-        private OrganizationRepository $organizationRepository,
-        private RoleRepository $roleRepository,
-        private TeamRepository $teamRepository,
-        private TicketRepository $ticketRepository,
-        private UserRepository $userRepository,
+        private Repository\ContractRepository $contractRepository,
+        private Repository\LabelRepository $labelRepository,
+        private Repository\OrganizationRepository $organizationRepository,
+        private Repository\RoleRepository $roleRepository,
+        private Repository\TeamRepository $teamRepository,
+        private Repository\TicketRepository $ticketRepository,
+        private Repository\UserRepository $userRepository,
         private EntityManagerInterface $entityManager,
         private ValidatorInterface $validator,
         private HtmlSanitizerInterface $appMessageSanitizer,
@@ -160,7 +142,7 @@ class DataImporter
             throw new DataImporterError('The file is not a valid ZIP archive.');
         }
 
-        $now = Time::now();
+        $now = Utils\Time::now();
         $tmpPath = sys_get_temp_dir();
         $tmpPath = $tmpPath . "/BiletoDataImport_{$now->format('Y-m-d\TH:i:s')}";
 
@@ -173,49 +155,49 @@ class DataImporter
 
         $organizations = [];
         if (file_exists("{$tmpPath}/organizations.json")) {
-            $organizations = FSHelper::readJson("{$tmpPath}/organizations.json");
+            $organizations = Utils\FSHelper::readJson("{$tmpPath}/organizations.json");
         } else {
             yield "The file organizations.json is missing, so ignoring organizations.\n";
         }
 
         $roles = [];
         if (file_exists("{$tmpPath}/roles.json")) {
-            $roles = FSHelper::readJson("{$tmpPath}/roles.json");
+            $roles = Utils\FSHelper::readJson("{$tmpPath}/roles.json");
         } else {
             yield "The file roles.json is missing, so ignoring roles.\n";
         }
 
         $users = [];
         if (file_exists("{$tmpPath}/users.json")) {
-            $users = FSHelper::readJson("{$tmpPath}/users.json");
+            $users = Utils\FSHelper::readJson("{$tmpPath}/users.json");
         } else {
             yield "The file users.json is missing, so ignoring users.\n";
         }
 
         $teams = [];
         if (file_exists("{$tmpPath}/teams.json")) {
-            $teams = FSHelper::readJson("{$tmpPath}/teams.json");
+            $teams = Utils\FSHelper::readJson("{$tmpPath}/teams.json");
         } else {
             yield "The file teams.json is missing, so ignoring teams.\n";
         }
 
         $contracts = [];
         if (file_exists("{$tmpPath}/contracts.json")) {
-            $contracts = FSHelper::readJson("{$tmpPath}/contracts.json");
+            $contracts = Utils\FSHelper::readJson("{$tmpPath}/contracts.json");
         } else {
             yield "The file contracts.json is missing, so ignoring contracts.\n";
         }
 
         $labels = [];
         if (file_exists("{$tmpPath}/labels.json")) {
-            $labels = FSHelper::readJson("{$tmpPath}/labels.json");
+            $labels = Utils\FSHelper::readJson("{$tmpPath}/labels.json");
         } else {
             yield "The file labels.json is missing, so ignoring labels.\n";
         }
 
         $tickets = [];
-        foreach (FSHelper::recursiveScandir("{$tmpPath}/tickets/") as $ticketFilepath) {
-            $tickets[] = FSHelper::readJson($ticketFilepath);
+        foreach (Utils\FSHelper::recursiveScandir("{$tmpPath}/tickets/") as $ticketFilepath) {
+            $tickets[] = Utils\FSHelper::readJson($ticketFilepath);
         }
 
         $countTickets = count($tickets);
@@ -247,7 +229,7 @@ class DataImporter
         }
 
         yield "Removing the extracted files at {$tmpPath}… ";
-        FSHelper::recursiveUnlink($tmpPath);
+        Utils\FSHelper::recursiveUnlink($tmpPath);
 
         if ($error) {
             throw $error;
@@ -347,7 +329,7 @@ class DataImporter
             }
 
             // Build the organization
-            $organization = new Organization();
+            $organization = new Entity\Organization();
             $organization->setName($name);
 
             if (is_array($domains)) {
@@ -421,7 +403,7 @@ class DataImporter
             }
 
             // Build the role
-            $role = new Role();
+            $role = new Entity\Role();
             $role->setName($name);
             $role->setDescription($description);
             $role->setType($type);
@@ -517,7 +499,7 @@ class DataImporter
             }
 
             // Build the user
-            $user = new User();
+            $user = new Entity\User();
             $user->setEmail($email);
             $user->setLocale($locale);
             if ($name) {
@@ -575,7 +557,7 @@ class DataImporter
      *
      * @param mixed[] $json
      */
-    private function processUserAuthorizations(string $userId, User $user, array $json): void
+    private function processUserAuthorizations(string $userId, Entity\User $user, array $json): void
     {
         $requiredFields = [
             'roleId',
@@ -597,7 +579,7 @@ class DataImporter
             }
 
             // Build the authorization
-            $authorization = new Authorization();
+            $authorization = new Entity\Authorization();
 
             // Check and set references
             $role = $this->indexRoles->get($roleId);
@@ -658,7 +640,7 @@ class DataImporter
             }
 
             // Build the team
-            $team = new Team();
+            $team = new Entity\Team();
             $team->setName($name);
 
             // Check and set references
@@ -699,7 +681,7 @@ class DataImporter
      *
      * @param mixed[] $json
      */
-    private function processTeamAuthorizations(string $teamId, Team $team, array $json): void
+    private function processTeamAuthorizations(string $teamId, Entity\Team $team, array $json): void
     {
         $requiredFields = [
             'roleId',
@@ -721,7 +703,7 @@ class DataImporter
             }
 
             // Build the authorization
-            $teamAuthorization = new TeamAuthorization();
+            $teamAuthorization = new Entity\TeamAuthorization();
 
             // Check and set references
             $role = $this->indexRoles->get($roleId);
@@ -802,7 +784,7 @@ class DataImporter
             }
 
             // Build the contract
-            $contract = new Contract();
+            $contract = new Entity\Contract();
             $contract->setName($name);
             $contract->setMaxHours($maxHours);
 
@@ -908,7 +890,7 @@ class DataImporter
             }
 
             // Build the label
-            $label = new Label();
+            $label = new Entity\Label();
             $label->setName($name);
             $label->setDescription($description);
             $label->setColor($color);
@@ -1037,7 +1019,7 @@ class DataImporter
             }
 
             // Build the ticket
-            $ticket = new Ticket();
+            $ticket = new Entity\Ticket();
             $ticket->setCreatedAt($createdAt);
             $ticket->setTitle($title);
 
@@ -1189,7 +1171,7 @@ class DataImporter
      *
      * @param mixed[] $json
      */
-    private function processTicketTimeSpents(string $ticketId, Ticket $ticket, array $json): void
+    private function processTicketTimeSpents(string $ticketId, Entity\Ticket $ticket, array $json): void
     {
         $requiredFields = [
             'createdAt',
@@ -1217,7 +1199,7 @@ class DataImporter
             }
 
             // Build the time spent
-            $timeSpent = new TimeSpent();
+            $timeSpent = new Entity\TimeSpent();
             $timeSpent->setCreatedAt($createdAt);
             $timeSpent->setTime($time);
             $timeSpent->setRealTime($realTime);
@@ -1260,8 +1242,12 @@ class DataImporter
      *
      * @param mixed[] $json
      */
-    private function processTicketMessages(string $ticketId, Ticket $ticket, array $json, ?string $solutionId): void
-    {
+    private function processTicketMessages(
+        string $ticketId,
+        Entity\Ticket $ticket,
+        array $json,
+        ?string $solutionId,
+    ): void {
         $requiredFields = [
             'id',
             'createdAt',
@@ -1300,7 +1286,7 @@ class DataImporter
             }
 
             // Build the message
-            $message = new Message();
+            $message = new Entity\Message();
             $message->setCreatedAt($createdAt);
             $message->setContent($content);
             if ($isConfidential !== null) {
@@ -1438,7 +1424,7 @@ class DataImporter
     }
 
     /**
-     * @template T of UidEntityInterface
+     * @template T of Uid\UidEntityInterface
      *
      * @param T[] $entities
      *
@@ -1539,7 +1525,7 @@ class DataImporter
             return '';
         }
 
-        $formattedErrors = ConstraintErrorsFormatter::format($rawErrors);
+        $formattedErrors = Utils\ConstraintErrorsFormatter::format($rawErrors);
         return implode(' ', $formattedErrors);
     }
 }

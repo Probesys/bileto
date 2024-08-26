@@ -8,15 +8,7 @@ namespace App\Tests\Service\DataImporter;
 
 use App\Service\DataImporter\DataImporter;
 use App\Service\DataImporter\DataImporterError;
-use App\Tests\Factory\ContractFactory;
-use App\Tests\Factory\LabelFactory;
-use App\Tests\Factory\MessageFactory;
-use App\Tests\Factory\MessageDocumentFactory;
-use App\Tests\Factory\OrganizationFactory;
-use App\Tests\Factory\RoleFactory;
-use App\Tests\Factory\TeamFactory;
-use App\Tests\Factory\TicketFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Factory;
 use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
@@ -62,15 +54,15 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(organizations: $organizations));
 
-        $this->assertSame(1, OrganizationFactory::count());
-        $organization = OrganizationFactory::last();
+        $this->assertSame(1, Factory\OrganizationFactory::count());
+        $organization = Factory\OrganizationFactory::last();
         $this->assertSame('Foo', $organization->getName());
         $this->assertEquals(['example.org', '*'], $organization->getDomains());
     }
 
     public function testImportOrganizationsKeepsExistingOrganizationsInDatabase(): void
     {
-        $existingOrganization = OrganizationFactory::createOne([
+        $existingOrganization = Factory\OrganizationFactory::createOne([
             'name' => 'Foo',
         ]);
 
@@ -83,8 +75,8 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(organizations: $organizations));
 
-        $this->assertSame(1, OrganizationFactory::count());
-        $organization = OrganizationFactory::last();
+        $this->assertSame(1, Factory\OrganizationFactory::count());
+        $organization = Factory\OrganizationFactory::last();
         $this->assertSame($existingOrganization->getUid(), $organization->getUid());
     }
 
@@ -106,7 +98,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(organizations: $organizations));
 
-        $this->assertSame(0, OrganizationFactory::count());
+        $this->assertSame(0, Factory\OrganizationFactory::count());
     }
 
     public function testImportOrganizationsFailsIfNameIsDuplicatedInFile(): void
@@ -127,7 +119,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(organizations: $organizations));
 
-        $this->assertSame(0, OrganizationFactory::count());
+        $this->assertSame(0, Factory\OrganizationFactory::count());
     }
 
     public function testImportOrganizationsFailsIfOrganizationIsInvalid(): void
@@ -144,7 +136,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(organizations: $organizations));
 
-        $this->assertSame(0, OrganizationFactory::count());
+        $this->assertSame(0, Factory\OrganizationFactory::count());
     }
 
     public function testImportOrganizationsFailsIfDomainsAreDuplicated(): void
@@ -152,7 +144,7 @@ class DataImporterTest extends WebTestCase
         $this->expectException(DataImporterError::class);
         $this->expectExceptionMessage('Organization 1 error: The domain example.org is already used');
 
-        $exisitingOrganization = OrganizationFactory::createOne([
+        $exisitingOrganization = Factory\OrganizationFactory::createOne([
             'domains' => ['example.org'],
         ]);
 
@@ -166,7 +158,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(organizations: $organizations));
 
-        $this->assertSame(0, OrganizationFactory::count());
+        $this->assertSame(0, Factory\OrganizationFactory::count());
     }
 
     public function testImportOrganizationsFailsIfDomainsAreInvalid(): void
@@ -184,7 +176,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(organizations: $organizations));
 
-        $this->assertSame(0, OrganizationFactory::count());
+        $this->assertSame(0, Factory\OrganizationFactory::count());
     }
 
     public function testImportRoles(): void
@@ -205,8 +197,8 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(roles: $roles));
 
-        $this->assertSame(1, RoleFactory::count());
-        $role = RoleFactory::last();
+        $this->assertSame(1, Factory\RoleFactory::count());
+        $role = Factory\RoleFactory::last();
         $this->assertSame('Foo', $role->getName());
         $this->assertSame('Foo description', $role->getDescription());
         $this->assertSame('user', $role->getType());
@@ -218,7 +210,7 @@ class DataImporterTest extends WebTestCase
 
     public function testImportRolesKeepsExistingRolesInDatabase(): void
     {
-        $exisitingRole = RoleFactory::createOne([
+        $exisitingRole = Factory\RoleFactory::createOne([
             'name' => 'Foo',
         ]);
 
@@ -237,15 +229,15 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(roles: $roles));
 
-        $this->assertSame(1, RoleFactory::count());
-        $role = RoleFactory::last();
+        $this->assertSame(1, Factory\RoleFactory::count());
+        $role = Factory\RoleFactory::last();
         $this->assertSame($exisitingRole->getUid(), $role->getUid());
     }
 
     public function testImportRolesKeepsSuperRoleInDatabase(): void
     {
         /** @var \App\Repository\RoleRepository */
-        $roleRepository = RoleFactory::repository();
+        $roleRepository = Factory\RoleFactory::repository();
         $superRole = $roleRepository->findOrCreateSuperRole();
 
         $roles = [
@@ -260,8 +252,8 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(roles: $roles));
 
-        $this->assertSame(1, RoleFactory::count());
-        $role = RoleFactory::last();
+        $this->assertSame(1, Factory\RoleFactory::count());
+        $role = Factory\RoleFactory::last();
         $this->assertSame($superRole->getUid(), $role->getUid());
     }
 
@@ -287,7 +279,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(roles: $roles));
 
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(0, Factory\RoleFactory::count());
     }
 
     public function testImportRolesFailsIfNameIsDuplicatedInFile(): void
@@ -312,7 +304,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(roles: $roles));
 
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(0, Factory\RoleFactory::count());
     }
 
     public function testImportRolesFailsIfTypeSuperIsDuplicatedInFile(): void
@@ -337,7 +329,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(roles: $roles));
 
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(0, Factory\RoleFactory::count());
     }
 
     public function testImportRolesFailsIfRoleIsInvalid(): void
@@ -356,7 +348,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(roles: $roles));
 
-        $this->assertSame(0, RoleFactory::count());
+        $this->assertSame(0, Factory\RoleFactory::count());
     }
 
     public function testImportUsers(): void
@@ -398,8 +390,8 @@ class DataImporterTest extends WebTestCase
             users: $users,
         ));
 
-        $this->assertSame(1, UserFactory::count());
-        $user = UserFactory::last();
+        $this->assertSame(1, Factory\UserFactory::count());
+        $user = Factory\UserFactory::last();
         $user->_refresh();
         $this->assertSame('Alix Hambourg', $user->getName());
         $this->assertSame('alix@example.com', $user->getEmail());
@@ -419,7 +411,7 @@ class DataImporterTest extends WebTestCase
 
     public function testImportUsersKeepsExistingUsersInDatabase(): void
     {
-        $existingUser = UserFactory::createOne([
+        $existingUser = Factory\UserFactory::createOne([
             'email' => 'alix@example.com',
         ]);
 
@@ -432,8 +424,8 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(users: $users));
 
-        $this->assertSame(1, UserFactory::count());
-        $user = UserFactory::last();
+        $this->assertSame(1, Factory\UserFactory::count());
+        $user = Factory\UserFactory::last();
         $this->assertSame($existingUser->getUid(), $user->getUid());
     }
 
@@ -455,7 +447,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(users: $users));
 
-        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, Factory\UserFactory::count());
     }
 
     public function testImportUsersFailsIfEmailIsDuplicatedInFile(): void
@@ -476,7 +468,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(users: $users));
 
-        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, Factory\UserFactory::count());
     }
 
     public function testImportUsersFailsIfUserIsInvalid(): void
@@ -493,7 +485,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(users: $users));
 
-        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, Factory\UserFactory::count());
     }
 
     public function testImportUsersFailsIfOrganizationRefersToUnknownId(): void
@@ -511,7 +503,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(users: $users));
 
-        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, Factory\UserFactory::count());
     }
 
     public function testImportUsersFailsIfAuthorizationRefersToUnknownRole(): void
@@ -534,7 +526,7 @@ class DataImporterTest extends WebTestCase
 
         $this->processGenerator($this->dataImporter->import(users: $users));
 
-        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, Factory\UserFactory::count());
     }
 
     public function testImportUsersFailsIfAuthorizationRefersToUnknownOrganization(): void
@@ -568,7 +560,7 @@ class DataImporterTest extends WebTestCase
             users: $users,
         ));
 
-        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, Factory\UserFactory::count());
     }
 
     public function testImportTeams(): void
@@ -613,8 +605,8 @@ class DataImporterTest extends WebTestCase
             teams: $teams,
         ));
 
-        $this->assertSame(1, TeamFactory::count());
-        $team = TeamFactory::last();
+        $this->assertSame(1, Factory\TeamFactory::count());
+        $team = Factory\TeamFactory::last();
         $this->assertSame('My team', $team->getName());
         $teamAuthorizations = $team->getTeamAuthorizations();
         $this->assertSame(1, count($teamAuthorizations));
@@ -627,7 +619,7 @@ class DataImporterTest extends WebTestCase
 
     public function testImportTeamsKeepsExistingTeamsInDatabase(): void
     {
-        $existingTeam = TeamFactory::createOne([
+        $existingTeam = Factory\TeamFactory::createOne([
             'name' => 'My team',
         ]);
 
@@ -642,8 +634,8 @@ class DataImporterTest extends WebTestCase
             teams: $teams,
         ));
 
-        $this->assertSame(1, TeamFactory::count());
-        $team = TeamFactory::last();
+        $this->assertSame(1, Factory\TeamFactory::count());
+        $team = Factory\TeamFactory::last();
         $this->assertSame($existingTeam->getUid(), $team->getUid());
     }
 
@@ -667,7 +659,7 @@ class DataImporterTest extends WebTestCase
             teams: $teams,
         ));
 
-        $this->assertSame(0, TeamFactory::count());
+        $this->assertSame(0, Factory\TeamFactory::count());
     }
 
     public function testImportTeamsFailsIfNameIsDuplicatedInFile(): void
@@ -690,7 +682,7 @@ class DataImporterTest extends WebTestCase
             teams: $teams,
         ));
 
-        $this->assertSame(0, TeamFactory::count());
+        $this->assertSame(0, Factory\TeamFactory::count());
     }
 
     public function testImportTeamsFailsIfNameIsInvalid(): void
@@ -709,7 +701,7 @@ class DataImporterTest extends WebTestCase
             teams: $teams,
         ));
 
-        $this->assertSame(0, TeamFactory::count());
+        $this->assertSame(0, Factory\TeamFactory::count());
     }
 
     public function testImportTeamsFailsIfTeamAuthorizationRefersToUnknownRole(): void
@@ -734,7 +726,7 @@ class DataImporterTest extends WebTestCase
             teams: $teams,
         ));
 
-        $this->assertSame(0, TeamFactory::count());
+        $this->assertSame(0, Factory\TeamFactory::count());
     }
 
     public function testImportTeamsFailsIfTeamAuthorizationRefersToUnknownOrganization(): void
@@ -768,7 +760,7 @@ class DataImporterTest extends WebTestCase
             teams: $teams,
         ));
 
-        $this->assertSame(0, TeamFactory::count());
+        $this->assertSame(0, Factory\TeamFactory::count());
     }
 
     public function testImportContracts(): void
@@ -799,8 +791,8 @@ class DataImporterTest extends WebTestCase
             contracts: $contracts,
         ));
 
-        $this->assertSame(1, ContractFactory::count());
-        $contract = ContractFactory::last();
+        $this->assertSame(1, Factory\ContractFactory::count());
+        $contract = Factory\ContractFactory::last();
         $this->assertSame('My contract', $contract->getName());
         $this->assertSame(1704067200, $contract->getStartAt()->getTimestamp());
         $this->assertSame(1735689599, $contract->getEndAt()->getTimestamp());
@@ -816,10 +808,10 @@ class DataImporterTest extends WebTestCase
 
     public function testImportContractsKeepsExistingContractsInDatabase(): void
     {
-        $existingOrganization = OrganizationFactory::createOne([
+        $existingOrganization = Factory\OrganizationFactory::createOne([
             'name' => 'Foo',
         ]);
-        $existingContract = ContractFactory::createOne([
+        $existingContract = Factory\ContractFactory::createOne([
             'name' => 'My contract',
             'organization' => $existingOrganization,
             'startAt' => new \DateTimeImmutable('2024-01-01T00:00:00+00:00'),
@@ -848,8 +840,8 @@ class DataImporterTest extends WebTestCase
             contracts: $contracts,
         ));
 
-        $this->assertSame(1, ContractFactory::count());
-        $contract = ContractFactory::last();
+        $this->assertSame(1, Factory\ContractFactory::count());
+        $contract = Factory\ContractFactory::last();
         $this->assertSame($existingContract->getUid(), $contract->getUid());
     }
 
@@ -888,7 +880,7 @@ class DataImporterTest extends WebTestCase
             contracts: $contracts,
         ));
 
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
     }
 
     public function testImportContractsFailsIfFieldsAreDuplicatedInFile(): void
@@ -936,7 +928,7 @@ class DataImporterTest extends WebTestCase
             contracts: $contracts,
         ));
 
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
     }
 
     public function testImportContractsFailsIfContractIsInvalid(): void
@@ -966,7 +958,7 @@ class DataImporterTest extends WebTestCase
             contracts: $contracts,
         ));
 
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
     }
 
     public function testImportContractsFailsIfOrganizationRefersToUnknownId(): void
@@ -989,7 +981,7 @@ class DataImporterTest extends WebTestCase
             contracts: $contracts,
         ));
 
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
     }
 
     public function testImportLabels(): void
@@ -1007,8 +999,8 @@ class DataImporterTest extends WebTestCase
             labels: $labels,
         ));
 
-        $this->assertSame(1, LabelFactory::count());
-        $label = LabelFactory::last();
+        $this->assertSame(1, Factory\LabelFactory::count());
+        $label = Factory\LabelFactory::last();
         $this->assertSame('My label', $label->getName());
         $this->assertSame('My description', $label->getDescription());
         $this->assertSame('primary', $label->getColor());
@@ -1016,7 +1008,7 @@ class DataImporterTest extends WebTestCase
 
     public function testImportLabelsKeepsExistingLabelsInDatabase(): void
     {
-        $existingLabel = LabelFactory::createOne([
+        $existingLabel = Factory\LabelFactory::createOne([
             'name' => 'My label',
             'description' => 'My description',
         ]);
@@ -1033,8 +1025,8 @@ class DataImporterTest extends WebTestCase
             labels: $labels,
         ));
 
-        $this->assertSame(1, LabelFactory::count());
-        $label = LabelFactory::last();
+        $this->assertSame(1, Factory\LabelFactory::count());
+        $label = Factory\LabelFactory::last();
         $this->assertSame('My label', $label->getName());
         $this->assertSame('My description', $label->getDescription());
         $this->assertSame($existingLabel->getUid(), $label->getUid());
@@ -1060,7 +1052,7 @@ class DataImporterTest extends WebTestCase
             labels: $labels,
         ));
 
-        $this->assertSame(0, LabelFactory::count());
+        $this->assertSame(0, Factory\LabelFactory::count());
     }
 
     public function testImportLabelsFailsIfNameIsDuplicatedInFile(): void
@@ -1083,7 +1075,7 @@ class DataImporterTest extends WebTestCase
             labels: $labels,
         ));
 
-        $this->assertSame(0, LabelFactory::count());
+        $this->assertSame(0, Factory\LabelFactory::count());
     }
 
     public function testImportLabelsFailsIfLabelIsInvalid(): void
@@ -1101,7 +1093,7 @@ class DataImporterTest extends WebTestCase
             labels: $labels,
         ));
 
-        $this->assertSame(0, LabelFactory::count());
+        $this->assertSame(0, Factory\LabelFactory::count());
     }
 
     public function testImportTickets(): void
@@ -1198,8 +1190,8 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(1, TicketFactory::count());
-        $ticket = TicketFactory::last();
+        $this->assertSame(1, Factory\TicketFactory::count());
+        $ticket = Factory\TicketFactory::last();
         $ticket->_refresh();
         $this->assertSame('It does not work', $ticket->getTitle());
         $this->assertSame(1714066680, $ticket->getCreatedAt()->getTimestamp());
@@ -1251,10 +1243,10 @@ class DataImporterTest extends WebTestCase
 
     public function testImportTicketsKeepsExistingTicketsInDatabase(): void
     {
-        $existingOrganization = OrganizationFactory::createOne([
+        $existingOrganization = Factory\OrganizationFactory::createOne([
             'name' => 'Foo',
         ]);
-        $existingTicket = TicketFactory::createOne([
+        $existingTicket = Factory\TicketFactory::createOne([
             'title' => 'It does not work',
             'createdAt' => new \DateTimeImmutable('2024-04-25T17:38:00+00:00'),
             'organization' => $existingOrganization,
@@ -1289,8 +1281,8 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(1, TicketFactory::count());
-        $ticket = TicketFactory::last();
+        $this->assertSame(1, Factory\TicketFactory::count());
+        $ticket = Factory\TicketFactory::last();
         $this->assertSame($existingTicket->getUid(), $ticket->getUid());
     }
 
@@ -1346,10 +1338,10 @@ class DataImporterTest extends WebTestCase
             documentsPath: $documentsPath,
         ));
 
-        $this->assertSame(1, MessageFactory::count());
-        $message = MessageFactory::last();
-        $this->assertSame(1, MessageDocumentFactory::count());
-        $messageDocument = MessageDocumentFactory::first();
+        $this->assertSame(1, Factory\MessageFactory::count());
+        $message = Factory\MessageFactory::last();
+        $this->assertSame(1, Factory\MessageDocumentFactory::count());
+        $messageDocument = Factory\MessageDocumentFactory::first();
         $this->assertSame('The bug', $messageDocument->getName());
         $this->assertSame($hash . '.txt', $messageDocument->getFilename());
         $this->assertSame('text/plain', $messageDocument->getMimetype());
@@ -1400,7 +1392,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfFieldsAreDuplicatedInFile(): void
@@ -1447,7 +1439,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfTicketIsInvalid(): void
@@ -1484,7 +1476,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfCreatedByRefersToUnknownId(): void
@@ -1521,7 +1513,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfOrganizationRefersToUnknownId(): void
@@ -1558,7 +1550,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfRequesterRefersToUnknownId(): void
@@ -1595,7 +1587,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfAssigneeRefersToUnknownId(): void
@@ -1633,7 +1625,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfObserversRefersToUnknownId(): void
@@ -1671,7 +1663,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfContractsRefersToUnknownId(): void
@@ -1709,7 +1701,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfLabelsRefersToUnknownId(): void
@@ -1747,7 +1739,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfSolutionRefersToUnknownId(): void
@@ -1785,7 +1777,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfSpentTimeIsInvalid(): void
@@ -1830,7 +1822,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfSpentTimeCreatedByRefersToUnknownId(): void
@@ -1875,7 +1867,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfSpentTimeContractRefersToUnknownId(): void
@@ -1921,7 +1913,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfMessageIsInvalid(): void
@@ -1966,7 +1958,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfMessageCreatedByRefersToUnknownId(): void
@@ -2011,7 +2003,7 @@ class DataImporterTest extends WebTestCase
             tickets: $tickets,
         ));
 
-        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
     }
 
     public function testImportTicketsFailsIfDocumentIsMissing(): void
@@ -2070,8 +2062,8 @@ class DataImporterTest extends WebTestCase
             documentsPath: $documentsPath,
         ));
 
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSame(0, MessageDocumentFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
+        $this->assertSame(0, Factory\MessageDocumentFactory::count());
     }
 
     private function createDocumentsFolder(): string
