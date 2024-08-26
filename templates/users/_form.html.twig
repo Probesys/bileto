@@ -64,6 +64,32 @@
         />
     </div>
 
+    <div class="flow flow--small">
+        <label for="{{ field_id(form.locale) }}">
+            {{ 'users.language' | trans }}
+        </label>
+
+        {{ form_errors(form.locale) }}
+
+        <select
+            id="{{ field_id(form.locale) }}"
+            name="{{ field_name(form.locale) }}"
+            {% if field_has_errors(form.locale) %}
+                aria-invalid="true"
+                aria-errormessage="{{ field_id(form.locale, 'error') }}"
+            {% endif %}
+        >
+            {% for choice in form.locale.vars.choices %}
+                <option
+                    value="{{ choice.value }}"
+                    {{ choice.value == field_value(form.locale) ? 'selected' }}
+                >
+                    {{ choice.label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
     {% if form.ldapIdentifier is defined %}
     <div class="flow flow--small">
             <label for="{{ field_id(form.ldapIdentifier) }}">

@@ -8,6 +8,7 @@ namespace App\Form;
 
 use App\Entity;
 use App\Form\Type as AppType;
+use App\Service;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
@@ -22,6 +23,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 class UserForm extends AbstractType
 {
     public function __construct(
+        private Service\Locales $locales,
         #[Autowire(env: 'bool:LDAP_ENABLED')]
         private bool $ldapEnabled,
     ) {
@@ -34,6 +36,10 @@ class UserForm extends AbstractType
             $user = $event->getData();
             $managedByLdap = $this->isManagedByLdap($user);
 
+            if ($user->getUid() === null) {
+                $user->setLocale($this->locales->getDefaultLocale());
+            }
+
             $form->add('email', Type\EmailType::class, [
                 'empty_data' => '',
                 'trim' => true,
@@ -44,6 +50,10 @@ class UserForm extends AbstractType
                 'empty_data' => '',
                 'trim' => true,
                 'disabled' => $managedByLdap,
+            ]);
+
+            $form->add('locale', Type\ChoiceType::class, [
+                'choices' => array_flip(Service\Locales::SUPPORTED_LOCALES),
             ]);
 
             if ($this->ldapEnabled) {

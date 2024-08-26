@@ -100,6 +100,7 @@ class UsersControllerTest extends WebTestCase
         $name = 'Alix Pataquès';
         $password = 'secret';
         $organization = OrganizationFactory::createOne();
+        $locale = 'fr_FR';
 
         $this->assertSame(1, UserFactory::count());
 
@@ -110,6 +111,7 @@ class UsersControllerTest extends WebTestCase
                 'name' => $name,
                 'plainPassword' => $password,
                 'organization' => $organization->getId(),
+                'locale' => $locale,
             ],
         ]);
 
@@ -118,7 +120,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertResponseRedirects("/users/{$newUser->getUid()}", 302);
         $this->assertSame($email, $newUser->getEmail());
         $this->assertSame($name, $newUser->getName());
-        $this->assertSame($user->getLocale(), $newUser->getLocale());
+        $this->assertSame($locale, $newUser->getLocale());
         $this->assertSame(20, strlen($newUser->getUid()));
         $this->assertTrue($passwordHasher->isPasswordValid($newUser->_real(), $password));
         $this->assertSame($organization->getId(), $newUser->getOrganization()->getId());
@@ -140,6 +142,7 @@ class UsersControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'user'),
                 'email' => $email,
                 'name' => $name,
+                'locale' => 'en_GB',
             ],
         ]);
 
@@ -164,6 +167,7 @@ class UsersControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'user'),
                 'email' => $email,
                 'name' => $name,
+                'locale' => 'en_GB',
             ],
         ]);
 
@@ -185,6 +189,7 @@ class UsersControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'user'),
                 'email' => $email,
                 'name' => $name,
+                'locale' => 'en_GB',
             ],
         ]);
 
@@ -206,6 +211,7 @@ class UsersControllerTest extends WebTestCase
                 '_token' => 'not a token',
                 'email' => $email,
                 'name' => $name,
+                'locale' => 'en_GB',
             ],
         ]);
 
@@ -229,6 +235,7 @@ class UsersControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'user'),
                 'email' => $email,
                 'name' => $name,
+                'locale' => 'en_GB',
             ],
         ]);
     }
@@ -297,6 +304,8 @@ class UsersControllerTest extends WebTestCase
         $newName = 'Benedict Aphone';
         $oldPassword = 'secret';
         $newPassword = 'super secret';
+        $oldLocale = 'en_GB';
+        $newLocale = 'en_GB';
         $oldOrganization = OrganizationFactory::createOne();
         $newOrganization = OrganizationFactory::createOne();
         $otherUser = UserFactory::createOne([
@@ -304,6 +313,7 @@ class UsersControllerTest extends WebTestCase
             'name' => $oldName,
             'password' => $oldPassword,
             'organization' => $oldOrganization,
+            'locale' => $oldLocale,
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
@@ -313,6 +323,7 @@ class UsersControllerTest extends WebTestCase
                 'name' => $newName,
                 'plainPassword' => $newPassword,
                 'organization' => $newOrganization->getId(),
+                'locale' => $newLocale,
             ]
         ]);
 
@@ -322,6 +333,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($newName, $otherUser->getName());
         $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $newPassword));
         $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
+        $this->assertSame($newLocale, $otherUser->getLocale());
     }
 
     public function testPostUpdateDoesNotChangePasswordIfEmpty(): void
@@ -354,6 +366,7 @@ class UsersControllerTest extends WebTestCase
                 'name' => $newName,
                 'plainPassword' => $newPassword,
                 'organization' => $newOrganization->getId(),
+                'locale' => 'en_GB',
             ],
         ]);
 
@@ -399,6 +412,7 @@ class UsersControllerTest extends WebTestCase
                 // Don't pass the password as Symfony Form will complain about extra field.
                 // 'plainPassword' => $newPassword,
                 'organization' => $newOrganization->getId(),
+                'locale' => 'en_GB',
                 'ldapIdentifier' => $newLdapIdentifier,
             ],
         ]);
@@ -441,6 +455,7 @@ class UsersControllerTest extends WebTestCase
                 'name' => $newName,
                 'plainPassword' => $newPassword,
                 'organization' => '',
+                'locale' => 'en_GB',
             ],
         ]);
 
@@ -482,6 +497,7 @@ class UsersControllerTest extends WebTestCase
                 'name' => $newName,
                 'plainPassword' => $newPassword,
                 'organization' => $newOrganization->getId(),
+                'locale' => 'en_GB',
             ],
         ]);
 
@@ -524,6 +540,7 @@ class UsersControllerTest extends WebTestCase
                 'name' => $newName,
                 'plainPassword' => $newPassword,
                 'organization' => $newOrganization->getId(),
+                'locale' => 'en_GB',
             ],
         ]);
 
@@ -567,6 +584,7 @@ class UsersControllerTest extends WebTestCase
                 'name' => $newName,
                 'plainPassword' => $newPassword,
                 'organization' => $newOrganization->getId(),
+                'locale' => 'en_GB',
             ],
         ]);
     }
