@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\SetList;
 use Rector\Symfony\Set\SymfonySetList;
+use Rector\Symfony\Symfony34\Rector\Closure\ContainerGetNameToTypeInTestsRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
@@ -24,5 +25,10 @@ return static function (RectorConfig $rectorConfig): void {
         SymfonySetList::SYMFONY_71,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
+    ]);
+
+    $rectorConfig->skip([
+        // This conflicts with the HTMLSanitizer component which requires named services.
+        ContainerGetNameToTypeInTestsRector::class,
     ]);
 };
