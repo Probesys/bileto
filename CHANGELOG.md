@@ -1,10 +1,57 @@
 # Changelog of Bileto
 
-## unreleased
+## 2024-08-26 - 0.10.0-beta
 
 ### Migration notes
 
 You can now change the default locale globally by setting the `APP_DEFAULT_LOCALE` in your env file.
+
+### New
+
+- Provide labels ([9dc904c](https://github.com/Probesys/bileto/commit/9dc904c), [8ff1927](https://github.com/Probesys/bileto/commit/8ff1927), [02d62ba](https://github.com/Probesys/bileto/commit/02d62ba), [5c99beb](https://github.com/Probesys/bileto/commit/5c99beb), [00cfe75](https://github.com/Probesys/bileto/commit/00cfe75), [25b01fe](https://github.com/Probesys/bileto/commit/25b01fe))
+- Add observers to a tickets ([22a4dd3](https://github.com/Probesys/bileto/commit/22a4dd3), [027faa7](https://github.com/Probesys/bileto/commit/027faa7), [57118af](https://github.com/Probesys/bileto/commit/57118af))
+- Allow to reset passwords ([6e4e8bb](https://github.com/Probesys/bileto/commit/6e4e8bb))
+
+### Improvements
+
+- Allow to search for tickets with and without contracts ([28a76cf](https://github.com/Probesys/bileto/commit/28a76cf))
+- Separate permissions to see real vs. accounted times spent ([30387e6](https://github.com/Probesys/bileto/commit/30387e6))
+- Allow to choose locale when creating/editing a user ([1e5fcb5](https://github.com/Probesys/bileto/commit/1e5fcb5))
+- Allow to import teams ([f722522](https://github.com/Probesys/bileto/commit/f722522))
+- Allow to import the organizations' domains ([12ea090](https://github.com/Probesys/bileto/commit/12ea090))
+- Improve the look of form fieldsets ([1806b8b](https://github.com/Probesys/bileto/commit/1806b8b))
+
+### Bug fixes
+
+- Use the correct white logo ([0e36766](https://github.com/Probesys/bileto/commit/0e36766))
+- Fix the header on mobile when not connected ([e35fa48](https://github.com/Probesys/bileto/commit/e35fa48))
+- Fix search with "NOT assignee" for unassigned tickets ([5b78fd8](https://github.com/Probesys/bileto/commit/5b78fd8))
+- Fix search with "NOT involves" not returning correct results ([8f973a1](https://github.com/Probesys/bileto/commit/8f973a1))
+- Allow to list tickets not attached to a contract ([3748d33](https://github.com/Probesys/bileto/commit/3748d33))
+- Redirect to the user page after updating ([30df1c0](https://github.com/Probesys/bileto/commit/30df1c0))
+- Fix spacing in the list of mailboxes ([78b326d](https://github.com/Probesys/bileto/commit/78b326d))
+
+### Documentation
+
+- Add an item to PR template about data import ([0896d38](https://github.com/Probesys/bileto/commit/0896d38))
+- Update the screenshot in the README ([b4213ee](https://github.com/Probesys/bileto/commit/b4213ee))
+
+### Technical
+
+- Allow to pass locale when creating user with CLI ([187add3](https://github.com/Probesys/bileto/commit/187add3))
+- Allow to change the default locale globally ([0916174](https://github.com/Probesys/bileto/commit/0916174))
+- Add a scheduled message to clean data everyday ([4fc1109](https://github.com/Probesys/bileto/commit/4fc1109))
+- Update dependencies ([5aabff3](https://github.com/Probesys/bileto/commit/5aabff3), [3687da6](https://github.com/Probesys/bileto/commit/3687da6))
+
+### Developers
+
+- Fix some PHPUnit Testdox warnings ([59c8441](https://github.com/Probesys/bileto/commit/59c8441))
+- Remove the symfony/phpunit-bridge dependency ([c1ccb71](https://github.com/Probesys/bileto/commit/c1ccb71))
+- Refactor the Ticket title form ([c8abf72](https://github.com/Probesys/bileto/commit/c8abf72))
+- Refactor edit ticket actors with Symfony Form ([8b35064](https://github.com/Probesys/bileto/commit/8b35064))
+- Move `Form\Type` classes to `Form\` ([5470325](https://github.com/Probesys/bileto/commit/5470325))
+- Set radio/checkbox tick position with margin ([cb14588](https://github.com/Probesys/bileto/commit/cb14588))
+- Fix test in TicketSearcherTest failing randomly ([8d7fa9c](https://github.com/Probesys/bileto/commit/8d7fa9c))
 
 ## 2024-07-05 - 0.9.0-beta
 
