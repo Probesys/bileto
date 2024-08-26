@@ -9,50 +9,44 @@
 {% block title %}{{ 'tickets.title.edit.title' | trans }}{% endblock %}
 
 {% block body %}
-    <form
-        action="{{ path('update ticket title', {'uid': ticket.uid}) }}"
-        method="post"
-        class="form--standard"
-    >
-        {% if error %}
-            {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-        {% endif %}
+    {{ form_start(form, {
+        action: path('update ticket title', { uid: ticket.uid }),
+        attr: {
+            'class': 'form--standard',
+            'data-turbo-preserve-scroll': true,
+        },
+    }) }}
+        {{ form_errors(form) }}
 
         <div class="flow flow--small">
-            <label for="title">
+            <label for="{{ field_id(form.title) }}">
                 {{ 'tickets.title' | trans }}
+
                 <small class="text--secondary">
                     {{ 'forms.max_chars' | trans({ number: 255 }) }}
                 </small>
             </label>
 
-            {% if errors.title is defined %}
-                <p class="form__error" role="alert" id="title-error">
-                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                    {{ errors.title }}
-                </p>
-            {% endif %}
+            {{ form_errors(form.title) }}
 
             <input
                 type="text"
-                id="title"
-                name="title"
-                value="{{ title }}"
+                id="{{ field_id(form.title) }}"
+                name="{{ field_name(form.title) }}"
+                value="{{ field_value(form.title) }}"
                 required
                 maxlength="255"
-                {% if errors.title is defined %}
+                {% if field_has_errors(form.title) %}
                     aria-invalid="true"
-                    aria-errormessage="title-error"
+                    aria-errormessage="{{ field_id(form.title, 'error') }}"
                 {% endif %}
             />
         </div>
 
         <div class="form__actions">
-            <button id="form-update-title-submit" class="button--primary" type="submit">
+            <button class="button--primary" type="submit">
                 {{ 'forms.save_changes' | trans }}
             </button>
         </div>
-
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket title') }}">
-    </form>
+    {{ form_end(form) }}
 {% endblock %}

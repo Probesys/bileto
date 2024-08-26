@@ -6,10 +6,8 @@
 
 namespace App\Tests\Controller\Tickets;
 
-use App\Tests\AuthorizationHelper;
-use App\Tests\Factory\TicketFactory;
-use App\Tests\Factory\UserFactory;
-use App\Tests\SessionHelper;
+use App\Tests;
+use App\Tests\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -18,18 +16,19 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 
 class TitleControllerTest extends WebTestCase
 {
-    use AuthorizationHelper;
+    use Tests\AuthorizationHelper;
+    use Tests\FactoriesHelper;
+    use Tests\SessionHelper;
     use Factories;
     use ResetDatabase;
-    use SessionHelper;
 
     public function testGetEditRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
         ]);
 
@@ -44,9 +43,9 @@ class TitleControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
         ]);
 
@@ -59,10 +58,10 @@ class TitleControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
-        $ticket = TicketFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne();
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/title/edit");
@@ -71,19 +70,21 @@ class TitleControllerTest extends WebTestCase
     public function testPostUpdateSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'title' => $oldTitle,
         ]);
 
-        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/title/edit");
-        $crawler = $client->submitForm('form-update-title-submit', [
-            'title' => $newTitle,
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
+            'ticket_title' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket title'),
+                'title' => $newTitle,
+            ],
         ]);
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
@@ -94,45 +95,53 @@ class TitleControllerTest extends WebTestCase
     public function testPostUpdateFailsIfTitleIsInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = str_repeat('a', 256);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'title' => $oldTitle,
         ]);
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket title'),
-            'title' => $newTitle,
+            'ticket_title' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket title'),
+                'title' => $newTitle,
+            ],
         ]);
 
+        $this->clearEntityManager();
+
         $ticket->_refresh();
-        $this->assertSelectorTextContains('#title-error', 'Enter a title of less than 255 characters');
+        $this->assertSelectorTextContains('#ticket_title_title-error', 'Enter a title of less than 255 characters');
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
 
     public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'title' => $oldTitle,
         ]);
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
-            '_csrf_token' => 'not the token',
-            'title' => $newTitle,
+            'ticket_title' => [
+                '_token' => 'not the token',
+                'title' => $newTitle,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->clearEntityManager();
+
+        $this->assertSelectorTextContains('#ticket_title-error', 'The security token is invalid');
         $ticket->_refresh();
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
@@ -142,19 +151,21 @@ class TitleControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'title' => $oldTitle,
         ]);
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket title'),
-            'title' => $newTitle,
+            'ticket_title' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket title'),
+                'title' => $newTitle,
+            ],
         ]);
     }
 
@@ -163,19 +174,21 @@ class TitleControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => $oldTitle,
         ]);
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket title'),
-            'title' => $newTitle,
+            'ticket_title' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket title'),
+                'title' => $newTitle,
+            ],
         ]);
     }
 }

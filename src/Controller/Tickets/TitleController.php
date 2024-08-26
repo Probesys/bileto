@@ -7,82 +7,64 @@
 namespace App\Controller\Tickets;
 
 use App\Controller\BaseController;
-use App\Entity\Ticket;
-use App\Repository\TicketRepository;
-use App\Utils\ConstraintErrorsFormatter;
+use App\Entity;
+use App\Form;
+use App\Repository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TitleController extends BaseController
 {
     #[Route('/tickets/{uid:ticket}/title/edit', name: 'edit ticket title', methods: ['GET', 'HEAD'])]
-    public function edit(Ticket $ticket): Response
+    public function edit(Entity\Ticket $ticket): Response
     {
         $organization = $ticket->getOrganization();
+
         $this->denyAccessUnlessGranted('orga:update:tickets:title', $organization);
 
-        /** @var \App\Entity\User $user */
+        /** @var Entity\User */
         $user = $this->getUser();
 
         if (!$ticket->hasActor($user)) {
             $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
         }
 
+        $form = $this->createNamedForm('ticket_title', Form\Ticket\TitleForm::class, $ticket);
+
         return $this->render('tickets/title/edit.html.twig', [
             'ticket' => $ticket,
-            'title' => $ticket->getTitle(),
+            'form' => $form,
         ]);
     }
 
     #[Route('/tickets/{uid:ticket}/title/edit', name: 'update ticket title', methods: ['POST'])]
     public function update(
-        Ticket $ticket,
+        Entity\Ticket $ticket,
         Request $request,
-        TicketRepository $ticketRepository,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
+        Repository\TicketRepository $ticketRepository,
     ): Response {
         $organization = $ticket->getOrganization();
         $this->denyAccessUnlessGranted('orga:update:tickets:title', $organization);
 
-        /** @var \App\Entity\User $user */
+        /** @var Entity\User */
         $user = $this->getUser();
 
         if (!$ticket->hasActor($user)) {
             $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
         }
 
-        $oldTitle = $ticket->getTitle();
+        $form = $this->createNamedForm('ticket_title', Form\Ticket\TitleForm::class, $ticket);
+        $form->handleRequest($request);
 
-        /** @var string $title */
-        $title = $request->request->get('title', $oldTitle);
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        if (!$this->isCsrfTokenValid('update ticket title', $csrfToken)) {
-            return $this->renderBadRequest('tickets/title/edit.html.twig', [
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->render('tickets/title/edit.html.twig', [
                 'ticket' => $ticket,
-                'title' => $title,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'form' => $form,
             ]);
         }
 
-        $ticket->setTitle($title);
-
-        $errors = $validator->validate($ticket);
-        if (count($errors) > 0) {
-            $ticket->setTitle($oldTitle);
-            return $this->renderBadRequest('tickets/title/edit.html.twig', [
-                'ticket' => $ticket,
-                'title' => $title,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
+        $ticket = $form->getData();
         $ticketRepository->save($ticket, true);
 
         return $this->redirectToRoute('ticket', [
