@@ -31,7 +31,7 @@ class UserCreator
         string $name = '',
         string $password = '',
         string $locale = '',
-        ?string $ldapIdentifier = null,
+        string $ldapIdentifier = '',
         ?Entity\Organization $organization = null,
         bool $flush = true,
     ): Entity\User {

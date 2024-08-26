@@ -61,7 +61,7 @@ The data is stored in a ZIP archive. It contains several files:
   - email: string (unique, not empty, valid email)
   - locale: string, optional (must be `en_GB`, or `fr_FR`)
   - name: string, optional (not empty, max 100 chars)
-  - ldapIdentifier: string or null, optional
+  - ldapIdentifier: string, optional
   - organizationId: string or null, optional (reference to an organization)
   - authorizations: array of, optional:
     - roleId: string (reference to a role)
