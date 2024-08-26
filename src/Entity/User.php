@@ -112,7 +112,7 @@ class User implements
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Organization $organization = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, options: ['default' => ''])]
     private ?string $ldapIdentifier = null;
 
     /** @var Collection<int, Team> */
@@ -125,8 +125,11 @@ class User implements
 
     public function __construct()
     {
+        $this->name = '';
+        $this->email = '';
         $this->password = '';
         $this->locale = 'en_GB';
+        $this->ldapIdentifier = '';
         $this->authorizations = new ArrayCollection();
         $this->teams = new ArrayCollection();
     }
@@ -292,7 +295,7 @@ class User implements
      */
     public function getAuthType(): string
     {
-        if ($this->getLdapIdentifier() === null) {
+        if ($this->getLdapIdentifier() === '') {
             return 'local';
         } else {
             return 'ldap';

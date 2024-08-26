@@ -43,7 +43,7 @@ class UserRepository extends ServiceEntityRepository implements
         $query = $entityManager->createQuery(<<<SQL
             SELECT u
             FROM App\Entity\User u
-            WHERE (u.ldapIdentifier IS NULL AND u.email = :identifier)
+            WHERE (u.ldapIdentifier = '' AND u.email = :identifier)
             OR u.ldapIdentifier = :identifier
         SQL);
         $query->setParameter('identifier', $identifier);

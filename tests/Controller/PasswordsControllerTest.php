@@ -53,7 +53,7 @@ class PasswordsControllerTest extends WebTestCase
         $email = 'alix@example.com';
         $user = Factory\UserFactory::createOne([
             'email' => $email,
-            'ldapIdentifier' => null,
+            'ldapIdentifier' => '',
             'resetPasswordToken' => null,
         ]);
 
@@ -80,7 +80,7 @@ class PasswordsControllerTest extends WebTestCase
         $email = 'alix@example.com';
         $user = Factory\UserFactory::createOne([
             'email' => $email,
-            'ldapIdentifier' => null,
+            'ldapIdentifier' => '',
             'resetPasswordToken' => null,
         ]);
 
@@ -134,7 +134,7 @@ class PasswordsControllerTest extends WebTestCase
         $email = 'alix@example.com';
         $user = Factory\UserFactory::createOne([
             'email' => $email,
-            'ldapIdentifier' => null,
+            'ldapIdentifier' => '',
             'resetPasswordToken' => null,
         ]);
 
@@ -160,7 +160,7 @@ class PasswordsControllerTest extends WebTestCase
         ]);
         $user = Factory\UserFactory::createOne([
             'resetPasswordToken' => $token,
-            'ldapIdentifier' => null,
+            'ldapIdentifier' => '',
         ]);
 
         $client->request(Request::METHOD_GET, "/passwords/{$token->getValue()}/edit");
@@ -179,7 +179,7 @@ class PasswordsControllerTest extends WebTestCase
         ]);
         $user = Factory\UserFactory::createOne([
             'resetPasswordToken' => null,
-            'ldapIdentifier' => null,
+            'ldapIdentifier' => '',
         ]);
 
         $client->catchExceptions(false);
@@ -196,7 +196,7 @@ class PasswordsControllerTest extends WebTestCase
         ]);
         $user = Factory\UserFactory::createOne([
             'resetPasswordToken' => $token,
-            'ldapIdentifier' => null,
+            'ldapIdentifier' => '',
         ]);
 
         $client->catchExceptions(false);
@@ -232,7 +232,7 @@ class PasswordsControllerTest extends WebTestCase
         $newPassword = 'secret';
         $user = Factory\UserFactory::createOne([
             'resetPasswordToken' => $token,
-            'ldapIdentifier' => null,
+            'ldapIdentifier' => '',
             'password' => $initialPassword,
         ]);
 
@@ -262,7 +262,7 @@ class PasswordsControllerTest extends WebTestCase
         $newPassword = 'secret';
         $user = Factory\UserFactory::createOne([
             'resetPasswordToken' => $token,
-            'ldapIdentifier' => null,
+            'ldapIdentifier' => '',
             'password' => $initialPassword,
         ]);
 

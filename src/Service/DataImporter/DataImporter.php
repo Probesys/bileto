@@ -500,7 +500,7 @@ class DataImporter
             if (isset($jsonUser['locale'])) {
                 $locale = strval($jsonUser['locale']);
             }
-            $ldapIdentifier = null;
+            $ldapIdentifier = '';
             if (isset($jsonUser['ldapIdentifier'])) {
                 $ldapIdentifier = strval($jsonUser['ldapIdentifier']);
             }

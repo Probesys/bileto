@@ -26,12 +26,37 @@ class UserCreator
     ) {
     }
 
+    public function createUser(Entity\User $user, bool $flush = true): void
+    {
+        $this->userRepository->save($user, $flush);
+
+        $defaultRole = $this->roleRepository->findDefault();
+        if ($defaultRole) {
+            $organization = $user->getOrganization();
+
+            if ($organization) {
+                $authorizationOrganization = $organization;
+            } else {
+                $emailDomain = Utils\Email::extractDomain($user->getEmail());
+                $authorizationOrganization = $this->organizationRepository->findOneByDomainOrDefault($emailDomain);
+            }
+
+            if ($authorizationOrganization) {
+                $this->authorizationRepository->grant(
+                    $user,
+                    $defaultRole,
+                    $authorizationOrganization,
+                );
+            }
+        }
+    }
+
     public function create(
         string $email,
         string $name = '',
         string $password = '',
         string $locale = '',
-        ?string $ldapIdentifier = null,
+        string $ldapIdentifier = '',
         ?Entity\Organization $organization = null,
         bool $flush = true,
     ): Entity\User {
@@ -56,25 +81,7 @@ class UserCreator
             throw new UserCreatorException($errors);
         }
 
-        $this->userRepository->save($user, $flush);
-
-        $defaultRole = $this->roleRepository->findDefault();
-        if ($defaultRole) {
-            if ($organization) {
-                $authorizationOrganization = $organization;
-            } else {
-                $emailDomain = Utils\Email::extractDomain($user->getEmail());
-                $authorizationOrganization = $this->organizationRepository->findOneByDomainOrDefault($emailDomain);
-            }
-
-            if ($authorizationOrganization) {
-                $this->authorizationRepository->grant(
-                    $user,
-                    $defaultRole,
-                    $authorizationOrganization,
-                );
-            }
-        }
+        $this->createUser($user, $flush);
 
         return $user;
     }

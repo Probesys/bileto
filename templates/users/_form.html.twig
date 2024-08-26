@@ -1,0 +1,204 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{{ form_start(form, { attr: {
+    'class': 'form--standard',
+}}) }}
+    {% if form.vars['managedByLdap'] %}
+        {{ include('alerts/_alert.html.twig', {
+            type: 'info',
+            title: 'users.form.ldap.information' | trans,
+            message: 'users.form.ldap.managed' | trans,
+        }, with_context = false) }}
+    {% endif %}
+
+    {{ form_errors(form) }}
+
+    <div class="flow flow--small">
+        <label for="{{ field_id(form.email) }}">
+            {{ 'users.email' | trans }}
+        </label>
+
+        {{ form_errors(form.email) }}
+
+        <input
+            type="email"
+            id="{{ field_id(form.email) }}"
+            name="{{ field_name(form.email) }}"
+            value="{{ field_value(form.email) }}"
+            required="true"
+            {% if field_has_errors(form.email) %}
+                aria-invalid="true"
+                aria-errormessage="{{ field_id(form.email, 'error') }}"
+            {% endif %}
+            {{ form.email.vars.disabled ? 'disabled' }}
+        />
+    </div>
+
+    <div class="flow flow--small">
+        <label for="{{ field_id(form.name) }}">
+            {{ 'users.name' | trans }}
+
+            <small class="text--secondary">
+                {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
+            </small>
+        </label>
+
+        {{ form_errors(form.name) }}
+
+        <input
+            type="text"
+            id="{{ field_id(form.name) }}"
+            name="{{ field_name(form.name) }}"
+            value="{{ field_value(form.name) }}"
+            maxlength="100"
+            autocomplete="name"
+            {% if field_has_errors(form.name) %}
+                aria-invalid="true"
+                aria-errormessage="{{ field_id(form.name, 'error') }}"
+            {% endif %}
+            {{ form.name.vars.disabled ? 'disabled' }}
+        />
+    </div>
+
+    <div class="flow flow--small">
+        <label for="{{ field_id(form.locale) }}">
+            {{ 'users.language' | trans }}
+        </label>
+
+        {{ form_errors(form.locale) }}
+
+        <select
+            id="{{ field_id(form.locale) }}"
+            name="{{ field_name(form.locale) }}"
+            {% if field_has_errors(form.locale) %}
+                aria-invalid="true"
+                aria-errormessage="{{ field_id(form.locale, 'error') }}"
+            {% endif %}
+        >
+            {% for choice in form.locale.vars.choices %}
+                <option
+                    value="{{ choice.value }}"
+                    {{ choice.value == field_value(form.locale) ? 'selected' }}
+                >
+                    {{ choice.label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if form.ldapIdentifier is defined %}
+    <div class="flow flow--small">
+            <label for="{{ field_id(form.ldapIdentifier) }}">
+                {{ 'users.ldap_identifier' | trans }}
+
+                <span class="text--secondary">
+                    {{ 'forms.optional' | trans }}
+                </span>
+            </label>
+
+            {{ form_errors(form.ldapIdentifier) }}
+
+            <input
+                type="text"
+                id="{{ field_id(form.ldapIdentifier) }}"
+                name="{{ field_name(form.ldapIdentifier) }}"
+                value="{{ field_value(form.ldapIdentifier) }}"
+                {% if field_has_errors(form.ldapIdentifier) %}
+                    aria-invalid="true"
+                    aria-errormessage="{{ field_id(form.ldapIdentifier, 'error') }}"
+                {% endif %}
+            />
+    </div>
+    {% endif %}
+
+    {% if form.plainPassword is defined %}
+        <div class="flow flow--small">
+            <label for="{{ field_id(form.plainPassword) }}">
+                {{ 'users.password' | trans }}
+            </label>
+
+            <p class="form__caption" id="{{ field_id(form.plainPassword, 'caption') }}">
+                {{ form.plainPassword.vars.help | trans }}
+            </p>
+
+            {{ form_errors(form.plainPassword) }}
+
+            <div class="input-container" data-controller="password">
+                <input
+                    type="password"
+                    id="{{ field_id(form.plainPassword) }}"
+                    name="{{ field_name(form.plainPassword) }}"
+                    value="{{ field_value(form.plainPassword) }}"
+                    maxlength="100"
+                    autocomplete="new-password"
+                    {% if field_has_errors(form.plainPassword) %}
+                        aria-invalid="true"
+                        aria-errormessage="{{ field_id(form.plainPassword, 'error') }}"
+                    {% endif %}
+                    aria-describedby="{{ field_id(form.plainPassword, 'caption') }}"
+                    data-password-target="input"
+                />
+
+                <button
+                    class="button--icon"
+                    type="button"
+                    role="switch"
+                    data-action="password#toggle"
+                    data-password-target="button"
+                >
+                    {{ icon('eye') }}
+                    {{ icon('eye-slash') }}
+
+                    <span class="sr-only">
+                        {{ 'forms.show_password' | trans }}
+                    </span>
+                </button>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="flow flow--small">
+        <label for="{{ field_id(form.organization) }}">
+            {{ 'users.organization' | trans }}
+        </label>
+
+        <p class="form__caption" id="{{ field_id(form.organization, 'caption') }}">
+            {{ 'users.form.organization_caption' | trans }}
+        </p>
+
+        {{ form_errors(form.organization) }}
+
+        <select
+            id="{{ field_id(form.organization) }}"
+            name="{{ field_name(form.organization) }}"
+            aria-describedby="{{ field_id(form.organization, 'caption') }}"
+            {% if field_has_errors(form.organization) %}
+                aria-invalid="true"
+                aria-errormessage="{{ field_id(form.organization, 'error') }}"
+            {% endif %}
+        >
+            <option value="">
+                {{ 'users.no_organization' | trans }}
+            </option>
+
+            {% for choice in form.organization.vars.choices %}
+                <option
+                    value="{{ choice.value }}"
+                    {{ choice.value == field_value(form.organization) ? 'selected' }}
+                >
+                    {{ choice.label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form__actions">
+        <button class="button--primary" type="submit">
+            {{ submit_label }}
+        </button>
+    </div>
+{{ form_end(form) }}
