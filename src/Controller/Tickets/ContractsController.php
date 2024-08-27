@@ -28,6 +28,7 @@ class ContractsController extends BaseController
         ContractRepository $contractRepository,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $organization = $ticket->getOrganization();
         $ongoingContracts = $contractRepository->findOngoingByOrganization($organization);
@@ -52,6 +53,7 @@ class ContractsController extends BaseController
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $organization = $ticket->getOrganization();
 

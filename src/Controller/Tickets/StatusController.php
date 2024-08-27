@@ -22,6 +22,7 @@ class StatusController extends BaseController
     public function edit(Ticket $ticket): Response
     {
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $statuses = Ticket::getStatusesWithLabels();
 
@@ -41,6 +42,7 @@ class StatusController extends BaseController
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         /** @var string $status */
         $status = $request->request->get('status', $ticket->getStatus());

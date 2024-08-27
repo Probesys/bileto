@@ -114,6 +114,7 @@ class MessagesControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
@@ -138,6 +139,7 @@ class MessagesControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
@@ -173,6 +175,7 @@ class MessagesControllerTest extends WebTestCase
             'orga:create:tickets:time_spent',
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message';
@@ -204,6 +207,7 @@ class MessagesControllerTest extends WebTestCase
             'timeAccountingUnit' => 30,
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $ticket->addContract($contract->_real());
@@ -237,6 +241,7 @@ class MessagesControllerTest extends WebTestCase
             'maxHours' => 1,
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $ticket->addContract($contract->_real());
@@ -355,6 +360,7 @@ class MessagesControllerTest extends WebTestCase
         ]);
         $solution = MessageFactory::createOne();
         $ticket = TicketFactory::createOne([
+            'status' => 'resolved',
             'createdBy' => $user,
             'assignee' => $user,
             'solution' => $solution,
@@ -378,34 +384,6 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($solution->getId(), $ticket->getSolution()->getId());
     }
 
-    public function testPostCreateDoesNotSetSolutionIfStatusIsFinished(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ]);
-        $initialStatus = 'closed';
-        $ticket = TicketFactory::createOne([
-            'createdBy' => $user,
-            'assignee' => $user,
-            'status' => $initialStatus,
-        ]);
-        $messageContent = 'My message';
-
-        $this->assertSame(0, MessageFactory::count());
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerType' => 'solution',
-        ]);
-
-        $ticket->_refresh();
-        $this->assertSame($initialStatus, $ticket->getStatus());
-    }
-
     public function testPostCreateDoesNotSetSolutionIfUserIsRequester(): void
     {
         $client = static::createClient();
@@ -415,6 +393,7 @@ class MessagesControllerTest extends WebTestCase
             'orga:create:tickets:messages',
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => $user,
         ]);
@@ -507,6 +486,7 @@ class MessagesControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = '';
@@ -529,6 +509,7 @@ class MessagesControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message';
@@ -553,6 +534,7 @@ class MessagesControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message';
@@ -566,6 +548,27 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
     }
 
+    public function testPostCreateFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+        ]);
+        $messageContent = 'My message';
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+        ]);
+    }
+
     public function testPostCreateFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
@@ -574,6 +577,7 @@ class MessagesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message';
@@ -593,7 +597,9 @@ class MessagesControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne();
+        $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
+        ]);
         $messageContent = 'My message';
 
         $client->catchExceptions(false);

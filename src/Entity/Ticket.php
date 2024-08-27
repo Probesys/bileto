@@ -210,6 +210,11 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         }
     }
 
+    public function isClosed(): bool
+    {
+        return $this->status === 'closed';
+    }
+
     public function isOpen(): bool
     {
         return in_array($this->status, self::OPEN_STATUSES);

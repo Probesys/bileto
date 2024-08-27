@@ -20,6 +20,7 @@ class TitleController extends BaseController
     public function edit(Entity\Ticket $ticket): Response
     {
         $this->denyAccessUnlessGranted('orga:update:tickets:title', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $form = $this->createNamedForm('ticket_title', Form\Ticket\TitleForm::class, $ticket);
 
@@ -36,6 +37,7 @@ class TitleController extends BaseController
         Repository\TicketRepository $ticketRepository,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:title', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $form = $this->createNamedForm('ticket_title', Form\Ticket\TitleForm::class, $ticket);
         $form->handleRequest($request);

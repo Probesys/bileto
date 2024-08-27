@@ -452,7 +452,6 @@ tickets.show.answer_type.solution: Solution
 tickets.show.approve: Approuver
 tickets.show.assign_yourself: 'vous attribuer le ticket'
 tickets.show.assignee: "Attribué à\_:"
-tickets.show.closed: 'Ce ticket est clos.'
 tickets.show.hide_history: 'Masquer l’historique des changements'
 tickets.show.impact: "Impact\_:"
 tickets.show.message.confidential: Confidentiel

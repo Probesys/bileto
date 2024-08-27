@@ -6,6 +6,7 @@
 
 namespace App\Controller;
 
+use App\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,5 +52,14 @@ class BaseController extends AbstractController
         array $options = [],
     ): FormInterface {
         return $this->container->get('form.factory')->createNamed($name, $type, $data, $options);
+    }
+
+    protected function denyAccessIfTicketIsClosed(
+        Entity\Ticket $ticket,
+        string $message = 'Access denied because ticket is closed.',
+    ): void {
+        if ($ticket->isClosed()) {
+            throw $this->createAccessDeniedException($message);
+        }
     }
 }

@@ -37,6 +37,7 @@ class ActorsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => $requester,
             'assignee' => $assignee,
@@ -46,6 +47,29 @@ class ActorsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit the actors');
+    }
+
+    public function testGetEditFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+            'requester' => $requester,
+            'assignee' => $assignee,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/actors/edit");
     }
 
     public function testGetEditFailsIfAccessIsForbidden(): void
@@ -60,6 +84,7 @@ class ActorsControllerTest extends WebTestCase
         ) = UserFactory::createMany(3);
         $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => $requester,
             'assignee' => $assignee,
@@ -82,6 +107,7 @@ class ActorsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'requester' => $requester,
             'assignee' => $assignee,
         ]);
@@ -110,6 +136,7 @@ class ActorsControllerTest extends WebTestCase
         $this->grantOrga($observer2->_real(), ['orga:see']);
         $this->grantTeam($team->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => null,
             'team' => null,
@@ -151,6 +178,7 @@ class ActorsControllerTest extends WebTestCase
         $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $this->grantOrga($requester->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => null,
             'assignee' => null,
@@ -180,6 +208,7 @@ class ActorsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => null,
             'assignee' => null,
@@ -211,6 +240,7 @@ class ActorsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => null,
             'assignee' => null,
@@ -248,6 +278,7 @@ class ActorsControllerTest extends WebTestCase
         $this->grantOrga($requester->_real(), ['orga:create:tickets']);
         $this->grantOrga($assignee->_real(), ['orga:create:tickets'], type: 'user');
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => $user,
             'assignee' => $user,
@@ -284,6 +315,7 @@ class ActorsControllerTest extends WebTestCase
         $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
         $this->grantTeam($team->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => $user,
             'team' => null,
@@ -327,6 +359,7 @@ class ActorsControllerTest extends WebTestCase
         $this->grantOrga($requester->_real(), ['orga:create:tickets']);
         $this->grantTeam($initialTeam->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => $user,
             'team' => $initialTeam,
@@ -364,6 +397,7 @@ class ActorsControllerTest extends WebTestCase
         $this->grantOrga($requester->_real(), ['orga:create:tickets']);
         $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => null,
             'assignee' => null,
@@ -385,6 +419,37 @@ class ActorsControllerTest extends WebTestCase
         $this->assertNull($ticket->getAssignee());
     }
 
+    public function testPostUpdateFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $assignee,
+        ) = UserFactory::createMany(3);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
+        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+            'requester' => null,
+            'assignee' => null,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'assignee' => $assignee->getId(),
+            ],
+        ]);
+    }
+
     public function testPostUpdateFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
@@ -399,6 +464,7 @@ class ActorsControllerTest extends WebTestCase
         $this->grantOrga($requester->_real(), ['orga:create:tickets']);
         $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'requester' => null,
             'assignee' => null,
@@ -429,6 +495,7 @@ class ActorsControllerTest extends WebTestCase
         $this->grantOrga($requester->_real(), ['orga:create:tickets']);
         $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'requester' => null,
             'assignee' => null,
         ]);
