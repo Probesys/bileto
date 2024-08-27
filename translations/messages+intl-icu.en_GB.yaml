@@ -441,6 +441,8 @@ tickets.search.placeholder: 'Keywords or #id'
 tickets.search.quick_search: 'Quick search'
 tickets.search.submit: Search
 tickets.show.actions.rename: 'Rename the ticket'
+tickets.show.actions.reopen: 'Reopen the ticket'
+tickets.show.actions.reopen.confirm: 'The ticket is currently closed. It is often better to open a new ticket, unless there is an error. Are you sure you want to reopen this ticket?'
 tickets.show.actions.turn_into_incident: 'Turn into an incident'
 tickets.show.actions.turn_into_request: 'Turn into a request'
 tickets.show.actions.update_status: 'Edit the status'

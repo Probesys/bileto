@@ -224,4 +224,123 @@ class StatusControllerTest extends WebTestCase
             'status' => $newStatus,
         ]);
     }
+
+    public function testPostReopenSetsStatusToNewIfUnassigned(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'closed',
+            'assignee' => null,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->_refresh();
+        $this->assertSame('new', $ticket->getStatus());
+    }
+
+    public function testPostReopenSetsStatusToInProgressIfAssigned(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'closed',
+            'assignee' => UserFactory::createOne(),
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->_refresh();
+        $this->assertSame('in_progress', $ticket->getStatus());
+    }
+
+    public function testPostReopenFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'closed',
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => 'not a token',
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        $ticket->_refresh();
+        $this->assertSame('closed', $ticket->getStatus());
+    }
+
+    public function testPostReopenFailsIfTicketIsNotClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'resolved',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+    }
+
+    public function testPostReopenFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'closed',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+    }
+
+    public function testPostReopenFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+    }
 }

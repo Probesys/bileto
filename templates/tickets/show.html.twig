@@ -67,7 +67,7 @@
 
             {% set canUpdateType = is_granted('orga:update:tickets:type', organization) and not ticket.isClosed %}
             {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) and not ticket.isClosed %}
-            {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) and not ticket.isClosed %}
+            {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
             {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
 
             <div class="text--right">
@@ -114,15 +114,29 @@
                         {% endif %}
 
                         {% if canUpdateStatus %}
-                            <button
-                                class="popup__item"
-                                type="button"
-                                data-controller="modal-opener"
-                                data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
-                            >
-                                {{ 'tickets.show.actions.update_status' | trans }}
-                            </button>
+                            {% if ticket.isClosed %}
+                                <form action="{{ path('reopen ticket', { uid: ticket.uid }) }}" method="post">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('reopen ticket') }}">
+
+                                    <button
+                                        class="popup__item"
+                                        type="submit"
+                                        data-turbo-confirm="{{ 'tickets.show.actions.reopen.confirm' | trans }}"
+                                    >
+                                        {{ 'tickets.show.actions.reopen' | trans }}
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button
+                                    class="popup__item"
+                                    type="button"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
+                                >
+                                    {{ 'tickets.show.actions.update_status' | trans }}
+                                </button>
+                            {% endif %}
                         {% endif %}
 
                         {% if menuHasItem %}
