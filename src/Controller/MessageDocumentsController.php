@@ -130,14 +130,11 @@ class MessageDocumentsController extends BaseController
                 // The message of the document is posted, check that the user has
                 // the permissions to see the message.
                 $ticket = $message->getTicket();
-                $organization = $ticket->getOrganization();
-
-                if (!$ticket->hasActor($user)) {
-                    $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-                }
 
                 if ($message->isConfidential()) {
-                    $this->denyAccessUnlessGranted('orga:see:tickets:messages:confidential', $organization);
+                    $this->denyAccessUnlessGranted('orga:see:tickets:messages:confidential', $ticket);
+                } else {
+                    $this->denyAccessUnlessGranted('orga:see', $ticket);
                 }
             }
         }

@@ -50,15 +50,12 @@ class MessagesController extends BaseController
         MessageBusInterface $bus,
         EventDispatcherInterface $eventDispatcher,
     ): Response {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:create:tickets:messages', $organization);
+        $this->denyAccessUnlessGranted('orga:create:tickets:messages', $ticket);
 
-        /** @var \App\Entity\User $user */
+        /** @var \App\Entity\User */
         $user = $this->getUser();
 
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $organization = $ticket->getOrganization();
 
         $messageContent = $request->request->getString('message', '');
         $messageContent = $appMessageSanitizer->sanitize($messageContent);

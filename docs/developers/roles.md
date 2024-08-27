@@ -148,6 +148,14 @@ You can check that a permission is given at least by one authorization by passin
 $this->denyAccessUnlessGranted('orga:see', 'any');
 ```
 
+You can check that a permission is applicable in a ticket by passing a `Ticket` entity instead of an organization:
+
+```php
+$this->denyAccessUnlessGranted('orga:see', $ticket);
+```
+
+This will check that the user has the permission `orga:see` in the ticket's organization, and that the user has access to the ticket (either they're involved in the ticket, or they have the `orga:see:tickets:all` permission in the ticket's organization).
+
 It is also possible to create an error of access manually with:
 
 ```php

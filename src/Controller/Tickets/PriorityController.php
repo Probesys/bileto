@@ -21,15 +21,7 @@ class PriorityController extends BaseController
     #[Route('/tickets/{uid:ticket}/priority/edit', name: 'edit ticket priority', methods: ['GET', 'HEAD'])]
     public function edit(Ticket $ticket): Response
     {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:priority', $organization);
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:priority', $ticket);
 
         return $this->render('tickets/priority/edit.html.twig', [
             'ticket' => $ticket,
@@ -47,15 +39,7 @@ class PriorityController extends BaseController
         ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:priority', $organization);
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:priority', $ticket);
 
         /** @var string $urgency */
         $urgency = $request->request->get('urgency', $ticket->getUrgency());

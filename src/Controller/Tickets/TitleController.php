@@ -19,16 +19,7 @@ class TitleController extends BaseController
     #[Route('/tickets/{uid:ticket}/title/edit', name: 'edit ticket title', methods: ['GET', 'HEAD'])]
     public function edit(Entity\Ticket $ticket): Response
     {
-        $organization = $ticket->getOrganization();
-
-        $this->denyAccessUnlessGranted('orga:update:tickets:title', $organization);
-
-        /** @var Entity\User */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:title', $ticket);
 
         $form = $this->createNamedForm('ticket_title', Form\Ticket\TitleForm::class, $ticket);
 
@@ -44,15 +35,7 @@ class TitleController extends BaseController
         Request $request,
         Repository\TicketRepository $ticketRepository,
     ): Response {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:title', $organization);
-
-        /** @var Entity\User */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:title', $ticket);
 
         $form = $this->createNamedForm('ticket_title', Form\Ticket\TitleForm::class, $ticket);
         $form->handleRequest($request);

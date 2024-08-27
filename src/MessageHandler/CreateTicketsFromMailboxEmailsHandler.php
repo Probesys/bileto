@@ -106,7 +106,7 @@ class CreateTicketsFromMailboxEmailsHandler
                 $canAnswerTicket = $this->authorizer->isGrantedToUser(
                     $requester,
                     'orga:create:tickets:messages',
-                    $ticket->getOrganization(),
+                    $ticket,
                 );
 
                 if (!$canAnswerTicket || $ticket->getStatus() === 'closed') {

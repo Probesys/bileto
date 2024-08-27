@@ -124,6 +124,8 @@ class TicketsController extends BaseController
         OrganizationSorter $organizationSorter,
         Authorizer $authorizer,
     ): Response {
+        $this->denyAccessUnlessGranted('orga:create:tickets', 'any');
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -161,10 +163,7 @@ class TicketsController extends BaseController
         });
         $organizations = array_values($organizations); // reset the keys of the array
 
-        if (count($organizations) === 0) {
-            // The user doesn't have permission to create ticket!
-            throw $this->createAccessDeniedException();
-        } elseif (count($organizations) === 1) {
+        if (count($organizations) === 1) {
             // The user has the permission to create tickets in only one
             // organization, so let's redirect to it.
             return $this->redirectToRoute('new organization ticket', [
@@ -185,7 +184,6 @@ class TicketsController extends BaseController
     public function show(
         string $ticketUid,
         TicketRepository $ticketRepository,
-        OrganizationRepository $organizationRepository,
         TicketTimeline $ticketTimeline,
     ): Response {
         $ticket = $ticketRepository->findOneByUidWithAssociations($ticketUid);
@@ -194,21 +192,14 @@ class TicketsController extends BaseController
             throw $this->createNotFoundException('The ticket does not exist.');
         }
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        $organization = $ticket->getOrganization();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:see', $ticket);
 
         $timeline = $ticketTimeline->build($ticket);
 
         return $this->render('tickets/show.html.twig', [
             'ticket' => $ticket,
             'timeline' => $timeline,
-            'organization' => $organization,
+            'organization' => $ticket->getOrganization(),
             'today' => Time::relative('today'),
             'message' => '',
             'answerType' => 'normal',

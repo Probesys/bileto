@@ -17,18 +17,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class LabelsController extends BaseController
 {
     #[Route('/tickets/{uid:ticket}/labels/edit', name: 'edit ticket labels', methods: ['GET', 'HEAD'])]
-    public function edit(
-        Entity\Ticket $ticket,
-    ): Response {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:labels', $organization);
-
-        /** @var Entity\User */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+    public function edit(Entity\Ticket $ticket): Response
+    {
+        $this->denyAccessUnlessGranted('orga:update:tickets:labels', $ticket);
 
         $form = $this->createNamedForm('ticket_labels', Form\Ticket\LabelsForm::class, $ticket);
 
@@ -45,15 +36,7 @@ class LabelsController extends BaseController
         Repository\EntityEventRepository $entityEventRepository,
         Repository\TicketRepository $ticketRepository,
     ): Response {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:labels', $organization);
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:labels', $ticket);
 
         $initialLabels = $ticket->getLabels()->toArray();
         $initialLabelsIds = array_map(fn (Entity\Label $label): int => $label->getId(), $initialLabels);

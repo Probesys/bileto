@@ -33,6 +33,7 @@ class TicketsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'assignee' => $user,
@@ -51,7 +52,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         OrganizationFactory::createMany(2);
-        $this->grantOrga($user->_real(), ['orga:create:tickets']);
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:create:tickets']);
 
         $client->request(Request::METHOD_GET, '/tickets/new');
 
@@ -136,6 +137,7 @@ class TicketsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'createdBy' => $user,
@@ -152,6 +154,7 @@ class TicketsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'requester' => $user,
@@ -168,6 +171,7 @@ class TicketsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'assignee' => $user,
@@ -184,6 +188,7 @@ class TicketsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
             'observers' => [$user],
@@ -200,7 +205,7 @@ class TicketsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:see:tickets:all']);
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all']);
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
         ]);
@@ -220,6 +225,7 @@ class TicketsControllerTest extends WebTestCase
             'title' => 'My ticket',
             'createdBy' => $user,
         ]);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $content = 'The content of the answer';
         $message = MessageFactory::createOne([
             'isConfidential' => false,
@@ -239,6 +245,7 @@ class TicketsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
+            'orga:see',
             'orga:see:tickets:all',
             'orga:see:tickets:messages:confidential',
         ]);
@@ -261,7 +268,7 @@ class TicketsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:see:tickets:all']);
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all']);
         $content = 'The content of the answer';
         $ticket = TicketFactory::createOne();
         $message = MessageFactory::createOne([
@@ -285,6 +292,7 @@ class TicketsControllerTest extends WebTestCase
             'title' => 'The old title',
             'createdBy' => $user,
         ]);
+        $this->grantOrga($user->_real(), ['orga:see']);
         // Change the title and save the ticket to create a new EntityEvent in
         // database.
         $ticket->setTitle('The new title');
@@ -309,6 +317,7 @@ class TicketsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = TicketFactory::createOne([
             'title' => 'My ticket',
         ]);

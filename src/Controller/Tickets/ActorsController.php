@@ -27,15 +27,7 @@ class ActorsController extends BaseController
     #[Route('/tickets/{uid:ticket}/actors/edit', name: 'edit ticket actors', methods: ['GET', 'HEAD'])]
     public function edit(Entity\Ticket $ticket): Response
     {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
-
-        /** @var Entity\User */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:actors', $ticket);
 
         $form = $this->createNamedForm('ticket_actors', Form\Ticket\ActorsForm::class, $ticket);
 
@@ -53,15 +45,7 @@ class ActorsController extends BaseController
         Repository\EntityEventRepository $entityEventRepository,
         EventDispatcherInterface $eventDispatcher,
     ): Response {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:actors', $organization);
-
-        /** @var Entity\User */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:actors', $ticket);
 
         $initialObservers = $ticket->getObservers()->toArray();
         $initialObserversIds = array_map(fn (Entity\User $observer): int => $observer->getId(), $initialObservers);

@@ -21,15 +21,7 @@ class StatusController extends BaseController
     #[Route('/tickets/{uid:ticket}/status/edit', name: 'edit ticket status', methods: ['GET', 'HEAD'])]
     public function edit(Ticket $ticket): Response
     {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:status', $organization);
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
 
         $statuses = Ticket::getStatusesWithLabels();
 
@@ -48,15 +40,7 @@ class StatusController extends BaseController
         ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:status', $organization);
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
 
         /** @var string $status */
         $status = $request->request->get('status', $ticket->getStatus());

@@ -27,16 +27,9 @@ class ContractsController extends BaseController
         Ticket $ticket,
         ContractRepository $contractRepository,
     ): Response {
+        $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $ticket);
+
         $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $organization);
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
-
         $ongoingContracts = $contractRepository->findOngoingByOrganization($organization);
         $initialOngoingContract = $ticket->getOngoingContract();
 
@@ -58,15 +51,9 @@ class ContractsController extends BaseController
         ContractTimeAccounting $contractTimeAccounting,
         TranslatorInterface $translator,
     ): Response {
+        $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $ticket);
+
         $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $organization);
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
 
         $ongoingContractUid = $request->request->getString('ongoingContractUid');
 

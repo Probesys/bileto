@@ -26,15 +26,7 @@ class TypeController extends BaseController
         ValidatorInterface $validator,
         TranslatorInterface $translator,
     ): Response {
-        $organization = $ticket->getOrganization();
-        $this->denyAccessUnlessGranted('orga:update:tickets:type', $organization);
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$ticket->hasActor($user)) {
-            $this->denyAccessUnlessGranted('orga:see:tickets:all', $organization);
-        }
+        $this->denyAccessUnlessGranted('orga:update:tickets:type', $ticket);
 
         $oldType = $ticket->getType();
 

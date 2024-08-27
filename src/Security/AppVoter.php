@@ -6,25 +6,22 @@
 
 namespace App\Security;
 
-use App\Entity\Authorization;
-use App\Entity\Organization;
-use App\Entity\User;
-use App\Repository\AuthorizationRepository;
+use App\Entity;
+use App\Repository;
+use App\Utils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * @phpstan-import-type Scope from AuthorizationRepository
+ * @phpstan-import-type Scope from Repository\AuthorizationRepository
  *
- * @extends Voter<string, ?Scope>
+ * @extends Voter<string, Scope|Entity\Ticket|null>
  */
 class AppVoter extends Voter
 {
-    private AuthorizationRepository $authorizationRepo;
-
-    public function __construct(AuthorizationRepository $authorizationRepo)
-    {
-        $this->authorizationRepo = $authorizationRepo;
+    public function __construct(
+        private Repository\AuthorizationRepository $authorizationRepository,
+    ) {
     }
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -32,17 +29,18 @@ class AppVoter extends Voter
         return (
             (str_starts_with($attribute, 'admin:') && $subject === null) ||
             (str_starts_with($attribute, 'orga:') && (
-                $subject instanceof Organization ||
+                $subject instanceof Entity\Organization ||
+                $subject instanceof Entity\Ticket ||
                 $subject === 'any'
             ))
         );
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $scope, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
-        if (!$user instanceof User) {
+        if (!$user instanceof Entity\User) {
             // deny access if the user is not logged in
             return false;
         }
@@ -55,14 +53,30 @@ class AppVoter extends Voter
             throw new \DomainException("Permission must start by 'orga:' or 'admin:' (got {$attribute})");
         }
 
-        $authorizations = $this->authorizationRepo->getAuthorizations($authorizationType, $user, $scope);
-
-        foreach ($authorizations as $authorization) {
-            if ($authorization->getRole()->hasPermission($attribute)) {
-                return true;
-            }
+        if ($subject instanceof Entity\Ticket) {
+            $scope = $subject->getOrganization();
+            $ticket = $subject;
+        } else {
+            $scope = $subject;
+            $ticket = null;
         }
 
-        return false;
+        $authorizations = $this->authorizationRepository->getAuthorizations(
+            $authorizationType,
+            $user,
+            $scope,
+        );
+
+        $isGranted = Utils\ArrayHelper::any($authorizations, function ($authorization) use ($attribute): bool {
+            return $authorization->getRole()->hasPermission($attribute);
+        });
+
+        if (!$isGranted) {
+            return false;
+        } elseif (!$ticket || $ticket->hasActor($user)) {
+            return true;
+        } else {
+            return $this->voteOnAttribute('orga:see:tickets:all', $scope, $token);
+        }
     }
 }
