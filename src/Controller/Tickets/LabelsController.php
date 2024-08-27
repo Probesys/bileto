@@ -20,6 +20,7 @@ class LabelsController extends BaseController
     public function edit(Entity\Ticket $ticket): Response
     {
         $this->denyAccessUnlessGranted('orga:update:tickets:labels', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $form = $this->createNamedForm('ticket_labels', Form\Ticket\LabelsForm::class, $ticket);
 
@@ -37,6 +38,7 @@ class LabelsController extends BaseController
         Repository\TicketRepository $ticketRepository,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:labels', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $initialLabels = $ticket->getLabels()->toArray();
         $initialLabelsIds = array_map(fn (Entity\Label $label): int => $label->getId(), $initialLabels);

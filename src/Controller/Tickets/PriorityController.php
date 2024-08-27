@@ -22,6 +22,7 @@ class PriorityController extends BaseController
     public function edit(Ticket $ticket): Response
     {
         $this->denyAccessUnlessGranted('orga:update:tickets:priority', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         return $this->render('tickets/priority/edit.html.twig', [
             'ticket' => $ticket,
@@ -40,6 +41,7 @@ class PriorityController extends BaseController
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:priority', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         /** @var string $urgency */
         $urgency = $request->request->get('urgency', $ticket->getUrgency());

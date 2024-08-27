@@ -22,6 +22,7 @@ class StatusController extends BaseController
     public function edit(Ticket $ticket): Response
     {
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $statuses = Ticket::getStatusesWithLabels();
 
@@ -41,6 +42,7 @@ class StatusController extends BaseController
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         /** @var string $status */
         $status = $request->request->get('status', $ticket->getStatus());
@@ -69,6 +71,43 @@ class StatusController extends BaseController
                 'statuses' => $statuses,
                 'errors' => ConstraintErrorsFormatter::format($errors),
             ]);
+        }
+
+        $ticketRepository->save($ticket, true);
+
+        return $this->redirectToRoute('ticket', [
+            'uid' => $ticket->getUid(),
+        ]);
+    }
+
+    #[Route('/tickets/{uid:ticket}/status/reopening', name: 'reopen ticket', methods: ['POST'])]
+    public function reopen(
+        Ticket $ticket,
+        Request $request,
+        TicketRepository $ticketRepository,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
+
+        if (!$ticket->isClosed()) {
+            throw $this->createAccessDeniedException('Access denied because ticket is not closed.');
+        }
+
+        /** @var string $csrfToken */
+        $csrfToken = $request->request->get('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('reopen ticket', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+
+            return $this->redirectToRoute('ticket', [
+                'uid' => $ticket->getUid(),
+            ]);
+        }
+
+        if ($ticket->getAssignee() === null) {
+            $ticket->setStatus('new');
+        } else {
+            $ticket->setStatus('in_progress');
         }
 
         $ticketRepository->save($ticket, true);

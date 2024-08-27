@@ -37,6 +37,7 @@ class ContractsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -44,6 +45,23 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit the contract');
+    }
+
+    public function testGetEditFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/contracts/edit");
     }
 
     public function testGetEditFailsIfAccessIsForbidden(): void
@@ -54,6 +72,7 @@ class ContractsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -71,6 +90,7 @@ class ContractsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $otherUser,
         ]);
 
@@ -96,6 +116,7 @@ class ContractsControllerTest extends WebTestCase
             'endAt' => Utils\Time::fromNow(1, 'week'),
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'organization' => $organization,
             'createdBy' => $user,
             'contracts' => [$oldContract],
@@ -137,6 +158,7 @@ class ContractsControllerTest extends WebTestCase
             'endAt' => Utils\Time::fromNow(1, 'week'),
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'organization' => $organization,
             'createdBy' => $user,
             'contracts' => [$oldContract],
@@ -177,6 +199,7 @@ class ContractsControllerTest extends WebTestCase
             'timeAccountingUnit' => 30,
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'organization' => $organization,
             'createdBy' => $user,
             'contracts' => [$oldContract],
@@ -229,6 +252,7 @@ class ContractsControllerTest extends WebTestCase
             'endAt' => Utils\Time::fromNow(1, 'week'),
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'organization' => $organization,
             'createdBy' => $user,
             'contracts' => [$oldContract],
@@ -244,6 +268,39 @@ class ContractsControllerTest extends WebTestCase
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame($oldContract->getId(), $contracts[0]->getId());
+    }
+
+    public function testPostUpdateFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
+        $organization = OrganizationFactory::createOne();
+        $oldContract = ContractFactory::createOne([
+            'organization' => $organization,
+            'startAt' => Utils\Time::ago(1, 'week'),
+            'endAt' => Utils\Time::fromNow(1, 'week'),
+        ]);
+        $newContract = ContractFactory::createOne([
+            'organization' => $organization,
+            'startAt' => Utils\Time::ago(1, 'week'),
+            'endAt' => Utils\Time::fromNow(1, 'week'),
+        ]);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'organization' => $organization,
+            'createdBy' => $user,
+            'contracts' => [$oldContract],
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/contracts/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
+            'ongoingContractUid' => $newContract->getUid(),
+        ]);
     }
 
     public function testPostUpdateFailsIfAccessIsForbidden(): void
@@ -265,6 +322,7 @@ class ContractsControllerTest extends WebTestCase
             'endAt' => Utils\Time::fromNow(1, 'week'),
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'organization' => $organization,
             'createdBy' => $user,
             'contracts' => [$oldContract],
@@ -298,6 +356,7 @@ class ContractsControllerTest extends WebTestCase
             'endAt' => Utils\Time::fromNow(1, 'week'),
         ]);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'organization' => $organization,
             'createdBy' => $otherUser,
             'contracts' => [$oldContract],

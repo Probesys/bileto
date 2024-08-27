@@ -28,6 +28,7 @@ class ActorsController extends BaseController
     public function edit(Entity\Ticket $ticket): Response
     {
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $form = $this->createNamedForm('ticket_actors', Form\Ticket\ActorsForm::class, $ticket);
 
@@ -46,6 +47,7 @@ class ActorsController extends BaseController
         EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $initialObservers = $ticket->getObservers()->toArray();
         $initialObserversIds = array_map(fn (Entity\User $observer): int => $observer->getId(), $initialObservers);

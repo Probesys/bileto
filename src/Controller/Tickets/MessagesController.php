@@ -51,6 +51,7 @@ class MessagesController extends BaseController
         EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets:messages', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         /** @var \App\Entity\User */
         $user = $this->getUser();

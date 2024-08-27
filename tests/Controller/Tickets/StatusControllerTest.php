@@ -32,6 +32,7 @@ class StatusControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -39,6 +40,23 @@ class StatusControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit the status');
+    }
+
+    public function testGetEditFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/status/edit");
     }
 
     public function testGetEditFailsIfAccessIsForbidden(): void
@@ -49,6 +67,7 @@ class StatusControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -64,7 +83,9 @@ class StatusControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
-        $ticket = TicketFactory::createOne();
+        $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
+        ]);
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/status/edit");
@@ -140,6 +161,28 @@ class StatusControllerTest extends WebTestCase
         $this->assertSame($oldStatus, $ticket->getStatus());
     }
 
+    public function testPostUpdateFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $oldStatus = 'closed';
+        $newStatus = 'in_progress';
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => $oldStatus,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket status'),
+            'status' => $newStatus,
+        ]);
+    }
+
     public function testPostUpdateFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
@@ -179,6 +222,125 @@ class StatusControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/edit", [
             '_csrf_token' => $this->generateCsrfToken($client, 'update ticket status'),
             'status' => $newStatus,
+        ]);
+    }
+
+    public function testPostReopenSetsStatusToNewIfUnassigned(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'closed',
+            'assignee' => null,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->_refresh();
+        $this->assertSame('new', $ticket->getStatus());
+    }
+
+    public function testPostReopenSetsStatusToInProgressIfAssigned(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'closed',
+            'assignee' => UserFactory::createOne(),
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->_refresh();
+        $this->assertSame('in_progress', $ticket->getStatus());
+    }
+
+    public function testPostReopenFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'closed',
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => 'not a token',
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        $ticket->_refresh();
+        $this->assertSame('closed', $ticket->getStatus());
+    }
+
+    public function testPostReopenFailsIfTicketIsNotClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'resolved',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+    }
+
+    public function testPostReopenFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'closed',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
+        ]);
+    }
+
+    public function testPostReopenFailsIfAccessToTicketIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:status']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/status/reopening", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'reopen ticket'),
         ]);
     }
 }

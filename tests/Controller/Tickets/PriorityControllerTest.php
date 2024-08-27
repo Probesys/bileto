@@ -32,6 +32,7 @@ class PriorityControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -39,6 +40,23 @@ class PriorityControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit the priority');
+    }
+
+    public function testGetEditFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/priority/edit");
     }
 
     public function testGetEditFailsIfAccessIsForbidden(): void
@@ -49,6 +67,7 @@ class PriorityControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -64,7 +83,9 @@ class PriorityControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
-        $ticket = TicketFactory::createOne();
+        $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
+        ]);
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/priority/edit");
@@ -83,6 +104,7 @@ class PriorityControllerTest extends WebTestCase
         $newImpact = 'high';
         $newPriority = 'high';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'urgency' => $oldUrgency,
             'impact' => $oldImpact,
@@ -116,6 +138,7 @@ class PriorityControllerTest extends WebTestCase
         $newImpact = 'high';
         $newPriority = 'invalid';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'urgency' => $oldUrgency,
             'impact' => $oldImpact,
@@ -150,6 +173,7 @@ class PriorityControllerTest extends WebTestCase
         $newImpact = 'high';
         $newPriority = 'high';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'urgency' => $oldUrgency,
             'impact' => $oldImpact,
@@ -170,6 +194,37 @@ class PriorityControllerTest extends WebTestCase
         $this->assertSame($oldPriority, $ticket->getPriority());
     }
 
+    public function testPostUpdateFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
+        $oldUrgency = 'low';
+        $oldImpact = 'low';
+        $oldPriority = 'low';
+        $newUrgency = 'high';
+        $newImpact = 'high';
+        $newPriority = 'high';
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+            'urgency' => $oldUrgency,
+            'impact' => $oldImpact,
+            'priority' => $oldPriority,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/priority/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket priority'),
+            'urgency' => $newUrgency,
+            'impact' => $newImpact,
+            'priority' => $newPriority,
+        ]);
+    }
+
     public function testPostUpdateFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
@@ -184,6 +239,7 @@ class PriorityControllerTest extends WebTestCase
         $newImpact = 'high';
         $newPriority = 'high';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'urgency' => $oldUrgency,
             'impact' => $oldImpact,
@@ -214,6 +270,7 @@ class PriorityControllerTest extends WebTestCase
         $newImpact = 'high';
         $newPriority = 'high';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'urgency' => $oldUrgency,
             'impact' => $oldImpact,
             'priority' => $oldPriority,

@@ -441,6 +441,8 @@ tickets.search.placeholder: 'Mots-clés ou #id'
 tickets.search.quick_search: 'Recherche rapide'
 tickets.search.submit: Rechercher
 tickets.show.actions.rename: 'Renommer le ticket'
+tickets.show.actions.reopen: 'Réouvrir le ticket'
+tickets.show.actions.reopen.confirm: "Le ticket est actuellement fermé. Il est généralement préférable d’ouvrir un nouveau ticket, sauf en cas d’erreur. Êtes-vous sûr de vouloir réouvrir ce ticket\_?"
 tickets.show.actions.turn_into_incident: 'Changer en incident'
 tickets.show.actions.turn_into_request: 'Changer en demande'
 tickets.show.actions.update_status: 'Modifier le statut'
@@ -452,7 +454,6 @@ tickets.show.answer_type.solution: Solution
 tickets.show.approve: Approuver
 tickets.show.assign_yourself: 'vous attribuer le ticket'
 tickets.show.assignee: "Attribué à\_:"
-tickets.show.closed: 'Ce ticket est clos.'
 tickets.show.hide_history: 'Masquer l’historique des changements'
 tickets.show.impact: "Impact\_:"
 tickets.show.message.confidential: Confidentiel

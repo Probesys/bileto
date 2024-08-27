@@ -29,6 +29,7 @@ class TitleControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -36,6 +37,23 @@ class TitleControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Rename the ticket');
+    }
+
+    public function testGetEditFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/title/edit");
     }
 
     public function testGetEditFailsIfAccessIsForbidden(): void
@@ -46,6 +64,7 @@ class TitleControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -61,7 +80,9 @@ class TitleControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
-        $ticket = Factory\TicketFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
+        ]);
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/title/edit");
@@ -76,6 +97,7 @@ class TitleControllerTest extends WebTestCase
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'title' => $oldTitle,
         ]);
@@ -101,6 +123,7 @@ class TitleControllerTest extends WebTestCase
         $oldTitle = 'My ticket';
         $newTitle = str_repeat('a', 256);
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'title' => $oldTitle,
         ]);
@@ -128,6 +151,7 @@ class TitleControllerTest extends WebTestCase
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'title' => $oldTitle,
         ]);
@@ -146,6 +170,31 @@ class TitleControllerTest extends WebTestCase
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
 
+    public function testPostUpdateFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
+        $oldTitle = 'My ticket';
+        $newTitle = 'My urgent ticket!';
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+            'title' => $oldTitle,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
+            'ticket_title' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket title'),
+                'title' => $newTitle,
+            ],
+        ]);
+    }
+
     public function testPostUpdateFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
@@ -156,6 +205,7 @@ class TitleControllerTest extends WebTestCase
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'title' => $oldTitle,
         ]);
@@ -180,6 +230,7 @@ class TitleControllerTest extends WebTestCase
         $oldTitle = 'My ticket';
         $newTitle = 'My urgent ticket!';
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'title' => $oldTitle,
         ]);
 

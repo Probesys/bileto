@@ -34,6 +34,7 @@ class TypeControllerTest extends WebTestCase
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'type' => $oldType,
         ]);
@@ -55,6 +56,7 @@ class TypeControllerTest extends WebTestCase
         $oldType = 'request';
         $newType = 'not a type';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'type' => $oldType,
         ]);
@@ -82,6 +84,7 @@ class TypeControllerTest extends WebTestCase
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'type' => $oldType,
         ]);
@@ -98,6 +101,29 @@ class TypeControllerTest extends WebTestCase
         $this->assertSame($oldType, $ticket->getType());
     }
 
+    public function testPostUpdateFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:type']);
+        $oldType = 'request';
+        $newType = 'incident';
+        $ticket = TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+            'type' => $oldType,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/type/edit", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket type'),
+            'type' => $newType,
+        ]);
+    }
+
     public function testPostUpdateFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
@@ -108,6 +134,7 @@ class TypeControllerTest extends WebTestCase
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'type' => $oldType,
         ]);
@@ -130,6 +157,7 @@ class TypeControllerTest extends WebTestCase
         $oldType = 'request';
         $newType = 'incident';
         $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
             'type' => $oldType,
         ]);
 

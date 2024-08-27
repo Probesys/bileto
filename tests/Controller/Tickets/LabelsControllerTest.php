@@ -32,6 +32,7 @@ class LabelsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:labels']);
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -39,6 +40,23 @@ class LabelsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit the labels');
+    }
+
+    public function testGetEditFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:labels']);
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/labels/edit");
     }
 
     public function testGetEditFailsIfAccessIsForbidden(): void
@@ -49,6 +67,7 @@ class LabelsControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
         ]);
 
@@ -66,6 +85,7 @@ class LabelsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:update:tickets:labels']);
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $otherUser,
         ]);
 
@@ -82,6 +102,7 @@ class LabelsControllerTest extends WebTestCase
         $oldLabel = Factory\LabelFactory::createOne();
         $newLabel = Factory\LabelFactory::createOne();
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'labels' => [$oldLabel],
         ]);
@@ -115,6 +136,7 @@ class LabelsControllerTest extends WebTestCase
         $oldLabel = Factory\LabelFactory::createOne();
         $newLabel = Factory\LabelFactory::createOne();
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'labels' => [$oldLabel],
         ]);
@@ -146,6 +168,7 @@ class LabelsControllerTest extends WebTestCase
         $oldLabel = Factory\LabelFactory::createOne();
         $newLabel = Factory\LabelFactory::createOne();
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'labels' => [$oldLabel],
         ]);
@@ -164,6 +187,31 @@ class LabelsControllerTest extends WebTestCase
         $this->assertSame($oldLabel->getId(), $labels[0]->getId());
     }
 
+    public function testPostUpdateFailsIfTicketIsClosed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:labels']);
+        $oldLabel = Factory\LabelFactory::createOne();
+        $newLabel = Factory\LabelFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => 'closed',
+            'createdBy' => $user,
+            'labels' => [$oldLabel],
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/labels/edit", [
+            'ticket_labels' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket labels'),
+                'labels' => [$newLabel->getId()],
+            ],
+        ]);
+    }
+
     public function testPostUpdateFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
@@ -174,6 +222,7 @@ class LabelsControllerTest extends WebTestCase
         $oldLabel = Factory\LabelFactory::createOne();
         $newLabel = Factory\LabelFactory::createOne();
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $user,
             'labels' => [$oldLabel],
         ]);
@@ -199,6 +248,7 @@ class LabelsControllerTest extends WebTestCase
         $oldLabel = Factory\LabelFactory::createOne();
         $newLabel = Factory\LabelFactory::createOne();
         $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
             'createdBy' => $otherUser,
             'labels' => [$oldLabel],
         ]);

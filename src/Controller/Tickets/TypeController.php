@@ -27,6 +27,7 @@ class TypeController extends BaseController
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:type', $ticket);
+        $this->denyAccessIfTicketIsClosed($ticket);
 
         $oldType = $ticket->getType();
 

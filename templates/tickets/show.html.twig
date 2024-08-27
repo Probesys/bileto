@@ -65,8 +65,8 @@
                 {{ 'tickets.show.number_messages' | trans({ 'count': timeline.countItems('message') }) }}
             </p>
 
-            {% set canUpdateType = is_granted('orga:update:tickets:type', organization) %}
-            {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) %}
+            {% set canUpdateType = is_granted('orga:update:tickets:type', organization) and not ticket.isClosed %}
+            {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) and not ticket.isClosed %}
             {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
             {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
 
@@ -114,15 +114,29 @@
                         {% endif %}
 
                         {% if canUpdateStatus %}
-                            <button
-                                class="popup__item"
-                                type="button"
-                                data-controller="modal-opener"
-                                data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
-                            >
-                                {{ 'tickets.show.actions.update_status' | trans }}
-                            </button>
+                            {% if ticket.isClosed %}
+                                <form action="{{ path('reopen ticket', { uid: ticket.uid }) }}" method="post">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('reopen ticket') }}">
+
+                                    <button
+                                        class="popup__item"
+                                        type="submit"
+                                        data-turbo-confirm="{{ 'tickets.show.actions.reopen.confirm' | trans }}"
+                                    >
+                                        {{ 'tickets.show.actions.reopen' | trans }}
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button
+                                    class="popup__item"
+                                    type="button"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
+                                >
+                                    {{ 'tickets.show.actions.update_status' | trans }}
+                                </button>
+                            {% endif %}
                         {% endif %}
 
                         {% if menuHasItem %}
@@ -161,7 +175,7 @@
                                 {{ 'tickets.actors' | trans }}
                             </h2>
 
-                            {% if is_granted('orga:update:tickets:actors', organization) %}
+                            {% if is_granted('orga:update:tickets:actors', organization) and not ticket.isClosed %}
                                 <button
                                     class="button--icon button--discreet"
                                     data-controller="modal-opener"
@@ -255,7 +269,7 @@
                                 {{ 'tickets.priority' | trans }}
                             </h2>
 
-                            {% if is_granted('orga:update:tickets:priority', organization) %}
+                            {% if is_granted('orga:update:tickets:priority', organization) and not ticket.isClosed %}
                                 <button
                                     class="button--icon button--discreet"
                                     data-controller="modal-opener"
@@ -303,7 +317,7 @@
                                 {{ 'tickets.labels' | trans }}
                             </h2>
 
-                            {% if is_granted('orga:update:tickets:labels', organization) %}
+                            {% if is_granted('orga:update:tickets:labels', organization) and not ticket.isClosed %}
                                 <button
                                     class="button--icon button--discreet"
                                     data-controller="modal-opener"
@@ -343,7 +357,7 @@
                                     {{ 'tickets.contracts.ongoing' | trans }}
                                 </h2>
 
-                                {% if is_granted('orga:update:tickets:contracts', organization) %}
+                                {% if is_granted('orga:update:tickets:contracts', organization) and not ticket.isClosed %}
                                     <button
                                         class="button--icon button--discreet"
                                         data-controller="modal-opener"
@@ -432,7 +446,7 @@
                     {% endfor %}
 
                     <div id="bottom">
-                        {% if is_granted('orga:create:tickets:messages', organization) %}
+                        {% if is_granted('orga:create:tickets:messages', organization) and not ticket.isClosed %}
                             <form
                                 action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
                                 method="post"
@@ -457,11 +471,6 @@
                                     <p class="text--center text--success">
                                         {{ icon('check') }}
                                         {{ 'tickets.show.resolved' | trans }}
-                                    </p>
-                                {% elseif ticket.status == 'closed' %}
-                                    <p class="text--center text--secondary">
-                                        {{ icon('close') }}
-                                        {{ 'tickets.show.closed' | trans }}
                                     </p>
                                 {% endif %}
 
