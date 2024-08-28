@@ -10,6 +10,8 @@ use App\Controller\BaseController;
 use App\Form;
 use App\Entity;
 use App\Repository;
+use App\TicketActivity;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,9 +37,12 @@ class OrganizationController extends BaseController
         Entity\Ticket $ticket,
         Request $request,
         Repository\TicketRepository $ticketRepository,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:organization', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
+
+        $oldOrganization = $ticket->getOrganization();
 
         $form = $this->createNamedForm('ticket_organization', Form\Ticket\OrganizationForm::class, $ticket);
         $form->handleRequest($request);
@@ -51,6 +56,13 @@ class OrganizationController extends BaseController
 
         $ticket = $form->getData();
         $ticketRepository->save($ticket, true);
+
+        $newOrganization = $ticket->getOrganization();
+
+        if ($oldOrganization->getId() !== $newOrganization->getId()) {
+            $ticketEvent = new TicketActivity\TicketEvent($ticket);
+            $eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::TRANSFERRED);
+        }
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

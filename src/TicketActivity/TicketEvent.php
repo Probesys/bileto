@@ -23,6 +23,9 @@ class TicketEvent extends Event
     // To be used when a resolved ticket got approved without answer.
     public const APPROVED = 'ticket.approved';
 
+    // To be used when a ticket is transferred to a new organization.
+    public const TRANSFERRED = 'ticket.transferred';
+
     private Ticket $ticket;
 
     public function __construct(Ticket $ticket)
