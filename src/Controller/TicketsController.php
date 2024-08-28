@@ -180,18 +180,9 @@ class TicketsController extends BaseController
         ]);
     }
 
-    #[Route('/tickets/{uid:ticketUid}', name: 'ticket', methods: ['GET', 'HEAD'])]
-    public function show(
-        string $ticketUid,
-        TicketRepository $ticketRepository,
-        TicketTimeline $ticketTimeline,
-    ): Response {
-        $ticket = $ticketRepository->findOneByUidWithAssociations($ticketUid);
-
-        if (!$ticket) {
-            throw $this->createNotFoundException('The ticket does not exist.');
-        }
-
+    #[Route('/tickets/{uid:ticket}', name: 'ticket', methods: ['GET', 'HEAD'])]
+    public function show(Ticket $ticket, TicketTimeline $ticketTimeline): Response
+    {
         $this->denyAccessUnlessGranted('orga:see', $ticket);
 
         $timeline = $ticketTimeline->build($ticket);
