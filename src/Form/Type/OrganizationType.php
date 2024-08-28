@@ -8,6 +8,7 @@ namespace App\Form\Type;
 
 use App\Entity;
 use App\Repository;
+use App\Security;
 use App\Service;
 use Symfony\Bridge\Doctrine\Form\Type;
 use Symfony\Component\Form\AbstractType;
@@ -20,6 +21,7 @@ class OrganizationType extends AbstractType
 {
     public function __construct(
         private Repository\OrganizationRepository $organizationRepository,
+        private Security\Authorizer $authorizer,
         private Service\Sorter\OrganizationSorter $organizationSorter,
     ) {
     }
@@ -30,19 +32,39 @@ class OrganizationType extends AbstractType
             'class' => Entity\Organization::class,
 
             'choice_loader' => function (Options $options): ChoiceLoaderInterface {
+                $permission = $options['permission'];
+
+                $vary = [$permission];
+
                 return ChoiceList::lazy(
                     $this,
-                    function () {
+                    function () use ($permission) {
                         $organizations = $this->organizationRepository->findAll();
+
+                        if ($permission) {
+                            $organizations = array_filter(
+                                $organizations,
+                                function ($organization) use ($permission): bool {
+                                    return $this->authorizer->isGranted($permission, $organization);
+                                }
+                            );
+                        }
+
                         $this->organizationSorter->sort($organizations);
+
                         return $organizations;
                     },
+                    $vary,
                 );
             },
 
             'choice_label' => 'name',
             'choice_value' => 'id',
+
+            'permission' => '',
         ]);
+
+        $resolver->setAllowedTypes('permission', 'string');
     }
 
     public function getParent(): string
