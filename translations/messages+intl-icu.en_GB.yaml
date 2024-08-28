@@ -74,6 +74,7 @@ common.colors.grey: Grey
 common.colors.primary: Primary
 common.colors.orange: Orange
 common.colors.red: Red
+common.information: Information
 common.join.and: ' and '
 common.join.glue: ', '
 common.system_user: 'System user'
@@ -251,7 +252,6 @@ passwords.reset.short: 'Enter your email address and we will send you a link to 
 passwords.reset.title: 'Reset your password'
 preferences.title: Preferences
 profile.current_password: 'Current password'
-profile.ldap.information: Information
 profile.ldap.managed: 'You can’t change your profile because your account is managed by LDAP.'
 profile.leave_password: 'Leave these fields blank to keep your current password.'
 profile.new_password: 'New password'
@@ -511,7 +511,6 @@ users.color_scheme.dark: Dark
 users.color_scheme.light: Light
 users.edit.title: 'Edit a user'
 users.email: 'Email address'
-users.form.ldap.information: Information
 users.form.ldap.managed: 'You can’t change some information because this account is managed by LDAP.'
 users.form.organization_caption: 'The tickets opened by email by this user will be attached to this organization.'
 users.form.password.empty_keep_current: 'Leave blank to keep the current password.'

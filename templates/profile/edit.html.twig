@@ -43,7 +43,7 @@
                 {% if managedByLdap %}
                     {{ include('alerts/_alert.html.twig', {
                         type: 'info',
-                        title: 'profile.ldap.information' | trans,
+                        title: 'common.information' | trans,
                         message: 'profile.ldap.managed' | trans,
                     }, with_context = false) }}
                 {% endif %}

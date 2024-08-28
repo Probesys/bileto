@@ -10,7 +10,7 @@
     {% if form.vars['managedByLdap'] %}
         {{ include('alerts/_alert.html.twig', {
             type: 'info',
-            title: 'users.form.ldap.information' | trans,
+            title: 'common.information' | trans,
             message: 'users.form.ldap.managed' | trans,
         }, with_context = false) }}
     {% endif %}

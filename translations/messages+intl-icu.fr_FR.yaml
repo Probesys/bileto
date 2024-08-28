@@ -74,6 +74,7 @@ common.colors.grey: Gris
 common.colors.primary: Principale
 common.colors.orange: Orange
 common.colors.red: Rouge
+common.information: Information
 common.join.and: ' et '
 common.join.glue: ', '
 common.system_user: 'Utilisateur système'
@@ -251,7 +252,6 @@ passwords.reset.short: 'Saisissez votre adresse email et nous vous enverrons un 
 passwords.reset.title: 'Réinitialisation de votre mot de passe'
 preferences.title: Préférences
 profile.current_password: 'Mot de passe actuel'
-profile.ldap.information: Information
 profile.ldap.managed: 'Vous ne pouvez pas modifier votre profil car votre compte est géré avec LDAP.'
 profile.leave_password: 'Laissez ces champs vides pour conserver votre mot de passe actuel.'
 profile.new_password: 'Nouveau mot de passe'
@@ -511,7 +511,6 @@ users.color_scheme.dark: Sombre
 users.color_scheme.light: Clair
 users.edit.title: 'Modifier un utilisateur'
 users.email: 'Adresse email'
-users.form.ldap.information: Information
 users.form.ldap.managed: 'Certaines informations ne sont pas modifiables car ce compte est géré avec LDAP.'
 users.form.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
 users.form.password.empty_keep_current: 'Laissez vide pour conserver le mot de passe actuel.'
