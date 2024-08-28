@@ -373,6 +373,7 @@ tickets.events.labels.removed: '<strong>{username}</strong> a retiré l’étiqu
 tickets.events.observers.added: '<strong>{username}</strong> a ajouté l’observateur(s) <i>{added}</i>'
 tickets.events.observers.added_and_removed: '<strong>{username}</strong> a ajouté l’observateur(s) <i>{added}</i> et retiré <i>{removed}</i>'
 tickets.events.observers.removed: '<strong>{username}</strong> a retiré l’observateur(s) <i>{removed}</i>'
+tickets.events.organization: '<strong>{username}</strong> a transféré le ticket de <i>{oldValue}</i> à <i>{newValue}</i>'
 tickets.events.priority: '<strong>{username}</strong> a changé la priorité de <i>{oldValue}</i> à <i>{newValue}</i>'
 tickets.events.requester: '<strong>{username}</strong> a changé le demandeur de <i>{oldValue}</i> à <i>{newValue}</i>'
 tickets.events.solution.changed: '<strong>{username}</strong> a changé la solution'
@@ -429,6 +430,11 @@ tickets.new.title: 'Nouveau ticket'
 tickets.observers: Observateurs
 tickets.observers.select: 'Sélectionner un observateur'
 tickets.observers.unselect: Désélectionner
+tickets.organization: Organisation
+tickets.organization.edit.information: 'Vous êtes sur le point de transférer un ticket dans une autre organisation. <strong>Vous allez potentiellement donner accès à ce ticket à de nouvelles personnes.</strong> Aussi, les acteurs du ticket n’étant pas dans l’organisation de destination seront retirés. Si le ticket est associé à des contrats, ceux-ci seront également détachés.'
+tickets.organization.edit.title: 'Transférer le ticket'
+tickets.organization.edit.transfer: Transférer
+tickets.show.actions.transfer: 'Transférer le ticket'
 tickets.priority: Priorité
 tickets.priority.edit.title: 'Modifier la priorité'
 tickets.priority.high: Haute

@@ -17,6 +17,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     public function __construct(
         private Repository\ContractRepository $contractRepository,
         private Repository\LabelRepository $labelRepository,
+        private Repository\OrganizationRepository $organizationRepository,
         private Repository\TeamRepository $teamRepository,
         private Repository\UserRepository $userRepository,
         private TranslatorInterface $translator,
@@ -63,6 +64,8 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             return $this->formatLabelsChanges($user, $fieldChanges);
         } elseif ($field === 'observers') {
             return $this->formatObserversChanges($user, $fieldChanges);
+        } elseif ($field === 'organization') {
+            return $this->formatOrganizationChanges($user, $fieldChanges);
         } elseif ($field === 'statusChangedAt') {
             // statusChangedAt is hidden to end user, so don't display this
             // change.
@@ -468,6 +471,27 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
                 ],
             );
         }
+    }
+
+    /**
+     * @param mixed[] $changes
+     */
+    private function formatOrganizationChanges(Entity\User $user, array $changes): string
+    {
+        $username = $this->escape($user->getDisplayName());
+        $oldOrganization = $this->organizationRepository->find($changes[0]);
+        $oldOrganizationName = $this->escape($oldOrganization->getName());
+        $newOrganization = $this->organizationRepository->find($changes[1]);
+        $newOrganizationName = $this->escape($newOrganization->getName());
+
+        return $this->translator->trans(
+            'tickets.events.organization',
+            [
+                'username' => $username,
+                'newValue' => $newOrganizationName,
+                'oldValue' => $oldOrganizationName,
+            ]
+        );
     }
 
     /**
