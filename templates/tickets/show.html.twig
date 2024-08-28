@@ -414,6 +414,8 @@
                             {# On the next line, "0 + numerical string" converts the string to an integer. #}
                             {% set diff = timelineDate ? 0 + timelineDate.diff(timelineItem.createdAt).format('%a') : 0 %}
                             {% set timelineDate = timelineItem.createdAt %}
+                            {% set isToday = today.format('Y-m-d') == timelineItem.createdAt.format('Y-m-d') %}
+                            {% set olderThanOneWeek = diff >= 7 %}
 
                             <div class="timeline__date">
                                 <h2 class="text--inline">
@@ -422,15 +424,15 @@
                                     </time>
                                 </h2>
 
-                                    {% if today.format('Y-m-d') == timelineItem.createdAt.format('Y-m-d') %}
-                                        <span class="text--secondary">
-                                            {{ 'tickets.timeline.today' | trans }}
-                                        </span>
-                                    {% endif %}
-
-                                {% if diff >= 7 %}
+                                {% if isToday or olderThanOneWeek %}
                                     <p class="text--inline text--secondary">
-                                        —&nbsp;{{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}
+                                        {% if isToday %}
+                                            {{ 'tickets.timeline.today' | trans }}
+                                        {% endif %}
+
+                                        {% if olderThanOneWeek %}
+                                            —&nbsp;{{ 'tickets.timeline.diff_days' | trans({ days: diff }) }}
+                                        {% endif %}
                                     </p>
                                 {% endif %}
                             </div>
