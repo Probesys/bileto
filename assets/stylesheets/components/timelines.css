@@ -38,7 +38,7 @@
 }
 
 .timeline__date + * {
-    margin-top: 0;
+    margin-top: var(--space-medium);
 }
 
 .timeline__date-diff {
