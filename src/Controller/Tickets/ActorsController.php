@@ -43,14 +43,11 @@ class ActorsController extends BaseController
         Entity\Ticket $ticket,
         Request $request,
         Repository\TicketRepository $ticketRepository,
-        Repository\EntityEventRepository $entityEventRepository,
         EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
-        $initialObservers = $ticket->getObservers()->toArray();
-        $initialObserversIds = array_map(fn (Entity\User $observer): int => $observer->getId(), $initialObservers);
         $initialAssignee = $ticket->getAssignee();
 
         $form = $this->createNamedForm('ticket_actors', Form\Ticket\ActorsForm::class, $ticket);
@@ -66,28 +63,11 @@ class ActorsController extends BaseController
         $ticket = $form->getData();
         $ticketRepository->save($ticket, true);
 
-        $newObservers = $ticket->getObservers()->toArray();
-        $newObserversIds = array_map(fn (Entity\User $observer): int => $observer->getId(), $newObservers);
         $newAssignee = $ticket->getAssignee();
 
         if ($initialAssignee != $newAssignee) {
             $ticketEvent = new TicketEvent($ticket);
             $eventDispatcher->dispatch($ticketEvent, TicketEvent::ASSIGNED);
-        }
-
-        // Log changes to the observers field manually, as we cannot log
-        // these automatically with the EntityActivitySubscriber (i.e. ManyToMany
-        // relationships cannot be handled easily).
-        if ($initialObserversIds != $newObserversIds) {
-            $changes = [
-                $initialObserversIds,
-                $newObserversIds,
-            ];
-
-            $entityEvent = Entity\EntityEvent::initUpdate($ticket, [
-                'observers' => $changes,
-            ]);
-            $entityEventRepository->save($entityEvent, true);
         }
 
         return $this->redirectToRoute('ticket', [

@@ -32,12 +32,11 @@ This can be done easily by using [the `MonitorableEntityTrait` trait](/src/Activ
 ```php
 namespace App\Entity;
 
-use App\ActivityMonitor\MonitorableEntityInterface;
-use App\ActivityMonitor\MonitorableEntityTrait;
+use App\ActivityMonitor;
 
-class Foo implements MonitorableEntityInterface
+class Foo implements ActivityMonitor\MonitorableEntityInterface
 {
-    use MonitorableEntityTrait;
+    use ActivityMonitor\MonitorableEntityTrait;
 
     // ...
 }

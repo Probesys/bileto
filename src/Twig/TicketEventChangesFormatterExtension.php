@@ -57,8 +57,8 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             return $this->formatTeamChanges($user, $fieldChanges);
         } elseif ($field === 'solution') {
             return $this->formatSolutionChanges($user, $fieldChanges);
-        } elseif ($field === 'ongoingContract') {
-            return $this->formatOngoingContractChanges($user, $fieldChanges);
+        } elseif ($field === 'contracts') {
+            return $this->formatContractsChanges($user, $fieldChanges);
         } elseif ($field === 'labels') {
             return $this->formatLabelsChanges($user, $fieldChanges);
         } elseif ($field === 'observers') {
@@ -311,43 +311,52 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     }
 
     /**
-     * @param array<?int> $changes
+     * @param array<int[]> $changes
      */
-    private function formatOngoingContractChanges(Entity\User $user, array $changes): string
+    private function formatContractsChanges(Entity\User $user, array $changes): string
     {
         $username = $this->escape($user->getDisplayName());
 
-        if ($changes[0] === null) {
-            $newContract = $this->contractRepository->find($changes[1]);
-            $newContractName = $this->escape($newContract->getName());
+        $removedContracts = $this->contractRepository->findBy([
+          'id' => $changes[0],
+        ]);
+        $addedContracts = $this->contractRepository->findBy([
+          'id' => $changes[1],
+        ]);
+
+        $removed = array_map(function ($contract): string {
+            return $this->escape($contract->getName());
+        }, $removedContracts);
+        $removed = implode(', ', $removed);
+
+        $added = array_map(function ($contract): string {
+            return $this->escape($contract->getName());
+        }, $addedContracts);
+        $added = implode(', ', $added);
+
+        if (empty($removed)) {
             return $this->translator->trans(
-                'tickets.events.ongoing_contract.new',
+                'tickets.events.contracts.added',
                 [
                     'username' => $username,
-                    'newValue' => $newContractName,
+                    'added' => $added,
                 ],
             );
-        } elseif ($changes[1] === null) {
-            $oldContract = $this->contractRepository->find($changes[0]);
-            $oldContractName = $this->escape($oldContract->getName());
+        } elseif (empty($added)) {
             return $this->translator->trans(
-                'tickets.events.ongoing_contract.removed',
+                'tickets.events.contracts.removed',
                 [
                     'username' => $username,
-                    'oldValue' => $oldContractName,
+                    'removed' => $removed,
                 ],
             );
         } else {
-            $oldContract = $this->contractRepository->find($changes[0]);
-            $oldContractName = $this->escape($oldContract->getName());
-            $newContract = $this->contractRepository->find($changes[1]);
-            $newContractName = $this->escape($newContract->getName());
             return $this->translator->trans(
-                'tickets.events.ongoing_contract.changed',
+                'tickets.events.contracts.added_and_removed',
                 [
                     'username' => $username,
-                    'oldValue' => $oldContractName,
-                    'newValue' => $newContractName,
+                    'added' => $added,
+                    'removed' => $removed,
                 ],
             );
         }
@@ -360,14 +369,11 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     {
         $username = $this->escape($user->getDisplayName());
 
-        $removedLabelsIds = array_diff($changes[0], $changes[1]);
-        $addedLabelsIds = array_diff($changes[1], $changes[0]);
-
         $removedLabels = $this->labelRepository->findBy([
-          'id' => $removedLabelsIds,
+          'id' => $changes[0],
         ]);
         $addedLabels = $this->labelRepository->findBy([
-          'id' => $addedLabelsIds,
+          'id' => $changes[1],
         ]);
 
         $removed = array_map(function ($label): string {
@@ -384,7 +390,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
         }, $addedLabels);
         $added = implode(', ', $added);
 
-        if (empty($removedLabelsIds)) {
+        if (empty($removed)) {
             return $this->translator->trans(
                 'tickets.events.labels.added',
                 [
@@ -392,7 +398,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
                     'added' => $added,
                 ],
             );
-        } elseif (empty($addedLabelsIds)) {
+        } elseif (empty($added)) {
             return $this->translator->trans(
                 'tickets.events.labels.removed',
                 [
@@ -419,14 +425,11 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     {
         $username = $this->escape($user->getDisplayName());
 
-        $removedObserversIds = array_diff($changes[0], $changes[1]);
-        $addedObserversIds = array_diff($changes[1], $changes[0]);
-
         $removedObservers = $this->userRepository->findBy([
-          'id' => $removedObserversIds,
+          'id' => $changes[0],
         ]);
         $addedObservers = $this->userRepository->findBy([
-          'id' => $addedObserversIds,
+          'id' => $changes[1],
         ]);
 
         $removed = array_map(function ($user): string {
@@ -439,7 +442,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
         }, $addedObservers);
         $added = implode(', ', $added);
 
-        if (empty($removedObserversIds)) {
+        if (empty($removed)) {
             return $this->translator->trans(
                 'tickets.events.observers.added',
                 [
@@ -447,7 +450,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
                     'added' => $added,
                 ],
             );
-        } elseif (empty($addedObserversIds)) {
+        } elseif (empty($added)) {
             return $this->translator->trans(
                 'tickets.events.observers.removed',
                 [

@@ -12,7 +12,6 @@ use App\Entity\EntityEvent;
 use App\Entity\Organization;
 use App\Form;
 use App\Repository\ContractRepository;
-use App\Repository\EntityEventRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TimeSpentRepository;
@@ -94,7 +93,6 @@ class ContractsController extends BaseController
         Organization $organization,
         Request $request,
         ContractRepository $contractRepository,
-        EntityEventRepository $entityEventRepository,
         TicketRepository $ticketRepository,
         TimeSpentRepository $timeSpentRepository,
         ContractTimeAccounting $contractTimeAccounting,
@@ -122,18 +120,12 @@ class ContractsController extends BaseController
 
         if ($form->get('associateTickets')->getData()) {
             $contractTickets = $ticketRepository->findAssociableTickets($contract);
-            $entityEvents = [];
 
             foreach ($contractTickets as $ticket) {
                 $ticket->addContract($contract);
-
-                $entityEvents[] = EntityEvent::initUpdate($ticket, [
-                    'ongoingContract' => [null, $contract->getId()],
-                ]);
             }
 
             $ticketRepository->save($contractTickets, true);
-            $entityEventRepository->save($entityEvents, true);
         }
 
         if ($form->get('associateUnaccountedTimes')->getData()) {

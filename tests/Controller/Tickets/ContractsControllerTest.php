@@ -8,7 +8,6 @@ namespace App\Tests\Controller\Tickets;
 
 use App\Entity\EntityEvent;
 use App\Entity\Ticket;
-use App\Repository\EntityEventRepository;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\OrganizationFactory;
@@ -132,52 +131,6 @@ class ContractsControllerTest extends WebTestCase
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame($newContract->getId(), $contracts[0]->getId());
-    }
-
-    public function testPostUpdateLogsAnEntityEvent(): void
-    {
-        $client = static::createClient();
-        $container = static::getContainer();
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
-        $registry = $container->get('doctrine');
-        $entityManager = $registry->getManager();
-        /** @var EntityEventRepository */
-        $entityEventRepository = $entityManager->getRepository(EntityEvent::class);
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:contracts']);
-        $organization = OrganizationFactory::createOne();
-        $oldContract = ContractFactory::createOne([
-            'organization' => $organization,
-            'startAt' => Utils\Time::ago(1, 'week'),
-            'endAt' => Utils\Time::fromNow(1, 'week'),
-        ]);
-        $newContract = ContractFactory::createOne([
-            'organization' => $organization,
-            'startAt' => Utils\Time::ago(1, 'week'),
-            'endAt' => Utils\Time::fromNow(1, 'week'),
-        ]);
-        $ticket = TicketFactory::createOne([
-            'status' => 'in_progress',
-            'organization' => $organization,
-            'createdBy' => $user,
-            'contracts' => [$oldContract],
-        ]);
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/contracts/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket contracts'),
-            'ongoingContractUid' => $newContract->getUid(),
-        ]);
-
-        $entityEvent = $entityEventRepository->findOneBy([
-            'type' => 'update',
-            'entityType' => Ticket::class,
-            'entityId' => $ticket->getId(),
-        ]);
-        $this->assertNotNull($entityEvent);
-        $changes = $entityEvent->getChanges();
-        $this->assertSame($oldContract->getId(), $changes['ongoingContract'][0]);
-        $this->assertSame($newContract->getId(), $changes['ongoingContract'][1]);
     }
 
     public function testPostUpdateCanIncludeUnaccountedTimeSpent(): void

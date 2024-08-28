@@ -121,44 +121,6 @@ class LabelsControllerTest extends WebTestCase
         $this->assertSame($newLabel->getId(), $labels[0]->getId());
     }
 
-    public function testPostUpdateLogsAnEntityEvent(): void
-    {
-        $client = static::createClient();
-        $container = static::getContainer();
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
-        $registry = $container->get('doctrine');
-        $entityManager = $registry->getManager();
-        /** @var Repository\EntityEventRepository */
-        $entityEventRepository = $entityManager->getRepository(Entity\EntityEvent::class);
-        $user = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:labels']);
-        $oldLabel = Factory\LabelFactory::createOne();
-        $newLabel = Factory\LabelFactory::createOne();
-        $ticket = Factory\TicketFactory::createOne([
-            'status' => 'in_progress',
-            'createdBy' => $user,
-            'labels' => [$oldLabel],
-        ]);
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/labels/edit", [
-            'ticket_labels' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket labels'),
-                'labels' => [$newLabel->getId()],
-            ],
-        ]);
-
-        $entityEvent = $entityEventRepository->findOneBy([
-            'type' => 'update',
-            'entityType' => Entity\Ticket::class,
-            'entityId' => $ticket->getId(),
-        ]);
-        $this->assertNotNull($entityEvent);
-        $changes = $entityEvent->getChanges();
-        $this->assertSame([$oldLabel->getId()], $changes['labels'][0]);
-        $this->assertSame([$newLabel->getId()], $changes['labels'][1]);
-    }
-
     public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();

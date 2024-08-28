@@ -34,14 +34,10 @@ class LabelsController extends BaseController
     public function update(
         Entity\Ticket $ticket,
         Request $request,
-        Repository\EntityEventRepository $entityEventRepository,
         Repository\TicketRepository $ticketRepository,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:labels', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
-
-        $initialLabels = $ticket->getLabels()->toArray();
-        $initialLabelsIds = array_map(fn (Entity\Label $label): int => $label->getId(), $initialLabels);
 
         $form = $this->createNamedForm('ticket_labels', Form\Ticket\LabelsForm::class, $ticket);
         $form->handleRequest($request);
@@ -55,24 +51,6 @@ class LabelsController extends BaseController
 
         $ticket = $form->getData();
         $ticketRepository->save($ticket, true);
-
-        $newLabels = $ticket->getLabels()->toArray();
-        $newLabelsIds = array_map(fn (Entity\Label $label): int => $label->getId(), $newLabels);
-
-        // Log changes to the labels field manually, as we cannot log
-        // these automatically with the EntityActivitySubscriber (i.e. ManyToMany
-        // relationships cannot be handled easily).
-        if ($initialLabelsIds != $newLabelsIds) {
-            $changes = [
-                $initialLabelsIds,
-                $newLabelsIds,
-            ];
-
-            $entityEvent = Entity\EntityEvent::initUpdate($ticket, [
-                'labels' => $changes,
-            ]);
-            $entityEventRepository->save($entityEvent, true);
-        }
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

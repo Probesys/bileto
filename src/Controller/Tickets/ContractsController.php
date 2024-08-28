@@ -10,7 +10,6 @@ use App\Controller\BaseController;
 use App\Entity\EntityEvent;
 use App\Entity\Ticket;
 use App\Repository\ContractRepository;
-use App\Repository\EntityEventRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TimeSpentRepository;
 use App\Service\ContractTimeAccounting;
@@ -46,7 +45,6 @@ class ContractsController extends BaseController
         Ticket $ticket,
         Request $request,
         ContractRepository $contractRepository,
-        EntityEventRepository $entityEventRepository,
         TicketRepository $ticketRepository,
         TimeSpentRepository $timeSpentRepository,
         ContractTimeAccounting $contractTimeAccounting,
@@ -82,33 +80,15 @@ class ContractsController extends BaseController
             }
         }
 
-        $changes = [];
-
         if ($initialOngoingContract) {
             $ticket->removeContract($initialOngoingContract);
-            $changes[] = $initialOngoingContract->getId();
-        } else {
-            $changes[] = null;
         }
 
         if ($newOngoingContract) {
             $ticket->addContract($newOngoingContract);
-            $changes[] = $newOngoingContract->getId();
-        } else {
-            $changes[] = null;
         }
 
         $ticketRepository->save($ticket, true);
-
-        // Log changes to the ongoingContract field manually, as we cannot log
-        // these automatically with the EntityActivitySubscriber (i.e. ManyToMany
-        // relationships cannot be handled easily).
-        if ($changes[0] !== $changes[1]) {
-            $entityEvent = EntityEvent::initUpdate($ticket, [
-                'ongoingContract' => $changes,
-            ]);
-            $entityEventRepository->save($entityEvent, true);
-        }
 
         if ($includeUnaccountedTime && $newOngoingContract) {
             $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();

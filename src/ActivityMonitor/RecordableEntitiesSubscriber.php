@@ -11,6 +11,7 @@ use App\Repository\EntityEventRepository;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ObjectManager;
 
@@ -67,8 +68,11 @@ class RecordableEntitiesSubscriber
         /** @var \Doctrine\ORM\EntityManager $entityManager */
         $entityManager = $args->getObjectManager();
         $unitOfWork = $entityManager->getUnitOfWork();
-        $entityChanges = $unitOfWork->getEntityChangeSet($entity);
-        $entityChanges = $this->processChanges($entityChanges);
+
+        $entityChanges = array_merge(
+            $this->processEntityChangeSet($entity, $unitOfWork),
+            $this->processEntityCollectionUpdates($entity, $unitOfWork),
+        );
 
         if ($entityChanges) {
             $entityEvent = EntityEvent::initUpdate($entity, $entityChanges);
@@ -120,15 +124,15 @@ class RecordableEntitiesSubscriber
      * the changes. A change is an array containing two elements: the old and
      * the new values of the field.
      *
-     * @param array<string, array<int, mixed>|PersistentCollection<int, object>> $changes
-     *
      * @return array<string, array{mixed, mixed}>
      */
-    private function processChanges(array $changes): array
+    private function processEntityChangeSet(RecordableEntityInterface $entity, UnitOfWork $unitOfWork): array
     {
         $processedChanges = [];
 
-        foreach ($changes as $field => $fieldChanges) {
+        $changeSet = $unitOfWork->getEntityChangeSet($entity);
+
+        foreach ($changeSet as $field => $fieldChanges) {
             if ($fieldChanges instanceof PersistentCollection) {
                 // If it is a PersistentCollection (i.e. an Entity relation),
                 // it means that another Entity has been changed or created at
@@ -155,9 +159,53 @@ class RecordableEntitiesSubscriber
     }
 
     /**
+     * Return a list of changes concerning the ManyToMany relations.
+     *
+     * The returned array is indexed by the changed fields and the values are
+     * the changes. A change is an array containing two arrays:
+     *
+     * - the first array contains the removed relation's ids
+     * - the second array contains the added relation's ids
+     *
+     * Important note: this method heavily relies on internal methods of
+     * Doctrine. It may break when updating to a patch or minor version of
+     * Doctrine.
+     *
+     * @return array<string, array{mixed, mixed}>
+     */
+    private function processEntityCollectionUpdates(RecordableEntityInterface $entity, UnitOfWork $unitOfWork): array
+    {
+        $processedChanges = [];
+
+        $collectionUpdates = $unitOfWork->getScheduledCollectionUpdates();
+
+        foreach ($collectionUpdates as $collectionUpdate) {
+            $owner = $collectionUpdate->getOwner();
+
+            $concernsEntity = (
+                $owner &&
+                $owner instanceof RecordableEntityInterface &&
+                $owner::class === $entity::class &&
+                $owner->getId() === $entity->getId()
+            );
+
+            if ($concernsEntity) {
+                $field = $collectionUpdate->getMapping()->fieldName;
+
+                $processedChanges[$field] = [
+                    $this->processChangesValue($collectionUpdate->getDeleteDiff()),
+                    $this->processChangesValue($collectionUpdate->getInsertDiff()),
+                ];
+            }
+        }
+
+        return $processedChanges;
+    }
+
+    /**
      * Return a stringifiable representation of the given value.
      *
-     * @return string|int|float|bool|null
+     * @return string|int|float|bool|mixed[]|null
      */
     private function processChangesValue(mixed $value): mixed
     {
@@ -170,6 +218,10 @@ class RecordableEntitiesSubscriber
             }
 
             return $value->getId();
+        } elseif (is_array($value)) {
+            return array_map(function ($valueItem) {
+                return $this->processChangesValue($valueItem);
+            }, $value);
         } else {
             return $value;
         }
