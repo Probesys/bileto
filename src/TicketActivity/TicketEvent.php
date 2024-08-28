@@ -20,6 +20,9 @@ class TicketEvent extends Event
     // To be used when a ticket's status becomes "resolved".
     public const RESOLVED = 'ticket.resolved';
 
+    // To be used when a resolved ticket got approved without answer.
+    public const APPROVED = 'ticket.approved';
+
     private Ticket $ticket;
 
     public function __construct(Ticket $ticket)

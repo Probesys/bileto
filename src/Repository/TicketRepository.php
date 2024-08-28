@@ -110,4 +110,24 @@ class TicketRepository extends ServiceEntityRepository implements UidGeneratorIn
             return !$hasOngoingContract;
         });
     }
+
+    /**
+     * @return Ticket[]
+     */
+    public function findResolvedOlderThan(\DateTimeImmutable $date): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT t
+            FROM App\Entity\Ticket t
+
+            WHERE t.status = 'resolved'
+            AND t.statusChangedAt <= :date
+        SQL);
+
+        $query->setParameter('date', $date);
+
+        return $query->getResult();
+    }
 }

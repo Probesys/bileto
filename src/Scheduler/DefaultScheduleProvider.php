@@ -22,6 +22,7 @@ class DefaultScheduleProvider implements ScheduleProviderInterface
         $schedule->add(RecurringMessage::every('1 minute', new Message\FetchMailboxes()));
         $schedule->add(RecurringMessage::every('1 minute', new Message\CreateTicketsFromMailboxEmails()));
 
+        $schedule->add(RecurringMessage::every('12 hours', new Message\ProcessPreviouslyResolvedTickets()));
         $schedule->add(RecurringMessage::every('12 hours', new Message\SynchronizeLdap()));
 
         $schedule->add(RecurringMessage::every('24 hours', new Message\CleanData()));

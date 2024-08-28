@@ -5,13 +5,17 @@
  #}
 
 {% for field in event.changes | keys %}
-    <div class="timeline__event" data-test="event-item">
-        <div class="timeline__event-message">
-            {{ event | formatTicketChanges(field) | raw }}
-        </div>
+    {% set eventMessage = event | formatTicketChanges(field) %}
 
-        <time class="timeline__event-date" datetime="{{ event.createdAt | dateIso }}">
-            {{ event.createdAt | dateTrans('HH:mm') }}
-        </time>
-    </div>
+    {% if eventMessage %}
+        <div class="timeline__event" data-test="event-item">
+            <div class="timeline__event-message">
+                {{ eventMessage | raw }}
+            </div>
+
+            <time class="timeline__event-date" datetime="{{ event.createdAt | dateIso }}">
+                {{ event.createdAt | dateTrans('HH:mm') }}
+            </time>
+        </div>
+    {% endif %}
 {% endfor %}

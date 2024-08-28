@@ -22,6 +22,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
     {
         return [
             TicketEvent::ASSIGNED => 'processAssignedTicket',
+            TicketEvent::APPROVED => 'processApprovedTicket',
             MessageEvent::CREATED => 'processAnswer',
             MessageEvent::CREATED_SOLUTION => 'processNewSolution',
             MessageEvent::APPROVED_SOLUTION => 'processApprovedSolution',
@@ -48,6 +49,22 @@ class LifecycleSubscriber implements EventSubscriberInterface
             $ticket->setStatus('in_progress');
             $this->ticketRepository->save($ticket, true);
         }
+    }
+
+    /**
+     * Automatically close a resolved ticket (e.g. after few days).
+     */
+    public function processApprovedTicket(TicketEvent $event): void
+    {
+        $ticket = $event->getTicket();
+
+        if ($ticket->getStatus() !== 'resolved') {
+            return;
+        }
+
+        $ticket->setStatus('closed');
+
+        $this->ticketRepository->save($ticket, true);
     }
 
     /**

@@ -63,6 +63,10 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
             return $this->formatLabelsChanges($user, $fieldChanges);
         } elseif ($field === 'observers') {
             return $this->formatObserversChanges($user, $fieldChanges);
+        } elseif ($field === 'statusChangedAt') {
+            // statusChangedAt is hidden to end user, so don't display this
+            // change.
+            return '';
         } else {
             return $this->formatChanges($user, $field, $fieldChanges);
         }
@@ -90,9 +94,13 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     /**
      * @param string[] $changes
      */
-    private function formatStatusChanges(Entity\User $user, array $changes): string
+    private function formatStatusChanges(?Entity\User $user, array $changes): string
     {
-        $username = $this->escape($user->getDisplayName());
+        if ($user) {
+            $username = $this->escape($user->getDisplayName());
+        } else {
+            $username = $this->translator->trans('common.system_user');
+        }
         $oldValue = $this->translator->trans('tickets.status.' . $changes[0]);
         $newValue = $this->translator->trans('tickets.status.' . $changes[1]);
         return $this->translator->trans(

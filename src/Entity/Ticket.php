@@ -11,6 +11,7 @@ use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\TicketRepository;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
+use App\Utils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -72,6 +73,9 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         message: new TranslatableMessage('ticket.status.invalid', [], 'errors'),
     )]
     private ?string $status = self::DEFAULT_STATUS;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $statusChangedAt = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
@@ -156,6 +160,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
 
     public function __construct()
     {
+        $this->statusChangedAt = Utils\Time::now();
         $this->messages = new ArrayCollection();
         $this->contracts = new ArrayCollection();
         $this->timeSpents = new ArrayCollection();
@@ -228,6 +233,19 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     public function setStatus(string $status): self
     {
         $this->status = $status;
+        $this->statusChangedAt = Utils\Time::now();
+
+        return $this;
+    }
+
+    public function getStatusChangedAt(): ?\DateTimeImmutable
+    {
+        return $this->statusChangedAt;
+    }
+
+    public function setStatusChangedAt(\DateTimeImmutable $statusChangedAt): self
+    {
+        $this->statusChangedAt = $statusChangedAt;
 
         return $this;
     }

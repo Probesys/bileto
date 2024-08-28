@@ -76,6 +76,7 @@ common.colors.orange: Orange
 common.colors.red: Rouge
 common.join.and: ' et '
 common.join.glue: ', '
+common.system_user: 'Utilisateur système'
 contracts.alerts.edit.date_alert.after: 'jours de la fin du contrat.'
 contracts.alerts.edit.date_alert.before: 'Alerter à'
 contracts.alerts.edit.hours_alert.after: '% des heures seront consommées.'
