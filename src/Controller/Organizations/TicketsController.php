@@ -314,7 +314,10 @@ class TicketsController extends BaseController
         $ticket->setOrganization($organization);
         $ticket->setRequester($requester);
         $ticket->setTeam($team);
-        $ticket->setLabels($labels);
+
+        foreach ($labels as $label) {
+            $ticket->addLabel($label);
+        }
 
         foreach ($organization->getObservers() as $observer) {
             $ticket->addObserver($observer);

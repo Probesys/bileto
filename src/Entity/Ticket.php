@@ -598,18 +598,18 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         return $this->labels;
     }
 
-    /**
-     * @param Label[] $labels
-     */
-    public function setLabels(array $labels): static
+    public function addLabel(Label $label): static
     {
-        foreach ($this->labels as $label) {
-            $this->labels->removeElement($label);
-        }
-
-        foreach ($labels as $label) {
+        if (!$this->labels->contains($label)) {
             $this->labels->add($label);
         }
+
+        return $this;
+    }
+
+    public function removeLabel(Label $label): static
+    {
+        $this->labels->removeElement($label);
 
         return $this;
     }

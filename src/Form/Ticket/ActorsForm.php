@@ -42,6 +42,7 @@ class ActorsForm extends AbstractType
             $form->add('observers', Type\ActorType::class, [
                 'organization' => $organization,
                 'multiple' => true,
+                'by_reference' => false,
             ]);
         });
 

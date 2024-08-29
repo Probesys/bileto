@@ -67,7 +67,9 @@ class RecordableEntitiesSubscriberTest extends WebTestCase
         $ticket = Factory\TicketFactory::createOne([
             'labels' => [$label1],
         ]);
-        $ticket->setLabels([$label2->_real(), $label3->_real()]);
+        $ticket->removeLabel($label1->_real());
+        $ticket->addLabel($label2->_real());
+        $ticket->addLabel($label3->_real());
 
         $countEvents = Factory\EntityEventFactory::count();
 

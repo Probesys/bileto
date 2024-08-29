@@ -19,6 +19,7 @@ class LabelsForm extends AbstractType
         $builder->add('labels', Type\LabelType::class, [
             'expanded' => true,
             'multiple' => true,
+            'by_reference' => false,
         ]);
     }
 

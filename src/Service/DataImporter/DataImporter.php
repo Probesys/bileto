@@ -1108,17 +1108,15 @@ class DataImporter
             }
 
             if (is_array($labelIds)) {
-                $labels = [];
                 foreach ($labelIds as $labelId) {
                     $label = $this->indexLabels->get($labelId);
 
                     if ($label) {
-                        $labels[] = $label;
+                        $ticket->addLabel($label);
                     } else {
                         $this->errors[] = "Ticket {$id} error: references an unknown label {$labelId}.";
                     }
                 }
-                $ticket->setLabels($labels);
             } else {
                 $this->errors[] = "Ticket {$id} error: labelIds: not an array.";
             }
