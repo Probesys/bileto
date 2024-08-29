@@ -70,6 +70,7 @@ class SeedsCommand extends Command
                 'orga:see:tickets:time_spent:real',
                 'orga:update:tickets:actors',
                 'orga:update:tickets:labels',
+                'orga:update:tickets:organization',
                 'orga:update:tickets:priority',
                 'orga:update:tickets:status',
                 'orga:update:tickets:title',

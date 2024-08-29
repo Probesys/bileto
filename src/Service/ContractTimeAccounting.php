@@ -79,6 +79,18 @@ class ContractTimeAccounting
     }
 
     /**
+     * @param TimeSpent[] $timeSpents
+     */
+    public function unaccountTimeSpents(array $timeSpents): void
+    {
+        foreach ($timeSpents as $timeSpent) {
+            $timeSpent->setContract(null);
+            $realTime = $timeSpent->getRealTime();
+            $timeSpent->setTime($realTime);
+        }
+    }
+
+    /**
      * Round up time to a multiplier of the time accounting unit (in the limit
      * of the available time).
      */

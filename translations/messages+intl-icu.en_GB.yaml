@@ -307,6 +307,7 @@ roles.permissions.orga.see.users: 'See the users'
 roles.permissions.orga.update.tickets.actors: 'Update the actors of a ticket'
 roles.permissions.orga.update.tickets.contracts: 'Update the contract of a ticket'
 roles.permissions.orga.update.tickets.labels: 'Update the labels of a ticket'
+roles.permissions.orga.update.tickets.organization: 'Transfer the tickets to another organization'
 roles.permissions.orga.update.tickets.priority: 'Update the priority of a ticket'
 roles.permissions.orga.update.tickets.status: 'Update the status of a ticket'
 roles.permissions.orga.update.tickets.title: 'Update the title of a ticket'
@@ -372,6 +373,7 @@ tickets.events.labels.removed: '<strong>{username}</strong> removed {removed} la
 tickets.events.observers.added: '<strong>{username}</strong> added <i>{added}</i> to observers(s)'
 tickets.events.observers.added_and_removed: '<strong>{username}</strong> added {added}</i> and removed <i>{removed}</i> from observers(s)'
 tickets.events.observers.removed: '<strong>{username}</strong> removed <i>{removed}</i> from observers(s)'
+tickets.events.organization: '<strong>{username}</strong> transferred the ticket from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.events.priority: '<strong>{username}</strong> changed the priority from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.events.requester: '<strong>{username}</strong> changed the requester from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.events.solution.changed: '<strong>{username}</strong> changed the solution'
@@ -428,6 +430,11 @@ tickets.new.title: 'New ticket'
 tickets.observers: Observers
 tickets.observers.select: 'Select an observer'
 tickets.observers.unselect: Unselect
+tickets.organization: Organization
+tickets.organization.edit.information: 'You are about to transfer a ticket to another organization. <strong>Please note that you are potentially giving access to this ticket to new people.</strong> Also, the ticket’s actors who are not in the destination organization will be removed. If the ticket is associated with contracts, these will also be removed.'
+tickets.organization.edit.title: 'Transfer the ticket'
+tickets.organization.edit.transfer: Transfer
+tickets.show.actions.transfer: 'Transfer the ticket'
 tickets.priority: Priority
 tickets.priority.edit.title: 'Edit the priority'
 tickets.priority.high: High

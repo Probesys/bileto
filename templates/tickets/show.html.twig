@@ -68,7 +68,8 @@
             {% set canUpdateType = is_granted('orga:update:tickets:type', organization) and not ticket.isClosed %}
             {% set canUpdateTitle = is_granted('orga:update:tickets:title', organization) and not ticket.isClosed %}
             {% set canUpdateStatus = is_granted('orga:update:tickets:status', organization) %}
-            {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus %}
+            {% set canTransfer = is_granted('orga:update:tickets:organization', organization) and not ticket.isClosed %}
+            {% set menuHasItem = canUpdateType or canUpdateTitle or canUpdateStatus or canTransfer %}
 
             <div class="text--right">
                 <details
@@ -137,6 +138,18 @@
                                     {{ 'tickets.show.actions.update_status' | trans }}
                                 </button>
                             {% endif %}
+                        {% endif %}
+
+                        {% if canTransfer %}
+                            <button
+                                class="popup__item"
+                                type="button"
+                                data-controller="modal-opener"
+                                data-action="modal-opener#fetch"
+                                data-modal-opener-href-value="{{ path('edit ticket organization', { uid: ticket.uid }) }}"
+                            >
+                                {{ 'tickets.show.actions.transfer' | trans }}
+                            </button>
                         {% endif %}
 
                         {% if menuHasItem %}

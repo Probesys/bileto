@@ -266,10 +266,14 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $this->assertStringContainsString('changed the solution', $message);
     }
 
-    public function testFormatTicketChangesFormatsWithDefaultMessageWhenChanged(): void
+    public function testFormatTicketChangesFormatsOrganizationWhenChanged(): void
     {
-        $oldOrganization = OrganizationFactory::createOne();
-        $newOrganization = OrganizationFactory::createOne();
+        $oldOrganization = OrganizationFactory::createOne([
+            'name' => 'Foo',
+        ]);
+        $newOrganization = OrganizationFactory::createOne([
+            'name' => 'Bar',
+        ]);
         $ticket = TicketFactory::createOne([
             'organization' => $oldOrganization,
         ]);
@@ -279,9 +283,6 @@ class TicketEventChangesFormatterExtensionTest extends WebTestCase
         $message = $this->formatter->formatTicketChanges($event, 'organization');
 
         $message = strip_tags($message);
-        $this->assertStringContainsString(
-            "changed the organization from {$oldOrganization->getId()} to {$newOrganization->getId()}",
-            $message
-        );
+        $this->assertStringContainsString("transferred the ticket from Foo to Bar", $message);
     }
 }

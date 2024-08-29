@@ -6,8 +6,7 @@
 
 namespace App\TicketActivity;
 
-use App\Repository\ContractRepository;
-use App\Repository\TicketRepository;
+use App\Repository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -19,12 +18,13 @@ class OngoingContractSubscriber implements EventSubscriberInterface
     {
         return [
             TicketEvent::CREATED => 'attachOngoingContract',
+            TicketEvent::TRANSFERRED => 'attachOngoingContract',
         ];
     }
 
     public function __construct(
-        private ContractRepository $contractRepository,
-        private TicketRepository $ticketRepository,
+        private Repository\ContractRepository $contractRepository,
+        private Repository\TicketRepository $ticketRepository,
     ) {
     }
 
