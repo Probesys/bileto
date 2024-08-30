@@ -10,7 +10,6 @@ use App\Controller\BaseController;
 use App\Entity\Message;
 use App\Entity\Ticket;
 use App\Entity\TimeSpent;
-use App\Message\SendMessageEmail;
 use App\Repository\MessageRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\TicketRepository;
@@ -26,7 +25,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -47,7 +45,6 @@ class MessagesController extends BaseController
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer,
         TranslatorInterface $translator,
-        MessageBusInterface $bus,
         EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets:messages', $ticket);
@@ -165,8 +162,6 @@ class MessagesController extends BaseController
                 $timeSpentRepository->save($timeSpent, true);
             }
         }
-
-        $bus->dispatch(new SendMessageEmail($message->getId()));
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

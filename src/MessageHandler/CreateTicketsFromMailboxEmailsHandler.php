@@ -13,7 +13,6 @@ use App\Entity\MessageDocument;
 use App\Entity\Ticket;
 use App\Entity\User;
 use App\Message\CreateTicketsFromMailboxEmails;
-use App\Message\SendMessageEmail;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Repository\MessageRepository;
@@ -35,7 +34,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Webklex\PHPIMAP;
 
@@ -53,7 +51,6 @@ class CreateTicketsFromMailboxEmailsHandler
         private UserCreator $userCreator,
         private Authorizer $authorizer,
         private HtmlSanitizerInterface $appMessageSanitizer,
-        private MessageBusInterface $bus,
         private LoggerInterface $logger,
         private UrlGeneratorInterface $urlGenerator,
         private ActiveUser $activeUser,
@@ -172,8 +169,6 @@ class CreateTicketsFromMailboxEmailsHandler
             $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
 
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
-
-            $this->bus->dispatch(new SendMessageEmail($message->getId()));
 
             $this->activeUser->change(null);
         }
