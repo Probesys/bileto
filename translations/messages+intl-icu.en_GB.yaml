@@ -116,6 +116,9 @@ contracts.status: Status
 contracts.status.coming: Coming
 contracts.status.finished: Finished
 contracts.status.ongoing: Ongoing
+emails.receipt.hello: 'Hello,'
+emails.receipt.received: 'We have received your support request. It will be examined and processed as soon as possible.'
+emails.receipt.subject: 'Request for support received'
 emails.reset_password.expiration: 'If you don’t use it before then, this link will expire in 2 hours.'
 emails.reset_password.intro: 'You are receiving this email because a password reset request has been made for your account.'
 emails.reset_password.reset: 'Reset your password'

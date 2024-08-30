@@ -18,6 +18,7 @@ class NotificationsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
+            TicketEvent::CREATED => 'sendReceiptEmail',
             MessageEvent::CREATED => 'sendMessageEmail',
             MessageEvent::CREATED_SOLUTION => 'sendMessageEmail',
             MessageEvent::APPROVED_SOLUTION => 'sendMessageEmail',
@@ -28,6 +29,15 @@ class NotificationsSubscriber implements EventSubscriberInterface
     public function __construct(
         private MessageBusInterface $bus,
     ) {
+    }
+
+    /**
+     * Send a receipt by email to the requester of a ticket.
+     */
+    public function sendReceiptEmail(TicketEvent $event): void
+    {
+        $ticket = $event->getTicket();
+        $this->bus->dispatch(new Message\SendReceiptEmail($ticket->getId()));
     }
 
     /**

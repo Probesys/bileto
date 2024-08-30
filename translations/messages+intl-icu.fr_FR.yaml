@@ -116,6 +116,9 @@ contracts.status: Statut
 contracts.status.coming: 'À venir'
 contracts.status.finished: Terminé
 contracts.status.ongoing: 'En cours'
+emails.receipt.hello: 'Bonjour,'
+emails.receipt.received: 'Nous avons bien reçu votre demande de support. Celle-ci va être examinée pour un traitement dans les meilleurs délais possibles.'
+emails.receipt.subject: 'Demande de support reçue'
 emails.reset_password.expiration: 'Si vous ne l’utilisez pas avant, ce lien expirera dans 2 heures.'
 emails.reset_password.intro: 'Vous recevez cet email car une demande de réinialisation de mot de passe a été faite pour votre compte.'
 emails.reset_password.reset: 'Réinitialiser votre mot de passe'

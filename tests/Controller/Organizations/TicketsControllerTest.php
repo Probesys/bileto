@@ -259,6 +259,9 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('webapp', $message->getVia());
+        $this->assertEmailCount(2);
+        $email = $this->getMailerMessage();
+        $this->assertEmailHtmlBodyContains($email, 'We have received your support request.');
     }
 
     public function testPostCreateSanitizesTheMessageContent(): void
