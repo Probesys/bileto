@@ -67,6 +67,8 @@
 
     color: var(--color-primary12);
     font-size: var(--font-size-small);
+
+    border-bottom: var(--border-width) solid var(--color-main-background);
 }
 
 .message__top > * + * {
@@ -88,16 +90,30 @@
 .message__content {
     position: relative;
 
-    padding-top: var(--space-large);
-    padding-bottom: var(--space-large);
-
-    border-top: var(--border-width) solid var(--color-main-background);
+    margin-top: var(--space-large);
+    margin-bottom: var(--space-large);
 }
 
-.message__content * + p,
-.message__content * + ul,
-.message__content * + ol {
-    margin-top: 2rem;
+.message__content h1 {
+    margin-top: 1.17em;
+    margin-bottom: 0.67em;
+}
+
+.message__content h2 {
+    margin-top: 1.25em;
+    margin-bottom: 0.75em;
+}
+
+.message__content h3 {
+    margin-top: 1.33em;
+    margin-bottom: 0.83em;
+}
+
+.message__content p,
+.message__content ul,
+.message__content ol {
+    margin-top: 1.12em;
+    margin-bottom: 1.12em;
 }
 
 .message__content th,
@@ -123,11 +139,11 @@
 
 .message__content blockquote {
     margin-left: 0;
-    padding-left: 2rem;
+    padding-left: var(--space-medium);
 
     color: var(--color-grey11);
 
-    border-left: var(--width-border-bold) solid var(--color-primary6);
+    border-left: 2px solid var(--color-grey6);
 }
 
 .message__content pre {
