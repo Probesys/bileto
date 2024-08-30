@@ -75,7 +75,13 @@ class SendMessageEmailHandler
             return;
         }
 
-        $subject = "Re: [#{$ticket->getId()}] {$ticket->getTitle()}";
+        $previousMessage = $ticket->getPublicMessageBefore($message);
+
+        $subject = "[#{$ticket->getId()}] {$ticket->getTitle()}";
+
+        if ($previousMessage) {
+            $subject = "Re: {$subject}";
+        }
 
         $email = new Email();
         $email->bcc(...$recipients);
@@ -93,6 +99,24 @@ class SendMessageEmailHandler
                 $messageDocument->getMimetype()
             );
             $email->addPart($dataPart);
+        }
+
+        // Set correct references headers so email clients can add the email to
+        // the conversation thread.
+        $references = [];
+        foreach ($ticket->getMessagesWithoutConfidential() as $message) {
+            $reference = $message->getEmailId();
+            if ($reference) {
+                $references[] = $reference;
+            }
+        }
+
+        if ($references) {
+            $email->getHeaders()->addIdHeader('References', $references);
+        }
+
+        if ($previousMessage && $previousMessage->getEmailId()) {
+            $email->getHeaders()->addIdHeader('In-Reply-To', $previousMessage->getEmailId());
         }
 
         $sentEmail = $this->transportInterface->send($email);

@@ -136,6 +136,7 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
         orphanRemoval: true,
         cascade: ['persist'],
     )]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $messages;
 
     #[ORM\OneToOne(cascade: ['persist'])]
@@ -449,6 +450,23 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     public function getMessages(): Collection
     {
         return $this->messages;
+    }
+
+    public function getPublicMessageBefore(Message $beforeMessage): ?Message
+    {
+        $previousMessage = null;
+
+        foreach ($this->messages as $message) {
+            if ($message->getId() === $beforeMessage->getId()) {
+                return $previousMessage;
+            }
+
+            if (!$message->isConfidential()) {
+                $previousMessage = $message;
+            }
+        }
+
+        return null;
     }
 
     /**

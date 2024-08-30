@@ -68,9 +68,46 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('pending', $ticket->getStatus());
         $this->assertEquals($now, $ticket->getUpdatedAt());
         $this->assertsame($user->getId(), $ticket->getUpdatedBy()->getId());
+    }
+
+    public function testPostCreateSendsEmailNotification(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $ticket = TicketFactory::createOne([
+            'createdBy' => $user,
+            'status' => 'pending',
+        ]);
+        $previousEmailId = 'foo@example.com';
+        $previousMessage = MessageFactory::createOne([
+            'ticket' => $ticket,
+            'createdAt' => Time::ago(1, 'hour'),
+            'isConfidential' => false,
+            'emailId' => $previousEmailId,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(1, MessageFactory::count());
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
+            'message' => $messageContent,
+        ]);
+
+        $this->assertSame(2, MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $message = MessageFactory::last();
+        $this->assertNotEmpty($message->getEmailId());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, $messageContent);
+        $this->assertEmailHasHeader($email, 'References');
+        $this->assertEmailHeaderSame($email, 'References', "<{$previousEmailId}>");
+        $this->assertEmailHasHeader($email, 'In-Reply-To');
+        $this->assertEmailHeaderSame($email, 'In-Reply-To', "<{$previousEmailId}>");
     }
 
     public function testPostCreateCanCreateConfidentialMessage(): void
