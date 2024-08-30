@@ -447,40 +447,34 @@ class Ticket implements MonitorableEntityInterface, UidEntityInterface
     /**
      * @return Collection<int, Message>
      */
-    public function getMessages(): Collection
+    public function getMessages(bool $confidential = true): Collection
     {
-        return $this->messages;
+        if ($confidential) {
+            return $this->messages;
+        } else {
+            $criteria = new Criteria();
+            $expr = new Comparison('isConfidential', '=', false);
+            $criteria->where($expr);
+
+            /** @var ArrayCollection<int, Message> $messages */
+            $messages = $this->messages;
+            return $messages->matching($criteria);
+        }
     }
 
-    public function getPublicMessageBefore(Message $beforeMessage): ?Message
+    public function getMessageBefore(Message $beforeMessage, bool $confidential = true): ?Message
     {
         $previousMessage = null;
 
-        foreach ($this->messages as $message) {
+        foreach ($this->getMessages($confidential) as $message) {
             if ($message->getId() === $beforeMessage->getId()) {
                 return $previousMessage;
             }
 
-            if (!$message->isConfidential()) {
-                $previousMessage = $message;
-            }
+            $previousMessage = $message;
         }
 
         return null;
-    }
-
-    /**
-     * @return Collection<int, Message>
-     */
-    public function getMessagesWithoutConfidential(): Collection
-    {
-        $criteria = new Criteria();
-        $expr = new Comparison('isConfidential', '=', false);
-        $criteria->where($expr);
-
-        /** @var ArrayCollection<int, Message> $messages */
-        $messages = $this->messages;
-        return $messages->matching($criteria);
     }
 
     public function addMessage(Message $message): static

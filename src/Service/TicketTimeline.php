@@ -26,15 +26,13 @@ class TicketTimeline
         $timeline = new Timeline();
 
         $organization = $ticket->getOrganization();
+
         $includeConfidential = $this->authorizer->isGranted(
             'orga:see:tickets:messages:confidential',
             $organization,
         );
-        if ($includeConfidential) {
-            $messages = $ticket->getMessages()->toArray();
-        } else {
-            $messages = $ticket->getMessagesWithoutConfidential()->toArray();
-        }
+
+        $messages = $ticket->getMessages(confidential: $includeConfidential)->toArray();
 
         $timeline->addItems($messages);
 

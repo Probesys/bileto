@@ -75,7 +75,7 @@ class SendMessageEmailHandler
             return;
         }
 
-        $previousMessage = $ticket->getPublicMessageBefore($message);
+        $previousMessage = $ticket->getMessageBefore($message, confidential: false);
 
         $subject = "[#{$ticket->getId()}] {$ticket->getTitle()}";
 
@@ -104,7 +104,7 @@ class SendMessageEmailHandler
         // Set correct references headers so email clients can add the email to
         // the conversation thread.
         $references = [];
-        foreach ($ticket->getMessagesWithoutConfidential() as $message) {
+        foreach ($ticket->getMessages(confidential: false) as $message) {
             $reference = $message->getEmailId();
             if ($reference) {
                 $references[] = $reference;
