@@ -23,7 +23,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
-class Ticket implements MonitorableEntityInterface, UidEntityInterface
+class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

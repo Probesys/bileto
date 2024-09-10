@@ -18,7 +18,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MailboxRepository::class)]
-class Mailbox implements MonitorableEntityInterface, UidEntityInterface
+class Mailbox implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

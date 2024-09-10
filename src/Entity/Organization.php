@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: 'name',
     message: new TranslatableMessage('organization.name.already_used', [], 'errors'),
 )]
-class Organization implements MonitorableEntityInterface, UidEntityInterface
+class Organization implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

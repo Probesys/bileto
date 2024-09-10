@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuthorizationRepository::class)]
 #[ORM\Table(name: '`authorizations`')]
-class Authorization implements MonitorableEntityInterface, UidEntityInterface
+class Authorization implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

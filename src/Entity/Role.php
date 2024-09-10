@@ -24,7 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'name',
     message: new TranslatableMessage('role.name.already_used', [], 'errors'),
 )]
-class Role implements MonitorableEntityInterface, UidEntityInterface
+class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

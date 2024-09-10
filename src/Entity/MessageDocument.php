@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @see docs/developers/document-upload.md
  */
 #[ORM\Entity(repositoryClass: MessageDocumentRepository::class)]
-class MessageDocument implements MonitorableEntityInterface, UidEntityInterface
+class MessageDocument implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

@@ -24,7 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'name',
     message: new TranslatableMessage('label.name.already_used', [], 'errors'),
 )]
-class Label implements MonitorableEntityInterface, UidEntityInterface
+class Label implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

@@ -29,6 +29,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     message: new TranslatableMessage('user.email.already_used', [], 'errors'),
 )]
 class User implements
+    EntityInterface,
     UserInterface,
     PasswordAuthenticatedUserInterface,
     MonitorableEntityInterface,

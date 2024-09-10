@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Webklex\PHPIMAP;
 
 #[ORM\Entity(repositoryClass: MailboxEmailRepository::class)]
-class MailboxEmail implements MonitorableEntityInterface, UidEntityInterface
+class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

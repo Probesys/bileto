@@ -20,7 +20,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     fields: 'value',
     message: new TranslatableMessage('token.value.already_used', [], 'errors'),
 )]
-class Token implements ActivityMonitor\MonitorableEntityInterface
+class Token implements EntityInterface, ActivityMonitor\MonitorableEntityInterface
 {
     use ActivityMonitor\MonitorableEntityTrait;
 

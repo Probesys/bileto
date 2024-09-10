@@ -17,7 +17,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TimeSpentRepository::class)]
-class TimeSpent implements MonitorableEntityInterface, UidEntityInterface
+class TimeSpent implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
     use MonitorableEntityTrait;
     use UidEntityTrait;

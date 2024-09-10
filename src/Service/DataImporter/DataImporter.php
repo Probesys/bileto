@@ -9,9 +9,7 @@ namespace App\Service\DataImporter;
 use App\Entity;
 use App\Repository;
 use App\Service;
-use App\Uid;
 use App\Utils;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -120,7 +118,7 @@ class DataImporter
         private Repository\TeamRepository $teamRepository,
         private Repository\TicketRepository $ticketRepository,
         private Repository\UserRepository $userRepository,
-        private EntityManagerInterface $entityManager,
+        private Persister $persister,
         private ValidatorInterface $validator,
         private HtmlSanitizerInterface $appMessageSanitizer,
         private Service\MessageDocumentStorage $messageDocumentStorage,
@@ -286,14 +284,14 @@ class DataImporter
             throw new DataImporterError(implode("\n", $this->errors));
         }
 
-        yield from $this->saveEntities($this->indexOrganizations->list());
-        yield from $this->saveEntities($this->indexRoles->list());
-        yield from $this->saveEntities($this->indexUsers->list());
-        yield from $this->saveEntities($this->indexTeams->list());
-        yield from $this->saveEntities($this->indexContracts->list());
-        yield from $this->saveEntities($this->indexLabels->list());
-        yield from $this->saveEntities($this->indexTickets->list());
-        yield from $this->saveMessageDocuments();
+        yield from $this->importEntities($this->indexOrganizations->list());
+        yield from $this->importEntities($this->indexRoles->list());
+        yield from $this->importEntities($this->indexUsers->list(), ['authorizations']);
+        yield from $this->importEntities($this->indexTeams->list(), ['teamAuthorizations']);
+        yield from $this->importEntities($this->indexContracts->list());
+        yield from $this->importEntities($this->indexLabels->list());
+        yield from $this->importEntities($this->indexTickets->list(), ['timeSpents', 'messages']);
+        yield from $this->importMessageDocuments();
     }
 
     /**
@@ -331,6 +329,10 @@ class DataImporter
             // Build the organization
             $organization = new Entity\Organization();
             $organization->setName($name);
+
+            $organization->setUid(Utils\Random::hex(20));
+            $organization->setCreatedAt(Utils\Time::now());
+            $organization->setUpdatedAt(Utils\Time::now());
 
             if (is_array($domains)) {
                 $organization->setDomains($domains);
@@ -407,6 +409,10 @@ class DataImporter
             $role->setName($name);
             $role->setDescription($description);
             $role->setType($type);
+
+            $role->setUid(Utils\Random::hex(20));
+            $role->setCreatedAt(Utils\Time::now());
+            $role->setUpdatedAt(Utils\Time::now());
 
             if (is_array($permissions)) {
                 $role->setPermissions($permissions);
@@ -509,6 +515,10 @@ class DataImporter
                 $user->setLdapIdentifier($ldapIdentifier);
             }
 
+            $user->setUid(Utils\Random::hex(20));
+            $user->setCreatedAt(Utils\Time::now());
+            $user->setUpdatedAt(Utils\Time::now());
+
             // Check and set references
             if ($organizationId) {
                 $organization = $this->indexOrganizations->get($organizationId);
@@ -581,6 +591,10 @@ class DataImporter
             // Build the authorization
             $authorization = new Entity\Authorization();
 
+            $authorization->setUid(Utils\Random::hex(20));
+            $authorization->setCreatedAt(Utils\Time::now());
+            $authorization->setUpdatedAt(Utils\Time::now());
+
             // Check and set references
             $role = $this->indexRoles->get($roleId);
 
@@ -643,6 +657,10 @@ class DataImporter
             $team = new Entity\Team();
             $team->setName($name);
 
+            $team->setUid(Utils\Random::hex(20));
+            $team->setCreatedAt(Utils\Time::now());
+            $team->setUpdatedAt(Utils\Time::now());
+
             // Check and set references
             if (is_array($teamAuthorizations)) {
                 $this->processTeamAuthorizations($id, $team, $teamAuthorizations);
@@ -704,6 +722,10 @@ class DataImporter
 
             // Build the authorization
             $teamAuthorization = new Entity\TeamAuthorization();
+
+            $teamAuthorization->setUid(Utils\Random::hex(20));
+            $teamAuthorization->setCreatedAt(Utils\Time::now());
+            $teamAuthorization->setUpdatedAt(Utils\Time::now());
 
             // Check and set references
             $role = $this->indexRoles->get($roleId);
@@ -787,6 +809,10 @@ class DataImporter
             $contract = new Entity\Contract();
             $contract->setName($name);
             $contract->setMaxHours($maxHours);
+
+            $contract->setUid(Utils\Random::hex(20));
+            $contract->setCreatedAt(Utils\Time::now());
+            $contract->setUpdatedAt(Utils\Time::now());
 
             if ($startAt !== null) {
                 $contract->setStartAt($startAt);
@@ -894,6 +920,10 @@ class DataImporter
             $label->setName($name);
             $label->setDescription($description);
             $label->setColor($color);
+
+            $label->setUid(Utils\Random::hex(20));
+            $label->setCreatedAt(Utils\Time::now());
+            $label->setUpdatedAt(Utils\Time::now());
 
             // Add the label to the index
             try {
@@ -1021,7 +1051,10 @@ class DataImporter
             // Build the ticket
             $ticket = new Entity\Ticket();
             $ticket->setCreatedAt($createdAt);
+            $ticket->setUpdatedAt($createdAt);
             $ticket->setTitle($title);
+
+            $ticket->setUid(Utils\Random::hex(20));
 
             if ($type !== null) {
                 $ticket->setType($type);
@@ -1199,8 +1232,11 @@ class DataImporter
             // Build the time spent
             $timeSpent = new Entity\TimeSpent();
             $timeSpent->setCreatedAt($createdAt);
+            $timeSpent->setUpdatedAt($createdAt);
             $timeSpent->setTime($time);
             $timeSpent->setRealTime($realTime);
+
+            $timeSpent->setUid(Utils\Random::hex(20));
 
             // Check and set references
             $createdBy = $this->indexUsers->get($createdById);
@@ -1286,10 +1322,15 @@ class DataImporter
             // Build the message
             $message = new Entity\Message();
             $message->setCreatedAt($createdAt);
+            $message->setUpdatedAt($createdAt);
             $message->setContent($content);
+
+            $message->setUid(Utils\Random::hex(20));
+
             if ($isConfidential !== null) {
                 $message->setIsConfidential($isConfidential);
             }
+
             if ($via !== null) {
                 $message->setVia($via);
             }
@@ -1422,13 +1463,12 @@ class DataImporter
     }
 
     /**
-     * @template T of Uid\UidEntityInterface
-     *
-     * @param T[] $entities
+     * @param Entity\EntityInterface[] $entities
+     * @param string[] $additionalAssociations
      *
      * @return \Generator<int, string, void, void>
      */
-    private function saveEntities(array $entities): \Generator
+    private function importEntities(array $entities, array $additionalAssociations = []): \Generator
     {
         if (empty($entities)) {
             return;
@@ -1436,23 +1476,19 @@ class DataImporter
 
         $entities = array_values($entities);
         $entityClass = $entities[0]::class;
-        $repository = $this->entityManager->getRepository($entityClass);
 
         $entitiesToSave = [];
         foreach ($entities as $entity) {
-            if ($entity->getUid() === null) {
+            // We save only entities that are not yet in the database.
+            if ($entity->getId() === null) {
                 $entitiesToSave[] = $entity;
             }
         }
 
-        if (!is_callable([$repository, 'save'])) {
-            throw new \BadMethodCallException('The method save() cannot be called on ' . $repository::class);
-        }
+        $countEntities = count($entitiesToSave);
+        yield "Saving {$countEntities} {$entityClass}… ";
 
-        $count = count($entitiesToSave);
-        yield "Saving {$count} {$entityClass}… ";
-
-        $repository->save($entitiesToSave, true);
+        $this->persister->insertEntities($entitiesToSave, $additionalAssociations);
 
         yield "ok\n";
     }
@@ -1460,7 +1496,7 @@ class DataImporter
     /**
      * @return \Generator<int, string, void, void>
      */
-    private function saveMessageDocuments(): \Generator
+    private function importMessageDocuments(): \Generator
     {
         if ($this->documentsPath === '') {
             return;
@@ -1502,6 +1538,11 @@ class DataImporter
                 $messageDocument->setCreatedBy($message->getCreatedBy());
                 $messageDocument->setUpdatedBy($message->getCreatedBy());
                 $messageDocument->setMessage($message);
+
+                $messageDocument->setUid(Utils\Random::hex(20));
+                $messageDocument->setCreatedAt($message->getCreatedAt());
+                $messageDocument->setUpdatedAt($message->getCreatedAt());
+
                 $messageDocuments[] = $messageDocument;
             }
         }
@@ -1513,7 +1554,7 @@ class DataImporter
 
         yield "ok\n";
 
-        yield from $this->saveEntities($messageDocuments);
+        yield from $this->importEntities($messageDocuments);
     }
 
     private function validate(object $object): string
