@@ -80,7 +80,9 @@ install: ## Install the dependencies
 db-setup: ## Setup the database
 	$(CONSOLE) doctrine:database:create
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+ifndef NO_SEED
 	$(CONSOLE) db:seeds:load
+endif
 
 .PHONY: db-migrate
 db-migrate: ## Migrate the database
@@ -102,7 +104,9 @@ endif
 	$(CONSOLE) doctrine:database:create
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
 	$(CONSOLE) cache:clear
+ifndef NO_SEED
 	$(CONSOLE) db:seeds:load
+endif
 ifndef NO_DOCKER
 	$(DOCKER_COMPOSE) start worker
 endif

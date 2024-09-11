@@ -91,3 +91,21 @@ $ ./docker/bin/console
 $ ./docker/bin/npm
 $ ./docker/bin/psql
 ```
+
+## Reset the database
+
+When developing, you may need to reset the database pretty often.
+You can do it with the following command:
+
+```console
+$ make db-reset FORCE=true
+```
+
+You need to pass the `FORCE` argument, or the command will not be executed.
+
+Resetting the database will also load the seeds.
+You can prevent this by passing the `NO_SEED` argument:
+
+```console
+$ make db-reset FORCE=true NO_SEED=true
+```

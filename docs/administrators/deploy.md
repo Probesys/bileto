@@ -183,6 +183,9 @@ www-data$ php bin/console doctrine:migrations:migrate --no-interaction
 www-data$ php bin/console db:seeds:load
 ```
 
+The seeds provide some default roles: Technician, Salesman and User.
+It's not required to load the seeds if you don't want these roles.
+
 ### Configure the webserver
 
 Configure your webserver to serve Bileto.
