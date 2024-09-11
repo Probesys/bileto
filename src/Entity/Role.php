@@ -219,7 +219,9 @@ class Role implements MonitorableEntityInterface, UidEntityInterface
         // We use array_values to reindex the returned array.
         $permissions = array_values($permissions);
 
-        if ($type === 'admin' && !in_array('admin:see', $permissions)) {
+        if ($type === 'super' && !in_array('admin:*', $permissions)) {
+            $permissions[] = 'admin:*';
+        } elseif ($type === 'admin' && !in_array('admin:see', $permissions)) {
             $permissions[] = 'admin:see';
         } elseif ($type === 'agent' && !in_array('orga:see', $permissions)) {
             $permissions[] = 'orga:see';
