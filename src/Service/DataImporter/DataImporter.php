@@ -1562,9 +1562,14 @@ class DataImporter
         yield from $this->importEntities($messageDocuments);
     }
 
-    private function validate(object $object): string
+    private function validate(Entity\EntityInterface $entity): string
     {
-        $rawErrors = $this->validator->validate($object);
+        if ($entity->getId() !== null) {
+            // Don't validate entities that are already saved in the database.
+            return '';
+        }
+
+        $rawErrors = $this->validator->validate($entity);
         if (count($rawErrors) === 0) {
             return '';
         }
