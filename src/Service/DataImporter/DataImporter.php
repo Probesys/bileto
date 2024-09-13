@@ -984,6 +984,11 @@ class DataImporter
             $createdById = strval($jsonTicket['createdById']);
             $title = strval($jsonTicket['title']);
 
+            $updatedAt = $createdAt;
+            if (isset($jsonTicket['updatedAt'])) {
+                $updatedAt = self::parseDatetime($jsonTicket['updatedAt']);
+            }
+
             $type = null;
             if (isset($jsonTicket['type'])) {
                 $type = strval($jsonTicket['type']);
@@ -1051,7 +1056,7 @@ class DataImporter
             // Build the ticket
             $ticket = new Entity\Ticket();
             $ticket->setCreatedAt($createdAt);
-            $ticket->setUpdatedAt($createdAt);
+            $ticket->setUpdatedAt($updatedAt);
             $ticket->setTitle($title);
 
             $ticket->setUid(Utils\Random::hex(20));

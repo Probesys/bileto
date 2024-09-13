@@ -93,6 +93,7 @@ It also contains a `tickets/` folder where each file corresponds to a ticket. Fo
 
 - id: string (unique)
 - createdAt: datetime
+- updatedAt: datetime, optional (defaults to createdAt)
 - createdById: string (reference to a user)
 - type: string, optional (must be `request`, or `incident`)
 - status: string, optional (must be `new`, `in_progress`, `planned`, `pending`, `resolved`, or `closed`)

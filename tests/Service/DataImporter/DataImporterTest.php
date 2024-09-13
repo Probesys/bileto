@@ -1138,6 +1138,7 @@ class DataImporterTest extends WebTestCase
             [
                 'id' => '1',
                 'createdAt' => '2024-04-25T17:38:00+00:00',
+                'updatedAt' => '2024-04-25T18:00:00+00:00',
                 'createdById' => '1',
                 'type' => 'incident',
                 'status' => 'resolved',
@@ -1195,6 +1196,7 @@ class DataImporterTest extends WebTestCase
         $ticket->_refresh();
         $this->assertSame('It does not work', $ticket->getTitle());
         $this->assertSame(1714066680, $ticket->getCreatedAt()->getTimestamp());
+        $this->assertSame(1714068000, $ticket->getUpdatedAt()->getTimestamp());
         $this->assertSame('incident', $ticket->getType());
         $this->assertSame('resolved', $ticket->getStatus());
         $this->assertSame('low', $ticket->getUrgency());
