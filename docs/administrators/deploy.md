@@ -301,6 +301,11 @@ If you need to synchronize manually, you can run:
 www-data$ php bin/console app:ldap:sync
 ```
 
+### Optional: Send errors to Sentry
+
+You can configure Bileto to send errors (exceptions and logs) to a Sentry server.
+All you need to do is set the `SENTRY_DSN` environment variable to the value that Sentry gives you when you create a new project.
+
 ## Updating the production environment
 
 **Please always start by checking the migration notes in [the changelog](/CHANGELOG.md) before updating Bileto.**
