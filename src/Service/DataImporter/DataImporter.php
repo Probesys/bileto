@@ -1319,6 +1319,11 @@ class DataImporter
                 $via = strval($jsonMessage['via']);
             }
 
+            $emailId = null;
+            if (isset($jsonMessage['emailId'])) {
+                $emailId = strval($jsonMessage['emailId']);
+            }
+
             $messageDocuments = [];
             if (isset($jsonMessage['messageDocuments'])) {
                 $messageDocuments = $jsonMessage['messageDocuments'];
@@ -1328,6 +1333,7 @@ class DataImporter
             $message = new Entity\Message();
             $message->setCreatedAt($createdAt);
             $message->setUpdatedAt($createdAt);
+            $message->setEmailId($emailId);
             $message->setContent($content);
 
             $message->setUid(Utils\Random::hex(20));

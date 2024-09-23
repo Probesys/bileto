@@ -1177,6 +1177,7 @@ class DataImporterTest extends WebTestCase
                         'createdById' => '2',
                         'isConfidential' => true,
                         'via' => 'webapp',
+                        'emailId' => 'some-id@example.com',
                         'content' => '<p>Indeed, it does not work.</p>',
                     ],
                 ],
@@ -1232,11 +1233,13 @@ class DataImporterTest extends WebTestCase
         $this->assertSame($requester->getUid(), $messages[0]->getCreatedBy()->getUid());
         $this->assertFalse($messages[0]->isConfidential());
         $this->assertSame('email', $messages[0]->getVia());
+        $this->assertNull($messages[0]->getEmailId());
         $this->assertSame('<p>This is not working!</p>', $messages[0]->getContent());
         $this->assertSame(1714068000, $messages[1]->getCreatedAt()->getTimestamp());
         $this->assertSame($assignee->getUid(), $messages[1]->getCreatedBy()->getUid());
         $this->assertTrue($messages[1]->isConfidential());
         $this->assertSame('webapp', $messages[1]->getVia());
+        $this->assertSame('some-id@example.com', $messages[1]->getEmailId());
         $this->assertSame('<p>Indeed, it does not work.</p>', $messages[1]->getContent());
         $solution = $ticket->getSolution();
         $this->assertNotNull($solution);
