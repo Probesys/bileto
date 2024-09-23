@@ -37,13 +37,7 @@ class PagesController extends BaseController
     #[Route('/about', name: 'about', methods: ['GET', 'HEAD'])]
     public function about(): Response
     {
-        /** @var string $projectDir */
-        $projectDir = $this->getParameter('kernel.project_dir');
-        $versionPathfile = "{$projectDir}/VERSION.txt";
-        $version = file_get_contents($versionPathfile);
-        if (!$version) {
-            $version = 'N/A';
-        }
+        $version = $this->getParameter('app.version');
 
         return $this->render('pages/about.html.twig', [
             'version' => $version,
