@@ -252,6 +252,66 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertEmailHeaderSame($email, 'Bcc', $assignee->getEmail());
     }
 
+    public function testInvokeAnswersToTicketIfInReplyToCorrespondsToGlpiAnswers(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+        /** @var HtmlSanitizerInterface */
+        $appMessageSanitizer = $container->get('html_sanitizer.sanitizer.app.message_sanitizer');
+
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages'], $organization->_real());
+        $uid = 'm1Li5KGHCCfzgAygETyCTWJBHMzrSeXIR5mirM4n';
+        $emailId = "GLPI_{$uid}-Ticket-42@example.com";
+        $inReplyTo = "GLPI_{$uid}-Ticket-42/add_followup.1708632638.137855826@example.com";
+        $assignee = UserFactory::createOne();
+        $ticket = TicketFactory::createOne([
+            'status' => 'new',
+            'organization' => $organization,
+            'requester' => $user,
+            'assignee' => $assignee,
+        ]);
+        MessageFactory::createOne([
+            'ticket' => $ticket,
+            'emailId' => $emailId,
+        ]);
+        /** @var string */
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'inReplyTo' => $inReplyTo,
+            'subject' => $subject,
+            'htmlBody' => $body,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(2, MessageFactory::count());
+
+        $message = MessageFactory::last();
+        $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
+        $sanitizedBody = trim($appMessageSanitizer->sanitize($body));
+        $this->assertSame($sanitizedBody, $message->getContent());
+        $this->assertSame($ticket->getId(), $message->getTicket()->getId());
+        $this->assertFalse($message->isConfidential());
+        $this->assertSame('email', $message->getVia());
+
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        $this->assertEmailHeaderSame($email, 'Bcc', $assignee->getEmail());
+    }
+
     public function testInvokeCreatesATicketIfTicketIdIsGivenButPermissionsAreInsufficient(): void
     {
         $container = static::getContainer();

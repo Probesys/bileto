@@ -178,6 +178,26 @@ class CreateTicketsFromMailboxEmailsHandler
     {
         $replyId = $mailboxEmail->getInReplyTo();
 
+        if ($replyId !== null) {
+            // If the email comes from GLPI, we need to rebuild the replyId to
+            // remove random parts of the header.
+
+            $glpiPattern = '/'
+                . 'GLPI'
+                . '_(?<uuid>[a-z0-9]+)'
+                . '-(?<itemType>[a-z]+)-(?<itemId>[0-9]+)' // this part is optional in GLPI, but required in our case
+                . '\/([a-z_]+)' // we don't care about the event, but we need to match it
+                . '(\.[0-9]+\.[0-9]+)?' // optional time and random values
+                . '@(?<hostname>.+)'
+                . '/i';
+
+            $result = preg_match($glpiPattern, $replyId, $matches);
+
+            if ($result === 1) {
+                $replyId = "GLPI_{$matches['uuid']}-{$matches['itemType']}-{$matches['itemId']}@{$matches['hostname']}";
+            }
+        }
+
         if ($replyId) {
             $replyMessage = $this->messageRepository->findOneBy([
                 'emailId' => $replyId,
