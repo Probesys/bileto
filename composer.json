@@ -31,6 +31,7 @@
         "symfony/ldap": "7.1.*",
         "symfony/mailer": "7.1.*",
         "symfony/messenger": "7.1.*",
+        "symfony/monolog-bundle": "^3.10",
         "symfony/runtime": "7.1.*",
         "symfony/scheduler": "7.1.*",
         "symfony/security-bundle": "7.1.*",
