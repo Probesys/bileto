@@ -216,12 +216,9 @@ class OrganizationControllerTest extends WebTestCase
         $ticketContracts = $ticket->getContracts();
         $this->assertSame(1, count($ticketContracts));
         $this->assertSame($newContract->getId(), $ticketContracts[0]->getId());
-        // For now, the times spent are not accounted for the new ongoing
-        // contract to let the commercials decide if they want to or not. This
-        // may change in the future.
         $timeSpent->_refresh();
-        $this->assertNull($timeSpent->getContract());
-        $this->assertSame(10, $timeSpent->getTime());
+        $this->assertSame($newContract->getId(), $timeSpent->getContract()->getId());
+        $this->assertSame(20, $timeSpent->getTime());
     }
 
     public function testPostUpdateFailsIfAccessIsForbiddenInDestinationOrganization(): void

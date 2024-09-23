@@ -7,6 +7,7 @@
 namespace App\TicketActivity;
 
 use App\Repository;
+use App\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -25,6 +26,8 @@ class OngoingContractSubscriber implements EventSubscriberInterface
     public function __construct(
         private Repository\ContractRepository $contractRepository,
         private Repository\TicketRepository $ticketRepository,
+        private Repository\TimeSpentRepository $timeSpentRepository,
+        private Service\ContractTimeAccounting $contractTimeAccounting,
     ) {
     }
 
@@ -39,13 +42,23 @@ class OngoingContractSubscriber implements EventSubscriberInterface
 
         $organization = $ticket->getOrganization();
 
-        $contracts = $this->contractRepository->findOngoingByOrganization($organization);
+        $ongoingContracts = $this->contractRepository->findOngoingByOrganization($organization);
 
         // Set the ongoing contract if there is one and only one ongoing
         // contract in the organization.
-        if (count($contracts) === 1) {
-            $ticket->addContract($contracts[0]);
-            $this->ticketRepository->save($ticket, true);
+        if (count($ongoingContracts) !== 1) {
+            return;
         }
+
+        $ongoingContract = $ongoingContracts[0];
+
+        $ticket->addContract($ongoingContract);
+        $this->ticketRepository->save($ticket, true);
+
+        // Account any unaccounted time spent on the contract (this can happen
+        // during a transfer).
+        $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
+        $this->contractTimeAccounting->accountTimeSpents($ongoingContract, $timeSpents);
+        $this->timeSpentRepository->save($timeSpents, true);
     }
 }
