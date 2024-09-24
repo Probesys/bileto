@@ -249,7 +249,7 @@ passwords.edit.short: 'You are about to change the password for the account <str
 passwords.edit.title: 'Changing password'
 passwords.reset.form.email: 'Email address'
 passwords.reset.form.submit: 'Send reset email'
-passwords.reset.sent.message: 'We have just sent you an email containing a link to reset your password. If you haven’t received it in a few minutes, please check your spam folder.'
+passwords.reset.sent.message: 'If the address you entered is correct, we have sent you an email containing a link to reset your password. If you haven’t received it in a few minutes, please check your spam folder.'
 passwords.reset.sent.title: 'Email sent'
 passwords.reset.short: 'Enter your email address and we will send you a link to reset your password.'
 passwords.reset.title: 'Reset your password'

@@ -44,14 +44,10 @@
                     {{ form_start(form, { attr: {
                         'class': 'form--standard',
                     }}) }}
-                        {{ form_errors(form) }}
-
                         <div class="flow flow--small">
                             <label for="{{ field_id(form.user) }}">
                                 {{ 'passwords.reset.form.email' | trans }}
                             </label>
-
-                            {{ form_errors(form.user) }}
 
                             <input
                                 type="email"
@@ -59,10 +55,6 @@
                                 name="{{ field_name(form.user) }}"
                                 value="{{ field_value(form.user) }}"
                                 required
-                                {% if field_has_errors(form.user) %}
-                                    aria-invalid="true"
-                                    aria-errormessage="{{ field_id(form.user, 'error') }}"
-                                {% endif %}
                             />
                         </div>
 

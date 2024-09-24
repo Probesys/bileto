@@ -249,7 +249,7 @@ passwords.edit.short: 'Vous êtes sur le point de changer le mot de passe du com
 passwords.edit.title: 'Changement de mot de passe'
 passwords.reset.form.email: 'Adresse email'
 passwords.reset.form.submit: 'Envoyer le mail de réinitialisation'
-passwords.reset.sent.message: 'Nous venons de vous envoyer un email contenant un lien pour réinitialiser votre mot de passe. Si vous ne l’avez pas reçu d’ici quelques minutes, veuillez vérifier vos spams.'
+passwords.reset.sent.message: 'Si l’adresse saisie est correcte, nous vous avons envoyé un email contenant un lien pour réinitialiser votre mot de passe. Si vous ne l’avez pas reçu d’ici quelques minutes, veuillez vérifier vos spams.'
 passwords.reset.sent.title: 'Email envoyé'
 passwords.reset.short: 'Saisissez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.'
 passwords.reset.title: 'Réinitialisation de votre mot de passe'

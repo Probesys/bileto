@@ -29,21 +29,23 @@ class PasswordsController extends BaseController
         $form = $this->createNamedForm('reset_password', Form\Password\ResetForm::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $user = $data['user'];
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $user = $data['user'];
 
-            $token = Entity\Token::create(
-                2,
-                'hours',
-                length: 20,
-                description: "Reset password token for {$user->getEmail()}"
-            );
-            $user->setResetPasswordToken($token);
+                $token = Entity\Token::create(
+                    2,
+                    'hours',
+                    length: 20,
+                    description: "Reset password token for {$user->getEmail()}"
+                );
+                $user->setResetPasswordToken($token);
 
-            $userRepository->save($user, true);
+                $userRepository->save($user, true);
 
-            $bus->dispatch(new Message\SendResetPasswordEmail($user->getId()));
+                $bus->dispatch(new Message\SendResetPasswordEmail($user->getId()));
+            }
 
             return $this->redirectToRoute('reset password', ['sent' => true]);
         }

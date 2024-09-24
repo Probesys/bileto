@@ -74,7 +74,7 @@ class PasswordsControllerTest extends WebTestCase
         $this->assertEmailHtmlBodyContains($email, 'Reset your password');
     }
 
-    public function testPostResetFailsIfEmailIsUnknown(): void
+    public function testPostResetRedirectsEvenIfEmailIsUnknown(): void
     {
         $client = static::createClient();
         $email = 'alix@example.com';
@@ -91,17 +91,14 @@ class PasswordsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertSelectorTextContains(
-            '#reset_password_user-error',
-            'The email address is not associated to a user account'
-        );
+        $this->assertResponseRedirects('/passwords/reset?sent=1', 302);
         $user->_refresh();
         $resetPasswordToken = $user->getResetPasswordToken();
         $this->assertNull($resetPasswordToken);
         $this->assertEmailCount(0);
     }
 
-    public function testPostResetFailsIfUserIsManagedByLdap(): void
+    public function testPostResetRedirectsEvenIfUserIsManagedByLdap(): void
     {
         $client = static::createClient();
         $email = 'alix@example.com';
@@ -118,17 +115,14 @@ class PasswordsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertSelectorTextContains(
-            '#reset_password_user-error',
-            'The email address is associated to a user account managed by LDAP'
-        );
+        $this->assertResponseRedirects('/passwords/reset?sent=1', 302);
         $user->_refresh();
         $resetPasswordToken = $user->getResetPasswordToken();
         $this->assertNull($resetPasswordToken);
         $this->assertEmailCount(0);
     }
 
-    public function testPostResetFailsIfCsrfTokenIsInvalid(): void
+    public function testPostResetRedirectsEvenIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $email = 'alix@example.com';
@@ -145,7 +139,7 @@ class PasswordsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertSelectorTextContains('#reset_password-error', 'The security token is invalid');
+        $this->assertResponseRedirects('/passwords/reset?sent=1', 302);
         $user->_refresh();
         $resetPasswordToken = $user->getResetPasswordToken();
         $this->assertNull($resetPasswordToken);
