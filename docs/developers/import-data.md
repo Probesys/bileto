@@ -55,6 +55,7 @@ The data is stored in a ZIP archive. It contains several files:
   - name: string (unique, not empty, max 50 chars)
   - description: string (not empty, max 255 chars)
   - type: string (must be `super`, `admin`, `agent`, or `user`, `super` must be unique)
+  - isDefault: boolean, optional (only one `user` role can be the default role)
   - permissions: array of strings, optional (see `Role::PERMISSIONS` for the list of valid strings)
 - `users.json` an array of users defined as:
   - id: string (unique)

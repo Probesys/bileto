@@ -33,6 +33,20 @@ class Index
         return $this->index[$id] ?? null;
     }
 
+    /**
+     * @return ?T
+     */
+    public function getByKey(string $uniqueKey): mixed
+    {
+        $id = $this->uniqueIndex[$uniqueKey] ?? null;
+
+        if ($id === null) {
+            return null;
+        }
+
+        return $this->get($id);
+    }
+
     public function has(string $id): bool
     {
         return isset($this->index[$id]);

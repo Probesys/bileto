@@ -385,6 +385,7 @@ class DataImporter
         ];
 
         $superUniqueKey = '@super';
+        $defaultUniqueKey = '@default';
 
         foreach ($json as $jsonRole) {
             // Check the structure of the role
@@ -404,11 +405,17 @@ class DataImporter
                 $permissions = $jsonRole['permissions'];
             }
 
+            $isDefault = false;
+            if (isset($jsonRole['isDefault'])) {
+                $isDefault = boolval($jsonRole['isDefault']);
+            }
+
             // Build the role
             $role = new Entity\Role();
             $role->setName($name);
             $role->setDescription($description);
             $role->setType($type);
+            $role->setIsDefault($isDefault);
 
             $role->setUid(Utils\Random::hex(20));
             $role->setCreatedAt(Utils\Time::now());
@@ -420,12 +427,20 @@ class DataImporter
                 $this->errors[] = "Role {$id} error: permissions: not an array.";
             }
 
+            if ($isDefault && $type !== 'user') {
+                $this->errors[] = "Role {$id} error: {$type} role cannot be a default role.";
+            }
+
             // Add the role to the index
             try {
                 $this->indexRoles->add($id, $role, uniqueKey: $name);
 
                 if ($type === 'super') {
                     $this->indexRoles->addUniqueAlias($id, uniqueKey: $superUniqueKey);
+                }
+
+                if ($isDefault) {
+                    $this->indexRoles->addUniqueAlias($id, uniqueKey: $defaultUniqueKey);
                 }
             } catch (IndexError $e) {
                 $this->errors[] = "Role {$id} error: {$e->getMessage()}";
@@ -440,6 +455,11 @@ class DataImporter
 
             if ($role->getType() === 'super') {
                 $this->indexRoles->refreshUnique($role, uniqueKey: $superUniqueKey);
+            }
+
+            if ($role->isDefault()) {
+                $declaredDefaultRole = $this->indexRoles->getByKey($defaultUniqueKey);
+                $declaredDefaultRole->setIsDefault(false);
             }
         }
 

@@ -187,6 +187,7 @@ class DataImporterTest extends WebTestCase
                 'name' => 'Foo',
                 'description' => 'Foo description',
                 'type' => 'user',
+                'isDefault' => true,
                 'permissions' => [
                     'orga:create:tickets',
                     'orga:see',
@@ -202,6 +203,7 @@ class DataImporterTest extends WebTestCase
         $this->assertSame('Foo', $role->getName());
         $this->assertSame('Foo description', $role->getDescription());
         $this->assertSame('user', $role->getType());
+        $this->assertTrue($role->isDefault());
         $this->assertSame([
             'orga:create:tickets',
             'orga:see',
@@ -255,6 +257,31 @@ class DataImporterTest extends WebTestCase
         $this->assertSame(1, Factory\RoleFactory::count());
         $role = Factory\RoleFactory::last();
         $this->assertSame($superRole->getUid(), $role->getUid());
+    }
+
+    public function testImportRolesKeepsDefaultRoleInDatabase(): void
+    {
+        $defaultRole = Factory\RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+
+        $roles = [
+            [
+                'id' => '1',
+                'name' => 'Foo',
+                'description' => 'Foo description',
+                'type' => 'user',
+                'isDefault' => true,
+                'permissions' => [],
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(roles: $roles));
+
+        $this->assertSame(2, Factory\RoleFactory::count());
+        $role = Factory\RoleFactory::last();
+        $this->assertFalse($role->isDefault());
     }
 
     public function testImportRolesFailsIfIdIsDuplicatedInFile(): void
@@ -324,6 +351,53 @@ class DataImporterTest extends WebTestCase
                 'name' => 'Bar',
                 'description' => 'Bar description',
                 'type' => 'super',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(roles: $roles));
+
+        $this->assertSame(0, Factory\RoleFactory::count());
+    }
+
+    public function testImportRolesFailsIfDefaultIsDuplicatedInFile(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Role 2 error: duplicates id 1');
+
+        $roles = [
+            [
+                'id' => '1',
+                'name' => 'Foo',
+                'description' => 'Foo description',
+                'type' => 'user',
+                'isDefault' => true,
+            ],
+            [
+                'id' => '2',
+                'name' => 'Bar',
+                'description' => 'Bar description',
+                'type' => 'user',
+                'isDefault' => true,
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(roles: $roles));
+
+        $this->assertSame(0, Factory\RoleFactory::count());
+    }
+
+    public function testImportRolesFailsIfNotUserTypeIsDefaultRole(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('Role 1 error: agent role cannot be a default role');
+
+        $roles = [
+            [
+                'id' => '1',
+                'name' => 'Foo',
+                'description' => 'Foo description',
+                'type' => 'agent',
+                'isDefault' => true,
             ],
         ];
 
