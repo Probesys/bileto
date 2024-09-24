@@ -92,6 +92,8 @@
 
     margin-top: var(--space-large);
     margin-bottom: var(--space-large);
+
+    word-wrap: anywhere;
 }
 
 .message__content h1 {
