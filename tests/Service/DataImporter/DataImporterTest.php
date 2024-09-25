@@ -8,6 +8,7 @@ namespace App\Tests\Service\DataImporter;
 
 use App\Service\DataImporter\DataImporter;
 use App\Service\DataImporter\DataImporterError;
+use App\Tests;
 use App\Tests\Factory;
 use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -18,6 +19,7 @@ class DataImporterTest extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
+    use Tests\MessageDocumentStorageHelper;
 
     private DataImporter $dataImporter;
 
@@ -1427,6 +1429,7 @@ class DataImporterTest extends WebTestCase
         $this->assertSame('sha256:' . $hash, $messageDocument->getHash());
         $this->assertNotNull($messageDocument->getMessage());
         $this->assertSame($message->getUid(), $messageDocument->getMessage()->getUid());
+        $this->assertTrue(file_exists("{$documentsPath}/bug.txt"));
     }
 
     public function testImportTicketsFailsIfIdIsDuplicatedInFile(): void

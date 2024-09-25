@@ -1559,7 +1559,11 @@ class DataImporter
                 $file = new File($filepath, false);
 
                 try {
-                    $messageDocument = $this->messageDocumentStorage->store($file, $filename);
+                    $messageDocument = $this->messageDocumentStorage->store(
+                        $file,
+                        $filename,
+                        copy: true,
+                    );
                 } catch (Service\MessageDocumentStorageError $e) {
                     $hasErrors = true;
                     yield "Cannot store the file {$filename}: {$e->getMessage()}\n";

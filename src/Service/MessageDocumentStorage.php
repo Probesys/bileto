@@ -22,7 +22,7 @@ class MessageDocumentStorage
 
     public function __construct(
         #[Autowire(param: 'app.uploads_directory')]
-        private string $uploadsDirectory,
+        public readonly string $uploadsDirectory,
     ) {
     }
 
@@ -37,7 +37,7 @@ class MessageDocumentStorage
      *     If the file cannot be saved (e.g. invalid mimetype, file doesn't
      *     exist, cannot move the file to its destination).
      */
-    public function store(File $file, string $name): MessageDocument
+    public function store(File $file, string $name, bool $copy = false): MessageDocument
     {
         $pathname = $file->getPathname();
         $mimetype = $file->getMimeType();
@@ -65,10 +65,18 @@ class MessageDocumentStorage
         if (!file_exists($pathname)) {
             $directory = "{$this->uploadsDirectory}/{$messageDocument->getFilepath()}";
 
-            try {
-                $file->move($directory, $messageDocument->getFilename());
-            } catch (FileException $e) {
-                throw MessageDocumentStorageError::immovableFile($pathname, $directory, $e->getMessage());
+            if ($copy) {
+                if (!is_dir($directory)) {
+                    mkdir($directory, 0755, recursive: true);
+                }
+
+                copy($file->getPathname(), "{$directory}/{$filename}");
+            } else {
+                try {
+                    $file->move($directory, $messageDocument->getFilename());
+                } catch (FileException $e) {
+                    throw MessageDocumentStorageError::immovableFile($pathname, $directory, $e->getMessage());
+                }
             }
         }
 
