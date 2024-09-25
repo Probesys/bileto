@@ -40,7 +40,12 @@ class MessageDocumentStorage
     public function store(File $file, string $name, bool $copy = false, bool $trustMimeType = false): MessageDocument
     {
         $pathname = $file->getPathname();
-        $mimetype = $file->getMimeType();
+
+        try {
+            $mimetype = $file->getMimeType();
+        } catch (\Exception $e) {
+            throw MessageDocumentStorageError::unreadableFile($pathname);
+        }
 
         if (!$trustMimeType && !MessageDocument::isMimetypeAccepted($mimetype)) {
             throw MessageDocumentStorageError::rejectedMimetype($mimetype);
