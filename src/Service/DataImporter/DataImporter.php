@@ -1543,7 +1543,7 @@ class DataImporter
         foreach ($this->indexMessageToDocuments->list() as $messageId => $jsonMessageDocuments) {
             $message = $this->indexMessages->get($messageId);
 
-            if ($message->getUid() === null) {
+            if ($message->getId() === null) {
                 // Ignore this Message as it is not saved in database. It
                 // happens when the ticket is duplicated in the database: the
                 // related messages are not saved as they should already exist
