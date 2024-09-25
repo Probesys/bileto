@@ -129,7 +129,7 @@ class DataImporter
     /**
      * @return \Generator<int, string, void, void>
      */
-    public function importFile(string $filepathname): \Generator
+    public function importFile(string $filepathname, bool $trustMimeTypes = false): \Generator
     {
         $zipArchive = new \ZipArchive();
         $result = $zipArchive->open($filepathname, \ZipArchive::RDONLY);
@@ -220,6 +220,7 @@ class DataImporter
                 labels: $labels,
                 tickets: $tickets,
                 documentsPath: $documentsPath,
+                trustMimeTypes: $trustMimeTypes,
             );
         } catch (DataImporterError $e) {
             $error = $e;
@@ -257,6 +258,7 @@ class DataImporter
         array $labels = [],
         array $tickets = [],
         string $documentsPath = '',
+        bool $trustMimeTypes = false,
     ): \Generator {
         $this->errors = [];
 
@@ -291,7 +293,7 @@ class DataImporter
         yield from $this->importEntities($this->indexContracts->list());
         yield from $this->importEntities($this->indexLabels->list());
         yield from $this->importEntities($this->indexTickets->list(), ['timeSpents', 'messages']);
-        yield from $this->importMessageDocuments();
+        yield from $this->importMessageDocuments($trustMimeTypes);
     }
 
     /**
@@ -1527,7 +1529,7 @@ class DataImporter
     /**
      * @return \Generator<int, string, void, void>
      */
-    private function importMessageDocuments(): \Generator
+    private function importMessageDocuments(bool $trustMimeTypes): \Generator
     {
         if ($this->documentsPath === '') {
             return;
@@ -1563,6 +1565,7 @@ class DataImporter
                         $file,
                         $filename,
                         copy: true,
+                        trustMimeType: $trustMimeTypes,
                     );
                 } catch (Service\MessageDocumentStorageError $e) {
                     $hasErrors = true;

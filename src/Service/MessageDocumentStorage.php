@@ -37,12 +37,12 @@ class MessageDocumentStorage
      *     If the file cannot be saved (e.g. invalid mimetype, file doesn't
      *     exist, cannot move the file to its destination).
      */
-    public function store(File $file, string $name, bool $copy = false): MessageDocument
+    public function store(File $file, string $name, bool $copy = false, bool $trustMimeType = false): MessageDocument
     {
         $pathname = $file->getPathname();
         $mimetype = $file->getMimeType();
 
-        if (!MessageDocument::isMimetypeAccepted($mimetype)) {
+        if (!$trustMimeType && !MessageDocument::isMimetypeAccepted($mimetype)) {
             throw MessageDocumentStorageError::rejectedMimetype($mimetype);
         }
 
