@@ -8,11 +8,10 @@ namespace App\Tests\Controller;
 
 use App\Repository\MessageDocumentRepository;
 use App\Service\MessageDocumentStorage;
-use App\Tests\AuthorizationHelper;
+use App\Tests;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\MessageDocumentFactory;
 use App\Tests\Factory\UserFactory;
-use App\Tests\SessionHelper;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\File;
@@ -27,10 +26,11 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 
 class MessageDocumentsControllerTest extends WebTestCase
 {
-    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
-    use SessionHelper;
+    use Tests\AuthorizationHelper;
+    use Tests\MessageDocumentStorageHelper;
+    use Tests\SessionHelper;
 
     public function testPostCreateSavesTheFile(): void
     {

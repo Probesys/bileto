@@ -11,6 +11,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
@@ -28,6 +29,12 @@ class ImportCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('file', InputArgument::REQUIRED, 'The ZIP archive file to import');
+        $this->addOption(
+            'trust-mimetypes',
+            '',
+            InputOption::VALUE_NONE,
+            'Whether to trust the mimetypes of files to be imported'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -35,10 +42,12 @@ class ImportCommand extends Command
         $filename = $input->getArgument('file');
         $filepathname = getcwd() . '/' . $filename;
 
+        $trustMimeTypes = $input->getOption('trust-mimetypes');
+
         $output->writeln("Starting to import {$filename}…");
 
         try {
-            $progress = $this->dataImporter->importFile($filepathname);
+            $progress = $this->dataImporter->importFile($filepathname, $trustMimeTypes);
 
             foreach ($progress as $log) {
                 $output->write($log);
