@@ -6,7 +6,8 @@
 
 namespace App\Security;
 
-use App\Repository\AuthorizationRepository;
+use App\Entity;
+use App\Repository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,15 +18,82 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * For more consistency within the application, please use this class instead
  * of Security to call `isGranted()`.
  *
- * @phpstan-import-type Scope from AuthorizationRepository
+ * @phpstan-import-type Scope from Repository\AuthorizationRepository
  */
 class Authorizer
 {
     public function __construct(
-        private AuthorizationRepository $authorizationRepository,
+        private Repository\AuthorizationRepository $authorizationRepository,
         private Security $security,
         private AccessDecisionManagerInterface $accessDecisionManager,
     ) {
+    }
+
+    public function grant(Entity\User $user, Entity\Role $role, ?Entity\Organization $organization = null): void
+    {
+        $authorization = new Entity\Authorization();
+        $authorization->setHolder($user);
+        $authorization->setRole($role);
+        $authorization->setOrganization($organization);
+
+        $this->authorizationRepository->save($authorization, true);
+    }
+
+    public function ungrant(Entity\User $user, Entity\Authorization $authorization): void
+    {
+        if ($user->getId() !== $authorization->getHolder()->getId()) {
+            throw new \DomainException('Cannot ungrant this authorization as it’s not attached to the given user.');
+        }
+
+        $this->authorizationRepository->remove($authorization, true);
+    }
+
+    public function grantToTeam(Entity\User $user, Entity\Team $team): void
+    {
+        // Make sure to remove existing team authorizations of this user
+        $this->ungrantFromTeam($user, $team);
+
+        // Copy the team authorizations to the user.
+        $teamAuthorizations = $team->getTeamAuthorizations();
+        $authorizations = [];
+        foreach ($teamAuthorizations as $teamAuthorization) {
+            $authorization = Entity\Authorization::fromTeamAuthorization($teamAuthorization);
+            $authorization->setHolder($user);
+
+            $authorizations[] = $authorization;
+        }
+
+        $this->authorizationRepository->save($authorizations, true);
+    }
+
+    public function ungrantFromTeam(Entity\User $user, Entity\Team $team): void
+    {
+        $teamAuthorizations = $team->getTeamAuthorizations();
+
+        $authorizations = $this->authorizationRepository->findBy([
+            'holder' => $user,
+            'teamAuthorization' => $teamAuthorizations->toArray(),
+        ]);
+
+        $this->authorizationRepository->remove($authorizations, true);
+    }
+
+    public function grantTeamAuthorization(Entity\Team $team, Entity\TeamAuthorization $teamAuthorization): void
+    {
+        if ($team->getId() !== $teamAuthorization->getTeam()->getId()) {
+            throw new \DomainException('Cannot grant this team authorization as it’s not attached to the given team.');
+        }
+
+        $users = $team->getAgents();
+        $authorizations = [];
+
+        foreach ($users as $user) {
+            $authorization = Entity\Authorization::fromTeamAuthorization($teamAuthorization);
+            $authorization->setHolder($user);
+            $authorizations[] = $authorization;
+        }
+
+        $this->authorizationRepository->save($authorizations, true);
     }
 
     /**

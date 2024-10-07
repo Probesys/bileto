@@ -28,23 +28,15 @@ class AuthorizerTest extends WebTestCase
 
     private Authorizer $authorizer;
 
-    private AuthorizationRepository $authRepository;
-
     #[Before]
     public function setupTest(): void
     {
         $this->client = static::createClient();
         $container = static::getContainer();
+
         /** @var Authorizer */
         $authorizer = $container->get(Authorizer::class);
         $this->authorizer = $authorizer;
-
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
-        $registry = $container->get('doctrine');
-        $entityManager = $registry->getManager();
-        /** @var AuthorizationRepository */
-        $authRepository = $entityManager->getRepository(Authorization::class);
-        $this->authRepository = $authRepository;
     }
 
     public function testIsAgentWithAgentRole(): void
@@ -54,7 +46,7 @@ class AuthorizerTest extends WebTestCase
         $role = RoleFactory::createOne([
             'type' => 'agent',
         ])->_real();
-        $this->authRepository->grant($user, $role, null);
+        $this->authorizer->grant($user, $role, null);
 
         $isAgent = $this->authorizer->isAgent('any');
 
@@ -70,7 +62,7 @@ class AuthorizerTest extends WebTestCase
         ])->_real();
         $organization1 = OrganizationFactory::createOne()->_real();
         $organization2 = OrganizationFactory::createOne()->_real();
-        $this->authRepository->grant($user, $role, $organization1);
+        $this->authorizer->grant($user, $role, $organization1);
 
         $isAgent = $this->authorizer->isAgent('any');
         $this->assertTrue($isAgent);
@@ -89,7 +81,7 @@ class AuthorizerTest extends WebTestCase
         $role = RoleFactory::createOne([
             'type' => 'user',
         ])->_real();
-        $this->authRepository->grant($user, $role, null);
+        $this->authorizer->grant($user, $role, null);
 
         $isAgent = $this->authorizer->isAgent('any');
 
@@ -115,7 +107,7 @@ class AuthorizerTest extends WebTestCase
         $role = RoleFactory::createOne([
             'type' => 'agent',
         ])->_real();
-        $this->authRepository->grant($user, $role, null);
+        $this->authorizer->grant($user, $role, null);
 
         $isAgent = $this->authorizer->isAgent('any');
 

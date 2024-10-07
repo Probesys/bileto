@@ -11,16 +11,15 @@ use App\Entity\Role;
 use App\Entity\Team;
 use App\Entity\TeamAuthorization;
 use App\Entity\User;
-use App\Repository\AuthorizationRepository;
-use App\Repository\TeamRepository;
-use App\Repository\TeamAuthorizationRepository;
+use App\Repository;
+use App\Security;
 
 class TeamService
 {
     public function __construct(
-        private AuthorizationRepository $authorizationRepository,
-        private TeamRepository $teamRepository,
-        private TeamAuthorizationRepository $teamAuthorizationRepository,
+        private Repository\TeamRepository $teamRepository,
+        private Repository\TeamAuthorizationRepository $teamAuthorizationRepository,
+        private Security\Authorizer $authorizer,
     ) {
     }
 
@@ -28,8 +27,10 @@ class TeamService
     {
         if (!$team->hasAgent($agent)) {
             $team->addAgent($agent);
+
             $this->teamRepository->save($team, true);
-            $this->authorizationRepository->grantToTeam($agent, $team);
+
+            $this->authorizer->grantToTeam($agent, $team);
         }
     }
 
@@ -37,8 +38,10 @@ class TeamService
     {
         if ($team->hasAgent($agent)) {
             $team->removeAgent($agent);
+
             $this->teamRepository->save($team, true);
-            $this->authorizationRepository->ungrantFromTeam($agent, $team);
+
+            $this->authorizer->ungrantFromTeam($agent, $team);
         }
     }
 
@@ -50,7 +53,8 @@ class TeamService
         $teamAuthorization->setOrganization($organization);
 
         $this->teamAuthorizationRepository->save($teamAuthorization, true);
-        $this->authorizationRepository->grantTeamAuthorization($team, $teamAuthorization);
+
+        $this->authorizer->grantTeamAuthorization($team, $teamAuthorization);
     }
 
     public function removeAuthorization(TeamAuthorization $teamAuthorization): void

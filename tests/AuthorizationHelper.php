@@ -11,9 +11,9 @@ use App\Entity\Organization;
 use App\Entity\Role;
 use App\Entity\Team;
 use App\Entity\User;
-use App\Service\TeamService;
-use App\Utils\Random;
-use App\Utils\Time;
+use App\Security;
+use App\Service;
+use App\Utils;
 use Doctrine\ORM\EntityManager;
 
 trait AuthorizationHelper
@@ -28,28 +28,29 @@ trait AuthorizationHelper
         }
 
         $container = static::getContainer();
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $registry */
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
         $registry = $container->get('doctrine');
         $entityManager = $registry->getManager();
 
-        /** @var \App\Repository\RoleRepository $roleRepo */
+        /** @var \App\Repository\RoleRepository */
         $roleRepo = $entityManager->getRepository(Role::class);
-        /** @var \App\Repository\AuthorizationRepository $authorizationRepo */
-        $authorizationRepo = $entityManager->getRepository(Authorization::class);
+
+        /** @var Security\Authorizer */
+        $authorizer = $container->get(Security\Authorizer::class);
 
         $superPermissionGranted = in_array('admin:*', $permissions);
         if ($superPermissionGranted) {
             $role = $roleRepo->findOrCreateSuperRole();
-            $authorizationRepo->grant($user, $role);
+            $authorizer->grant($user, $role);
         } else {
             $role = new Role();
-            $role->setName(Random::hex(10));
+            $role->setName(Utils\Random::hex(10));
             $role->setDescription('The role description');
             $role->setType('admin');
             $role->setPermissions($permissions);
 
             $roleRepo->save($role);
-            $authorizationRepo->grant($user, $role);
+            $authorizer->grant($user, $role);
         }
     }
 
@@ -68,23 +69,24 @@ trait AuthorizationHelper
         }
 
         $container = static::getContainer();
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $registry */
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
         $registry = $container->get('doctrine');
         $entityManager = $registry->getManager();
 
-        /** @var \App\Repository\RoleRepository $roleRepo */
+        /** @var \App\Repository\RoleRepository */
         $roleRepo = $entityManager->getRepository(Role::class);
-        /** @var \App\Repository\AuthorizationRepository $authorizationRepo */
-        $authorizationRepo = $entityManager->getRepository(Authorization::class);
+
+        /** @var Security\Authorizer */
+        $authorizer = $container->get(Security\Authorizer::class);
 
         $role = new Role();
-        $role->setName(Random::hex(10));
+        $role->setName(Utils\Random::hex(10));
         $role->setDescription('The role description');
         $role->setType($type);
         $role->setPermissions($permissions);
 
         $roleRepo->save($role);
-        $authorizationRepo->grant($user, $role, $organization);
+        $authorizer->grant($user, $role, $organization);
     }
 
     /**
@@ -100,17 +102,17 @@ trait AuthorizationHelper
         }
 
         $container = static::getContainer();
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $registry */
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
         $registry = $container->get('doctrine');
         $entityManager = $registry->getManager();
 
         /** @var \App\Repository\RoleRepository */
         $roleRepo = $entityManager->getRepository(Role::class);
-        /** @var TeamService */
-        $teamService = $container->get(TeamService::class);
+        /** @var Service\TeamService */
+        $teamService = $container->get(Service\TeamService::class);
 
         $role = new Role();
-        $role->setName(Random::hex(10));
+        $role->setName(Utils\Random::hex(10));
         $role->setDescription('The role description');
         $role->setType('agent');
         $role->setPermissions($permissions);

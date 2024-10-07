@@ -8,6 +8,7 @@ namespace App\Service;
 
 use App\Entity;
 use App\Repository;
+use App\Security;
 use App\Service;
 use App\Utils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,9 +17,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserCreator
 {
     public function __construct(
-        private Repository\AuthorizationRepository $authorizationRepository,
         private Repository\RoleRepository $roleRepository,
         private Repository\UserRepository $userRepository,
+        private Security\Authorizer $authorizer,
         private Service\Locales $locales,
         private Service\UserService $userService,
         private ValidatorInterface $validator,
@@ -45,7 +46,7 @@ class UserCreator
             $defaultOrganization = $this->userService->getDefaultOrganization($user);
 
             if ($defaultOrganization) {
-                $this->authorizationRepository->grant(
+                $this->authorizer->grant(
                     $user,
                     $defaultRole,
                     $defaultOrganization,

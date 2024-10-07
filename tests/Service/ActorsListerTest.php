@@ -6,10 +6,9 @@
 
 namespace App\Tests\Service;
 
-use App\Entity\Authorization;
-use App\Entity\User;
-use App\Repository\AuthorizationRepository;
-use App\Service\ActorsLister;
+use App\Entity;
+use App\Security;
+use App\Service;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\OrganizationFactory;
@@ -26,30 +25,28 @@ class ActorsListerTest extends WebTestCase
     use Factories;
     use ResetDatabase;
 
-    private ActorsLister $actorsLister;
+    private Entity\User $currentUser;
 
-    private User $currentUser;
+    private Service\ActorsLister $actorsLister;
 
-    private AuthorizationRepository $authRepository;
+    private Security\Authorizer $authorizer;
 
     #[Before]
     public function setupTest(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var ActorsLister */
-        $actorsLister = $container->get(ActorsLister::class);
+
+        /** @var Service\ActorsLister */
+        $actorsLister = $container->get(Service\ActorsLister::class);
         $this->actorsLister = $actorsLister;
+
+        /** @var Security\Authorizer */
+        $authorizer = $container->get(Security\Authorizer::class);
+        $this->authorizer = $authorizer;
 
         $this->currentUser = UserFactory::createOne()->_real();
         $client->loginUser($this->currentUser);
-
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry */
-        $registry = $container->get('doctrine');
-        $entityManager = $registry->getManager();
-        /** @var AuthorizationRepository */
-        $authRepository = $entityManager->getRepository(Authorization::class);
-        $this->authRepository = $authRepository;
     }
 
     public function testFindAll(): void
@@ -60,7 +57,7 @@ class ActorsListerTest extends WebTestCase
         ]);
         // The current user must have an authorization on the users'
         // organizations that we want to list.
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $this->currentUser,
             $role->_real(),
             null,
@@ -68,7 +65,7 @@ class ActorsListerTest extends WebTestCase
         // The listed users must have authorizations on some organizations
         // themselves. Otherwise, they are not part of any organization and we
         // don't want to list them.
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $otherUser->_real(),
             $role->_real(),
             null,
@@ -90,13 +87,13 @@ class ActorsListerTest extends WebTestCase
         ]);
         $organization = OrganizationFactory::createOne();
         $otherOrga = OrganizationFactory::createOne();
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $this->currentUser,
             $role->_real(),
             $organization->_real(),
         );
         // The $otherUser is now in a totally separated organization.
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $otherUser->_real(),
             $role->_real(),
             $otherOrga->_real(),
@@ -120,13 +117,13 @@ class ActorsListerTest extends WebTestCase
             'type' => 'agent',
         ]);
         // $currentUser has a "tech" role
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $this->currentUser,
             $roleTech->_real(),
             null,
         );
         // $otherUser has a "user" role
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $otherUser->_real(),
             $roleUser->_real(),
             null,
@@ -150,12 +147,12 @@ class ActorsListerTest extends WebTestCase
         ]);
         // The $currentUser must have an authorization on the requested
         // organization.
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $this->currentUser,
             $role->_real(),
             $organization->_real(),
         );
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $otherUser->_real(),
             $role->_real(),
             $organization->_real(),
@@ -179,12 +176,12 @@ class ActorsListerTest extends WebTestCase
         $roleTech = RoleFactory::createOne([
             'type' => 'agent',
         ]);
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $this->currentUser,
             $roleTech->_real(),
             $organization->_real(),
         );
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $otherUser->_real(),
             $roleUser->_real(),
             $organization->_real(),
@@ -206,12 +203,12 @@ class ActorsListerTest extends WebTestCase
         $role = RoleFactory::createOne([
             'type' => \Zenstruck\Foundry\faker()->randomElement(['agent', 'user']),
         ]);
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $this->currentUser,
             $role->_real(),
             $organization->_real(),
         );
-        $this->authRepository->grant(
+        $this->authorizer->grant(
             $otherUser->_real(),
             $role->_real(),
             $otherOrganization->_real(),
