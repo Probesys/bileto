@@ -26,6 +26,7 @@ use App\Service\MessageDocumentStorage;
 use App\Service\MessageDocumentStorageError;
 use App\Service\UserCreator;
 use App\Service\UserCreatorException;
+use App\Service\UserService;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
 use App\Utils;
@@ -49,6 +50,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private TicketRepository $ticketRepository,
         private UserRepository $userRepository,
         private UserCreator $userCreator,
+        private UserService $userService,
         private Authorizer $authorizer,
         private HtmlSanitizerInterface $appMessageSanitizer,
         private LoggerInterface $logger,
@@ -86,11 +88,9 @@ class CreateTicketsFromMailboxEmailsHandler
                 continue;
             }
 
-            $requesterOrganization = $requester->getOrganization();
+            $requesterOrganization = $this->userService->getDefaultOrganization($requester);
 
-            if (!$requesterOrganization && $domainOrganization) {
-                $requesterOrganization = $domainOrganization;
-            } elseif (!$requesterOrganization) {
+            if (!$requesterOrganization) {
                 $this->markError($mailboxEmail, 'sender is not attached to an organization');
                 continue;
             }

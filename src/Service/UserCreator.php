@@ -17,10 +17,10 @@ class UserCreator
 {
     public function __construct(
         private Repository\AuthorizationRepository $authorizationRepository,
-        private Repository\OrganizationRepository $organizationRepository,
         private Repository\RoleRepository $roleRepository,
         private Repository\UserRepository $userRepository,
         private Service\Locales $locales,
+        private Service\UserService $userService,
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $passwordHasher,
     ) {
@@ -42,20 +42,13 @@ class UserCreator
 
         $defaultRole = $this->roleRepository->findDefault();
         if ($defaultRole) {
-            $organization = $user->getOrganization();
+            $defaultOrganization = $this->userService->getDefaultOrganization($user);
 
-            if ($organization) {
-                $authorizationOrganization = $organization;
-            } else {
-                $emailDomain = Utils\Email::extractDomain($user->getEmail());
-                $authorizationOrganization = $this->organizationRepository->findOneByDomainOrDefault($emailDomain);
-            }
-
-            if ($authorizationOrganization) {
+            if ($defaultOrganization) {
                 $this->authorizationRepository->grant(
                     $user,
                     $defaultRole,
-                    $authorizationOrganization,
+                    $defaultOrganization,
                 );
             }
         }
