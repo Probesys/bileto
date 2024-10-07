@@ -51,14 +51,23 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
     }
 
     /**
+     * @param 'any'|'user'|'agent' $roleType
+     *
      * @return Organization[]
      */
-    public function findAuthorizedOrganizations(User $user): array
+    public function findAuthorizedOrganizations(User $user, string $roleType = 'any'): array
     {
         $entityManager = $this->getEntityManager();
         /** @var AuthorizationRepository */
         $authorizationRepository = $entityManager->getRepository(Authorization::class);
         $authorizations = $authorizationRepository->getOrgaAuthorizationsFor($user, scope: 'any');
+
+        $authorizations = array_filter(
+            $authorizations,
+            function ($authorization) use ($roleType): bool {
+                return $roleType === 'any' || $authorization->getRole()->getType() === $roleType;
+            }
+        );
 
         $authorizedOrgaIds = array_map(function ($authorization): ?int {
             $organization = $authorization->getOrganization();

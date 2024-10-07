@@ -8,12 +8,14 @@ namespace App\Service;
 
 use App\Entity;
 use App\Repository;
+use App\Security;
 use App\Utils;
 
 class UserService
 {
     public function __construct(
         private Repository\OrganizationRepository $organizationRepository,
+        private Security\Authorizer $authorizer,
     ) {
     }
 
@@ -32,6 +34,21 @@ class UserService
             return $domainOrganization;
         }
 
-        return null;
+        $authorizedOrganizations = $this->organizationRepository->findAuthorizedOrganizations(
+            $user,
+            roleType: 'user'
+        );
+
+        // Return the first organization in which the user can create tickets.
+        return Utils\ArrayHelper::find(
+            $authorizedOrganizations,
+            function ($organization) use ($user): bool {
+                return $this->authorizer->isGrantedToUser(
+                    $user,
+                    'orga:create:tickets',
+                    $organization
+                );
+            }
+        );
     }
 }
