@@ -12,6 +12,7 @@ use App\Tests\Factory\ContractFactory;
 use App\Tests\Factory\MailboxEmailFactory;
 use App\Tests\Factory\MessageFactory;
 use App\Tests\Factory\OrganizationFactory;
+use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
 use App\Utils\Time;
@@ -139,6 +140,35 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $ticketObservers = $ticket->getObservers();
         $this->assertSame(1, count($ticketObservers));
         $this->assertSame($observer->getUid(), $ticketObservers[0]->getUid());
+    }
+
+    public function testInvokeCreatesATicketAndCanAssignToATeam(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $team = TeamFactory::createOne();
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $this->grantTeam($team->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+        ]);
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $ticket = TicketFactory::first();
+        $assignedTeam = $ticket->getTeam();
+        $this->assertNotNull($assignedTeam);
+        $this->assertSame($team->getUid(), $assignedTeam->getUid());
     }
 
     public function testInvokeAnswersToTicketIfTicketIdIsGiven(): void
