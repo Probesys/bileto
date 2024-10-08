@@ -78,9 +78,12 @@ class UserForm extends AbstractType
                     'help' => $help,
                 ]);
             }
-        });
 
-        $builder->add('organization', AppType\OrganizationType::class);
+            $form->add('organization', AppType\OrganizationType::class, [
+                'permission' => 'orga:create:tickets',
+                'context_user' => $user,
+            ]);
+        });
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void

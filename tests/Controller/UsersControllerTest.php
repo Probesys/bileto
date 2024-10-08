@@ -99,7 +99,6 @@ class UsersControllerTest extends WebTestCase
         $email = 'alix@example.com';
         $name = 'Alix Pataquès';
         $password = 'secret';
-        $organization = OrganizationFactory::createOne();
         $locale = 'fr_FR';
 
         $this->assertSame(1, UserFactory::count());
@@ -110,20 +109,19 @@ class UsersControllerTest extends WebTestCase
                 'email' => $email,
                 'name' => $name,
                 'plainPassword' => $password,
-                'organization' => $organization->getId(),
                 'locale' => $locale,
             ],
         ]);
 
         $this->assertSame(2, UserFactory::count());
         $newUser = UserFactory::last();
-        $this->assertResponseRedirects("/users/{$newUser->getUid()}", 302);
+        $this->assertResponseRedirects("/users/{$newUser->getUid()}/authorizations/new", 302);
         $this->assertSame($email, $newUser->getEmail());
         $this->assertSame($name, $newUser->getName());
         $this->assertSame($locale, $newUser->getLocale());
         $this->assertSame(20, strlen($newUser->getUid()));
         $this->assertTrue($passwordHasher->isPasswordValid($newUser->_real(), $password));
-        $this->assertSame($organization->getId(), $newUser->getOrganization()->getId());
+        $this->assertNull($newUser->getOrganization());
     }
 
     public function testPostCreateFailsIfEmailIsAlreadyUsed(): void
@@ -315,8 +313,10 @@ class UsersControllerTest extends WebTestCase
             'organization' => $oldOrganization,
             'locale' => $oldLocale,
         ]);
+        // This is required so the organizations are accessible to the user.
+        $this->grantOrga($otherUser->_real(), ['orga:create:tickets'], type: 'user');
 
-        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
+        $result = $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             'user' => [
                 '_token' => $this->generateCsrfToken($client, 'user'),
                 'email' => $newEmail,
@@ -350,13 +350,10 @@ class UsersControllerTest extends WebTestCase
         $newName = 'Benedict Aphone';
         $oldPassword = 'secret';
         $newPassword = ''; // leave the password unchanged
-        $oldOrganization = OrganizationFactory::createOne();
-        $newOrganization = OrganizationFactory::createOne();
         $otherUser = UserFactory::createOne([
             'email' => $oldEmail,
             'name' => $oldName,
             'password' => $oldPassword,
-            'organization' => $oldOrganization,
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
@@ -365,7 +362,6 @@ class UsersControllerTest extends WebTestCase
                 'email' => $newEmail,
                 'name' => $newName,
                 'plainPassword' => $newPassword,
-                'organization' => $newOrganization->getId(),
                 'locale' => 'en_GB',
             ],
         ]);
@@ -375,7 +371,6 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($newEmail, $otherUser->getEmail());
         $this->assertSame($newName, $otherUser->getName());
         $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $oldPassword));
-        $this->assertSame($newOrganization->getId(), $otherUser->getOrganization()->getId());
     }
 
     public function testPostUpdateDoesNotChangeEmailNameOrPasswordIfLdapIsEnabled(): void
@@ -403,6 +398,8 @@ class UsersControllerTest extends WebTestCase
             'organization' => $oldOrganization,
             'ldapIdentifier' => $oldLdapIdentifier,
         ]);
+        // This is required so the organizations are accessible to the user.
+        $this->grantOrga($otherUser->_real(), ['orga:create:tickets'], type: 'user');
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             'user' => [
@@ -447,6 +444,8 @@ class UsersControllerTest extends WebTestCase
             'password' => $oldPassword,
             'organization' => $oldOrganization,
         ]);
+        // This is required so the organizations are accessible to the user.
+        $this->grantOrga($otherUser->_real(), ['orga:create:tickets'], type: 'user');
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             'user' => [
@@ -489,6 +488,8 @@ class UsersControllerTest extends WebTestCase
             'password' => $oldPassword,
             'organization' => $oldOrganization,
         ]);
+        // This is required so the organizations are accessible to the user.
+        $this->grantOrga($otherUser->_real(), ['orga:create:tickets'], type: 'user');
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             'user' => [
@@ -532,6 +533,8 @@ class UsersControllerTest extends WebTestCase
             'password' => $oldPassword,
             'organization' => $oldOrganization,
         ]);
+        // This is required so the organizations are accessible to the user.
+        $this->grantOrga($otherUser->_real(), ['orga:create:tickets'], type: 'user');
 
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
             'user' => [
@@ -575,6 +578,8 @@ class UsersControllerTest extends WebTestCase
             'password' => $oldPassword,
             'organization' => $oldOrganization,
         ]);
+        // This is required so the organizations are accessible to the user.
+        $this->grantOrga($otherUser->_real(), ['orga:create:tickets'], type: 'user');
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [

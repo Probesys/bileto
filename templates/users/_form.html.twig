@@ -161,40 +161,44 @@
         </div>
     {% endif %}
 
-    <div class="flow flow--small">
-        <label for="{{ field_id(form.organization) }}">
-            {{ 'users.organization' | trans }}
-        </label>
+    {% if form.organization.vars.choices is not empty %}
+        <div class="flow flow--small">
+            <label for="{{ field_id(form.organization) }}">
+                {{ 'users.organization' | trans }}
+            </label>
 
-        <p class="form__caption" id="{{ field_id(form.organization, 'caption') }}">
-            {{ 'users.form.organization_caption' | trans }}
-        </p>
+            <p class="form__caption" id="{{ field_id(form.organization, 'caption') }}">
+                {{ 'users.form.organization_caption' | trans }}
+            </p>
 
-        {{ form_errors(form.organization) }}
+            {{ form_errors(form.organization) }}
 
-        <select
-            id="{{ field_id(form.organization) }}"
-            name="{{ field_name(form.organization) }}"
-            aria-describedby="{{ field_id(form.organization, 'caption') }}"
-            {% if field_has_errors(form.organization) %}
-                aria-invalid="true"
-                aria-errormessage="{{ field_id(form.organization, 'error') }}"
-            {% endif %}
-        >
-            <option value="">
-                {{ 'users.no_organization' | trans }}
-            </option>
-
-            {% for choice in form.organization.vars.choices %}
-                <option
-                    value="{{ choice.value }}"
-                    {{ choice.value == field_value(form.organization) ? 'selected' }}
-                >
-                    {{ choice.label }}
+            <select
+                id="{{ field_id(form.organization) }}"
+                name="{{ field_name(form.organization) }}"
+                aria-describedby="{{ field_id(form.organization, 'caption') }}"
+                {% if field_has_errors(form.organization) %}
+                    aria-invalid="true"
+                    aria-errormessage="{{ field_id(form.organization, 'error') }}"
+                {% endif %}
+            >
+                <option value="">
+                    {{ 'users.no_organization' | trans }}
                 </option>
-            {% endfor %}
-        </select>
-    </div>
+
+                {% for choice in form.organization.vars.choices %}
+                    <option
+                        value="{{ choice.value }}"
+                        {{ choice.value == field_value(form.organization) ? 'selected' }}
+                    >
+                        {{ choice.label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    {% else %}
+        <!-- {{ field_name(form.organization) }} -->
+    {% endif %}
 
     <div class="form__actions">
         <button class="button--primary" type="submit">

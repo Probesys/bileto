@@ -11,6 +11,7 @@ use App\Repository;
 use App\Security;
 use App\Service;
 use Symfony\Bridge\Doctrine\Form\Type;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
@@ -23,36 +24,28 @@ class OrganizationType extends AbstractType
         private Repository\OrganizationRepository $organizationRepository,
         private Security\Authorizer $authorizer,
         private Service\Sorter\OrganizationSorter $organizationSorter,
+        private SymfonySecurity $security,
     ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        /** @var ?Entity\User */
+        $currentUser = $this->security->getUser();
+
         $resolver->setDefaults([
             'class' => Entity\Organization::class,
 
             'choice_loader' => function (Options $options): ChoiceLoaderInterface {
+                $contextUser = $options['context_user'];
                 $permission = $options['permission'];
 
-                $vary = [$permission];
+                $vary = [$contextUser, $permission];
 
                 return ChoiceList::lazy(
                     $this,
-                    function () use ($permission) {
-                        $organizations = $this->organizationRepository->findAll();
-
-                        if ($permission) {
-                            $organizations = array_filter(
-                                $organizations,
-                                function ($organization) use ($permission): bool {
-                                    return $this->authorizer->isGranted($permission, $organization);
-                                }
-                            );
-                        }
-
-                        $this->organizationSorter->sort($organizations);
-
-                        return $organizations;
+                    function () use ($contextUser, $permission): array {
+                        return $this->loadOrganizations($contextUser, $permission);
                     },
                     $vary,
                 );
@@ -62,13 +55,44 @@ class OrganizationType extends AbstractType
             'choice_value' => 'id',
 
             'permission' => '',
+            'context_user' => $currentUser,
         ]);
 
         $resolver->setAllowedTypes('permission', 'string');
+        $resolver->setAllowedTypes('context_user', Entity\User::class);
     }
 
     public function getParent(): string
     {
         return Type\EntityType::class;
+    }
+
+    /**
+     * @return Entity\Organization[]
+     */
+    private function loadOrganizations(Entity\User $contextUser, string $permission): array
+    {
+        if ($permission && $contextUser->getId() === null) {
+            return [];
+        }
+
+        $organizations = $this->organizationRepository->findAll();
+
+        if ($permission) {
+            $organizations = array_filter(
+                $organizations,
+                function ($organization) use ($contextUser, $permission): bool {
+                    return $this->authorizer->isGrantedToUser(
+                        $contextUser,
+                        $permission,
+                        $organization
+                    );
+                }
+            );
+        }
+
+        $this->organizationSorter->sort($organizations);
+
+        return $organizations;
     }
 }

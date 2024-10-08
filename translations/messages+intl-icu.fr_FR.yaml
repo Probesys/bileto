@@ -537,7 +537,6 @@ users.n_others: '{number, plural, =0 {aucun autre} one {1 autre} other {# autres
 users.name: Nom
 users.new.submit: 'Créer l’utilisateur'
 users.new.title: 'Nouvel utilisateur'
-users.no_organization_authorization: 'Cet utilisateur ne peut pas créer de tickets dans son organisation par défaut. Pensez à lui <a href="{path}">donner une autorisation correspondante.</a>'
 users.no_organization: 'Aucune organisation'
 users.organization: Organisation
 users.password: 'Mot de passe'
@@ -548,6 +547,5 @@ users.show.email: "Email\_: {email}"
 users.show.ldap_identifier: "Identifiant LDAP\_: {identifier}"
 users.show.name: "Nom\_: {name}"
 users.show.organization: "Organisation\_: {name}"
-users.show.organization.none: "Organisation\_: Aucune"
 users.show.profile: 'Profil utilisateur'
 users.yourself: vous

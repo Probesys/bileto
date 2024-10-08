@@ -24,6 +24,7 @@ class Authorizer
 {
     public function __construct(
         private Repository\AuthorizationRepository $authorizationRepository,
+        private Repository\UserRepository $userRepository,
         private Security $security,
         private AccessDecisionManagerInterface $accessDecisionManager,
     ) {
@@ -46,6 +47,7 @@ class Authorizer
         }
 
         $this->authorizationRepository->remove($authorization, true);
+        $this->refreshDefaultOrganization($user);
     }
 
     public function grantToTeam(Entity\User $user, Entity\Team $team): void
@@ -76,6 +78,7 @@ class Authorizer
         ]);
 
         $this->authorizationRepository->remove($authorizations, true);
+        $this->refreshDefaultOrganization($user);
     }
 
     public function grantTeamAuthorization(Entity\Team $team, Entity\TeamAuthorization $teamAuthorization): void
@@ -135,5 +138,24 @@ class Authorizer
         }
 
         return false;
+    }
+
+    /**
+     * Make sure that the default user's organization (if any) is still
+     * accessible to them and remove it if it's not.
+     *
+     * This method must be used after ungranting an authorization of a user.
+     */
+    private function refreshDefaultOrganization(Entity\User $user): void
+    {
+        $defaultOrganization = $user->getOrganization();
+
+        if (
+            $defaultOrganization &&
+            !$this->isGrantedToUser($user, 'orga:create:tickets', $defaultOrganization)
+        ) {
+            $user->setOrganization(null);
+            $this->userRepository->save($user, true);
+        }
     }
 }
