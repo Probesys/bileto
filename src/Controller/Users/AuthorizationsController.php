@@ -9,7 +9,6 @@ namespace App\Controller\Users;
 use App\Controller\BaseController;
 use App\Entity\Authorization;
 use App\Entity\User;
-use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\RoleRepository;
 use App\Security\Authorizer;
@@ -63,7 +62,6 @@ class AuthorizationsController extends BaseController
     public function create(
         User $holder,
         Request $request,
-        AuthorizationRepository $authorizationRepository,
         OrganizationRepository $organizationRepository,
         RoleRepository $roleRepository,
         OrganizationSorter $organizationSorter,
@@ -141,7 +139,7 @@ class AuthorizationsController extends BaseController
             ]);
         }
 
-        $authorizationRepository->grant($holder, $role, $organization);
+        $authorizer->grant($holder, $role, $organization);
 
         return $this->redirectToRoute('user', [
             'uid' => $holder->getUid(),
@@ -152,7 +150,6 @@ class AuthorizationsController extends BaseController
     public function delete(
         Authorization $authorization,
         Request $request,
-        AuthorizationRepository $authorizationRepository,
         Authorizer $authorizer,
         TranslatorInterface $translator,
     ): Response {
@@ -193,7 +190,7 @@ class AuthorizationsController extends BaseController
             ]);
         }
 
-        $authorizationRepository->remove($authorization, true);
+        $authorizer->ungrant($holder, $authorization);
 
         return $this->redirectToRoute('user', [
             'uid' => $holder->getUid(),

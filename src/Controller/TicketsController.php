@@ -21,6 +21,7 @@ use App\Service\ActorsLister;
 use App\Service\Sorter\LabelSorter;
 use App\Service\Sorter\OrganizationSorter;
 use App\Service\TicketTimeline;
+use App\Service\UserService;
 use App\Utils\Pagination;
 use App\Utils\Time;
 use Symfony\Component\HttpFoundation\Response;
@@ -122,6 +123,7 @@ class TicketsController extends BaseController
         AuthorizationRepository $authorizationRepository,
         OrganizationRepository $organizationRepository,
         OrganizationSorter $organizationSorter,
+        UserService $userService,
         Authorizer $authorizer,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', 'any');
@@ -133,7 +135,8 @@ class TicketsController extends BaseController
 
         // If the user has a default organization and can create tickets in it,
         // just redirect to the "new ticket" form of this organization.
-        $defaultOrganization = $user->getOrganization();
+        $defaultOrganization = $userService->getDefaultOrganization($user);
+
         if ($defaultOrganization && $authorizer->isGranted('orga:create:tickets', $defaultOrganization)) {
             return $this->redirectToRoute('new organization ticket', [
                 'uid' => $defaultOrganization->getUid(),

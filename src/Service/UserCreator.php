@@ -8,6 +8,7 @@ namespace App\Service;
 
 use App\Entity;
 use App\Repository;
+use App\Security;
 use App\Service;
 use App\Utils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,11 +17,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserCreator
 {
     public function __construct(
-        private Repository\AuthorizationRepository $authorizationRepository,
-        private Repository\OrganizationRepository $organizationRepository,
         private Repository\RoleRepository $roleRepository,
         private Repository\UserRepository $userRepository,
+        private Security\Authorizer $authorizer,
         private Service\Locales $locales,
+        private Service\UserService $userService,
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $passwordHasher,
     ) {
@@ -42,20 +43,13 @@ class UserCreator
 
         $defaultRole = $this->roleRepository->findDefault();
         if ($defaultRole) {
-            $organization = $user->getOrganization();
+            $defaultOrganization = $this->userService->getDefaultOrganization($user);
 
-            if ($organization) {
-                $authorizationOrganization = $organization;
-            } else {
-                $emailDomain = Utils\Email::extractDomain($user->getEmail());
-                $authorizationOrganization = $this->organizationRepository->findOneByDomainOrDefault($emailDomain);
-            }
-
-            if ($authorizationOrganization) {
-                $this->authorizationRepository->grant(
+            if ($defaultOrganization) {
+                $this->authorizer->grant(
                     $user,
                     $defaultRole,
-                    $authorizationOrganization,
+                    $defaultOrganization,
                 );
             }
         }

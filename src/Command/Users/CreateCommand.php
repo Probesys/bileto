@@ -7,6 +7,7 @@
 namespace App\Command\Users;
 
 use App\Repository;
+use App\Security;
 use App\Service;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -24,8 +25,8 @@ use Doctrine\Persistence\ManagerRegistry;
 class CreateCommand extends Command
 {
     public function __construct(
-        private Repository\AuthorizationRepository $authorizationRepository,
         private Repository\RoleRepository $roleRepository,
+        private Security\Authorizer $authorizer,
         private Service\Locales $locales,
         private Service\UserCreator $userCreator,
     ) {
@@ -103,7 +104,7 @@ class CreateCommand extends Command
         }
 
         $superRole = $this->roleRepository->findOrCreateSuperRole();
-        $this->authorizationRepository->grant($user, $superRole);
+        $this->authorizer->grant($user, $superRole);
 
         $output->writeln("The user \"{$user->getEmail()}\" has been created.");
 

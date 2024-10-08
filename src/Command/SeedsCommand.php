@@ -35,6 +35,7 @@ class SeedsCommand extends Command
         private Repository\RoleRepository $roleRepository,
         private Repository\TicketRepository $ticketRepository,
         private Repository\UserRepository $userRepository,
+        private Security\Authorizer $authorizer,
         private Security\Encryptor $encryptor,
         private Service\Locales $locales,
         private UserPasswordHasherInterface $passwordHasher,
@@ -176,19 +177,19 @@ class SeedsCommand extends Command
             $this->entityManager->flush();
 
             if (empty($this->authorizationRepository->getAdminAuthorizationsFor($userAlix))) {
-                $this->authorizationRepository->grant($userAlix, $roleSuper);
+                $this->authorizer->grant($userAlix, $roleSuper);
             }
 
             if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userAlix, $orgaFriendlyCoop))) {
-                $this->authorizationRepository->grant($userAlix, $roleTech, null);
+                $this->authorizer->grant($userAlix, $roleTech, null);
             }
 
             if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userBenedict, $orgaFriendlyCoop))) {
-                $this->authorizationRepository->grant($userBenedict, $roleSalesman, null);
+                $this->authorizer->grant($userBenedict, $roleSalesman, null);
             }
 
             if (empty($this->authorizationRepository->getOrgaAuthorizationsFor($userCharlie, $orgaFriendlyCoop))) {
-                $this->authorizationRepository->grant($userCharlie, $roleUser, $orgaFriendlyCoop);
+                $this->authorizer->grant($userCharlie, $roleUser, $orgaFriendlyCoop);
             }
 
             // Seed mailboxes

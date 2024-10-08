@@ -61,7 +61,7 @@ class UsersController extends BaseController
         $user = $form->getData();
         $userCreator->createUser($user);
 
-        return $this->redirectToRoute('user', [
+        return $this->redirectToRoute('new user authorization', [
             'uid' => $user->getUid(),
         ]);
     }

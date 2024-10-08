@@ -66,17 +66,28 @@ See below for the technical aspects of the teams authorizations.
 
 ### Granting roles to users
 
-You can grant a role to a user with the [`AuthorizationRepository`](/src/Repository/AuthorizationRepository.php):
+You can grant a role to a user with the [`Security\Authorizer`](/src/Security/Authorizer.php) service;
 
 ```php
+use App\Security\Authorizer;
+
 $user = /* get some user */;
 $role = /* get some role */;
 
-$authorizationRepository->grant($user, $role);
+$authorizer->grant($user, $role);
 
 // or, to grant a role scoped to a certain organization
 $organization = /* get some organization */;
-$authorizationRepository->grant($user, $role, $organization);
+$authorizer->grant($user, $role, $organization);
+```
+
+The authorizer can also grant a user to a team:
+
+```php
+$user = /* get some user */;
+$team = /* get some team */;
+
+$authorizer->grantToTeam($user, $team);
 ```
 
 ### Checking permissions with Symfony

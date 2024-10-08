@@ -251,6 +251,36 @@ class AuthorizationsControllerTest extends WebTestCase
         AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
     }
 
+    public function testPostDeleteUnsetDefaultOrganizationIfUserNoLongerHasAccess(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
+        $organization = OrganizationFactory::createOne();
+        $holder = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $role = RoleFactory::createOne([
+            'type' => 'admin',
+            'permissions' => ['orga:see', 'orga:create:tickets'],
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'holder' => $holder,
+            'role' => $role,
+            'organization' => $organization,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/authorizations/{$authorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        $holder->_refresh();
+        $this->assertNull($holder->getOrganization());
+    }
+
     public function testPostDeleteCanDeleteSuperRole(): void
     {
         $client = static::createClient();
