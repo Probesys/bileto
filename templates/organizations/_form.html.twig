@@ -37,6 +37,10 @@
     <div class="flow flow--small">
         <label for="{{ field_id(form.domains) }}">
             {{ 'organizations.domains' | trans }}
+
+            <small class="text--secondary">
+                {{ 'forms.optional' | trans }}
+            </small>
         </label>
 
         <p id="domains-caption" class="form__caption">
