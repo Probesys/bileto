@@ -344,6 +344,7 @@ teams.index.new_team: 'Nouvelle équipe'
 teams.index.none: 'Aucune équipe'
 teams.index.number: '{count, plural, =0 {Aucune équipe} one {1 équipe} other {# équipes}}'
 teams.index.title: 'Équipes & Agents'
+teams.is_responsible: 'Équipe responsable (peut être automatiquement assignée à un ticket)'
 teams.name: Nom
 teams.new.submit: 'Créer l’équipe'
 teams.new.title: 'Nouvelle équipe'
@@ -356,6 +357,7 @@ teams.show.agents.title: Agents
 teams.show.authorizations.new: 'Donner une autorisation'
 teams.show.authorizations.title: Autorisations
 teams.show.edit: 'Modifier l’équipe'
+teams.show.team_responsible: 'Équipe responsable'
 tickets.actors: Acteurs
 tickets.actors.edit.title: 'Modifier les acteurs'
 tickets.assignee: 'Attribué à'

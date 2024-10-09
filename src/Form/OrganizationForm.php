@@ -39,6 +39,7 @@ class OrganizationForm extends AbstractType
 
             $form->add('responsibleTeam', AppType\TeamType::class, [
                 'organization' => $organization,
+                'responsible_only' => true,
             ]);
         });
     }

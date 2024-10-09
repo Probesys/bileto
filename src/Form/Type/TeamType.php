@@ -30,19 +30,26 @@ class TeamType extends AbstractType
             'class' => Entity\Team::class,
 
             'choice_loader' => function (Options $options): ChoiceLoaderInterface {
+                $responsibleOnly = $options['responsible_only'];
                 $organization = $options['organization'];
 
-                $vary = [$organization];
+                $vary = [$organization, $responsibleOnly];
 
                 return ChoiceList::lazy(
                     $this,
-                    function () use ($organization) {
+                    function () use ($organization, $responsibleOnly) {
                         if ($organization && $organization->getId() === null) {
                             $teams = [];
                         } elseif ($organization) {
                             $teams = $this->teamRepository->findByOrganization($organization);
                         } else {
                             $teams = $this->teamRepository->findAll();
+                        }
+
+                        if ($responsibleOnly) {
+                            $teams = array_filter($teams, function ($team): bool {
+                                return $team->isResponsible();
+                            });
                         }
 
                         $this->teamSorter->sort($teams);
@@ -65,9 +72,11 @@ class TeamType extends AbstractType
                 ];
             },
 
+            'responsible_only' => false,
             'organization' => null,
         ]);
 
+        $resolver->setAllowedTypes('responsible_only', ['bool']);
         $resolver->setAllowedTypes('organization', [Entity\Organization::class, 'null']);
     }
 

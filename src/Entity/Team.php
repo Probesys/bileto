@@ -77,6 +77,9 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
     #[ORM\OneToMany(targetEntity: Organization::class, mappedBy: 'responsibleTeam')]
     private Collection $supervisedOrganizations;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isResponsible = false;
+
     public function __construct()
     {
         $this->name = '';
@@ -171,5 +174,17 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
     public function getSupervisedOrganizations(): Collection
     {
         return $this->supervisedOrganizations;
+    }
+
+    public function isResponsible(): bool
+    {
+        return $this->isResponsible;
+    }
+
+    public function setIsResponsible(bool $isResponsible): static
+    {
+        $this->isResponsible = $isResponsible;
+
+        return $this;
     }
 }

@@ -148,7 +148,9 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         /** @var MessageBusInterface */
         $bus = $container->get(MessageBusInterface::class);
 
-        $team = TeamFactory::createOne();
+        $team = TeamFactory::createOne([
+            'isResponsible' => true,
+        ]);
         $organization = OrganizationFactory::createOne();
         $user = UserFactory::createOne([
             'organization' => $organization,

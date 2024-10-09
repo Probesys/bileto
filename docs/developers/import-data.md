@@ -70,6 +70,7 @@ The data is stored in a ZIP archive. It contains several files:
 - `teams.json` an array of teams defined as:
   - id: string (unique)
   - name: string (unique, not empty, max 50 chars)
+  - isResponsible: boolean, optional
   - teamAuthorizations: array of, optional:
     - roleId: string (reference to a role)
     - organizationId: string or null (reference to an organization)

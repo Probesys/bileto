@@ -35,6 +35,12 @@
         <div class="flow flow--smaller">
             <h1>{{ team.name }}</h1>
 
+            {% if team.isResponsible %}
+                <p class="text--center">
+                    {{ 'teams.show.team_responsible' | trans }}
+                </p>
+            {% endif %}
+
             <div class="text--right">
                 <details
                     class="popup"

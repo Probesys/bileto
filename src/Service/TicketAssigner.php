@@ -26,6 +26,10 @@ class TicketAssigner
 
         $teams = $this->teamRepository->findByOrganization($organization);
 
+        $teams = array_filter($teams, function ($team): bool {
+            return $team->isResponsible();
+        });
+
         if (count($teams) === 0) {
             return null;
         }

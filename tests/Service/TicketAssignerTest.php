@@ -38,9 +38,11 @@ class TicketAssignerTest extends WebTestCase
     {
         $team1 = Factory\TeamFactory::createOne([
             'createdAt' => Utils\Time::ago(2, 'day'),
+            'isResponsible' => true,
         ])->_real();
         $team2 = Factory\TeamFactory::createOne([
             'createdAt' => Utils\Time::ago(1, 'day'),
+            'isResponsible' => true,
         ])->_real();
         $organization = Factory\OrganizationFactory::createOne()->_real();
         $this->grantTeam($team1, ['orga:see'], $organization);
@@ -54,8 +56,12 @@ class TicketAssignerTest extends WebTestCase
 
     public function testGetDefaultResponsibleTeamWithNoTeamsHavingAccessToOrganization(): void
     {
-        $team1 = Factory\TeamFactory::createOne()->_real();
-        $team2 = Factory\TeamFactory::createOne()->_real();
+        $team1 = Factory\TeamFactory::createOne([
+            'isResponsible' => true,
+        ])->_real();
+        $team2 = Factory\TeamFactory::createOne([
+            'isResponsible' => true,
+        ])->_real();
         $organization = Factory\OrganizationFactory::createOne()->_real();
 
         $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($organization);
@@ -67,9 +73,11 @@ class TicketAssignerTest extends WebTestCase
     {
         $team1 = Factory\TeamFactory::createOne([
             'createdAt' => Utils\Time::ago(2, 'day'),
+            'isResponsible' => true,
         ])->_real();
         $team2 = Factory\TeamFactory::createOne([
             'createdAt' => Utils\Time::ago(1, 'day'),
+            'isResponsible' => true,
         ])->_real();
         $organization = Factory\OrganizationFactory::createOne([
             'responsibleTeam' => $team2,
@@ -81,5 +89,22 @@ class TicketAssignerTest extends WebTestCase
 
         $this->assertNotNull($responsibleTeam);
         $this->assertSame($team2->getId(), $responsibleTeam->getId());
+    }
+
+    public function testGetDefaultResponsibleTeamWithNoResponsibleTeams(): void
+    {
+        $team1 = Factory\TeamFactory::createOne([
+            'isResponsible' => false,
+        ])->_real();
+        $team2 = Factory\TeamFactory::createOne([
+            'isResponsible' => false,
+        ])->_real();
+        $organization = Factory\OrganizationFactory::createOne()->_real();
+        $this->grantTeam($team1, ['orga:see'], $organization);
+        $this->grantTeam($team2, ['orga:see'], $organization);
+
+        $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($organization);
+
+        $this->assertNull($responsibleTeam);
     }
 }

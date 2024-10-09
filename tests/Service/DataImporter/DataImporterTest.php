@@ -665,6 +665,7 @@ class DataImporterTest extends WebTestCase
             [
                 'id' => '1',
                 'name' => 'My team',
+                'isResponsible' => true,
                 'teamAuthorizations' => [
                     [
                         'roleId' => '1',
@@ -684,6 +685,7 @@ class DataImporterTest extends WebTestCase
         $this->assertSame(1, Factory\TeamFactory::count());
         $team = Factory\TeamFactory::last();
         $this->assertSame('My team', $team->getName());
+        $this->assertTrue($team->isResponsible());
         $teamAuthorizations = $team->getTeamAuthorizations();
         $this->assertSame(1, count($teamAuthorizations));
         $authOrganization = $teamAuthorizations[0]->getOrganization();
