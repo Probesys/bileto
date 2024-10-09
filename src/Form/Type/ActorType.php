@@ -53,7 +53,7 @@ class ActorType extends AbstractType
             'roleType' => 'any',
         ]);
 
-        $resolver->setAllowedTypes('organization', [Entity\Organization::class, null]);
+        $resolver->setAllowedTypes('organization', [Entity\Organization::class, 'null']);
         $resolver->setAllowedValues('roleType', Service\ActorsLister::VALID_ROLE_TYPES);
     }
 

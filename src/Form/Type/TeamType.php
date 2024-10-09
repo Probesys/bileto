@@ -65,7 +65,7 @@ class TeamType extends AbstractType
             'organization' => null,
         ]);
 
-        $resolver->setAllowedTypes('organization', [Entity\Organization::class, null]);
+        $resolver->setAllowedTypes('organization', [Entity\Organization::class, 'null']);
     }
 
     public function getParent(): string
