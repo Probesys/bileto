@@ -7,9 +7,12 @@
 namespace App\Form;
 
 use App\Entity;
+use App\Form\Type as AppType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrganizationForm extends AbstractType
@@ -20,6 +23,7 @@ class OrganizationForm extends AbstractType
             'empty_data' => '',
             'trim' => true,
         ]);
+
         $builder->add('domains', Type\CollectionType::class, [
             'entry_type' => Type\TextType::class,
             'entry_options' => [
@@ -28,6 +32,16 @@ class OrganizationForm extends AbstractType
             'allow_add' => true,
             'allow_delete' => true,
         ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            $form = $event->getForm();
+            $organization = $event->getData();
+
+            $form->add('responsibleTeam', AppType\TeamType::class, [
+                'organization' => $organization,
+                'responsible_only' => true,
+            ]);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

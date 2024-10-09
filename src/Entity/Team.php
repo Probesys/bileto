@@ -71,11 +71,21 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
     )]
     private Collection $teamAuthorizations;
 
+    /**
+     * @var Collection<int, Organization>
+     */
+    #[ORM\OneToMany(targetEntity: Organization::class, mappedBy: 'responsibleTeam')]
+    private Collection $supervisedOrganizations;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isResponsible = false;
+
     public function __construct()
     {
         $this->name = '';
         $this->agents = new ArrayCollection();
         $this->teamAuthorizations = new ArrayCollection();
+        $this->supervisedOrganizations = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -154,6 +164,26 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
             $this->teamAuthorizations->add($teamAuthorization);
             $teamAuthorization->setTeam($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Organization>
+     */
+    public function getSupervisedOrganizations(): Collection
+    {
+        return $this->supervisedOrganizations;
+    }
+
+    public function isResponsible(): bool
+    {
+        return $this->isResponsible;
+    }
+
+    public function setIsResponsible(bool $isResponsible): static
+    {
+        $this->isResponsible = $isResponsible;
 
         return $this;
     }

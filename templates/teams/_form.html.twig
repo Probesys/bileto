@@ -34,6 +34,21 @@
         />
     </div>
 
+    <div>
+        {{ form_errors(form.isResponsible) }}
+
+        <input
+            type="checkbox"
+            id="{{ field_id(form.isResponsible) }}"
+            name="{{ field_name(form.isResponsible) }}"
+            {{ form.isResponsible.vars.checked ? 'checked' }}
+        />
+
+        <label for="{{ field_id(form.isResponsible) }}">
+            {{ 'teams.is_responsible' | trans }}
+        </label>
+    </div>
+
     <div class="form__actions">
         <button class="button--primary" type="submit">
             {{ submit_label }}

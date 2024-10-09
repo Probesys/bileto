@@ -59,6 +59,49 @@
         }, with_context = false) }}
     </div>
 
+    {% if form.responsibleTeam.vars.choices is not empty %}
+        <div class="flow flow--small">
+            <label for="{{ field_id(form.responsibleTeam) }}">
+                {{ 'organizations.responsible_team' | trans }}
+
+                <small class="text--secondary">
+                    {{ 'forms.optional' | trans }}
+                </small>
+            </label>
+
+            {{ form_errors(form.responsibleTeam) }}
+
+            <p id="{{ field_id(form.responsibleTeam, 'caption') }}" class="form__caption">
+                {{ 'organizations.responsible_team.caption' | trans }}
+            </p>
+
+            <select
+                id="{{ field_id(form.responsibleTeam) }}"
+                name="{{ field_name(form.responsibleTeam) }}"
+                aria-describedby="{{ field_id(form.responsibleTeam, 'caption') }}"
+                {% if field_has_errors(form.responsibleTeam) %}
+                    aria-invalid="true"
+                    aria-errormessage="{{ field_id(form.responsibleTeam, 'error') }}"
+                {% endif %}
+            >
+                <option value="">
+                    {{ 'organizations.responsible_team.auto' | trans }}
+                </option>
+
+                {% for choice in form.responsibleTeam.vars.choices %}
+                    <option
+                        value="{{ choice.value }}"
+                        {{ choice.value == field_value(form.responsibleTeam) ? 'selected' }}
+                    >
+                        {{ choice.label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    {% else %}
+        <!-- {{ field_name(form.responsibleTeam) }} -->
+    {% endif %}
+
     <div class="form__actions">
         <button class="button--primary" type="submit">
             {{ submit_label }}

@@ -670,6 +670,11 @@ class DataImporter
             $id = strval($jsonTeam['id']);
             $name = strval($jsonTeam['name']);
 
+            $isResponsible = false;
+            if (isset($jsonTeam['isResponsible'])) {
+                $isResponsible = boolval($jsonTeam['isResponsible']);
+            }
+
             $teamAuthorizations = [];
             if (isset($jsonTeam['teamAuthorizations'])) {
                 $teamAuthorizations = $jsonTeam['teamAuthorizations'];
@@ -678,6 +683,7 @@ class DataImporter
             // Build the team
             $team = new Entity\Team();
             $team->setName($name);
+            $team->setIsResponsible($isResponsible);
 
             $team->setUid(Utils\Random::hex(20));
             $team->setCreatedAt(Utils\Time::now());

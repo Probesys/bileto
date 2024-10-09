@@ -20,6 +20,10 @@ class TeamForm extends AbstractType
             'empty_data' => '',
             'trim' => true,
         ]);
+
+        $builder->add('isResponsible', Type\CheckboxType::class, [
+            'required' => false,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

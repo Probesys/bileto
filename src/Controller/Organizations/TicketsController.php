@@ -24,6 +24,7 @@ use App\Security\Authorizer;
 use App\Service\ActorsLister;
 use App\Service\Sorter\LabelSorter;
 use App\Service\Sorter\TeamSorter;
+use App\Service\TicketAssigner;
 use App\TicketActivity\MessageEvent;
 use App\TicketActivity\TicketEvent;
 use App\Utils\ArrayHelper;
@@ -134,6 +135,7 @@ class TicketsController extends BaseController
         LabelRepository $labelRepository,
         OrganizationRepository $organizationRepository,
         TeamRepository $teamRepository,
+        TicketAssigner $ticketAssigner,
         LabelSorter $labelSorter,
         TeamSorter $teamSorter,
     ): Response {
@@ -144,6 +146,8 @@ class TicketsController extends BaseController
         $teams = $teamRepository->findByOrganization($organization);
         $teamSorter->sort($teams);
 
+        $responsibleTeam = $ticketAssigner->getDefaultResponsibleTeam($organization);
+
         $allLabels = $labelRepository->findAll();
         $labelSorter->sort($allLabels);
 
@@ -153,7 +157,7 @@ class TicketsController extends BaseController
             'message' => '',
             'type' => Ticket::DEFAULT_TYPE,
             'requesterUid' => '',
-            'teamUid' => '',
+            'teamUid' => $responsibleTeam ? $responsibleTeam->getUid() : '',
             'assigneeUid' => '',
             'isResolved' => false,
             'urgency' => Ticket::DEFAULT_WEIGHT,

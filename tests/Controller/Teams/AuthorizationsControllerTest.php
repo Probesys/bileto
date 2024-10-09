@@ -241,6 +241,110 @@ class AuthorizationsControllerTest extends WebTestCase
         AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
     }
 
+    public function testPostDeleteUnsetsResponsibleTeamIfTeamHasNoLongerAccessToOrganization(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne();
+        $organization = OrganizationFactory::createOne([
+            'responsibleTeam' => $team,
+        ]);
+        $teamAuthorization = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+            'organization' => $organization,
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'teamAuthorization' => $teamAuthorization,
+            'organization' => $organization,
+        ]);
+
+        $this->clearEntityManager();
+
+        $client->request(Request::METHOD_POST, "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete team authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+        TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        $organization->_refresh();
+        $this->assertNull($organization->getResponsibleTeam());
+    }
+
+    public function testPostDeleteDoesNotChangeResponsibleTeamIfTeamStillHasAccessToOrganization(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne();
+        $organization = OrganizationFactory::createOne([
+            'responsibleTeam' => $team,
+        ]);
+        $teamAuthorization = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+            'organization' => $organization,
+        ]);
+        $teamAuthorization2 = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+            'organization' => $organization,
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'teamAuthorization' => $teamAuthorization,
+            'organization' => $organization,
+        ]);
+
+        $this->clearEntityManager();
+
+        $client->request(Request::METHOD_POST, "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete team authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+        TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        $organization->_refresh();
+        $this->assertNotNull($organization->getResponsibleTeam());
+    }
+
+    public function testPostDeleteDoesNotChangeResponsibleTeamIfTeamHasGlobalAccess(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:agents']);
+        $team = TeamFactory::createOne();
+        $organization = OrganizationFactory::createOne([
+            'responsibleTeam' => $team,
+        ]);
+        $teamAuthorization = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+            'organization' => $organization,
+        ]);
+        $teamAuthorization2 = TeamAuthorizationFactory::createOne([
+            'team' => $team,
+            'organization' => null,
+        ]);
+        $authorization = AuthorizationFactory::createOne([
+            'teamAuthorization' => $teamAuthorization,
+            'organization' => $organization,
+        ]);
+
+        $this->clearEntityManager();
+
+        $client->request(Request::METHOD_POST, "/team-authorizations/{$teamAuthorization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete team authorization'),
+        ]);
+
+        $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
+        TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
+        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        $organization->_refresh();
+        $this->assertNotNull($organization->getResponsibleTeam());
+    }
+
     public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();

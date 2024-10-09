@@ -17,6 +17,7 @@ use App\Security;
 class TeamService
 {
     public function __construct(
+        private Repository\OrganizationRepository $organizationRepository,
         private Repository\TeamRepository $teamRepository,
         private Repository\TeamAuthorizationRepository $teamAuthorizationRepository,
         private Security\Authorizer $authorizer,
@@ -60,5 +61,14 @@ class TeamService
     public function removeAuthorization(TeamAuthorization $teamAuthorization): void
     {
         $this->teamAuthorizationRepository->remove($teamAuthorization, true);
+
+        $team = $teamAuthorization->getTeam();
+        $organizations = $this->organizationRepository->findObsoleteSupervisedOrganizations($team);
+
+        foreach ($organizations as $organization) {
+            $organization->setResponsibleTeam(null);
+        }
+
+        $this->organizationRepository->save($organizations, true);
     }
 }

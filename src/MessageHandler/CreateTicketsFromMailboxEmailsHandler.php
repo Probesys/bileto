@@ -24,6 +24,7 @@ use App\Security\Authorizer;
 use App\Security\Encryptor;
 use App\Service\MessageDocumentStorage;
 use App\Service\MessageDocumentStorageError;
+use App\Service\TicketAssigner;
 use App\Service\UserCreator;
 use App\Service\UserCreatorException;
 use App\Service\UserService;
@@ -48,6 +49,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private MessageDocumentStorage $messageDocumentStorage,
         private OrganizationRepository $organizationRepository,
         private TicketRepository $ticketRepository,
+        private TicketAssigner $ticketAssigner,
         private UserRepository $userRepository,
         private UserCreator $userCreator,
         private UserService $userService,
@@ -132,6 +134,9 @@ class CreateTicketsFromMailboxEmailsHandler
                 $ticket->setTitle($subject);
                 $ticket->setOrganization($requesterOrganization);
                 $ticket->setRequester($requester);
+
+                $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($requesterOrganization);
+                $ticket->setTeam($responsibleTeam);
 
                 foreach ($requesterOrganization->getObservers() as $observer) {
                     $ticket->addObserver($observer);

@@ -236,6 +236,9 @@ organizations.new.title: 'New organization'
 organizations.observers.add_user: 'Add to observers'
 organizations.observers.confirm_add_user: 'By adding this user to the organization’s observers, you give him access to all future tickets opened in the organization. Can you confirm?'
 organizations.observers.remove_user: 'Remove from observers'
+organizations.responsible_team: 'Responsible team'
+organizations.responsible_team.caption: 'The team responsible for the organization will be assigned by default to the tickets opened in that organization.'
+organizations.responsible_team.auto: Automatic
 organizations.settings.deletion.confirm: 'Are you sure that you want to delete this organization?'
 organizations.settings.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and contracts.'
 organizations.settings.deletion.submit: 'Delete the organization'
@@ -341,6 +344,7 @@ teams.index.new_team: 'New team'
 teams.index.none: 'No teams'
 teams.index.number: '{count, plural, =0 {No teams} one {1 team} other {# teams}}'
 teams.index.title: 'Teams & Agents'
+teams.is_responsible: 'Responsible team (can be automatically assigned to tickets)'
 teams.name: Name
 teams.new.submit: 'Create the team'
 teams.new.title: 'New team'
@@ -353,6 +357,7 @@ teams.show.agents.title: Agents
 teams.show.authorizations.new: 'Give an authorization'
 teams.show.authorizations.title: Authorizations
 teams.show.edit: 'Edit the team'
+teams.show.team_responsible: 'Responsible team'
 tickets.actors: Actors
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee
