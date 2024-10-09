@@ -88,6 +88,10 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
     #[ORM\ManyToMany(targetEntity: User::class)]
     private Collection $observers;
 
+    #[ORM\ManyToOne(inversedBy: 'supervisedOrganizations')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Team $responsibleTeam = null;
+
     public function __construct()
     {
         $this->name = '';
@@ -208,6 +212,18 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
     public function removeObserver(User $observer): static
     {
         $this->observers->removeElement($observer);
+
+        return $this;
+    }
+
+    public function getResponsibleTeam(): ?Team
+    {
+        return $this->responsibleTeam;
+    }
+
+    public function setResponsibleTeam(?Team $responsibleTeam): static
+    {
+        $this->responsibleTeam = $responsibleTeam;
 
         return $this;
     }

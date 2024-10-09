@@ -18,6 +18,12 @@ class TicketAssigner
 
     public function getDefaultResponsibleTeam(Entity\Organization $organization): ?Entity\Team
     {
+        $responsibleTeam = $organization->getResponsibleTeam();
+
+        if ($responsibleTeam) {
+            return $responsibleTeam;
+        }
+
         $teams = $this->teamRepository->findByOrganization($organization);
 
         if (count($teams) === 0) {

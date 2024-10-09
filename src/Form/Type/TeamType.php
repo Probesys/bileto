@@ -37,13 +37,16 @@ class TeamType extends AbstractType
                 return ChoiceList::lazy(
                     $this,
                     function () use ($organization) {
-                        if ($organization) {
+                        if ($organization && $organization->getId() === null) {
+                            $teams = [];
+                        } elseif ($organization) {
                             $teams = $this->teamRepository->findByOrganization($organization);
                         } else {
                             $teams = $this->teamRepository->findAll();
                         }
 
                         $this->teamSorter->sort($teams);
+
                         return $teams;
                     },
                     $vary,

@@ -62,4 +62,24 @@ class TicketAssignerTest extends WebTestCase
 
         $this->assertNull($responsibleTeam);
     }
+
+    public function testGetDefaultResponsibleTeamWithDeclaredResponsibleTeam(): void
+    {
+        $team1 = Factory\TeamFactory::createOne([
+            'createdAt' => Utils\Time::ago(2, 'day'),
+        ])->_real();
+        $team2 = Factory\TeamFactory::createOne([
+            'createdAt' => Utils\Time::ago(1, 'day'),
+        ])->_real();
+        $organization = Factory\OrganizationFactory::createOne([
+            'responsibleTeam' => $team2,
+        ])->_real();
+        $this->grantTeam($team1, ['orga:see'], $organization);
+        $this->grantTeam($team2, ['orga:see'], $organization);
+
+        $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($organization);
+
+        $this->assertNotNull($responsibleTeam);
+        $this->assertSame($team2->getId(), $responsibleTeam->getId());
+    }
 }

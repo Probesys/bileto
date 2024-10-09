@@ -8,6 +8,7 @@ namespace App\Repository;
 
 use App\Entity\Authorization;
 use App\Entity\Organization;
+use App\Entity\Team;
 use App\Entity\User;
 use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
@@ -87,6 +88,35 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
                 'id' => $authorizedOrgaIds,
             ]);
         }
+    }
+
+    /**
+     * @return Organization[]
+     */
+    public function findObsoleteSupervisedOrganizations(Team $team): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT o
+            FROM App\Entity\Organization o
+            JOIN o.responsibleTeam t
+
+            WHERE t = :team
+            AND NOT EXISTS (
+                SELECT 1
+                FROM App\Entity\TeamAuthorization ta
+                WHERE ta.team = :team
+                AND (
+                    ta.organization IS NULL
+                    OR ta.organization = o
+                )
+            )
+        SQL);
+
+        $query->setParameter('team', $team);
+
+        return $query->getResult();
     }
 
     public function findOneByDomain(string $domain): ?Organization

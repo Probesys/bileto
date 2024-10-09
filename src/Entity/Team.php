@@ -71,11 +71,18 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
     )]
     private Collection $teamAuthorizations;
 
+    /**
+     * @var Collection<int, Organization>
+     */
+    #[ORM\OneToMany(targetEntity: Organization::class, mappedBy: 'responsibleTeam')]
+    private Collection $supervisedOrganizations;
+
     public function __construct()
     {
         $this->name = '';
         $this->agents = new ArrayCollection();
         $this->teamAuthorizations = new ArrayCollection();
+        $this->supervisedOrganizations = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -156,5 +163,13 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Organization>
+     */
+    public function getSupervisedOrganizations(): Collection
+    {
+        return $this->supervisedOrganizations;
     }
 }

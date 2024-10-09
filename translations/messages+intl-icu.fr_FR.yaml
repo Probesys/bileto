@@ -236,6 +236,9 @@ organizations.new.title: 'Nouvelle organisation'
 organizations.observers.add_user: 'Ajouter aux observateurs'
 organizations.observers.confirm_add_user: "En ajoutant cet utilisateur aux observateurs de l’organisation, vous lui permettez d’avoir accès à tous les futurs tickets ouverts dans celle-ci. Confirmez-vous\_?"
 organizations.observers.remove_user: 'Retirer des observateurs'
+organizations.responsible_team: 'Équipe responsable'
+organizations.responsible_team.caption: 'L’équipe responsable de l’organisation sera assignée par défaut aux tickets ouverts dans cette organisation.'
+organizations.responsible_team.auto: Automatique
 organizations.settings.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
 organizations.settings.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et contrats associés."
 organizations.settings.deletion.submit: 'Supprimer l’organisation'
