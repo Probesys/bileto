@@ -9,132 +9,21 @@
 {% block title %}{{ 'tickets.priority.edit.title' | trans }}{% endblock %}
 
 {% block body %}
-    <form
-        action="{{ path('update ticket priority', {'uid': ticket.uid}) }}"
-        method="post"
-        class="form--standard"
-        data-controller="form-priority"
-        data-turbo-preserve-scroll
-    >
-        {% if error %}
-            {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-        {% endif %}
+    {{ form_start(form, {
+        action: path('edit ticket priority', { uid: ticket.uid }),
+    }) }}
+        {{ form_errors(form) }}
 
         <div class="cols flow">
-            <div class="col--extend flow flow--small">
-                <label for="urgency">
-                    {{ 'tickets.urgency' | trans }}
-                </label>
-
-                {% if errors.urgency is defined %}
-                    <p class="form__error" role="alert" id="urgency-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.urgency }}
-                    </p>
-                {% endif %}
-
-                <select
-                    id="urgency"
-                    name="urgency"
-                    required
-                    {% if errors.urgency is defined %}
-                        autofocus
-                        aria-invalid="true"
-                        aria-errormessage="urgency-error"
-                    {% endif %}
-                    data-form-priority-target="urgency"
-                    data-action="form-priority#updatePriority"
-                >
-                    <option value="low" {{ "low" == urgency ? 'selected' }}>
-                        {{ 'tickets.urgency.low' | trans }}
-                    </option>
-                    <option value="medium" {{ "medium" == urgency ? 'selected' }}>
-                        {{ 'tickets.urgency.medium' | trans }}
-                    </option>
-                    <option value="high" {{ "high" == urgency ? 'selected' }}>
-                        {{ 'tickets.urgency.high' | trans }}
-                    </option>
-                </select>
+            <div class="col--extend">
+                {{ form_row(form.urgency) }}
             </div>
 
-            <div class="col--extend flow flow--small">
-                <label for="impact">
-                    {{ 'tickets.impact' | trans }}
-                </label>
-
-                {% if errors.impact is defined %}
-                    <p class="form__error" role="alert" id="impact-error">
-                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                        {{ errors.impact }}
-                    </p>
-                {% endif %}
-
-                <select
-                    id="impact"
-                    name="impact"
-                    required
-                    {% if errors.impact is defined %}
-                        autofocus
-                        aria-invalid="true"
-                        aria-errormessage="impact-error"
-                    {% endif %}
-                    data-form-priority-target="impact"
-                    data-action="form-priority#updatePriority"
-                >
-                    <option value="low" {{ "low" == impact ? 'selected' }}>
-                        {{ 'tickets.impact.low' | trans }}
-                    </option>
-                    <option value="medium" {{ "medium" == impact ? 'selected' }}>
-                        {{ 'tickets.impact.medium' | trans }}
-                    </option>
-                    <option value="high" {{ "high" == impact ? 'selected' }}>
-                        {{ 'tickets.impact.high' | trans }}
-                    </option>
-                </select>
+            <div class="col--extend">
+                {{ form_row(form.impact) }}
             </div>
         </div>
 
-        <div class="flow flow--small">
-            <label for="priority">
-                {{ 'tickets.priority' | trans }}
-            </label>
-
-            {% if errors.priority is defined %}
-                <p class="form__error" role="alert" id="priority-error">
-                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                    {{ errors.priority }}
-                </p>
-            {% endif %}
-
-            <select
-                id="priority"
-                name="priority"
-                required
-                {% if errors.priority is defined %}
-                    autofocus
-                    aria-invalid="true"
-                    aria-errormessage="priority-error"
-                {% endif %}
-                data-form-priority-target="priority"
-            >
-                <option value="low" {{ "low" == priority ? 'selected' }}>
-                    {{ 'tickets.priority.low' | trans }}
-                </option>
-                <option value="medium" {{ "medium" == priority ? 'selected' }}>
-                    {{ 'tickets.priority.medium' | trans }}
-                </option>
-                <option value="high" {{ "high" == priority ? 'selected' }}>
-                    {{ 'tickets.priority.high' | trans }}
-                </option>
-            </select>
-        </div>
-
-        <div class="form__actions">
-            <button id="form-update-priority-submit" class="button--primary" type="submit">
-                {{ 'forms.save_changes' | trans }}
-            </button>
-        </div>
-
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket priority') }}">
-    </form>
+        {{ form_row(form.priority) }}
+    {{ form_end(form) }}
 {% endblock %}
