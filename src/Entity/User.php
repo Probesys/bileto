@@ -38,6 +38,8 @@ class User implements
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const NAME_MAX_LENGTH = 100;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -90,9 +92,9 @@ class User implements
     )]
     private ?string $locale = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(length: self::NAME_MAX_LENGTH, nullable: true)]
     #[Assert\Length(
-        max: 100,
+        max: self::NAME_MAX_LENGTH,
         maxMessage: new TranslatableMessage('user.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;
