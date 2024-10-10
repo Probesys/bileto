@@ -16,22 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TitleController extends BaseController
 {
-    #[Route('/tickets/{uid:ticket}/title/edit', name: 'edit ticket title', methods: ['GET', 'HEAD'])]
-    public function edit(Entity\Ticket $ticket): Response
-    {
-        $this->denyAccessUnlessGranted('orga:update:tickets:title', $ticket);
-        $this->denyAccessIfTicketIsClosed($ticket);
-
-        $form = $this->createNamedForm('ticket_title', Form\Ticket\TitleForm::class, $ticket);
-
-        return $this->render('tickets/title/edit.html.twig', [
-            'ticket' => $ticket,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/tickets/{uid:ticket}/title/edit', name: 'update ticket title', methods: ['POST'])]
-    public function update(
+    #[Route('/tickets/{uid:ticket}/title/edit', name: 'edit ticket title')]
+    public function edit(
         Entity\Ticket $ticket,
         Request $request,
         Repository\TicketRepository $ticketRepository,
@@ -40,20 +26,21 @@ class TitleController extends BaseController
         $this->denyAccessIfTicketIsClosed($ticket);
 
         $form = $this->createNamedForm('ticket_title', Form\Ticket\TitleForm::class, $ticket);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->render('tickets/title/edit.html.twig', [
-                'ticket' => $ticket,
-                'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ticket = $form->getData();
+            $ticketRepository->save($ticket, true);
+
+            return $this->redirectToRoute('ticket', [
+                'uid' => $ticket->getUid(),
             ]);
         }
 
-        $ticket = $form->getData();
-        $ticketRepository->save($ticket, true);
-
-        return $this->redirectToRoute('ticket', [
-            'uid' => $ticket->getUid(),
+        return $this->render('tickets/title/edit.html.twig', [
+            'ticket' => $ticket,
+            'form' => $form,
         ]);
     }
 }

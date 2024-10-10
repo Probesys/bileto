@@ -28,6 +28,8 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const TITLE_MAX_LENGTH = 255;
+
     public const TYPES = ['request', 'incident'];
     public const DEFAULT_TYPE = 'incident';
 
@@ -77,12 +79,12 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $statusChangedAt = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: self::TITLE_MAX_LENGTH)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('ticket.title.required', [], 'errors'),
     )]
     #[Assert\Length(
-        max: 255,
+        max: self::TITLE_MAX_LENGTH,
         maxMessage: new TranslatableMessage('ticket.title.max_chars', [], 'errors'),
     )]
     private ?string $title = null;
