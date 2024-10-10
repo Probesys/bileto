@@ -84,7 +84,7 @@ class LabelsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, '/labels/new');
     }
 
-    public function testPostCreateCreatesTheLabelAndRedirects(): void
+    public function testPostNewCreatesTheLabelAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -114,7 +114,7 @@ class LabelsControllerTest extends WebTestCase
         $this->assertSame(20, strlen($label->getUid()));
     }
 
-    public function testPostCreateFailsIfNameIsAlreadyUsed(): void
+    public function testPostNewFailsIfNameIsAlreadyUsed(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -140,7 +140,7 @@ class LabelsControllerTest extends WebTestCase
         $this->assertSame(1, LabelFactory::count());
     }
 
-    public function testPostCreateFailsIfNameIsEmpty(): void
+    public function testPostNewFailsIfNameIsEmpty(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -160,7 +160,7 @@ class LabelsControllerTest extends WebTestCase
         $this->assertSame(0, LabelFactory::count());
     }
 
-    public function testPostCreateFailsIfColorIsInvalid(): void
+    public function testPostNewFailsIfColorIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -181,7 +181,7 @@ class LabelsControllerTest extends WebTestCase
         $this->assertSame(0, LabelFactory::count());
     }
 
-    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -199,25 +199,6 @@ class LabelsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#label-error', 'The security token is invalid');
         $this->assertSame(0, LabelFactory::count());
-    }
-
-    public function testPostCreateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $name = 'My label';
-
-        $client->catchExceptions(false);
-        $crawler = $client->request(Request::METHOD_POST, '/labels/new', [
-            'label' => [
-                '_token' => $this->generateCsrfToken($client, 'label'),
-                'name' => $name,
-                'color' => 'grey',
-            ],
-        ]);
     }
 
     public function testGetEditRendersCorrectly(): void
@@ -247,7 +228,7 @@ class LabelsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/labels/{$label->getUid()}/edit");
     }
 
-    public function testPostUpdateSavesTheLabelAndRedirects(): void
+    public function testPostEditSavesTheLabelAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -281,7 +262,7 @@ class LabelsControllerTest extends WebTestCase
         $this->assertSame($newColor, $label->getColor());
     }
 
-    public function testPostUpdateFailsIfNameIsAlreadyUsed(): void
+    public function testPostEditFailsIfNameIsAlreadyUsed(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -313,7 +294,7 @@ class LabelsControllerTest extends WebTestCase
         $this->assertSame($initialName, $label->getName());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -337,29 +318,6 @@ class LabelsControllerTest extends WebTestCase
         $this->clearEntityManager();
         $label->_refresh();
         $this->assertSame($initialName, $label->getName());
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $initialName = 'label';
-        $newName = 'My label';
-        $label = LabelFactory::createOne([
-            'name' => $initialName,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/labels/{$label->getUid()}/edit", [
-            'label' => [
-                '_token' => $this->generateCsrfToken($client, 'label'),
-                'name' => $newName,
-                'color' => 'grey',
-            ],
-        ]);
     }
 
     public function testPostDeleteRemovesTheLabelAndRedirects(): void

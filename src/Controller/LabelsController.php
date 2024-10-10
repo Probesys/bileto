@@ -30,8 +30,9 @@ class LabelsController extends BaseController
         ]);
     }
 
-    #[Route('/labels/new', name: 'new label', methods: ['GET', 'HEAD'])]
+    #[Route('/labels/new', name: 'new label')]
     public function new(
+        Request $request,
         LabelRepository $labelRepository,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:labels');
@@ -39,48 +40,22 @@ class LabelsController extends BaseController
         $label = new Label();
         $form = $this->createNamedForm('label', Form\LabelForm::class, $label);
 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $label = $form->getData();
+            $labelRepository->save($label, true);
+
+            return $this->redirectToRoute('labels');
+        }
+
         return $this->render('labels/new.html.twig', [
             'form' => $form,
         ]);
     }
 
-    #[Route('/labels/new', name: 'create label', methods: ['POST'])]
-    public function create(
-        Request $request,
-        LabelRepository $labelRepository,
-    ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:labels');
-
-        $form = $this->createNamedForm('label', Form\LabelForm::class);
-        $form->handleRequest($request);
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('labels/new.html.twig', [
-                'form' => $form,
-            ]);
-        }
-
-        $label = $form->getData();
-        $labelRepository->save($label, true);
-
-        return $this->redirectToRoute('labels');
-    }
-
-    #[Route('/labels/{uid:label}/edit', name: 'edit label', methods: ['GET', 'HEAD'])]
-    public function edit(Label $label): Response
-    {
-        $this->denyAccessUnlessGranted('admin:manage:labels');
-
-        $form = $this->createNamedForm('label', Form\LabelForm::class, $label);
-
-        return $this->render('labels/edit.html.twig', [
-            'label' => $label,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/labels/{uid:label}/edit', name: 'update label', methods: ['POST'])]
-    public function update(
+    #[Route('/labels/{uid:label}/edit', name: 'edit label')]
+    public function edit(
         Label $label,
         Request $request,
         LabelRepository $labelRepository,
@@ -88,19 +63,20 @@ class LabelsController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:labels');
 
         $form = $this->createNamedForm('label', Form\LabelForm::class, $label);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('labels/edit.html.twig', [
-                'label' => $label,
-                'form' => $form,
-            ]);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $label = $form->getData();
+            $labelRepository->save($label, true);
+
+            return $this->redirectToRoute('labels');
         }
 
-        $label = $form->getData();
-        $labelRepository->save($label, true);
-
-        return $this->redirectToRoute('labels');
+        return $this->render('labels/edit.html.twig', [
+            'label' => $label,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/labels/{uid:label}/deletion', name: 'delete label', methods: ['POST'])]
