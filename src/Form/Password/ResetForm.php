@@ -31,7 +31,13 @@ class ResetForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('user', Type\EmailType::class);
+        $builder->add('user', Type\EmailType::class, [
+            'label' => new TranslatableMessage('passwords.reset.form.email'),
+        ]);
+
+        $builder->add('submit', Type\SubmitType::class, [
+            'label' => new TranslatableMessage('passwords.reset.form.submit'),
+        ]);
 
         $transformer = new CallbackTransformer(
             function (?Entity\User $user): string {
@@ -72,6 +78,9 @@ class ResetForm extends AbstractType
         $resolver->setDefaults([
             'csrf_token_id' => 'reset password',
             'csrf_message' => 'csrf.invalid',
+            'attr' => [
+                'class' => 'form--standard',
+            ],
         ]);
     }
 }

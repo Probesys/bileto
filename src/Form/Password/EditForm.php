@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class EditForm extends AbstractType
 {
@@ -20,6 +21,14 @@ class EditForm extends AbstractType
             'empty_data' => '',
             'hash_property_path' => 'password',
             'mapped' => false,
+            'label' => new TranslatableMessage('passwords.edit.form.password'),
+            'attr' => [
+                'autocomplete' => 'new-password',
+            ],
+        ]);
+
+        $builder->add('submit', Type\SubmitType::class, [
+            'label' => new TranslatableMessage('passwords.edit.form.submit'),
         ]);
     }
 
@@ -29,6 +38,9 @@ class EditForm extends AbstractType
             'data_class' => Entity\User::class,
             'csrf_token_id' => 'edit password',
             'csrf_message' => 'csrf.invalid',
+            'attr' => [
+                'class' => 'form--standard',
+            ],
         ]);
     }
 }

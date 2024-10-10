@@ -41,29 +41,7 @@
                         message: 'passwords.reset.sent.message' | trans,
                     }, with_context = false) }}
                 {% else %}
-                    {{ form_start(form, { attr: {
-                        'class': 'form--standard',
-                    }}) }}
-                        <div class="flow flow--small">
-                            <label for="{{ field_id(form.user) }}">
-                                {{ 'passwords.reset.form.email' | trans }}
-                            </label>
-
-                            <input
-                                type="email"
-                                id="{{ field_id(form.user) }}"
-                                name="{{ field_name(form.user) }}"
-                                value="{{ field_value(form.user) }}"
-                                required
-                            />
-                        </div>
-
-                        <div class="form__actions">
-                            <button class="button--primary" type="submit">
-                                {{ 'passwords.reset.form.submit' | trans }}
-                            </button>
-                        </div>
-                    {{ form_end(form) }}
+                    {{ form(form) }}
                 {% endif %}
             </div>
         </div>
