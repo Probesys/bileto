@@ -18,22 +18,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class OrganizationController extends BaseController
 {
-    #[Route('/tickets/{uid:ticket}/organization/edit', name: 'edit ticket organization', methods: ['GET', 'HEAD'])]
-    public function edit(Entity\Ticket $ticket): Response
-    {
-        $this->denyAccessUnlessGranted('orga:update:tickets:organization', $ticket);
-        $this->denyAccessIfTicketIsClosed($ticket);
-
-        $form = $this->createNamedForm('ticket_organization', Form\Ticket\OrganizationForm::class, $ticket);
-
-        return $this->render('tickets/organization/edit.html.twig', [
-            'ticket' => $ticket,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/tickets/{uid:ticket}/organization/edit', name: 'update ticket organization', methods: ['POST'])]
-    public function update(
+    #[Route('/tickets/{uid:ticket}/organization/edit', name: 'edit ticket organization')]
+    public function edit(
         Entity\Ticket $ticket,
         Request $request,
         Repository\TicketRepository $ticketRepository,
@@ -45,27 +31,28 @@ class OrganizationController extends BaseController
         $oldOrganization = $ticket->getOrganization();
 
         $form = $this->createNamedForm('ticket_organization', Form\Ticket\OrganizationForm::class, $ticket);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('tickets/organization/edit.html.twig', [
-                'ticket' => $ticket,
-                'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ticket = $form->getData();
+            $ticketRepository->save($ticket, true);
+
+            $newOrganization = $ticket->getOrganization();
+
+            if ($oldOrganization->getId() !== $newOrganization->getId()) {
+                $ticketEvent = new TicketActivity\TicketEvent($ticket);
+                $eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::TRANSFERRED);
+            }
+
+            return $this->redirectToRoute('ticket', [
+                'uid' => $ticket->getUid(),
             ]);
         }
 
-        $ticket = $form->getData();
-        $ticketRepository->save($ticket, true);
-
-        $newOrganization = $ticket->getOrganization();
-
-        if ($oldOrganization->getId() !== $newOrganization->getId()) {
-            $ticketEvent = new TicketActivity\TicketEvent($ticket);
-            $eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::TRANSFERRED);
-        }
-
-        return $this->redirectToRoute('ticket', [
-            'uid' => $ticket->getUid(),
+        return $this->render('tickets/organization/edit.html.twig', [
+            'ticket' => $ticket,
+            'form' => $form,
         ]);
     }
 }
