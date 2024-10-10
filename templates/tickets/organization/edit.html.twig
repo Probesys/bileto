@@ -9,13 +9,7 @@
 {% block title %}{{ 'tickets.organization.edit.title' | trans }}{% endblock %}
 
 {% block body %}
-    {{ form_start(form, {
-        action: path('update ticket organization', { uid: ticket.uid }),
-        attr: {
-            'class': 'form--standard',
-            'data-turbo-preserve-scroll': true,
-        },
-    }) }}
+    <div class="flow flow--large wrapper wrapper--center wrapper--small">
         {{ include('alerts/_alert.html.twig', {
             type: 'warning',
             title: 'common.caution' | trans,
@@ -23,39 +17,8 @@
             raw: true,
         }, with_context = false) }}
 
-        {{ form_errors(form) }}
-
-        <div class="flow flow--small">
-            <label for="{{ field_id(form.organization) }}">
-                {{ 'tickets.organization' | trans }}
-            </label>
-
-            {{ form_errors(form.organization) }}
-
-            <select
-                id="{{ field_id(form.organization) }}"
-                name="{{ field_name(form.organization) }}"
-                required
-                {% if field_has_errors(form.organization) %}
-                    aria-invalid="true"
-                    aria-errormessage="{{ field_id(form.organization, 'error') }}"
-                {% endif %}
-            >
-                {% for choice in form.organization.vars.choices %}
-                    <option
-                        value="{{ choice.value }}"
-                        {{ choice.value == field_value(form.organization) ? 'selected' }}
-                    >
-                        {{ choice.label }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form__actions">
-            <button class="button--primary" type="submit">
-                {{ 'tickets.organization.edit.transfer' | trans }}
-            </button>
-        </div>
-    {{ form_end(form) }}
+        {{ form(form, {
+            action: path('edit ticket organization', { uid: ticket.uid }),
+        }) }}
+    </div>
 {% endblock %}

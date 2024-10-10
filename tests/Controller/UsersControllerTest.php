@@ -88,7 +88,7 @@ class UsersControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, '/users/new');
     }
 
-    public function testPostCreateCreatesTheUserAndRedirects(): void
+    public function testPostNewCreatesTheUserAndRedirects(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
@@ -124,7 +124,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertNull($newUser->getOrganization());
     }
 
-    public function testPostCreateFailsIfEmailIsAlreadyUsed(): void
+    public function testPostNewFailsIfEmailIsAlreadyUsed(): void
     {
         $client = static::createClient();
         $email = 'alix@example.com';
@@ -151,7 +151,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame(1, UserFactory::count());
     }
 
-    public function testPostCreateFailsIfEmailIsEmpty(): void
+    public function testPostNewFailsIfEmailIsEmpty(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -173,7 +173,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame(1, UserFactory::count());
     }
 
-    public function testPostCreateFailsIfEmailIsInvalid(): void
+    public function testPostNewFailsIfEmailIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -195,7 +195,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame(1, UserFactory::count());
     }
 
-    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -215,27 +215,6 @@ class UsersControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#user-error', 'The security token is invalid');
         $this->assertSame(1, UserFactory::count());
-    }
-
-    public function testPostCreateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $email = 'alix@example.com';
-        $name = 'Alix Pataquès';
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, '/users/new', [
-            'user' => [
-                '_token' => $this->generateCsrfToken($client, 'user'),
-                'email' => $email,
-                'name' => $name,
-                'locale' => 'en_GB',
-            ],
-        ]);
     }
 
     public function testGetShowRendersCorrectly(): void
@@ -288,7 +267,7 @@ class UsersControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/edit");
     }
 
-    public function testPostUpdateSavesTheUser(): void
+    public function testPostEditSavesTheUser(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
@@ -336,7 +315,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($newLocale, $otherUser->getLocale());
     }
 
-    public function testPostUpdateDoesNotChangePasswordIfEmpty(): void
+    public function testPostEditDoesNotChangePasswordIfEmpty(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
@@ -373,7 +352,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $oldPassword));
     }
 
-    public function testPostUpdateDoesNotChangeEmailNameOrPasswordIfLdapIsEnabled(): void
+    public function testPostEditDoesNotChangeEmailNameOrPasswordIfLdapIsEnabled(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
@@ -423,7 +402,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($newLdapIdentifier, $otherUser->getLdapIdentifier());
     }
 
-    public function testPostUpdateAcceptsEmptyOrganization(): void
+    public function testPostEditAcceptsEmptyOrganization(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
@@ -466,7 +445,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertNull($otherUser->getOrganization());
     }
 
-    public function testPostUpdateFailsIfParamsAreInvalid(): void
+    public function testPostEditFailsIfParamsAreInvalid(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
@@ -511,7 +490,7 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($oldOrganization->getId(), $otherUser->getOrganization()->getId());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
@@ -555,42 +534,5 @@ class UsersControllerTest extends WebTestCase
         $this->assertSame($oldName, $otherUser->getName());
         $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $oldPassword));
         $this->assertSame($oldOrganization->getId(), $otherUser->getOrganization()->getId());
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $oldEmail = 'alix@example.com';
-        $newEmail = 'benedict@example.com';
-        $oldName = 'Alix Pataquès';
-        $newName = 'Benedict Aphone';
-        $oldPassword = 'secret';
-        $newPassword = 'super secret';
-        $oldOrganization = OrganizationFactory::createOne();
-        $newOrganization = OrganizationFactory::createOne();
-        $otherUser = UserFactory::createOne([
-            'email' => $oldEmail,
-            'name' => $oldName,
-            'password' => $oldPassword,
-            'organization' => $oldOrganization,
-        ]);
-        // This is required so the organizations are accessible to the user.
-        $this->grantOrga($otherUser->_real(), ['orga:create:tickets'], type: 'user');
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/edit", [
-            'user' => [
-                '_token' => $this->generateCsrfToken($client, 'user'),
-                'email' => $newEmail,
-                'name' => $newName,
-                'plainPassword' => $newPassword,
-                'organization' => $newOrganization->getId(),
-                'locale' => 'en_GB',
-            ],
-        ]);
     }
 }

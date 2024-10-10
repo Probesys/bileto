@@ -44,16 +44,24 @@ class UserForm extends AbstractType
                 'empty_data' => '',
                 'trim' => true,
                 'disabled' => $managedByLdap,
+                'label' => new TranslatableMessage('users.email'),
             ]);
 
             $form->add('name', Type\TextType::class, [
                 'empty_data' => '',
+                'required' => false,
                 'trim' => true,
                 'disabled' => $managedByLdap,
+                'label' => new TranslatableMessage('users.name'),
+                'attr' => [
+                    'maxlength' => Entity\User::NAME_MAX_LENGTH,
+                    'autocomplete' => 'name',
+                ],
             ]);
 
             $form->add('locale', Type\ChoiceType::class, [
                 'choices' => array_flip(Service\Locales::SUPPORTED_LOCALES),
+                'label' => new TranslatableMessage('users.language'),
             ]);
 
             if ($this->ldapEnabled) {
@@ -61,6 +69,7 @@ class UserForm extends AbstractType
                     'empty_data' => '',
                     'trim' => true,
                     'required' => false,
+                    'label' => new TranslatableMessage('users.ldap_identifier'),
                 ]);
             }
 
@@ -75,13 +84,32 @@ class UserForm extends AbstractType
                     'empty_data' => '',
                     'hash_property_path' => 'password',
                     'mapped' => false,
+                    'required' => false,
+                    'label' => new TranslatableMessage('users.password'),
                     'help' => $help,
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                    ],
                 ]);
             }
 
             $form->add('organization', AppType\OrganizationType::class, [
                 'permission' => 'orga:create:tickets',
                 'context_user' => $user,
+                'required' => false,
+                'placeholder' => new TranslatableMessage('users.no_organization'),
+                'label' => new TranslatableMessage('users.organization'),
+                'help' => new TranslatableMessage('users.form.organization_caption'),
+            ]);
+
+            if ($user->getId() === null) {
+                $submitLabel = new TranslatableMessage('users.new.submit');
+            } else {
+                $submitLabel = new TranslatableMessage('forms.save_changes');
+            }
+
+            $form->add('submit', Type\SubmitType::class, [
+                'label' => $submitLabel,
             ]);
         });
     }
@@ -98,6 +126,9 @@ class UserForm extends AbstractType
             'data_class' => Entity\User::class,
             'csrf_token_id' => 'user',
             'csrf_message' => 'csrf.invalid',
+            'attr' => [
+                'class' => 'form--standard',
+            ],
         ]);
     }
 

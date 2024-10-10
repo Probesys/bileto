@@ -35,10 +35,7 @@
         <h1>{{ 'labels.new.title' | trans }}</h1>
 
         <div class="panel">
-            {{ include('labels/_form.html.twig', {
-                form: form,
-                submit_label: 'labels.new.submit' | trans,
-             }, with_context = false) }}
+            {{ include('labels/_form.html.twig', { form: form }) }}
         </div>
     </main>
 {% endblock %}

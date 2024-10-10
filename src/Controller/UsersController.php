@@ -30,39 +30,29 @@ class UsersController extends BaseController
         ]);
     }
 
-    #[Route('/users/new', name: 'new user', methods: ['GET', 'HEAD'])]
-    public function new(): Response
-    {
+    #[Route('/users/new', name: 'new user')]
+    public function new(
+        Request $request,
+        Service\UserCreator $userCreator,
+    ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         $user = new Entity\User();
         $form = $this->createNamedForm('user', Form\UserForm::class, $user);
 
-        return $this->render('users/new.html.twig', [
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/users/new', name: 'create user', methods: ['POST'])]
-    public function create(Request $request, Service\UserCreator $userCreator): Response
-    {
-        $this->denyAccessUnlessGranted('admin:manage:users');
-
-        $user = new Entity\User();
-        $form = $this->createNamedForm('user', Form\UserForm::class, $user);
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('users/new.html.twig', [
-                'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+            $userCreator->createUser($user);
+
+            return $this->redirectToRoute('new user authorization', [
+                'uid' => $user->getUid(),
             ]);
         }
 
-        $user = $form->getData();
-        $userCreator->createUser($user);
-
-        return $this->redirectToRoute('new user authorization', [
-            'uid' => $user->getUid(),
+        return $this->render('users/new.html.twig', [
+            'form' => $form,
         ]);
     }
 
@@ -85,21 +75,8 @@ class UsersController extends BaseController
         ]);
     }
 
-    #[Route('/users/{uid:user}/edit', name: 'edit user', methods: ['GET', 'HEAD'])]
-    public function edit(Entity\User $user): Response
-    {
-        $this->denyAccessUnlessGranted('admin:manage:users');
-
-        $form = $this->createNamedForm('user', Form\UserForm::class, $user);
-
-        return $this->render('users/edit.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/users/{uid:user}/edit', name: 'update user', methods: ['POST'])]
-    public function update(
+    #[Route('/users/{uid:user}/edit', name: 'edit user')]
+    public function edit(
         Entity\User $user,
         Request $request,
         Repository\UserRepository $userRepository,
@@ -107,20 +84,21 @@ class UsersController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         $form = $this->createNamedForm('user', Form\UserForm::class, $user);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('users/edit.html.twig', [
-                'user' => $user,
-                'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+            $userRepository->save($user, true);
+
+            return $this->redirectToRoute('user', [
+                'uid' => $user->getUid(),
             ]);
         }
 
-        $user = $form->getData();
-        $userRepository->save($user, true);
-
-        return $this->redirectToRoute('user', [
-            'uid' => $user->getUid(),
+        return $this->render('users/edit.html.twig', [
+            'user' => $user,
+            'form' => $form,
         ]);
     }
 }

@@ -6,6 +6,22 @@
 
 {% use 'form_div_layout.html.twig' %}
 
+{%- block button_row -%}
+    <div{% with {attr: row_attr|merge({class: row_attr.class|default('form__actions')|trim})} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_widget(form) -}}
+    </div>
+{%- endblock button_row %}
+
+{% block checkbox_row -%}
+    {%- set checkbox_layout = true -%}
+    {{- block('form_row') -}}
+{%- endblock checkbox_row %}
+
+{%- block checkbox_label -%}
+    {%- set no_optional = true -%}
+    {{- block('form_label') -}}
+{%- endblock -%}
+
 {%- block form_errors -%}
     {%- if errors|length == 1 -%}
         <p class="form__error" role="alert" id="{{ field_id(id, 'error') }}">
@@ -25,3 +41,112 @@
         </div>
     {%- endif -%}
 {%- endblock form_errors -%}
+
+{% block form_help -%}
+    {%- if help is not empty -%}
+        {%- set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' form__caption')|trim}) -%}
+        <p id="{{ field_id(id, 'caption') }}"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
+            {{- block('form_help_content') -}}
+        </p>
+    {%- endif -%}
+{%- endblock form_help %}
+
+{%- block form_label_content -%}
+    {{- parent() -}}
+
+    {%- set no_optional = no_optional|default(false) -%}
+
+    {%- if disabled %}
+        <small class="text--secondary">
+            {{ 'forms.read_only' | trans }}
+        </small>
+    {%- elseif not no_optional %}
+        {%- if not required and attr.maxlength is defined -%}
+            <small class="text--secondary">
+                {{ 'forms.optional_max_chars' | trans({ number: attr.maxlength }) }}
+            </small>
+        {%- elseif not required -%}
+            <small class="text--secondary">
+                {{ 'forms.optional' | trans }}
+            </small>
+        {%- elseif attr.maxlength is defined -%}
+            <small class="text--secondary">
+                {{ 'forms.max_chars' | trans({ number: attr.maxlength }) }}
+            </small>
+        {%- endif %}
+    {%- endif %}
+{%- endblock -%}
+
+{%- block form_row -%}
+    {%- set row_class = row_class|default(row_attr.class|default('flow flow--small')|trim) -%}
+    {%- set row_attr = row_attr|merge({class: row_class}) -%}
+
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': field_id(id, 'caption')}} -%}
+    {%- endif -%}
+
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {%- set checkbox_layout = checkbox_layout|default(false) -%}
+        {%- if checkbox_layout -%}
+            {{- form_errors(form) -}}
+            <div>
+                {{- form_widget(form, widget_attr) -}}
+                {{- form_label(form) -}}
+            </div>
+            {{- form_help(form) -}}
+        {%- else -%}
+            {{- form_label(form) -}}
+            {{- form_help(form) -}}
+            {{- form_errors(form) -}}
+            {{- form_widget(form, widget_attr) -}}
+        {%- endif -%}
+    </div>
+{%- endblock form_row %}
+
+{%- block form_widget_compound -%}
+    {%- if form is rootform -%}
+        {{ form_errors(form) }}
+        {{- block('form_rows') -}}
+        {{- form_rest(form) -}}
+    {%- else -%}
+        <div {{ block('widget_container_attributes') }}>
+            {{- block('form_rows') -}}
+            {{- form_rest(form) -}}
+        </div>
+    {%- endif -%}
+{%- endblock form_widget_compound -%}
+
+{%- block password_widget -%}
+    <div class="input-container" data-controller="password">
+        {%- set attr = attr|merge({ 'data-password-target': 'input' }) -%}
+        {{- parent() -}}
+
+        <button
+            class="button--icon"
+            type="button"
+            role="switch"
+            data-action="password#toggle"
+            data-password-target="button"
+        >
+            {{ icon('eye') }}
+            {{ icon('eye-slash') }}
+
+            <span class="sr-only">
+                {{ 'forms.show_password' | trans }}
+            </span>
+        </button>
+    </div>
+{%- endblock password_widget %}
+
+{%- block submit_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default('button--primary'))|trim}) -%}
+    {{- parent() -}}
+{%- endblock submit_widget %}
+
+{%- block widget_attributes -%}
+    {%- if not valid %}
+        {% set attr = attr|merge({'aria-invalid': 'true', 'aria-errormessage': field_id(id, 'error')}) %}
+    {% endif -%}
+    {{ parent() }}
+{%- endblock widget_attributes -%}

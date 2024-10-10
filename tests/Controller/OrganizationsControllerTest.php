@@ -102,7 +102,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, '/organizations/new');
     }
 
-    public function testPostCreateCreatesAnOrganizationAndRedirects(): void
+    public function testPostNewCreatesAnOrganizationAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -123,7 +123,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSame(20, strlen($organization->getUid()));
     }
 
-    public function testPostCreateFailsIfNameIsEmpty(): void
+    public function testPostNewFailsIfNameIsEmpty(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -142,7 +142,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSame(0, OrganizationFactory::count());
     }
 
-    public function testPostCreateFailsIfNameIsTooLong(): void
+    public function testPostNewFailsIfNameIsTooLong(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -161,7 +161,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSame(0, OrganizationFactory::count());
     }
 
-    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -178,24 +178,6 @@ class OrganizationsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#organization-error', 'The security token is invalid');
         $this->assertSame(0, OrganizationFactory::count());
-    }
-
-    public function testPostCreateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $name = 'My organization';
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, '/organizations/new', [
-            'organization' => [
-                '_token' => $this->generateCsrfToken($client, 'organization'),
-                'name' => $name,
-            ],
-        ]);
     }
 
     public function testGetShowRedirectsToTickets(): void
@@ -224,7 +206,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}");
     }
 
-    public function testGetSettingsRendersCorrectly(): void
+    public function testGetEditRendersCorrectly(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -238,7 +220,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Settings');
     }
 
-    public function testGetSettingsFailsIfAccessIsForbidden(): void
+    public function testGetEditFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);
 
@@ -251,7 +233,7 @@ class OrganizationsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/settings");
     }
 
-    public function testPostUpdateSavesTheOrganizationAndRedirects(): void
+    public function testPostEditSavesTheOrganizationAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -275,7 +257,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSame($newName, $organization->getName());
     }
 
-    public function testPostUpdateFailsIfNameIsInvalid(): void
+    public function testPostEditFailsIfNameIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -300,7 +282,7 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSame($oldName, $organization->getName());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -323,28 +305,6 @@ class OrganizationsControllerTest extends WebTestCase
         $this->clearEntityManager();
         $organization->_refresh();
         $this->assertSame($oldName, $organization->getName());
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $oldName = 'Old name';
-        $newName = 'New name';
-        $organization = OrganizationFactory::createOne([
-            'name' => $oldName,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/settings", [
-            'organization' => [
-                '_token' => $this->generateCsrfToken($client, 'organization'),
-                'name' => $newName,
-            ],
-        ]);
     }
 
     public function testPostDeleteRemovesTheOrganizationAndRedirects(): void

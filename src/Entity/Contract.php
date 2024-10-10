@@ -25,6 +25,7 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const NAME_MAX_LENGTH = 255;
     public const STATUSES = ['coming', 'ongoing', 'finished'];
 
     #[ORM\Id]
@@ -47,12 +48,12 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
     #[ORM\ManyToOne]
     private ?User $updatedBy = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: self::NAME_MAX_LENGTH)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('contract.name.required', [], 'errors'),
     )]
     #[Assert\Length(
-        max: 255,
+        max: self::NAME_MAX_LENGTH,
         maxMessage: new TranslatableMessage('contract.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;

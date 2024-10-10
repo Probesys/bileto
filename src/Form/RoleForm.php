@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class RoleForm extends AbstractType
 {
@@ -27,24 +28,49 @@ class RoleForm extends AbstractType
         $builder->add('name', Type\TextType::class, [
             'empty_data' => '',
             'trim' => true,
+            'label' => new TranslatableMessage('roles.name'),
+            'attr' => [
+                'maxlength' => Entity\Role::NAME_MAX_LENGTH,
+            ],
         ]);
 
         $builder->add('description', Type\TextType::class, [
             'empty_data' => '',
             'trim' => true,
+            'label' => new TranslatableMessage('roles.description'),
+            'attr' => [
+                'maxlength' => Entity\Role::DESCRIPTION_MAX_LENGTH,
+            ],
         ]);
 
         $builder->add('permissions', Type\ChoiceType::class, [
             'choices' => Entity\Role::PERMISSIONS[$type],
             'expanded' => true,
             'multiple' => true,
+            'label' => new TranslatableMessage('roles.permissions'),
         ]);
 
         if ($type === 'user') {
             $builder->add('isDefault', Type\CheckboxType::class, [
                 'required' => false,
+                'label' => new TranslatableMessage('roles.is_default'),
             ]);
         }
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            $form = $event->getForm();
+            $role = $event->getData();
+
+            if ($role->getId() === null) {
+                $submitLabel = new TranslatableMessage('roles.new.submit');
+            } else {
+                $submitLabel = new TranslatableMessage('forms.save_changes');
+            }
+
+            $form->add('submit', Type\SubmitType::class, [
+                'label' => $submitLabel,
+            ]);
+        });
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($type): void {
             $data = $event->getData();
@@ -69,6 +95,9 @@ class RoleForm extends AbstractType
             'data_class' => Entity\Role::class,
             'csrf_token_id' => 'role',
             'csrf_message' => 'csrf.invalid',
+            'attr' => [
+                'class' => 'form--standard',
+            ],
             'type' => 'user',
         ]);
 

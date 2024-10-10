@@ -107,7 +107,7 @@ class RolesControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, '/roles/new?type=agent');
     }
 
-    public function testPostCreateCreatesARoleAndRedirects(): void
+    public function testPostNewCreatesARoleAndRedirects(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
         Time::freeze($now);
@@ -120,12 +120,11 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(1, RoleFactory::count());
 
-        $client->request(Request::METHOD_POST, '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new?type=agent', [
             'role' => [
                 '_token' => $this->generateCsrfToken($client, 'role'),
                 'name' => $name,
                 'description' => $description,
-                'type' => 'agent',
             ],
         ]);
 
@@ -144,7 +143,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame($user->getId(), $role->getCreatedBy()->getId());
     }
 
-    public function testPostCreateCanCreateAdminRole(): void
+    public function testPostNewCanCreateAdminRole(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -155,12 +154,11 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(1, RoleFactory::count());
 
-        $client->request(Request::METHOD_POST, '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new?type=admin', [
             'role' => [
                 '_token' => $this->generateCsrfToken($client, 'role'),
                 'name' => $name,
                 'description' => $description,
-                'type' => 'admin',
             ],
         ]);
 
@@ -172,7 +170,32 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(['admin:see'], $role->getPermissions());
     }
 
-    public function testPostCreateCannotCreateSuperRole(): void
+    public function testPostNewCannotCreateSuperRole(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
+        $name = 'My role';
+        $description = 'What it does';
+
+        $this->assertSame(1, RoleFactory::count());
+
+        $client->request(Request::METHOD_POST, '/roles/new?type=super', [
+            'role' => [
+                '_token' => $this->generateCsrfToken($client, 'role'),
+                'name' => $name,
+                'description' => $description,
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/roles', 302);
+        $this->assertSame(2, RoleFactory::count());
+        $role = RoleFactory::last();
+        $this->assertSame('user', $role->getType());
+    }
+
+    public function testPostNewCreatesAnOrgaUserRoleByDefault(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -188,7 +211,6 @@ class RolesControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'role'),
                 'name' => $name,
                 'description' => $description,
-                'type' => 'super',
             ],
         ]);
 
@@ -198,32 +220,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame('user', $role->getType());
     }
 
-    public function testPostCreateCreatesAnOrgaUserRoleByDefault(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantAdmin($user->_real(), ['admin:manage:roles']);
-        $name = 'My role';
-        $description = 'What it does';
-
-        $this->assertSame(1, RoleFactory::count());
-
-        $client->request(Request::METHOD_POST, '/roles/new', [
-            'role' => [
-                '_token' => $this->generateCsrfToken($client, 'role'),
-                'name' => $name,
-                'description' => $description,
-            ],
-        ]);
-
-        $this->assertResponseRedirects('/roles', 302);
-        $this->assertSame(2, RoleFactory::count());
-        $role = RoleFactory::last();
-        $this->assertSame('user', $role->getType());
-    }
-
-    public function testPostCreateCanCreateDefaultUserRole(): void
+    public function testPostNewCanCreateDefaultUserRole(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -238,12 +235,11 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(2, RoleFactory::count());
 
-        $client->request(Request::METHOD_POST, '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new?type=user', [
             'role' => [
                 '_token' => $this->generateCsrfToken($client, 'role'),
                 'name' => $name,
                 'description' => $description,
-                'type' => 'user',
                 'isDefault' => true,
             ],
         ]);
@@ -256,7 +252,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertFalse($initialDefaultRole->isDefault());
     }
 
-    public function testPostCreateSanitizesPermissionsForAgentRole(): void
+    public function testPostNewSanitizesPermissionsForAgentRole(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -274,12 +270,11 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(1, RoleFactory::count());
 
-        $client->request(Request::METHOD_POST, '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new?type=agent', [
             'role' => [
                 '_token' => $this->generateCsrfToken($client, 'role'),
                 'name' => $name,
                 'description' => $description,
-                'type' => 'agent',
                 'permissions' => $permissions,
             ],
         ]);
@@ -290,7 +285,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(['orga:see'], $role->getPermissions());
     }
 
-    public function testPostCreateSanitizesPermissionsForUserRole(): void
+    public function testPostNewSanitizesPermissionsForUserRole(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -309,12 +304,11 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(1, RoleFactory::count());
 
-        $client->request(Request::METHOD_POST, '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new?type=user', [
             'role' => [
                 '_token' => $this->generateCsrfToken($client, 'role'),
                 'name' => $name,
                 'description' => $description,
-                'type' => 'user',
                 'permissions' => $permissions,
             ],
         ]);
@@ -325,7 +319,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(['orga:see'], $role->getPermissions());
     }
 
-    public function testPostCreateSanitizesPermissionsForAdminRole(): void
+    public function testPostNewSanitizesPermissionsForAdminRole(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -343,12 +337,11 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(1, RoleFactory::count());
 
-        $client->request(Request::METHOD_POST, '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new?type=admin', [
             'role' => [
                 '_token' => $this->generateCsrfToken($client, 'role'),
                 'name' => $name,
                 'description' => $description,
-                'type' => 'admin',
                 'permissions' => $permissions,
             ],
         ]);
@@ -359,7 +352,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(['admin:see'], $role->getPermissions());
     }
 
-    public function testPostCreateFailsWhenSettingDefaultAgentRole(): void
+    public function testPostNewFailsWhenSettingDefaultAgentRole(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -374,25 +367,24 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSame(2, RoleFactory::count());
 
-        $client->request(Request::METHOD_POST, '/roles/new', [
+        $client->request(Request::METHOD_POST, '/roles/new?type=agent', [
             'role' => [
                 '_token' => $this->generateCsrfToken($client, 'role'),
                 'name' => $name,
                 'description' => $description,
-                'type' => 'agent',
                 'isDefault' => true,
             ],
         ]);
 
         $this->clearEntityManager();
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertSame(2, RoleFactory::count());
         $initialDefaultRole->_refresh();
         $this->assertTrue($initialDefaultRole->isDefault());
     }
 
-    public function testPostCreateFailsIfNameIsEmpty(): void
+    public function testPostNewFailsIfNameIsEmpty(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -415,7 +407,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(1, RoleFactory::count());
     }
 
-    public function testPostCreateFailsIfNameIsTooLong(): void
+    public function testPostNewFailsIfNameIsTooLong(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -438,7 +430,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(1, RoleFactory::count());
     }
 
-    public function testPostCreateFailsIfDescriptionIsEmpty(): void
+    public function testPostNewFailsIfDescriptionIsEmpty(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -461,7 +453,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(1, RoleFactory::count());
     }
 
-    public function testPostCreateFailsIfDescriptionIsTooLong(): void
+    public function testPostNewFailsIfDescriptionIsTooLong(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -484,7 +476,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(1, RoleFactory::count());
     }
 
-    public function testPostCreateFailsIfNameAlreadyExists(): void
+    public function testPostNewFailsIfNameAlreadyExists(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -510,7 +502,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertSame(2, RoleFactory::count());
     }
 
-    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -532,30 +524,6 @@ class RolesControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#role-error', 'The security token is invalid');
         $this->assertSame(1, RoleFactory::count());
-    }
-
-    public function testPostCreateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $name = 'My role';
-        $description = 'What it does';
-
-        $this->assertSame(0, RoleFactory::count());
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, '/roles/new', [
-            'role' => [
-                '_token' => $this->generateCsrfToken($client, 'role'),
-                'name' => $name,
-                'description' => $description,
-            ],
-        ]);
-
-        $this->assertSame(0, RoleFactory::count());
     }
 
     public function testGetEditRendersCorrectly(): void
@@ -612,7 +580,7 @@ class RolesControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/roles/{$role->getUid()}/edit");
     }
 
-    public function testPostUpdateChangesTheRoleAndRedirects(): void
+    public function testPostEditChangesTheRoleAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -658,7 +626,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertEquals($newPermissions, $role->getPermissions());
     }
 
-    public function testPostUpdateSanitizesThePermissions(): void
+    public function testPostEditSanitizesThePermissions(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -694,7 +662,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertEquals(['admin:see'], $role->getPermissions());
     }
 
-    public function testPostUpdateCanSetDefaultRole(): void
+    public function testPostEditCanSetDefaultRole(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -728,7 +696,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertFalse($initialDefaultRole->isDefault());
     }
 
-    public function testPostUpdateFailsWhenSettingDefaultForAgentRole(): void
+    public function testPostEditFailsWhenSettingDefaultForAgentRole(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -755,14 +723,14 @@ class RolesControllerTest extends WebTestCase
 
         $this->clearEntityManager();
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(422);
         $role->_refresh();
         $this->assertFalse($role->isDefault());
         $initialDefaultRole->_refresh();
         $this->assertTrue($initialDefaultRole->isDefault());
     }
 
-    public function testPostUpdateFailsIfParamsAreInvalid(): void
+    public function testPostEditFailsIfParamsAreInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -804,7 +772,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertEquals($oldPermissions, $role->getPermissions());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -846,7 +814,7 @@ class RolesControllerTest extends WebTestCase
         $this->assertEquals($oldPermissions, $role->getPermissions());
     }
 
-    public function testPostUpdateFailsIfTypeIsSuper(): void
+    public function testPostEditFailsIfTypeIsSuper(): void
     {
         $this->expectException(NotFoundHttpException::class);
 
@@ -861,43 +829,6 @@ class RolesControllerTest extends WebTestCase
         $newDescription = 'Description of the new role';
         $oldPermissions = ['admin:*'];
         $newPermissions = ['admin:manage:roles'];
-        $role = RoleFactory::createOne([
-            'type' => $type,
-            'name' => $oldName,
-            'description' => $oldDescription,
-            'permissions' => $oldPermissions,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/roles/{$role->getUid()}/edit", [
-            'role' => [
-                '_token' => $this->generateCsrfToken($client, 'role'),
-                'name' => $newName,
-                'description' => $newDescription,
-                'permissions' => $newPermissions,
-            ],
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $type = Foundry\faker()->randomElement(['admin', 'agent', 'user']);
-        $oldName = 'Old role';
-        $newName = 'New role';
-        $oldDescription = 'Description of the old role';
-        $newDescription = 'Description of the new role';
-        if ($type === 'admin') {
-            $oldPermissions = ['admin:create:organizations'];
-            $newPermissions = ['admin:manage:roles'];
-        } else {
-            $oldPermissions = ['orga:create:tickets'];
-            $newPermissions = ['orga:create:tickets:messages'];
-        }
         $role = RoleFactory::createOne([
             'type' => $type,
             'name' => $oldName,

@@ -93,7 +93,7 @@ class OrganizationControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/organization/edit");
     }
 
-    public function testPostUpdateSavesTicketAndRedirects(): void
+    public function testPostEditSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -119,7 +119,7 @@ class OrganizationControllerTest extends WebTestCase
         $this->assertSame($newOrganization->getId(), $ticket->getOrganization()->getId());
     }
 
-    public function testPostUpdateChangesActors(): void
+    public function testPostEditChangesActors(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -171,7 +171,7 @@ class OrganizationControllerTest extends WebTestCase
         $this->assertSame($newObserver->getId(), $ticketObservers[0]->getId());
     }
 
-    public function testPostUpdateChangesContracts(): void
+    public function testPostEditChangesContracts(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -221,7 +221,7 @@ class OrganizationControllerTest extends WebTestCase
         $this->assertSame(20, $timeSpent->getTime());
     }
 
-    public function testPostUpdateFailsIfAccessIsForbiddenInDestinationOrganization(): void
+    public function testPostEditFailsIfAccessIsForbiddenInDestinationOrganization(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -249,7 +249,7 @@ class OrganizationControllerTest extends WebTestCase
         $this->assertSame($oldOrganization->getId(), $ticket->getOrganization()->getId());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -275,80 +275,5 @@ class OrganizationControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#ticket_organization-error', 'The security token is invalid');
         $ticket->_refresh();
         $this->assertSame($oldOrganization->getId(), $ticket->getOrganization()->getId());
-    }
-
-    public function testPostUpdateFailsIfTicketIsClosed(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:organization']);
-        $oldOrganization = Factory\OrganizationFactory::createOne();
-        $newOrganization = Factory\OrganizationFactory::createOne();
-        $ticket = Factory\TicketFactory::createOne([
-            'status' => 'closed',
-            'createdBy' => $user,
-            'organization' => $oldOrganization,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/organization/edit", [
-            'ticket_organization' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket organization'),
-                'organization' => $newOrganization->getId(),
-            ],
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $oldOrganization = Factory\OrganizationFactory::createOne();
-        $newOrganization = Factory\OrganizationFactory::createOne();
-        $ticket = Factory\TicketFactory::createOne([
-            'status' => 'in_progress',
-            'createdBy' => $user,
-            'organization' => $oldOrganization,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/organization/edit", [
-            'ticket_organization' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket organization'),
-                'organization' => $newOrganization->getId(),
-            ],
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = Factory\UserFactory::createOne();
-        $otherUser = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:labels']);
-        $oldOrganization = Factory\OrganizationFactory::createOne();
-        $newOrganization = Factory\OrganizationFactory::createOne();
-        $ticket = Factory\TicketFactory::createOne([
-            'status' => 'in_progress',
-            'createdBy' => $otherUser,
-            'organization' => $oldOrganization,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/organization/edit", [
-            'ticket_organization' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket organization'),
-                'organization' => $newOrganization->getId(),
-            ],
-        ]);
     }
 }

@@ -10,11 +10,7 @@
 
 {% block body %}
     {{ form_start(form, {
-        action: path('update ticket labels', { uid: ticket.uid }),
-        attr: {
-            'class': 'form--standard',
-            'data-turbo-preserve-scroll': true,
-        },
+        action: path('edit ticket labels', { uid: ticket.uid }),
     }) }}
         {{ form_errors(form) }}
 
@@ -43,12 +39,6 @@
                     {% endif %}
                 </div>
             {% endfor %}
-        </div>
-
-        <div class="form__actions">
-            <button class="button--primary" type="submit">
-                {{ 'forms.save_changes' | trans }}
-            </button>
         </div>
     {{ form_end(form) }}
 {% endblock %}

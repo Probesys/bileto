@@ -16,7 +16,6 @@ use App\Utils\Pagination;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContractsController extends BaseController
 {
@@ -67,50 +66,35 @@ class ContractsController extends BaseController
         ]);
     }
 
-    #[Route('/contracts/{uid:contract}/edit', name: 'edit contract', methods: ['GET', 'HEAD'])]
+    #[Route('/contracts/{uid:contract}/edit', name: 'edit contract')]
     public function edit(
         Contract $contract,
+        Request $request,
+        ContractRepository $contractRepository,
     ): Response {
         $organization = $contract->getOrganization();
 
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
-        $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract);
+        $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract, [
+            'allow_associate' => false,
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $contract = $form->getData();
+            $contractRepository->save($contract, true);
+
+            return $this->redirectToRoute('contract', [
+                'uid' => $contract->getUid(),
+            ]);
+        }
 
         return $this->render('contracts/edit.html.twig', [
             'organization' => $organization,
             'contract' => $contract,
             'form' => $form,
-        ]);
-    }
-
-    #[Route('/contracts/{uid:contract}/edit', name: 'update contract', methods: ['POST'])]
-    public function update(
-        Contract $contract,
-        Request $request,
-        ContractRepository $contractRepository,
-        TranslatorInterface $translator,
-    ): Response {
-        $organization = $contract->getOrganization();
-
-        $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
-
-        $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract);
-        $form->handleRequest($request);
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('contracts/edit.html.twig', [
-                'organization' => $organization,
-                'contract' => $contract,
-                'form' => $form,
-            ]);
-        }
-
-        $contract = $form->getData();
-        $contractRepository->save($contract, true);
-
-        return $this->redirectToRoute('contract', [
-            'uid' => $contract->getUid(),
         ]);
     }
 }

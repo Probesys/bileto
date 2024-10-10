@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class TitleForm extends AbstractType
 {
@@ -19,6 +20,14 @@ class TitleForm extends AbstractType
         $builder->add('title', Type\TextType::class, [
             'empty_data' => '',
             'trim' => true,
+            'label' => new TranslatableMessage('tickets.title'),
+            'attr' => [
+                'maxlength' => Entity\Ticket::TITLE_MAX_LENGTH,
+            ],
+        ]);
+
+        $builder->add('submit', Type\SubmitType::class, [
+            'label' => new TranslatableMessage('forms.save_changes'),
         ]);
     }
 
@@ -28,6 +37,10 @@ class TitleForm extends AbstractType
             'data_class' => Entity\Ticket::class,
             'csrf_token_id' => 'ticket title',
             'csrf_message' => 'csrf.invalid',
+            'attr' => [
+                'class' => 'form--standard',
+                'data-turbo-preserve-scroll' => true,
+            ],
         ]);
     }
 }

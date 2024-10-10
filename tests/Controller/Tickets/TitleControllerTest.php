@@ -88,7 +88,7 @@ class TitleControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/title/edit");
     }
 
-    public function testPostUpdateSavesTicketAndRedirects(): void
+    public function testPostEditSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -114,7 +114,7 @@ class TitleControllerTest extends WebTestCase
         $this->assertSame($newTitle, $ticket->getTitle());
     }
 
-    public function testPostUpdateFailsIfTitleIsInvalid(): void
+    public function testPostEditFailsIfTitleIsInvalid(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -142,7 +142,7 @@ class TitleControllerTest extends WebTestCase
         $this->assertSame($oldTitle, $ticket->getTitle());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -168,78 +168,5 @@ class TitleControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#ticket_title-error', 'The security token is invalid');
         $ticket->_refresh();
         $this->assertSame($oldTitle, $ticket->getTitle());
-    }
-
-    public function testPostUpdateFailsIfTicketIsClosed(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
-        $oldTitle = 'My ticket';
-        $newTitle = 'My urgent ticket!';
-        $ticket = Factory\TicketFactory::createOne([
-            'status' => 'closed',
-            'createdBy' => $user,
-            'title' => $oldTitle,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
-            'ticket_title' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket title'),
-                'title' => $newTitle,
-            ],
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $oldTitle = 'My ticket';
-        $newTitle = 'My urgent ticket!';
-        $ticket = Factory\TicketFactory::createOne([
-            'status' => 'in_progress',
-            'createdBy' => $user,
-            'title' => $oldTitle,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
-            'ticket_title' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket title'),
-                'title' => $newTitle,
-            ],
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:title']);
-        $oldTitle = 'My ticket';
-        $newTitle = 'My urgent ticket!';
-        $ticket = Factory\TicketFactory::createOne([
-            'status' => 'in_progress',
-            'title' => $oldTitle,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/title/edit", [
-            'ticket_title' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket title'),
-                'title' => $newTitle,
-            ],
-        ]);
     }
 }

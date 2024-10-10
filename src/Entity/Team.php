@@ -29,6 +29,8 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const NAME_MAX_LENGTH = 50;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -49,12 +51,12 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
     #[ORM\ManyToOne]
     private ?User $updatedBy = null;
 
-    #[ORM\Column(length: 50, unique: true)]
+    #[ORM\Column(length: self::NAME_MAX_LENGTH, unique: true)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('team.name.required', [], 'errors'),
     )]
     #[Assert\Length(
-        max: 50,
+        max: self::NAME_MAX_LENGTH,
         maxMessage: new TranslatableMessage('team.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;

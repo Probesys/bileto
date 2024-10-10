@@ -35,10 +35,7 @@
         <h1>{{ 'organizations.settings.title' | trans }}</h1>
 
         <div class="panel">
-            {{ include('organizations/_form.html.twig', {
-                'form': form,
-                'submit_label': 'forms.save_changes' | trans,
-            }) }}
+            {{ include('organizations/_form.html.twig', { 'form': form }) }}
         </div>
 
         <div class="panel">

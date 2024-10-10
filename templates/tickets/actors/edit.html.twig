@@ -10,54 +10,14 @@
 
 {% block body %}
     {{ form_start(form, {
-        action: path('update ticket actors', { uid: ticket.uid }),
-        attr: {
-            'class': 'form--standard',
-            'data-turbo-preserve-scroll': true,
-            'data-controller': 'form-ticket-actors',
-        },
+        action: path('edit ticket actors', { uid: ticket.uid }),
     }) }}
         {{ form_errors(form) }}
 
-        <div class="flow flow--small">
-            <label for="{{ field_id(form.requester) }}">
-                {{ 'tickets.requester' | trans }}
-            </label>
-
-            {{ form_errors(form.requester) }}
-
-            <select
-                id="{{ field_id(form.requester) }}"
-                name="{{ field_name(form.requester) }}"
-                required
-                {% if field_has_errors(form.requester) %}
-                    aria-invalid="true"
-                    aria-errormessage="{{ field_id(form.requester, 'error') }}"
-                {% endif %}
-            >
-                {% for choice in form.requester.vars.choices %}
-                    <option
-                        value="{{ choice.value }}"
-                        {{ choice.value == field_value(form.requester) ? 'selected' }}
-                    >
-                        {{ choice.label }}
-
-                        {% if choice.value == app.user.id %}
-                            ({{ 'users.yourself' | trans }})
-                        {% endif %}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+        {{ form_row(form.requester) }}
 
         <div class="flow flow--small">
-            <label for="{{ field_id(form.observers) }}">
-                {{ 'tickets.observers' | trans }}
-
-                <small class="text--secondary">
-                    {{ 'forms.optional' | trans }}
-                </small>
-            </label>
+            {{ form_label(form.observers) }}
 
             {{ form_errors(form.observers) }}
 
@@ -76,10 +36,6 @@
                             {{ choice.value in field_value(form.observers) ? 'selected' }}
                         >
                             {{ choice.label }}
-
-                            {% if choice.value == app.user.id %}
-                                ({{ 'users.yourself' | trans }})
-                            {% endif %}
                         </option>
                     {% endfor %}
                 </select>
@@ -118,90 +74,12 @@
             </div>
         </div>
 
-        {% if form.team.vars.choices|length > 0 %}
-            <div class="flow flow--small">
-                <label for="{{ field_id(form.team) }}">
-                    {{ 'tickets.team' | trans }}
-
-                    <small class="text--secondary">
-                        {{ 'forms.optional' | trans }}
-                    </small>
-                </label>
-
-                {{ form_errors(form.team) }}
-
-                <select
-                    id="{{ field_id(form.team) }}"
-                    name="{{ field_name(form.team) }}"
-                    {% if field_has_errors(form.team) %}
-                        aria-invalid="true"
-                        aria-errormessage="{{ field_id(form.team, 'error') }}"
-                    {% endif %}
-                    data-form-ticket-actors-target="teams"
-                    data-action="form-ticket-actors#refreshAssignees"
-                >
-                    <option value="">
-                        {{ 'tickets.team.none' | trans }}
-                    </option>
-
-                    {% for choice in form.team.vars.choices %}
-                        <option
-                            value="{{ choice.value }}"
-                            {{ choice.value == field_value(form.team) ? 'selected' }}
-                            data-agents-ids="{{ choice.attr.agentsIds }}"
-                        >
-                            {{ choice.label }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
+        {% if form.team.vars.choices is not empty %}
+            {{ form_row(form.team) }}
         {% else %}
             <!-- {{ field_name(form.team) }} -->
         {% endif %}
 
-        <div class="flow flow--small">
-            <label for="{{ field_id(form.assignee) }}">
-                {{ 'tickets.assignee' | trans }}
-
-                <small class="text--secondary">
-                    {{ 'forms.optional' | trans }}
-                </small>
-            </label>
-
-            {{ form_errors(form.assignee) }}
-
-            <select
-                id="{{ field_id(form.assignee) }}"
-                name="{{ field_name(form.assignee) }}"
-                {% if field_has_errors(form.assignee) %}
-                    aria-invalid="true"
-                    aria-errormessage="{{ field_id(form.assignee, 'error') }}"
-                {% endif %}
-                data-form-ticket-actors-target="assignees"
-            >
-                <option value="">
-                    {{ 'tickets.unassigned' | trans }}
-                </option>
-
-                {% for choice in form.assignee.vars.choices %}
-                    <option
-                        value="{{ choice.value }}"
-                        {{ choice.value == field_value(form.assignee) ? 'selected' }}
-                    >
-                        {{ choice.label }}
-
-                        {% if choice.value == app.user.id %}
-                            ({{ 'users.yourself' | trans }})
-                        {% endif %}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form__actions">
-            <button class="button--primary" type="submit">
-                {{ 'forms.save_changes' | trans }}
-            </button>
-        </div>
+        {{ form_row(form.assignee) }}
     {{ form_end(form) }}
 {% endblock %}

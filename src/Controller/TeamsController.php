@@ -34,40 +34,29 @@ class TeamsController extends BaseController
         ]);
     }
 
-    #[Route('/teams/new', name: 'new team', methods: ['GET', 'HEAD'])]
-    public function new(): Response
-    {
-        $this->denyAccessUnlessGranted('admin:manage:agents');
-
-        $team = new Team();
-        $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
-
-        return $this->render('teams/new.html.twig', [
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/teams/new', name: 'create team', methods: ['POST'])]
-    public function create(
+    #[Route('/teams/new', name: 'new team')]
+    public function new(
         Request $request,
         TeamRepository $teamRepository,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
-        $form = $this->createNamedForm('team', Form\TeamForm::class);
+        $team = new Team();
+        $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('teams/new.html.twig', [
-                'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $team = $form->getData();
+            $teamRepository->save($team, true);
+
+            return $this->redirectToRoute('team', [
+                'uid' => $team->getUid(),
             ]);
         }
 
-        $team = $form->getData();
-        $teamRepository->save($team, true);
-
-        return $this->redirectToRoute('team', [
-            'uid' => $team->getUid(),
+        return $this->render('teams/new.html.twig', [
+            'form' => $form,
         ]);
     }
 
@@ -92,21 +81,8 @@ class TeamsController extends BaseController
         ]);
     }
 
-    #[Route('/teams/{uid:team}/edit', name: 'edit team', methods: ['GET', 'HEAD'])]
-    public function edit(Team $team): Response
-    {
-        $this->denyAccessUnlessGranted('admin:manage:agents');
-
-        $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
-
-        return $this->render('teams/edit.html.twig', [
-            'team' => $team,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/teams/{uid:team}/edit', name: 'update team', methods: ['POST'])]
-    public function update(
+    #[Route('/teams/{uid:team}/edit', name: 'edit team')]
+    public function edit(
         Team $team,
         Request $request,
         TeamRepository $teamRepository,
@@ -114,20 +90,21 @@ class TeamsController extends BaseController
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('teams/edit.html.twig', [
-                'team' => $team,
-                'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $team = $form->getData();
+            $teamRepository->save($team, true);
+
+            return $this->redirectToRoute('team', [
+                'uid' => $team->getUid(),
             ]);
         }
 
-        $team = $form->getData();
-        $teamRepository->save($team, true);
-
-        return $this->redirectToRoute('team', [
-            'uid' => $team->getUid(),
+        return $this->render('teams/edit.html.twig', [
+            'team' => $team,
+            'form' => $form,
         ]);
     }
 

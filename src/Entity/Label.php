@@ -29,6 +29,10 @@ class Label implements EntityInterface, MonitorableEntityInterface, UidEntityInt
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const NAME_MAX_LENGTH = 50;
+
+    public const DESCRIPTION_MAX_LENGTH = 250;
+
     public const COLORS = ['grey', 'primary', 'blue', 'green', 'orange', 'red'];
 
     #[ORM\Id]
@@ -51,19 +55,19 @@ class Label implements EntityInterface, MonitorableEntityInterface, UidEntityInt
     #[ORM\ManyToOne]
     private ?User $updatedBy = null;
 
-    #[ORM\Column(length: 50, unique: true)]
+    #[ORM\Column(length: self::NAME_MAX_LENGTH, unique: true)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('label.name.required', [], 'errors'),
     )]
     #[Assert\Length(
-        max: 50,
+        max: self::NAME_MAX_LENGTH,
         maxMessage: new TranslatableMessage('label.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;
 
-    #[ORM\Column(length: 250)]
+    #[ORM\Column(length: self::DESCRIPTION_MAX_LENGTH)]
     #[Assert\Length(
-        max: 250,
+        max: self::DESCRIPTION_MAX_LENGTH,
         maxMessage: new TranslatableMessage('label.description.max_chars', [], 'errors'),
     )]
     private ?string $description = null;

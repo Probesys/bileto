@@ -48,7 +48,7 @@ class RolesController extends BaseController
         ]);
     }
 
-    #[Route('/roles/new', name: 'new role', methods: ['GET', 'HEAD'])]
+    #[Route('/roles/new', name: 'new role')]
     public function new(
         Request $request,
         RoleRepository $roleRepository,
@@ -73,67 +73,26 @@ class RolesController extends BaseController
             'type' => $type,
         ]);
 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $role = $form->getData();
+            $roleRepository->save($role, true);
+
+            if ($role->isDefault() && $role->getType() === 'user') {
+                $roleRepository->changeDefault($role);
+            }
+
+            return $this->redirectToRoute('roles');
+        }
+
         return $this->render('roles/new.html.twig', [
             'form' => $form,
         ]);
     }
 
-    #[Route('/roles/new', name: 'create role', methods: ['POST'])]
-    public function create(
-        Request $request,
-        RoleRepository $roleRepository,
-    ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:roles');
-
-        $data = $request->request->all('role');
-        $type = $data['type'] ?? 'user';
-
-        if (!in_array($type, Role::TYPES) || $type === 'super') {
-            $type = 'user';
-        }
-
-        $form = $this->createNamedForm('role', Form\RoleForm::class, options: [
-            'type' => $type,
-        ]);
-        $form->handleRequest($request);
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('roles/new.html.twig', [
-                'form' => $form,
-            ]);
-        }
-
-        $role = $form->getData();
-        $roleRepository->save($role, true);
-
-        if ($role->isDefault() && $role->getType() === 'user') {
-            $roleRepository->changeDefault($role);
-        }
-
-        return $this->redirectToRoute('roles');
-    }
-
-    #[Route('/roles/{uid:role}/edit', name: 'edit role', methods: ['GET', 'HEAD'])]
-    public function edit(Role $role): Response
-    {
-        $this->denyAccessUnlessGranted('admin:manage:roles');
-
-        if ($role->getType() === 'super') {
-            throw $this->createNotFoundException('Super Role object cannot be loaded.');
-        }
-
-        $form = $this->createNamedForm('role', Form\RoleForm::class, $role, [
-            'type' => $role->getType(),
-        ]);
-
-        return $this->render('roles/edit.html.twig', [
-            'role' => $role,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/roles/{uid:role}/edit', name: 'update role', methods: ['POST'])]
-    public function update(
+    #[Route('/roles/{uid:role}/edit', name: 'edit role')]
+    public function edit(
         Role $role,
         Request $request,
         RoleRepository $roleRepository,
@@ -144,26 +103,27 @@ class RolesController extends BaseController
             throw $this->createNotFoundException('Super Role object cannot be loaded.');
         }
 
-        $form = $this->createNamedForm('role', Form\RoleForm::class, $role, options: [
+        $form = $this->createNamedForm('role', Form\RoleForm::class, $role, [
             'type' => $role->getType(),
         ]);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('roles/edit.html.twig', [
-                'role' => $role,
-                'form' => $form,
-            ]);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $role = $form->getData();
+            $roleRepository->save($role, true);
+
+            if ($role->isDefault() && $role->getType() === 'user') {
+                $roleRepository->changeDefault($role);
+            }
+
+            return $this->redirectToRoute('roles');
         }
 
-        $role = $form->getData();
-        $roleRepository->save($role, true);
-
-        if ($role->isDefault() && $role->getType() === 'user') {
-            $roleRepository->changeDefault($role);
-        }
-
-        return $this->redirectToRoute('roles');
+        return $this->render('roles/edit.html.twig', [
+            'role' => $role,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/roles/{uid:role}/deletion', name: 'delete role', methods: ['POST'])]
