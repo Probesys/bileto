@@ -6,6 +6,13 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     connect () {
+        this.resizeBar();
+
+        const resizeObserver = new ResizeObserver(() => this.resizeBar());
+        resizeObserver.observe(this.element);
+    }
+
+    resizeBar () {
         const bottom = this.element.querySelector('#bottom');
 
         let lastElement = null
