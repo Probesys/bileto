@@ -16,22 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LabelsController extends BaseController
 {
-    #[Route('/tickets/{uid:ticket}/labels/edit', name: 'edit ticket labels', methods: ['GET', 'HEAD'])]
-    public function edit(Entity\Ticket $ticket): Response
-    {
-        $this->denyAccessUnlessGranted('orga:update:tickets:labels', $ticket);
-        $this->denyAccessIfTicketIsClosed($ticket);
-
-        $form = $this->createNamedForm('ticket_labels', Form\Ticket\LabelsForm::class, $ticket);
-
-        return $this->render('tickets/labels/edit.html.twig', [
-            'ticket' => $ticket,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/tickets/{uid:ticket}/labels/edit', name: 'update ticket labels', methods: ['POST'])]
-    public function update(
+    #[Route('/tickets/{uid:ticket}/labels/edit', name: 'edit ticket labels')]
+    public function edit(
         Entity\Ticket $ticket,
         Request $request,
         Repository\TicketRepository $ticketRepository,
@@ -40,20 +26,21 @@ class LabelsController extends BaseController
         $this->denyAccessIfTicketIsClosed($ticket);
 
         $form = $this->createNamedForm('ticket_labels', Form\Ticket\LabelsForm::class, $ticket);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('tickets/labels/edit.html.twig', [
-                'ticket' => $ticket,
-                'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ticket = $form->getData();
+            $ticketRepository->save($ticket, true);
+
+            return $this->redirectToRoute('ticket', [
+                'uid' => $ticket->getUid(),
             ]);
         }
 
-        $ticket = $form->getData();
-        $ticketRepository->save($ticket, true);
-
-        return $this->redirectToRoute('ticket', [
-            'uid' => $ticket->getUid(),
+        return $this->render('tickets/labels/edit.html.twig', [
+            'ticket' => $ticket,
+            'form' => $form,
         ]);
     }
 }
