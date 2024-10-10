@@ -68,7 +68,7 @@ class TeamType extends AbstractType
                     return (string)$id;
                 }, $team->getAgentsIds());
                 return [
-                    'agentsIds' => json_encode($agentsIds),
+                    'data-agents-ids' => json_encode($agentsIds),
                 ];
             },
 

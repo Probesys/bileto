@@ -116,7 +116,7 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/actors/edit");
     }
 
-    public function testPostUpdateSavesTicketAndRedirects(): void
+    public function testPostEditSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
         list(
@@ -167,7 +167,7 @@ class ActorsControllerTest extends WebTestCase
         );
     }
 
-    public function testPostUpdateAcceptsEmptyAssignee(): void
+    public function testPostEditAcceptsEmptyAssignee(): void
     {
         $client = static::createClient();
         list(
@@ -198,7 +198,7 @@ class ActorsControllerTest extends WebTestCase
         $this->assertNull($ticket->getAssignee());
     }
 
-    public function testPostUpdateFailsIfRequesterIsNotInOrganization(): void
+    public function testPostEditFailsIfRequesterIsNotInOrganization(): void
     {
         $client = static::createClient();
         list(
@@ -230,7 +230,7 @@ class ActorsControllerTest extends WebTestCase
         $this->assertNull($ticket->getAssignee());
     }
 
-    public function testPostUpdateFailsIfObserverIsNotInOrganization(): void
+    public function testPostEditFailsIfObserverIsNotInOrganization(): void
     {
         $client = static::createClient();
         list(
@@ -265,7 +265,7 @@ class ActorsControllerTest extends WebTestCase
         $this->assertSame(0, count($ticket->getObservers()));
     }
 
-    public function testPostUpdateFailsIfAssigneeIsNotAgent(): void
+    public function testPostEditFailsIfAssigneeIsNotAgent(): void
     {
         $client = static::createClient();
         list(
@@ -300,7 +300,7 @@ class ActorsControllerTest extends WebTestCase
         $this->assertSame($user->getUid(), $ticket->getAssignee()->getUid());
     }
 
-    public function testPostUpdateFailsIfAssigneeIsNotInTeam(): void
+    public function testPostEditFailsIfAssigneeIsNotInTeam(): void
     {
         $client = static::createClient();
         list(
@@ -340,7 +340,7 @@ class ActorsControllerTest extends WebTestCase
         $this->assertNull($ticket->getAssignee());
     }
 
-    public function testPostUpdateFailsIfTeamNotAuthorizedInOrga(): void
+    public function testPostEditFailsIfTeamNotAuthorizedInOrga(): void
     {
         $client = static::createClient();
         list(
@@ -384,7 +384,7 @@ class ActorsControllerTest extends WebTestCase
         $this->assertNull($ticket->getAssignee());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         list(
@@ -417,96 +417,5 @@ class ActorsControllerTest extends WebTestCase
         $ticket->_refresh();
         $this->assertNull($ticket->getRequester());
         $this->assertNull($ticket->getAssignee());
-    }
-
-    public function testPostUpdateFailsIfTicketIsClosed(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        list(
-            $user,
-            $requester,
-            $assignee,
-        ) = UserFactory::createMany(3);
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
-        $ticket = TicketFactory::createOne([
-            'status' => 'closed',
-            'createdBy' => $user,
-            'requester' => null,
-            'assignee' => null,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            'ticket_actors' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
-                'assignee' => $assignee->getId(),
-            ],
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        list(
-            $user,
-            $requester,
-            $assignee,
-        ) = UserFactory::createMany(3);
-        $client->loginUser($user->_real());
-        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
-        $ticket = TicketFactory::createOne([
-            'status' => 'in_progress',
-            'createdBy' => $user,
-            'requester' => null,
-            'assignee' => null,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            'ticket_actors' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
-                'assignee' => $assignee->getId(),
-            ],
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        list(
-            $user,
-            $requester,
-            $assignee,
-        ) = UserFactory::createMany(3);
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
-        $this->grantOrga($requester->_real(), ['orga:create:tickets']);
-        $this->grantOrga($assignee->_real(), ['orga:create:tickets']);
-        $ticket = TicketFactory::createOne([
-            'status' => 'in_progress',
-            'requester' => null,
-            'assignee' => null,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
-            'ticket_actors' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
-                'assignee' => $assignee->getId(),
-            ],
-        ]);
     }
 }

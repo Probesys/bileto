@@ -251,7 +251,7 @@
 
                                     {% if is_agent(organization) and (not ticket.team or ticket.team.hasAgent(app.user)) %}
                                         <form
-                                            action="{{ path('update ticket actors', { uid: ticket.uid }) }}"
+                                            action="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
                                             method="post"
                                             class="form--inline"
                                             data-turbo-preserve-scroll

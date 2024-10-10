@@ -7,13 +7,15 @@
 namespace App\Form\Ticket;
 
 use App\Entity;
-use App\Form\Type;
+use App\Form\Type as AppType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ActorsForm extends AbstractType
 {
@@ -25,24 +27,43 @@ class ActorsForm extends AbstractType
 
             $organization = $ticket->getOrganization();
 
-            $form->add('requester', Type\ActorType::class, [
+            $form->add('requester', AppType\ActorType::class, [
                 'organization' => $organization,
-                'required' => true,
+                'label' => new TranslatableMessage('tickets.requester'),
             ]);
 
-            $form->add('team', Type\TeamType::class, [
-                'organization' => $organization,
-            ]);
-
-            $form->add('assignee', Type\ActorType::class, [
-                'organization' => $organization,
-                'roleType' => 'agent',
-            ]);
-
-            $form->add('observers', Type\ActorType::class, [
+            $form->add('observers', AppType\ActorType::class, [
                 'organization' => $organization,
                 'multiple' => true,
                 'by_reference' => false,
+                'required' => false,
+                'label' => new TranslatableMessage('tickets.observers'),
+            ]);
+
+            $form->add('team', AppType\TeamType::class, [
+                'organization' => $organization,
+                'required' => false,
+                'label' => new TranslatableMessage('tickets.team'),
+                'placeholder' => new TranslatableMessage('tickets.team.none'),
+                'attr' => [
+                    'data-form-ticket-actors-target' => 'teams',
+                    'data-action' => 'form-ticket-actors#refreshAssignees',
+                ],
+            ]);
+
+            $form->add('assignee', AppType\ActorType::class, [
+                'organization' => $organization,
+                'roleType' => 'agent',
+                'required' => false,
+                'label' => new TranslatableMessage('tickets.assignee'),
+                'placeholder' => new TranslatableMessage('tickets.unassigned'),
+                'attr' => [
+                    'data-form-ticket-actors-target' => 'assignees',
+                ],
+            ]);
+
+            $form->add('submit', Type\SubmitType::class, [
+                'label' => new TranslatableMessage('forms.save_changes'),
             ]);
         });
 
@@ -70,6 +91,11 @@ class ActorsForm extends AbstractType
             'data_class' => Entity\Ticket::class,
             'csrf_token_id' => 'ticket actors',
             'csrf_message' => 'csrf.invalid',
+            'attr' => [
+                'class' => 'form--standard',
+                'data-turbo-preserve-scroll' => true,
+                'data-controller' => 'form-ticket-actors',
+            ],
         ]);
     }
 }
