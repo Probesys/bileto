@@ -134,6 +134,7 @@ forms.input_texts.remove: Retirer
 forms.max_chars: '(max. {number} caractères)'
 forms.optional: (optionnel)
 forms.optional_max_chars: '(optionnel, max. {number} caractères)'
+forms.read_only: '(lecture seule)'
 forms.save_changes: 'Enregistrer les modifications'
 forms.show_password: 'Afficher le mot de passe sous forme de texte. Attention, cela exposera votre mot de passe visuellement.'
 home.all_your_tickets: 'Voir tous vos tickets'
