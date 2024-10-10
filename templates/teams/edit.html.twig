@@ -39,10 +39,7 @@
         <h1>{{ 'teams.edit.title' | trans }}</h1>
 
         <div class="panel">
-            {{ include('teams/_form.html.twig', {
-                'form': form,
-                'submit_label': 'forms.save_changes' | trans,
-            }) }}
+            {{ form(form) }}
         </div>
 
         <div class="panel">

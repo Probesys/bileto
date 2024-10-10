@@ -87,7 +87,7 @@ class TeamsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, '/teams/new');
     }
 
-    public function testPostCreateCreatesTheTeamAndRedirects(): void
+    public function testPostNewCreatesTheTeamAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -111,7 +111,7 @@ class TeamsControllerTest extends WebTestCase
         $this->assertSame(20, strlen($team->getUid()));
     }
 
-    public function testPostCreateFailsIfNameIsAlreadyUsed(): void
+    public function testPostNewFailsIfNameIsAlreadyUsed(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -136,7 +136,7 @@ class TeamsControllerTest extends WebTestCase
         $this->assertSame(1, TeamFactory::count());
     }
 
-    public function testPostCreateFailsIfNameIsEmpty(): void
+    public function testPostNewFailsIfNameIsEmpty(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -155,7 +155,7 @@ class TeamsControllerTest extends WebTestCase
         $this->assertSame(0, TeamFactory::count());
     }
 
-    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -172,24 +172,6 @@ class TeamsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#team-error', 'The security token is invalid');
         $this->assertSame(0, TeamFactory::count());
-    }
-
-    public function testPostCreateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $name = 'My team';
-
-        $client->catchExceptions(false);
-        $crawler = $client->request(Request::METHOD_POST, '/teams/new', [
-            'team' => [
-                '_token' => $this->generateCsrfToken($client, 'team'),
-                'name' => $name,
-            ],
-        ]);
     }
 
     public function testGetShowRendersCorrectly(): void
@@ -250,7 +232,7 @@ class TeamsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/edit");
     }
 
-    public function testPostUpdateSavesTheTeamAndRedirects(): void
+    public function testPostEditSavesTheTeamAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -274,7 +256,7 @@ class TeamsControllerTest extends WebTestCase
         $this->assertSame($newName, $team->getName());
     }
 
-    public function testPostUpdateFailsIfNameIsAlreadyUsed(): void
+    public function testPostEditFailsIfNameIsAlreadyUsed(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -305,7 +287,7 @@ class TeamsControllerTest extends WebTestCase
         $this->assertSame($initialName, $team->getName());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -328,28 +310,6 @@ class TeamsControllerTest extends WebTestCase
         $this->clearEntityManager();
         $team->_refresh();
         $this->assertSame($initialName, $team->getName());
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $initialName = 'team';
-        $newName = 'My team';
-        $team = TeamFactory::createOne([
-            'name' => $initialName,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/edit", [
-            'team' => [
-                '_token' => $this->generateCsrfToken($client, 'team'),
-                'name' => $newName,
-            ],
-        ]);
     }
 
     public function testPostDeleteRemovesTheTeamAndRedirects(): void
