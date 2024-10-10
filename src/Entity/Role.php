@@ -29,6 +29,10 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const NAME_MAX_LENGTH = 50;
+
+    public const DESCRIPTION_MAX_LENGTH = 255;
+
     public const TYPES = ['super', 'admin', 'agent', 'user'];
 
     public const PERMISSIONS = [
@@ -108,22 +112,22 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
     #[ORM\ManyToOne]
     private ?User $updatedBy = null;
 
-    #[ORM\Column(length: 50, unique: true)]
+    #[ORM\Column(length: self::NAME_MAX_LENGTH, unique: true)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('role.name.required', [], 'errors'),
     )]
     #[Assert\Length(
-        max: 50,
+        max: self::NAME_MAX_LENGTH,
         maxMessage: new TranslatableMessage('role.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: self::DESCRIPTION_MAX_LENGTH)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('role.description.required', [], 'errors'),
     )]
     #[Assert\Length(
-        max: 255,
+        max: self::DESCRIPTION_MAX_LENGTH,
         maxMessage: new TranslatableMessage('role.description.max_chars', [], 'errors'),
     )]
     private ?string $description = null;

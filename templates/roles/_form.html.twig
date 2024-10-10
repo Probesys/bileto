@@ -4,79 +4,21 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{{ form_start(form, { attr: {
-    'class': 'form--standard',
-}}) }}
+{{ form_start(form) }}
     {{ form_errors(form) }}
 
-    <div class="flow flow--small">
-        <label for="{{ field_id(form.name) }}">
-            {{ 'roles.name' | trans }}
+    {{ form_row(form.name) }}
 
-            <small class="text--secondary">
-                {{ 'forms.max_chars' | trans({ number: 50 }) }}
-            </small>
-        </label>
-
-        {{ form_errors(form.name) }}
-
-        <input
-            type="text"
-            id="{{ field_id(form.name) }}"
-            name="{{ field_name(form.name) }}"
-            value="{{ field_value(form.name) }}"
-            required
-            maxlength="50"
-            {% if field_has_errors(form.name) %}
-                aria-invalid="true"
-                aria-errormessage="{{ field_id(form.name, 'error') }}"
-            {% endif %}
-        />
-    </div>
-
-    <div class="flow flow--small">
-        <label for="{{ field_id(form.description) }}">
-            {{ 'roles.description' | trans }}
-
-            <small class="text--secondary">
-                {{ 'forms.max_chars' | trans({ number: 255 }) }}
-            </small>
-        </label>
-
-        {{ form_errors(form.description) }}
-
-        <input
-            type="text"
-            id="{{ field_id(form.description) }}"
-            name="{{ field_name(form.description) }}"
-            value="{{ field_value(form.description) }}"
-            required
-            maxlength="255"
-            {% if field_has_errors(form.description) %}
-                aria-invalid="true"
-                aria-errormessage="{{ field_id(form.description, 'error') }}"
-            {% endif %}
-        />
-    </div>
+    {{ form_row(form.description) }}
 
     {% if form.isDefault is defined %}
-        <div>
-            {{ form_errors(form.isDefault) }}
-            <input
-                type="checkbox"
-                id="{{ field_id(form.isDefault) }}"
-                name="{{ field_name(form.isDefault) }}"
-                {{ form.isDefault.vars.checked ? 'checked' }}
-            />
-
-            <label for="{{ field_id(form.isDefault) }}">
-                {{ 'roles.is_default' | trans }}
-            </label>
-        </div>
+        {{ form_row(form.isDefault) }}
     {% endif %}
 
     <fieldset data-controller="checkboxes">
-        <legend>{{ 'roles.permissions' | trans }}</legend>
+        <legend>
+            {{ field_label(form.permissions) }}
+        </legend>
 
         <div class="flow flow--large">
             {{ form_errors(form.permissions) }}
@@ -151,10 +93,4 @@
             </div>
         </div>
     </fieldset>
-
-    <div class="form__actions">
-        <button id="form-save-role-submit" class="button--primary" type="submit">
-            {{ submit_label }}
-        </button>
-    </div>
 {{ form_end(form) }}
