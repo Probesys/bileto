@@ -140,7 +140,7 @@ class ContractsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/edit");
     }
 
-    public function testPostUpdateSavesTheContract(): void
+    public function testPostEditSavesTheContract(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -169,7 +169,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame($newMaxHours, $contract->getMaxHours());
     }
 
-    public function testPostUpdateDoesNotAcceptMaxHoursBelowSpentTime(): void
+    public function testPostEditDoesNotAcceptMaxHoursBelowSpentTime(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -206,7 +206,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame($oldMaxHours, $contract->getMaxHours());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -234,31 +234,5 @@ class ContractsControllerTest extends WebTestCase
         $contract->_refresh();
         $this->assertSame($oldName, $contract->getName());
         $this->assertSame($oldMaxHours, $contract->getMaxHours());
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $oldName = 'Contract 2023';
-        $newName = 'Contract 2024';
-        $oldMaxHours = 5;
-        $newMaxHours = 10;
-        $contract = ContractFactory::createOne([
-            'name' => $oldName,
-            'maxHours' => $oldMaxHours,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/edit", [
-            'contract' => [
-                '_token' => $this->generateCsrfToken($client, 'contract'),
-                'name' => $newName,
-                'maxHours' => $newMaxHours,
-            ],
-        ]);
     }
 }

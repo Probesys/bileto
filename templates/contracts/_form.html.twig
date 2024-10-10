@@ -4,192 +4,32 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{{ form_start(form, { attr: {
-    'class': 'form--standard',
-    'data-controller': 'form-contract',
-}}) }}
+{{ form_start(form) }}
     {{ form_errors(form) }}
 
-    <div class="flow flow--small">
-        <label for="{{ field_id(form.name) }}">
-            {{ 'contracts.form.name' | trans }}
-
-            <small class="text--secondary">
-                {{ 'forms.max_chars' | trans({ number: 255 }) }}
-            </small>
-        </label>
-
-        {{ form_errors(form.name) }}
-
-        <input
-            type="text"
-            id="{{ field_id(form.name) }}"
-            name="{{ field_name(form.name) }}"
-            value="{{ field_value(form.name) }}"
-            required
-            maxlength="255"
-            {% if field_has_errors(form.name) %}
-                aria-invalid="true"
-                aria-errormessage="{{ field_id(form.name, 'error') }}"
-            {% endif %}
-        />
-    </div>
+    {{ form_row(form.name) }}
 
     <div class="cols flow">
-        <div class="col--extend flow flow--small">
-            <label for="{{ field_id(form.startAt) }}">
-                {{ 'contracts.form.start_at' | trans }}
-            </label>
-
-            {{ form_errors(form.startAt) }}
-
-            <input
-                type="date"
-                id="{{ field_id(form.startAt) }}"
-                name="{{ field_name(form.startAt) }}"
-                value="{{ field_value(form.startAt) }}"
-                required
-                data-form-contract-target="startAt"
-                data-action="form-contract#updateEndAt"
-                {% if field_has_errors(form.startAt) %}
-                    aria-invalid="true"
-                    aria-errormessage="{{ field_id(form.startAt, 'error') }}"
-                {% endif %}
-            />
+        <div class="col--extend">
+            {{ form_row(form.startAt) }}
         </div>
 
-        <div class="col--extend flow flow--small">
-            <label for="{{ field_id(form.endAt) }}">
-                {{ 'contracts.form.end_at' | trans }}
-            </label>
-
-            {{ form_errors(form.endAt) }}
-
-            <input
-                type="date"
-                id="{{ field_id(form.endAt) }}"
-                name="{{ field_name(form.endAt) }}"
-                value="{{ field_value(form.endAt) }}"
-                required
-                data-form-contract-target="endAt"
-                {% if field_has_errors(form.endAt) %}
-                    aria-invalid="true"
-                    aria-errormessage="{{ field_id(form.endAt, 'error') }}"
-                {% endif %}
-            />
+        <div class="col--extend">
+            {{ form_row(form.endAt) }}
         </div>
     </div>
 
-    <div class="flow flow--small">
-        <label for="{{ field_id(form.maxHours) }}">
-            {{ 'contracts.form.max_hours' | trans }}
-        </label>
+    {{ form_row(form.maxHours) }}
 
-        {{ form_errors(form.maxHours) }}
+    {{ form_row(form.timeAccountingUnit) }}
 
-        <input
-            type="number"
-            id="{{ field_id(form.maxHours) }}"
-            name="{{ field_name(form.maxHours) }}"
-            value="{{ field_value(form.maxHours) }}"
-            min="0"
-            step="1"
-            required
-            class="input--size3"
-            {% if field_has_errors(form.maxHours) %}
-                aria-invalid="true"
-                aria-errormessage="{{ field_id(form.maxHours, 'error') }}"
-            {% endif %}
-        />
-    </div>
+    {{ form_row(form.notes) }}
 
-    <div class="flow flow--small">
-        <label for="{{ field_id(form.timeAccountingUnit) }}">
-            {{ 'contracts.form.time_accounting_unit' | trans }}
-
-            <small class="text--secondary">
-                {{ 'forms.optional' | trans }}
-            </small>
-        </label>
-
-        <p class="form__caption" id="{{ field_id(form.timeAccountingUnit, 'caption') }}">
-            {{ 'contracts.form.time_accounting_unit.caption' | trans }}
-        </p>
-
-        {{ form_errors(form.timeAccountingUnit) }}
-
-        <input
-            type="number"
-            id="{{ field_id(form.timeAccountingUnit) }}"
-            name="{{ field_name(form.timeAccountingUnit) }}"
-            value="{{ field_value(form.timeAccountingUnit) }}"
-            min="0"
-            step="1"
-            class="input--size3"
-            aria-describedby="{{ field_id(form.timeAccountingUnit, 'caption') }}"
-            {% if field_has_errors(form.timeAccountingUnit) %}
-                aria-invalid="true"
-                aria-errormessage="{{ field_id(form.timeAccountingUnit, 'error') }}"
-            {% endif %}
-        />
-    </div>
-
-    <div class="flow flow--small">
-        <label for="{{ field_id(form.notes) }}">
-            {{ icon('shield-halved') }}
-            {{ 'contracts.form.notes' | trans }}
-
-            <small class="text--secondary">
-                {{ 'forms.optional' | trans }}
-            </small>
-        </label>
-
-        {{ form_errors(form.notes) }}
-
-        <textarea
-            id="{{ field_id(form.notes) }}"
-            name="{{ field_name(form.notes) }}"
-            {% if field_has_errors(form.notes) %}
-                aria-invalid="true"
-                aria-errormessage="{{ field_id(form.notes, 'error') }}"
-            {% endif %}
-        >{{ field_value(form.notes) }}</textarea>
-    </div>
-
-    {% if display_associate_checkboxes %}
-        <div>
-            <input
-                type="checkbox"
-                id="{{ field_id(form.associateTickets) }}"
-                name="{{ field_name(form.associateTickets) }}"
-                {{ form.associateTickets.vars.checked ? 'checked' }}
-            />
-
-            <label for="{{ field_id(form.associateTickets) }}">
-                {{ 'contracts.form.associate_tickets' | trans }}
-            </label>
-        </div>
-
-        <div>
-            <input
-                type="checkbox"
-                id="{{ field_id(form.associateUnaccountedTimes) }}"
-                name="{{ field_name(form.associateUnaccountedTimes) }}"
-                {{ form.associateUnaccountedTimes.vars.checked ? 'checked' }}
-            />
-
-            <label for="{{ field_id(form.associateUnaccountedTimes) }}">
-                {{ 'contracts.form.associate_unaccounted_times' | trans }}
-            </label>
-        </div>
-    {% else %}
-        <!-- {{ field_name(form.associateTickets) }} -->
-        <!-- {{ field_name(form.associateUnaccountedTimes) }} -->
+    {% if form.associateTickets is defined %}
+        {{ form_row(form.associateTickets) }}
     {% endif %}
 
-    <div class="form__actions">
-        <button class="button--primary" type="submit">
-            {{ submit_label }}
-        </button>
-    </div>
+    {% if form.associateUnaccountedTimes is defined %}
+        {{ form_row(form.associateUnaccountedTimes) }}
+    {% endif %}
 {{ form_end(form) }}

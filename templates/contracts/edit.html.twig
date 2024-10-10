@@ -43,11 +43,7 @@
         <h1>{{ 'contracts.edit.title' | trans }}</h1>
 
         <div class="panel">
-            {{ include('contracts/_form.html.twig', {
-                'form': form,
-                'display_associate_checkboxes': false,
-                'submit_label': 'forms.save_changes' | trans,
-            }) }}
+            {{ include('contracts/_form.html.twig', { 'form': form }) }}
         </div>
     </main>
 {% endblock %}

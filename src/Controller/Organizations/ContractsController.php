@@ -21,8 +21,6 @@ use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContractsController extends BaseController
 {
@@ -53,15 +51,14 @@ class ContractsController extends BaseController
         ]);
     }
 
-    #[Route(
-        '/organizations/{uid:organization}/contracts/new',
-        name: 'new organization contract',
-        methods: ['GET', 'HEAD']
-    )]
+    #[Route('/organizations/{uid:organization}/contracts/new', name: 'new organization contract')]
     public function new(
         Organization $organization,
         Request $request,
         ContractRepository $contractRepository,
+        TicketRepository $ticketRepository,
+        TimeSpentRepository $timeSpentRepository,
+        ContractTimeAccounting $contractTimeAccounting,
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
@@ -80,69 +77,50 @@ class ContractsController extends BaseController
             $contract = new Contract();
         }
 
-        $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract);
-
-        return $this->render('organizations/contracts/new.html.twig', [
-            'organization' => $organization,
-            'form' => $form,
+        $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract, [
+            'allow_associate' => true,
         ]);
-    }
 
-    #[Route('/organizations/{uid:organization}/contracts/new', name: 'create organization contract', methods: ['POST'])]
-    public function create(
-        Organization $organization,
-        Request $request,
-        ContractRepository $contractRepository,
-        TicketRepository $ticketRepository,
-        TimeSpentRepository $timeSpentRepository,
-        ContractTimeAccounting $contractTimeAccounting,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
-    ): Response {
-        $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
-
-        $form = $this->createNamedForm('contract', Form\ContractForm::class);
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('organizations/contracts/new.html.twig', [
-                'organization' => $organization,
-                'form' => $form,
-            ]);
-        }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $contract = $form->getData();
+            $contract->setOrganization($organization);
+            $contract->initDefaultAlerts();
+            $contractRepository->save($contract, true);
 
-        $contract = $form->getData();
-        $contract->setOrganization($organization);
-        $contract->initDefaultAlerts();
-        $contractRepository->save($contract, true);
-
-        $contractTickets = [];
-
-        if ($form->get('associateTickets')->getData()) {
             $contractTickets = $ticketRepository->findAssociableTickets($contract);
 
-            foreach ($contractTickets as $ticket) {
-                $ticket->addContract($contract);
+            if ($form->get('associateTickets')->getData()) {
+                foreach ($contractTickets as $ticket) {
+                    $ticket->addContract($contract);
+                }
+
+                $ticketRepository->save($contractTickets, true);
             }
 
-            $ticketRepository->save($contractTickets, true);
-        }
+            if ($form->get('associateUnaccountedTimes')->getData()) {
+                $timeSpents = [];
 
-        if ($form->get('associateUnaccountedTimes')->getData()) {
-            foreach ($contractTickets as $ticket) {
-                $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
-
-                if (!$timeSpents) {
-                    continue;
+                foreach ($contractTickets as $ticket) {
+                    $timeSpents = array_merge(
+                        $timeSpents,
+                        $ticket->getUnaccountedTimeSpents()->getValues()
+                    );
                 }
 
                 $contractTimeAccounting->accountTimeSpents($contract, $timeSpents);
                 $timeSpentRepository->save($timeSpents, true);
             }
+
+            return $this->redirectToRoute('contract', [
+                'uid' => $contract->getUid(),
+            ]);
         }
 
-        return $this->redirectToRoute('contract', [
-            'uid' => $contract->getUid(),
+        return $this->render('organizations/contracts/new.html.twig', [
+            'organization' => $organization,
+            'form' => $form,
         ]);
     }
 }

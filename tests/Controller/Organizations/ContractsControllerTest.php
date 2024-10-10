@@ -106,7 +106,7 @@ class ContractsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/contracts/new");
     }
 
-    public function testPostCreateCreatesAContractAndRedirects(): void
+    public function testPostNewCreatesAContractAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -152,7 +152,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame(24, $contract->getDateAlert()); // 20% of the days duration
     }
 
-    public function testPostCreateCanAttachTicketsToContract(): void
+    public function testPostNewCanAttachTicketsToContract(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -191,7 +191,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame($ticket->getUid(), $tickets[0]->getUid());
     }
 
-    public function testPostCreateDoesNotAttachContractIfTicketsHaveAlreadyOneOngoing(): void
+    public function testPostNewDoesNotAttachContractIfTicketsHaveAlreadyOneOngoing(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -240,7 +240,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame(0, count($tickets));
     }
 
-    public function testPostCreateCanAttachUnaccountedTimeSpentsToContract(): void
+    public function testPostNewCanAttachUnaccountedTimeSpentsToContract(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -289,7 +289,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame(30, $timeSpent->getTime());
     }
 
-    public function testPostCreateFailsIfNameIsInvalid(): void
+    public function testPostNewFailsIfNameIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -320,7 +320,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame(0, ContractFactory::count());
     }
 
-    public function testPostCreateFailsIfDatesAreInvalid(): void
+    public function testPostNewFailsIfDatesAreInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -351,7 +351,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame(0, ContractFactory::count());
     }
 
-    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -380,35 +380,5 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#contract-error', 'The security token is invalid');
         $this->assertSame(0, ContractFactory::count());
-    }
-
-    public function testPostCreateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
-        $this->grantOrga($user->_real(), [
-            'orga:see:contracts',
-        ]);
-        $name = 'My contract';
-        $maxHours = 10;
-        $startAt = new \DateTimeImmutable('2023-09-01');
-        $endAt = new \DateTimeImmutable('2023-12-31');
-        $notes = 'Some notes';
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
-            'contract' => [
-                '_token' => $this->generateCsrfToken($client, 'contract'),
-                'name' => $name,
-                'maxHours' => $maxHours,
-                'startAt' => $startAt->format('Y-m-d'),
-                'endAt' => $endAt->format('Y-m-d'),
-                'notes' => $notes,
-            ],
-        ]);
     }
 }
