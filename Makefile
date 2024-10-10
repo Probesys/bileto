@@ -53,7 +53,11 @@ docker-start: ## Start a development server with Docker
 
 .PHONY: docker-build
 docker-build: ## Rebuild Docker containers
-	$(DOCKER_COMPOSE) build
+	$(DOCKER_COMPOSE) build --pull
+
+.PHONY: docker-pull
+docker-pull: ## Pull the Docker images from the Docker Hub
+	$(DOCKER_COMPOSE) pull --ignore-buildable
 
 .PHONY: docker-clean
 docker-clean: ## Clean the Docker stuff
@@ -65,6 +69,7 @@ ifndef VERSION
 	$(error You need to provide a "VERSION" argument)
 endif
 	docker build \
+		--pull \
 		--build-arg VERSION="$(VERSION)" \
 		--build-arg SOURCE_COMMIT="$(shell git describe --match '' --always --abbrev=42 --dirty)" \
 		-t ghcr.io/probesys/bileto:$(VERSION) \

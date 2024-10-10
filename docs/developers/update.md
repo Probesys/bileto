@@ -18,9 +18,10 @@ Execute the migrations:
 $ make db-migrate
 ```
 
-Sometimes, you may also have to rebuild the Docker image:
+Sometimes, you may also have to pull or rebuild the Docker images:
 
 ```console
+$ make docker-pull
 $ make docker-build
 ```
 
