@@ -9,52 +9,7 @@
 {% block title %}{{ 'tickets.status.edit.title' | trans }}{% endblock %}
 
 {% block body %}
-    <form
-        action="{{ path('update ticket status', {'uid': ticket.uid}) }}"
-        method="post"
-        class="form--standard"
-        data-turbo-preserve-scroll
-    >
-        {% if error %}
-            {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-        {% endif %}
-
-        <div class="flow flow--small">
-            <label for="status">
-                {{ 'tickets.status' | trans }}
-            </label>
-
-            {% if errors.status is defined %}
-                <p class="form__error" role="alert" id="status-error">
-                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                    {{ errors.status }}
-                </p>
-            {% endif %}
-
-            <select
-                id="status"
-                name="status"
-                required
-                {% if errors.status is defined %}
-                    autofocus
-                    aria-invalid="true"
-                    aria-errormessage="status-error"
-                {% endif %}
-            >
-                {% for value, label in statuses %}
-                    <option value="{{ value }}" {{ value == status ? 'selected' }}>
-                        {{ label | trans }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form__actions">
-            <button id="form-update-status-submit" class="button--primary" type="submit">
-                {{ 'forms.save_changes' | trans }}
-            </button>
-        </div>
-
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket status') }}">
-    </form>
+    {{ form(form, {
+        action: path('edit ticket status', { uid: ticket.uid }),
+    }) }}
 {% endblock %}

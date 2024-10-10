@@ -7,84 +7,49 @@
 namespace App\Controller\Tickets;
 
 use App\Controller\BaseController;
-use App\Entity\Ticket;
-use App\Repository\TicketRepository;
-use App\Utils\ConstraintErrorsFormatter;
+use App\Entity;
+use App\Form;
+use App\Repository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StatusController extends BaseController
 {
-    #[Route('/tickets/{uid:ticket}/status/edit', name: 'edit ticket status', methods: ['GET', 'HEAD'])]
-    public function edit(Ticket $ticket): Response
-    {
-        $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
-        $this->denyAccessIfTicketIsClosed($ticket);
-
-        $statuses = Ticket::getStatusesWithLabels();
-
-        return $this->render('tickets/status/edit.html.twig', [
-            'ticket' => $ticket,
-            'status' => $ticket->getStatus(),
-            'statuses' => $statuses,
-        ]);
-    }
-
-    #[Route('/tickets/{uid:ticket}/status/edit', name: 'update ticket status', methods: ['POST'])]
-    public function update(
-        Ticket $ticket,
+    #[Route('/tickets/{uid:ticket}/status/edit', name: 'edit ticket status')]
+    public function edit(
+        Entity\Ticket $ticket,
         Request $request,
-        TicketRepository $ticketRepository,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
+        Repository\TicketRepository $ticketRepository,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
-        /** @var string $status */
-        $status = $request->request->get('status', $ticket->getStatus());
+        $form = $this->createNamedForm('ticket_status', Form\Ticket\StatusForm::class, $ticket);
 
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
+        $form->handleRequest($request);
 
-        $statuses = Ticket::getStatusesWithLabels();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ticket = $form->getData();
+            $ticketRepository->save($ticket, true);
 
-        if (!$this->isCsrfTokenValid('update ticket status', $csrfToken)) {
-            return $this->renderBadRequest('tickets/status/edit.html.twig', [
-                'ticket' => $ticket,
-                'status' => $status,
-                'statuses' => $statuses,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+            return $this->redirectToRoute('ticket', [
+                'uid' => $ticket->getUid(),
             ]);
         }
 
-        $ticket->setStatus($status);
-
-        $errors = $validator->validate($ticket);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('tickets/status/edit.html.twig', [
-                'ticket' => $ticket,
-                'status' => $status,
-                'statuses' => $statuses,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
-        $ticketRepository->save($ticket, true);
-
-        return $this->redirectToRoute('ticket', [
-            'uid' => $ticket->getUid(),
+        return $this->render('tickets/status/edit.html.twig', [
+            'ticket' => $ticket,
+            'form' => $form,
         ]);
     }
 
     #[Route('/tickets/{uid:ticket}/status/reopening', name: 'reopen ticket', methods: ['POST'])]
     public function reopen(
-        Ticket $ticket,
+        Entity\Ticket $ticket,
         Request $request,
-        TicketRepository $ticketRepository,
+        Repository\TicketRepository $ticketRepository,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
