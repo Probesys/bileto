@@ -32,6 +32,8 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const TITLE_MAX_LENGTH = 255;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -52,12 +54,12 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
     #[ORM\ManyToOne]
     private ?User $updatedBy = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: self::TITLE_MAX_LENGTH, unique: true)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('organization.name.required', [], 'errors'),
     )]
     #[Assert\Length(
-        max: 255,
+        max: self::TITLE_MAX_LENGTH,
         maxMessage: new TranslatableMessage('organization.name.max_chars', [], 'errors'),
     )]
     private ?string $name = null;

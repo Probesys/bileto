@@ -25,13 +25,13 @@ class OrganizationsController extends BaseController
 {
     #[Route('/organizations', name: 'organizations', methods: ['GET', 'HEAD'])]
     public function index(
-        OrganizationRepository $orgaRepository,
+        OrganizationRepository $organizationRepository,
         OrganizationSorter $orgaSorter,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        $organizations = $orgaRepository->findAuthorizedOrganizations($user);
+        $organizations = $organizationRepository->findAuthorizedOrganizations($user);
         $orgaSorter->sort($organizations);
 
         return $this->render('organizations/index.html.twig', [
@@ -39,42 +39,29 @@ class OrganizationsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/new', name: 'new organization', methods: ['GET', 'HEAD'])]
-    public function new(): Response
-    {
+    #[Route('/organizations/new', name: 'new organization')]
+    public function new(
+        Request $request,
+        OrganizationRepository $organizationRepository,
+    ): Response {
         $this->denyAccessUnlessGranted('admin:create:organizations');
 
         $organization = new Organization();
         $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $organization = $form->getData();
+            $organization->normalizeDomains();
+            $organizationRepository->save($organization, true);
+
+            return $this->redirectToRoute('organizations');
+        }
+
         return $this->render('organizations/new.html.twig', [
             'form' => $form,
         ]);
-    }
-
-    #[Route('/organizations/new', name: 'create organization', methods: ['POST'])]
-    public function create(
-        Request $request,
-        OrganizationRepository $orgaRepository,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
-    ): Response {
-        $this->denyAccessUnlessGranted('admin:create:organizations');
-
-        $form = $this->createNamedForm('organization', Form\OrganizationForm::class);
-        $form->handleRequest($request);
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('organizations/new.html.twig', [
-                'form' => $form,
-            ]);
-        }
-
-        $organization = $form->getData();
-        $organization->normalizeDomains();
-        $orgaRepository->save($organization, true);
-
-        return $this->redirectToRoute('organizations');
     }
 
     #[Route('/organizations/{uid:organization}', name: 'organization', methods: ['GET', 'HEAD'])]
@@ -89,47 +76,33 @@ class OrganizationsController extends BaseController
         ]);
     }
 
-    #[Route('/organizations/{uid:organization}/settings', name: 'organization settings', methods: ['GET', 'HEAD'])]
-    public function settings(Organization $organization): Response
-    {
-        $this->denyAccessUnlessGranted('orga:manage', $organization);
-
-        $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
-
-        return $this->render('organizations/settings.html.twig', [
-            'organization' => $organization,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/organizations/{uid:organization}/settings', name: 'update organization', methods: ['POST'])]
-    public function update(
+    #[Route('/organizations/{uid:organization}/settings', name: 'organization settings')]
+    public function edit(
         Organization $organization,
         Request $request,
-        OrganizationRepository $orgaRepository,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
+        OrganizationRepository $organizationRepository,
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
 
         $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
+
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->renderBadRequest('organizations/settings.html.twig', [
-                'organization' => $organization,
-                'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $organization = $form->getData();
+            $organization->normalizeDomains();
+            $organizationRepository->save($organization, true);
+
+            $this->addFlash('success', new TranslatableMessage('notifications.saved'));
+
+            return $this->redirectToRoute('organization settings', [
+                'uid' => $organization->getUid(),
             ]);
         }
 
-        $organization = $form->getData();
-        $organization->normalizeDomains();
-        $orgaRepository->save($organization, true);
-
-        $this->addFlash('success', new TranslatableMessage('notifications.saved'));
-
-        return $this->redirectToRoute('organization settings', [
-            'uid' => $organization->getUid(),
+        return $this->render('organizations/settings.html.twig', [
+            'organization' => $organization,
+            'form' => $form,
         ]);
     }
 
