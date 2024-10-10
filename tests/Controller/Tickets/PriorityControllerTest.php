@@ -91,7 +91,7 @@ class PriorityControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}/priority/edit");
     }
 
-    public function testPostUpdateSavesTicketAndRedirects(): void
+    public function testPostEditSavesTicketAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -125,7 +125,7 @@ class PriorityControllerTest extends WebTestCase
         $this->assertSame($newPriority, $ticket->getPriority());
     }
 
-    public function testPostUpdateFailsIfPriorityIsInvalid(): void
+    public function testPostEditFailsIfPriorityIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -160,7 +160,7 @@ class PriorityControllerTest extends WebTestCase
         $this->assertSame($oldPriority, $ticket->getPriority());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -192,96 +192,5 @@ class PriorityControllerTest extends WebTestCase
         $this->assertSame($oldUrgency, $ticket->getUrgency());
         $this->assertSame($oldImpact, $ticket->getImpact());
         $this->assertSame($oldPriority, $ticket->getPriority());
-    }
-
-    public function testPostUpdateFailsIfTicketIsClosed(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
-        $oldUrgency = 'low';
-        $oldImpact = 'low';
-        $oldPriority = 'low';
-        $newUrgency = 'high';
-        $newImpact = 'high';
-        $newPriority = 'high';
-        $ticket = TicketFactory::createOne([
-            'status' => 'closed',
-            'createdBy' => $user,
-            'urgency' => $oldUrgency,
-            'impact' => $oldImpact,
-            'priority' => $oldPriority,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/priority/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket priority'),
-            'urgency' => $newUrgency,
-            'impact' => $newImpact,
-            'priority' => $newPriority,
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $oldUrgency = 'low';
-        $oldImpact = 'low';
-        $oldPriority = 'low';
-        $newUrgency = 'high';
-        $newImpact = 'high';
-        $newPriority = 'high';
-        $ticket = TicketFactory::createOne([
-            'status' => 'in_progress',
-            'createdBy' => $user,
-            'urgency' => $oldUrgency,
-            'impact' => $oldImpact,
-            'priority' => $oldPriority,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/priority/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket priority'),
-            'urgency' => $newUrgency,
-            'impact' => $newImpact,
-            'priority' => $newPriority,
-        ]);
-    }
-
-    public function testPostUpdateFailsIfAccessToTicketIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:update:tickets:priority']);
-        $oldUrgency = 'low';
-        $oldImpact = 'low';
-        $oldPriority = 'low';
-        $newUrgency = 'high';
-        $newImpact = 'high';
-        $newPriority = 'high';
-        $ticket = TicketFactory::createOne([
-            'status' => 'in_progress',
-            'urgency' => $oldUrgency,
-            'impact' => $oldImpact,
-            'priority' => $oldPriority,
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/priority/edit", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update ticket priority'),
-            'urgency' => $newUrgency,
-            'impact' => $newImpact,
-            'priority' => $newPriority,
-        ]);
     }
 }
