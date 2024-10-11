@@ -7,97 +7,52 @@
 namespace App\Controller\Tickets;
 
 use App\Controller\BaseController;
-use App\Entity\EntityEvent;
-use App\Entity\Ticket;
-use App\Repository\ContractRepository;
-use App\Repository\TicketRepository;
-use App\Repository\TimeSpentRepository;
-use App\Service\ContractTimeAccounting;
-use App\Utils\ConstraintErrorsFormatter;
+use App\Entity;
+use App\Form;
+use App\Repository;
+use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContractsController extends BaseController
 {
-    #[Route('/tickets/{uid:ticket}/contracts/edit', name: 'edit ticket contracts', methods: ['GET', 'HEAD'])]
+    #[Route('/tickets/{uid:ticket}/contracts/edit', name: 'edit ticket contracts')]
     public function edit(
-        Ticket $ticket,
-        ContractRepository $contractRepository,
-    ): Response {
-        $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $ticket);
-        $this->denyAccessIfTicketIsClosed($ticket);
-
-        $organization = $ticket->getOrganization();
-        $ongoingContracts = $contractRepository->findOngoingByOrganization($organization);
-        $initialOngoingContract = $ticket->getOngoingContract();
-
-        return $this->render('tickets/contracts/edit.html.twig', [
-            'ticket' => $ticket,
-            'ongoingContracts' => $ongoingContracts,
-            'ongoingContractUid' => $initialOngoingContract ? $initialOngoingContract->getUid() : null,
-        ]);
-    }
-
-    #[Route('/tickets/{uid:ticket}/contracts/edit', name: 'update ticket contracts', methods: ['POST'])]
-    public function update(
-        Ticket $ticket,
+        Entity\Ticket $ticket,
         Request $request,
-        ContractRepository $contractRepository,
-        TicketRepository $ticketRepository,
-        TimeSpentRepository $timeSpentRepository,
-        ContractTimeAccounting $contractTimeAccounting,
-        TranslatorInterface $translator,
+        Repository\TicketRepository $ticketRepository,
+        Repository\TimeSpentRepository $timeSpentRepository,
+        Service\ContractTimeAccounting $contractTimeAccounting,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
-        $organization = $ticket->getOrganization();
+        $form = $this->createNamedForm('ticket_ongoing_contract', Form\Ticket\OngoingContractForm::class, $ticket);
 
-        $ongoingContractUid = $request->request->getString('ongoingContractUid');
+        $form->handleRequest($request);
 
-        $includeUnaccountedTime = $request->request->getBoolean('includeUnaccountedTime');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ticket = $form->getData();
+            $ticketRepository->save($ticket, true);
 
-        $csrfToken = $request->request->getString('_csrf_token');
+            $ongoingContract = $form->get('ongoingContract')->getData();
+            $includeUnaccountedTime = $form->get('includeUnaccountedTime')->getData();
 
-        $ongoingContracts = $contractRepository->findOngoingByOrganization($organization);
-        $initialOngoingContract = $ticket->getOngoingContract();
+            if ($includeUnaccountedTime && $ongoingContract) {
+                $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
+                $contractTimeAccounting->accountTimeSpents($ongoingContract, $timeSpents);
+                $timeSpentRepository->save($timeSpents, true);
+            }
 
-        if (!$this->isCsrfTokenValid('update ticket contracts', $csrfToken)) {
-            return $this->renderBadRequest('tickets/contracts/edit.html.twig', [
-                'ticket' => $ticket,
-                'ongoingContracts' => $ongoingContracts,
-                'ongoingContractUid' => $ongoingContractUid,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+            return $this->redirectToRoute('ticket', [
+                'uid' => $ticket->getUid(),
             ]);
         }
 
-        $newOngoingContract = null;
-        foreach ($ongoingContracts as $contract) {
-            if ($contract->getUid() === $ongoingContractUid) {
-                $newOngoingContract = $contract;
-            }
-        }
-
-        if ($initialOngoingContract) {
-            $ticket->removeContract($initialOngoingContract);
-        }
-
-        if ($newOngoingContract) {
-            $ticket->addContract($newOngoingContract);
-        }
-
-        $ticketRepository->save($ticket, true);
-
-        if ($includeUnaccountedTime && $newOngoingContract) {
-            $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
-            $contractTimeAccounting->accountTimeSpents($newOngoingContract, $timeSpents);
-            $timeSpentRepository->save($timeSpents, true);
-        }
-
-        return $this->redirectToRoute('ticket', [
-            'uid' => $ticket->getUid(),
+        return $this->render('tickets/contracts/edit.html.twig', [
+            'ticket' => $ticket,
+            'form' => $form,
         ]);
     }
 }

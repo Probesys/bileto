@@ -9,55 +9,7 @@
 {% block title %}{{ 'tickets.contracts.edit.title' | trans }}{% endblock %}
 
 {% block body %}
-    <form
-        action="{{ path('update ticket contracts', {'uid': ticket.uid}) }}"
-        method="post"
-        class="form--standard"
-        data-turbo-preserve-scroll
-    >
-        {% if error %}
-            {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-        {% endif %}
-
-        <div class="flow flow--small">
-            <label for="contract">
-                {{ 'tickets.contracts.ongoing' | trans }}
-            </label>
-
-            <select
-                id="contract"
-                name="ongoingContractUid"
-            >
-                <option value="">
-                    {{ 'tickets.contracts.none' | trans }}
-                </option>
-
-                {% for contract in ongoingContracts %}
-                    <option value="{{ contract.uid }}" {{ contract.uid == ongoingContractUid ? 'selected' }}>
-                        {{ contract.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div>
-            <input
-                type="checkbox"
-                id="include-unaccounted-time"
-                name="includeUnaccountedTime"
-            />
-
-            <label for="include-unaccounted-time">
-                {{ 'tickets.contracts.edit.associate_unaccounted_times' | trans }}
-            </label>
-        </div>
-
-        <div class="form__actions">
-            <button class="button--primary" type="submit">
-                {{ 'forms.save_changes' | trans }}
-            </button>
-        </div>
-
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('update ticket contracts') }}">
-    </form>
+    {{ form(form, {
+        action: path('edit ticket contracts', { uid: ticket.uid }),
+    }) }}
 {% endblock %}
