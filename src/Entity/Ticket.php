@@ -527,6 +527,21 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         return null;
     }
 
+    public function setOngoingContract(?Contract $newOngoingContract): static
+    {
+        $oldOngoingContract = $this->getOngoingContract();
+
+        if ($oldOngoingContract) {
+            $this->removeContract($oldOngoingContract);
+        }
+
+        if ($newOngoingContract) {
+            $this->addContract($newOngoingContract);
+        }
+
+        return $this;
+    }
+
     public function addContract(Contract $contract): static
     {
         if (!$this->contracts->contains($contract)) {
