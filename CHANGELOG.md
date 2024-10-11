@@ -1,5 +1,70 @@
 # Changelog of Bileto
 
+## 2024-10-11 - 0.11.0-beta
+
+### Security
+
+- Hide the details of errors when reseting a password ([c66cf04](https://github.com/Probesys/bileto/commit/c66cf04))
+
+### New
+
+- Automate the assignment of teams to tickets ([d070858](https://github.com/Probesys/bileto/commit/d070858))
+- Allow to transfer tickets ([52ac714](https://github.com/Probesys/bileto/commit/52ac714))
+- Autoclose resolved tickets after 7 days ([a32f870](https://github.com/Probesys/bileto/commit/a32f870))
+- Forbid actions in closed tickets ([506d21a](https://github.com/Probesys/bileto/commit/506d21a))
+- Send a receipt to the requester when ticket is opened ([b1ef3fb](https://github.com/Probesys/bileto/commit/b1ef3fb))
+
+### Improvements
+
+- Determine the default users' organization from authorizations ([7304749](https://github.com/Probesys/bileto/commit/7304749))
+- Account time spent on new contract during a transfer ([f3334b2](https://github.com/Probesys/bileto/commit/f3334b2))
+- Detect emails answering to a GLPI server ([5de12d9](https://github.com/Probesys/bileto/commit/5de12d9))
+- Allow to thread notification emails in email clients ([c375ada](https://github.com/Probesys/bileto/commit/c375ada))
+- Add padding between timeline dates and their following elements ([4f9b95c](https://github.com/Probesys/bileto/commit/4f9b95c))
+- Improve the design of the tickets' messages ([1bdc2f8](https://github.com/Probesys/bileto/commit/1bdc2f8))
+- Improve the ticket's events messages ([e28066b](https://github.com/Probesys/bileto/commit/e28066b))
+- Improve the performance to fetch the ticket page ([31cb55d](https://github.com/Probesys/bileto/commit/31cb55d))
+
+### Bug fixes
+
+- Fix the contracts' pagination ([4e24da8](https://github.com/Probesys/bileto/commit/4e24da8))
+- Don't remove observers when self-assigning a ticket ([fcb0b57](https://github.com/Probesys/bileto/commit/fcb0b57))
+- Unset correctly previous default role when changing it ([4145da6](https://github.com/Probesys/bileto/commit/4145da6))
+- Don't show the "unassigned buttons" if the ticket is closed ([5ebfae8](https://github.com/Probesys/bileto/commit/5ebfae8))
+- Add the missing labels to buttons in organization template ([97f6986](https://github.com/Probesys/bileto/commit/97f6986))
+- Fix the timeline bar height ([61a14d0](https://github.com/Probesys/bileto/commit/61a14d0))
+- Display "optional" label in the label of the organizations' domains ([d5f843f](https://github.com/Probesys/bileto/commit/d5f843f))
+- Make sure the messages don't expand out of the screen ([0ed6ce4](https://github.com/Probesys/bileto/commit/0ed6ce4))
+- Make sure the super role contains the `admin:*` permission ([e7bf8ac](https://github.com/Probesys/bileto/commit/e7bf8ac))
+
+### Technical
+
+- Update the dependencies ([39d0cbb](https://github.com/Probesys/bileto/commit/39d0cbb))
+- Allow to send errors to a Sentry server ([7216468](https://github.com/Probesys/bileto/commit/7216468), [21c35a3](https://github.com/Probesys/bileto/commit/21c35a3))
+- Improve the data importation
+    - Improve the performance of DataImporter ([82b5bf4](https://github.com/Probesys/bileto/commit/82b5bf4))
+    - Improve the importation of documents ([18f26e7](https://github.com/Probesys/bileto/commit/18f26e7))
+    - Allow to import the default role ([ef1e2b5](https://github.com/Probesys/bileto/commit/ef1e2b5))
+    - Allow to import Messages emailId ([7232231](https://github.com/Probesys/bileto/commit/7232231))
+    - Allow to import Tickets updatedAt ([5215858](https://github.com/Probesys/bileto/commit/5215858))
+    - Validate only new entities during importation ([c8e3cc6](https://github.com/Probesys/bileto/commit/c8e3cc6))
+
+### Developers
+
+- Provide a command to pull the Docker images ([14a87a4](https://github.com/Probesys/bileto/commit/14a87a4))
+- Allow to setup/reset the database without the seeds ([3903511](https://github.com/Probesys/bileto/commit/3903511))
+- Refactor the Symfony forms ([1745d70](https://github.com/Probesys/bileto/commit/1745d70))
+- Load the application version in the configuration ([57fec7a](https://github.com/Probesys/bileto/commit/57fec7a))
+- Increase PHP `memory_limit` in Docker ([60dbdad](https://github.com/Probesys/bileto/commit/60dbdad))
+- Refactor sending the "message email" to ticket's actors ([0c72ea3](https://github.com/Probesys/bileto/commit/0c72ea3))
+- Refactor getting (confidential) messages ([665785d](https://github.com/Probesys/bileto/commit/665785d))
+- Refactor the RecordableEntitiesSubscriber ([6c0cf97](https://github.com/Probesys/bileto/commit/6c0cf97))
+- Refactor records of ManyToMany relations changes ([a20a96e](https://github.com/Probesys/bileto/commit/a20a96e))
+- Allow to filter organizations by granted permission in OrganizationType ([21c9f07](https://github.com/Probesys/bileto/commit/21c9f07))
+- Improve markup of timeline dates ([0f1504c](https://github.com/Probesys/bileto/commit/0f1504c))
+- Extract a common.information key ([76d45e2](https://github.com/Probesys/bileto/commit/76d45e2))
+- Allow to check permissions on tickets with the AppVoter ([2a003b0](https://github.com/Probesys/bileto/commit/2a003b0))
+
 ## 2024-08-26 - 0.10.0-beta
 
 ### Migration notes
