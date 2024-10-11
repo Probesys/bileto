@@ -50,4 +50,19 @@ class ArrayHelper
 
         return false;
     }
+
+    /**
+     * Return the first element of an array.
+     *
+     * @template TElement of mixed
+     *
+     * @param TElement[] $array
+     *
+     * @return ?TElement
+     */
+    public static function first(array $array): mixed
+    {
+        $firstKey = array_key_first($array);
+        return $array[$firstKey];
+    }
 }

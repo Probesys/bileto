@@ -8,6 +8,7 @@ namespace App\Service;
 
 use App\Entity;
 use App\Repository;
+use App\Utils;
 
 class TicketAssigner
 {
@@ -38,6 +39,6 @@ class TicketAssigner
             return $t1->getCreatedAt() <=> $t2->getCreatedAt();
         });
 
-        return $teams[0];
+        return Utils\ArrayHelper::first($teams);
     }
 }
