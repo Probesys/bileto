@@ -186,6 +186,7 @@ class TicketsController extends BaseController
         LabelSorter $labelSorter,
         TeamSorter $teamSorter,
         Authorizer $authorizer,
+        TicketAssigner $ticketAssigner,
         ValidatorInterface $validator,
         HtmlSanitizerInterface $appMessageSanitizer,
         TranslatorInterface $translator,
@@ -222,7 +223,9 @@ class TicketsController extends BaseController
         } else {
             $requesterUid = $user->getUid();
             $assigneeUid = '';
-            $teamUid = '';
+
+            $responsibleTeam = $ticketAssigner->getDefaultResponsibleTeam($organization);
+            $teamUid = $responsibleTeam ? $responsibleTeam->getUid() : '';
         }
 
         if ($authorizer->isGranted('orga:update:tickets:priority', $organization)) {

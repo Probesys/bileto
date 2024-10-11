@@ -364,6 +364,40 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
     }
 
+    public function testPostCreateAssignAResponsibleTeamByDefault(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = OrganizationFactory::createOne();
+        $team = TeamFactory::createOne([
+            'isResponsible' => true,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $this->grantTeam($team->_real(), [
+            'orga:create:tickets',
+        ], $organization->_real());
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'create organization ticket'),
+            'title' => $title,
+            'message' => $messageContent,
+        ]);
+
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $this->assertSame('new', $ticket->getStatus());
+        $this->assertSame($team->getId(), $ticket->getTeam()->getId());
+    }
+
     public function testPostCreateCanAssignATeamAndAnAgent(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
