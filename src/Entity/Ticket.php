@@ -30,7 +30,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
 
     public const TITLE_MAX_LENGTH = 255;
 
-    public const TYPES = ['request', 'incident'];
+    public const TYPES = ['incident', 'request'];
     public const DEFAULT_TYPE = 'incident';
 
     public const STATUSES = ['new', 'in_progress', 'planned', 'pending', 'resolved', 'closed'];
@@ -485,6 +485,29 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
             $this->messages->add($message);
             $message->setTicket($this);
         }
+
+        return $this;
+    }
+
+    public function getContent(): string
+    {
+        $firstMessage = $this->messages->first();
+        return $firstMessage ? $firstMessage->getContent() : '';
+    }
+
+    public function setContent(string $content): static
+    {
+        if (!$this->messages->isEmpty()) {
+            throw new \LogicException('Cannot set content if ticket already has messages.');
+        }
+
+        $message = new Message();
+        $message->setContent($content);
+        $message->setTicket($this);
+        $message->setIsConfidential(false);
+        $message->setVia('webapp');
+
+        $this->addMessage($message);
 
         return $this;
     }

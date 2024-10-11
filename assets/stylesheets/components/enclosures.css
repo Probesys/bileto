@@ -3,6 +3,7 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
 .enclosure {
+    display: inline-block;
     padding: var(--space-small);
 
     border-radius: var(--border-radius);
