@@ -77,11 +77,12 @@ class RolesController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $role = $form->getData();
-            $roleRepository->save($role, true);
 
             if ($role->isDefault() && $role->getType() === 'user') {
-                $roleRepository->changeDefault($role);
+                $roleRepository->unsetDefault();
             }
+
+            $roleRepository->save($role, true);
 
             return $this->redirectToRoute('roles');
         }
@@ -111,11 +112,12 @@ class RolesController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $role = $form->getData();
-            $roleRepository->save($role, true);
 
             if ($role->isDefault() && $role->getType() === 'user') {
-                $roleRepository->changeDefault($role);
+                $roleRepository->unsetDefault();
             }
+
+            $roleRepository->save($role, true);
 
             return $this->redirectToRoute('roles');
         }

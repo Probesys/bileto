@@ -48,19 +48,15 @@ class RoleRepository extends ServiceEntityRepository implements UidGeneratorInte
         ]);
     }
 
-    public function changeDefault(Role $newDefaultRole): void
+    public function unsetDefault(): void
     {
-        if ($newDefaultRole->getType() !== 'user') {
-            throw new \DomainException('Only user roles can be set as default.');
-        }
+        $entityManager = $this->getEntityManager();
 
-        $initialDefaultRole = $this->findDefault();
-        if ($initialDefaultRole) {
-            $initialDefaultRole->setIsDefault(false);
-            $this->save($initialDefaultRole);
-        }
+        $query = $entityManager->createQuery(<<<SQL
+            UPDATE App\Entity\Role r
+            SET r.isDefault = false
+        SQL);
 
-        $newDefaultRole->setIsDefault(true);
-        $this->save($newDefaultRole, true);
+        $query->execute();
     }
 }
