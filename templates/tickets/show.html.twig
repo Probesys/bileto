@@ -239,7 +239,7 @@
 
                                 {% if ticket.assignee %}
                                     {{ ticket.assignee.displayName }}
-                                {% elseif is_granted('orga:update:tickets:actors', organization) %}
+                                {% elseif is_granted('orga:update:tickets:actors', organization) and not ticket.isClosed %}
                                     <button
                                         class="button--anchor"
                                         data-controller="modal-opener"
