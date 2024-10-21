@@ -6,8 +6,8 @@
 
 namespace App\Tests\MessageHandler;
 
-use App\Message\SynchronizeLdap;
-use App\Tests\Factory\UserFactory;
+use App\Message;
+use App\Tests\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Zenstruck\Foundry\Test\Factories;
@@ -24,13 +24,13 @@ class SynchronizeLdapHandlerTest extends WebTestCase
         /** @var MessageBusInterface */
         $bus = $container->get(MessageBusInterface::class);
 
-        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, Factory\UserFactory::count());
 
-        $bus->dispatch(new SynchronizeLdap());
+        $bus->dispatch(new Message\SynchronizeLdap());
 
-        $this->assertSame(2, UserFactory::count());
+        $this->assertSame(2, Factory\UserFactory::count());
 
-        $users = UserFactory::all();
+        $users = Factory\UserFactory::all();
         $this->assertSame('charlie', $users[0]->getLdapIdentifier());
         $this->assertSame('charlie@example.com', $users[0]->getEmail());
         $this->assertSame('Charlie Gature', $users[0]->getName());
@@ -44,17 +44,49 @@ class SynchronizeLdapHandlerTest extends WebTestCase
         $container = static::getContainer();
         /** @var MessageBusInterface */
         $bus = $container->get(MessageBusInterface::class);
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'email' => 'cgature@example.com',
             'name' => 'C. Gature',
             'ldapIdentifier' => 'charlie',
         ]);
 
-        $bus->dispatch(new SynchronizeLdap());
+        $bus->dispatch(new Message\SynchronizeLdap());
 
         $user->_refresh();
         $this->assertSame('charlie@example.com', $user->getEmail());
         $this->assertSame('Charlie Gature', $user->getName());
         $this->assertSame('charlie', $user->getLdapIdentifier());
+    }
+
+    public function testInvokeCanSetDefaultAuthorizations(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+        $defaultRole = Factory\RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+        $defaultOrganization = Factory\OrganizationFactory::createOne([
+            'domains' => ['example.com'], // don't include example.org
+        ]);
+
+        $bus->dispatch(new Message\SynchronizeLdap());
+
+        $this->assertSame(2, Factory\UserFactory::count());
+        $this->assertSame(1, Factory\AuthorizationFactory::count());
+
+        $users = Factory\UserFactory::all();
+        $this->assertSame('charlie@example.com', $users[0]->getEmail());
+        Factory\AuthorizationFactory::assert()->exists([
+            'holder' => $users[0],
+            'role' => $defaultRole,
+            'organization' => $defaultOrganization,
+        ]);
+        $this->assertSame('dominique@example.org', $users[1]->getEmail());
+        // example.org is not handled by any organization
+        Factory\AuthorizationFactory::assert()->notExists([
+            'holder' => $users[1],
+        ]);
     }
 }

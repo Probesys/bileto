@@ -100,6 +100,10 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
      */
     public function loadUserAuthorizations(User $user): array
     {
+        if ($user->getId() === null) {
+            return [];
+        }
+
         $keyCache = $user->getUid();
 
         if (!isset($this->cacheAuthorizations[$keyCache])) {
