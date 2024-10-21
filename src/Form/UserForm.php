@@ -97,7 +97,7 @@ class UserForm extends AbstractType
                 'permission' => 'orga:create:tickets',
                 'context_user' => $user,
                 'required' => false,
-                'placeholder' => new TranslatableMessage('users.no_organization'),
+                'placeholder' => new TranslatableMessage('users.organization.auto'),
                 'label' => new TranslatableMessage('users.organization'),
                 'help' => new TranslatableMessage('users.form.organization_caption'),
             ]);

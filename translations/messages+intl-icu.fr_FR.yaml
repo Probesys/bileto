@@ -543,8 +543,8 @@ users.n_others: '{number, plural, =0 {aucun autre} one {1 autre} other {# autres
 users.name: Nom
 users.new.submit: 'Créer l’utilisateur'
 users.new.title: 'Nouvel utilisateur'
-users.no_organization: 'Aucune organisation'
 users.organization: Organisation
+users.organization.auto: Automatique
 users.password: 'Mot de passe'
 users.show.authorizations.new: 'Donner une autorisation'
 users.show.authorizations.title: Autorisations
