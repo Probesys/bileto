@@ -58,14 +58,7 @@ If you want to make this change permanent, create a `.env.local` file and copy t
 
 ## Work with LDAP
 
-The LDAP server is not started by default.
-To start the LDAP server, pass the `LDAP` variable to the command:
-
-```console
-$ make docker-start LDAP=true
-```
-
-You’ll also have to create an `.env.local` file to enable LDAP support in Bileto:
+You’ll have to create an `.env.local` file to enable LDAP support in Bileto:
 
 ```dotenv
 LDAP_ENABLED=true

@@ -83,5 +83,3 @@ services:
             - BITNAMI_DEBUG=true
         volumes:
             - ./ldap-ldifs:/ldifs:z
-        profiles:
-            - ldap

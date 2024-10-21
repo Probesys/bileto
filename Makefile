@@ -26,10 +26,6 @@ else
 	DOCKER_COMPOSE_PROFILE = --profile pgsql
 endif
 
-ifdef LDAP
-	DOCKER_COMPOSE_PROFILE += --profile ldap
-endif
-
 ifndef COVERAGE
 	COVERAGE = --coverage-html ./coverage
 endif
@@ -61,7 +57,7 @@ docker-pull: ## Pull the Docker images from the Docker Hub
 
 .PHONY: docker-clean
 docker-clean: ## Clean the Docker stuff
-	$(DOCKER_COMPOSE) --profile pgsql --profile mariadb --profile ldap down -v
+	$(DOCKER_COMPOSE) --profile pgsql --profile mariadb down -v
 
 .PHONY: docker-image
 docker-image: ## Build the Docker image for production (take a VERSION argument)
