@@ -102,32 +102,8 @@
                                         {{ 'tickets.labels' | trans }}
                                     </summary>
 
-                                    <div class="accordion__body flow">
-                                        {# TODO extract a partial #}
-                                        {% for label in form.labels %}
-                                            <div>
-                                                <input
-                                                    type="checkbox"
-                                                    id="{{ field_id(label) }}"
-                                                    name="{{ field_name(label) }}"
-                                                    value="{{ field_value(label) }}"
-                                                    {{ field_value(label) in field_value(form.labels) ? 'checked' }}
-                                                    {% if label.vars.attr.description %}
-                                                        aria-describedby="{{ field_id(label, 'description') }}"
-                                                    {% endif %}
-                                                />
-
-                                                <label for="{{ field_id(label) }}" class="badge badge--{{ label.vars.attr.color }}">
-                                                    {{ field_label(label) }}
-                                                </label>
-
-                                                {% if label.vars.attr.description %}
-                                                    <span id="{{ field_id(label, 'description') }}" class="text--small text--secondary">
-                                                        {{ label.vars.attr.description }}
-                                                    </span>
-                                                {% endif %}
-                                            </div>
-                                        {% endfor %}
+                                    <div class="accordion__body">
+                                        {{ form_row(form.labels) }}
                                     </div>
                                 </details>
                             {% endif %}

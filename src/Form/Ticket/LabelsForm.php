@@ -24,6 +24,7 @@ class LabelsForm extends AbstractType
             'by_reference' => false,
             'required' => false,
             'label' => false,
+            'block_prefix' => 'labels',
         ]);
 
         $builder->add('submit', Type\SubmitType::class, [

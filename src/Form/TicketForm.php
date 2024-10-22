@@ -106,6 +106,7 @@ class TicketForm extends AbstractType
                     'by_reference' => false,
                     'required' => false,
                     'label' => false,
+                    'block_prefix' => 'labels',
                 ]);
             }
 
