@@ -6,57 +6,52 @@
 
 namespace App\Tests\Controller\Tickets;
 
-use App\Entity\Ticket;
-use App\Tests\AuthorizationHelper;
-use App\Tests\Factory\ContractFactory;
-use App\Tests\Factory\MessageFactory;
-use App\Tests\Factory\MessageDocumentFactory;
-use App\Tests\Factory\TicketFactory;
-use App\Tests\Factory\TimeSpentFactory;
-use App\Tests\Factory\UserFactory;
-use App\Tests\SessionHelper;
-use App\Utils\Time;
+use App\Entity;
+use App\Tests;
+use App\Tests\Factory;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry;
-use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class MessagesControllerTest extends WebTestCase
 {
-    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
-    use SessionHelper;
+    use Tests\AuthorizationHelper;
+    use Tests\SessionHelper;
 
     public function testPostCreateCreatesAMessageAndRedirects(): void
     {
         $now = new \DateTimeImmutable('2022-11-02');
-        Time::freeze($now);
+        Utils\Time::freeze($now);
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'status' => 'pending',
         ]);
         $messageContent = 'My message';
 
-        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
 
-        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
-        $crawler = $client->submitForm('form-create-message-submit', [
-            'message' => $messageContent,
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
 
-        Time::unfreeze();
-        $this->assertSame(1, MessageFactory::count());
+        Utils\Time::unfreeze();
+        $this->assertSame(1, Factory\MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $message = MessageFactory::first();
+        $message = Factory\MessageFactory::first();
         $ticket->_refresh();
         $this->assertSame($messageContent, $message->getContent());
         $this->assertEquals($now, $message->getCreatedAt());
@@ -73,33 +68,35 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateSendsEmailNotification(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'status' => 'pending',
         ]);
         $previousEmailId = 'foo@example.com';
-        $previousMessage = MessageFactory::createOne([
+        $previousMessage = Factory\MessageFactory::createOne([
             'ticket' => $ticket,
-            'createdAt' => Time::ago(1, 'hour'),
+            'createdAt' => Utils\Time::ago(1, 'hour'),
             'isConfidential' => false,
             'emailId' => $previousEmailId,
         ]);
         $messageContent = 'My message';
 
-        $this->assertSame(1, MessageFactory::count());
+        $this->assertSame(1, Factory\MessageFactory::count());
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
 
-        $this->assertSame(2, MessageFactory::count());
+        $this->assertSame(2, Factory\MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $message = MessageFactory::last();
+        $message = Factory\MessageFactory::last();
         $this->assertNotEmpty($message->getEmailId());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
@@ -113,30 +110,32 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateCanCreateConfidentialMessage(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
             'orga:create:tickets:messages:confidential',
         ]);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'status' => 'pending',
         ]);
         $messageContent = 'My message';
 
-        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerType' => 'confidential',
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'type' => 'confidential',
+            ],
         ]);
 
-        $this->assertSame(1, MessageFactory::count());
+        $this->assertSame(1, Factory\MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $message = MessageFactory::first();
+        $message = Factory\MessageFactory::first();
         $this->assertSame($messageContent, $message->getContent());
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
@@ -147,54 +146,54 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateSanitizesTheMessageContent(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
 
-        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
 
-        $this->assertSame(1, MessageFactory::count());
+        $this->assertSame(1, Factory\MessageFactory::count());
 
-        $message = MessageFactory::first();
+        $message = Factory\MessageFactory::first();
         $this->assertSame('My message', $message->getContent());
     }
 
     public function testPostCreateAttachesDocumentsToMessage(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message <style>body { background-color: pink; }</style>';
-        list($messageDocument1, $messageDocument2) = MessageDocumentFactory::createMany(2, [
+        list($messageDocument1, $messageDocument2) = Factory\MessageDocumentFactory::createMany(2, [
             'createdBy' => $user->_real(),
             'message' => null,
         ]);
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'messageDocumentUids' => [
-                $messageDocument1->getUid(),
-                $messageDocument2->getUid(),
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
             ],
         ]);
 
-        $message = MessageFactory::first();
+        $message = Factory\MessageFactory::first();
         $messageDocument1->_refresh();
         $messageDocument2->_refresh();
         $this->assertNotNull($message);
@@ -205,25 +204,27 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateAcceptsTimeSpent(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
             'orga:create:tickets:time_spent',
         ]);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'timeSpent' => 20,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'timeSpent' => 20,
+            ],
         ]);
 
-        $timeSpent = TimeSpentFactory::first();
+        $timeSpent = Factory\TimeSpentFactory::first();
         $this->assertSame(20, $timeSpent->getTime());
         $this->assertSame($ticket->getId(), $timeSpent->getTicket()->getId());
     }
@@ -231,19 +232,19 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCanAssociateTimeSpentToContract(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
             'orga:create:tickets:time_spent',
         ]);
-        $contract = ContractFactory::createOne([
-            'startAt' => Time::ago(1, 'week'),
-            'endAt' => Time::fromNow(1, 'week'),
+        $contract = Factory\ContractFactory::createOne([
+            'startAt' => Utils\Time::ago(1, 'week'),
+            'endAt' => Utils\Time::fromNow(1, 'week'),
             'maxHours' => 10,
             'timeAccountingUnit' => 30,
         ]);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
@@ -251,12 +252,14 @@ class MessagesControllerTest extends WebTestCase
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'timeSpent' => 10,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'timeSpent' => 10,
+            ],
         ]);
 
-        $timeSpent = TimeSpentFactory::first();
+        $timeSpent = Factory\TimeSpentFactory::first();
         $this->assertSame(30, $timeSpent->getTime());
         $this->assertSame(10, $timeSpent->getRealTime());
         $this->assertSame($ticket->getId(), $timeSpent->getTicket()->getId());
@@ -266,18 +269,18 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateCanCreateTwoTimeSpentIfContractIsAlmostFinished(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
             'orga:create:tickets:time_spent',
         ]);
-        $contract = ContractFactory::createOne([
-            'startAt' => Time::ago(1, 'week'),
-            'endAt' => Time::fromNow(1, 'week'),
+        $contract = Factory\ContractFactory::createOne([
+            'startAt' => Utils\Time::ago(1, 'week'),
+            'endAt' => Utils\Time::fromNow(1, 'week'),
             'maxHours' => 1,
         ]);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
@@ -285,12 +288,14 @@ class MessagesControllerTest extends WebTestCase
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'timeSpent' => 80,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'timeSpent' => 80,
+            ],
         ]);
 
-        list($timeSpent1, $timeSpent2) = TimeSpentFactory::all();
+        list($timeSpent1, $timeSpent2) = Factory\TimeSpentFactory::all();
         $this->assertSame(60, $timeSpent1->getTime());
         $this->assertSame($ticket->getId(), $timeSpent1->getTicket()->getId());
         $this->assertSame($contract->getId(), $timeSpent1->getContract()->getId());
@@ -302,23 +307,25 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateChangesStatusToInProgressIfUserIsRequester(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
         ]);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $user,
             'status' => 'pending',
         ]);
         $messageContent = 'My message';
 
-        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
 
         $ticket->_refresh();
@@ -328,23 +335,25 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateChangesStatusToPendingStatusIfUserIsAssignee(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
         ]);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => $user,
             'status' => 'in_progress',
         ]);
         $messageContent = 'My message';
 
-        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
 
         $ticket->_refresh();
@@ -354,31 +363,33 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateSetsSolutionIfActionIsNewSolutionAndUserIsAssignee(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
         ]);
-        $initialStatus = Foundry\faker()->randomElement(Ticket::OPEN_STATUSES);
-        $ticket = TicketFactory::createOne([
+        $initialStatus = Foundry\faker()->randomElement(Entity\Ticket::OPEN_STATUSES);
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => $user,
             'status' => $initialStatus,
         ]);
         $messageContent = 'My message';
 
-        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerType' => 'solution',
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'type' => 'solution',
+            ],
         ]);
 
-        $this->assertSame(1, MessageFactory::count());
+        $this->assertSame(1, Factory\MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $message = MessageFactory::first();
+        $message = Factory\MessageFactory::first();
         $ticket->_refresh();
         $this->assertNotNull($message);
         $this->assertNotNull($ticket->getSolution());
@@ -386,82 +397,17 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('resolved', $ticket->getStatus());
     }
 
-    public function testPostCreateDoesNotChangeSolutionIfAlreadyExists(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-            'orga:create:tickets:messages:confidential',
-        ]);
-        $solution = MessageFactory::createOne();
-        $ticket = TicketFactory::createOne([
-            'status' => 'resolved',
-            'createdBy' => $user,
-            'assignee' => $user,
-            'solution' => $solution,
-        ]);
-        $messageContent = 'My message';
-
-        $this->assertSame(1, MessageFactory::count());
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerType' => 'solution',
-        ]);
-
-        $this->assertSame(2, MessageFactory::count());
-
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $message = MessageFactory::last();
-        $this->assertNotSame($solution->getId(), $message->getId());
-        $ticket->_refresh();
-        $this->assertSame($solution->getId(), $ticket->getSolution()->getId());
-    }
-
-    public function testPostCreateDoesNotSetSolutionIfUserIsRequester(): void
-    {
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ]);
-        $ticket = TicketFactory::createOne([
-            'status' => 'in_progress',
-            'createdBy' => $user,
-            'requester' => $user,
-        ]);
-        $messageContent = 'My message';
-
-        $this->assertSame(0, MessageFactory::count());
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerType' => 'solution',
-        ]);
-
-        $this->assertSame(1, MessageFactory::count());
-
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticket->_refresh();
-        $this->assertNull($ticket->getSolution());
-    }
-
     public function testPostCreateRefusesSolutionIfActionIsRefuseSolutionAndUserIsRequester(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
         ]);
         $initialStatus = 'resolved';
-        $solution = MessageFactory::createOne();
-        $ticket = TicketFactory::createOne([
+        $solution = Factory\MessageFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $user,
             'status' => $initialStatus,
@@ -470,12 +416,14 @@ class MessagesControllerTest extends WebTestCase
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerType' => 'solution refusal',
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'submitSolutionRefusal' => true,
+            ],
         ]);
 
-        $this->assertSame(2, MessageFactory::count());
+        $this->assertSame(2, Factory\MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticket->_refresh();
@@ -486,14 +434,14 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateApprovesSolutionIfActionIsApproveSolutionAndUserIsRequester(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:create:tickets:messages',
         ]);
         $initialStatus = 'resolved';
-        $solution = MessageFactory::createOne();
-        $ticket = TicketFactory::createOne([
+        $solution = Factory\MessageFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $user,
             'status' => $initialStatus,
@@ -502,12 +450,14 @@ class MessagesControllerTest extends WebTestCase
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerType' => 'solution approval',
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'submitSolutionApproval' => true,
+            ],
         ]);
 
-        $this->assertSame(2, MessageFactory::count());
+        $this->assertSame(2, Factory\MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticket->_refresh();
@@ -519,70 +469,134 @@ class MessagesControllerTest extends WebTestCase
     public function testPostCreateFailsIfMessageIsEmpty(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = '';
 
-        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
 
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('#message-error', 'Enter a message');
+        $this->assertSame(0, Factory\MessageFactory::count());
+        $this->assertSelectorTextContains('#answer_content-error', 'Enter a message');
     }
 
     public function testPostCreateFailsIfIsConfidentialIsTrueButAccessIsNotGranted(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
-            'answerType' => 'confidential',
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'type' => 'confidential',
+            ],
         ]);
 
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains(
-            '#answer-type-error',
-            'You are not authorized to answer confidentially.'
-        );
+        $this->assertSame(0, Factory\MessageFactory::count());
+        $this->assertSelectorTextContains('#answer_type-error', 'The selected choice is invalid');
+    }
+
+    public function testPostCreateFailsIfSolutionAlreadyExists(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets:messages',
+            'orga:create:tickets:messages:confidential',
+        ]);
+        $solution = Factory\MessageFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => 'resolved',
+            'createdBy' => $user,
+            'assignee' => $user,
+            'solution' => $solution,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(1, Factory\MessageFactory::count());
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'type' => 'solution',
+            ],
+        ]);
+
+        $this->assertSame(1, Factory\MessageFactory::count());
+        $this->assertSelectorTextContains('#answer_type-error', 'The selected choice is invalid');
+    }
+
+    public function testPostCreateFailsIfSettingSolutionAndUserIsNotAssignee(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets:messages',
+        ]);
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
+            'createdBy' => $user,
+            'assignee' => null,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(0, Factory\MessageFactory::count());
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'type' => 'solution',
+            ],
+        ]);
+
+        $this->assertSame(0, Factory\MessageFactory::count());
+        $this->assertSelectorTextContains('#answer_type-error', 'The selected choice is invalid');
     }
 
     public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => 'not the token',
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => 'not the token',
+                'content' => $messageContent,
+            ],
         ]);
 
-        $this->assertSame(0, MessageFactory::count());
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->assertSame(0, Factory\MessageFactory::count());
+        $this->assertSelectorTextContains('#answer-error', 'The security token is invalid');
     }
 
     public function testPostCreateFailsIfTicketIsClosed(): void
@@ -590,10 +604,10 @@ class MessagesControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'closed',
             'createdBy' => $user,
         ]);
@@ -601,8 +615,10 @@ class MessagesControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
     }
 
@@ -611,9 +627,9 @@ class MessagesControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
         ]);
@@ -621,8 +637,10 @@ class MessagesControllerTest extends WebTestCase
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
     }
 
@@ -631,18 +649,20 @@ class MessagesControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
         ]);
         $messageContent = 'My message';
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create ticket message'),
-            'message' => $messageContent,
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
         ]);
     }
 }

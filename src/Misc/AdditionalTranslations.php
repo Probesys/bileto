@@ -54,3 +54,8 @@ new TranslatableMessage('common.colors.red');
 // See src/Form/TicketForm.php
 new TranslatableMessage('tickets.type.request');
 new TranslatableMessage('tickets.type.incident');
+
+// See src/Form/AnswerForm.php
+new TranslatableMessage('tickets.show.answer_type.confidential');
+new TranslatableMessage('tickets.show.answer_type.normal');
+new TranslatableMessage('tickets.show.answer_type.solution');

@@ -7,23 +7,13 @@
 namespace App\Controller;
 
 use App\Controller\BaseController;
-use App\Entity\Ticket;
-use App\Repository\AuthorizationRepository;
-use App\Repository\LabelRepository;
-use App\Repository\OrganizationRepository;
-use App\Repository\TicketRepository;
-use App\Repository\UserRepository;
-use App\SearchEngine\TicketFilter;
-use App\SearchEngine\TicketSearcher;
-use App\SearchEngine\Query;
-use App\Security\Authorizer;
-use App\Service\ActorsLister;
-use App\Service\Sorter\LabelSorter;
-use App\Service\Sorter\OrganizationSorter;
-use App\Service\TicketTimeline;
-use App\Service\UserService;
-use App\Utils\Pagination;
-use App\Utils\Time;
+use App\Entity;
+use App\Form;
+use App\Repository;
+use App\SearchEngine;
+use App\Security;
+use App\Service;
+use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,31 +24,24 @@ class TicketsController extends BaseController
     #[Route('/tickets', name: 'tickets', methods: ['GET', 'HEAD'])]
     public function index(
         Request $request,
-        AuthorizationRepository $authorizationRepository,
-        LabelRepository $labelRepository,
-        OrganizationRepository $orgaRepository,
-        UserRepository $userRepository,
-        TicketSearcher $ticketSearcher,
-        ActorsLister $actorsLister,
-        LabelSorter $labelSorter,
+        Repository\AuthorizationRepository $authorizationRepository,
+        Repository\LabelRepository $labelRepository,
+        Repository\OrganizationRepository $orgaRepository,
+        Repository\UserRepository $userRepository,
+        SearchEngine\TicketSearcher $ticketSearcher,
+        Service\ActorsLister $actorsLister,
+        Service\Sorter\LabelSorter $labelSorter,
         TranslatorInterface $translator,
     ): Response {
-        /** @var \App\Entity\User $user */
+        /** @var \App\Entity\User */
         $user = $this->getUser();
 
         $page = $request->query->getInt('page', 1);
-
-        /** @var string $view */
-        $view = $request->query->get('view', 'all');
-
-        /** @var ?string $queryString */
+        $view = $request->query->getString('view', 'all');
+        $searchMode = $request->query->getString('mode', 'quick');
+        $sort = $request->query->getString('sort', 'updated-desc');
+        /** @var ?string */
         $queryString = $request->query->get('q');
-
-        /** @var string $searchMode */
-        $searchMode = $request->query->get('mode', 'quick');
-
-        /** @var string $sort */
-        $sort = $request->query->get('sort', 'updated-desc');
 
         $organizations = $orgaRepository->findAuthorizedOrganizations($user);
 
@@ -67,33 +50,33 @@ class TicketsController extends BaseController
         if ($queryString !== null) {
             $queryString = trim($queryString);
         } elseif ($view === 'unassigned') {
-            $queryString = TicketSearcher::QUERY_UNASSIGNED;
+            $queryString = SearchEngine\TicketSearcher::QUERY_UNASSIGNED;
         } elseif ($view === 'owned') {
-            $queryString = TicketSearcher::QUERY_OWNED;
+            $queryString = SearchEngine\TicketSearcher::QUERY_OWNED;
         } else {
-            $queryString = TicketSearcher::QUERY_DEFAULT;
+            $queryString = SearchEngine\TicketSearcher::QUERY_DEFAULT;
         }
 
         $ticketFilter = null;
         $errors = [];
 
         try {
-            $query = Query::fromString($queryString);
+            $query = SearchEngine\Query::fromString($queryString);
             $ticketsPagination = $ticketSearcher->getTickets($query, $sort, [
                 'page' => $page,
                 'maxResults' => 25,
             ]);
             if ($query) {
-                $ticketFilter = TicketFilter::fromQuery($query);
+                $ticketFilter = SearchEngine\TicketFilter::fromQuery($query);
             }
         } catch (\Exception $e) {
-            $ticketsPagination = Pagination::empty();
+            $ticketsPagination = Utils\Pagination::empty();
             $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
         }
 
         if (!$ticketFilter) {
             $searchMode = 'advanced';
-            $ticketFilter = new TicketFilter();
+            $ticketFilter = new SearchEngine\TicketFilter();
         }
 
         $labels = $labelRepository->findAll();
@@ -101,15 +84,15 @@ class TicketsController extends BaseController
 
         return $this->render('tickets/index.html.twig', [
             'ticketsPagination' => $ticketsPagination,
-            'countToAssign' => $ticketSearcher->countTickets(TicketSearcher::queryUnassigned()),
-            'countOwned' => $ticketSearcher->countTickets(TicketSearcher::queryOwned()),
+            'countToAssign' => $ticketSearcher->countTickets(SearchEngine\TicketSearcher::queryUnassigned()),
+            'countOwned' => $ticketSearcher->countTickets(SearchEngine\TicketSearcher::queryOwned()),
             'view' => $view,
             'query' => $queryString,
             'sort' => $sort,
             'ticketFilter' => $ticketFilter,
             'searchMode' => $searchMode,
-            'openStatuses' => Ticket::getStatusesWithLabels('open'),
-            'finishedStatuses' => Ticket::getStatusesWithLabels('finished'),
+            'openStatuses' => Entity\Ticket::getStatusesWithLabels('open'),
+            'finishedStatuses' => Entity\Ticket::getStatusesWithLabels('finished'),
             'allUsers' => $actorsLister->findAll(),
             'agents' => $actorsLister->findAll(roleType: 'agent'),
             'labels' => $labels,
@@ -120,15 +103,15 @@ class TicketsController extends BaseController
     #[Route('/tickets/new', name: 'new ticket', methods: ['GET', 'HEAD'])]
     public function new(
         Request $request,
-        AuthorizationRepository $authorizationRepository,
-        OrganizationRepository $organizationRepository,
-        OrganizationSorter $organizationSorter,
-        UserService $userService,
-        Authorizer $authorizer,
+        Repository\AuthorizationRepository $authorizationRepository,
+        Repository\OrganizationRepository $organizationRepository,
+        Service\UserService $userService,
+        Service\Sorter\OrganizationSorter $organizationSorter,
+        Security\Authorizer $authorizer,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', 'any');
 
-        /** @var \App\Entity\User $user */
+        /** @var \App\Entity\User */
         $user = $this->getUser();
 
         $selectedOrganizationUid = $request->query->get('organization');
@@ -184,20 +167,25 @@ class TicketsController extends BaseController
     }
 
     #[Route('/tickets/{uid:ticket}', name: 'ticket', methods: ['GET', 'HEAD'])]
-    public function show(Ticket $ticket, TicketTimeline $ticketTimeline): Response
-    {
+    public function show(
+        Entity\Ticket $ticket,
+        Service\TicketTimeline $ticketTimeline,
+    ): Response {
         $this->denyAccessUnlessGranted('orga:see', $ticket);
 
         $timeline = $ticketTimeline->build($ticket);
+
+        $message = new Entity\Message();
+        $message->setTicket($ticket);
+
+        $form = $this->createNamedForm('answer', Form\AnswerForm::class, $message);
 
         return $this->render('tickets/show.html.twig', [
             'ticket' => $ticket,
             'timeline' => $timeline,
             'organization' => $ticket->getOrganization(),
-            'today' => Time::relative('today'),
-            'message' => '',
-            'answerType' => 'normal',
-            'minutesSpent' => 0,
+            'today' => Utils\Time::relative('today'),
+            'form' => $form,
         ]);
     }
 }

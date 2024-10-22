@@ -465,25 +465,10 @@
 
                     <div id="bottom">
                         {% if is_granted('orga:create:tickets:messages', organization) and not ticket.isClosed %}
-                            <form
-                                action="{{ path('create ticket message', {'uid': ticket.uid}) }}"
-                                method="post"
-                                class="timeline__editor flow"
-                                data-controller="form-message-documents"
-                                data-turbo-preserve-scroll
-                            >
-                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('create ticket message') }}">
-
-                                {% if error %}
-                                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-                                {% endif %}
-
-                                {% if errors.answerType is defined %}
-                                    <p class="form__error" role="alert" id="answer-type-error">
-                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                        {{ errors.answerType }}
-                                    </p>
-                                {% endif %}
+                            {{ form_start(form, {
+                                action: path('create ticket message', {'uid': ticket.uid})
+                            }) }}
+                                {{ form_errors(form) }}
 
                                 {% if ticket.status == 'resolved' %}
                                     <p class="text--center text--success">
@@ -492,50 +477,21 @@
                                     </p>
                                 {% endif %}
 
-                                {% set canPostSolutionApprovement = ticket.status == 'resolved' and ticket.requester == app.user %}
-                                {% set canSeeAgentMenu = not canPostSolutionApprovement and is_agent(organization) %}
-
-                                {% if canSeeAgentMenu %}
-                                    {% set canPostSolution = not ticket.isFinished and not ticket.hasSolution and ticket.assignee == app.user %}
-                                    {% set canPostTimeSpent = is_granted('orga:create:tickets:time_spent', organization) %}
-
+                                {% if form.type is defined %}
                                     <div class="cols flow">
                                         <div class="col--extend">
-                                            <select
-                                                name="answerType"
-                                                class="answer__select-answer-type widget--small"
-                                                required
-                                                aria-label="{{ 'tickets.show.answer_type' | trans }}"
-                                                {% if errors.answerType is defined %}
-                                                    aria-invalid="true"
-                                                    aria-errormessage="answer-type-error"
-                                                {% endif %}
-                                            >
-                                                <option value="normal" {{ answerType == 'normal' ? 'selected' }}>
-                                                    {{ 'tickets.show.answer_type.normal' | trans }}
-                                                </option>
-
-                                                {% if is_granted('orga:create:tickets:messages:confidential', organization) %}
-                                                    <option value="confidential" {{ answerType == 'confidential' ? 'selected' }}>
-                                                        {{ 'tickets.show.answer_type.confidential' | trans }}
-                                                    </option>
-                                                {% endif %}
-
-                                                {% if canPostSolution %}
-                                                    <option value="solution" {{ answerType == 'solution' ? 'selected' }}>
-                                                        {{ 'tickets.show.answer_type.solution' | trans }}
-                                                    </option>
-                                                {% endif %}
-                                            </select>
+                                            {{ form_errors(form.type) }}
+                                            {{ form_widget(form.type) }}
                                         </div>
 
-                                        {% if canPostTimeSpent %}
+                                        {% if form.timeSpent is defined %}
+                                            {% set timeSpentChanged = field_value(form.timeSpent) > 0 %}
                                             <div
                                                 data-controller="switch"
                                                 data-action="keydown.esc->switch#change"
                                                 data-switch-for-param="time-spent-button"
                                             >
-                                                <div data-switch-target="panel" id="time-spent-button" {{ minutesSpent > 0 ? 'hidden' }}>
+                                                <div data-switch-target="panel" id="time-spent-button" {{ timeSpentChanged ? 'hidden' }}>
                                                     <button
                                                         class="button--discreet text--small"
                                                         type="button"
@@ -547,17 +503,10 @@
                                                     </button>
                                                 </div>
 
-                                                <div data-switch-target="panel" id="time-spent-input" {{ minutesSpent == 0 ? 'hidden' }}>
+                                                <div data-switch-target="panel" id="time-spent-input" {{ not timeSpentChanged ? 'hidden' }}>
                                                     <label>
-                                                        <input
-                                                            class="input--size2 widget--small"
-                                                            name="timeSpent"
-                                                            type="number"
-                                                            value="{{ minutesSpent }}"
-                                                            min="0"
-                                                        />
-
-                                                        {{ 'tickets.show.minutes' | trans }}
+                                                        {{ form_widget(form.timeSpent) }}
+                                                        {{ field_label(form.timeSpent) }}
                                                     </label>
                                                 </div>
                                             </div>
@@ -565,79 +514,20 @@
                                     </div>
                                 {% endif %}
 
-                                <div class="flow flow--small">
-                                    {% if errors.content is defined %}
-                                        <p class="form__error" role="alert" id="message-error">
-                                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                            {{ errors.content }}
-                                        </p>
-                                    {% endif %}
+                                {{ form_row(form.content) }}
 
-                                    <div class="editor" data-controller="editor">
-                                        <textarea
-                                            id="message"
-                                            name="message"
-                                            data-controller="tinymce"
-                                            data-tinymce-upload-url-value="{{ path('create message document') }}"
-                                            data-tinymce-upload-csrf-value="{{ csrf_token('create message document') }}"
-                                            data-editor-target="tinymce"
-                                            data-action="new-document->editor#newDocument remove-document->tinymce#removeImage"
-                                            {% if errors.content is defined %}
-                                                autofocus
-                                                aria-invalid="true"
-                                                aria-errormessage="message-error"
-                                            {% endif %}
-                                        >{{ message }}</textarea>
-
-                                        <div class="editor__documents">
-                                            <turbo-frame
-                                                id="message-documents"
-                                                src="{{ path('message documents', { filter: 'unattached' }) }}"
-                                                data-controller="message-documents"
-                                                data-editor-target="messageDocuments"
-                                                data-action="remove-document->editor#removeDocument new-document->message-documents#reload"
-                                            >
-                                            </turbo-frame>
-                                        </div>
+                                {% if form.submit is defined %}
+                                    <div class="text--center">
+                                        {{ form_row(form.submit) }}
                                     </div>
-                                </div>
+                                {% else %}
+                                    <div class="cols cols--always flow flow--small text--center">
+                                        {{ form_row(form.submitSolutionRefusal) }}
 
-                                <div class="text--center">
-                                    {% if canPostSolutionApprovement %}
-                                        <div class="cols cols--always flow flow--small text--center">
-                                            <button
-                                                type="submit"
-                                                name="answerType"
-                                                value="solution refusal"
-                                            >
-                                                {{ icon('close') }}
-
-                                                {{ 'tickets.show.refuse' | trans }}
-                                            </button>
-
-                                            <button
-                                                class="button--primary"
-                                                type="submit"
-                                                name="answerType"
-                                                value="solution approval"
-                                            >
-                                                {{ icon('check') }}
-
-                                                {{ 'tickets.show.approve' | trans }}
-                                            </button>
-                                        </div>
-                                    {% else %}
-                                        <button
-                                            id="form-create-message-submit"
-                                            class="button--primary button--animated-icon"
-                                            type="submit"
-                                        >
-                                            {{ 'tickets.show.answer' | trans }}
-                                            {{ icon('arrow-right') }}
-                                        </button>
-                                    {% endif %}
-                                </div>
-                            </form>
+                                        {{ form_row(form.submitSolutionApproval) }}
+                                    </div>
+                                {% endif %}
+                            {{ form_end(form) }}
                         {% endif %}
                     </div>
                 </div>
