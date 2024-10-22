@@ -326,10 +326,6 @@ class TicketsController extends BaseController
             $ticket->addLabel($label);
         }
 
-        foreach ($organization->getObservers() as $observer) {
-            $ticket->addObserver($observer);
-        }
-
         $errors = $validator->validate($ticket);
         if (count($errors) > 0) {
             return $this->renderBadRequest('organizations/tickets/new.html.twig', [

@@ -138,10 +138,6 @@ class CreateTicketsFromMailboxEmailsHandler
                 $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($requesterOrganization);
                 $ticket->setTeam($responsibleTeam);
 
-                foreach ($requesterOrganization->getObservers() as $observer) {
-                    $ticket->addObserver($observer);
-                }
-
                 $this->ticketRepository->save($ticket, true);
                 $isNewTicket = true;
             }
