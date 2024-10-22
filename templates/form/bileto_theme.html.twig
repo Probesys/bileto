@@ -20,7 +20,62 @@
 {%- block checkbox_label -%}
     {%- set no_optional = true -%}
     {{- block('form_label') -}}
-{%- endblock -%}
+{%- endblock checkbox_label -%}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- set enclosure = attr['data-enclosure']|default('') -%}
+        {%- set enclosure_attr = {} -%}
+        {%- if enclosure %}
+            {%- set enclosure_attr = {class: 'enclosure enclosure--' ~ enclosure} -%}
+        {%- endif %}
+
+        {%- for child in form %}
+            <div{% with { attr: enclosure_attr } %}{{ block('attributes') }}{% endwith %}>
+                {{- form_widget(child) -}}
+                {{- form_label(child, null, {translation_domain: choice_translation_domain}) -}}
+            </div>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block radio_label -%}
+    {%- set no_optional = true -%}
+    {{- block('form_label') -}}
+{%- endblock radio_label -%}
+
+{%- block editor_row -%}
+    <div class="flow flow--small">
+        {{- form_errors(form) -}}
+        {{- form_widget(form) -}}
+    </div>
+{%- endblock editor_row -%}
+
+{%- block editor_widget -%}
+    <div class="editor" data-controller="editor">
+        {{- form_widget(form, {
+            'required': false,
+            'attr': {
+                'data-controller': 'tinymce',
+                'data-tinymce-upload-url-value': path('create message document'),
+                'data-tinymce-upload-csrf-value': csrf_token('create message document'),
+                'data-editor-target': 'tinymce',
+                'data-action': 'new-document->editor#newDocument remove-document->tinymce#removeImage',
+            },
+        }) -}}
+
+        <div class="editor__documents">
+            <turbo-frame
+                id="message-documents"
+                src="{{ path('message documents', { filter: 'unattached' }) }}"
+                data-controller="message-documents"
+                data-editor-target="messageDocuments"
+                data-action="remove-document->editor#removeDocument new-document->message-documents#reload"
+            >
+            </turbo-frame>
+        </div>
+    </div>
+{%- endblock editor_widget -%}
 
 {%- block form_errors -%}
     {%- if errors|length == 1 -%}
@@ -54,6 +109,7 @@
 {%- block form_label_content -%}
     {{- parent() -}}
 
+    {%- set required = required|default(false) -%}
     {%- set no_optional = no_optional|default(false) -%}
 
     {%- if disabled %}
@@ -89,8 +145,13 @@
     <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
         {%- set checkbox_layout = checkbox_layout|default(false) -%}
         {%- if checkbox_layout -%}
+            {%- set enclosure = attr['data-enclosure']|default('') -%}
+            {%- set enclosure_attr = {} -%}
+            {%- if enclosure %}
+                {%- set enclosure_attr = {class: 'enclosure enclosure--' ~ enclosure} -%}
+            {%- endif %}
             {{- form_errors(form) -}}
-            <div>
+            <div{% with { attr: enclosure_attr } %}{{ block('attributes') }}{% endwith %}>
                 {{- form_widget(form, widget_attr) -}}
                 {{- form_label(form) -}}
             </div>
@@ -138,6 +199,20 @@
         </button>
     </div>
 {%- endblock password_widget %}
+
+{%- block submit_arrow_widget -%}
+    <div class="form__actions">
+        <button class="button--primary button--animated-icon" type="submit">
+            {%- if label_html is same as(false) -%}
+                {{ label|trans(label_translation_parameters, translation_domain) -}}
+            {%- else -%}
+                {{- label|trans(label_translation_parameters, translation_domain)|raw -}}
+            {%- endif -%}
+
+            &nbsp;{{ icon('arrow-right') }}
+        </button>
+    </div>
+{%- endblock submit_arrow_widget %}
 
 {%- block submit_widget -%}
     {%- set attr = attr|merge({class: (attr.class|default('button--primary'))|trim}) -%}
