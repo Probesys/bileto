@@ -9,36 +9,7 @@
 {% block title %}{{ 'tickets.labels.edit.title' | trans }}{% endblock %}
 
 {% block body %}
-    {{ form_start(form, {
+    {{ form(form, {
         action: path('edit ticket labels', { uid: ticket.uid }),
     }) }}
-        {{ form_errors(form) }}
-
-        <div class="flow">
-            {% for label in form.labels %}
-                <div>
-                    <input
-                        type="checkbox"
-                        id="{{ field_id(label) }}"
-                        name="{{ field_name(label) }}"
-                        value="{{ field_value(label) }}"
-                        {{ field_value(label) in field_value(form.labels) ? 'checked' }}
-                        {% if label.vars.attr.description %}
-                            aria-describedby="{{ field_id(label, 'description') }}"
-                        {% endif %}
-                    />
-
-                    <label for="{{ field_id(label) }}" class="badge badge--{{ label.vars.attr.color }}">
-                        {{ field_label(label) }}
-                    </label>
-
-                    {% if label.vars.attr.description %}
-                        <span id="{{ field_id(label, 'description') }}" class="text--small text--secondary">
-                            {{ label.vars.attr.description }}
-                        </span>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-    {{ form_end(form) }}
 {% endblock %}

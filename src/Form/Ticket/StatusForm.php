@@ -7,24 +7,22 @@
 namespace App\Form\Ticket;
 
 use App\Entity;
-use App\Form\Type as AppType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class LabelsForm extends AbstractType
+class StatusForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('labels', AppType\LabelType::class, [
-            'expanded' => true,
-            'multiple' => true,
-            'by_reference' => false,
-            'required' => false,
-            'label' => false,
-            'block_prefix' => 'labels',
+        $builder->add('status', Type\ChoiceType::class, [
+            'choices' => Entity\Ticket::STATUSES,
+            'choice_label' => function (string $choice): TranslatableMessage {
+                return new TranslatableMessage("tickets.status.{$choice}");
+            },
+            'label' => new TranslatableMessage('tickets.status'),
         ]);
 
         $builder->add('submit', Type\SubmitType::class, [
@@ -36,7 +34,7 @@ class LabelsForm extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Entity\Ticket::class,
-            'csrf_token_id' => 'ticket labels',
+            'csrf_token_id' => 'ticket status',
             'csrf_message' => 'csrf.invalid',
             'attr' => [
                 'class' => 'form--standard',
