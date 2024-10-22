@@ -20,9 +20,6 @@ class NotificationsSubscriber implements EventSubscriberInterface
         return [
             TicketEvent::CREATED => 'sendReceiptEmail',
             MessageEvent::CREATED => 'sendMessageEmail',
-            MessageEvent::CREATED_SOLUTION => 'sendMessageEmail',
-            MessageEvent::APPROVED_SOLUTION => 'sendMessageEmail',
-            MessageEvent::REFUSED_SOLUTION => 'sendMessageEmail',
         ];
     }
 

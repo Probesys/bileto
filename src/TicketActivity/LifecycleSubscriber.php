@@ -23,7 +23,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
         return [
             TicketEvent::ASSIGNED => 'processAssignedTicket',
             TicketEvent::APPROVED => 'processApprovedTicket',
-            MessageEvent::CREATED => 'processAnswer',
+            MessageEvent::CREATED_ANSWER => 'processAnswer',
             MessageEvent::CREATED_SOLUTION => 'processNewSolution',
             MessageEvent::APPROVED_SOLUTION => 'processApprovedSolution',
             MessageEvent::REFUSED_SOLUTION => 'processRefusedSolution',

@@ -11,8 +11,11 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class MessageEvent extends Event
 {
-    // To be used each time an answer without solution is created.
+    // To be used each time a message is created.
     public const CREATED = 'message.created';
+
+    // To be used each time a answer without solution is created.
+    public const CREATED_ANSWER = 'message.created.answer';
 
     // To be used when an answer is posted as a solution.
     public const CREATED_SOLUTION = 'message.created.solution';

@@ -169,6 +169,10 @@ class CreateTicketsFromMailboxEmailsHandler
             $messageEvent = new MessageEvent($message);
             $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
 
+            if (!$isNewTicket) {
+                $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_ANSWER);
+            }
+
             $this->mailboxEmailRepository->remove($mailboxEmail, true);
 
             $this->activeUser->change(null);

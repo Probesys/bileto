@@ -126,6 +126,8 @@ class MessagesController extends BaseController
 
         $messageEvent = new MessageEvent($message);
 
+        $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
+
         if ($user == $ticket->getAssignee() && $answerType === 'solution') {
             $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_SOLUTION);
         } elseif ($user == $ticket->getRequester() && $answerType === 'solution approval') {
@@ -133,7 +135,7 @@ class MessagesController extends BaseController
         } elseif ($user == $ticket->getRequester() && $answerType === 'solution refusal') {
             $eventDispatcher->dispatch($messageEvent, MessageEvent::REFUSED_SOLUTION);
         } else {
-            $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
+            $eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_ANSWER);
         }
 
         if ($minutesSpent > 0 && $authorizer->isGranted('orga:create:tickets:time_spent', $organization)) {
