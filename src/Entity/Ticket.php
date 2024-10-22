@@ -30,7 +30,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
 
     public const TITLE_MAX_LENGTH = 255;
 
-    public const TYPES = ['request', 'incident'];
+    public const TYPES = ['incident', 'request'];
     public const DEFAULT_TYPE = 'incident';
 
     public const STATUSES = ['new', 'in_progress', 'planned', 'pending', 'resolved', 'closed'];
@@ -174,12 +174,6 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     public function getType(): ?string
     {
         return $this->type;
-    }
-
-    public function getTypeLabel(): ?string
-    {
-        $typesWithLabels = self::getTypesWithLabels();
-        return $typesWithLabels[$this->type];
     }
 
     public function setType(string $type): self
@@ -436,17 +430,6 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     }
 
     /**
-     * @return array<string, string>
-     */
-    public static function getTypesWithLabels(): array
-    {
-        return [
-            'request' => new TranslatableMessage('tickets.request'),
-            'incident' => new TranslatableMessage('tickets.incident'),
-        ];
-    }
-
-    /**
      * @return Collection<int, Message>
      */
     public function getMessages(bool $confidential = true): Collection
@@ -485,6 +468,29 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
             $this->messages->add($message);
             $message->setTicket($this);
         }
+
+        return $this;
+    }
+
+    public function getContent(): string
+    {
+        $firstMessage = $this->messages->first();
+        return $firstMessage ? $firstMessage->getContent() : '';
+    }
+
+    public function setContent(string $content): static
+    {
+        if (!$this->messages->isEmpty()) {
+            throw new \LogicException('Cannot set content if ticket already has messages.');
+        }
+
+        $message = new Message();
+        $message->setContent($content);
+        $message->setTicket($this);
+        $message->setIsConfidential(false);
+        $message->setVia('webapp');
+
+        $this->addMessage($message);
 
         return $this;
     }

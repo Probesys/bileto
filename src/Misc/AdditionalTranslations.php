@@ -50,3 +50,7 @@ new TranslatableMessage('common.colors.blue');
 new TranslatableMessage('common.colors.green');
 new TranslatableMessage('common.colors.orange');
 new TranslatableMessage('common.colors.red');
+
+// See src/Form/TicketForm.php
+new TranslatableMessage('tickets.type.request');
+new TranslatableMessage('tickets.type.incident');
