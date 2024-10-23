@@ -31,16 +31,8 @@
         </p>
 
         <div class="panel">
-            <form
-                action="{{ path('update profile') }}"
-                method="post"
-                class="form--standard"
-            >
-                {% if error %}
-                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-                {% endif %}
-
-                {% if managedByLdap %}
+            {{ form_start(form) }}
+                {% if form.vars['managedByLdap'] %}
                     {{ include('alerts/_alert.html.twig', {
                         type: 'info',
                         title: 'common.information' | trans,
@@ -48,67 +40,13 @@
                     }, with_context = false) }}
                 {% endif %}
 
-                <div class="flow flow--small">
-                    <label for="name">
-                        {{ 'users.name' | trans }}
+                {{ form_errors(form) }}
 
-                        {% if not managedByLdap %}
-                            <span class="text--secondary">
-                                {{ 'forms.optional_max_chars' | trans({ number: 100 }) }}
-                            </span>
-                        {% endif %}
-                    </label>
+                {{ form_row(form.name) }}
 
-                    {% if errors.name is defined %}
-                        <p class="form__error" role="alert" id="name-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.name }}
-                        </p>
-                    {% endif %}
+                {{ form_row(form.email) }}
 
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value="{{ name }}"
-                        maxlength="100"
-                        autocomplete="name"
-                        {% if errors.name is defined %}
-                            aria-invalid="true"
-                            aria-errormessage="name-error"
-                        {% endif %}
-                        {{ managedByLdap ? 'disabled' }}
-                    />
-                </div>
-
-                <div class="flow flow--small">
-                    <label for="email">
-                        {{ 'users.email' | trans }}
-                    </label>
-
-                    {% if errors.email is defined %}
-                        <p class="form__error" role="alert" id="email-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.email }}
-                        </p>
-                    {% endif %}
-
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value="{{ email }}"
-                        required
-                        autocomplete="email"
-                        {% if errors.email is defined %}
-                            aria-invalid="true"
-                            aria-errormessage="email-error"
-                        {% endif %}
-                        {{ managedByLdap ? 'disabled' }}
-                    />
-                </div>
-
-                {% if not managedByLdap %}
+                {% if form.plainPassword is defined %}
                     <fieldset>
                         <legend>{{ 'users.password' | trans }}</legend>
 
@@ -117,92 +55,17 @@
                                 {{ 'profile.leave_password' | trans }}
                             </p>
 
-                            <div class="flow flow--small">
-                                <label for="current-password">
-                                    {{ 'profile.current_password' | trans }}
-                                </label>
+                            {{ form_row(form.currentPassword) }}
 
-                                {% if errors.password is defined %}
-                                    <p class="form__error" role="alert" id="current-password-error">
-                                        <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                                        {{ errors.password }}
-                                    </p>
-                                {% endif %}
-
-                                <div class="input-container" data-controller="password">
-                                    <input
-                                        type="password"
-                                        id="current-password"
-                                        name="currentPassword"
-                                        autocomplete="current-password"
-                                        data-password-target="input"
-                                        {% if errors.password is defined %}
-                                            aria-invalid="true"
-                                            aria-errormessage="current-password-error"
-                                        {% endif %}
-                                    />
-
-                                    <button
-                                        class="button--icon"
-                                        type="button"
-                                        role="switch"
-                                        data-action="password#toggle"
-                                        data-password-target="button"
-                                    >
-                                        {{ icon('eye') }}
-                                        {{ icon('eye-slash') }}
-                                        <span class="sr-only">
-                                            {{ 'forms.show_password' | trans }}
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="flow flow--small">
-                                <label for="new-password">
-                                    {{ 'profile.new_password' | trans }}
-                                </label>
-
-                                <div class="input-container" data-controller="password">
-                                    <input
-                                        type="password"
-                                        id="new-password"
-                                        name="newPassword"
-                                        autocomplete="new-password"
-                                        data-password-target="input"
-                                    />
-
-                                    <button
-                                        class="button--icon"
-                                        type="button"
-                                        role="switch"
-                                        data-action="password#toggle"
-                                        data-password-target="button"
-                                    >
-                                        {{ icon('eye') }}
-                                        {{ icon('eye-slash') }}
-                                        <span class="sr-only">
-                                            {{ 'forms.show_password' | trans }}
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
+                            {{ form_row(form.plainPassword) }}
                         </div>
                     </fieldset>
-
-                    <div class="form__actions">
-                        <button
-                            id="form-update-profile-submit"
-                            class="button--primary"
-                            type="submit"
-                        >
-                            {{ 'forms.save_changes' | trans }}
-                        </button>
-                    </div>
                 {% endif %}
 
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('update profile') }}">
-            </form>
+                {% if form.submit is defined %}
+                    {{ form_row(form.submit) }}
+                {% endif %}
+            {{ form_end(form) }}
         </div>
     </main>
 {% endblock %}
