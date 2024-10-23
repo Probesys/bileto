@@ -34,18 +34,30 @@ class RoleType extends AbstractType
             'class' => Entity\Role::class,
 
             'choice_loader' => function (Options $options): ChoiceLoaderInterface {
-                $vary = [];
+                $allowedTypes = ['user', 'agent', 'admin', 'super'];
+                $types = $options['types'];
+
+                if (empty($types)) {
+                    // No types is all types.
+                    $types = $allowedTypes;
+                } else {
+                    // Make sure that the types only contains allowed ones.
+                    $types = array_intersect($allowedTypes, $types);
+                }
+
+                if (!$this->authorizer->isGranted('admin:*')) {
+                    // Remove "super" type if permission is not granted.
+                    $types = array_diff($types, ['super']);
+                }
+
+                $vary = [$types];
 
                 return ChoiceList::lazy(
                     $this,
-                    function () {
+                    function () use ($types) {
                         $roles = $this->roleRepository->findBy([
-                            'type' => ['user', 'agent', 'admin'],
+                            'type' => $types,
                         ]);
-
-                        if ($this->authorizer->isGranted('admin:*')) {
-                            $roles[] = $this->roleRepository->findOrCreateSuperRole();
-                        }
 
                         $this->roleSorter->sort($roles);
 
@@ -64,7 +76,11 @@ class RoleType extends AbstractType
                     return $role->getName();
                 }
             },
+
+            'types' => [],
         ]);
+
+        $resolver->setAllowedTypes('types', 'array');
     }
 
     public function getParent(): string
