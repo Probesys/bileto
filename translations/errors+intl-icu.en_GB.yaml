@@ -1,7 +1,5 @@
 authorization.cannot_revoke.managed_by_team: 'You are not allowed to revoke a team authorization.'
 authorization.cannot_revoke.super: 'You are not allowed to revoke this super-admin authorization.'
-authorization.role.invalid: 'Select a role from the list.'
-authorization.super.unauthorized: 'You are not allowed to grant super-admin authorization.'
 contract.end_at.greater_than_start_at: 'Enter a date greater than the start date.'
 contract.end_at.required: 'Enter an end date.'
 contract.max_hours.greater_than_zero: 'Enter a number of hours greater than zero.'

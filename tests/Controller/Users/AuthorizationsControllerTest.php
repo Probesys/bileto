@@ -39,6 +39,7 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'New authorization');
+        $this->assertSelectorTextNotContains('#authorization_role', 'Super-admin');
     }
 
     public function testGetNewCanRenderSuperAdminRole(): void
@@ -51,7 +52,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('#role', 'Super-admin');
+        $this->assertSelectorTextContains('#authorization_role', 'Super-admin');
     }
 
     public function testGetNewFailsIfAccessIsForbidden(): void
@@ -66,7 +67,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
     }
 
-    public function testPostCreateGrantsAdminAuthorizationAndRedirects(): void
+    public function testPostNewGrantsAdminAuthorizationAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -79,9 +80,11 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(1, AuthorizationFactory::count());
 
-        $client->request(Request::METHOD_GET, "/users/{$holder->getUid()}/authorizations/new");
-        $crawler = $client->submitForm('form-create-authorization-submit', [
-            'role' => $role->getUid(),
+        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $role->getId(),
+            ],
         ]);
 
         $this->assertSame(2, AuthorizationFactory::count());
@@ -92,7 +95,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->assertSame($role->getId(), $authorization->getRole()->getId());
     }
 
-    public function testPostCreateGrantsOrgaAuthorizationAndRedirects(): void
+    public function testPostNewGrantsOrgaAuthorizationAndRedirects(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -106,10 +109,12 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertSame(1, AuthorizationFactory::count());
 
-        $client->request(Request::METHOD_GET, "/users/{$holder->getUid()}/authorizations/new");
-        $crawler = $client->submitForm('form-create-authorization-submit', [
-            'role' => $role->getUid(),
-            'organization' => $organization->getUid(),
+        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $role->getId(),
+                'organization' => $organization->getId(),
+            ],
         ]);
 
         $this->assertSame(2, AuthorizationFactory::count());
@@ -121,7 +126,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->assertSame($organization->getId(), $authorization->getOrganization()->getId());
     }
 
-    public function testPostCreateCanGrantSuperAuthorizationIfCorrectAuthorization(): void
+    public function testPostNewCanGrantSuperAuthorizationIfCorrectAuthorization(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -137,8 +142,10 @@ class AuthorizationsControllerTest extends WebTestCase
         $superRole = $roleRepository->findOrCreateSuperRole();
 
         $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
-            'role' => $superRole->getUid(),
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $superRole->getId(),
+            ],
         ]);
 
         $this->assertSame(2, AuthorizationFactory::count());
@@ -149,7 +156,38 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->assertSame($superRole->getId(), $authorization->getRole()->getId());
     }
 
-    public function testPostCreateFailsIfRoleDoesNotExist(): void
+    public function testPostNewForcesOrganizationToNullIfRoleIsAdmin(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
+        $holder = UserFactory::createOne();
+        $role = RoleFactory::createOne([
+            'type' => 'admin',
+        ]);
+        $organization = OrganizationFactory::createOne();
+
+        $this->assertSame(1, AuthorizationFactory::count());
+
+        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $role->getId(),
+                'organization' => $organization->getId(),
+            ],
+        ]);
+
+        $this->assertSame(2, AuthorizationFactory::count());
+
+        $this->assertResponseRedirects("/users/{$holder->getUid()}", 302);
+        $authorization = AuthorizationFactory::last();
+        $this->assertSame($holder->getId(), $authorization->getHolder()->getId());
+        $this->assertSame($role->getId(), $authorization->getRole()->getId());
+        $this->assertNull($authorization->getOrganization());
+    }
+
+    public function testPostNewFailsIfRoleDoesNotExist(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -158,15 +196,17 @@ class AuthorizationsControllerTest extends WebTestCase
         $holder = UserFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
-            'role' => 'not a uid',
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => 'not an id',
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#role-error', 'Select a role from the list');
+        $this->assertSelectorTextContains('#authorization_role-error', 'The selected choice is invalid');
         $this->assertSame(1, AuthorizationFactory::count());
     }
 
-    public function testPostCreateFailsIfSuperRoleAndNotCorrectAuthorization(): void
+    public function testPostNewFailsIfSuperRoleAndNotCorrectAuthorization(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -182,15 +222,17 @@ class AuthorizationsControllerTest extends WebTestCase
         $superRole = $roleRepository->findOrCreateSuperRole();
 
         $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
-            'role' => $superRole->getUid(),
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $superRole->getId(),
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#role-error', 'You are not allowed to grant super-admin authorization');
+        $this->assertSelectorTextContains('#authorization_role-error', 'The selected choice is invalid');
         $this->assertSame(1, AuthorizationFactory::count());
     }
 
-    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
@@ -202,30 +244,14 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
-            '_csrf_token' => 'not a token',
-            'role' => $role->getUid(),
+            'authorization' => [
+                '_token' => 'not a token',
+                'role' => $role->getId(),
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->assertSelectorTextContains('#authorization-error', 'The security token is invalid');
         $this->assertSame(1, AuthorizationFactory::count());
-    }
-
-    public function testPostCreateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $holder = UserFactory::createOne();
-        $role = RoleFactory::createOne([
-            'type' => 'admin',
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/users/{$holder->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create user authorization'),
-            'role' => $role->getUid(),
-        ]);
     }
 
     public function testPostDeleteDeletesAuthorizationAndRedirects(): void

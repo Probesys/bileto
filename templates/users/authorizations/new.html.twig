@@ -39,101 +39,13 @@
         <h1>{{ 'authorizations.new.title' | trans }}</h1>
 
         <div class="panel">
-            <form action="" method="post" class="form--standard" data-controller="form-new-authorization">
-                {% if error %}
-                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-                {% endif %}
+            {{ form_start(form) }}
+                {{ form_errors(form) }}
 
-                <div class="cols flow">
-                    <div>
-                        <input
-                            type="radio"
-                            id="type-user"
-                            name="type"
-                            value="user"
-                            {{ type == 'user' ? 'checked' }}
-                            data-action="form-new-authorization#refresh"
-                        />
-
-                        <label for="type-user">
-                            {{ 'roles.type.user' | trans }}
-                        </label>
-                    </div>
-
-                    <div>
-                        <input
-                            type="radio"
-                            id="type-agent"
-                            name="type"
-                            value="agent"
-                            {{ type == 'agent' ? 'checked' }}
-                            data-action="form-new-authorization#refresh"
-                        />
-
-                        <label for="type-agent">
-                            {{ 'roles.type.agent' | trans }}
-                        </label>
-                    </div>
-
-                    <div>
-                        <input
-                            type="radio"
-                            id="type-admin"
-                            name="type"
-                            value="admin"
-                            {{ type == 'admin' ? 'checked' }}
-                            data-action="form-new-authorization#refresh"
-                        />
-
-                        <label for="type-admin">
-                            {{ 'roles.type.admin' | trans }}
-                        </label>
-                    </div>
-                </div>
+                {{ form_row(form.type) }}
 
                 <div class="flow flow--small">
-                    <label for="role">
-                        {{ 'authorizations.new.role' | trans }}
-                    </label>
-
-                    {% if errors.role is defined %}
-                        <p class="form__error" role="alert" id="role-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.role }}
-                        </p>
-                    {% endif %}
-
-                    <select
-                        id="role"
-                        name="role"
-                        required
-                        aria-describedby="role-caption"
-                        {% if errors.role is defined %}
-                            aria-invalid="true"
-                            aria-errormessage="role-error"
-                        {% endif %}
-                        data-action="form-new-authorization#refreshRoleCaption"
-                        data-form-new-authorization-target="roleSelect"
-                    >
-                        {% for role in roles %}
-                            <option
-                                value="{{ role.uid }}"
-                                data-form-new-authorization-target="roleOption"
-                                data-type="{{ role.type }}"
-                                {% if role.type == 'super' %}
-                                    data-desc="{{ 'roles.super_admin.description' | trans }}"
-                                {% else %}
-                                    data-desc="{{ role.description }}"
-                                {% endif %}
-                            >
-                                {% if role.type == 'super' %}
-                                    {{ 'roles.super_admin' | trans }}
-                                {% else %}
-                                    {{ role.name }}
-                                {% endif %}
-                            </option>
-                        {% endfor %}
-                    </select>
+                    {{ form_row(form.role) }}
 
                     <p
                         id="role-caption"
@@ -144,51 +56,10 @@
                     ></p>
                 </div>
 
-                <div class="flow flow--small" data-form-new-authorization-target="organizationsGroup">
-                    <label for="organization">
-                        {{ 'authorizations.new.organization_scope' | trans }}
-                    </label>
+                {{ form_row(form.organization) }}
 
-                    <p class="form__caption" id="organization-caption">
-                        {{ 'authorizations.new.organization_caption' | trans }}
-                    </p>
-
-                    {% if errors.organization is defined %}
-                        <p class="form__error" role="alert" id="organization-error">
-                            <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                            {{ errors.organization }}
-                        </p>
-                    {% endif %}
-
-                    <select
-                        id="organization"
-                        name="organization"
-                        aria-describedby="organization-caption"
-                        {% if errors.organization is defined %}
-                            aria-invalid="true"
-                            aria-errormessage="organization-error"
-                        {% endif %}
-                    >
-                        <option value="">
-                            {{ 'authorizations.new.global' | trans }}
-                        </option>
-
-                        {% for organization in organizations %}
-                            <option value="{{ organization.uid }}" {{ organization.uid == organizationUid ? 'selected' }}>
-                                {{ organization.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form__actions">
-                    <button id="form-create-authorization-submit" class="button--primary" type="submit">
-                        {{ 'authorizations.new.submit' | trans }}
-                    </button>
-                </div>
-
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('create user authorization') }}">
-            </form>
+                {{ form_row(form.submit) }}
+            {{ form_end(form) }}
         </div>
     </main>
 {% endblock %}

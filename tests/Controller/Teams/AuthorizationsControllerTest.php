@@ -6,38 +6,30 @@
 
 namespace App\Tests\Controller\Teams;
 
-use App\Tests\AuthorizationHelper;
-use App\Tests\FactoriesHelper;
-use App\Tests\SessionHelper;
-use App\Tests\Factory\AuthorizationFactory;
-use App\Tests\Factory\OrganizationFactory;
-use App\Tests\Factory\RoleFactory;
-use App\Tests\Factory\TeamFactory;
-use App\Tests\Factory\TeamAuthorizationFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests;
+use App\Tests\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry;
-use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class AuthorizationsControllerTest extends WebTestCase
 {
-    use AuthorizationHelper;
     use Factories;
-    use FactoriesHelper;
     use ResetDatabase;
-    use SessionHelper;
+    use Tests\AuthorizationHelper;
+    use Tests\FactoriesHelper;
+    use Tests\SessionHelper;
 
     public function testGetNewRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
+        $team = Factory\TeamFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/authorizations/new");
 
@@ -50,183 +42,179 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $team = TeamFactory::createOne();
+        $team = Factory\TeamFactory::createOne();
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/teams/{$team->getUid()}/authorizations/new");
     }
 
-    public function testPostCreateGrantsAdminAuthorizationAndRedirects(): void
+    public function testPostNewGrantsAuthorizationOnOrganizationAndRedirects(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $role = RoleFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $role = Factory\RoleFactory::createOne([
             'type' => 'agent',
         ]);
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
 
-        $this->assertSame(0, TeamAuthorizationFactory::count());
+        $this->assertSame(0, Factory\TeamAuthorizationFactory::count());
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
-            'role' => $role->getUid(),
-            'organization' => $organization->getUid(),
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $role->getId(),
+                'organization' => $organization->getId(),
+            ],
         ]);
 
-        $this->assertSame(1, TeamAuthorizationFactory::count());
+        $this->assertSame(1, Factory\TeamAuthorizationFactory::count());
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        $teamAuthorization = TeamAuthorizationFactory::last();
+        $teamAuthorization = Factory\TeamAuthorizationFactory::last();
         $this->assertSame($team->getId(), $teamAuthorization->getTeam()->getId());
         $this->assertSame($role->getId(), $teamAuthorization->getRole()->getId());
         $this->assertSame($organization->getId(), $teamAuthorization->getOrganization()->getId());
     }
 
-    public function testPostCreateGrantsAgentAuthorizationAndRedirects(): void
+    public function testPostNewGrantsGlobalAuthorizationAndRedirects(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $role = RoleFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $role = Factory\RoleFactory::createOne([
             'type' => 'agent',
         ]);
 
-        $this->assertSame(0, TeamAuthorizationFactory::count());
+        $this->assertSame(0, Factory\TeamAuthorizationFactory::count());
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
-            'role' => $role->getUid(),
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $role->getId(),
+            ],
         ]);
 
-        $this->assertSame(1, TeamAuthorizationFactory::count());
+        $this->assertSame(1, Factory\TeamAuthorizationFactory::count());
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        $teamAuthorization = TeamAuthorizationFactory::last();
+        $teamAuthorization = Factory\TeamAuthorizationFactory::last();
         $this->assertSame($team->getId(), $teamAuthorization->getTeam()->getId());
         $this->assertSame($role->getId(), $teamAuthorization->getRole()->getId());
+        $this->assertNull($teamAuthorization->getOrganization());
     }
 
-    public function testPostCreateGrantsTeamAuthorizationsToTheAgents(): void
+    public function testPostNewGrantsTeamAuthorizationsToTheAgents(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $agent = UserFactory::createOne();
-        $team = TeamFactory::createOne([
+        $agent = Factory\UserFactory::createOne();
+        $team = Factory\TeamFactory::createOne([
             'agents' => [$agent],
         ]);
-        $role = RoleFactory::createOne([
+        $role = Factory\RoleFactory::createOne([
             'type' => 'agent',
         ]);
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
-            'role' => $role->getUid(),
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $role->getId(),
+            ],
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
         $agent->_refresh();
         $authorizations = $agent->getAuthorizations();
-        $teamAuthorization = TeamAuthorizationFactory::last();
+        $teamAuthorization = Factory\TeamAuthorizationFactory::last();
         $this->assertSame(1, count($authorizations));
         $this->assertSame($teamAuthorization->getId(), $authorizations[0]->getTeamAuthorization()->getId());
+        $this->assertSame($role->getId(), $authorizations[0]->getRole()->getId());
+        $this->assertNull($authorizations[0]->getOrganization());
     }
 
-    public function testPostCreateFailsIfRoleDoesNotExist(): void
+    public function testPostNewFailsIfRoleDoesNotExist(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
+        $team = Factory\TeamFactory::createOne();
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
-            'role' => 'not a uid',
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => 'not an id',
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#role-error', 'Select a role from the list');
-        $this->assertSame(0, TeamAuthorizationFactory::count());
+        $this->assertSelectorTextContains('#authorization_role-error', 'The selected choice is invalid');
+        $this->assertSame(0, Factory\TeamAuthorizationFactory::count());
     }
 
-    public function testPostCreateFailsIfNotAgentRole(): void
+    public function testPostNewFailsIfNotAgentRole(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $role = RoleFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $role = Factory\RoleFactory::createOne([
             'type' => Foundry\faker()->randomElement(['user', 'admin', 'super']),
         ]);
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
-            'role' => $role->getUid(),
+            'authorization' => [
+                '_token' => $this->generateCsrfToken($client, 'authorization'),
+                'role' => $role->getId(),
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#role-error', 'Select a role from the list');
-        $this->assertSame(0, TeamAuthorizationFactory::count());
+        $this->assertSelectorTextContains('#authorization_role-error', 'The selected choice is invalid');
+        $this->assertSame(0, Factory\TeamAuthorizationFactory::count());
     }
 
-    public function testPostCreateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $role = RoleFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $role = Factory\RoleFactory::createOne([
             'type' => 'agent',
         ]);
 
         $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
-            '_csrf_token' => 'not a token',
-            'role' => $role->getUid(),
+            'authorization' => [
+                '_token' => 'not a token',
+                'role' => $role->getId(),
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
-        $this->assertSame(0, TeamAuthorizationFactory::count());
-    }
-
-    public function testPostCreateFailsIfAccessIsForbidden(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $client = static::createClient();
-        $user = UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $team = TeamFactory::createOne();
-        $role = RoleFactory::createOne([
-            'type' => 'agent',
-        ]);
-
-        $client->catchExceptions(false);
-        $client->request(Request::METHOD_POST, "/teams/{$team->getUid()}/authorizations/new", [
-            '_csrf_token' => $this->generateCsrfToken($client, 'create team authorization'),
-            'role' => $role->getUid(),
-        ]);
+        $this->assertSelectorTextContains('#authorization-error', 'The security token is invalid');
+        $this->assertSame(0, Factory\TeamAuthorizationFactory::count());
     }
 
     public function testPostDeleteDeletesTeamAuthorizationAndRedirects(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $teamAuthorization = TeamAuthorizationFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $teamAuthorization = Factory\TeamAuthorizationFactory::createOne([
             'team' => $team,
         ]);
-        $authorization = AuthorizationFactory::createOne([
+        $authorization = Factory\AuthorizationFactory::createOne([
             'teamAuthorization' => $teamAuthorization,
         ]);
 
@@ -237,25 +225,25 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
-        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        Factory\TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
+        Factory\AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
     }
 
     public function testPostDeleteUnsetsResponsibleTeamIfTeamHasNoLongerAccessToOrganization(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $organization = OrganizationFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne([
             'responsibleTeam' => $team,
         ]);
-        $teamAuthorization = TeamAuthorizationFactory::createOne([
+        $teamAuthorization = Factory\TeamAuthorizationFactory::createOne([
             'team' => $team,
             'organization' => $organization,
         ]);
-        $authorization = AuthorizationFactory::createOne([
+        $authorization = Factory\AuthorizationFactory::createOne([
             'teamAuthorization' => $teamAuthorization,
             'organization' => $organization,
         ]);
@@ -267,8 +255,8 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
-        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        Factory\TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
+        Factory\AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
         $organization->_refresh();
         $this->assertNull($organization->getResponsibleTeam());
     }
@@ -276,22 +264,22 @@ class AuthorizationsControllerTest extends WebTestCase
     public function testPostDeleteDoesNotChangeResponsibleTeamIfTeamStillHasAccessToOrganization(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $organization = OrganizationFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne([
             'responsibleTeam' => $team,
         ]);
-        $teamAuthorization = TeamAuthorizationFactory::createOne([
+        $teamAuthorization = Factory\TeamAuthorizationFactory::createOne([
             'team' => $team,
             'organization' => $organization,
         ]);
-        $teamAuthorization2 = TeamAuthorizationFactory::createOne([
+        $teamAuthorization2 = Factory\TeamAuthorizationFactory::createOne([
             'team' => $team,
             'organization' => $organization,
         ]);
-        $authorization = AuthorizationFactory::createOne([
+        $authorization = Factory\AuthorizationFactory::createOne([
             'teamAuthorization' => $teamAuthorization,
             'organization' => $organization,
         ]);
@@ -303,8 +291,8 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
-        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        Factory\TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
+        Factory\AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
         $organization->_refresh();
         $this->assertNotNull($organization->getResponsibleTeam());
     }
@@ -312,22 +300,22 @@ class AuthorizationsControllerTest extends WebTestCase
     public function testPostDeleteDoesNotChangeResponsibleTeamIfTeamHasGlobalAccess(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $organization = OrganizationFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne([
             'responsibleTeam' => $team,
         ]);
-        $teamAuthorization = TeamAuthorizationFactory::createOne([
+        $teamAuthorization = Factory\TeamAuthorizationFactory::createOne([
             'team' => $team,
             'organization' => $organization,
         ]);
-        $teamAuthorization2 = TeamAuthorizationFactory::createOne([
+        $teamAuthorization2 = Factory\TeamAuthorizationFactory::createOne([
             'team' => $team,
             'organization' => null,
         ]);
-        $authorization = AuthorizationFactory::createOne([
+        $authorization = Factory\AuthorizationFactory::createOne([
             'teamAuthorization' => $teamAuthorization,
             'organization' => $organization,
         ]);
@@ -339,8 +327,8 @@ class AuthorizationsControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
-        TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
-        AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
+        Factory\TeamAuthorizationFactory::assert()->notExists(['id' => $teamAuthorization->getId()]);
+        Factory\AuthorizationFactory::assert()->notExists(['id' => $authorization->getId()]);
         $organization->_refresh();
         $this->assertNotNull($organization->getResponsibleTeam());
     }
@@ -348,11 +336,11 @@ class AuthorizationsControllerTest extends WebTestCase
     public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantAdmin($user->_real(), ['admin:manage:agents']);
-        $team = TeamFactory::createOne();
-        $teamAuthorization = TeamAuthorizationFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $teamAuthorization = Factory\TeamAuthorizationFactory::createOne([
             'team' => $team,
         ]);
 
@@ -363,7 +351,7 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->assertResponseRedirects("/teams/{$team->getUid()}", 302);
         $client->followRedirect();
         $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
-        TeamAuthorizationFactory::assert()->exists(['id' => $teamAuthorization->getId()]);
+        Factory\TeamAuthorizationFactory::assert()->exists(['id' => $teamAuthorization->getId()]);
     }
 
     public function testPostDeleteFailsIfAccessIsForbidden(): void
@@ -371,10 +359,10 @@ class AuthorizationsControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $team = TeamFactory::createOne();
-        $teamAuthorization = TeamAuthorizationFactory::createOne([
+        $team = Factory\TeamFactory::createOne();
+        $teamAuthorization = Factory\TeamAuthorizationFactory::createOne([
             'team' => $team,
         ]);
 

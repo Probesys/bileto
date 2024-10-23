@@ -6,11 +6,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Authorization;
-use App\Entity\Organization;
-use App\Entity\Role;
-use App\Entity\Team;
-use App\Entity\User;
+use App\Entity;
 use App\Security;
 use App\Service;
 use App\Utils;
@@ -21,7 +17,7 @@ trait AuthorizationHelper
     /**
      * @param string[] $permissions
      */
-    public function grantAdmin(User $user, array $permissions): void
+    public function grantAdmin(Entity\User $user, array $permissions): void
     {
         if (empty($permissions)) {
             return;
@@ -33,7 +29,7 @@ trait AuthorizationHelper
         $entityManager = $registry->getManager();
 
         /** @var \App\Repository\RoleRepository */
-        $roleRepo = $entityManager->getRepository(Role::class);
+        $roleRepo = $entityManager->getRepository(Entity\Role::class);
 
         /** @var Security\Authorizer */
         $authorizer = $container->get(Security\Authorizer::class);
@@ -43,7 +39,7 @@ trait AuthorizationHelper
             $role = $roleRepo->findOrCreateSuperRole();
             $authorizer->grant($user, $role);
         } else {
-            $role = new Role();
+            $role = new Entity\Role();
             $role->setName(Utils\Random::hex(10));
             $role->setDescription('The role description');
             $role->setType('admin');
@@ -59,9 +55,9 @@ trait AuthorizationHelper
      * @param 'user'|'agent' $type
      */
     public function grantOrga(
-        User $user,
+        Entity\User $user,
         array $permissions,
-        ?Organization $organization = null,
+        ?Entity\Organization $organization = null,
         string $type = 'agent',
     ): void {
         if (empty($permissions)) {
@@ -74,12 +70,12 @@ trait AuthorizationHelper
         $entityManager = $registry->getManager();
 
         /** @var \App\Repository\RoleRepository */
-        $roleRepo = $entityManager->getRepository(Role::class);
+        $roleRepo = $entityManager->getRepository(Entity\Role::class);
 
         /** @var Security\Authorizer */
         $authorizer = $container->get(Security\Authorizer::class);
 
-        $role = new Role();
+        $role = new Entity\Role();
         $role->setName(Utils\Random::hex(10));
         $role->setDescription('The role description');
         $role->setType($type);
@@ -93,9 +89,9 @@ trait AuthorizationHelper
      * @param string[] $permissions
      */
     public function grantTeam(
-        Team $team,
+        Entity\Team $team,
         array $permissions,
-        ?Organization $organization = null,
+        ?Entity\Organization $organization = null,
     ): void {
         if (empty($permissions)) {
             return;
@@ -107,17 +103,23 @@ trait AuthorizationHelper
         $entityManager = $registry->getManager();
 
         /** @var \App\Repository\RoleRepository */
-        $roleRepo = $entityManager->getRepository(Role::class);
+        $roleRepo = $entityManager->getRepository(Entity\Role::class);
         /** @var Service\TeamService */
         $teamService = $container->get(Service\TeamService::class);
 
-        $role = new Role();
+        $role = new Entity\Role();
         $role->setName(Utils\Random::hex(10));
         $role->setDescription('The role description');
         $role->setType('agent');
         $role->setPermissions($permissions);
 
         $roleRepo->save($role);
-        $teamService->createAuthorization($team, $role, $organization);
+
+        $teamAuthorization = new Entity\TeamAuthorization();
+        $teamAuthorization->setTeam($team);
+        $teamAuthorization->setRole($role);
+        $teamAuthorization->setOrganization($organization);
+
+        $teamService->createAuthorization($teamAuthorization);
     }
 }
