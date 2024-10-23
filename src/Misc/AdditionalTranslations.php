@@ -59,3 +59,10 @@ new TranslatableMessage('tickets.type.incident');
 new TranslatableMessage('tickets.show.answer_type.confidential');
 new TranslatableMessage('tickets.show.answer_type.normal');
 new TranslatableMessage('tickets.show.answer_type.solution');
+
+// See src/Form/MailboxForm.php
+new TranslatableMessage('mailboxes.encryption.none');
+new TranslatableMessage('mailboxes.encryption.ssl');
+new TranslatableMessage('mailboxes.encryption.tls');
+new TranslatableMessage('mailboxes.post_action.delete');
+new TranslatableMessage('mailboxes.post_action.mark_as_read');

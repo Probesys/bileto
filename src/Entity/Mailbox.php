@@ -23,6 +23,17 @@ class Mailbox implements EntityInterface, MonitorableEntityInterface, UidEntityI
     use MonitorableEntityTrait;
     use UidEntityTrait;
 
+    public const NAME_MAX_LENGTH = 255;
+    public const HOST_MAX_LENGTH = 255;
+    public const PROTOCOL_MAX_LENGTH = 10;
+    public const PORT_RANGE = [0, 65535];
+    public const ENCRYPTION_VALUES = ['tls', 'ssl', 'none'];
+    public const USERNAME_MAX_LENGTH = 255;
+    public const PASSWORD_MAX_LENGTH = 255;
+    public const AUTHENTICATION_VALUES = ['normal', 'oauth'];
+    public const FOLDER_MAX_LENGTH = 255;
+    public const POST_ACTION_VALUES = ['delete', 'mark as read'];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -43,53 +54,53 @@ class Mailbox implements EntityInterface, MonitorableEntityInterface, UidEntityI
     #[ORM\ManyToOne]
     private ?User $updatedBy = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: self::NAME_MAX_LENGTH)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('mailbox.name.required', [], 'errors'),
     )]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: self::HOST_MAX_LENGTH)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('mailbox.host.required', [], 'errors'),
     )]
     private ?string $host = null;
 
-    #[ORM\Column(length: 10)]
+    #[ORM\Column(length: self::PROTOCOL_MAX_LENGTH)]
     private ?string $protocol = null;
 
     #[ORM\Column]
     #[Assert\Range(
-        min: 0,
-        max: 65535,
+        min: self::PORT_RANGE[0],
+        max: self::PORT_RANGE[1],
         notInRangeMessage: new TranslatableMessage('mailbox.port.invalid', [], 'errors'),
     )]
     private ?int $port = null;
 
     #[ORM\Column(length: 10)]
     #[Assert\Choice(
-        choices: ['tls', 'ssl', 'none'],
+        choices: self::ENCRYPTION_VALUES,
         message: new TranslatableMessage('mailbox.encryption.invalid', [], 'errors'),
     )]
     private ?string $encryption = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: self::USERNAME_MAX_LENGTH)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('mailbox.username.required', [], 'errors'),
     )]
     private ?string $username = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: self::PASSWORD_MAX_LENGTH)]
     private ?string $password = null;
 
     #[ORM\Column(length: 10)]
     #[Assert\Choice(
-        choices: ['normal', 'oauth'],
+        choices: self::AUTHENTICATION_VALUES,
         message: new TranslatableMessage('mailbox.authentication.invalid', [], 'errors'),
     )]
     private ?string $authentication = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: self::FOLDER_MAX_LENGTH)]
     #[Assert\NotBlank(
         message: new TranslatableMessage('mailbox.folder.required', [], 'errors'),
     )]
@@ -102,19 +113,22 @@ class Mailbox implements EntityInterface, MonitorableEntityInterface, UidEntityI
     private ?\DateTimeImmutable $lastErrorAt = null;
 
     #[ORM\Column(length: 255, options: ['default' => 'delete'])]
-    #[Assert\NotBlank(
-        message: new TranslatableMessage('mailbox.post_action.required', [], 'errors'),
-    )]
-    #[Assert\Regex(
-        pattern: '/^(delete|mark as read)$/',
+    #[Assert\Choice(
+        choices: self::POST_ACTION_VALUES,
         message: new TranslatableMessage('mailbox.post_action.invalid', [], 'errors'),
     )]
     private ?string $postAction = null;
 
     public function __construct()
     {
-        $this->lastError = '';
+        $this->protocol = 'imap';
+        $this->port = 993;
+        $this->encryption = 'ssl';
+        $this->password = '';
+        $this->authentication = 'normal';
+        $this->folder = 'INBOX';
         $this->postAction = 'delete';
+        $this->lastError = '';
     }
 
     public function getName(): ?string

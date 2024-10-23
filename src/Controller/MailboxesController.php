@@ -6,21 +6,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Mailbox;
-use App\Message\FetchMailboxes;
-use App\Message\CreateTicketsFromMailboxEmails;
-use App\Repository\MailboxRepository;
-use App\Repository\MailboxEmailRepository;
-use App\Security\Encryptor;
-use App\Service\Sorter\MailboxSorter;
-use App\Utils\ConstraintErrorsFormatter;
+use App\Entity;
+use App\Form;
+use App\Message;
+use App\Repository;
+use App\Security;
+use App\Service;
+use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webklex\PHPIMAP;
 
@@ -28,9 +26,9 @@ class MailboxesController extends BaseController
 {
     #[Route('/mailboxes', name: 'mailboxes', methods: ['GET', 'HEAD'])]
     public function index(
-        MailboxRepository $mailboxRepository,
-        MailboxEmailRepository $mailboxEmailRepository,
-        MailboxSorter $mailboxSorter,
+        Repository\MailboxRepository $mailboxRepository,
+        Repository\MailboxEmailRepository $mailboxEmailRepository,
+        Service\Sorter\MailboxSorter $mailboxSorter,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
@@ -45,232 +43,67 @@ class MailboxesController extends BaseController
         ]);
     }
 
-    #[Route('/mailboxes/new', name: 'new mailbox', methods: ['GET', 'HEAD'])]
-    public function new(): Response
-    {
-        $this->denyAccessUnlessGranted('admin:manage:mailboxes');
-
-        return $this->render('mailboxes/new.html.twig', [
-            'name' => '',
-            'host' => '',
-            'port' => 993,
-            'encryption' => 'ssl',
-            'username' => '',
-            'password' => '',
-            'folder' => 'INBOX',
-            'postAction' => 'delete',
-        ]);
-    }
-
-    #[Route('/mailboxes/new', name: 'create mailbox', methods: ['POST'])]
-    public function create(
+    #[Route('/mailboxes/new', name: 'new mailbox')]
+    public function new(
         Request $request,
-        MailboxRepository $mailboxRepository,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
-        Encryptor $encryptor,
+        Repository\MailboxRepository $mailboxRepository,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
+        $mailbox = new Entity\Mailbox();
+        $form = $this->createNamedForm('mailbox', Form\MailboxForm::class, $mailbox);
 
-        /** @var string $name */
-        $name = $request->request->get('name', '');
+        $form->handleRequest($request);
 
-        /** @var string $host */
-        $host = $request->request->get('host', '');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $mailbox = $form->getData();
+            $mailboxRepository->save($mailbox, true);
 
-        /** @var integer $port */
-        $port = $request->request->getInt('port', 993);
-
-        /** @var string $encryption */
-        $encryption = $request->request->get('encryption', '');
-
-        /** @var string $username */
-        $username = $request->request->get('username', '');
-
-        /** @var string $password */
-        $password = $request->request->get('password', '');
-
-        /** @var string $folder */
-        $folder = $request->request->get('folder', '');
-
-        /** @var string $postAction */
-        $postAction = $request->request->get('postAction', 'delete');
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        if (!$this->isCsrfTokenValid('create mailbox', $csrfToken)) {
-            return $this->renderBadRequest('mailboxes/new.html.twig', [
-                'name' => $name,
-                'host' => $host,
-                'port' => $port,
-                'encryption' => $encryption,
-                'username' => $username,
-                'password' => $password,
-                'folder' => $folder,
-                'postAction' => $postAction,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
-            ]);
+            return $this->redirectToRoute('mailboxes');
         }
 
-        $mailbox = new Mailbox();
-        $mailbox->setName($name);
-        $mailbox->setHost($host);
-        $mailbox->setProtocol('imap');
-        $mailbox->setPort($port);
-        $mailbox->setEncryption($encryption);
-        $mailbox->setUsername($username);
-        $mailbox->setAuthentication('normal');
-        $mailbox->setFolder($folder);
-        $mailbox->setPostAction($postAction);
-
-        if ($password) {
-            $encryptedPassword = $encryptor->encrypt($password);
-            $mailbox->setPassword($encryptedPassword);
-        }
-
-        $errors = $validator->validate($mailbox);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('mailboxes/new.html.twig', [
-                'name' => $name,
-                'host' => $host,
-                'port' => $port,
-                'encryption' => $encryption,
-                'username' => $username,
-                'password' => $password,
-                'folder' => $folder,
-                'postAction' => $postAction,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
-        $mailboxRepository->save($mailbox, true);
-
-        return $this->redirectToRoute('mailboxes');
+        return $this->render('mailboxes/new.html.twig', [
+            'form' => $form,
+        ]);
     }
 
-    #[Route('/mailboxes/{uid:mailbox}/edit', name: 'edit mailbox', methods: ['GET', 'HEAD'])]
-    public function edit(Mailbox $mailbox): Response
-    {
+    #[Route('/mailboxes/{uid:mailbox}/edit', name: 'edit mailbox')]
+    public function edit(
+        Entity\Mailbox $mailbox,
+        Request $request,
+        Repository\MailboxRepository $mailboxRepository,
+    ): Response {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
+
+        $form = $this->createNamedForm('mailbox', Form\MailboxForm::class, $mailbox);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $mailbox = $form->getData();
+            $mailbox->resetLastError();
+            $mailboxRepository->save($mailbox, true);
+
+            $this->addFlash('success', new TranslatableMessage('notifications.saved'));
+
+            return $this->redirectToRoute('edit mailbox', [
+                'uid' => $mailbox->getUid(),
+            ]);
+        }
 
         return $this->render('mailboxes/edit.html.twig', [
             'mailbox' => $mailbox,
-            'name' => $mailbox->getName(),
-            'host' => $mailbox->getHost(),
-            'port' => $mailbox->getPort(),
-            'encryption' => $mailbox->getEncryption(),
-            'username' => $mailbox->getUsername(),
-            'folder' => $mailbox->getFolder(),
-            'postAction' => $mailbox->getPostAction(),
-        ]);
-    }
-
-    #[Route('/mailboxes/{uid:mailbox}/edit', name: 'update mailbox', methods: ['POST'])]
-    public function update(
-        Mailbox $mailbox,
-        Request $request,
-        MailboxRepository $mailboxRepository,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
-        Encryptor $encryptor,
-    ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:mailboxes');
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        /** @var string $name */
-        $name = $request->request->get('name', '');
-
-        /** @var string $host */
-        $host = $request->request->get('host', '');
-
-        /** @var integer $port */
-        $port = $request->request->getInt('port', 993);
-
-        /** @var string $encryption */
-        $encryption = $request->request->get('encryption', '');
-
-        /** @var string $username */
-        $username = $request->request->get('username', '');
-
-        /** @var string $password */
-        $password = $request->request->get('password', '');
-
-        /** @var string $folder */
-        $folder = $request->request->get('folder', '');
-
-        /** @var string $postAction */
-        $postAction = $request->request->get('postAction', 'delete');
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        if (!$this->isCsrfTokenValid('update mailbox', $csrfToken)) {
-            return $this->renderBadRequest('mailboxes/edit.html.twig', [
-                'mailbox' => $mailbox,
-                'name' => $name,
-                'host' => $host,
-                'port' => $port,
-                'encryption' => $encryption,
-                'username' => $username,
-                'folder' => $folder,
-                'postAction' => $postAction,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
-            ]);
-        }
-
-        $mailbox->setName($name);
-        $mailbox->setHost($host);
-        $mailbox->setProtocol('imap');
-        $mailbox->setPort($port);
-        $mailbox->setEncryption($encryption);
-        $mailbox->setUsername($username);
-        $mailbox->setAuthentication('normal');
-        $mailbox->setFolder($folder);
-        $mailbox->setPostAction($postAction);
-        $mailbox->resetLastError();
-
-        if ($password) {
-            $encryptedPassword = $encryptor->encrypt($password);
-            $mailbox->setPassword($encryptedPassword);
-        }
-
-        $errors = $validator->validate($mailbox);
-        if (count($errors) > 0) {
-            return $this->renderBadRequest('mailboxes/edit.html.twig', [
-                'mailbox' => $mailbox,
-                'name' => $name,
-                'host' => $host,
-                'port' => $port,
-                'encryption' => $encryption,
-                'username' => $username,
-                'folder' => $folder,
-                'postAction' => $postAction,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
-        $mailboxRepository->save($mailbox, true);
-
-        $this->addFlash('success', new TranslatableMessage('notifications.saved'));
-
-        return $this->redirectToRoute('edit mailbox', [
-            'uid' => $mailbox->getUid(),
+            'form' => $form,
         ]);
     }
 
     #[Route('/mailboxes/{uid:mailbox}/test', name: 'test mailbox', methods: ['POST'])]
     public function test(
         Request $request,
-        Mailbox $mailbox,
-        MailboxRepository $mailboxRepository,
+        Entity\Mailbox $mailbox,
+        Repository\MailboxRepository $mailboxRepository,
         TranslatorInterface $translator,
-        Encryptor $encryptor,
+        Security\Encryptor $encryptor,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
@@ -329,10 +162,10 @@ class MailboxesController extends BaseController
             return $this->redirectToRoute('mailboxes');
         }
 
-        $bus->dispatch(new FetchMailboxes(), [
+        $bus->dispatch(new Message\FetchMailboxes(), [
             new TransportNamesStamp('sync'),
         ]);
-        $bus->dispatch(new CreateTicketsFromMailboxEmails(), [
+        $bus->dispatch(new Message\CreateTicketsFromMailboxEmails(), [
             new TransportNamesStamp('sync'),
         ]);
 
@@ -341,9 +174,9 @@ class MailboxesController extends BaseController
 
     #[Route('/mailboxes/{uid:mailbox}/deletion', name: 'delete mailbox', methods: ['POST'])]
     public function delete(
-        Mailbox $mailbox,
+        Entity\Mailbox $mailbox,
         Request $request,
-        MailboxRepository $mailboxRepository,
+        Repository\MailboxRepository $mailboxRepository,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
