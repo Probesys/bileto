@@ -17,6 +17,10 @@ class Encryptor
 
     public function encrypt(string $data): string
     {
+        if ($data === '') {
+            return '';
+        }
+
         $key = $this->getSecretKey();
         $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 
@@ -38,6 +42,10 @@ class Encryptor
 
     public function decrypt(string $data): string
     {
+        if ($data === '') {
+            return '';
+        }
+
         $secret = sodium_base642bin($data, SODIUM_BASE64_VARIANT_ORIGINAL);
         $key = $this->getSecretKey();
 
