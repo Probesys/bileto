@@ -10,7 +10,7 @@ export default class extends Controller {
             'roleSelect',
             'roleOption',
             'roleCaption',
-            'organizationsGroup',
+            'organizations',
         ];
     }
 
@@ -19,8 +19,9 @@ export default class extends Controller {
     }
 
     refresh () {
-        const selectedTypeNode = this.element.querySelector('input[name="type"]:checked');
+        const selectedTypeNode = this.element.querySelector('input[name="authorization[type]"]:checked');
         const selectedType = selectedTypeNode ? selectedTypeNode.value : '';
+
 
         let selectedRole = '';
 
@@ -39,7 +40,7 @@ export default class extends Controller {
         });
 
         this.roleSelectTarget.value = selectedRole;
-        this.organizationsGroupTarget.hidden = selectedType === 'admin';
+        this.organizationsTarget.parentNode.hidden = selectedType === 'admin';
 
         this.refreshRoleCaption();
     }

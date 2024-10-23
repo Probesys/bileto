@@ -7,159 +7,69 @@
 namespace App\Controller\Users;
 
 use App\Controller\BaseController;
-use App\Entity\Authorization;
-use App\Entity\User;
-use App\Repository\OrganizationRepository;
-use App\Repository\RoleRepository;
-use App\Security\Authorizer;
-use App\Service\Sorter\OrganizationSorter;
-use App\Service\Sorter\RoleSorter;
+use App\Entity;
+use App\Form;
+use App\Repository;
+use App\Security;
+use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AuthorizationsController extends BaseController
 {
-    #[Route('/users/{uid:holder}/authorizations/new', name: 'new user authorization', methods: ['GET', 'HEAD'])]
+    #[Route('/users/{uid:holder}/authorizations/new', name: 'new user authorization')]
     public function new(
-        User $holder,
+        Entity\User $holder,
         Request $request,
-        OrganizationRepository $organizationRepository,
-        RoleRepository $roleRepository,
-        OrganizationSorter $organizationSorter,
-        RoleSorter $roleSorter,
-        Authorizer $authorizer,
+        Repository\AuthorizationRepository $authorizationRepository,
+        Repository\OrganizationRepository $organizationRepository,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        /** @var string $defaultOrganizationUid */
-        $defaultOrganizationUid = $request->query->get('orga', '');
+        $defaultOrganizationUid = $request->query->getString('orga', '');
 
-        $organizations = $organizationRepository->findAll();
-        $organizationSorter->sort($organizations);
-        $roles = $roleRepository->findBy([
-            'type' => ['user', 'agent', 'admin'],
+        $defaultOrganization = $organizationRepository->findOneBy([
+            'uid' => $defaultOrganizationUid,
         ]);
-        if ($authorizer->isGranted('admin:*')) {
-            $superRole = $roleRepository->findOrCreateSuperRole();
-            $roles[] = $superRole;
+
+        $authorization = new Entity\Authorization();
+        $authorization->setHolder($holder);
+        $authorization->setOrganization($defaultOrganization);
+
+        $form = $this->createNamedForm('authorization', Form\User\AuthorizationForm::class, $authorization);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $authorization = $form->getData();
+            $authorizationRepository->save($authorization, true);
+
+            return $this->redirectToRoute('user', [
+                'uid' => $holder->getUid(),
+            ]);
         }
-        $roleSorter->sort($roles);
 
         return $this->render('users/authorizations/new.html.twig', [
-            'organizations' => $organizations,
-            'roles' => $roles,
             'user' => $holder,
-            'type' => 'user',
-            'roleUid' => '',
-            'organizationUid' => $defaultOrganizationUid,
-        ]);
-    }
-
-    #[Route('/users/{uid:holder}/authorizations/new', name: 'create user authorization', methods: ['POST'])]
-    public function create(
-        User $holder,
-        Request $request,
-        OrganizationRepository $organizationRepository,
-        RoleRepository $roleRepository,
-        OrganizationSorter $organizationSorter,
-        RoleSorter $roleSorter,
-        ValidatorInterface $validator,
-        Authorizer $authorizer,
-        TranslatorInterface $translator,
-    ): Response {
-        $this->denyAccessUnlessGranted('admin:manage:users');
-
-        $organizations = $organizationRepository->findAll();
-        $organizationSorter->sort($organizations);
-        $roles = $roleRepository->findAll();
-        $roles = $roleRepository->findBy([
-            'type' => ['user', 'agent', 'admin'],
-        ]);
-        if ($authorizer->isGranted('admin:*')) {
-            $superRole = $roleRepository->findOrCreateSuperRole();
-            $roles[] = $superRole;
-        }
-        $roleSorter->sort($roles);
-
-        /** @var string $type */
-        $type = $request->request->get('type', 'orga');
-
-        /** @var string $roleUid */
-        $roleUid = $request->request->get('role', '');
-
-        /** @var string $organizationUid */
-        $organizationUid = $request->request->get('organization', '');
-
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
-
-        if (!$this->isCsrfTokenValid('create user authorization', $csrfToken)) {
-            return $this->renderBadRequest('users/authorizations/new.html.twig', [
-                'organizations' => $organizations,
-                'roles' => $roles,
-                'user' => $holder,
-                'type' => $type,
-                'roleUid' => $roleUid,
-                'organizationUid' => $organizationUid,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
-            ]);
-        }
-
-        $role = $roleRepository->findOneBy(['uid' => $roleUid]);
-        $organization = $organizationRepository->findOneBy(['uid' => $organizationUid]);
-
-        if (!$role) {
-            return $this->renderBadRequest('users/authorizations/new.html.twig', [
-                'organizations' => $organizations,
-                'roles' => $roles,
-                'user' => $holder,
-                'type' => $type,
-                'roleUid' => $roleUid,
-                'organizationUid' => $organizationUid,
-                'errors' => [
-                    'role' => $translator->trans('authorization.role.invalid', [], 'errors'),
-                ],
-            ]);
-        }
-
-        if ($role->getType() === 'super' && !$authorizer->isGranted('admin:*')) {
-            return $this->renderBadRequest('users/authorizations/new.html.twig', [
-                'organizations' => $organizations,
-                'roles' => $roles,
-                'user' => $holder,
-                'type' => $type,
-                'roleUid' => $roleUid,
-                'organizationUid' => $organizationUid,
-                'errors' => [
-                    'role' => $translator->trans('authorization.super.unauthorized', [], 'errors'),
-                ],
-            ]);
-        }
-
-        $authorizer->grant($holder, $role, $organization);
-
-        return $this->redirectToRoute('user', [
-            'uid' => $holder->getUid(),
+            'form' => $form,
         ]);
     }
 
     #[Route('/authorizations/{uid:authorization}/deletion', name: 'delete user authorization', methods: ['POST'])]
     public function delete(
-        Authorization $authorization,
+        Entity\Authorization $authorization,
         Request $request,
-        Authorizer $authorizer,
+        Security\Authorizer $authorizer,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        /** @var \App\Entity\User $user */
+        /** @var Entity\User */
         $user = $this->getUser();
 
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
+        $csrfToken = $request->request->getString('_csrf_token', '');
 
         $holder = $authorization->getHolder();
         $role = $authorization->getRole();

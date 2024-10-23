@@ -193,6 +193,11 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
         return $this;
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->type === 'admin' || $this->type === 'super';
+    }
+
     /**
      * @return string[]
      */
