@@ -215,7 +215,7 @@
 {%- endblock password_widget %}
 
 {%- block submit_arrow_widget -%}
-    {%- set attr = attr|merge({class: (attr.class|default('button--primary button--animated-icon'))|trim}) -%}
+    {%- set attr = attr|merge({class: (attr.class|default('button--primary') ~ ' button--animated-icon')|trim}) %}
     <button type="submit" {{ block('button_attributes') }}>
         {%- if label_html is same as(false) -%}
             {{ label|trans(label_translation_parameters, translation_domain) -}}

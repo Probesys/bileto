@@ -57,7 +57,8 @@
                         labels: labels,
                         organization: organization,
                         from: path('organization tickets', { uid: organization.uid }),
-                        error: errors.search ?? ''
+                        error: errors.search ?? '',
+                        advancedSearchForm: advancedSearchForm,
                     },
                     with_context = false
                 ) }}

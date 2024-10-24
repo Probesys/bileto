@@ -470,24 +470,10 @@
             </button>
         </div>
 
-        <form method="get" action="" class="flow flow--small">
-            {% if error %}
-                <p class="form__error" role="alert" id="search-error">
-                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                    {{ error }}
-                </p>
-            {% endif %}
+        {{ form_start(advancedSearchForm) }}
+            {{ form_errors(advancedSearchForm) }}
 
-            <textarea
-                type="text"
-                name="q"
-                autocomplete="off"
-                aria-label="{{ 'tickets.search.label' | trans }}"
-                {% if error %}
-                    aria-invalid="true"
-                    aria-errormessage="search-error"
-                {% endif %}
-            >{{ query }}</textarea>
+            {{ form_widget(advancedSearchForm.q) }}
 
             <button
                 class="button--anchor text--small"
@@ -504,8 +490,6 @@
                     {{ icon('arrow-right') }}
                 </button>
             </div>
-
-            <input type="hidden" name="mode" value="advanced">
-        </form>
+        {{ form_end(advancedSearchForm) }}
     </div>
 </div>

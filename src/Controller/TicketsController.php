@@ -82,6 +82,11 @@ class TicketsController extends BaseController
         $labels = $labelRepository->findAll();
         $labelSorter->sort($labels);
 
+        $advancedSearchForm = $this->createNamedForm('', Form\Search\AdvancedSearchForm::class, [
+            'q' => $queryString,
+        ]);
+        $advancedSearchForm->handleRequest($request);
+
         return $this->render('tickets/index.html.twig', [
             'ticketsPagination' => $ticketsPagination,
             'countToAssign' => $ticketSearcher->countTickets(SearchEngine\TicketSearcher::queryUnassigned()),
@@ -97,6 +102,7 @@ class TicketsController extends BaseController
             'agents' => $actorsLister->findAll(roleType: 'agent'),
             'labels' => $labels,
             'errors' => $errors,
+            'advancedSearchForm' => $advancedSearchForm,
         ]);
     }
 
