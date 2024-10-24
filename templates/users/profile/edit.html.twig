@@ -1,0 +1,71 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'profile' %}
+
+{% block title %}{{ 'profile.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'profile.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'profile.title' | trans }}</h1>
+
+        <p class="text--info text--center">
+            {{ 'profile.note' | trans }}
+        </p>
+
+        <div class="panel">
+            {{ form_start(form) }}
+                {% if form.vars['managedByLdap'] %}
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'info',
+                        title: 'common.information' | trans,
+                        message: 'profile.ldap.managed' | trans,
+                    }, with_context = false) }}
+                {% endif %}
+
+                {{ form_errors(form) }}
+
+                {{ form_row(form.name) }}
+
+                {{ form_row(form.email) }}
+
+                {% if form.plainPassword is defined %}
+                    <fieldset>
+                        <legend>{{ 'users.password' | trans }}</legend>
+
+                        <div class="flow flow--large">
+                            <p class="form__caption">
+                                {{ 'profile.leave_password' | trans }}
+                            </p>
+
+                            {{ form_row(form.currentPassword) }}
+
+                            {{ form_row(form.plainPassword) }}
+                        </div>
+                    </fieldset>
+                {% endif %}
+
+                {% if form.submit is defined %}
+                    {{ form_row(form.submit) }}
+                {% endif %}
+            {{ form_end(form) }}
+        </div>
+    </main>
+{% endblock %}

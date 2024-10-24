@@ -4,12 +4,10 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Users;
 
-use App\Entity\User;
-use App\Tests\FactoriesHelper;
-use App\Tests\Factory\UserFactory;
-use App\Tests\SessionHelper;
+use App\Tests;
+use App\Tests\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
@@ -18,14 +16,14 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 class PreferencesControllerTest extends WebTestCase
 {
     use Factories;
-    use FactoriesHelper;
     use ResetDatabase;
-    use SessionHelper;
+    use Tests\FactoriesHelper;
+    use Tests\SessionHelper;
 
     public function testGetEditRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_GET, '/preferences');
@@ -43,23 +41,25 @@ class PreferencesControllerTest extends WebTestCase
         $this->assertResponseRedirects('/login', 302);
     }
 
-    public function testPostUpdateSavesTheUserAndRedirects(): void
+    public function testPostEditSavesTheUserAndRedirects(): void
     {
         $client = static::createClient();
         $initialColorScheme = 'light';
         $newColorScheme = 'dark';
         $initialLocale = 'en_GB';
         $newLocale = 'fr_FR';
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'colorScheme' => $initialColorScheme,
             'locale' => $initialLocale,
         ]);
         $client->loginUser($user->_real());
 
-        $client->request(Request::METHOD_GET, '/preferences');
-        $crawler = $client->submitForm('form-update-preferences-submit', [
-            'colorScheme' => $newColorScheme,
-            'locale' => $newLocale,
+        $client->request(Request::METHOD_POST, '/preferences', [
+            'preferences' => [
+                '_token' => $this->generateCsrfToken($client, 'preferences'),
+                'colorScheme' => $newColorScheme,
+                'locale' => $newLocale,
+            ],
         ]);
 
         $this->assertResponseRedirects('/preferences', 302);
@@ -68,78 +68,85 @@ class PreferencesControllerTest extends WebTestCase
         $this->assertSame($newLocale, $user->getLocale());
     }
 
-    public function testPostUpdateFailsIfLocaleIsInvalid(): void
+    public function testPostEditFailsIfLocaleIsInvalid(): void
     {
         $client = static::createClient();
         $initialColorScheme = 'light';
         $newColorScheme = 'dark';
         $initialLocale = 'en_GB';
         $newLocale = 'invalid';
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'colorScheme' => $initialColorScheme,
             'locale' => $initialLocale,
         ]);
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/preferences', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update preferences'),
-            'colorScheme' => $newColorScheme,
-            'locale' => $newLocale,
+            'preferences' => [
+                '_token' => $this->generateCsrfToken($client, 'preferences'),
+                'colorScheme' => $newColorScheme,
+                'locale' => $newLocale,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#locale-error', 'Select a language from the list');
+        $this->assertSelectorTextContains('#preferences_locale-error', 'The selected choice is invalid');
         $this->clearEntityManager();
         $user->_refresh();
         $this->assertSame($initialColorScheme, $user->getColorScheme());
         $this->assertSame($initialLocale, $user->getLocale());
     }
 
-    public function testPostUpdateFailsIfColorSchemeIsInvalid(): void
+    public function testPostEditFailsIfColorSchemeIsInvalid(): void
     {
         $client = static::createClient();
         $initialColorScheme = 'light';
         $newColorScheme = 'invalid';
         $initialLocale = 'en_GB';
         $newLocale = 'fr_FR';
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'colorScheme' => $initialColorScheme,
             'locale' => $initialLocale,
         ]);
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/preferences', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update preferences'),
-            'colorScheme' => $newColorScheme,
-            'locale' => $newLocale,
+            'preferences' => [
+                '_token' => $this->generateCsrfToken($client, 'preferences'),
+                'colorScheme' => $newColorScheme,
+                'locale' => $newLocale,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#color-scheme-error', 'Select a color scheme from the list');
+        $this->assertSelectorTextContains('#preferences_colorScheme-error', 'The selected choice is invalid');
         $this->clearEntityManager();
         $user->_refresh();
         $this->assertSame($initialColorScheme, $user->getColorScheme());
         $this->assertSame($initialLocale, $user->getLocale());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $initialColorScheme = 'light';
         $newColorScheme = 'dark';
         $initialLocale = 'en_GB';
         $newLocale = 'fr_FR';
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'colorScheme' => $initialColorScheme,
             'locale' => $initialLocale,
         ]);
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/preferences', [
-            '_csrf_token' => 'not the token',
-            'colorScheme' => $newColorScheme,
-            'locale' => $newLocale,
+            'preferences' => [
+                '_token' => 'not the token',
+                'colorScheme' => $newColorScheme,
+                'locale' => $newLocale,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->assertSelectorTextContains('#preferences-error', 'The security token is invalid');
+        $this->clearEntityManager();
         $user->_refresh();
         $this->assertSame($initialColorScheme, $user->getColorScheme());
         $this->assertSame($initialLocale, $user->getLocale());
@@ -150,7 +157,7 @@ class PreferencesControllerTest extends WebTestCase
         $client = static::createClient();
         $initialHideEvents = false;
         $newHideEvents = true;
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'hideEvents' => $initialHideEvents,
         ]);
         $client->loginUser($user->_real());

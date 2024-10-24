@@ -4,30 +4,27 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Users;
 
-use App\Entity\User;
-use App\Tests\FactoriesHelper;
-use App\Tests\Factory\UserFactory;
-use App\Tests\SessionHelper;
+use App\Tests;
+use App\Tests\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry;
-use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class ProfileControllerTest extends WebTestCase
 {
     use Factories;
-    use FactoriesHelper;
     use ResetDatabase;
-    use SessionHelper;
+    use Tests\FactoriesHelper;
+    use Tests\SessionHelper;
 
     public function testGetEditRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_GET, '/profile');
@@ -45,23 +42,25 @@ class ProfileControllerTest extends WebTestCase
         $this->assertResponseRedirects('/login', 302);
     }
 
-    public function testPostUpdateSavesTheUserAndRedirects(): void
+    public function testPostEditSavesTheUserAndRedirects(): void
     {
         $client = static::createClient();
         $initialName = Foundry\faker()->unique()->userName();
         $newName = Foundry\faker()->unique()->userName();
         $initialEmail = Foundry\faker()->unique()->email();
         $newEmail = Foundry\faker()->unique()->email();
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'name' => $initialName,
             'email' => $initialEmail,
         ]);
         $client->loginUser($user->_real());
 
-        $client->request(Request::METHOD_GET, '/profile');
-        $crawler = $client->submitForm('form-update-profile-submit', [
-            'name' => $newName,
-            'email' => $newEmail,
+        $client->request(Request::METHOD_POST, '/profile', [
+            'profile' => [
+                '_token' => $this->generateCsrfToken($client, 'profile'),
+                'name' => $newName,
+                'email' => $newEmail,
+            ],
         ]);
 
         $this->assertResponseRedirects('/profile', 302);
@@ -70,22 +69,26 @@ class ProfileControllerTest extends WebTestCase
         $this->assertSame($newEmail, $user->getEmail());
     }
 
-    public function testPostUpdateChangesThePassword(): void
+    public function testPostEditChangesThePassword(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $initialPassword = Foundry\faker()->unique()->password();
         $newPassword = Foundry\faker()->unique()->password();
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'password' => $initialPassword,
         ]);
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/profile', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
-            'currentPassword' => $initialPassword,
-            'newPassword' => $newPassword,
+            'profile' => [
+                '_token' => $this->generateCsrfToken($client, 'profile'),
+                'name' => 'Alix',
+                'email' => 'alix@example.coop',
+                'currentPassword' => $initialPassword,
+                'plainPassword' => $newPassword,
+            ],
         ]);
 
         $this->assertResponseRedirects('/profile', 302);
@@ -94,93 +97,102 @@ class ProfileControllerTest extends WebTestCase
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $newPassword));
     }
 
-    public function testPostUpdateFailsIfNameIsInvalid(): void
+    public function testPostEditFailsIfNameIsInvalid(): void
     {
         $client = static::createClient();
         $initialName = Foundry\faker()->unique()->userName();
         $newName = str_repeat('a', 101);
         $initialEmail = Foundry\faker()->unique()->email();
         $newEmail = Foundry\faker()->unique()->email();
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'name' => $initialName,
             'email' => $initialEmail,
         ]);
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/profile', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
-            'name' => $newName,
-            'email' => $newEmail,
+            'profile' => [
+                '_token' => $this->generateCsrfToken($client, 'profile'),
+                'name' => $newName,
+                'email' => $newEmail,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#name-error', 'Enter a name of less than 100 characters');
+        $this->assertSelectorTextContains('#profile_name-error', 'Enter a name of less than 100 characters');
         $this->clearEntityManager();
         $user->_refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
     }
 
-    public function testPostUpdateFailsIfEmailIsInvalid(): void
+    public function testPostEditFailsIfEmailIsInvalid(): void
     {
         $client = static::createClient();
         $initialName = Foundry\faker()->unique()->userName();
         $newName = Foundry\faker()->unique()->userName();
         $initialEmail = Foundry\faker()->unique()->email();
         $newEmail = 'not an email';
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'name' => $initialName,
             'email' => $initialEmail,
         ]);
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/profile', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
-            'name' => $newName,
-            'email' => $newEmail,
+            'profile' => [
+                '_token' => $this->generateCsrfToken($client, 'profile'),
+                'name' => $newName,
+                'email' => $newEmail,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('#email-error', 'Enter a valid email address');
+        $this->assertSelectorTextContains('#profile_email-error', 'Enter a valid email address');
         $this->clearEntityManager();
         $user->_refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
     }
 
-    public function testPostUpdateFailsIfCurrentPasswordIsInvalid(): void
+    public function testPostEditFailsIfCurrentPasswordIsInvalid(): void
     {
         $client = static::createClient();
         /** @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface */
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $initialPassword = Foundry\faker()->unique()->password();
         $newPassword = Foundry\faker()->unique()->password();
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'password' => $initialPassword,
         ]);
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/profile', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
-            'currentPassword' => 'not the password',
-            'newPassword' => $newPassword,
+            'profile' => [
+                '_token' => $this->generateCsrfToken($client, 'profile'),
+                'name' => 'Alix',
+                'email' => 'alix@example.coop',
+                'currentPassword' => 'not the password',
+                'plainPassword' => $newPassword,
+            ],
         ]);
 
         $this->assertSelectorTextContains(
-            '#current-password-error',
+            '#profile_currentPassword-error',
             'The password does not match, please try with a different one',
         );
+        $this->clearEntityManager();
         $user->_refresh();
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $initialPassword));
         $this->assertFalse($passwordHasher->isPasswordValid($user->_real(), $newPassword));
     }
 
-    public function testPostUpdateFailsIfManagedByLdap(): void
+    public function testPostEditFailsIfManagedByLdap(): void
     {
         $client = static::createClient();
         $initialName = Foundry\faker()->unique()->userName();
         $newName = Foundry\faker()->unique()->userName();
         $initialEmail = Foundry\faker()->unique()->email();
         $newEmail = Foundry\faker()->unique()->email();
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'name' => $initialName,
             'email' => $initialEmail,
             'ldapIdentifier' => 'charlie',
@@ -188,40 +200,41 @@ class ProfileControllerTest extends WebTestCase
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/profile', [
-            '_csrf_token' => $this->generateCsrfToken($client, 'update profile'),
-            'name' => $newName,
-            'email' => $newEmail,
+            'profile' => [
+                '_token' => $this->generateCsrfToken($client, 'profile'),
+                'name' => $newName,
+                'email' => $newEmail,
+            ],
         ]);
 
-        $this->assertSelectorTextContains(
-            '[data-test="alert-error"]',
-            'You can’t update your profile because it’s managed by LDAP.',
-        );
         $user->_refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
     }
 
-    public function testPostUpdateFailsIfCsrfTokenIsInvalid(): void
+    public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
         $initialName = Foundry\faker()->unique()->userName();
         $newName = Foundry\faker()->unique()->userName();
         $initialEmail = Foundry\faker()->unique()->email();
         $newEmail = Foundry\faker()->unique()->email();
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'name' => $initialName,
             'email' => $initialEmail,
         ]);
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_POST, '/profile', [
-            '_csrf_token' => 'not the token',
-            'name' => $newName,
-            'email' => $newEmail,
+            'profile' => [
+                '_token' => 'not the token',
+                'name' => $newName,
+                'email' => $newEmail,
+            ],
         ]);
 
-        $this->assertSelectorTextContains('[data-test="alert-error"]', 'The security token is invalid');
+        $this->assertSelectorTextContains('#profile-error', 'The security token is invalid');
+        $this->clearEntityManager();
         $user->_refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
