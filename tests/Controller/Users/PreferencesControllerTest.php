@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Users;
 
 use App\Tests;
 use App\Tests\Factory;

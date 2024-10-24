@@ -4,8 +4,9 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Controller;
+namespace App\Controller\Users;
 
+use App\Controller\BaseController;
 use App\Entity;
 use App\Form;
 use App\Repository;
@@ -13,10 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Router;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PreferencesController extends BaseController
 {
@@ -45,7 +44,7 @@ class PreferencesController extends BaseController
             return $this->redirectToRoute('preferences');
         }
 
-        return $this->render('preferences/edit.html.twig', [
+        return $this->render('users/preferences/edit.html.twig', [
             'form' => $form,
         ]);
     }
@@ -54,8 +53,6 @@ class PreferencesController extends BaseController
     public function updateHideEvents(
         Request $request,
         Repository\UserRepository $userRepository,
-        ValidatorInterface $validator,
-        RequestStack $requestStack,
         TranslatorInterface $translator,
     ): Response {
         /** @var \App\Entity\User $user */

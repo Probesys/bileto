@@ -4,8 +4,9 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Controller;
+namespace App\Controller\Users;
 
+use App\Controller\BaseController;
 use App\Entity;
 use App\Form;
 use App\Repository;
@@ -37,7 +38,7 @@ class ProfileController extends BaseController
             return $this->redirectToRoute('profile');
         }
 
-        return $this->render('profile/edit.html.twig', [
+        return $this->render('users/profile/edit.html.twig', [
             'form' => $form,
         ]);
     }
