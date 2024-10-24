@@ -6,9 +6,9 @@
 
 namespace App\Controller;
 
-use App\Repository\UserRepository;
-use App\Service;
-use App\Utils\ConstraintErrorsFormatter;
+use App\Entity;
+use App\Form;
+use App\Repository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -20,76 +20,40 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PreferencesController extends BaseController
 {
-    #[Route('/preferences', name: 'preferences', methods: ['GET', 'HEAD'])]
-    public function edit(): Response
-    {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-        return $this->render('preferences/edit.html.twig', [
-            'colorScheme' => $user->getColorScheme(),
-            'locale' => $user->getLocale(),
-            'availableLanguages' => Service\Locales::SUPPORTED_LOCALES,
-        ]);
-    }
-
-    #[Route('/preferences', name: 'update preferences', methods: ['POST'])]
-    public function update(
+    #[Route('/preferences', name: 'preferences')]
+    public function edit(
         Request $request,
-        UserRepository $userRepository,
-        ValidatorInterface $validator,
         RequestStack $requestStack,
-        TranslatorInterface $translator,
+        Repository\UserRepository $userRepository,
     ): Response {
-        /** @var \App\Entity\User $user */
+        /** @var Entity\User */
         $user = $this->getUser();
 
-        /** @var string $colorScheme */
-        $colorScheme = $request->request->get('colorScheme', $user->getColorScheme());
+        $form = $this->createNamedForm('preferences', Form\User\PreferencesForm::class, $user);
 
-        /** @var string $locale */
-        $locale = $request->request->get('locale', $user->getLocale());
+        $form->handleRequest($request);
 
-        /** @var string $csrfToken */
-        $csrfToken = $request->request->get('_csrf_token', '');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+            $userRepository->save($user, true);
 
-        if (!$this->isCsrfTokenValid('update preferences', $csrfToken)) {
-            return $this->renderBadRequest('preferences/edit.html.twig', [
-                'colorScheme' => $colorScheme,
-                'locale' => $locale,
-                'availableLanguages' => Service\Locales::SUPPORTED_LOCALES,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
-            ]);
+            $session = $requestStack->getSession();
+            $session->set('_locale', $user->getLocale());
+
+            $this->addFlash('success', new TranslatableMessage('notifications.saved'));
+
+            return $this->redirectToRoute('preferences');
         }
 
-        $oldColorScheme = $user->getColorScheme();
-        $user->setColorScheme($colorScheme);
-        $user->setLocale($locale);
-
-        $errors = $validator->validate($user);
-        if (count($errors) > 0) {
-            $user->setColorScheme($oldColorScheme);
-            return $this->renderBadRequest('preferences/edit.html.twig', [
-                'colorScheme' => $colorScheme,
-                'locale' => $locale,
-                'availableLanguages' => Service\Locales::SUPPORTED_LOCALES,
-                'errors' => ConstraintErrorsFormatter::format($errors),
-            ]);
-        }
-
-        $userRepository->save($user, true);
-
-        $session = $requestStack->getSession();
-        $session->set('_locale', $user->getLocale());
-
-        $this->addFlash('success', new TranslatableMessage('notifications.saved'));
-
-        return $this->redirectToRoute('preferences');
+        return $this->render('preferences/edit.html.twig', [
+            'form' => $form,
+        ]);
     }
 
     #[Route('/preferences/hide-events', name: 'update hide events', methods: ['POST'])]
     public function updateHideEvents(
         Request $request,
-        UserRepository $userRepository,
+        Repository\UserRepository $userRepository,
         ValidatorInterface $validator,
         RequestStack $requestStack,
         TranslatorInterface $translator,

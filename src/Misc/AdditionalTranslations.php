@@ -66,3 +66,8 @@ new TranslatableMessage('mailboxes.encryption.ssl');
 new TranslatableMessage('mailboxes.encryption.tls');
 new TranslatableMessage('mailboxes.post_action.delete');
 new TranslatableMessage('mailboxes.post_action.mark_as_read');
+
+// See src/Form/User/PreferencesForm.php
+new TranslatableMessage('users.color_scheme.auto');
+new TranslatableMessage('users.color_scheme.dark');
+new TranslatableMessage('users.color_scheme.light');
