@@ -404,10 +404,10 @@ tickets.filters.assignee.no: 'Unassigned only'
 tickets.filters.labels.title: 'Filter by labels'
 tickets.filters.priority.title: 'Filter by priority'
 tickets.filters.status.title: 'Filter by status'
+tickets.filters.type.all: 'All the tickets'
+tickets.filters.type.incident: 'Only the incidents'
 tickets.filters.type.label: 'Type of tickets'
-tickets.filters.type.no_filter: 'All the tickets'
-tickets.filters.type.only_incidents: 'Only the incidents'
-tickets.filters.type.only_requests: 'Only the requests'
+tickets.filters.type.request: 'Only the requests'
 tickets.filters.type.title: 'Filter by type'
 tickets.impact: Impact
 tickets.impact.high: High

@@ -82,6 +82,10 @@ class TicketsController extends BaseController
         $labels = $labelRepository->findAll();
         $labelSorter->sort($labels);
 
+        $quickSearchForm = $this->createNamedForm('quick_search', Form\Search\QuickSearchForm::class, $ticketFilter, options: [
+            'from' => $this->generateUrl('tickets'),
+        ]);
+
         $advancedSearchForm = $this->createNamedForm('', Form\Search\AdvancedSearchForm::class, [
             'q' => $queryString,
         ]);
@@ -102,6 +106,7 @@ class TicketsController extends BaseController
             'agents' => $actorsLister->findAll(roleType: 'agent'),
             'labels' => $labels,
             'errors' => $errors,
+            'quickSearchForm' => $quickSearchForm,
             'advancedSearchForm' => $advancedSearchForm,
         ]);
     }

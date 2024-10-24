@@ -6,25 +6,163 @@
 
 namespace App\SearchEngine;
 
-use App\Entity\Ticket;
+use App\Entity;
 
-/**
- * @phpstan-type FilterValues array<value-of<TicketFilter::SUPPORTED_FILTERS>, FilterValue[]>
- * @phpstan-type FilterValue string|int|null
- */
 class TicketFilter
 {
-    public const SUPPORTED_FILTERS = [
-        'status', 'type',
-        'assignee', 'requester', 'involves',
-        'urgency', 'impact', 'priority',
-        'label',
-    ];
-
     private string $text = '';
+    private array $groupStatuses = [];
+    private array $statuses = [];
+    private array $involves = [];
+    private array $assignees = [];
+    private bool $unassignedOnly = false;
+    private array $requesters = [];
+    private array $labels = [];
+    private array $priorities = [];
+    private array $urgencies = [];
+    private array $impacts = [];
+    private string $type = '';
 
-    /** @var FilterValues $filters */
-    private array $filters = [];
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text): void
+    {
+        $this->text = $text;
+    }
+
+    public function getGroupStatuses(): array
+    {
+        return $this->groupStatuses;
+    }
+
+    public function setGroupStatuses(array $values): void
+    {
+        $this->groupStatuses = $values;
+    }
+
+    public function addGroupStatus(string $value): void
+    {
+        $this->groupStatuses[] = $value;
+    }
+
+    public function getStatuses(): array
+    {
+        return $this->statuses;
+    }
+
+    public function setStatuses(array $values): void
+    {
+        if (in_array('open', $values)) {
+            $values = array_diff($values, Entity\Ticket::OPEN_STATUSES);
+            $this->addGroupStatus('open');
+        }
+
+        if (in_array('finished', $values)) {
+            $values = array_diff($values, Entity\Ticket::FINISHED_STATUSES);
+            $this->addGroupStatus('finished');
+        }
+
+        $this->statuses = array_unique($values);
+    }
+
+    public function getInvolves(): array
+    {
+        return $this->involves;
+    }
+
+    public function setInvolves(array $values): void
+    {
+        $this->involves = $values;
+    }
+
+    public function getAssignees(): array
+    {
+        return $this->assignees;
+    }
+
+    public function setAssignees(array $values): void
+    {
+        $this->assignees = $values;
+    }
+
+    public function getUnassignedOnly(): bool
+    {
+        return $this->unassignedOnly;
+    }
+
+    public function setUnassignedOnly(bool $value): void
+    {
+        $this->unassignedOnly = $value;
+    }
+
+    public function getRequesters(): array
+    {
+        return $this->requesters;
+    }
+
+    public function setRequesters(array $values): void
+    {
+        $this->requesters = $values;
+    }
+
+    public function getLabels(): array
+    {
+        return $this->labels;
+    }
+
+    public function addLabels(array $values): void
+    {
+        $labels = array_merge($this->labels, $values);
+        $this->setLabels($labels);
+    }
+
+    public function setLabels(array $values): void
+    {
+        $this->labels = array_unique($values);
+    }
+
+    public function getPriorities(): array
+    {
+        return $this->priorities;
+    }
+
+    public function setPriorities(array $values): void
+    {
+        $this->priorities = $values;
+    }
+
+    public function getUrgencies(): array
+    {
+        return $this->urgencies;
+    }
+
+    public function setUrgencies(array $values): void
+    {
+        $this->urgencies = $values;
+    }
+
+    public function getImpacts(): array
+    {
+        return $this->impacts;
+    }
+
+    public function setImpacts(array $values): void
+    {
+        $this->impacts = $values;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType($value): void
+    {
+        $this->type = $value;
+    }
 
     public static function fromQuery(Query $query): ?self
     {
@@ -59,148 +197,62 @@ class TicketFilter
             $textualQueryParts[] = $this->text;
         }
 
-        foreach ($this->filters as $filter => $values) {
-            if ($filter === 'label') {
-                foreach ($values as $value) {
-                    if (
-                        is_string($value) &&
-                        str_contains($value, ' ') &&
-                        (!str_starts_with($value, '"') || !str_ends_with($value, '"'))
-                    ) {
-                        $value = '"' . $value . '"';
-                    }
+        if ($this->groupStatuses || $this->statuses) {
+            $values = array_merge($this->groupStatuses, $this->statuses);
+            $values = implode(',', $values);
+            $textualQueryParts[] = "status:{$values}";
+        }
 
-                    $textualQueryParts[] = "label:{$value}";
-                }
-            } else {
-                if ($this->isActorFilter($filter)) {
-                    $actorIds = [];
+        if ($this->involves) {
+            $values = $this->processActorValues($this->involves);
+            $textualQueryParts[] = "involves:{$values}";
+        }
 
-                    foreach ($values as $id) {
-                        if ($id === null) {
-                            $textualQueryParts[] = "no:{$filter}";
-                        } elseif ($id === '@me') {
-                            $actorIds[] = '@me';
-                        } else {
-                            $actorIds[] = "#{$id}";
-                        }
-                    }
+        if ($this->assignees) {
+            $values = $this->processActorValues($this->assignees);
+            $textualQueryParts[] = "assignee:{$values}";
+        }
 
-                    $values = $actorIds;
-                }
+        if ($this->unassignedOnly) {
+            $textualQueryParts[] = "no:assignee";
+        }
 
-                if ($values) {
-                    $values = implode(',', $values);
-                    $textualQueryParts[] = "{$filter}:{$values}";
-                }
+        if ($this->requesters) {
+            $values = $this->processActorValues($this->requesters);
+            $textualQueryParts[] = "requester:{$values}";
+        }
+
+        foreach ($this->labels as $value) {
+            if (
+                str_contains($value, ' ') &&
+                (!str_starts_with($value, '"') || !str_ends_with($value, '"'))
+            ) {
+                $value = '"' . $value . '"';
             }
+
+            $textualQueryParts[] = "label:{$value}";
+        }
+
+        if ($this->priorities) {
+            $values = implode(',', $this->priorities);
+            $textualQueryParts[] = "priority:{$values}";
+        }
+
+        if ($this->urgencies) {
+            $values = implode(',', $this->urgencies);
+            $textualQueryParts[] = "urgency:{$values}";
+        }
+
+        if ($this->impacts) {
+            $values = implode(',', $this->impacts);
+            $textualQueryParts[] = "impact:{$values}";
+        }
+
+        if ($this->type) {
+            $textualQueryParts[] = "type:{$this->type}";
         }
 
         return implode(' ', $textualQueryParts);
-    }
-
-    public function getText(bool $escaped = false): string
-    {
-        if ($escaped) {
-            return $this->text;
-        } else {
-            return stripcslashes($this->text);
-        }
-    }
-
-    public function setText(string $text): void
-    {
-        $this->text = $this->escapeText($text);
-    }
-
-    /**
-     * @return FilterValues
-     */
-    public function getFilters(): array
-    {
-        return $this->filters;
-    }
-
-    /**
-     * @return FilterValue[]
-     */
-    public function getFilter(string $filter): array
-    {
-        return $this->filters[$filter] ?? [];
-    }
-
-    /**
-     * @param string[] $filtersToFind
-     */
-    public function hasAnyFilters(array $filtersToFind): bool
-    {
-        foreach ($filtersToFind as $filterToFind) {
-            if (isset($this->filters[$filterToFind])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param value-of<self::SUPPORTED_FILTERS> $filter
-     * @param string[] $values
-     */
-    public function setFilter(string $filter, array $values): void
-    {
-        if ($filter === 'status') {
-            $acceptedValues = Ticket::STATUSES;
-            $acceptedValues[] = 'open';
-            $acceptedValues[] = 'finished';
-
-            foreach ($values as $value) {
-                if (!in_array($value, $acceptedValues)) {
-                    throw new \UnexpectedValueException("\"{$value}\" is not valid value for \"status\" filter");
-                }
-            }
-
-            if (in_array('open', $values)) {
-                $values = array_diff($values, Ticket::OPEN_STATUSES);
-            }
-
-            if (in_array('finished', $values)) {
-                $values = array_diff($values, Ticket::FINISHED_STATUSES);
-            }
-        }
-
-        if ($filter === 'type') {
-            foreach ($values as $value) {
-                if (!in_array($value, Ticket::TYPES)) {
-                    throw new \UnexpectedValueException("\"{$value}\" is not valid value for \"type\" filter");
-                }
-            }
-        }
-
-        if ($filter === 'urgency' || $filter === 'impact' || $filter === 'priority') {
-            foreach ($values as $value) {
-                if (!in_array($value, Ticket::WEIGHTS)) {
-                    throw new \UnexpectedValueException("\"{$value}\" is not valid value for \"{$filter}\" filter");
-                }
-            }
-        }
-
-        if ($this->isActorFilter($filter)) {
-            $values = $this->processActorValues($values);
-        }
-
-        $this->filters[$filter] = $values;
-    }
-
-    /**
-     * @param string[] $values
-     */
-    public function addLabelFilter(array $values): void
-    {
-        $existingValues = $this->filters['label'] ?? [];
-        /** @var string[] */
-        $values = array_merge($existingValues, $values);
-        $this->setFilter('label', $values);
     }
 
     private function addTextCondition(Query\Condition $condition): void
@@ -231,70 +283,51 @@ class TicketFilter
         $qualifier = $condition->getQualifier();
         $value = $condition->getValue();
 
-        if ($qualifier === 'no' && $value === 'assignee') {
-            $filter = 'assignee';
-            $value = null;
-        } else {
-            $filter = $qualifier;
-        }
-
-        if (!in_array($filter, self::SUPPORTED_FILTERS)) {
-            throw new \UnexpectedValueException("\"{$filter}\" filter is not supported");
-        }
-
-        /** @var value-of<self::SUPPORTED_FILTERS> */
-        $filter = $filter;
-
-        if ($filter !== 'label' && !empty($this->filters[$filter])) {
-            throw new \UnexpectedValueException("\"{$filter}\" filter is already set");
-        }
-
         if (is_array($value)) {
             $values = $value;
         } else {
             $values = [$value];
         }
 
-        if ($filter === 'label') {
-            $this->addLabelFilter($values);
+        // TODO fail if already set?
+        if ($qualifier === 'status') {
+            $this->setStatuses($values);
+        } elseif ($qualifier === 'priority') {
+            $this->setPriorities($values);
+        } elseif ($qualifier === 'urgency') {
+            $this->setUrgencies($values);
+        } elseif ($qualifier === 'impact') {
+            $this->setImpacts($values);
+        } elseif ($qualifier === 'involves') {
+            $this->setInvolves($values);
+        } elseif ($qualifier === 'assignee') {
+            $this->setAssignees($values);
+        } elseif ($qualifier === 'requester') {
+            $this->setRequesters($values);
+        } elseif ($qualifier === 'label') {
+            $this->addLabels($values);
+        } elseif ($qualifier === 'type') {
+            $this->setType($values[0]);
+        } elseif ($qualifier === 'no' && $values[0] === 'assignee') {
+            $this->setUnassignedOnly(true);
         } else {
-            $this->setFilter($filter, $values);
+            throw new \UnexpectedValueException("\"{$qualifier}\" qualifier is not supported");
         }
     }
 
-    public function isSupportedFilter(string $filter): bool
+    private function processActorValues(array $values): string
     {
-        return in_array($filter, self::SUPPORTED_FILTERS);
-    }
+        $actorIds = [];
 
-    private function isActorFilter(string $filter): bool
-    {
-        return (
-            $filter === 'assignee' ||
-            $filter === 'requester' ||
-            $filter === 'involves'
-        );
-    }
-
-    /**
-     * @param array<string|null> $values
-     *
-     * @return FilterValue[]
-     */
-    private function processActorValues(array $values): array
-    {
-        return array_map(function (?string $value): string|int|null {
-            if ($value === null) {
-                return null;
-            } elseif (preg_match('/^#[\d]+$/', $value)) {
-                $value = substr($value, 1);
-                return intval($value);
-            } elseif ($value === '@me') {
-                return $value;
+        foreach ($values as $id) {
+            if ($id === '@me') {
+                $actorIds[] = '@me';
             } else {
-                throw new \UnexpectedValueException('Unexpected actor value');
+                $actorIds[] = "#{$id}";
             }
-        }, $values);
+        }
+
+        return implode(',', $actorIds);
     }
 
     private function escapeText(string $text): string

@@ -404,10 +404,10 @@ tickets.filters.assignee.no: 'Non attribués seulement'
 tickets.filters.labels.title: 'Filtrer par étiquettes'
 tickets.filters.priority.title: 'Filtrer par priorité'
 tickets.filters.status.title: 'Filtrer par statut'
+tickets.filters.type.all: 'Tous les tickets'
+tickets.filters.type.incident: 'Uniquement les incidents'
 tickets.filters.type.label: 'Type des tickets'
-tickets.filters.type.no_filter: 'Tous les tickets'
-tickets.filters.type.only_incidents: 'Uniquement les incidents'
-tickets.filters.type.only_requests: 'Uniquement les demandes'
+tickets.filters.type.request: 'Uniquement les demandes'
 tickets.filters.type.title: 'Filtrer par type'
 tickets.impact: Impact
 tickets.impact.high: Haut
