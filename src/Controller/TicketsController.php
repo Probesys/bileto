@@ -17,86 +17,71 @@ use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TicketsController extends BaseController
 {
     #[Route('/tickets', name: 'tickets', methods: ['GET', 'HEAD'])]
     public function index(
         Request $request,
-        Repository\AuthorizationRepository $authorizationRepository,
-        Repository\LabelRepository $labelRepository,
-        Repository\OrganizationRepository $orgaRepository,
-        Repository\UserRepository $userRepository,
-        SearchEngine\TicketSearcher $ticketSearcher,
-        Service\ActorsLister $actorsLister,
-        Service\Sorter\LabelSorter $labelSorter,
-        TranslatorInterface $translator,
+        Repository\OrganizationRepository $organizationRepository,
+        SearchEngine\Ticket\Searcher $ticketSearcher,
+        SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder,
     ): Response {
-        /** @var \App\Entity\User */
-        $user = $this->getUser();
-
         $page = $request->query->getInt('page', 1);
         $view = $request->query->getString('view', 'all');
         $searchMode = $request->query->getString('mode', 'quick');
         $sort = $request->query->getString('sort', 'updated-desc');
-        /** @var ?string */
-        $queryString = $request->query->get('q');
 
-        $organizations = $orgaRepository->findAuthorizedOrganizations($user);
+        if ($view === 'unassigned') {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryUnassigned();
+        } elseif ($view === 'owned') {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryOwned();
+        } else {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryDefault();
+        }
+
+        $advancedSearchForm = $this->createNamedForm('', Form\Ticket\AdvancedSearchForm::class, [
+            'q' => $defaultQuery,
+        ]);
+        $advancedSearchForm->handleRequest($request);
+
+        $query = $advancedSearchForm->get('q')->getData();
+
+        $ticketQuickSearchFilter = $ticketQuickSearchFilterBuilder->getFilter($query);
+        $quickSearchForm = $this->createNamedForm(
+            'search',
+            Form\Ticket\QuickSearchForm::class,
+            $ticketQuickSearchFilter,
+            options: [
+                'from' => $this->generateUrl('tickets'),
+            ],
+        );
+
+        /** @var Entity\User */
+        $user = $this->getUser();
+        $organizations = $organizationRepository->findAuthorizedOrganizations($user);
 
         $ticketSearcher->setOrganizations($organizations);
 
-        if ($queryString !== null) {
-            $queryString = trim($queryString);
-        } elseif ($view === 'unassigned') {
-            $queryString = SearchEngine\TicketSearcher::QUERY_UNASSIGNED;
-        } elseif ($view === 'owned') {
-            $queryString = SearchEngine\TicketSearcher::QUERY_OWNED;
-        } else {
-            $queryString = SearchEngine\TicketSearcher::QUERY_DEFAULT;
-        }
-
-        $ticketFilter = null;
-        $errors = [];
-
-        try {
-            $query = SearchEngine\Query::fromString($queryString);
+        if ($query) {
             $ticketsPagination = $ticketSearcher->getTickets($query, $sort, [
                 'page' => $page,
                 'maxResults' => 25,
             ]);
-            if ($query) {
-                $ticketFilter = SearchEngine\TicketFilter::fromQuery($query);
-            }
-        } catch (\Exception $e) {
+        } else {
             $ticketsPagination = Utils\Pagination::empty();
-            $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
         }
-
-        if (!$ticketFilter) {
-            $searchMode = 'advanced';
-            $ticketFilter = new SearchEngine\TicketFilter();
-        }
-
-        $labels = $labelRepository->findAll();
-        $labelSorter->sort($labels);
 
         return $this->render('tickets/index.html.twig', [
             'ticketsPagination' => $ticketsPagination,
-            'countToAssign' => $ticketSearcher->countTickets(SearchEngine\TicketSearcher::queryUnassigned()),
-            'countOwned' => $ticketSearcher->countTickets(SearchEngine\TicketSearcher::queryOwned()),
+            'countToAssign' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryUnassigned()),
+            'countOwned' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryOwned()),
             'view' => $view,
-            'query' => $queryString,
+            'query' => $query?->getString(),
             'sort' => $sort,
-            'ticketFilter' => $ticketFilter,
             'searchMode' => $searchMode,
-            'openStatuses' => Entity\Ticket::getStatusesWithLabels('open'),
-            'finishedStatuses' => Entity\Ticket::getStatusesWithLabels('finished'),
-            'allUsers' => $actorsLister->findAll(),
-            'agents' => $actorsLister->findAll(roleType: 'agent'),
-            'labels' => $labels,
-            'errors' => $errors,
+            'quickSearchForm' => $quickSearchForm,
+            'advancedSearchForm' => $advancedSearchForm,
         ]);
     }
 

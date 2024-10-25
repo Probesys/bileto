@@ -4,46 +4,40 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\SearchEngine;
+namespace App\SearchEngine\Ticket;
 
-use App\Entity\Organization;
-use App\Entity\Ticket;
-use App\SearchEngine\QueryBuilder\TicketQueryBuilder;
-use App\Security\Authorizer;
-use App\Utils\Pagination;
+use App\Entity;
+use App\SearchEngine;
+use App\Security;
+use App\Utils;
 
 /**
- * @phpstan-import-type PaginationOptions from Pagination
+ * @phpstan-import-type PaginationOptions from Utils\Pagination
  */
-class TicketSearcher
+class Searcher
 {
     public const QUERY_DEFAULT = 'status:open';
     public const QUERY_UNASSIGNED = 'status:open no:assignee';
     public const QUERY_OWNED = 'status:open involves:@me';
 
-    private TicketQueryBuilder $ticketQueryBuilder;
+    private SearchEngine\Query $orgaQuery;
 
-    private Query $orgaQuery;
-
-    private Authorizer $authorizer;
-
-    public function __construct(TicketQueryBuilder $ticketQueryBuilder, Authorizer $authorizer)
-    {
-        $this->ticketQueryBuilder = $ticketQueryBuilder;
-        $this->authorizer = $authorizer;
-
+    public function __construct(
+        private QueryBuilder $ticketQueryBuilder,
+        private Security\Authorizer $authorizer,
+    ) {
         // The default query makes sure that the SearchEngine only returns
         // tickets related to the current user.
-        $this->orgaQuery = Query::fromString('involves:@me');
+        $this->orgaQuery = SearchEngine\Query::fromString('involves:@me');
     }
 
-    public function setOrganization(Organization $organization): self
+    public function setOrganization(Entity\Organization $organization): self
     {
         return $this->setOrganizations([$organization]);
     }
 
     /**
-     * @param Organization[] $organizations
+     * @param Entity\Organization[] $organizations
      */
     public function setOrganizations(array $organizations): self
     {
@@ -78,7 +72,7 @@ class TicketSearcher
 
         if (!empty($queries)) {
             $queryString = implode(' OR ', $queries);
-            $this->orgaQuery = Query::fromString($queryString);
+            $this->orgaQuery = SearchEngine\Query::fromString($queryString);
         }
 
         return $this;
@@ -87,10 +81,13 @@ class TicketSearcher
     /**
      * @param ?PaginationOptions $paginationOptions
      *
-     * @return Pagination<Ticket>
+     * @return Utils\Pagination<Entity\Ticket>
      */
-    public function getTickets(?Query $query = null, string $sort = '', ?array $paginationOptions = null): Pagination
-    {
+    public function getTickets(
+        ?SearchEngine\Query $query = null,
+        string $sort = '',
+        ?array $paginationOptions = null
+    ): Utils\Pagination {
         if ($paginationOptions === null) {
             $paginationOptions = [
                 'page' => 1,
@@ -109,13 +106,13 @@ class TicketSearcher
         $queryBuilder = $this->ticketQueryBuilder->create($queries);
         $queryBuilder->orderBy("t.{$sort[0]}", $sort[1]);
 
-        /** @var Pagination<Ticket> */
-        $pagination = Pagination::paginate($queryBuilder->getQuery(), $paginationOptions);
+        /** @var Utils\Pagination<Entity\Ticket> */
+        $pagination = Utils\Pagination::paginate($queryBuilder->getQuery(), $paginationOptions);
 
         return $pagination;
     }
 
-    public function countTickets(?Query $query = null): int
+    public function countTickets(?SearchEngine\Query $query = null): int
     {
         $queries = [$this->orgaQuery];
 
@@ -128,14 +125,19 @@ class TicketSearcher
         return (int) $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
-    public static function queryUnassigned(): Query
+    public static function queryDefault(): SearchEngine\Query
     {
-        return Query::fromString(self::QUERY_UNASSIGNED);
+        return SearchEngine\Query::fromString(self::QUERY_DEFAULT);
     }
 
-    public static function queryOwned(): Query
+    public static function queryUnassigned(): SearchEngine\Query
     {
-        return Query::fromString(self::QUERY_OWNED);
+        return SearchEngine\Query::fromString(self::QUERY_UNASSIGNED);
+    }
+
+    public static function queryOwned(): SearchEngine\Query
+    {
+        return SearchEngine\Query::fromString(self::QUERY_OWNED);
     }
 
     /**

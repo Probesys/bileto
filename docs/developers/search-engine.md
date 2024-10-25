@@ -1,13 +1,15 @@
 # Search engine
 
-The search engine is made of several parts:
+The search engine is built upon a generic Query parser.
+At the moment, the search engine is only able to search for tickets.
 
-- the Query Parser;
-- the Ticket Query Builder;
-- the Ticket Searcher;
-- and the Ticket Filter.
+Two forms are provided to search tickets:
 
-**The code of the search engine is placed under [the `src/SearchEngine/` folder](/src/SearchEngine).**
+- The Advanced Search Form: it allows to manipulate the query textually, for the advanced users.
+- The Quick Search Form: it provides a more intuitive experience to search tickets.
+
+**Most of the code of the search engine is placed under [the `src/SearchEngine/` folder](/src/SearchEngine).**
+The forms are placed under [`src/Form/Ticket`](/src/Form/Ticket).
 
 ## The Query Parser
 
@@ -40,41 +42,31 @@ The logic is defined by a [LL grammar](https://en.wikipedia.org/wiki/LL_grammar)
 You can find the grammar at the top of [the `Parser` file](/src/SearchEngine/Query/Parser.php).
 If the textual query matches the grammar, the Parser will return a Query.
 
-## The Ticket Query Builder
+## The Advanced Search Form
 
-The [Ticket Query Builder](/src/SearchEngine/QueryBuilder/TicketQueryBuilder.php) transforms a list of Queries into a Doctrine QueryBuilder.
-It is implemented as a service as it may need to access the database, or the current logged user.
+The [`AdvancedSearchForm`](/src/Form/Ticket/AdvancedSearchForm.php) transforms a textual query to a generic `Query` as explained above.
 
-To call the Ticket Query Builder, you have to inject it in some controller or service, and call its `create()` method:
+## The Quick Search Form
 
-```php
-use App\SearchEngine;
+The [`QuickSearchForm`](/src/Form/Ticket/QuickSearchForm.php) handles data through a [`Ticket\QuickSearchFilter`](/src/SearchEngine/Ticket/QuickSearchFilter.php).
 
-$query = SearchEngine\Query::fromString('status:new');
-$queryBuilder = $ticketQueryBuilder->create([$query]);
-```
+The `QuickSearchFilter` is initially built from the `Query` returned by the Advanced Search Form.
+It is only able to handle a subset of the Query conditions.
+If the query contains unsupported conditions, the Quick Search Form is initialized with no data.
 
-The Doctrine Query Builder can be then used to fetch tickets from the database.
+Once the `QuickSearchFilter` is initialized, you can programmatically change the filters.
 
-Internally, its functioning is quite simple.
-It first create a Doctrine Query Builder for the ticket table.
-If necessary, it joins additional tables based on the conditions of the queries.
+Once submitted, the `QuickSearchFilter` is transformed into a textual query in the [`Tickets\QuickSearchesController`](/src/Controller/Tickets/QuickSearchesController.php`).
 
-Then, it iterates over the queries and their conditions.
-For each condition, it returns the DQL expression corresponding to the condition.
-Each DQL expression is appended to the final string with an `AND` or `OR` keyword, depending on the condition operator.
-
-Sometimes, it needs to preprocess a string value.
-It is the case to transform the `@me` keyword by the id of the logged user.
-It also can search for elements in the database (such as organizations or users) to replace the value by the corresponding id.
-
-When an expression requiring a parameter is generated, the Query Builder register the parameter in a global list.
-The name of the parameter is automatically generated.
-For instance: `q0p0` where `q0` represents the first query and `p0` represents the first parameter.
+This system allows the search system to manipulate a Query easily.
 
 ## The Ticket Searcher
 
-The [Ticket Searcher](/src/SearchEngine/TicketSearcher.php) does the plumbing between the different parts of the search engine.
+Once submitted, a textual query is transformed to a generic `Query`, as seen above.
+**This `Query` is then passed to the [`Ticket\Searcher`](/src/SearchEngine/Ticket/Searcher.php).**
+This is the `Searcher` which is in charge of transforming the `Query` into a Doctrine query (through the `Ticket\QueryBuilder`, see below) and to paginate the results.
+
+To call the `Searcher`, you have to inject it in some controller or service, and call its `getTickets()` or `countTickets()` methods:
 
 ```php
 $queryString = 'status:new';
@@ -88,8 +80,6 @@ try {
 }
 ```
 
-**It takes a Query as an entry, and it returns either a (paginated) list of tickets, or the number of tickets depending on the called method.**
-
 It also makes sure that the current user only accesses the tickets that he has the permissions for.
 For that, it limits the tickets with an internal query `involves:@me`.
 You also can limit the result to a set of organizations:
@@ -101,31 +91,21 @@ $ticketSearcher->setOrganizations($organizations);
 
 In this case, the Searcher will check the permissions of the user for each organization and generates the correct (internal) query.
 
-## The Ticket Filter
+## The Ticket Query Builder
 
-The [Ticket Filter](/src/SearchEngine/TicketFilter.php) is an additionnal layer to manage the “quick search” mode.
+The [`Ticket\QueryBuilder`](/src/SearchEngine/Ticket/QueryBuilder.php) transforms a list of Queries into a Doctrine QueryBuilder.
 
-**It extracts a list of simple conditions from a Query.**
-Once the Ticket Filter is initialized, you can programmatically change the filters.
-Then, you can print the new textual query so it can be passed in an URL for instance.
-This allows the filter system to manipulate a Query easily.
+Internally, its functioning is quite simple.
+It first create a Doctrine Query Builder for the ticket table.
 
-```php
-use App\SearchEngine;
+Then, it iterates over the queries and their conditions.
+For each condition, it returns the DQL expression corresponding to the condition.
+Each DQL expression is appended to the final string with an `AND` or `OR` keyword, depending on the condition operator.
 
-$query = SearchEngine\Query::fromString('status:new');
-$ticketFilter = SearchEngine\TicketFilter::fromQuery($query);
+Sometimes, it needs to preprocess a string value.
+It is the case to transform the `@me` keyword by the id of the logged user.
+It also can search for elements in the database (such as organizations or users) to replace the value by the corresponding id.
 
-var_dump($ticketFilter->getFilter('status')); // display ['new']
-
-$ticketFilter->setFilter('status', ['new', 'in_progress']);
-var_dump($ticketFilter->getFilter('status')); // display ['new', 'in_progress']
-
-$ticketFilter->setText('email');
-
-var_dump($ticketFilter->toTextualQuery()); // display 'email status:new,in_progress'
-```
-
-If the initial Query is too complex for the Ticket Filter (e.g. it contains a sub-query), the method `fromQuery()` returns null.
-
-You can find more about it in the [`Tickets/FiltersController`](/src/Controller/Tickets/FiltersController.php).
+When an expression requiring a parameter is generated, the Query Builder register the parameter in a global list.
+The name of the parameter is automatically generated.
+For instance: `q0p0` where `q0` represents the first query and `p0` represents the first parameter.

@@ -10,21 +10,14 @@ use App\Controller\BaseController;
 use App\Entity;
 use App\Form;
 use App\Repository;
-use App\SearchEngine\Query;
-use App\SearchEngine\TicketFilter;
-use App\SearchEngine\TicketSearcher;
-use App\Service\ActorsLister;
-use App\Service\Sorter\LabelSorter;
-use App\Service\TicketAssigner;
+use App\SearchEngine;
+use App\Service;
 use App\TicketActivity;
-use App\Utils\Pagination;
+use App\Utils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TicketsController extends BaseController
 {
@@ -32,86 +25,66 @@ class TicketsController extends BaseController
     public function index(
         Entity\Organization $organization,
         Request $request,
-        Repository\LabelRepository $labelRepository,
-        Repository\OrganizationRepository $organizationRepository,
-        Repository\UserRepository $userRepository,
-        TicketSearcher $ticketSearcher,
-        ActorsLister $actorsLister,
-        LabelSorter $labelSorter,
-        TranslatorInterface $translator,
+        SearchEngine\Ticket\Searcher $ticketSearcher,
+        SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see', $organization);
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
         $page = $request->query->getInt('page', 1);
+        $view = $request->query->getString('view', 'all');
+        $searchMode = $request->query->getString('mode', 'quick');
+        $sort = $request->query->getString('sort', 'updated-desc');
 
-        /** @var string $view */
-        $view = $request->query->get('view', 'all');
+        if ($view === 'unassigned') {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryUnassigned();
+        } elseif ($view === 'owned') {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryOwned();
+        } else {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryDefault();
+        }
 
-        /** @var ?string $queryString */
-        $queryString = $request->query->get('q');
+        $advancedSearchForm = $this->createNamedForm('', Form\Ticket\AdvancedSearchForm::class, [
+            'q' => $defaultQuery,
+        ]);
+        $advancedSearchForm->handleRequest($request);
 
-        /** @var string $searchMode */
-        $searchMode = $request->query->get('mode', 'quick');
+        $query = $advancedSearchForm->get('q')->getData();
 
-        /** @var string $sort */
-        $sort = $request->query->get('sort', 'updated-desc');
+        $ticketQuickSearchFilter = $ticketQuickSearchFilterBuilder->getFilter($query);
+        $quickSearchForm = $this->createNamedForm(
+            'search',
+            Form\Ticket\QuickSearchForm::class,
+            $ticketQuickSearchFilter,
+            options: [
+                'organization' => $organization,
+                'from' => $this->generateUrl('organization tickets', [
+                    'uid' => $organization->getUid(),
+                ]),
+            ]
+        );
 
         $ticketSearcher->setOrganization($organization);
 
-        if ($queryString !== null) {
-            $queryString = trim($queryString);
-        } elseif ($view === 'unassigned') {
-            $queryString = TicketSearcher::QUERY_UNASSIGNED;
-        } elseif ($view === 'owned') {
-            $queryString = TicketSearcher::QUERY_OWNED;
-        } else {
-            $queryString = TicketSearcher::QUERY_DEFAULT;
-        }
-
-        $ticketFilter = null;
-        $errors = [];
-
-        try {
-            $query = Query::fromString($queryString);
+        if ($query) {
             $ticketsPagination = $ticketSearcher->getTickets($query, $sort, [
                 'page' => $page,
                 'maxResults' => 25,
             ]);
-            if ($query) {
-                $ticketFilter = TicketFilter::fromQuery($query);
-            }
-        } catch (\Exception $e) {
-            $ticketsPagination = Pagination::empty();
-            $errors['search'] = $translator->trans('ticket.search.invalid', [], 'errors');
+        } else {
+            $ticketsPagination = Utils\Pagination::empty();
         }
-
-        if (!$ticketFilter) {
-            $searchMode = 'advanced';
-            $ticketFilter = new TicketFilter();
-        }
-
-        $labels = $labelRepository->findAll();
-        $labelSorter->sort($labels);
 
         return $this->render('organizations/tickets/index.html.twig', [
             'organization' => $organization,
             'ticketsPagination' => $ticketsPagination,
-            'countToAssign' => $ticketSearcher->countTickets(TicketSearcher::queryUnassigned()),
-            'countOwned' => $ticketSearcher->countTickets(TicketSearcher::queryOwned()),
+            'countToAssign' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryUnassigned()),
+            'countOwned' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryOwned()),
             'view' => $view,
-            'query' => $queryString,
+            'query' => $query?->getString(),
             'sort' => $sort,
-            'ticketFilter' => $ticketFilter,
             'searchMode' => $searchMode,
-            'openStatuses' => Entity\Ticket::getStatusesWithLabels('open'),
-            'finishedStatuses' => Entity\Ticket::getStatusesWithLabels('finished'),
-            'allUsers' => $actorsLister->findByOrganization($organization),
-            'agents' => $actorsLister->findByOrganization($organization, roleType: 'agent'),
-            'labels' => $labels,
-            'errors' => $errors,
+            'quickSearchForm' => $quickSearchForm,
+            'advancedSearchForm' => $advancedSearchForm,
         ]);
     }
 
@@ -120,7 +93,7 @@ class TicketsController extends BaseController
         Entity\Organization $organization,
         Request $request,
         Repository\TicketRepository $ticketRepository,
-        TicketAssigner $ticketAssigner,
+        Service\TicketAssigner $ticketAssigner,
         EventDispatcherInterface $eventDispatcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);

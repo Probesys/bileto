@@ -4,39 +4,36 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\SearchEngine\QueryBuilder;
+namespace App\Tests\SearchEngine\Ticket;
 
-use App\Entity\Ticket;
-use App\Entity\User;
+use App\Entity;
 use App\SearchEngine;
-use App\Tests\AuthorizationHelper;
-use App\Tests\Factory\LabelFactory;
-use App\Tests\Factory\OrganizationFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests;
+use App\Tests\Factory;
 use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
-class TicketQueryBuilderTest extends WebTestCase
+class QueryBuilderTest extends WebTestCase
 {
-    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
+    use Tests\AuthorizationHelper;
 
-    private SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder;
+    private SearchEngine\Ticket\QueryBuilder $ticketQueryBuilder;
 
-    private User $currentUser;
+    private Entity\User $currentUser;
 
     #[Before]
     public function setUpQueryBuilder(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
-        $this->currentUser = UserFactory::createOne()->_real();
+        $this->currentUser = Factory\UserFactory::createOne()->_real();
         $client->loginUser($this->currentUser);
-        /** @var SearchEngine\QueryBuilder\TicketQueryBuilder $ticketQueryBuilder */
-        $ticketQueryBuilder = $container->get(SearchEngine\QueryBuilder\TicketQueryBuilder::class);
+        /** @var SearchEngine\Ticket\QueryBuilder */
+        $ticketQueryBuilder = $container->get(SearchEngine\Ticket\QueryBuilder::class);
         $this->ticketQueryBuilder = $ticketQueryBuilder;
     }
 
@@ -211,7 +208,7 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(<<<SQL
             t.status IN (:q0p0)
             SQL, $dql);
-        $this->assertSame(Ticket::OPEN_STATUSES, $parameters['q0p0']);
+        $this->assertSame(Entity\Ticket::OPEN_STATUSES, $parameters['q0p0']);
     }
 
     public function testBuildQueryWithQualifierStatusFinished(): void
@@ -223,12 +220,12 @@ class TicketQueryBuilderTest extends WebTestCase
         $this->assertSame(<<<SQL
             t.status IN (:q0p0)
             SQL, $dql);
-        $this->assertSame(Ticket::FINISHED_STATUSES, $parameters['q0p0']);
+        $this->assertSame(Entity\Ticket::FINISHED_STATUSES, $parameters['q0p0']);
     }
 
     public function testBuildQueryWithQualifierAssignee(): void
     {
-        $alix = UserFactory::createOne([
+        $alix = Factory\UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->_real();
         $query = SearchEngine\Query::fromString('assignee:alix');
@@ -243,7 +240,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierAssigneeAsId(): void
     {
-        $alix = UserFactory::createOne([
+        $alix = Factory\UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->_real();
         $query = SearchEngine\Query::fromString("assignee:#{$alix->getId()}");
@@ -270,7 +267,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierAssigneeAsArray(): void
     {
-        $alix = UserFactory::createOne([
+        $alix = Factory\UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->_real();
         $query = SearchEngine\Query::fromString('assignee:alix,@me');
@@ -300,7 +297,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierRequester(): void
     {
-        $alix = UserFactory::createOne([
+        $alix = Factory\UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->_real();
         $query = SearchEngine\Query::fromString('requester:alix');
@@ -315,7 +312,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierInvolves(): void
     {
-        $alix = UserFactory::createOne([
+        $alix = Factory\UserFactory::createOne([
             'name' => 'Alix Hambourg',
         ])->_real();
         $query = SearchEngine\Query::fromString('involves:alix');
@@ -333,7 +330,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierOrg(): void
     {
-        $probesys = OrganizationFactory::createOne([
+        $probesys = Factory\OrganizationFactory::createOne([
             'name' => 'Probesys',
         ])->_real();
         $query = SearchEngine\Query::fromString('org:probesys');
@@ -348,7 +345,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierOrgAsId(): void
     {
-        $probesys = OrganizationFactory::createOne([
+        $probesys = Factory\OrganizationFactory::createOne([
             'name' => 'Probesys',
         ])->_real();
         $query = SearchEngine\Query::fromString("org:#{$probesys->getId()}");
@@ -363,10 +360,10 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierOrgAsArray(): void
     {
-        $probesys = OrganizationFactory::createOne([
+        $probesys = Factory\OrganizationFactory::createOne([
             'name' => 'Probesys',
         ])->_real();
-        $friendlyCoorp = OrganizationFactory::createOne([
+        $friendlyCoorp = Factory\OrganizationFactory::createOne([
             'name' => 'Friendly Coorp',
         ])->_real();
         $query = SearchEngine\Query::fromString('org:Probesys,coorp');
@@ -384,10 +381,10 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierOrgAsIdAndArray(): void
     {
-        $probesys = OrganizationFactory::createOne([
+        $probesys = Factory\OrganizationFactory::createOne([
             'name' => 'Probesys',
         ])->_real();
-        $friendlyCoorp = OrganizationFactory::createOne([
+        $friendlyCoorp = Factory\OrganizationFactory::createOne([
             'name' => 'Friendly Coorp',
         ])->_real();
         $query = SearchEngine\Query::fromString("org:#{$probesys->getId()},coorp");
@@ -432,7 +429,7 @@ class TicketQueryBuilderTest extends WebTestCase
 
     public function testBuildQueryWithQualifierLabel(): void
     {
-        $label = LabelFactory::createOne([
+        $label = Factory\LabelFactory::createOne([
             'name' => 'Foo',
         ]);
         $query = SearchEngine\Query::fromString('label:foo');

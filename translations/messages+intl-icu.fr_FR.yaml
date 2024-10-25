@@ -404,10 +404,10 @@ tickets.filters.assignee.no: 'Non attribués seulement'
 tickets.filters.labels.title: 'Filtrer par étiquettes'
 tickets.filters.priority.title: 'Filtrer par priorité'
 tickets.filters.status.title: 'Filtrer par statut'
+tickets.filters.type.all: 'Tous les tickets'
+tickets.filters.type.incident: 'Uniquement les incidents'
 tickets.filters.type.label: 'Type des tickets'
-tickets.filters.type.no_filter: 'Tous les tickets'
-tickets.filters.type.only_incidents: 'Uniquement les incidents'
-tickets.filters.type.only_requests: 'Uniquement les demandes'
+tickets.filters.type.request: 'Uniquement les demandes'
 tickets.filters.type.title: 'Filtrer par type'
 tickets.impact: Impact
 tickets.impact.high: Haut
@@ -538,7 +538,6 @@ users.index.number: '{count, plural, =0 {Aucun utilisateur} one {1 utilisateur} 
 users.index.title: Utilisateurs
 users.language: Langue
 users.ldap_identifier: 'Identifiant LDAP'
-users.n_others: '{number, plural, =0 {aucun autre} one {1 autre} other {# autres}}'
 users.name: Nom
 users.new.submit: 'Créer l’utilisateur'
 users.new.title: 'Nouvel utilisateur'

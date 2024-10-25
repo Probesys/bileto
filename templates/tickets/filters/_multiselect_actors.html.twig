@@ -4,58 +4,60 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<div class="multiselect-actors" data-controller="multiselect-actors">
-    <select
-        id="{{ id }}-data"
-        name="{{ name }}"
-        multiple
-        data-multiselect-actors-target="data"
-        data-action="multiselect-actors#refresh"
-        hidden
-    >
-        {% for user in users %}
-            {% set isCurrentUser = user.id == app.user.id %}
-            {% set userId = isCurrentUser ? '@me' : user.id %}
+<div class="flow flow--small">
+    {{ form_label(form) }}
 
-            <option value="{{ isCurrentUser ? userId : '#' ~ userId }}" {{ userId in selected ? 'selected' }}>
-                {{ user.displayName }}
+    {{ form_errors(form) }}
 
-                {% if user.id == app.user.id %}
-                    ({{ 'users.yourself' | trans }})
-                {% endif %}
-            </option>
-        {% endfor %}
-    </select>
-
-    <div class="flow flow--smaller">
+    <div class="multiselect-actors" data-controller="multiselect-actors">
         <select
-            id="{{ id }}"
-            class="multiselect-actors__select widget--small"
-            data-multiselect-actors-target="select"
-            data-action="multiselect-actors#select"
+            id="{{ field_id(form, 'data') }}"
+            name="{{ field_name(form) }}"
+            multiple
+            data-multiselect-actors-target="data"
+            data-action="multiselect-actors#refresh"
+            hidden
         >
-            <option disabled value="">
-                {{ 'tickets.filters.actors.select' | trans }}
-            </option>
+            {% for choice in form.vars.choices %}
+                <option
+                    value="{{ choice.value }}"
+                    {{ choice.value in field_value(form) ? 'selected' }}
+                >
+                    {{ choice.label }}
+                </option>
+            {% endfor %}
         </select>
 
-        <div class="cols cols--always cols--wrap flow flow--smaller" data-multiselect-actors-target="list">
+        <div class="flow flow--smaller">
+            <select
+                id="{{ field_id(form) }}"
+                class="multiselect-actors__select widget--small"
+                data-multiselect-actors-target="select"
+                data-action="multiselect-actors#select"
+            >
+                <option disabled value="">
+                    {{ 'tickets.filters.actors.select' | trans }}
+                </option>
+            </select>
+
+            <div class="cols cols--always cols--wrap flow flow--smaller" data-multiselect-actors-target="list">
+            </div>
         </div>
+
+        <template data-multiselect-actors-target="template">
+            <button
+                type="button"
+                class="button--discreet-alt"
+                data-action="multiselect-actors#unselect"
+                data-target="unselect"
+                data-value=""
+                aria-label={{ 'tickets.filters.actors.unselect' | trans }}
+            >
+                <span data-target="name">
+                </span>
+
+                {{ icon('close') }}
+            </button>
+        </template>
     </div>
-
-    <template data-multiselect-actors-target="template">
-        <button
-            type="button"
-            class="button--discreet-alt"
-            data-action="multiselect-actors#unselect"
-            data-target="unselect"
-            data-value=""
-            aria-label={{ 'tickets.filters.actors.unselect' | trans }}
-        >
-            <span data-target="name">
-            </span>
-
-            {{ icon('close') }}
-        </button>
-    </template>
 </div>

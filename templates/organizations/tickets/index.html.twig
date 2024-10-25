@@ -48,16 +48,8 @@
                     'tickets/_search_form.html.twig',
                     {
                         searchMode: searchMode,
-                        query: query,
-                        ticketFilter: ticketFilter,
-                        openStatuses: openStatuses,
-                        finishedStatuses: finishedStatuses,
-                        allUsers: allUsers,
-                        agents: agents,
-                        labels: labels,
-                        organization: organization,
-                        from: path('organization tickets', { uid: organization.uid }),
-                        error: errors.search ?? ''
+                        quickSearchForm: quickSearchForm,
+                        advancedSearchForm: advancedSearchForm,
                     },
                     with_context = false
                 ) }}

@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\SearchEngine\QueryBuilder;
+namespace App\SearchEngine\Ticket;
 
 use App\Entity;
 use App\Repository;
@@ -13,7 +13,7 @@ use App\Utils;
 use Doctrine\ORM;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class TicketQueryBuilder
+class QueryBuilder
 {
     private int $subBuilderSequence = 0;
 
@@ -43,6 +43,10 @@ class TicketQueryBuilder
         $this->subBuilderSequence = 0;
 
         foreach ($queries as $sequence => $query) {
+            if ($query->getString() === '') {
+                continue;
+            }
+
             list($whereQuery, $parameters) = $this->buildQuery($query, $sequence);
 
             $queryBuilder->andWhere($whereQuery);

@@ -215,7 +215,7 @@
 {%- endblock password_widget %}
 
 {%- block submit_arrow_widget -%}
-    {%- set attr = attr|merge({class: (attr.class|default('button--primary button--animated-icon'))|trim}) -%}
+    {%- set attr = attr|merge({class: (attr.class|default('button--primary') ~ ' button--animated-icon')|trim}) %}
     <button type="submit" {{ block('button_attributes') }}>
         {%- if label_html is same as(false) -%}
             {{ label|trans(label_translation_parameters, translation_domain) -}}
@@ -265,7 +265,9 @@
 {%- endblock widget_attributes -%}
 
 {%- block labels_row -%}
-    <div class="flow">
+    {%- set row_class = row_class|default(row_attr.class|default('flow flow--small')|trim) -%}
+    {%- set row_attr = row_attr|merge({class: row_class}) -%}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
         {% for label in form %}
             <div>
                 <input

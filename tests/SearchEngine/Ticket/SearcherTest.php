@@ -4,38 +4,31 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Tests\SearchEngine;
+namespace App\Tests\SearchEngine\Ticket;
 
-use App\Entity\Ticket;
-use App\SearchEngine\Query;
-use App\SearchEngine\TicketSearcher;
-use App\Tests\AuthorizationHelper;
-use App\Tests\Factory\ContractFactory;
-use App\Tests\Factory\LabelFactory;
-use App\Tests\Factory\OrganizationFactory;
-use App\Tests\Factory\TeamFactory;
-use App\Tests\Factory\TicketFactory;
-use App\Tests\Factory\UserFactory;
+use App\SearchEngine;
+use App\Tests;
+use App\Tests\Factory;
 use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
-class TicketSearcherTest extends WebTestCase
+class SearcherTest extends WebTestCase
 {
-    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
+    use Tests\AuthorizationHelper;
 
     public function testGetTicketsReturnsTicketAssignedToUser(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'assignee' => $user,
         ]);
 
@@ -49,11 +42,11 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'requester' => $user,
         ]);
 
@@ -67,14 +60,14 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $team = TeamFactory::createOne([
+        $team = Factory\TeamFactory::createOne([
             'agents' => [$user],
         ]);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'team' => $team,
         ]);
 
@@ -88,11 +81,11 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'observers' => [$user],
         ]);
 
@@ -106,11 +99,11 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket = TicketFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne();
 
         $ticketsPagination = $ticketSearcher->getTickets();
 
@@ -121,17 +114,17 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization1 = OrganizationFactory::createOne();
-        $organization2 = OrganizationFactory::createOne();
-        $ticket1 = TicketFactory::createOne([
+        $organization1 = Factory\OrganizationFactory::createOne();
+        $organization2 = Factory\OrganizationFactory::createOne();
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'organization' => $organization1,
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'organization' => $organization2,
         ]);
@@ -147,22 +140,22 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization1 = OrganizationFactory::createOne();
-        $organization2 = OrganizationFactory::createOne();
-        $organization3 = OrganizationFactory::createOne();
-        $ticket1 = TicketFactory::createOne([
+        $organization1 = Factory\OrganizationFactory::createOne();
+        $organization2 = Factory\OrganizationFactory::createOne();
+        $organization3 = Factory\OrganizationFactory::createOne();
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'organization' => $organization1,
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'organization' => $organization2,
         ]);
-        $ticket3 = TicketFactory::createOne([
+        $ticket3 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'organization' => $organization3,
         ]);
@@ -185,14 +178,14 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
-        $otherUser = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
+        $otherUser = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), ['orga:see:tickets:all']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'organization' => $organization,
             'requester' => $otherUser,
             'assignee' => null,
@@ -210,35 +203,35 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
-        $otherUser = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
+        $otherUser = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), ['orga:see:tickets:all']);
-        $userTeam = TeamFactory::createOne([
+        $userTeam = Factory\TeamFactory::createOne([
             'agents' => [$user],
         ]);
-        $ticket1 = TicketFactory::createOne([
+        $ticket1 = Factory\TicketFactory::createOne([
             'organization' => $organization,
             'requester' => $user,
             'assignee' => null,
             'team' => null,
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'organization' => $organization,
             'requester' => $otherUser,
             'assignee' => $user,
             'team' => null,
         ]);
-        $ticket3 = TicketFactory::createOne([
+        $ticket3 = Factory\TicketFactory::createOne([
             'organization' => $organization,
             'requester' => $otherUser,
             'assignee' => null,
             'team' => $userTeam,
         ]);
-        $ticket4 = TicketFactory::createOne([
+        $ticket4 = Factory\TicketFactory::createOne([
             'organization' => $organization,
             'requester' => $otherUser,
             'assignee' => null,
@@ -246,7 +239,7 @@ class TicketSearcherTest extends WebTestCase
         ]);
         $ticketSearcher->setOrganization($organization->_real());
 
-        $query = Query::fromString('NOT involves:@me');
+        $query = SearchEngine\Query::fromString('NOT involves:@me');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -257,26 +250,26 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
-        $otherUser = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
+        $otherUser = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
-        $ticket1 = TicketFactory::createOne([
+        $organization = Factory\OrganizationFactory::createOne();
+        $ticket1 = Factory\TicketFactory::createOne([
             'requester' => $user,
             'assignee' => null,
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'requester' => $user,
             'assignee' => $otherUser,
         ]);
-        $ticket3 = TicketFactory::createOne([
+        $ticket3 = Factory\TicketFactory::createOne([
             'requester' => $user,
             'assignee' => $user,
         ]);
 
-        $query = Query::fromString('NOT assignee:@me');
+        $query = SearchEngine\Query::fromString('NOT assignee:@me');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(2, $ticketsPagination->count);
@@ -292,19 +285,19 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
-        $ticket1 = TicketFactory::createOne([
+        $organization = Factory\OrganizationFactory::createOne();
+        $ticket1 = Factory\TicketFactory::createOne([
             'observers' => [],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'observers' => [$user],
         ]);
 
-        $query = Query::fromString('observer:@me');
+        $query = SearchEngine\Query::fromString('observer:@me');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -315,22 +308,22 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $contract1 = ContractFactory::createOne();
-        $contract2 = ContractFactory::createOne();
-        $ticket1 = TicketFactory::createOne([
+        $contract1 = Factory\ContractFactory::createOne();
+        $contract2 = Factory\ContractFactory::createOne();
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'contracts' => [$contract1],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'contracts' => [$contract2],
         ]);
 
-        $query = Query::fromString('contract:#' . $contract1->getId());
+        $query = SearchEngine\Query::fromString('contract:#' . $contract1->getId());
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -341,22 +334,22 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $contract1 = ContractFactory::createOne();
-        $contract2 = ContractFactory::createOne();
-        $ticket1 = TicketFactory::createOne([
+        $contract1 = Factory\ContractFactory::createOne();
+        $contract2 = Factory\ContractFactory::createOne();
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'contracts' => [$contract1],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'contracts' => [$contract2],
         ]);
 
-        $query = Query::fromString('NOT contract:#' . $contract1->getId());
+        $query = SearchEngine\Query::fromString('NOT contract:#' . $contract1->getId());
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -367,21 +360,21 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $contract = ContractFactory::createOne();
-        $ticket1 = TicketFactory::createOne([
+        $contract = Factory\ContractFactory::createOne();
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'contracts' => [$contract],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'contracts' => [],
         ]);
 
-        $query = Query::fromString('has:contract');
+        $query = SearchEngine\Query::fromString('has:contract');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -392,21 +385,21 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $contract = ContractFactory::createOne();
-        $ticket1 = TicketFactory::createOne([
+        $contract = Factory\ContractFactory::createOne();
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'contracts' => [$contract],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'contracts' => [],
         ]);
 
-        $query = Query::fromString('no:contract');
+        $query = SearchEngine\Query::fromString('no:contract');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -417,26 +410,26 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $label1 = LabelFactory::createOne([
+        $label1 = Factory\LabelFactory::createOne([
             'name' => 'Foo',
         ]);
-        $label2 = LabelFactory::createOne([
+        $label2 = Factory\LabelFactory::createOne([
             'name' => 'Bar',
         ]);
-        $ticket1 = TicketFactory::createOne([
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'labels' => [$label1],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'labels' => [$label2],
         ]);
 
-        $query = Query::fromString('label:foo');
+        $query = SearchEngine\Query::fromString('label:foo');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -447,26 +440,26 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $label1 = LabelFactory::createOne([
+        $label1 = Factory\LabelFactory::createOne([
             'name' => 'Foo',
         ]);
-        $label2 = LabelFactory::createOne([
+        $label2 = Factory\LabelFactory::createOne([
             'name' => 'Bar',
         ]);
-        $ticket1 = TicketFactory::createOne([
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'labels' => [$label1],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'labels' => [$label2],
         ]);
 
-        $query = Query::fromString('-label:foo');
+        $query = SearchEngine\Query::fromString('-label:foo');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -477,23 +470,23 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $label = LabelFactory::createOne([
+        $label = Factory\LabelFactory::createOne([
             'name' => 'Foo',
         ]);
-        $ticket1 = TicketFactory::createOne([
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'labels' => [$label],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'labels' => [],
         ]);
 
-        $query = Query::fromString('has:label');
+        $query = SearchEngine\Query::fromString('has:label');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -504,23 +497,23 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $label = LabelFactory::createOne([
+        $label = Factory\LabelFactory::createOne([
             'name' => 'Foo',
         ]);
-        $ticket1 = TicketFactory::createOne([
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'labels' => [$label],
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'labels' => [],
         ]);
 
-        $query = Query::fromString('no:label');
+        $query = SearchEngine\Query::fromString('no:label');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -531,20 +524,20 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket1 = TicketFactory::createOne([
+        $ticket1 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'status' => 'new',
         ]);
-        $ticket2 = TicketFactory::createOne([
+        $ticket2 = Factory\TicketFactory::createOne([
             'assignee' => $user,
             'status' => 'closed',
         ]);
 
-        $query = Query::fromString('status:new');
+        $query = SearchEngine\Query::fromString('status:new');
         $ticketsPagination = $ticketSearcher->getTickets($query);
 
         $this->assertSame(1, $ticketsPagination->count);
@@ -555,11 +548,11 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        TicketFactory::createOne([
+        Factory\TicketFactory::createOne([
             'assignee' => $user,
         ]);
 
@@ -572,20 +565,20 @@ class TicketSearcherTest extends WebTestCase
     {
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        $user = UserFactory::createOne();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        TicketFactory::createOne([
+        Factory\TicketFactory::createOne([
             'assignee' => $user,
             'status' => 'new',
         ]);
-        TicketFactory::createOne([
+        Factory\TicketFactory::createOne([
             'assignee' => $user,
             'status' => 'closed',
         ]);
 
-        $query = Query::fromString('status:new');
+        $query = SearchEngine\Query::fromString('status:new');
         $count = $ticketSearcher->countTickets($query);
 
         $this->assertSame(1, $count);
@@ -599,16 +592,16 @@ class TicketSearcherTest extends WebTestCase
 
         $client = static::createClient();
         $container = static::getContainer();
-        /** @var TicketSearcher $ticketSearcher */
-        $ticketSearcher = $container->get(TicketSearcher::class);
-        list($user, $otherUser) = UserFactory::createMany(2);
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        list($user, $otherUser) = Factory\UserFactory::createMany(2);
         $client->loginUser($user->_real());
-        $team = TeamFactory::createOne([
+        $team = Factory\TeamFactory::createOne([
             'agents' => [$user, $otherUser],
         ]);
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantTeam($team->_real(), ['orga:see'], $organization->_real());
-        TicketFactory::createOne([
+        Factory\TicketFactory::createOne([
             'organization' => $organization,
             'team' => $team,
             'assignee' => $user,

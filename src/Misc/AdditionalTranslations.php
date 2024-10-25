@@ -71,3 +71,9 @@ new TranslatableMessage('mailboxes.post_action.mark_as_read');
 new TranslatableMessage('users.color_scheme.auto');
 new TranslatableMessage('users.color_scheme.dark');
 new TranslatableMessage('users.color_scheme.light');
+
+// See src/Form/Ticket/QuickSearchForm.php
+new TranslatableMessage('tickets.filters.type.incident');
+new TranslatableMessage('tickets.filters.type.request');
+new TranslatableMessage('tickets.status.finished');
+new TranslatableMessage('tickets.status.open');

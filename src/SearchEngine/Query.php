@@ -8,6 +8,8 @@ namespace App\SearchEngine;
 
 class Query
 {
+    private string $string = '';
+
     /** @var Query\Condition[] */
     private array $conditions = [];
 
@@ -22,15 +24,22 @@ class Query
         return $this->conditions;
     }
 
-    public static function fromString(string $queryString): ?Query
+    public static function fromString(string $queryString): Query
     {
         if (!$queryString) {
-            return null;
+            return new self();
         }
 
         $tokenizer = new Query\Tokenizer();
         $parser = new Query\Parser();
         $tokens = $tokenizer->tokenize($queryString);
-        return $parser->parse($tokens);
+        $query = $parser->parse($tokens);
+        $query->string = $queryString;
+        return $query;
+    }
+
+    public function getString(): string
+    {
+        return $this->string;
     }
 }

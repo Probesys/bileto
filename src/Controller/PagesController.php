@@ -9,7 +9,7 @@ namespace App\Controller;
 use App\Entity\Ticket;
 use App\Repository\AuthorizationRepository;
 use App\Repository\OrganizationRepository;
-use App\SearchEngine\TicketSearcher;
+use App\SearchEngine;
 use App\Service;
 use App\Service\Sorter\OrganizationSorter;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,9 +22,9 @@ class PagesController extends BaseController
         AuthorizationRepository $authorizationRepository,
         OrganizationRepository $orgaRepository,
         OrganizationSorter $orgaSorter,
-        TicketSearcher $ticketSearcher,
+        SearchEngine\Ticket\Searcher $ticketSearcher,
     ): Response {
-        $ticketsPagination = $ticketSearcher->getTickets(TicketSearcher::queryOwned(), 'updated-desc', [
+        $ticketsPagination = $ticketSearcher->getTickets(SearchEngine\Ticket\Searcher::queryOwned(), 'updated-desc', [
             'page' => 1,
             'maxResults' => 5,
         ]);

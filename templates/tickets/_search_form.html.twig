@@ -30,209 +30,87 @@
             </button>
         </div>
 
-        <form method="post" action="{{ path('combine filters') }}" class="flow flow--large">
-            <input
-                type="text"
-                name="text"
-                value="{{ ticketFilter.text }}"
-                autocomplete="off"
-                aria-label="{{ 'tickets.search.label' | trans }}"
-                placeholder="{{ 'tickets.search.placeholder' | trans }}"
-            />
+        {{ form_start(quickSearchForm, {
+            action: path('search tickets'),
+        }) }}
+            {{ form_widget(quickSearchForm.text) }}
 
             <div>
-                <details class="accordion" {{ ticketFilter.anyFilters(['status']) ? 'open' }}>
+                {% set groupStatusesIsSet = field_value(quickSearchForm.groupStatuses) is not empty %}
+                {% set statusesIsSet = field_value(quickSearchForm.statuses) is not empty %}
+
+                <details class="accordion" {{ groupStatusesIsSet or statusesIsSet ? 'open' }}>
                     <summary class="accordion__title">
                         {{ 'tickets.filters.status.title' | trans }}
                     </summary>
 
                     <div class="accordion__body flow flow--small" data-controller="checkboxes">
-                        <div class="flow flow--small">
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    id="filter-status-open"
-                                    name="filters[status][]"
-                                    value="open"
-                                    {{ 'open' in ticketFilter.filter('status') ? 'checked' }}
-                                    data-checkboxes-target="control"
-                                    data-checkboxes-control="[data-status-group='open']#switch"
-                                    data-action="checkboxes#execute"
-                                />
+                        {{ form_row(quickSearchForm.groupStatuses) }}
 
-                                <label for="filter-status-open">
-                                    {{ 'tickets.status.open' | trans }}
-                                </label>
-                            </div>
-
-                            <div class="indent flow flow--small">
-                                {% for value, label in openStatuses %}
-                                    <div>
-                                        <input
-                                            type="checkbox"
-                                            id="filter-status-{{ value }}"
-                                            name="filters[status][]"
-                                            value="{{ value }}"
-                                            {{ value in ticketFilter.filter('status') ? 'checked' }}
-                                            data-status-group="open"
-                                            data-checkboxes-control="#filter-status-open#uncheck"
-                                            data-action="checkboxes#execute"
-                                        />
-
-                                        <label for="filter-status-{{ value }}">
-                                            {{ label | trans }}
-                                        </label>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <div class="flow flow--small">
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    id="filter-status-finished"
-                                    name="filters[status][]"
-                                    value="finished"
-                                    {{ 'finished' in ticketFilter.filter('status') ? 'checked' }}
-                                    data-checkboxes-target="control"
-                                    data-checkboxes-control="[data-status-group='finished']#switch"
-                                    data-action="checkboxes#execute"
-                                />
-
-                                <label for="filter-status-finished">
-                                    {{ 'tickets.status.finished' | trans }}
-                                </label>
-                            </div>
-
-                            <div class="indent flow flow--small">
-                                {% for value, label in finishedStatuses %}
-                                    <div>
-                                        <input
-                                            type="checkbox"
-                                            id="filter-status-{{ value }}"
-                                            name="filters[status][]"
-                                            value="{{ value }}"
-                                            {{ value in ticketFilter.filter('status') ? 'checked' }}
-                                            data-status-group="finished"
-                                            data-checkboxes-target="control"
-                                            data-checkboxes-control="#filter-status-finished#uncheck"
-                                            data-action="checkboxes#execute"
-                                        />
-
-                                        <label for="filter-status-{{ value }}">
-                                            {{ label | trans }}
-                                        </label>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
+                        {{ form_row(quickSearchForm.statuses) }}
                     </div>
                 </details>
 
-                {% if is_agent(organization ?? 'any') %}
-                    <details class="accordion" {{ ticketFilter.anyFilters(['involves', 'assignee', 'requester']) ? 'open' }}>
+                {% if quickSearchForm.involves is defined %}
+                    {% set involvesIsSet = field_value(quickSearchForm.involves) is not empty %}
+                    {% set assigneesIsSet = field_value(quickSearchForm.assignees) is not empty %}
+                    {% set unassignedOnlyIsSet = quickSearchForm.unassignedOnly.vars.checked %}
+                    {% set requestersIsSet = field_value(quickSearchForm.requesters) is not empty %}
+
+                    <details class="accordion" {{ involvesIsSet or assigneesIsSet or unassignedOnlyIsSet or requestersIsSet ? 'open' }}>
                         <summary class="accordion__title">
                             {{ 'tickets.filters.actors.title' | trans }}
                         </summary>
 
                         <div class="accordion__body flow flow--large">
-                            <div class="flow flow--small">
-                                <label for="filter-involves" class="text--bold">
-                                    {{ 'tickets.involves' | trans }}
-                                </label>
-
-                                {{ include(
-                                    'tickets/filters/_multiselect_actors.html.twig',
-                                    {
-                                        users: allUsers,
-                                        selected: ticketFilter.filter('involves'),
-                                        id: "filter-involves",
-                                        name: "filters[involves][]",
-                                    },
-                                    with_context = false
-                                ) }}
-                            </div>
+                            {{ include(
+                                'tickets/filters/_multiselect_actors.html.twig',
+                                {
+                                    form: quickSearchForm.involves,
+                                },
+                                with_context = false
+                            ) }}
 
                             <div class="flow flow--small" data-controller="checkboxes">
-                                <label for="filter-assignee" class="text--bold">
-                                    {{ 'tickets.assignee' | trans }}
-                                </label>
-
                                 {{ include(
                                     'tickets/filters/_multiselect_actors.html.twig',
                                     {
-                                        users: agents,
-                                        selected: ticketFilter.filter('assignee'),
-                                        id: "filter-assignee",
-                                        name: "filters[assignee][]",
+                                        form: quickSearchForm.assignees,
                                     },
                                     with_context = false
                                 ) }}
 
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-assignee-no"
-                                        name="filters[assignee][]"
-                                        value="no"
-                                        {{ null in ticketFilter.filter('assignee') ? 'checked' }}
-                                        data-checkboxes-target="control"
-                                        data-checkboxes-control="#filter-assignee-data#switchDisabled"
-                                        data-action="checkboxes#execute"
-                                    />
-
-                                    <label for="filter-assignee-no">
-                                        {{ 'tickets.filters.assignee.no' | trans }}
-                                    </label>
-                                </div>
+                                {{ form_row(quickSearchForm.unassignedOnly) }}
                             </div>
 
-                            <div class="flow flow--small">
-                                <label for="filter-requester" class="text--bold">
-                                    {{ 'tickets.requester' | trans }}
-                                </label>
-
-                                {{ include(
-                                    'tickets/filters/_multiselect_actors.html.twig',
-                                    {
-                                        users: allUsers,
-                                        selected: ticketFilter.filter('requester'),
-                                        id: "filter-requester",
-                                        name: "filters[requester][]",
-                                    },
-                                    with_context = false
-                                ) }}
-                            </div>
+                            {{ include(
+                                'tickets/filters/_multiselect_actors.html.twig',
+                                {
+                                    form: quickSearchForm.requesters,
+                                },
+                                with_context = false
+                            ) }}
                         </div>
                     </details>
                 {% endif %}
 
-                <details class="accordion" {{ ticketFilter.anyFilters(['label']) ? 'open' }}>
+                {% set labelsIsSet = field_value(quickSearchForm.labels) is not empty %}
+
+                <details class="accordion" {{ labelsIsSet ? 'open' }}>
                     <summary class="accordion__title">
                         {{ 'tickets.filters.labels.title' | trans }}
                     </summary>
 
-                    <div class="accordion__body flow">
-                        {% for label in labels %}
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    id="filter-label-{{ label.uid }}"
-                                    name="filters[label][]"
-                                    value="{{ label.name }}"
-                                    {{ label.name in ticketFilter.filter('label') ? 'checked' }}
-                                />
-
-                                <label for="filter-label-{{ label.uid }}" class="badge badge--{{ label.color }}">
-                                    {{ label.name }}
-                                </label>
-                            </div>
-                        {% endfor %}
+                    <div class="accordion__body">
+                        {{ form_row(quickSearchForm.labels) }}
                     </div>
                 </details>
 
-                <details class="accordion" {{ ticketFilter.anyFilters(['priority', 'urgency', 'impact']) ? 'open' }}>
+                {% set prioritiesIsSet = field_value(quickSearchForm.priorities) is not empty %}
+                {% set urgenciesIsSet = field_value(quickSearchForm.urgencies) is not empty %}
+                {% set impactsIsSet = field_value(quickSearchForm.impacts) is not empty %}
+
+                <details class="accordion" {{ prioritiesIsSet or urgenciesIsSet or impactsIsSet ? 'open' }}>
                     <summary class="accordion__title">
                         {{ 'tickets.filters.priority.title' | trans }}
                     </summary>
@@ -243,49 +121,7 @@
                                 {{ 'tickets.priority' | trans }}
                             </legend>
 
-                            <div class="flow flow--smaller">
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-priority-low"
-                                        name="filters[priority][]"
-                                        value="low"
-                                        {{ 'low' in ticketFilter.filter('priority') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-priority-low">
-                                        {{ 'tickets.priority.low' | trans }}
-                                    </label>
-                                </div>
-
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-priority-medium"
-                                        name="filters[priority][]"
-                                        value="medium"
-                                        {{ 'medium' in ticketFilter.filter('priority') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-priority-medium">
-                                        {{ 'tickets.priority.medium' | trans }}
-                                    </label>
-                                </div>
-
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-priority-high"
-                                        name="filters[priority][]"
-                                        value="high"
-                                        {{ 'high' in ticketFilter.filter('priority') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-priority-high">
-                                        {{ 'tickets.priority.high' | trans }}
-                                    </label>
-                                </div>
-                            </div>
+                            {{ form_row(quickSearchForm.priorities) }}
                         </fieldset>
 
                         <fieldset>
@@ -293,49 +129,7 @@
                                 {{ 'tickets.urgency' | trans }}
                             </legend>
 
-                            <div class="flow flow--smaller">
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-urgency-low"
-                                        name="filters[urgency][]"
-                                        value="low"
-                                        {{ 'low' in ticketFilter.filter('urgency') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-urgency-low">
-                                        {{ 'tickets.urgency.low' | trans }}
-                                    </label>
-                                </div>
-
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-urgency-medium"
-                                        name="filters[urgency][]"
-                                        value="medium"
-                                        {{ 'medium' in ticketFilter.filter('urgency') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-urgency-medium">
-                                        {{ 'tickets.urgency.medium' | trans }}
-                                    </label>
-                                </div>
-
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-urgency-high"
-                                        name="filters[urgency][]"
-                                        value="high"
-                                        {{ 'high' in ticketFilter.filter('urgency') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-urgency-high">
-                                        {{ 'tickets.urgency.high' | trans }}
-                                    </label>
-                                </div>
-                            </div>
+                            {{ form_row(quickSearchForm.urgencies) }}
                         </fieldset>
 
                         <fieldset>
@@ -343,106 +137,26 @@
                                 {{ 'tickets.impact' | trans }}
                             </legend>
 
-                            <div class="flow flow--smaller">
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-impact-low"
-                                        name="filters[impact][]"
-                                        value="low"
-                                        {{ 'low' in ticketFilter.filter('impact') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-impact-low">
-                                        {{ 'tickets.impact.low' | trans }}
-                                    </label>
-                                </div>
-
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-impact-medium"
-                                        name="filters[impact][]"
-                                        value="medium"
-                                        {{ 'medium' in ticketFilter.filter('impact') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-impact-medium">
-                                        {{ 'tickets.impact.medium' | trans }}
-                                    </label>
-                                </div>
-
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        id="filter-impact-high"
-                                        name="filters[impact][]"
-                                        value="high"
-                                        {{ 'high' in ticketFilter.filter('impact') ? 'checked' }}
-                                    />
-
-                                    <label for="filter-impact-high">
-                                        {{ 'tickets.impact.high' | trans }}
-                                    </label>
-                                </div>
-                            </div>
+                            {{ form_row(quickSearchForm.impacts) }}
                         </fieldset>
                     </div>
                 </details>
 
-                <details class="accordion" {{ ticketFilter.anyFilters(['type']) ? 'open' }}>
+                {% set typeIsSet = field_value(quickSearchForm.type) is not empty %}
+
+                <details class="accordion" {{ typeIsSet ? 'open' }}>
                     <summary class="accordion__title">
                         {{ 'tickets.filters.type.title' | trans }}
                     </summary>
 
                     <div class="accordion__body flow flow--small">
-                        <label for="type" class="text--bold">
-                            {{ 'tickets.filters.type.label' | trans }}
-                        </label>
-
-                        <select
-                            id="type"
-                            class="widget--small"
-                            name="filters[type][]"
-                        >
-                            <option value="" {{ ticketFilter.filter('type') is empty ? 'checked' }}>
-                                {{ 'tickets.filters.type.no_filter' | trans }}
-                            </option>
-
-                            <option value="incident" {{ 'incident' in ticketFilter.filter('type') ? 'selected' }}>
-                                {{ 'tickets.filters.type.only_incidents' | trans }}
-                            </option>
-
-                            <option value="request" {{ 'request' in ticketFilter.filter('type') ? 'selected' }}>
-                                {{ 'tickets.filters.type.only_requests' | trans }}
-                            </option>
-                        </select>
+                        {{ form_row(quickSearchForm.type) }}
                     </div>
                 </details>
             </div>
 
-            <div class="text--right">
-                <button class="button--animated-icon" type="submit">
-                    {{ 'tickets.search.submit' | trans }}
-                    {{ icon('arrow-right') }}
-                </button>
-            </div>
-
-            {# Send an empty value so the parameter is always sent, even if all the
-             # checkboxes are unchecked. #}
-            <input type="hidden" name="filters[status][]" value="">
-            <input type="hidden" name="filters[priority][]" value="" />
-            <input type="hidden" name="filters[urgency][]" value="" />
-            <input type="hidden" name="filters[impact][]" value="" />
-            <input type="hidden" name="filters[involves][]" value="" />
-            <input type="hidden" name="filters[assignee][]" value="" />
-            <input type="hidden" name="filters[requester][]" value="" />
-            <input type="hidden" name="filters[label][]" value="" />
-
-            <input type="hidden" name="mode" value="quick">
-            <input type="hidden" name="from" value="{{ from }}">
-            <input type="hidden" name="query" value="{{ query }}">
-        </form>
+            {{ form_row(quickSearchForm.submit) }}
+        {{ form_end(quickSearchForm) }}
     </div>
 
     <div
@@ -470,24 +184,10 @@
             </button>
         </div>
 
-        <form method="get" action="" class="flow flow--small">
-            {% if error %}
-                <p class="form__error" role="alert" id="search-error">
-                    <span class="sr-only">{{ 'forms.error' | trans }}</span>
-                    {{ error }}
-                </p>
-            {% endif %}
+        {{ form_start(advancedSearchForm) }}
+            {{ form_errors(advancedSearchForm) }}
 
-            <textarea
-                type="text"
-                name="q"
-                autocomplete="off"
-                aria-label="{{ 'tickets.search.label' | trans }}"
-                {% if error %}
-                    aria-invalid="true"
-                    aria-errormessage="search-error"
-                {% endif %}
-            >{{ query }}</textarea>
+            {{ form_row(advancedSearchForm.q) }}
 
             <button
                 class="button--anchor text--small"
@@ -504,8 +204,6 @@
                     {{ icon('arrow-right') }}
                 </button>
             </div>
-
-            <input type="hidden" name="mode" value="advanced">
-        </form>
+        {{ form_end(advancedSearchForm) }}
     </div>
 </div>
