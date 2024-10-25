@@ -10,12 +10,14 @@ use App\Entity;
 use App\Repository;
 use App\SearchEngine;
 use Doctrine\Common\Collections;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class QuickSearchFilterBuilder
 {
     public function __construct(
         private Repository\LabelRepository $labelRepository,
         private Repository\UserRepository $userRepository,
+        private Security $security,
     ) {
     }
 
@@ -115,10 +117,15 @@ class QuickSearchFilterBuilder
     {
         $ids = [];
 
+        /** @var ?Entity\User */
+        $currentUser = $this->security->getUser();
+
         foreach ($values as $value) {
             if (preg_match('/^#[\d]+$/', $value)) {
                 $value = substr($value, 1);
                 $ids[] = intval($value);
+            } elseif ($value === '@me' && $currentUser) {
+                $ids[] = $currentUser->getId();
             }
         }
 

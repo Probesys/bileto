@@ -6,6 +6,7 @@
 
 namespace App\Tests\SearchEngine\Ticket;
 
+use App\Entity;
 use App\SearchEngine;
 use App\Tests\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -20,10 +21,16 @@ class QuickSearchFilterBuilderTest extends WebTestCase
 
     private SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder;
 
+    private Entity\User $currentUser;
+
     #[Before]
     public function setUpQuickSearchFilterBuilder(): void
     {
         $client = static::createClient();
+
+        $this->currentUser = Factory\UserFactory::createOne()->_real();
+        $client->loginUser($this->currentUser);
+
         $container = static::getContainer();
         /** @var SearchEngine\Ticket\QuickSearchFilterBuilder */
         $ticketQuickSearchFilterBuilder = $container->get(SearchEngine\Ticket\QuickSearchFilterBuilder::class);
@@ -93,6 +100,18 @@ class QuickSearchFilterBuilderTest extends WebTestCase
         $assignees = $ticketQuickSearchFilter->getAssignees();
         $this->assertSame(1, count($assignees));
         $this->assertSame($user->getId(), $assignees[0]->getId());
+    }
+
+    public function testGetFilterWithMeAssigneeConditionReturnsFilter(): void
+    {
+        $query = SearchEngine\Query::fromString('assignee:@me');
+
+        $ticketQuickSearchFilter = $this->ticketQuickSearchFilterBuilder->getFilter($query);
+
+        $this->assertNotNull($ticketQuickSearchFilter);
+        $assignees = $ticketQuickSearchFilter->getAssignees();
+        $this->assertSame(1, count($assignees));
+        $this->assertSame($this->currentUser->getId(), $assignees[0]->getId());
     }
 
     public function testGetFilterWithNoAssigneeConditionReturnsFilter(): void
