@@ -62,20 +62,18 @@
 
                 <div class="cols cols--center flow">
                     <div class="col--extend cols cols--center flow">
-                        {% if ticketsPagination.count > 0 %}
-                            <p class="text--secondary">
-                                {{ 'tickets.index.number' | trans({ count: ticketsPagination.countAll }) }}
-                            </p>
+                        <p class="text--secondary">
+                            {{ 'tickets.index.number' | trans({ count: ticketsPagination.countAll }) }}
+                        </p>
 
-                            {{ include(
-                                'tickets/_sort_button.html.twig',
-                                {
-                                    currentPath: path('organization tickets', { uid: organization.uid, q: query }),
-                                    currentSort: sort,
-                                },
-                                with_context = false
-                            ) }}
-                        {% endif %}
+                        {{ include(
+                            'tickets/_sort_button.html.twig',
+                            {
+                                currentPath: path('organization tickets', { uid: organization.uid, q: query }),
+                                currentSort: sort,
+                            },
+                            with_context = false
+                        ) }}
                     </div>
 
                     {% if is_granted('orga:create:tickets', organization) %}
