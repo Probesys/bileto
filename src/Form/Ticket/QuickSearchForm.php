@@ -34,6 +34,7 @@ class QuickSearchForm extends AbstractType
             'empty_data' => '',
             'trim' => true,
             'required' => false,
+            'label' => false,
             'attr' => [
                 'aria-label' => $this->translator->trans('tickets.search.label'),
                 'aria-placeholder' => $this->translator->trans('tickets.search.placeholder'),

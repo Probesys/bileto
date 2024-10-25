@@ -33,7 +33,9 @@
         {{ form_start(quickSearchForm, {
             action: path('search tickets'),
         }) }}
-            {{ form_widget(quickSearchForm.text) }}
+            {{ form_errors(quickSearchForm) }}
+
+            {{ form_row(quickSearchForm.text) }}
 
             <div>
                 {% set groupStatusesIsSet = field_value(quickSearchForm.groupStatuses) is not empty %}
