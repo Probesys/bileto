@@ -62,6 +62,7 @@ class AdvancedSearchForm extends AbstractType
         $resolver->setDefaults([
             'method' => 'GET',
             'csrf_protection' => false,
+            'allow_extra_fields' => true,
             'attr' => [
                 'class' => 'flow flow--small',
             ],
