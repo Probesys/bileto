@@ -2,6 +2,8 @@
 # Copyright 2022-2024 Probesys
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+name: bileto
+
 services:
     php:
         image: bileto:php-dev

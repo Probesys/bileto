@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 SCRIPT_PATH=$(dirname $(realpath -s $0))
-export COMPOSE_PROJECT_NAME=bileto
 export COMPOSE_FILE=$SCRIPT_PATH/../development/docker-compose.yml
 
 docker compose exec pgsql psql -U postgres "$@"
