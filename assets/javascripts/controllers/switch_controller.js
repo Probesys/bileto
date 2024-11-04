@@ -4,7 +4,7 @@
 
 import { Controller } from '@hotwired/stimulus';
 
-import { FOCUSABLE_ELEMENTS } from '@/query_selectors.js';
+import { FOCUSABLE_ELEMENTS } from '../query_selectors.js';
 
 export default class extends Controller {
     static get targets () {

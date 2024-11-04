@@ -49,6 +49,7 @@ Ideas, bug reports and contributions are welcome. Please follow [the contributin
 
 Bileto relies on a bunch of other projects:
 
+- [esbuild](https://esbuild.github.io/)
 - [ESLint](https://eslint.org/)
 - [Font Awesome icons](https://fontawesome.com)
 - [Lexend Font](https://www.lexend.com/)
@@ -63,6 +64,5 @@ Bileto relies on a bunch of other projects:
 - [Symfony](https://symfony.com/)
 - [TinyMCE](https://www.tiny.cloud/tinymce/)
 - [Turbo](https://turbo.hotwired.dev/)
-- [Vite](https://vitejs.dev/)
 
 Thanks to their authors!

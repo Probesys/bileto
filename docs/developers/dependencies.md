@@ -78,10 +78,11 @@ For major versions upgrade, please update the requirements in the file `package.
 Also verify that building the assets still works:
 
 ```console
+$ rm -rf public/assets
 $ ./docker/bin/npm run build
 ```
 
-Check the built assets work correctly by changing the path of the Twig `ViteTagsExtension` extension in the dev environment in the file [`config/services.yaml`](/config/services.yaml) (i.e. use `manifest.json` instead of `manifest.dev.json`).
+Check the built assets work correctly by changing the path of the Twig `EsbuildAssetExtension` extension in the dev environment in the file [`config/services.yaml`](/config/services.yaml) (i.e. use `assets` instead of `dev_assets`).
 
 It is also possible to perform a security audit of the dependencies with:
 

@@ -4,28 +4,24 @@
   "repository": "github:Probesys/bileto",
   "type": "module",
   "scripts": {
-    "watch": "vite build --config .vite/vite.config.js --mode development --watch",
-    "build": "vite build --config .vite/vite.config.js --mode production",
+    "watch": "esbuild --bundle --loader:.woff2=file --loader:.svg=file --sourcemap --outdir=public/dev_assets --watch=forever assets/*/application.*",
+    "build": "esbuild --bundle --loader:.woff2=file --loader:.svg=file --sourcemap --outdir=public/assets --minify assets/*/application.*",
     "build:icons": "svg-sprite --config .svg-sprite.json assets/icons/*.svg",
     "lint-js": "eslint -c .eslint.config.js assets/javascripts/",
     "lint-js-fix": "eslint -c .eslint.config.js --fix assets/javascripts/",
     "lint-css": "stylelint assets/stylesheets/**/*.css",
     "lint-css-fix": "stylelint --fix assets/stylesheets/**/*.css"
   },
-  "browserslist": [
-    "defaults"
-  ],
   "devDependencies": {
     "@eslint/js": "^9.2.0",
     "@stylistic/stylelint-plugin": "^3.0.0",
-    "autoprefixer": "^10.4.15",
+    "esbuild": "0.24.0",
     "eslint": "^9.2.0",
     "globals": "^15.1.0",
     "stylelint": "^16.2.0",
     "stylelint-config-standard": "^36.0.0",
     "stylelint-order": "^6.0.0",
-    "svg-sprite": "^2.0.1",
-    "vite": "^5.0.0"
+    "svg-sprite": "^2.0.1"
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.1.0",

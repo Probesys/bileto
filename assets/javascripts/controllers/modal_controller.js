@@ -5,7 +5,7 @@
 
 import { Controller } from '@hotwired/stimulus';
 
-import { FOCUSABLE_ELEMENTS } from '@/query_selectors.js';
+import { FOCUSABLE_ELEMENTS } from '../query_selectors.js';
 
 // Credits to:
 // - JoliCode: https://jolicode.com/blog/une-fenetre-modale-accessible

@@ -160,6 +160,7 @@ ifndef VERSION
 	$(error You need to provide a "VERSION" argument)
 endif
 	echo $(VERSION) > VERSION.txt
+	rm -rf public/assets
 	$(NPM) run build
 	$(EDITOR) CHANGELOG.md
 	git add .

@@ -11,6 +11,7 @@ parameters:
     env(VERSION_FILE): '%kernel.project_dir%/VERSION.txt'
 
     app.default_uploads_directory: '%kernel.project_dir%/uploads'
+    app.public_directory: "%kernel.project_dir%/public"
     app.uploads_directory: '%env(default:app.default_uploads_directory:APP_UPLOADS_DIRECTORY)%'
     app.version: '%env(trim:file:VERSION_FILE)%'
 
@@ -40,9 +41,9 @@ services:
         arguments:
             - '%kernel.project_dir%/var/data/encrypt.key'
 
-    App\Twig\ViteTagsExtension:
+    App\Twig\EsbuildAssetExtension:
         arguments:
-            - "%kernel.project_dir%/public/manifest.json"
+            - "assets"
 
     App\Twig\IconExtension:
         arguments:
@@ -66,9 +67,9 @@ when@dev:
             autowire: true
             autoconfigure: true
 
-        App\Twig\ViteTagsExtension:
+        App\Twig\EsbuildAssetExtension:
             arguments:
-                - "%kernel.project_dir%/public/manifest.dev.json"
+                - "dev_assets"
 
 when@test:
     services:

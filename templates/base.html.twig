@@ -33,11 +33,11 @@
 
         {% block javascripts %}
             <script src="{{ asset('tinymce/tinymce.min.js') }}" defer data-turbo-track="reload"></script>
-            {{ vite_javascript_tag('assets/javascripts/application.js') }}
+            <script src="{{ esbuild_asset('javascripts/application.js') }}" defer data-turbo-track="reload"></script>
         {% endblock %}
 
         {% block stylesheets %}
-            {{ vite_stylesheet_tag('assets/stylesheets/application.css') }}
+            <link rel="stylesheet" href="{{ esbuild_asset('stylesheets/application.css') }}" data-turbo-track="reload">
         {% endblock %}
     </head>
 
