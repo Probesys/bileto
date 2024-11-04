@@ -7,7 +7,6 @@ FROM node:20-alpine AS assets
 
 WORKDIR /app
 COPY package*.json /app
-COPY .vite/ /app/.vite
 COPY assets/ /app/assets
 RUN npm install && npm run build
 
@@ -73,7 +72,6 @@ RUN apt-get update \
 COPY . .
 RUN rm -rf public/assets
 COPY --from=assets /app/public/assets/ public/assets/
-COPY --from=assets /app/public/manifest.json public/
 COPY docker/production/entrypoint.sh /entrypoint.sh
 
 # Set correct permissions
