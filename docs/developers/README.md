@@ -29,6 +29,7 @@ Dedicated to the frontend:
 Dedicated to the maintainers:
 
 - [Managing the dependencies](/docs/developers/dependencies.md)
+- [Reviewing the pull requests](/docs/developers/review.md)
 - [How to release a version](/docs/developers/release.md)
 
 Architecture:
