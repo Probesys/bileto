@@ -215,20 +215,6 @@
 
                         <p>
                             <span class="text--secondary">
-                                {{ 'tickets.show.observers' | trans }}
-                            </span>
-
-                            <strong>
-                                {% if ticket.observers | length > 0 %}
-                                    {{ ticket.observers | map(user => user.displayName) | join('common.join.glue' | trans, 'common.join.and' | trans) }}
-                                {% else %}
-                                    {{ 'tickets.show.observers.none' | trans }}
-                                {% endif %}
-                            </strong>
-                        </p>
-
-                        <p>
-                            <span class="text--secondary">
                                 {{ 'tickets.show.assignee' | trans }}
                             </span>
 
@@ -272,6 +258,20 @@
                                     {% endif %}
                                 {% else %}
                                     <strong>{{ 'tickets.unassigned' | trans }}</strong>
+                                {% endif %}
+                            </strong>
+                        </p>
+
+                        <p>
+                            <span class="text--secondary">
+                                {{ 'tickets.show.observers' | trans }}
+                            </span>
+
+                            <strong>
+                                {% if ticket.observers | length > 0 %}
+                                    {{ ticket.observers | map(user => user.displayName) | join('common.join.glue' | trans, 'common.join.and' | trans) }}
+                                {% else %}
+                                    {{ 'tickets.show.observers.none' | trans }}
                                 {% endif %}
                             </strong>
                         </p>

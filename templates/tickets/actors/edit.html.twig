@@ -16,6 +16,14 @@
 
         {{ form_row(form.requester) }}
 
+        {% if form.team.vars.choices is not empty %}
+            {{ form_row(form.team) }}
+        {% else %}
+            <!-- {{ field_name(form.team) }} -->
+        {% endif %}
+
+        {{ form_row(form.assignee) }}
+
         <div class="flow flow--small">
             {{ form_label(form.observers) }}
 
@@ -73,13 +81,5 @@
                 </template>
             </div>
         </div>
-
-        {% if form.team.vars.choices is not empty %}
-            {{ form_row(form.team) }}
-        {% else %}
-            <!-- {{ field_name(form.team) }} -->
-        {% endif %}
-
-        {{ form_row(form.assignee) }}
     {{ form_end(form) }}
 {% endblock %}
