@@ -4,7 +4,7 @@
 
 when@prod:
     sentry:
-        dsn: '%env(SENTRY_DSN)%'
+        dsn: '%env(string:default::SENTRY_DSN)%'
         register_error_listener: false
         register_error_handler: false
         options:
