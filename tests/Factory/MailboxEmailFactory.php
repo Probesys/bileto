@@ -31,6 +31,9 @@ final class MailboxEmailFactory extends PersistentProxyObjectFactory
 
     protected function initialize(): static
     {
+        // instantiateWith return type is not correctly typed in Foundry 2.2.2
+        // @see https://github.com/zenstruck/foundry/issues/721
+        // @phpstan-ignore argument.type
         return $this->instantiateWith(function (array $attributes, string $class): MailboxEmail {
             $headers = <<<TEXT
                 Subject: {$attributes['subject']}\r
