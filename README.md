@@ -28,7 +28,7 @@ It is not advised to use Bileto in production yet.
 It is written with [Symfony](https://symfony.com/) and works with [PHP](https://www.php.net/) 8.2 or 8.3.
 The supported databases are PostgreSQL >= 12 and MariaDB >= 10.4.
 
-It is developed by [Probesys](https://probesys.com) as a community project.
+It is developed by [Probesys](https://probesys.coop) as a community project.
 
 Bileto is licensed under [GNU Affero General Public License v3.0 or later](LICENSE.txt).
 

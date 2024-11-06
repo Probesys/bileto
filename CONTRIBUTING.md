@@ -17,7 +17,7 @@ We would be grateful if you [open a ticket](https://github.com/Probesys/bileto/i
 Please always check that a similar ticket is not already opened to avoid duplicates.
 
 **Special note about security issues:** please let we know by a more private channel to avoid disclosing information that would harm our users.
-You can use [our contact form on our website](https://www.probesys.com/contact) for instance.
+Please report vulnerabilities using [the security form on GitHub.](https://github.com/Probesys/bileto/security/advisories/new)
 
 ## Contribute to the code
 
