@@ -83,6 +83,7 @@ $ ./docker/bin/composer
 $ ./docker/bin/console
 $ ./docker/bin/npm
 $ ./docker/bin/psql
+$ ./docker/bin/mariadb
 ```
 
 ## Reset the database
