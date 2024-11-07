@@ -76,15 +76,16 @@ ifndef NO_SEED
 endif
 
 .PHONY: db-migrate
-db-migrate: ## Migrate the database
-	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+db-migrate: VERSION ?= latest
+db-migrate: ## Migrate the database (can take a VERSION argument)
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction $(VERSION)
 
 .PHONY: db-rollback
 db-rollback: ## Rollback the database to the previous version
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction prev
 
 .PHONY: db-reset
-db-reset: ## Reset the database
+db-reset: ## Reset the database (take a FORCE argument)
 ifndef FORCE
 	$(error Please run the operation with FORCE=true)
 endif
