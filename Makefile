@@ -58,9 +58,14 @@ endif
 		.
 
 .PHONY: install
-install: ## Install the dependencies
+install: INSTALLER ?= all
+install: ## Install the dependencies (can take an INSTALLER argument)
+ifeq ($(INSTALLER), $(filter $(INSTALLER), all composer))
 	$(COMPOSER) install
+endif
+ifeq ($(INSTALLER), $(filter $(INSTALLER), all npm))
 	$(NPM) install
+endif
 
 .PHONY: db-setup
 db-setup: ## Setup the database
