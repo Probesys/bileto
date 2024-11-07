@@ -26,22 +26,6 @@ else
 	DOCKER_COMPOSE_PROFILE = --profile pgsql
 endif
 
-ifndef COVERAGE
-	COVERAGE = --coverage-html ./coverage
-endif
-
-ifdef FILE
-	PHPUNIT_FILE = $(FILE)
-else
-	PHPUNIT_FILE = ./tests
-endif
-
-ifdef FILTER
-	PHPUNIT_FILTER = --filter=$(FILTER)
-else
-	PHPUNIT_FILTER =
-endif
-
 .PHONY: docker-start
 docker-start: ## Start a development server with Docker
 	@echo "Running webserver on http://localhost:8000"
@@ -128,7 +112,12 @@ icons: ## Build the icons asset
 	$(NPM) run build:icons
 
 .PHONY: test
-test: ## Run the test suite
+test: FILE ?= ./tests
+ifdef FILTER
+test: override FILTER := --filter=$(FILTER)
+endif
+test: COVERAGE ?= --coverage-html ./coverage
+test: ## Run the test suite (can take FILE, FILTER and COVERAGE arguments)
 	$(PHP) ./vendor/bin/phpunit \
 		-c .phpunit.xml.dist \
 		--testdox \
