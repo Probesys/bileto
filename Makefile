@@ -133,22 +133,43 @@ test: ## Run the test suite (can take FILE, FILTER and COVERAGE arguments)
 		$(PHPUNIT_FILE)
 
 .PHONY: lint
-lint: ## Execute the linter (PHPStan and PHP_CodeSniffer)
+lint: LINTER ?= all
+lint: ## Execute the linter (can take a LINTER argument)
+ifeq ($(LINTER), $(filter $(LINTER), all phpstan))
 	$(PHP) vendor/bin/phpstan analyse --memory-limit 1G -v -c .phpstan.neon
+endif
+ifeq ($(LINTER), $(filter $(LINTER), all rector))
 	$(PHP) vendor/bin/rector process --dry-run --config .rector.php
+endif
+ifeq ($(LINTER), $(filter $(LINTER), all phpcs))
 	$(PHP) vendor/bin/phpcs
+endif
+ifeq ($(LINTER), $(filter $(LINTER), all symfony))
 	$(CONSOLE) lint:container
 	$(CONSOLE) lint:twig
 	$(CONSOLE) lint:yaml translations/*
+endif
+ifeq ($(LINTER), $(filter $(LINTER), all js))
 	$(NPM) run lint-js
+endif
+ifeq ($(LINTER), $(filter $(LINTER), all css))
 	$(NPM) run lint-css
+endif
 
 .PHONY: lint-fix
-lint-fix: ## Fix the errors detected by the linters (PHP_CodeSniffer)
+lint-fix: ## Fix the errors detected by the linters (can take a LINTER argument)
+ifeq ($(LINTER), $(filter $(LINTER), all rector))
 	$(PHP) vendor/bin/rector process --config .rector.php
+endif
+ifeq ($(LINTER), $(filter $(LINTER), all phpcs))
 	$(PHP) vendor/bin/phpcbf
+endif
+ifeq ($(LINTER), $(filter $(LINTER), all js))
 	$(NPM) run lint-js-fix
+endif
+ifeq ($(LINTER), $(filter $(LINTER), all css))
 	$(NPM) run lint-css-fix
+endif
 
 .PHONY: release
 release: ## Release a new version (take a VERSION argument)
