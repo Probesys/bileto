@@ -27,6 +27,13 @@ Start the development server:
 $ make docker-start
 ```
 
+> [!TIP]
+> You can change the port of the application by passing the `PORT` parameter:
+>
+> ```console
+> $ make docker-start PORT=9000
+> ```
+
 Setup the database:
 
 ```console

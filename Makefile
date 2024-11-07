@@ -27,8 +27,9 @@ else
 endif
 
 .PHONY: docker-start
-docker-start: ## Start a development server with Docker
-	@echo "Running webserver on http://localhost:8000"
+docker-start: PORT ?= 8000
+docker-start: ## Start a development server with Docker (can take a PORT argument)
+	@echo "Running webserver on http://localhost:$(PORT)"
 	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_PROFILE) up
 
 .PHONY: docker-build
