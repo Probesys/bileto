@@ -25,8 +25,11 @@ class TicketTimeAccounting
      *
      * @param positive-int $minutes
      */
-    public function accountTime(Entity\Ticket $ticket, int $minutes): void
-    {
+    public function accountTime(
+        int $minutes,
+        Entity\Ticket $ticket,
+        ?Entity\Message $message = null,
+    ): void {
         $contract = $ticket->getOngoingContract();
 
         if (!$contract) {
@@ -34,6 +37,7 @@ class TicketTimeAccounting
             $timeSpent->setTicket($ticket);
             $timeSpent->setTime($minutes);
             $timeSpent->setRealTime($minutes);
+            $timeSpent->setMessage($message);
 
             $this->timeSpentRepository->save($timeSpent, true);
 
@@ -42,6 +46,7 @@ class TicketTimeAccounting
 
         $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
         $timeSpent->setTicket($ticket);
+        $timeSpent->setMessage($message);
 
         $this->timeSpentRepository->save($timeSpent, true);
 
@@ -54,6 +59,7 @@ class TicketTimeAccounting
             $timeSpent->setTicket($ticket);
             $timeSpent->setTime($remainingUnaccountedTime);
             $timeSpent->setRealTime($remainingUnaccountedTime);
+            $timeSpent->setMessage($message);
 
             $this->timeSpentRepository->save($timeSpent, true);
         }

@@ -72,6 +72,10 @@ class TimeSpent implements EntityInterface, MonitorableEntityInterface, UidEntit
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Contract $contract = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Message $message = null;
+
     public function getTicket(): ?Ticket
     {
         return $this->ticket;
@@ -123,5 +127,17 @@ class TimeSpent implements EntityInterface, MonitorableEntityInterface, UidEntit
     public function getTimelineType(): string
     {
         return 'time_spent';
+    }
+
+    public function getMessage(): ?Message
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?Message $message): static
+    {
+        $this->message = $message;
+
+        return $this;
     }
 }

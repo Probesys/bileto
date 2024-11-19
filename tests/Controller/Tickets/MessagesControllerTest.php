@@ -224,9 +224,11 @@ class MessagesControllerTest extends WebTestCase
             ],
         ]);
 
+        $message = Factory\MessageFactory::last();
         $timeSpent = Factory\TimeSpentFactory::first();
         $this->assertSame(20, $timeSpent->getTime());
         $this->assertSame($ticket->getId(), $timeSpent->getTicket()->getId());
+        $this->assertSame($message->getId(), $timeSpent->getMessage()->getId());
     }
 
     public function testPostCanAssociateTimeSpentToContract(): void

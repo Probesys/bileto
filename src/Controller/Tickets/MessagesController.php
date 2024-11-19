@@ -65,7 +65,7 @@ class MessagesController extends BaseController
 
         $minutesSpent = $form->has('timeSpent') ? $form->get('timeSpent')->getData() : 0;
         if ($minutesSpent > 0) {
-            $ticketTimeAccounting->accountTime($ticket, $minutesSpent);
+            $ticketTimeAccounting->accountTime($minutesSpent, $ticket, $message);
         }
 
         $type = $form->has('type') ? $form->get('type')->getData() : 'normal';
