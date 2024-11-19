@@ -35,6 +35,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Webklex\PHPIMAP;
@@ -59,6 +60,7 @@ class CreateTicketsFromMailboxEmailsHandler
         private UrlGeneratorInterface $urlGenerator,
         private ActiveUser $activeUser,
         private EventDispatcherInterface $eventDispatcher,
+        private LockFactory $lockFactory,
     ) {
     }
 
@@ -67,116 +69,138 @@ class CreateTicketsFromMailboxEmailsHandler
         $mailboxEmails = $this->mailboxEmailRepository->findAll();
 
         foreach ($mailboxEmails as $mailboxEmail) {
-            $senderEmail = $mailboxEmail->getFrom();
+            $lock = $this->lockFactory->createLock("process-mailbox-email.{$mailboxEmail->getId()}", ttl: 1 * 60);
 
-            $domain = Utils\Email::extractDomain($senderEmail);
-            $domainOrganization = $this->organizationRepository->findOneByDomainOrDefault($domain);
-
-            $requester = $this->userRepository->findOneBy([
-                'email' => $senderEmail,
-            ]);
-
-            if (!$requester && $domainOrganization) {
-                try {
-                    $requester = $this->userCreator->create(email: $senderEmail);
-                } catch (UserCreatorException $e) {
-                    $errors = Utils\ConstraintErrorsFormatter::format($e->getErrors());
-                    $errors = implode(' ', $errors);
-                    $this->markError($mailboxEmail, 'cannot create sender: ' . $errors);
-                    continue;
-                }
-            } elseif (!$requester) {
-                $this->markError($mailboxEmail, 'unknown sender');
+            if (!$lock->acquire()) {
                 continue;
             }
 
-            $requesterOrganization = $this->userService->getDefaultOrganization($requester);
+            try {
+                $this->processMailboxEmail($mailboxEmail);
+            } catch (\Exception $e) {
+                $error = $e->getMessage();
 
-            if (!$requesterOrganization) {
-                $this->markError($mailboxEmail, 'sender is not attached to an organization');
-                continue;
+                $mailboxEmail->setLastError($error);
+                $this->mailboxEmailRepository->save($mailboxEmail, true);
+
+                $this->logger->error("MailboxEmail #{$mailboxEmail->getId()} error: {$error}");
+            } finally {
+                $lock->release();
             }
-
-            $this->activeUser->change($requester);
-
-            $ticket = $this->getAnsweredTicket($mailboxEmail);
-
-            if ($ticket) {
-                $canAnswerTicket = $this->authorizer->isGrantedToUser(
-                    $requester,
-                    'orga:create:tickets:messages',
-                    $ticket,
-                );
-
-                if (!$canAnswerTicket || $ticket->getStatus() === 'closed') {
-                    $ticket = null;
-                }
-            }
-
-            $isNewTicket = false;
-
-            if (!$ticket) {
-                $canCreateTicket = $this->authorizer->isGrantedToUser(
-                    $requester,
-                    'orga:create:tickets',
-                    $requesterOrganization,
-                );
-
-                if (!$canCreateTicket) {
-                    $this->markError($mailboxEmail, 'sender has not permission to create tickets');
-                    $this->activeUser->change(null);
-                    continue;
-                }
-
-                $subject = $mailboxEmail->getSubject();
-
-                $ticket = new Ticket();
-                $ticket->setTitle($subject);
-                $ticket->setOrganization($requesterOrganization);
-                $ticket->setRequester($requester);
-
-                $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($requesterOrganization);
-                $ticket->setTeam($responsibleTeam);
-
-                $this->ticketRepository->save($ticket, true);
-                $isNewTicket = true;
-            }
-
-            $messageDocuments = $this->storeAttachments($mailboxEmail);
-            $this->messageDocumentRepository->save($messageDocuments, true);
-
-            $messageContent = $mailboxEmail->getBody();
-            // Inline attachments (i.e. <img>) have URLs of type: `cid:<id>`.
-            // Here we replace these URLs with the application URLs to the message documents.
-            $messageContent = $this->replaceAttachmentsUrls($messageContent, $messageDocuments);
-            // Sanitize the HTML only after replacing the URLs or it would
-            // remove the `src` attributes as the `cid:` scheme is forbidden.
-            $messageContent = $this->appMessageSanitizer->sanitize($messageContent);
-
-            $message = new Message();
-            $message->setContent($messageContent);
-            $message->setTicket($ticket);
-            $message->setIsConfidential(false);
-            $message->setVia('email');
-
-            $this->messageRepository->save($message, true);
-
-            if ($isNewTicket) {
-                $ticketEvent = new TicketEvent($ticket);
-                $this->eventDispatcher->dispatch($ticketEvent, TicketEvent::CREATED);
-            }
-
-            $messageEvent = new MessageEvent($message);
-            $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
-
-            if (!$isNewTicket) {
-                $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_ANSWER);
-            }
-
-            $this->mailboxEmailRepository->remove($mailboxEmail, true);
-
-            $this->activeUser->change(null);
         }
+    }
+
+    private function processMailboxEmail(MailboxEmail $mailboxEmail): void
+    {
+        $senderEmail = $mailboxEmail->getFrom();
+
+        $domain = Utils\Email::extractDomain($senderEmail);
+        $domainOrganization = $this->organizationRepository->findOneByDomainOrDefault($domain);
+
+        $requester = $this->userRepository->findOneBy([
+            'email' => $senderEmail,
+        ]);
+
+        if (!$requester && $domainOrganization) {
+            try {
+                $requester = $this->userCreator->create(email: $senderEmail);
+            } catch (UserCreatorException $e) {
+                $errors = Utils\ConstraintErrorsFormatter::format($e->getErrors());
+                $errors = implode(' ', $errors);
+                $this->markError($mailboxEmail, 'cannot create sender: ' . $errors);
+                return;
+            }
+        } elseif (!$requester) {
+            $this->markError($mailboxEmail, 'unknown sender');
+            return;
+        }
+
+        $requesterOrganization = $this->userService->getDefaultOrganization($requester);
+
+        if (!$requesterOrganization) {
+            $this->markError($mailboxEmail, 'sender is not attached to an organization');
+            return;
+        }
+
+        $this->activeUser->change($requester);
+
+        $ticket = $this->getAnsweredTicket($mailboxEmail);
+
+        if ($ticket) {
+            $canAnswerTicket = $this->authorizer->isGrantedToUser(
+                $requester,
+                'orga:create:tickets:messages',
+                $ticket,
+            );
+
+            if (!$canAnswerTicket || $ticket->getStatus() === 'closed') {
+                $ticket = null;
+            }
+        }
+
+        $isNewTicket = false;
+
+        if (!$ticket) {
+            $canCreateTicket = $this->authorizer->isGrantedToUser(
+                $requester,
+                'orga:create:tickets',
+                $requesterOrganization,
+            );
+
+            if (!$canCreateTicket) {
+                $this->markError($mailboxEmail, 'sender has not permission to create tickets');
+                $this->activeUser->change(null);
+                return;
+            }
+
+            $subject = $mailboxEmail->getSubject();
+
+            $ticket = new Ticket();
+            $ticket->setTitle($subject);
+            $ticket->setOrganization($requesterOrganization);
+            $ticket->setRequester($requester);
+
+            $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($requesterOrganization);
+            $ticket->setTeam($responsibleTeam);
+
+            $this->ticketRepository->save($ticket, true);
+            $isNewTicket = true;
+        }
+
+        $messageDocuments = $this->storeAttachments($mailboxEmail);
+        $this->messageDocumentRepository->save($messageDocuments, true);
+
+        $messageContent = $mailboxEmail->getBody();
+        // Inline attachments (i.e. <img>) have URLs of type: `cid:<id>`.
+        // Here we replace these URLs with the application URLs to the message documents.
+        $messageContent = $this->replaceAttachmentsUrls($messageContent, $messageDocuments);
+        // Sanitize the HTML only after replacing the URLs or it would
+        // remove the `src` attributes as the `cid:` scheme is forbidden.
+        $messageContent = $this->appMessageSanitizer->sanitize($messageContent);
+
+        $message = new Message();
+        $message->setContent($messageContent);
+        $message->setTicket($ticket);
+        $message->setIsConfidential(false);
+        $message->setVia('email');
+
+        $this->messageRepository->save($message, true);
+
+        if ($isNewTicket) {
+            $ticketEvent = new TicketEvent($ticket);
+            $this->eventDispatcher->dispatch($ticketEvent, TicketEvent::CREATED);
+        }
+
+        $messageEvent = new MessageEvent($message);
+        $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
+
+        if (!$isNewTicket) {
+            $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_ANSWER);
+        }
+
+        $this->mailboxEmailRepository->remove($mailboxEmail, true);
+
+        $this->activeUser->change(null);
     }
 
     private function getAnsweredTicket(MailboxEmail $mailboxEmail): ?Ticket

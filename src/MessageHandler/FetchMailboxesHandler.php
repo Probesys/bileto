@@ -13,6 +13,7 @@ use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
 use App\Security\Encryptor;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Webklex\PHPIMAP;
 
@@ -23,6 +24,7 @@ class FetchMailboxesHandler
         private MailboxRepository $mailboxRepository,
         private MailboxEmailRepository $mailboxEmailRepository,
         private Encryptor $encryptor,
+        private LockFactory $lockFactory,
         private LoggerInterface $logger,
     ) {
     }
@@ -31,7 +33,24 @@ class FetchMailboxesHandler
     {
         $mailboxes = $this->mailboxRepository->findAll();
         foreach ($mailboxes as $mailbox) {
-            $this->fetchMailbox($mailbox);
+            $lock = $this->lockFactory->createLock("fetch-mailbox.{$mailbox->getId()}", ttl: 10 * 60);
+
+            if (!$lock->acquire()) {
+                continue;
+            }
+
+            try {
+                $this->fetchMailbox($mailbox);
+            } catch (\Exception $e) {
+                $error = $e->getMessage();
+
+                $mailbox->setLastError($error);
+                $this->mailboxRepository->save($mailbox, true);
+
+                $this->logger->error("Mailbox #{$mailbox->getId()} error: {$error}");
+            } finally {
+                $lock->release();
+            }
         }
     }
 
@@ -48,46 +67,37 @@ class FetchMailboxesHandler
             'password' => $this->encryptor->decrypt($mailbox->getPassword()),
         ]);
 
-        try {
-            $client->connect();
+        $client->connect();
 
-            $postAction = $mailbox->getPostAction();
+        $postAction = $mailbox->getPostAction();
 
-            $folder = $client->getFolderByPath($mailbox->getFolder());
-            $messages = $folder->messages()->unseen()->get();
-            $error = '';
+        $folder = $client->getFolderByPath($mailbox->getFolder());
+        $messages = $folder->messages()->unseen()->get();
+        $error = '';
 
-            foreach ($messages as $email) {
-                $mailboxEmail = new MailboxEmail($mailbox, $email);
-                $this->mailboxEmailRepository->save($mailboxEmail, true);
+        foreach ($messages as $email) {
+            $mailboxEmail = new MailboxEmail($mailbox, $email);
+            $this->mailboxEmailRepository->save($mailboxEmail, true);
 
-                if ($postAction === 'delete') {
-                    try {
-                        $email->delete();
-                    } catch (\Exception $e) {
-                        $error = $e->getMessage();
+            if ($postAction === 'delete') {
+                try {
+                    $email->delete();
+                } catch (\Exception $e) {
+                    $error = $e->getMessage();
 
-                        $this->logger->warning(
-                            "Mailbox #{$mailbox->getId()} error (will try to mark as seen): {$error}"
-                        );
-                        $email->setFlag('Seen');
-                    }
-                } elseif ($postAction === 'mark as read') {
+                    $this->logger->warning(
+                        "Mailbox #{$mailbox->getId()} error (will try to mark as seen): {$error}"
+                    );
                     $email->setFlag('Seen');
                 }
+            } elseif ($postAction === 'mark as read') {
+                $email->setFlag('Seen');
             }
-
-            $client->disconnect();
-
-            $mailbox->setLastError($error);
-            $this->mailboxRepository->save($mailbox, true);
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-
-            $mailbox->setLastError($error);
-            $this->mailboxRepository->save($mailbox, true);
-
-            $this->logger->error("Mailbox #{$mailbox->getId()} error: {$error}");
         }
+
+        $client->disconnect();
+
+        $mailbox->setLastError($error);
+        $this->mailboxRepository->save($mailbox, true);
     }
 }
