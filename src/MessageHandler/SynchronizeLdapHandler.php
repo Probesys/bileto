@@ -52,8 +52,6 @@ class SynchronizeLdapHandler
                 'ldapIdentifier' => $ldapUser->getLdapIdentifier(),
             ]);
 
-            $errors = [];
-
             if ($user) {
                 $user->setEmail($ldapUser->getEmail());
                 $user->setName($ldapUser->getName());
@@ -62,32 +60,35 @@ class SynchronizeLdapHandler
                 $errors = ConstraintErrorsFormatter::format($errors);
 
                 if (count($errors) === 0) {
+                    $this->entityManager->persist($user);
+
                     $countUpdated += 1;
+                } else {
+                    $errors = implode(' ', $errors);
+                    $this->logger->error(
+                        "[SynchronizeLdap] Can't sync user {$user->getLdapIdentifier()}: {$errors}"
+                    );
+
+                    $countErrors += 1;
                 }
             } else {
                 $user = $ldapUser;
 
                 try {
                     $this->userCreator->createUser($user, flush: false);
+                    $this->entityManager->persist($user);
 
                     $countCreated += 1;
                 } catch (UserCreatorException $e) {
                     $errors = ConstraintErrorsFormatter::format($e->getErrors());
+                    $errors = implode(' ', $errors);
+                    $this->logger->warning(
+                        "[SynchronizeLdap] Can't sync user {$user->getLdapIdentifier()}: {$errors}"
+                    );
+
+                    $countErrors += 1;
                 }
             }
-
-            if (count($errors) > 0) {
-                $errors = implode(' ', $errors);
-                $this->logger->error(
-                    "[SynchronizeLdap] Can't sync user {$user->getLdapIdentifier()}: {$errors}"
-                );
-
-                $countErrors += 1;
-
-                continue;
-            }
-
-            $this->entityManager->persist($user);
         }
 
         $this->entityManager->flush();
