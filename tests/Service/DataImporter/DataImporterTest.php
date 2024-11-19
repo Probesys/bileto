@@ -1196,6 +1196,12 @@ class DataImporterTest extends WebTestCase
                 'email' => 'charlie@example.com',
             ],
         ];
+        $teams = [
+            [
+                'id' => '1',
+                'name' => 'My team',
+            ],
+        ];
         $contracts = [
             [
                 'id' => '1',
@@ -1227,6 +1233,7 @@ class DataImporterTest extends WebTestCase
                 'requesterId' => '1',
                 'assigneeId' => '2',
                 'observerIds' => ['3'],
+                'teamId' => '1',
                 'organizationId' => '1',
                 'solutionId' => '2',
                 'contractIds' => ['1'],
@@ -1265,6 +1272,7 @@ class DataImporterTest extends WebTestCase
         $this->processGenerator($this->dataImporter->import(
             organizations: $organizations,
             users: $users,
+            teams: $teams,
             contracts: $contracts,
             labels: $labels,
             tickets: $tickets,
@@ -1292,6 +1300,8 @@ class DataImporterTest extends WebTestCase
         $observers = $ticket->getObservers();
         $this->assertSame(1, count($observers));
         $this->assertSame('charlie@example.com', $observers[0]->getEmail());
+        $team = $ticket->getTeam();
+        $this->assertSame('My team', $team->getName());
         $contracts = $ticket->getContracts();
         $this->assertSame(1, count($contracts));
         $this->assertSame('My contract', $contracts[0]->getName());

@@ -1044,6 +1044,11 @@ class DataImporter
 
             $requesterId = strval($jsonTicket['requesterId']);
 
+            $teamId = null;
+            if (isset($jsonTicket['teamId'])) {
+                $teamId = strval($jsonTicket['teamId']);
+            }
+
             $assigneeId = null;
             if (isset($jsonTicket['assigneeId'])) {
                 $assigneeId = strval($jsonTicket['assigneeId']);
@@ -1133,6 +1138,16 @@ class DataImporter
                 $ticket->setRequester($requester);
             } else {
                 $this->errors[] = "Ticket {$id} error: references an unknown requester user {$requesterId}.";
+            }
+
+            if ($teamId !== null) {
+                $team = $this->indexTeams->get($teamId);
+
+                if ($team) {
+                    $ticket->setTeam($team);
+                } else {
+                    $this->errors[] = "Ticket {$id} error: references an unknown team {$teamId}.";
+                }
             }
 
             if ($assigneeId !== null) {
