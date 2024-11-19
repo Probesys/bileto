@@ -129,8 +129,8 @@ test: ## Run the test suite (can take FILE, FILTER and COVERAGE arguments)
 		-c .phpunit.xml.dist \
 		--testdox \
 		$(COVERAGE) \
-		$(PHPUNIT_FILTER) \
-		$(PHPUNIT_FILE)
+		$(FILTER) \
+		$(FILE)
 
 .PHONY: lint
 lint: LINTER ?= all
