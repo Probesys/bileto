@@ -29,6 +29,7 @@
         "symfony/framework-bundle": "7.1.*",
         "symfony/html-sanitizer": "7.1.*",
         "symfony/ldap": "7.1.*",
+        "symfony/lock": "7.1.*",
         "symfony/mailer": "7.1.*",
         "symfony/messenger": "7.1.*",
         "symfony/monolog-bundle": "^3.10",
