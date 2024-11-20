@@ -18,8 +18,11 @@
             <div class="cols cols--center flow">
                 <h2 class="col--extend">{{ 'home.your_tickets' | trans }}</h2>
 
-                {% if is_granted('orga:create:tickets', 'any') %}
-                    <a class="button button--primary button--uppercase" href="{{ path('new ticket') }}">
+                {% if defaultOrganization %}
+                    <a
+                        class="button button--primary button--uppercase"
+                        href="{{ path('new organization ticket', { uid: defaultOrganization.uid }) }}"
+                    >
                         {{ icon('plus') }}
                         {{ 'home.new_ticket' | trans }}
                     </a>

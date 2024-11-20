@@ -118,7 +118,8 @@ class CreateTicketsFromMailboxEmailsHandler
         $requesterOrganization = $this->userService->getDefaultOrganization($requester);
 
         if (!$requesterOrganization) {
-            $this->markError($mailboxEmail, 'sender is not attached to an organization');
+            $this->markError($mailboxEmail, 'sender has not permission to create tickets');
+            $this->activeUser->change(null);
             return;
         }
 
@@ -141,18 +142,6 @@ class CreateTicketsFromMailboxEmailsHandler
         $isNewTicket = false;
 
         if (!$ticket) {
-            $canCreateTicket = $this->authorizer->isGrantedToUser(
-                $requester,
-                'orga:create:tickets',
-                $requesterOrganization,
-            );
-
-            if (!$canCreateTicket) {
-                $this->markError($mailboxEmail, 'sender has not permission to create tickets');
-                $this->activeUser->change(null);
-                return;
-            }
-
             $subject = $mailboxEmail->getSubject();
 
             $ticket = new Ticket();

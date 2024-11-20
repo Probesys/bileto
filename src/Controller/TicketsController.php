@@ -26,6 +26,7 @@ class TicketsController extends BaseController
         Repository\OrganizationRepository $organizationRepository,
         SearchEngine\Ticket\Searcher $ticketSearcher,
         SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder,
+        Service\UserService $userService,
     ): Response {
         $page = $request->query->getInt('page', 1);
         $view = $request->query->getString('view', 'all');
@@ -72,6 +73,8 @@ class TicketsController extends BaseController
             $ticketsPagination = Utils\Pagination::empty();
         }
 
+        $defaultOrganization = $userService->getDefaultOrganization($user);
+
         return $this->render('tickets/index.html.twig', [
             'ticketsPagination' => $ticketsPagination,
             'countToAssign' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryUnassigned()),
@@ -82,72 +85,7 @@ class TicketsController extends BaseController
             'searchMode' => $searchMode,
             'quickSearchForm' => $quickSearchForm,
             'advancedSearchForm' => $advancedSearchForm,
-        ]);
-    }
-
-    #[Route('/tickets/new', name: 'new ticket', methods: ['GET', 'HEAD'])]
-    public function new(
-        Request $request,
-        Repository\AuthorizationRepository $authorizationRepository,
-        Repository\OrganizationRepository $organizationRepository,
-        Service\UserService $userService,
-        Service\Sorter\OrganizationSorter $organizationSorter,
-        Security\Authorizer $authorizer,
-    ): Response {
-        $this->denyAccessUnlessGranted('orga:create:tickets', 'any');
-
-        /** @var \App\Entity\User */
-        $user = $this->getUser();
-
-        $selectedOrganizationUid = $request->query->get('organization');
-
-        // If the user has a default organization and can create tickets in it,
-        // just redirect to the "new ticket" form of this organization.
-        $defaultOrganization = $userService->getDefaultOrganization($user);
-
-        if ($defaultOrganization && $authorizer->isGranted('orga:create:tickets', $defaultOrganization)) {
-            return $this->redirectToRoute('new organization ticket', [
-                'uid' => $defaultOrganization->getUid(),
-            ]);
-        }
-
-        // Otherwise, load the list of organizations they have access to (or
-        // only the selected organization, i.e. once the user has submitted the
-        // form).
-        if ($selectedOrganizationUid) {
-            $organization = $organizationRepository->findOneBy([
-                'uid' => $selectedOrganizationUid,
-            ]);
-
-            if (!$organization) {
-                throw $this->createNotFoundException('The organization does not exist.');
-            }
-
-            $organizations = [$organization];
-        } else {
-            $organizations = $organizationRepository->findAuthorizedOrganizations($user);
-        }
-
-        // Keep only the organizations in which the user can create tickets
-        $organizations = array_filter($organizations, function ($organization) use ($authorizer): bool {
-            return $authorizer->isGranted('orga:create:tickets', $organization);
-        });
-        $organizations = array_values($organizations); // reset the keys of the array
-
-        if (count($organizations) === 1) {
-            // The user has the permission to create tickets in only one
-            // organization, so let's redirect to it.
-            return $this->redirectToRoute('new organization ticket', [
-                'uid' => $organizations[0]->getUid(),
-            ]);
-        }
-
-        // Finally, let the user choose in which organization they want to
-        // create a ticket.
-        $organizationSorter->sort($organizations);
-
-        return $this->render('tickets/new.html.twig', [
-            'organizations' => $organizations,
+            'defaultOrganization' => $defaultOrganization,
         ]);
     }
 

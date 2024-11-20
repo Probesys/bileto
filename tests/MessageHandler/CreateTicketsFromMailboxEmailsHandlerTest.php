@@ -15,6 +15,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\Factory\RoleFactory;
 use App\Utils\Time;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -185,7 +186,10 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages'], $organization->_real());
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets',
+            'orga:create:tickets:messages',
+        ], $organization->_real());
         $assignee = UserFactory::createOne();
         $ticket = TicketFactory::createOne([
             'status' => 'new',
@@ -238,7 +242,10 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages'], $organization->_real());
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets',
+            'orga:create:tickets:messages',
+        ], $organization->_real());
         $emailId = 'abc@example.com';
         $assignee = UserFactory::createOne();
         $ticket = TicketFactory::createOne([
@@ -296,7 +303,10 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => $organization,
         ]);
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages'], $organization->_real());
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets',
+            'orga:create:tickets:messages',
+        ], $organization->_real());
         $uid = 'm1Li5KGHCCfzgAygETyCTWJBHMzrSeXIR5mirM4n';
         $emailId = "GLPI_{$uid}-Ticket-42@example.com";
         $inReplyTo = "GLPI_{$uid}-Ticket-42/add_followup.1708632638.137855826@example.com";
@@ -523,6 +533,14 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $mailboxEmail = MailboxEmailFactory::createOne([
             'from' => $email,
         ]);
+        $role = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+            'permissions' => [
+                'orga:see',
+                'orga:create:tickets',
+            ],
+        ]);
 
         $this->assertSame(1, MailboxEmailFactory::count());
         $this->assertSame(0, TicketFactory::count());
@@ -531,16 +549,19 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
 
         $bus->dispatch(new CreateTicketsFromMailboxEmails());
 
-        $this->assertSame(1, MailboxEmailFactory::count());
-        $this->assertSame(0, TicketFactory::count());
-        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
         $this->assertSame(1, UserFactory::count());
 
-        $mailboxEmail->_refresh();
-        $this->assertSame('sender has not permission to create tickets', $mailboxEmail->getLastError());
         $user = UserFactory::last();
         $this->assertSame($email, $user->getEmail());
         $this->assertNull($user->getOrganization());
+
+        $ticket = TicketFactory::first();
+        $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
+        $this->assertSame($user->getId(), $ticket->getRequester()->getId());
+        $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
     }
 
     public function testInvokeFailsIfRequesterDoesNotExists(): void
@@ -583,7 +604,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(0, MessageFactory::count());
 
         $mailboxEmail->_refresh();
-        $this->assertSame('sender is not attached to an organization', $mailboxEmail->getLastError());
+        $this->assertSame('sender has not permission to create tickets', $mailboxEmail->getLastError());
     }
 
     public function testInvokeFailsIfAccessIsForbidden(): void

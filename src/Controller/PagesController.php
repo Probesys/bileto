@@ -6,12 +6,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Ticket;
-use App\Repository\AuthorizationRepository;
-use App\Repository\OrganizationRepository;
+use App\Entity;
+use App\Repository;
 use App\SearchEngine;
 use App\Service;
-use App\Service\Sorter\OrganizationSorter;
+use App\Service\Sorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,18 +18,24 @@ class PagesController extends BaseController
 {
     #[Route('/', name: 'home', methods: ['GET', 'HEAD'])]
     public function home(
-        AuthorizationRepository $authorizationRepository,
-        OrganizationRepository $orgaRepository,
-        OrganizationSorter $orgaSorter,
+        Repository\AuthorizationRepository $authorizationRepository,
+        Repository\OrganizationRepository $orgaRepository,
+        Sorter\OrganizationSorter $orgaSorter,
         SearchEngine\Ticket\Searcher $ticketSearcher,
+        Service\UserService $userService,
     ): Response {
         $ticketsPagination = $ticketSearcher->getTickets(SearchEngine\Ticket\Searcher::queryOwned(), 'updated-desc', [
             'page' => 1,
             'maxResults' => 5,
         ]);
 
+        /** @var Entity\User */
+        $user = $this->getUser();
+        $defaultOrganization = $userService->getDefaultOrganization($user);
+
         return $this->render('pages/home.html.twig', [
             'ticketsPagination' => $ticketsPagination,
+            'defaultOrganization' => $defaultOrganization,
         ]);
     }
 

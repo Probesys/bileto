@@ -17,11 +17,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserCreator
 {
     public function __construct(
+        private Repository\OrganizationRepository $organizationRepository,
         private Repository\RoleRepository $roleRepository,
         private Repository\UserRepository $userRepository,
         private Security\Authorizer $authorizer,
         private Service\Locales $locales,
-        private Service\UserService $userService,
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $passwordHasher,
     ) {
@@ -43,7 +43,7 @@ class UserCreator
 
         $defaultRole = $this->roleRepository->findDefault();
         if ($defaultRole) {
-            $defaultOrganization = $this->userService->getDefaultOrganization($user);
+            $defaultOrganization = $this->getDefaultOrganization($user);
 
             if ($defaultOrganization) {
                 $this->authorizer->grant(
@@ -79,5 +79,18 @@ class UserCreator
         $this->createUser($user, $flush);
 
         return $user;
+    }
+
+    public function getDefaultOrganization(Entity\User $user): ?Entity\Organization
+    {
+        $organization = $user->getOrganization();
+
+        if ($organization) {
+            return $organization;
+        }
+
+        $domain = Utils\Email::extractDomain($user->getEmail());
+
+        return $this->organizationRepository->findOneByDomainOrDefault($domain);
     }
 }

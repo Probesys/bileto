@@ -23,14 +23,20 @@ class UserService
     {
         $organization = $user->getOrganization();
 
-        if ($organization) {
+        if (
+            $organization &&
+            $this->authorizer->isGrantedToUser($user, 'orga:create:tickets', $organization)
+        ) {
             return $organization;
         }
 
         $domain = Utils\Email::extractDomain($user->getEmail());
         $domainOrganization = $this->organizationRepository->findOneByDomainOrDefault($domain);
 
-        if ($domainOrganization) {
+        if (
+            $domainOrganization &&
+            $this->authorizer->isGrantedToUser($user, 'orga:create:tickets', $domainOrganization)
+        ) {
             return $domainOrganization;
         }
 

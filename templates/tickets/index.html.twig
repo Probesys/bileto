@@ -78,8 +78,11 @@
                         ) }}
                     </div>
 
-                    {% if is_granted('orga:create:tickets', 'any') %}
-                        <a class="button button--primary button--uppercase" href="{{ path('new ticket') }}">
+                    {% if defaultOrganization %}
+                        <a
+                            class="button button--primary button--uppercase"
+                            href="{{ path('new organization ticket', { uid: defaultOrganization.uid }) }}"
+                        >
                             {{ icon('plus') }}
                             {{ 'tickets.index.new_ticket' | trans }}
                         </a>

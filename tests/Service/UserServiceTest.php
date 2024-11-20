@@ -36,21 +36,26 @@ class UserServiceTest extends WebTestCase
         $this->userService = $userService;
     }
 
-    public function testGetDefaultOrganizationWithDeclaredDefaultOrganization(): void
+    public function testGetDefaultOrganizationWithDeclaredDefaultOrganizationAndPermission(): void
     {
         $organization1 = OrganizationFactory::createOne();
         $organization2 = OrganizationFactory::createOne();
         $user = UserFactory::createOne([
             'organization' => $organization1,
         ]);
+        $this->grantOrga(
+            $user->_real(),
+            ['orga:create:tickets'],
+            $organization1->_real(),
+            'user',
+        );
 
         $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
 
-        $this->assertNotNull($defaultOrganization);
-        $this->assertSame($organization1->getId(), $defaultOrganization->getId());
+        $this->assertSame($organization1->getId(), $defaultOrganization?->getId());
     }
 
-    public function testGetDefaultOrganizationWithOrganizationDomain(): void
+    public function testGetDefaultOrganizationWithOrganizationDomainAndPermission(): void
     {
         $organization1 = OrganizationFactory::createOne([
             'domains' => ['example.com'],
@@ -62,11 +67,16 @@ class UserServiceTest extends WebTestCase
             'email' => 'alix@example.com',
             'organization' => null,
         ]);
+        $this->grantOrga(
+            $user->_real(),
+            ['orga:create:tickets'],
+            $organization1->_real(),
+            'user',
+        );
 
         $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
 
-        $this->assertNotNull($defaultOrganization);
-        $this->assertSame($organization1->getId(), $defaultOrganization->getId());
+        $this->assertSame($organization1->getId(), $defaultOrganization?->getId());
     }
 
     public function testGetDefaultOrganizationWithGivenUserAuthorization(): void
@@ -85,8 +95,81 @@ class UserServiceTest extends WebTestCase
 
         $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
 
-        $this->assertNotNull($defaultOrganization);
-        $this->assertSame($organization1->getId(), $defaultOrganization->getId());
+        $this->assertSame($organization1->getId(), $defaultOrganization?->getId());
+    }
+
+    public function testGetDefaultOrganizationWithDeclaredDefaultOrganizationAndPermissionOnOtherOrganization(): void
+    {
+        $organization1 = OrganizationFactory::createOne();
+        $organization2 = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization1,
+        ]);
+        $this->grantOrga(
+            $user->_real(),
+            ['orga:create:tickets'],
+            $organization2->_real(),
+            'user',
+        );
+
+        $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
+
+        $this->assertSame($organization2->getId(), $defaultOrganization?->getId());
+    }
+
+    public function testGetDefaultOrganizationWithOrganizationDomainAndPermissionOnOtherOrganization(): void
+    {
+        $organization1 = OrganizationFactory::createOne([
+            'domains' => ['example.com'],
+        ]);
+        $organization2 = OrganizationFactory::createOne([
+            'domains' => ['example.org'],
+        ]);
+        $user = UserFactory::createOne([
+            'email' => 'alix@example.com',
+            'organization' => null,
+        ]);
+        $this->grantOrga(
+            $user->_real(),
+            ['orga:create:tickets'],
+            $organization2->_real(),
+            'user',
+        );
+
+        $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
+
+        $this->assertSame($organization2->getId(), $defaultOrganization?->getId());
+    }
+
+    public function testGetDefaultOrganizationReturnsNullWithDeclaredDefaultOrganizationAndNoPermission(): void
+    {
+        $organization1 = OrganizationFactory::createOne();
+        $organization2 = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization1,
+        ]);
+
+        $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
+
+        $this->assertNull($defaultOrganization);
+    }
+
+    public function testGetDefaultOrganizationReturnsNullWithOrganizationDomainAndNoPermission(): void
+    {
+        $organization1 = OrganizationFactory::createOne([
+            'domains' => ['example.com'],
+        ]);
+        $organization2 = OrganizationFactory::createOne([
+            'domains' => ['example.org'],
+        ]);
+        $user = UserFactory::createOne([
+            'email' => 'alix@example.com',
+            'organization' => null,
+        ]);
+
+        $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
+
+        $this->assertNull($defaultOrganization);
     }
 
     public function testGetDefaultOrganizationReturnsNullWithAgentAuthorization(): void
@@ -102,19 +185,6 @@ class UserServiceTest extends WebTestCase
             $organization1->_real(),
             'agent',
         );
-
-        $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
-
-        $this->assertNull($defaultOrganization);
-    }
-
-    public function testGetDefaultOrganizationReturnsNullOtherwise(): void
-    {
-        $organization1 = OrganizationFactory::createOne();
-        $organization2 = OrganizationFactory::createOne();
-        $user = UserFactory::createOne([
-            'organization' => null,
-        ]);
 
         $defaultOrganization = $this->userService->getDefaultOrganization($user->_real());
 
