@@ -18,6 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SendReceiptEmailHandler
 {
     public function __construct(
+        private Repository\MessageRepository $messageRepository,
         private Repository\TicketRepository $ticketRepository,
         private LoggerInterface $logger,
         private TranslatorInterface $translator,
@@ -39,6 +40,7 @@ class SendReceiptEmailHandler
 
         $locale = $requester->getLocale();
         $subject = $this->translator->trans('emails.receipt.subject', locale: $locale);
+        $subject = "[#{$ticket->getId()}] {$subject}";
 
         $email = new TemplatedEmail();
         $email->to($requester->getEmail());
@@ -46,6 +48,13 @@ class SendReceiptEmailHandler
         $email->locale($locale);
         $email->htmlTemplate('emails/receipt.html.twig');
 
-        $this->transportInterface->send($email);
+        $sentEmail = $this->transportInterface->send($email);
+
+        $message = $ticket->getMessages()->first();
+        if ($message) {
+            $emailId = $sentEmail->getMessageId();
+            $message->addEmailNotificationReference($emailId);
+            $this->messageRepository->save($message, true);
+        }
     }
 }

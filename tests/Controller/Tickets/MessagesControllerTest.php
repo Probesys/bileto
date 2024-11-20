@@ -59,7 +59,9 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('webapp', $message->getVia());
-        $this->assertMatchesRegularExpression('/^[\w\d]*@example.com$/', $message->getEmailId());
+        $references = $message->getEmailNotificationsReferences();
+        $this->assertSame(1, count($references));
+        $this->assertMatchesRegularExpression('/^[\w\d]*@example.com$/', $references[0]);
         $this->assertSame('pending', $ticket->getStatus());
         $this->assertEquals($now, $ticket->getUpdatedAt());
         $this->assertsame($user->getId(), $ticket->getUpdatedBy()->getId());
@@ -80,7 +82,7 @@ class MessagesControllerTest extends WebTestCase
             'ticket' => $ticket,
             'createdAt' => Utils\Time::ago(1, 'hour'),
             'isConfidential' => false,
-            'emailId' => $previousEmailId,
+            'notificationsReferences' => ["email:{$previousEmailId}"],
         ]);
         $messageContent = 'My message';
 
@@ -97,7 +99,6 @@ class MessagesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $message = Factory\MessageFactory::last();
-        $this->assertNotEmpty($message->getEmailId());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, $messageContent);

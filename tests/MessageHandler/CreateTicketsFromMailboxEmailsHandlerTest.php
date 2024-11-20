@@ -256,7 +256,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         ]);
         MessageFactory::createOne([
             'ticket' => $ticket,
-            'emailId' => $emailId,
+            'notificationsReferences' => ["email:{$emailId}"],
         ]);
         /** @var string */
         $subject = \Zenstruck\Foundry\faker()->words(3, true);
@@ -319,7 +319,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         ]);
         MessageFactory::createOne([
             'ticket' => $ticket,
-            'emailId' => $emailId,
+            'notificationsReferences' => ["glpi:{$emailId}"],
         ]);
         /** @var string */
         $subject = \Zenstruck\Foundry\faker()->words(3, true);

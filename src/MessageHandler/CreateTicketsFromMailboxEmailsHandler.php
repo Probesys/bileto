@@ -197,8 +197,9 @@ class CreateTicketsFromMailboxEmailsHandler
         $replyId = $mailboxEmail->getInReplyTo();
 
         if ($replyId !== null) {
-            // If the email comes from GLPI, we need to rebuild the replyId to
-            // remove random parts of the header.
+            // Verify if the email answers to a message stored in the database.
+            // We handle the case where the email answers to a GLPI email
+            // (after a migration from GLPI to Bileto for instance).
 
             $glpiPattern = '/'
                 . 'GLPI'
@@ -212,20 +213,19 @@ class CreateTicketsFromMailboxEmailsHandler
             $result = preg_match($glpiPattern, $replyId, $matches);
 
             if ($result === 1) {
-                $replyId = "GLPI_{$matches['uuid']}-{$matches['itemType']}-{$matches['itemId']}@{$matches['hostname']}";
+                // If the email comes from GLPI, we need to rebuild the
+                // reference to remove random parts of the header.
+                $reference = "glpi:GLPI_{$matches['uuid']}-{$matches['itemType']}-{$matches['itemId']}";
+                $reference .= "@{$matches['hostname']}";
+            } else {
+                $reference = "email:{$replyId}";
             }
-        }
 
-        if ($replyId) {
-            $replyMessage = $this->messageRepository->findOneBy([
-                'emailId' => $replyId,
-            ]);
-        } else {
-            $replyMessage = null;
-        }
+            $replyMessage = $this->messageRepository->findOneByNotificationReference($reference);
 
-        if ($replyMessage) {
-            return $replyMessage->getTicket();
+            if ($replyMessage) {
+                return $replyMessage->getTicket();
+            }
         }
 
         $ticketId = $mailboxEmail->extractTicketId();

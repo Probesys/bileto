@@ -124,7 +124,7 @@ It also contains a `tickets/` folder where each file corresponds to a ticket. Fo
   - isConfidential: boolean, optional
   - via: string, optional (must be `webapp`, or `email`)
   - content: string (not empty, HTML, will be sanitized)
-  - emailId: string, optional (max 1000 chars)
+  - notificationsReferences: array of strings
   - messageDocuments: array of, optional:
     - name: string (not empty)
     - filepath: string (not empty, exists under the `documents/` folder)

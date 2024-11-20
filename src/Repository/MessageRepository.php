@@ -27,4 +27,18 @@ class MessageRepository extends ServiceEntityRepository implements UidGeneratorI
     {
         parent::__construct($registry, Message::class);
     }
+
+    public function findOneByNotificationReference(string $reference): ?Message
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT m
+            FROM App\Entity\Message m
+            WHERE JSON_CONTAINS(m.notificationsReferences, :reference) = true
+        SQL);
+        $query->setParameter('reference', '"' . $reference . '"');
+
+        return $query->getOneOrNullResult();
+    }
 }

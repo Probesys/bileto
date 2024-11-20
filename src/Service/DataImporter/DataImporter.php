@@ -1362,9 +1362,9 @@ class DataImporter
                 $via = strval($jsonMessage['via']);
             }
 
-            $emailId = null;
-            if (isset($jsonMessage['emailId'])) {
-                $emailId = strval($jsonMessage['emailId']);
+            $notificationsReferences = [];
+            if (isset($jsonMessage['notificationsReferences'])) {
+                $notificationsReferences = $jsonMessage['notificationsReferences'];
             }
 
             $messageDocuments = [];
@@ -1376,7 +1376,6 @@ class DataImporter
             $message = new Entity\Message();
             $message->setCreatedAt($createdAt);
             $message->setUpdatedAt($createdAt);
-            $message->setEmailId($emailId);
             $message->setContent($content);
 
             $message->setUid(Utils\Random::hex(20));
@@ -1391,6 +1390,12 @@ class DataImporter
 
             if ($solutionId === $id) {
                 $ticket->setSolution($message);
+            }
+
+            if (is_array($notificationsReferences)) {
+                $message->setNotificationsReferences($notificationsReferences);
+            } else {
+                $this->errors[] = "Message {$id} error: notificationsReferences: not an array.";
             }
 
             // Check and set references

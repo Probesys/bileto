@@ -103,26 +103,30 @@ class SendMessageEmailHandler
 
         // Set correct references headers so email clients can add the email to
         // the conversation thread.
-        $references = [];
+        $emailReferences = [];
         foreach ($ticket->getMessages(confidential: false) as $message) {
-            $reference = $message->getEmailId();
-            if ($reference) {
-                $references[] = $reference;
+            $references = $message->getEmailNotificationsReferences();
+            if ($references) {
+                $emailReferences = array_merge($emailReferences, $references);
             }
         }
 
-        if ($references) {
-            $email->getHeaders()->addIdHeader('References', $references);
+        if ($emailReferences) {
+            $email->getHeaders()->addIdHeader('References', $emailReferences);
         }
 
-        if ($previousMessage && $previousMessage->getEmailId()) {
-            $email->getHeaders()->addIdHeader('In-Reply-To', $previousMessage->getEmailId());
+        if ($previousMessage) {
+            $references = $previousMessage->getEmailNotificationsReferences();
+
+            if ($references) {
+                $email->getHeaders()->addIdHeader('In-Reply-To', $references[0]);
+            }
         }
 
         $sentEmail = $this->transportInterface->send($email);
 
         $emailId = $sentEmail->getMessageId();
-        $message->setEmailId($emailId);
+        $message->addEmailNotificationReference($emailId);
         $this->messageRepository->save($message, true);
     }
 }

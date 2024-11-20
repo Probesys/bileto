@@ -65,12 +65,13 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Ticket $ticket = null;
 
-    #[ORM\Column(length: 1000, nullable: true)]
-    private ?string $emailId = null;
-
     /** @var Collection<int, MessageDocument> */
     #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageDocument::class)]
     private Collection $messageDocuments;
+
+    /** @var string[] */
+    #[ORM\Column(options: ['default' => '[]'])]
+    private array $notificationsReferences = [];
 
     public function __construct()
     {
@@ -130,23 +131,58 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
         return 'message';
     }
 
-    public function getEmailId(): ?string
-    {
-        return $this->emailId;
-    }
-
-    public function setEmailId(?string $emailId): static
-    {
-        $this->emailId = $emailId;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, MessageDocument>
      */
     public function getMessageDocuments(): Collection
     {
         return $this->messageDocuments;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getEmailNotificationsReferences(): array
+    {
+        $references = [];
+
+        foreach ($this->notificationsReferences as $reference) {
+            if (str_starts_with($reference, 'email:')) {
+                $references[] = substr($reference, strlen('email:'));
+            }
+        }
+
+        return $references;
+    }
+
+    public function addEmailNotificationReference(string $reference): static
+    {
+        return $this->addNotificationReference("email:{$reference}");
+    }
+
+    private function addNotificationReference(string $reference): static
+    {
+        $references = $this->notificationsReferences;
+
+        $references[] = $reference;
+
+        // Make sure the list doesn't contain empty or duplicated values.
+        $references = array_filter($references);
+        $references = array_unique($references);
+        $references = array_values($references);
+
+        $this->notificationsReferences = $references;
+
+        return $this;
+    }
+
+    /**
+     * @param string[] $notificationsReferences
+     */
+    public function setNotificationsReferences(array $notificationsReferences): self
+    {
+        $this->notificationsReferences = $notificationsReferences;
+
+        return $this;
     }
 }

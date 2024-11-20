@@ -240,6 +240,10 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('webapp', $message->getVia());
+        $references = $message->getEmailNotificationsReferences();
+        $this->assertSame(2, count($references));
+        $this->assertMatchesRegularExpression('/^[\w\d]*@example.com$/', $references[0]);
+        $this->assertMatchesRegularExpression('/^[\w\d]*@example.com$/', $references[1]);
         $this->assertEmailCount(2);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, 'We have received your support request.');
