@@ -550,6 +550,8 @@ users.show.edit: 'Edit the user'
 users.show.email: 'Email: {email}'
 users.show.ldap_identifier: 'LDAP identifier: {identifier}'
 users.show.name: 'Name: {name}'
+users.show.no_organization: 'Organization: None'
 users.show.organization: 'Organization: {name}'
+users.show.organization_automatic: 'Organization: {name} (automatic)'
 users.show.profile: 'User profile'
 users.yourself: yourself

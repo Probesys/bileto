@@ -76,11 +76,15 @@
                         </p>
                     {% endif %}
 
-                    {% if user.organization %}
-                        <p>
+                    <p>
+                        {% if user.organization %}
                             {{ 'users.show.organization' | trans({ name: user.organization.name }) }}
-                        </p>
-                    {% endif %}
+                        {% elseif defaultOrganization %}
+                            {{ 'users.show.organization_automatic' | trans({ name: defaultOrganization.name }) }}
+                        {% else %}
+                            {{ 'users.show.no_organization' | trans }}
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>

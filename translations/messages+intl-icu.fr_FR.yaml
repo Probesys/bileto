@@ -550,6 +550,8 @@ users.show.edit: 'Modifier l’utilisateur'
 users.show.email: "Email\_: {email}"
 users.show.ldap_identifier: "Identifiant LDAP\_: {identifier}"
 users.show.name: "Nom\_: {name}"
+users.show.no_organization: "Organisation\_: Aucune"
 users.show.organization: "Organisation\_: {name}"
+users.show.organization_automatic: "Organisation\_: {name} (automatique)"
 users.show.profile: 'Profil utilisateur'
 users.yourself: vous

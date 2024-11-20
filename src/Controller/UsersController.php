@@ -61,8 +61,11 @@ class UsersController extends BaseController
         Entity\User $user,
         Repository\AuthorizationRepository $authorizationRepository,
         Sorter\AuthorizationSorter $authorizationSorter,
+        Service\UserService $userService,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
+
+        $defaultOrganization = $userService->getDefaultOrganization($user);
 
         $authorizations = $authorizationRepository->findBy([
             'holder' => $user,
@@ -71,6 +74,7 @@ class UsersController extends BaseController
 
         return $this->render('users/show.html.twig', [
             'user' => $user,
+            'defaultOrganization' => $defaultOrganization,
             'authorizations' => $authorizations,
         ]);
     }
