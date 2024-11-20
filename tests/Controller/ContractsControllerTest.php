@@ -35,24 +35,22 @@ class ContractsControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see:contracts']);
-        $endAt1 = Utils\Time::fromNow(1, 'months');
         $contract1 = ContractFactory::createOne([
-            'name' => 'My contract 1',
-            'startAt' => Utils\Time::ago(1, 'months'),
-            'endAt' => $endAt1,
-        ]);
-        $endAt2 = Utils\Time::fromNow(2, 'months');
-        $contract2 = ContractFactory::createOne([
             'name' => 'My contract 2',
             'startAt' => Utils\Time::ago(1, 'months'),
-            'endAt' => $endAt2,
+            'endAt' => Utils\Time::fromNow(1, 'months'),
+        ]);
+        $contract2 = ContractFactory::createOne([
+            'name' => 'My contract 1',
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => Utils\Time::fromNow(1, 'months'),
         ]);
 
         $client->request(Request::METHOD_GET, '/contracts');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(1)', 'My contract 2');
-        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(2)', 'My contract 1');
+        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(1)', 'My contract 1');
+        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(2)', 'My contract 2');
     }
 
     public function testGetIndexRendersCorrectlyListsOnlyAccessibleContracts(): void

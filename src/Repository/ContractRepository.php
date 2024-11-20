@@ -69,7 +69,7 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
                 WHERE ts2.contract = c
             )
 
-            ORDER BY c.endAt DESC, c.name
+            ORDER BY c.name
         SQL);
 
         $query->setParameter('now', $now);
