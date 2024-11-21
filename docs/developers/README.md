@@ -15,6 +15,7 @@ Dedicated to the backend:
 - [Working with the tickets' events](/docs/developers/tickets-events.md)
 - [Importing data](/docs/developers/import-data.md)
 - [Cleaning data](/docs/developers/clean-data.md)
+- [Sending emails](/docs/developers/send-emails.md)
 
 Dedicated to the frontend:
 
