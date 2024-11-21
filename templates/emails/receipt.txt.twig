@@ -1,0 +1,11 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'emails/transactional.txt.twig' %}
+
+{% block body %}
+{{ 'emails.receipt.received' | trans }}
+{% endblock %}

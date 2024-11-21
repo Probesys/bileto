@@ -4,10 +4,12 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<p>
-    {{ 'emails.receipt.hello' | trans }}
-</p>
+{% extends 'emails/transactional.html.twig' %}
 
-<p>
-    {{ 'emails.receipt.received' | trans }}
-</p>
+{% block title %}{{ subject }}{% endblock %}
+
+{% block body %}
+    <p>
+        {{ 'emails.receipt.received' | trans }}
+    </p>
+{% endblock %}

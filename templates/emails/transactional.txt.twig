@@ -1,0 +1,18 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{{ 'emails.politeness.hello' | trans }}
+
+{% block body %}
+{% endblock %}
+
+{{ 'emails.politeness.regards' | trans }}
+{{ 'emails.politeness.support_team' | trans }}
+
+{% block footer %}
+-- 
+{{ 'emails.transactional.sent_txt' | trans({ url: url('home') }) | raw }}
+{% endblock %}

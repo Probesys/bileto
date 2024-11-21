@@ -1,0 +1,42 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% apply inline_css(source('@styles/email.css')) %}
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>{% block title %}Bileto{% endblock %}</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+        </head>
+
+        <body class="email email--transactional">
+            <div class="email__header">
+                <img src="{{ email.image('@public/logo.svg') }}" alt="Bileto" width="200" height="40">
+            </div>
+
+            <div class="email__body">
+                <p>
+                    {{ 'emails.politeness.hello' | trans }}
+                </p>
+
+                {% block body %}
+                {% endblock %}
+
+                <p>
+                    {{ 'emails.politeness.regards' | trans }}<br />
+                    {{ 'emails.politeness.support_team' | trans }}<br />
+                </p>
+            </div>
+
+            <p class="email__footer text--center">
+                {% block footer %}
+                    {{ 'emails.transactional.sent' | trans({ url: url('home') }) | raw }}
+                {% endblock %}
+            </p>
+        </body>
+    </html>
+{% endapply %}

@@ -51,10 +51,12 @@ class SendResetPasswordEmailHandler
         $email->subject($subject);
         $email->locale($locale);
         $email->context([
+            'subject' => $subject,
             'user' => $user,
             'token' => $resetToken,
         ]);
         $email->htmlTemplate('emails/reset_password.html.twig');
+        $email->textTemplate('emails/reset_password.txt.twig');
 
         $this->transportInterface->send($email);
     }

@@ -10,9 +10,9 @@ use App\Repository\MessageRepository;
 use App\Message\SendMessageEmail;
 use App\Service\MessageDocumentStorage;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\File;
 
@@ -83,12 +83,20 @@ class SendMessageEmailHandler
             $subject = "Re: {$subject}";
         }
 
-        $email = new Email();
+        $locale = $author->getLocale();
+
+        $email = new TemplatedEmail();
         $email->bcc(...$recipients);
         $email->subject($subject);
+        $email->locale($locale);
         $content = $message->getContent();
-        $email->html($content);
-        $email->text(strip_tags($content));
+        $email->context([
+            'subject' => $subject,
+            'ticket' => $ticket,
+            'content' => $content,
+        ]);
+        $email->htmlTemplate('emails/message.html.twig');
+        $email->textTemplate('emails/message.txt.twig');
 
         foreach ($message->getMessageDocuments() as $messageDocument) {
             $filepath = $this->messageDocumentStorage->getPathname($messageDocument);

@@ -46,7 +46,11 @@ class SendReceiptEmailHandler
         $email->to($requester->getEmail());
         $email->subject($subject);
         $email->locale($locale);
+        $email->context([
+            'subject' => $subject,
+        ]);
         $email->htmlTemplate('emails/receipt.html.twig');
+        $email->textTemplate('emails/receipt.txt.twig');
 
         $sentEmail = $this->transportInterface->send($email);
 
