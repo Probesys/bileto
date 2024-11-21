@@ -96,6 +96,7 @@ class SendMessageEmailHandler
             'content' => $content,
         ]);
         $email->htmlTemplate('emails/message.html.twig');
+        $email->textTemplate('emails/message.txt.twig');
 
         foreach ($message->getMessageDocuments() as $messageDocument) {
             $filepath = $this->messageDocumentStorage->getPathname($messageDocument);

@@ -56,6 +56,7 @@ class SendResetPasswordEmailHandler
             'token' => $resetToken,
         ]);
         $email->htmlTemplate('emails/reset_password.html.twig');
+        $email->textTemplate('emails/reset_password.txt.twig');
 
         $this->transportInterface->send($email);
     }

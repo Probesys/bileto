@@ -118,6 +118,7 @@ contracts.status.finished: Terminé
 contracts.status.ongoing: 'En cours'
 emails.message.receiving: 'Vous recevez cet email car vous êtes concerné par { ticketType, select, request {cette demande} incident {cet incident} other {} }.'
 emails.message.reply: 'Répondez à cet email directement ou <a href="{url}">consultez-le dans Bileto</a>.'
+emails.message.reply_txt: 'Répondez à cet email directement ou consultez-le dans Bileto : {url}'
 emails.politeness.hello: 'Bonjour,'
 emails.politeness.regards: 'Cordialement,'
 emails.politeness.support_team: 'L’équipe support'
@@ -128,6 +129,7 @@ emails.reset_password.intro: 'Vous recevez cet email car une demande de réinial
 emails.reset_password.reset: 'Réinitialiser votre mot de passe'
 emails.reset_password.subject: 'Réinitialisez votre mot de passe Bileto'
 emails.transactional.sent: 'Cet email a été envoyé par <a href="{url}">Bileto</a>.'
+emails.transactional.sent_txt: 'Cet email a été envoyé par Bileto : {url}'
 errors.404.description: 'La page demandée n’a pas été trouvée. Vérifiez qu’il n’y a pas de faute dans l’URL.'
 errors.404.title: "Page non trouvée\_!"
 errors.back_home: 'Retour à la page d’accueil'

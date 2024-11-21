@@ -50,6 +50,7 @@ class SendReceiptEmailHandler
             'subject' => $subject,
         ]);
         $email->htmlTemplate('emails/receipt.html.twig');
+        $email->textTemplate('emails/receipt.txt.twig');
 
         $sentEmail = $this->transportInterface->send($email);
 

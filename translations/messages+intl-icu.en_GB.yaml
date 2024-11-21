@@ -118,6 +118,7 @@ contracts.status.finished: Finished
 contracts.status.ongoing: Ongoing
 emails.message.receiving: 'You are receiving this email because you are concerned by this { ticketType, select, request {request} incident {incident} other {} }.'
 emails.message.reply: 'Reply to this email directly or <a href="{url}">view it on Bileto</a>.'
+emails.message.reply_txt: 'Reply to this email directly or view it on Bileto: {url}'
 emails.politeness.hello: 'Hello,'
 emails.politeness.regards: 'Best regards,'
 emails.politeness.support_team: 'The support team'
@@ -128,6 +129,7 @@ emails.reset_password.intro: 'You are receiving this email because a password re
 emails.reset_password.reset: 'Reset your password'
 emails.reset_password.subject: 'Reset your Bileto password'
 emails.transactional.sent: 'This email has been sent by <a href="{url}">Bileto</a>.'
+emails.transactional.sent_txt: 'This email has been sent by Bileto: {url}'
 errors.404.description: 'The requested page couldn’t be located. Checkout for any URL misspelling.'
 errors.404.title: 'Page not found!'
 errors.back_home: 'Back to the homepage'
