@@ -116,6 +116,8 @@ contracts.status: Statut
 contracts.status.coming: 'À venir'
 contracts.status.finished: Terminé
 contracts.status.ongoing: 'En cours'
+emails.message.receiving: 'Vous recevez cet email car vous êtes concerné par { ticketType, select, request {cette demande} incident {cet incident} other {} }.'
+emails.message.reply: 'Répondez à cet email directement ou <a href="{url}">consultez-le dans Bileto</a>.'
 emails.receipt.hello: 'Bonjour,'
 emails.receipt.received: 'Nous avons bien reçu votre demande de support. Celle-ci va être examinée pour un traitement dans les meilleurs délais possibles.'
 emails.receipt.subject: 'Demande de support reçue'
