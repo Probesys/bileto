@@ -4,42 +4,44 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ subject }}</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+{% apply inline_css %}
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>{{ subject }}</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 
-        <style>
-            body {
-                font-size: 18px;
-                line-height: 1.3;
-            }
+            <style>
+                body {
+                    font-size: 18px;
+                    line-height: 1.3;
+                }
 
-            img {
-                max-width: 100%;
-                height: auto;
-            }
+                img {
+                    max-width: 100%;
+                    height: auto;
+                }
 
-            .footer {
-                color: #60646c;
-                font-size: 14px;
-            }
+                .footer {
+                    color: #60646c;
+                    font-size: 14px;
+                }
 
-            .footer a {
-                color: #60646c;
-            }
-        </style>
-    </head>
+                .footer a {
+                    color: #60646c;
+                }
+            </style>
+        </head>
 
-    <body>
-        {{ content | raw }}
+        <body>
+            {{ content | raw }}
 
-        <p class="footer">
-            &mdash;<br />
-            {{ 'emails.message.reply' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}<br />
-            {{ 'emails.message.receiving' | trans({ ticketType: ticket.type }) }}
-        </p>
-    </body>
-</html>
+            <p class="footer">
+                &mdash;<br />
+                {{ 'emails.message.reply' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}<br />
+                {{ 'emails.message.receiving' | trans({ ticketType: ticket.type }) }}
+            </p>
+        </body>
+    </html>
+{% endapply %}
