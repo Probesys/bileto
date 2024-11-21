@@ -19,8 +19,17 @@
             </div>
 
             <div class="email__body">
+                <p>
+                    {{ 'emails.politeness.hello' | trans }}
+                </p>
+
                 {% block body %}
                 {% endblock %}
+
+                <p>
+                    {{ 'emails.politeness.regards' | trans }}<br />
+                    {{ 'emails.politeness.support_team' | trans }}<br />
+                </p>
             </div>
 
             <p class="email__footer text--center">
