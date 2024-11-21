@@ -4,40 +4,21 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% apply inline_css %}
+{% apply inline_css(source('@styles/email.css')) %}
     <!DOCTYPE html>
     <html>
         <head>
             <title>{{ subject }}</title>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-
-            <style>
-                body {
-                    font-size: 18px;
-                    line-height: 1.3;
-                }
-
-                img {
-                    max-width: 100%;
-                    height: auto;
-                }
-
-                .footer {
-                    color: #60646c;
-                    font-size: 14px;
-                }
-
-                .footer a {
-                    color: #60646c;
-                }
-            </style>
         </head>
 
-        <body>
-            {{ content | raw }}
+        <body class="email">
+            <div>
+                {{ content | raw }}
+            </div>
 
-            <p class="footer">
+            <p class="email__footer">
                 &mdash;<br />
                 {{ 'emails.message.reply' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}<br />
                 {{ 'emails.message.receiving' | trans({ ticketType: ticket.type }) }}

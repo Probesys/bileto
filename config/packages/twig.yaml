@@ -12,6 +12,7 @@ twig:
 
     paths:
         '%kernel.project_dir%/public': public
+        '%kernel.project_dir%/assets/stylesheets': styles
 
 when@test:
     twig:
