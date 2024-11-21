@@ -51,6 +51,7 @@ class SendResetPasswordEmailHandler
         $email->subject($subject);
         $email->locale($locale);
         $email->context([
+            'subject' => $subject,
             'user' => $user,
             'token' => $resetToken,
         ]);

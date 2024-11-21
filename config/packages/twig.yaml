@@ -10,6 +10,9 @@ twig:
         error: null
     file_name_pattern: '*.twig'
 
+    paths:
+        '%kernel.project_dir%/public': public
+
 when@test:
     twig:
         strict_variables: true
