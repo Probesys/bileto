@@ -131,6 +131,9 @@ class SendMessageEmailHandler
             }
         }
 
+        // Ask compliant autoresponders to not reply to this email
+        $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
+
         $sentEmail = $this->transportInterface->send($email);
 
         $emailId = $sentEmail->getMessageId();

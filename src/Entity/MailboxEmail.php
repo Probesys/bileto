@@ -138,6 +138,27 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
         return $inReplyTo;
     }
 
+    public function isAutoreply(): bool
+    {
+        $email = $this->getEmail();
+
+        $isAutosubmitted = false;
+        $autosubmittedHeader = $email->get('Auto-Submitted');
+        if ($autosubmittedHeader instanceof PHPIMAP\Attribute) {
+            $autosubmitted = $autosubmittedHeader->first();
+            $isAutosubmitted = $autosubmitted !== false && $autosubmitted !== 'no';
+        }
+
+        $isAutoreply = false;
+        $autoreplyHeader = $email->get('X-Autoreply');
+        if ($autoreplyHeader instanceof PHPIMAP\Attribute) {
+            $autoreply = $autoreplyHeader->first();
+            $isAutoreply = $autoreply !== false && $autoreply === 'yes';
+        }
+
+        return $isAutosubmitted || $isAutoreply;
+    }
+
     public function getSubject(): string
     {
         return $this->getEmail()->getSubject();

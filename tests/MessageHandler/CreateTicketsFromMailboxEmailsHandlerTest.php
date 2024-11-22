@@ -564,6 +564,72 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
     }
 
+    public function testInvokeIgnoresEmailsWithAutoSubmittedHeader(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+            'headers' => [
+                'Auto-Submitted' => 'auto-generated',
+            ],
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+    }
+
+    public function testInvokeIgnoresEmailsWithXAutoreplyHeader(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+            'headers' => [
+                'X-Autoreply' => 'yes',
+            ],
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+    }
+
     public function testInvokeFailsIfRequesterDoesNotExists(): void
     {
         $container = static::getContainer();

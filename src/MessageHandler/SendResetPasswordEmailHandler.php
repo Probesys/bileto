@@ -58,6 +58,9 @@ class SendResetPasswordEmailHandler
         $email->htmlTemplate('emails/reset_password.html.twig');
         $email->textTemplate('emails/reset_password.txt.twig');
 
+        // Ask compliant autoresponders to not reply to this email
+        $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
+
         $this->transportInterface->send($email);
     }
 }

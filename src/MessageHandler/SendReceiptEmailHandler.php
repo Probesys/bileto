@@ -52,6 +52,9 @@ class SendReceiptEmailHandler
         $email->htmlTemplate('emails/receipt.html.twig');
         $email->textTemplate('emails/receipt.txt.twig');
 
+        // Ask compliant autoresponders to not reply to this email
+        $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
+
         $sentEmail = $this->transportInterface->send($email);
 
         $message = $ticket->getMessages()->first();

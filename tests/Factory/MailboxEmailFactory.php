@@ -47,6 +47,11 @@ final class MailboxEmailFactory extends PersistentProxyObjectFactory
                 $headers .= "\nIn-Reply-To: <{$attributes['inReplyTo']}>\r";
             }
 
+            $attributesHeaders = $attributes['headers'] ?? [];
+            foreach ($attributesHeaders as $name => $value) {
+                $headers .= "\n{$name}: {$value}\r";
+            }
+
             $rawEmail = "{$headers}\n\r\n\r{$attributes['htmlBody']}";
 
             $clientManager = new PHPIMAP\ClientManager();

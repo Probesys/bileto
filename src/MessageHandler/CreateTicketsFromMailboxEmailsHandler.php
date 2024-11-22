@@ -92,6 +92,14 @@ class CreateTicketsFromMailboxEmailsHandler
 
     private function processMailboxEmail(MailboxEmail $mailboxEmail): void
     {
+        if ($mailboxEmail->isAutoreply()) {
+            $this->logger->notice("MailboxEmail #{$mailboxEmail->getId()} ignored: detected as auto reply");
+
+            $this->mailboxEmailRepository->remove($mailboxEmail, true);
+
+            return;
+        }
+
         $senderEmail = $mailboxEmail->getFrom();
 
         $domain = Utils\Email::extractDomain($senderEmail);
