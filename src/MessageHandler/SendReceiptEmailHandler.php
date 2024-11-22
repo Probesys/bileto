@@ -39,7 +39,13 @@ class SendReceiptEmailHandler
         $requester = $ticket->getRequester();
 
         $locale = $requester->getLocale();
-        $subject = $this->translator->trans('emails.receipt.subject', locale: $locale);
+
+        if ($ticket->getType() === 'incident') {
+            $subject = $this->translator->trans('emails.receipt.subject.incident', locale: $locale);
+        } else {
+            $subject = $this->translator->trans('emails.receipt.subject.request', locale: $locale);
+        }
+
         $subject = "[#{$ticket->getId()}] {$subject}";
 
         $email = new TemplatedEmail();
@@ -48,6 +54,7 @@ class SendReceiptEmailHandler
         $email->locale($locale);
         $email->context([
             'subject' => $subject,
+            'ticket' => $ticket,
         ]);
         $email->htmlTemplate('emails/receipt.html.twig');
         $email->textTemplate('emails/receipt.txt.twig');

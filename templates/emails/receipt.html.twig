@@ -10,6 +10,6 @@
 
 {% block body %}
     <p>
-        {{ 'emails.receipt.received' | trans }}
+        {{ 'emails.receipt.received' | trans({ ticketType: ticket.type }) }}
     </p>
 {% endblock %}

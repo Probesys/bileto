@@ -7,5 +7,5 @@
 {% extends 'emails/transactional.txt.twig' %}
 
 {% block body %}
-{{ 'emails.receipt.received' | trans }}
+{{ 'emails.receipt.received' | trans({ ticketType: ticket.type }) }}
 {% endblock %}
