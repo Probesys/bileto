@@ -1,5 +1,71 @@
 # Changelog of Bileto
 
+## 2024-11-22 - 0.12.0-beta
+
+### Improvements
+
+- Improve the look of the email notifications ([728f88d](https://github.com/Probesys/bileto/commit/728f88d))
+- Allow to answer to the receipt emails ([1d77cad](https://github.com/Probesys/bileto/commit/1d77cad))
+- Order contracts by names in the global list ([94fd53b](https://github.com/Probesys/bileto/commit/94fd53b))
+- Always display the default organization on the user page ([565e10c](https://github.com/Probesys/bileto/commit/565e10c))
+- Make sure that users can always create tickets in their default organization ([aa3d2e1](https://github.com/Probesys/bileto/commit/aa3d2e1))
+- Move the observers after the assignee in the tickets ([2788bcd](https://github.com/Probesys/bileto/commit/2788bcd))
+- Always show the number of tickets above the list ([b953bf9](https://github.com/Probesys/bileto/commit/b953bf9))
+- Change the placeholder of the organization field in the user form ([e425e2e](https://github.com/Probesys/bileto/commit/e425e2e))
+
+### Bug fixes
+
+- Accept `@me` notation in the "quick search" form ([df4be41](https://github.com/Probesys/bileto/commit/df4be41))
+- Display all the errors in the "quick search" form ([80b03e5](https://github.com/Probesys/bileto/commit/80b03e5))
+- Accept extra fields in the "advanced search" form ([ae7ede4](https://github.com/Probesys/bileto/commit/ae7ede4))
+- Use "demande" instead of "requête" in the French translation ([90160a2](https://github.com/Probesys/bileto/commit/90160a2))
+- Fix the LDAP synchronization when creating new users ([03027f7](https://github.com/Probesys/bileto/commit/03027f7))
+
+### Technical
+
+- Ignore auto-response emails when collecting emails ([221a7ff](https://github.com/Probesys/bileto/commit/221a7ff))
+- Associate the time spent with their corresponding messages ([c041744](https://github.com/Probesys/bileto/commit/c041744))
+- Allow to import the ticket's team ([4d0a5c7](https://github.com/Probesys/bileto/commit/4d0a5c7))
+- Make Sentry optional in production ([5f6fb1b](https://github.com/Probesys/bileto/commit/5f6fb1b))
+- Lock mailbox and mailbox emails during processing ([391f85c](https://github.com/Probesys/bileto/commit/391f85c))
+- Log only warning if a user cannot be created with LDAP ([30f3bee](https://github.com/Probesys/bileto/commit/30f3bee))
+- Provide a file favicon.ico ([e1a74d8](https://github.com/Probesys/bileto/commit/e1a74d8))
+- Update the dependencies ([cfa938a](https://github.com/Probesys/bileto/commit/cfa938a), [a0c98eb](https://github.com/Probesys/bileto/commit/a0c98eb), [35a4995](https://github.com/Probesys/bileto/commit/35a4995), [e7d14d9](https://github.com/Probesys/bileto/commit/e7d14d9), [c9c352e](https://github.com/Probesys/bileto/commit/c9c352e))
+
+### Documentation
+
+- Explain to the administrators how to import data ([50489de](https://github.com/Probesys/bileto/commit/50489de))
+- Add documentation about backup and restoration in production ([880c217](https://github.com/Probesys/bileto/commit/880c217))
+- Update the available features in the readme and the roadmap ([af6e39b](https://github.com/Probesys/bileto/commit/af6e39b))
+
+### Developers
+
+- Improve the development tooling
+    - Replace Vite by esbuild ([5843249](https://github.com/Probesys/bileto/commit/5843249))
+    - Allow to pass a `VERSION` param to `make db-migrate` ([adb3dfb](https://github.com/Probesys/bileto/commit/adb3dfb))
+    - Allow to run a specific linter with `make lint` ([6144b5f](https://github.com/Probesys/bileto/commit/6144b5f))
+    - Allow to choose the installer with `make install` ([13a0343](https://github.com/Probesys/bileto/commit/13a0343))
+    - Allow to change the Nginx port in development ([90b4bfd](https://github.com/Probesys/bileto/commit/90b4bfd))
+    - Provide a command to run mysql command in the Docker container ([6feb532](https://github.com/Probesys/bileto/commit/6feb532))
+    - Declare `COVERAGE`, `FILE` and `FILTER` next to the `make test` command ([b5e2660](https://github.com/Probesys/bileto/commit/b5e2660), [fd590ac](https://github.com/Probesys/bileto/commit/fd590ac))
+    - Declare the Docker Composer project name in the docker-compose.yml file ([afe751b](https://github.com/Probesys/bileto/commit/afe751b))
+    - Ignore the `uploads/` folder on `make tree` ([1e666db](https://github.com/Probesys/bileto/commit/1e666db))
+- Finish to refactor the forms
+    - Improve the Bileto theme of forms ([eef60a2](https://github.com/Probesys/bileto/commit/eef60a2))
+    - Refactor the search forms ([b3baa55](https://github.com/Probesys/bileto/commit/b3baa55))
+    - Refactor the answer form ([ed43f0e](https://github.com/Probesys/bileto/commit/ed43f0e))
+    - Refactor the mailbox form ([97db752](https://github.com/Probesys/bileto/commit/97db752))
+    - Refactor the ticket forms ([f0f30e8](https://github.com/Probesys/bileto/commit/f0f30e8))
+    - Refactor preferences and profile forms ([f70c838](https://github.com/Probesys/bileto/commit/f70c838))
+    - Refactor the authorization forms ([6c15390](https://github.com/Probesys/bileto/commit/6c15390))
+- Set the default ticket's observers in TicketActivity ([0e6fe33](https://github.com/Probesys/bileto/commit/0e6fe33))
+- Enable LDAP server by default in the development environment ([1a9c940](https://github.com/Probesys/bileto/commit/1a9c940))
+- Fix the database configuration on the CI ([ed8db12](https://github.com/Probesys/bileto/commit/ed8db12))
+- Update the instructions for pull requests ([18e8112](https://github.com/Probesys/bileto/commit/18e8112))
+- Install and configure phpstan-symfony ([bad64fe](https://github.com/Probesys/bileto/commit/bad64fe))
+- Refactor the `MessageEvent::CREATED` event ([084369f](https://github.com/Probesys/bileto/commit/084369f))
+- Handle empty data in the Encryptor ([6210e2e](https://github.com/Probesys/bileto/commit/6210e2e))
+
 ## 2024-10-11 - 0.11.0-beta
 
 ### Security
