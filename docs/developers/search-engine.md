@@ -94,6 +94,7 @@ In this case, the Searcher will check the permissions of the user for each organ
 ## The Ticket Query Builder
 
 The [`Ticket\QueryBuilder`](/src/SearchEngine/Ticket/QueryBuilder.php) transforms a list of Queries into a Doctrine QueryBuilder.
+It inherits from the generic [`QueryBuilder` class](/src/SearchEngine/QueryBuilder.php).
 
 Internally, its functioning is quite simple.
 It first create a Doctrine Query Builder for the ticket table.
