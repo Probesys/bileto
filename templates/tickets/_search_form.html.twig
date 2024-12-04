@@ -195,7 +195,7 @@
                 class="button--anchor text--small"
                 data-controller="modal-opener"
                 data-action="modal-opener#fetch"
-                data-modal-opener-href-value="{{ path('advanced search syntax') }}"
+                data-modal-opener-href-value="{{ path('advanced search syntax', { subject: 'tickets' }) }}"
             >
                 {{ 'forms.search.advanced_help' | trans }}
             </button>
