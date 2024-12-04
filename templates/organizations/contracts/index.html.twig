@@ -31,50 +31,69 @@
 {% endblock %}
 
 {% block body %}
-    <main class="layout__body">
+    <main class="layout__body layout__body--extend">
         <h1>{{ 'contracts.index.title' | trans }}</h1>
 
-        <div class="flow">
-            <div class="cols cols--center flow">
-                <div class="col--extend">
-                    {% if contractsPagination.count > 0 %}
+        <div class="cols flow flow--larger">
+            <div class="col--size3">
+                {{ include(
+                    'contracts/_search_form.html.twig',
+                    {
+                        advancedSearchForm: advancedSearchForm,
+                    },
+                    with_context = false
+                ) }}
+            </div>
+
+            <div class="col--size9 flow">
+                <div class="cols cols--center flow">
+                    <div class="col--extend cols cols--center flow">
                         <p class="text--secondary">
                             {{ 'contracts.index.number' | trans({ count: contractsPagination.countAll }) }}
                         </p>
+
+                        {{ include(
+                            'contracts/_sort_button.html.twig',
+                            {
+                                currentPath: path('contracts', { q: query }),
+                                currentSort: sort,
+                            },
+                            with_context = false
+                        ) }}
+                    </div>
+
+                    {% if is_granted('orga:manage:contracts', organization) %}
+                        <a class="button button--primary button--uppercase" href="{{ path('new organization contract', { uid: organization.uid }) }}">
+                            {{ icon('plus') }}
+                            {{ 'contracts.index.new_contract' | trans }}
+                        </a>
                     {% endif %}
                 </div>
 
-                {% if is_granted('orga:manage:contracts', organization) %}
-                    <a class="button button--primary button--uppercase" href="{{ path('new organization contract', { uid: organization.uid }) }}">
-                        {{ icon('plus') }}
-                        {{ 'contracts.index.new_contract' | trans }}
-                    </a>
+                {% if contractsPagination.count > 0 %}
+                    <div class="flow flow--small">
+                        {{ include(
+                            'contracts/_list.html.twig',
+                            { contracts: contractsPagination.items },
+                            with_context = false
+                        ) }}
+
+                        {{ include(
+                            '_pagination.html.twig',
+                            { pagination: contractsPagination },
+                            with_context = false
+                        ) }}
+                    </div>
+                {% else %}
+                    <div class="placeholder flow flow--larger">
+                        <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                        <p class="placeholder__text">
+                            {{ 'contracts.index.no_contracts' | trans }}
+                        </p>
+                    </div>
                 {% endif %}
             </div>
-
-            {% if contractsPagination.count > 0 %}
-                <div class="flow flow--small">
-                    {{ include(
-                        'contracts/_list.html.twig',
-                        { contracts: contractsPagination.items },
-                        with_context = false
-                    ) }}
-
-                    {{ include(
-                        '_pagination.html.twig',
-                        { pagination: contractsPagination },
-                        with_context = false
-                    ) }}
-                </div>
-            {% else %}
-                <div class="placeholder flow flow--larger">
-                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
-
-                    <p class="placeholder__text">
-                        {{ 'contracts.index.no_contracts' | trans }}
-                    </p>
-                </div>
-            {% endif %}
         </div>
     </main>
 {% endblock %}

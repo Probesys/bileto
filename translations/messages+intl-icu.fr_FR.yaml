@@ -112,6 +112,11 @@ contracts.show.notes_confidential: Confidentielles
 contracts.show.renew: Renouveler
 contracts.show.set_up_alerts: 'Configurer les alertes'
 contracts.show.warning: Attention
+contracts.sort.alphabetical: 'Ordre alphabétique'
+contracts.sort.antichronological: 'Ordre de fin antichronologique'
+contracts.sort.chronological: 'Ordre de fin chronologique'
+contracts.sort.label: 'Trier par'
+contracts.sort.reverse_alphabetical: 'Ordre alphabétique inverse'
 contracts.status: Statut
 contracts.status.coming: 'À venir'
 contracts.status.finished: Terminé

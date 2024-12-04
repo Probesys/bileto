@@ -112,6 +112,11 @@ contracts.show.notes_confidential: Confidential
 contracts.show.renew: Renew
 contracts.show.set_up_alerts: 'Set up alerts'
 contracts.show.warning: Warning
+contracts.sort.alphabetical: 'Alphabetical order'
+contracts.sort.antichronological: 'Antichronological end order'
+contracts.sort.chronological: 'Chronological end order'
+contracts.sort.label: 'Sort by'
+contracts.sort.reverse_alphabetical: 'Reverse alphabetical order'
 contracts.status: Status
 contracts.status.coming: Coming
 contracts.status.finished: Finished

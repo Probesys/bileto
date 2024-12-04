@@ -7,16 +7,11 @@
 namespace App\Controller\Organizations;
 
 use App\Controller\BaseController;
-use App\Entity\Contract;
-use App\Entity\EntityEvent;
-use App\Entity\Organization;
+use App\Entity;
 use App\Form;
-use App\Repository\ContractRepository;
-use App\Repository\OrganizationRepository;
-use App\Repository\TicketRepository;
-use App\Repository\TimeSpentRepository;
-use App\Security\Authorizer;
-use App\Service\ContractTimeAccounting;
+use App\Repository;
+use App\SearchEngine;
+use App\Service;
 use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,38 +22,49 @@ class ContractsController extends BaseController
     #[Route('/organizations/{uid:organization}/contracts', name: 'organization contracts', methods: ['GET', 'HEAD'])]
     public function index(
         Request $request,
-        Organization $organization,
-        ContractRepository $contractRepository,
-        OrganizationRepository $organizationRepository,
+        Entity\Organization $organization,
+        SearchEngine\Contract\Searcher $contractSearcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
         $page = $request->query->getInt('page', 1);
+        $sort = $request->query->getString('sort', 'end-desc');
 
-        $contractsQuery = $contractRepository->findByOrganizationQuery($organization);
-
-        $contractsPagination = Utils\Pagination::paginate($contractsQuery, [
-            'page' => $page,
-            'maxResults' => 25,
+        $advancedSearchForm = $this->createNamedForm('', Form\AdvancedSearchForm::class, [
+            'q' => SearchEngine\Contract\Searcher::queryDefault(),
         ]);
+        $advancedSearchForm->handleRequest($request);
+
+        $query = $advancedSearchForm->get('q')->getData();
+
+        $contractSearcher->setOrganization($organization);
+
+        if ($query) {
+            $contractsPagination = $contractSearcher->getContracts($query, $sort, [
+                'page' => $page,
+                'maxResults' => 25,
+            ]);
+        } else {
+            $contractsPagination = Utils\Pagination::empty();
+        }
 
         return $this->render('organizations/contracts/index.html.twig', [
             'organization' => $organization,
             'contractsPagination' => $contractsPagination,
+            'query' => $query?->getString(),
+            'sort' => $sort,
+            'advancedSearchForm' => $advancedSearchForm,
         ]);
     }
 
     #[Route('/organizations/{uid:organization}/contracts/new', name: 'new organization contract')]
     public function new(
-        Organization $organization,
+        Entity\Organization $organization,
         Request $request,
-        ContractRepository $contractRepository,
-        TicketRepository $ticketRepository,
-        TimeSpentRepository $timeSpentRepository,
-        ContractTimeAccounting $contractTimeAccounting,
+        Repository\ContractRepository $contractRepository,
+        Repository\TicketRepository $ticketRepository,
+        Repository\TimeSpentRepository $timeSpentRepository,
+        Service\ContractTimeAccounting $contractTimeAccounting,
     ): Response {
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
@@ -74,7 +80,7 @@ class ContractsController extends BaseController
         if ($contract) {
             $contract = $contract->getRenewed();
         } else {
-            $contract = new Contract();
+            $contract = new Entity\Contract();
         }
 
         $form = $this->createNamedForm('contract', Form\ContractForm::class, $contract, [

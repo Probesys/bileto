@@ -13,6 +13,7 @@ use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -33,24 +34,24 @@ class ContractsControllerTest extends WebTestCase
         $client->loginUser($user->_real());
         $organization = OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), ['orga:see:contracts']);
-        $endAt1 = new \DateTimeImmutable('2023-10-01');
         $contract1 = ContractFactory::createOne([
             'name' => 'My contract 1',
             'organization' => $organization,
-            'endAt' => $endAt1,
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => Utils\Time::fromNow(1, 'months'),
         ]);
-        $endAt2 = new \DateTimeImmutable('2023-09-01');
         $contract2 = ContractFactory::createOne([
             'name' => 'My contract 2',
             'organization' => $organization,
-            'endAt' => $endAt2,
+            'startAt' => Utils\Time::ago(1, 'months'),
+            'endAt' => Utils\Time::fromNow(2, 'months'),
         ]);
 
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/contracts");
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(1)', 'My contract 1');
-        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(2)', 'My contract 2');
+        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(1)', 'My contract 2');
+        $this->assertSelectorTextContains('[data-test="contract-item"]:nth-child(2)', 'My contract 1');
     }
 
     public function testGetIndexFailsIfAccessIsForbidden(): void
