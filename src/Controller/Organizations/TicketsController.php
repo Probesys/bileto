@@ -43,7 +43,7 @@ class TicketsController extends BaseController
             $defaultQuery = SearchEngine\Ticket\Searcher::queryDefault();
         }
 
-        $advancedSearchForm = $this->createNamedForm('', Form\Ticket\AdvancedSearchForm::class, [
+        $advancedSearchForm = $this->createNamedForm('', Form\AdvancedSearchForm::class, [
             'q' => $defaultQuery,
         ]);
         $advancedSearchForm->handleRequest($request);

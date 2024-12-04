@@ -5,11 +5,10 @@ At the moment, the search engine is only able to search for tickets.
 
 Two forms are provided to search tickets:
 
-- The Advanced Search Form: it allows to manipulate the query textually, for the advanced users.
-- The Quick Search Form: it provides a more intuitive experience to search tickets.
+- The generic [Advanced Search Form](/src/Form/AdvancedSearchForm.php): it can be used for any kind of elements and it allows to manipulate the query textually, for the advanced users.
+- The Tickets [Quick Search Form](/src/Form/Ticket/QuickSearchForm.php): it provides a more intuitive experience to search tickets.
 
 **Most of the code of the search engine is placed under [the `src/SearchEngine/` folder](/src/SearchEngine).**
-The forms are placed under [`src/Form/Ticket`](/src/Form/Ticket).
 
 ## The Query Parser
 
@@ -44,7 +43,7 @@ If the textual query matches the grammar, the Parser will return a Query.
 
 ## The Advanced Search Form
 
-The [`AdvancedSearchForm`](/src/Form/Ticket/AdvancedSearchForm.php) transforms a textual query to a generic `Query` as explained above.
+The generic [`AdvancedSearchForm`](/src/Form/AdvancedSearchForm.php) transforms a textual query to a generic `Query` as explained above.
 
 ## The Quick Search Form
 

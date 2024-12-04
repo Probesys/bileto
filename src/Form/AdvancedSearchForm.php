@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Form\Ticket;
+namespace App\Form;
 
 use App\SearchEngine;
 use Symfony\Component\Form\AbstractType;
