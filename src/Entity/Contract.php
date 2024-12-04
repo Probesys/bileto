@@ -242,10 +242,6 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
      */
     public function getStatus(): string
     {
-        if ($this->getConsumedHours() >= $this->getMaxHours()) {
-            return 'finished';
-        }
-
         $today = Utils\Time::now();
         if ($today < $this->startAt) {
             return 'coming';

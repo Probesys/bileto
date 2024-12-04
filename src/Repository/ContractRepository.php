@@ -61,13 +61,8 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
             FROM App\Entity\Contract c
 
             WHERE c.startAt <= :now
-            AND :now < c.endAt
+            AND :now <= c.endAt
             AND c.organization IN (:organizations)
-            AND c.maxHours > (
-                SELECT (COALESCE(SUM(ts2.time), 0) / 60.0)
-                FROM App\Entity\TimeSpent ts2
-                WHERE ts2.contract = c
-            )
 
             ORDER BY c.name
         SQL);
