@@ -143,6 +143,13 @@ forms.optional: (optional)
 forms.optional_max_chars: '(optional, max. {number} characters)'
 forms.read_only: '(read only)'
 forms.save_changes: 'Save the changes'
+forms.search.advanced_label: 'Search using keywords or by using the advanced syntax'
+forms.search.advanced_help: 'Show syntax help'
+forms.search.advanced_title: 'Advanced search'
+forms.search.quick_label: 'Search using keywords or #id'
+forms.search.quick_placeholder: 'Keywords or #id'
+forms.search.quick_title: 'Quick search'
+forms.search.submit: Search
 forms.show_password: 'Show password as plain text. Note: this will visually expose your password.'
 home.all_your_tickets: 'See all your tickets'
 home.new_ticket: 'New ticket'
@@ -454,12 +461,6 @@ tickets.priority.high: High
 tickets.priority.low: Low
 tickets.priority.medium: Medium
 tickets.requester: Requester
-tickets.search.advanced_search: 'Advanced search'
-tickets.search.help: 'Show syntax help'
-tickets.search.label: 'Search using keywords or by using the advanced syntax'
-tickets.search.placeholder: 'Keywords or #id'
-tickets.search.quick_search: 'Quick search'
-tickets.search.submit: Search
 tickets.show.actions.rename: 'Rename the ticket'
 tickets.show.actions.reopen: 'Reopen the ticket'
 tickets.show.actions.reopen.confirm: 'The ticket is currently closed. It is often better to open a new ticket, unless there is an error. Are you sure you want to reopen this ticket?'

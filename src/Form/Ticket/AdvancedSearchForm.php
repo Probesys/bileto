@@ -36,7 +36,7 @@ class AdvancedSearchForm extends AbstractType
             'required' => false,
             'label' => false,
             'attr' => [
-                'aria-label' => $this->translator->trans('tickets.search.label'),
+                'aria-label' => $this->translator->trans('forms.search.advanced_label'),
             ],
         ]);
 
@@ -49,7 +49,7 @@ class AdvancedSearchForm extends AbstractType
                     return SearchEngine\Query::fromString($queryString);
                 } catch (SearchEngine\Query\SyntaxError $e) {
                     $failure = new TransformationFailedException($e->getMessage());
-                    $message = new TranslatableMessage('ticket.search.invalid', domain: 'errors');
+                    $message = new TranslatableMessage('forms.search.syntax_invalid', domain: 'errors');
                     $failure->setInvalidMessage($message);
                     throw $failure;
                 }

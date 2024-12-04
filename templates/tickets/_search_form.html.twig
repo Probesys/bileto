@@ -13,19 +13,19 @@
     >
         <div class="cols cols--always cols--center">
             <h2 class="col--extend">
-                {{ 'tickets.search.quick_search' | trans }}
+                {{ 'forms.search.quick_title' | trans }}
             </h2>
 
             <button
                 class="button--discreet button--icon"
                 data-action="switch#change"
                 data-switch-for-param="search-advanced-panel"
-                title="{{ 'tickets.search.advanced_search' | trans }}"
+                title="{{ 'forms.search.advanced_title' | trans }}"
             >
                 {{ icon('dna') }}
 
                 <span class="sr-only">
-                    {{ 'tickets.search.advanced_search' | trans }}
+                    {{ 'forms.search.advanced_title' | trans }}
                 </span>
             </button>
         </div>
@@ -169,19 +169,19 @@
     >
         <div class="cols cols--always cols--center">
             <h2 class="col--extend">
-                {{ 'tickets.search.advanced_search' | trans }}
+                {{ 'forms.search.advanced_title' | trans }}
             </h2>
 
             <button
                 class="button--discreet button--icon"
                 data-action="switch#change"
                 data-switch-for-param="search-quick-panel"
-                title="{{ 'tickets.search.quick_search' | trans }}"
+                title="{{ 'forms.search.quick_title' | trans }}"
             >
                 {{ icon('search') }}
 
                 <span class="sr-only">
-                    {{ 'tickets.search.quick_search' | trans }}"
+                    {{ 'forms.search.quick_title' | trans }}"
                 </span>
             </button>
         </div>
@@ -197,12 +197,12 @@
                 data-action="modal-opener#fetch"
                 data-modal-opener-href-value="{{ path('advanced search syntax') }}"
             >
-                {{ 'tickets.search.help' | trans }}
+                {{ 'forms.search.advanced_help' | trans }}
             </button>
 
             <div class="text--right">
                 <button class="button--animated-icon" type="submit">
-                    {{ 'tickets.search.submit' | trans }}
+                    {{ 'forms.search.submit' | trans }}
                     {{ icon('arrow-right') }}
                 </button>
             </div>
