@@ -1,0 +1,45 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<details
+    class="popup"
+    data-controller="popup"
+    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+>
+    <summary class="popup__opener">
+        <span class="button button--discreet" title="{{ 'contracts.sort.label' | trans }}">
+            {% if currentSort == 'end-desc' %}
+                {{ 'contracts.sort.antichronological' | trans }}
+            {% elseif currentSort == 'end-asc' %}
+                {{ 'contracts.sort.chronological' | trans }}
+            {% elseif currentSort == 'name-asc' %}
+                {{ 'contracts.sort.alphabetical' | trans }}
+            {% elseif currentSort == 'name-desc' %}
+                {{ 'contracts.sort.reverse_alphabetical' | trans }}
+            {% endif %}
+
+            {{ icon('angle-down') }}
+        </span>
+    </summary>
+
+    <nav class="popup__container popup__container--center">
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=end-desc">
+            {{ 'contracts.sort.antichronological' | trans }}
+        </a>
+
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=end-asc">
+            {{ 'contracts.sort.chronological' | trans }}
+        </a>
+
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=name-asc">
+            {{ 'contracts.sort.alphabetical' | trans }}
+        </a>
+
+        <a class="popup__item" href="{{ currentPath }}&amp;sort=name-desc">
+            {{ 'contracts.sort.reverse_alphabetical' | trans }}
+        </a>
+    </nav>
+</details>

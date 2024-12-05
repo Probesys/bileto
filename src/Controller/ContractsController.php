@@ -7,12 +7,11 @@
 namespace App\Controller;
 
 use App\Controller\BaseController;
-use App\Entity\Contract;
+use App\Entity;
 use App\Form;
-use App\Repository\ContractRepository;
-use App\Repository\OrganizationRepository;
-use App\Security\Authorizer;
-use App\Utils\Pagination;
+use App\Repository;
+use App\SearchEngine;
+use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,39 +21,39 @@ class ContractsController extends BaseController
     #[Route('/contracts', name: 'contracts', methods: ['GET', 'HEAD'])]
     public function index(
         Request $request,
-        ContractRepository $contractRepository,
-        OrganizationRepository $organizationRepository,
-        Authorizer $authorizer,
+        SearchEngine\Contract\Searcher $contractSearcher,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see:contracts', 'any');
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
         $page = $request->query->getInt('page', 1);
+        $sort = $request->query->getString('sort', 'end-desc');
 
-        $organizations = $organizationRepository->findAuthorizedOrganizations($user);
-        $authorizedOrganizations = [];
-        foreach ($organizations as $organization) {
-            if ($authorizer->isGranted('orga:see:contracts', $organization)) {
-                $authorizedOrganizations[] = $organization;
-            }
-        }
-
-        $contractsQuery = $contractRepository->findOngoingByOrganizationsQuery($authorizedOrganizations);
-
-        $contractsPagination = Pagination::paginate($contractsQuery, [
-            'page' => $page,
-            'maxResults' => 25,
+        $advancedSearchForm = $this->createNamedForm('', Form\AdvancedSearchForm::class, [
+            'q' => SearchEngine\Contract\Searcher::queryDefault(),
         ]);
+        $advancedSearchForm->handleRequest($request);
+
+        $query = $advancedSearchForm->get('q')->getData();
+
+        if ($query) {
+            $contractsPagination = $contractSearcher->getContracts($query, $sort, [
+                'page' => $page,
+                'maxResults' => 25,
+            ]);
+        } else {
+            $contractsPagination = Utils\Pagination::empty();
+        }
 
         return $this->render('contracts/index.html.twig', [
             'contractsPagination' => $contractsPagination,
+            'query' => $query?->getString(),
+            'sort' => $sort,
+            'advancedSearchForm' => $advancedSearchForm,
         ]);
     }
 
     #[Route('/contracts/{uid:contract}', name: 'contract', methods: ['GET', 'HEAD'])]
-    public function show(Contract $contract): Response
+    public function show(Entity\Contract $contract): Response
     {
         $organization = $contract->getOrganization();
 
@@ -68,9 +67,9 @@ class ContractsController extends BaseController
 
     #[Route('/contracts/{uid:contract}/edit', name: 'edit contract')]
     public function edit(
-        Contract $contract,
+        Entity\Contract $contract,
         Request $request,
-        ContractRepository $contractRepository,
+        Repository\ContractRepository $contractRepository,
     ): Response {
         $organization = $contract->getOrganization();
 

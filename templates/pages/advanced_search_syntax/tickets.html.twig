@@ -6,22 +6,22 @@
 
 {% extends 'modal.html.twig' %}
 
-{% block title %}{{ 'advanced_search_syntax.title' | trans }}{% endblock %}
+{% block title %}{{ 'advanced_search_syntax.tickets.title' | trans }}{% endblock %}
 
 {% block body %}
     <div class="flow flow--larger">
         <div class="wrapper wrapper--text wrapper--center flow">
             <p>
-                {{ 'advanced_search_syntax.intro1' | trans }}
+                {{ 'advanced_search_syntax.tickets.intro1' | trans }}
             </p>
 
             <p>
-                {{ 'advanced_search_syntax.intro2' | trans }}
+                {{ 'advanced_search_syntax.tickets.intro2' | trans }}
             </p>
         </div>
 
         <div class="flow">
-            <h2>{{ 'advanced_search_syntax.keywords.title' | trans }}</h2>
+            <h2>{{ 'advanced_search_syntax.tickets.keywords.title' | trans }}</h2>
 
             <table>
                 <thead>
@@ -34,24 +34,24 @@
                 <tbody>
                     <tr>
                         <td><code>emails spam</code></td>
-                        <td>{{ 'advanced_search_syntax.keywords.example1' | trans | raw }}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.keywords.example1' | trans | raw }}</td>
                     </tr>
 
                     <tr>
                         <td><code>emails OR spam</code></td>
-                        <td>{{ 'advanced_search_syntax.keywords.example2' | trans | raw }}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.keywords.example2' | trans | raw }}</td>
                     </tr>
 
                     <tr>
                         <td><code>"emails spam"</code></td>
-                        <td>{{ 'advanced_search_syntax.keywords.example3' | trans }}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.keywords.example3' | trans }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="flow">
-            <h2>{{ 'advanced_search_syntax.identifier.title' | trans }}</h2>
+            <h2>{{ 'advanced_search_syntax.tickets.identifier.title' | trans }}</h2>
 
             <table>
                 <thead>
@@ -64,21 +64,21 @@
                 <tbody>
                     <tr>
                         <td><code>#42</code></td>
-                        <td>{{ 'advanced_search_syntax.identifier.example1' | trans }}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.identifier.example1' | trans }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="flow flow--large">
-            <h2>{{ 'advanced_search_syntax.qualifiers.title' | trans }}</h2>
+            <h2>{{ 'advanced_search_syntax.tickets.qualifiers.title' | trans }}</h2>
 
             <p class="wrapper wrapper--text">
-                {{ 'advanced_search_syntax.qualifiers.description' | trans | raw }}
+                {{ 'advanced_search_syntax.tickets.qualifiers.description' | trans | raw }}
             </p>
 
             <div class="flow">
-                <h3>{{ 'advanced_search_syntax.qualifiers.status.title' | trans }}</h3>
+                <h3>{{ 'advanced_search_syntax.tickets.qualifiers.status.title' | trans }}</h3>
 
                 <table>
                     <thead>
@@ -91,23 +91,23 @@
                     <tbody>
                         <tr>
                             <td><code>status:new</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.status.example1' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.status.example1' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>status:new,in_progress</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.status.example2' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.status.example2' | trans }}</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <p class="wrapper wrapper--text">
-                    {{ 'advanced_search_syntax.qualifiers.status.values' | trans | raw }}
+                    {{ 'advanced_search_syntax.tickets.qualifiers.status.values' | trans | raw }}
                 </p>
             </div>
 
             <div class="flow">
-                <h3>{{ 'advanced_search_syntax.qualifiers.type.title' | trans }}</h3>
+                <h3>{{ 'advanced_search_syntax.tickets.qualifiers.type.title' | trans }}</h3>
 
                 <table>
                     <thead>
@@ -120,19 +120,19 @@
                     <tbody>
                         <tr>
                             <td><code>type:incident</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.type.example1' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.type.example1' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>type:request</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.type.example2' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.type.example2' | trans }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="flow">
-                <h3>{{ 'advanced_search_syntax.qualifiers.priority.title' | trans }}</h3>
+                <h3>{{ 'advanced_search_syntax.tickets.qualifiers.priority.title' | trans }}</h3>
 
                 <table>
                     <thead>
@@ -145,24 +145,24 @@
                     <tbody>
                         <tr>
                             <td><code>urgency:low</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.priority.example1' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.priority.example1' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>impact:low,medium</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.priority.example2' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.priority.example2' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>priority:high</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.priority.example3' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.priority.example3' | trans }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="flow">
-                <h3>{{ 'advanced_search_syntax.qualifiers.solution.title' | trans }}</h3>
+                <h3>{{ 'advanced_search_syntax.tickets.qualifiers.solution.title' | trans }}</h3>
 
                 <table>
                     <thead>
@@ -175,19 +175,19 @@
                     <tbody>
                         <tr>
                             <td><code>no:solution</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.solution.example1' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.solution.example1' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>has:solution</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.solution.example2' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.solution.example2' | trans }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="flow">
-                <h3>{{ 'advanced_search_syntax.qualifiers.actors.title' | trans }}</h3>
+                <h3>{{ 'advanced_search_syntax.tickets.qualifiers.actors.title' | trans }}</h3>
 
                 <table>
                     <thead>
@@ -200,39 +200,39 @@
                     <tbody>
                         <tr>
                             <td><code>assignee:alix</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.actors.example1' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.actors.example1' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>requester:@me</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.actors.example2' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.actors.example2' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>observer:@me</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.actors.example3' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.actors.example3' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>involves:alix</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.actors.example4' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.actors.example4' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>no:assignee</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.actors.example5' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.actors.example5' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>has:assignee</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.actors.example6' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.actors.example6' | trans }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="flow">
-                <h3>{{ 'advanced_search_syntax.qualifiers.organization.title' | trans }}</h3>
+                <h3>{{ 'advanced_search_syntax.tickets.qualifiers.organization.title' | trans }}</h3>
 
                 <table>
                     <thead>
@@ -245,14 +245,14 @@
                     <tbody>
                         <tr>
                             <td><code>org:probesys</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.organization.example1' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.organization.example1' | trans }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="flow">
-                <h3>{{ 'advanced_search_syntax.qualifiers.labels.title' | trans }}</h3>
+                <h3>{{ 'advanced_search_syntax.tickets.qualifiers.labels.title' | trans }}</h3>
 
                 <table>
                     <thead>
@@ -265,27 +265,27 @@
                     <tbody>
                         <tr>
                             <td><code>label:bug</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example1' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.labels.example1' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>label:bug label:"Tickets topic"</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example2' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.labels.example2' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>label:bug,"Tickets topic"</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example3' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.labels.example3' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>has:label</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example4' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.labels.example4' | trans }}</td>
                         </tr>
 
                         <tr>
                             <td><code>no:label</code></td>
-                            <td>{{ 'advanced_search_syntax.qualifiers.labels.example5' | trans }}</td>
+                            <td>{{ 'advanced_search_syntax.tickets.qualifiers.labels.example5' | trans }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -293,7 +293,7 @@
         </div>
 
         <div class="flow">
-            <h2>{{ 'advanced_search_syntax.not.title' | trans }}</h2>
+            <h2>{{ 'advanced_search_syntax.tickets.not.title' | trans }}</h2>
 
             <table>
                 <thead>
@@ -306,19 +306,19 @@
                 <tbody>
                     <tr>
                         <td><code>emails NOT spam</code></td>
-                        <td>{{ 'advanced_search_syntax.not.example1' | trans }}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.not.example1' | trans }}</td>
                     </tr>
 
                     <tr>
                         <td><code>-status:open</code></td>
-                        <td>{{ 'advanced_search_syntax.not.example2' | trans | raw}}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.not.example2' | trans | raw}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="flow">
-            <h2>{{ 'advanced_search_syntax.complex.title' | trans }}</h2>
+            <h2>{{ 'advanced_search_syntax.tickets.complex.title' | trans }}</h2>
 
             <table>
                 <thead>
@@ -331,17 +331,17 @@
                 <tbody>
                     <tr>
                         <td><code>emails priority:high</code></td>
-                        <td>{{ 'advanced_search_syntax.complex.example1' | trans }}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.complex.example1' | trans }}</td>
                     </tr>
 
                     <tr>
                         <td><code>status:new OR assignee:@me</code></td>
-                        <td>{{ 'advanced_search_syntax.complex.example2' | trans }}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.complex.example2' | trans }}</td>
                     </tr>
 
                     <tr>
                         <td><code>emails (priority:high OR assignee:@me)</code></td>
-                        <td>{{ 'advanced_search_syntax.complex.example3' | trans }}</td>
+                        <td>{{ 'advanced_search_syntax.tickets.complex.example3' | trans }}</td>
                     </tr>
                 </tbody>
             </table>

@@ -11,6 +11,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -51,15 +52,45 @@ class PagesControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'About Bileto');
     }
 
-    public function testGetAdvancedSearchSyntaxRendersCorrectly(): void
+    public function testGetAdvancedSearchSyntaxRendersCorrectlyWithSubjectTickets(): void
     {
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
 
-        $crawler = $client->request(Request::METHOD_GET, '/advanced-search-syntax');
+        $client->request(Request::METHOD_GET, '/advanced-search-syntax', [
+            'subject' => 'tickets',
+        ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Quick reference for the advanced syntax');
+        $this->assertSelectorTextContains('h1', 'Quick reference for the tickets advanced search');
+    }
+
+    public function testGetAdvancedSearchSyntaxRendersCorrectlyWithSubjectContracts(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+
+        $client->request(Request::METHOD_GET, '/advanced-search-syntax', [
+            'subject' => 'contracts',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Quick reference for the contracts advanced search');
+    }
+
+    public function testGetAdvancedSearchSyntaxFailsWithOtherSubjects(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, '/advanced-search-syntax', [
+            'subject' => 'foo',
+        ]);
     }
 }

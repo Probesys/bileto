@@ -412,7 +412,7 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
             return null;
         }
 
-        return $this->getEndAt()->modify("-{$this->getDateAlert()} days 00:00:00");
+        return $this->getEndAt()->modify("-{$this->getDateAlert()} days");
     }
 
     public function getDateAlertPercent(): float

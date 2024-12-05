@@ -8,55 +8,76 @@ about.version: Version
 admin.index.no_access: 'Vous n’avez pas accès à l’administration.'
 admin.index.no_access_advice: 'Votre rôle administrateur n’a probablement aucune permission. Vous devriez contacter un autre administrateur pour corriger cela.'
 admin.index.title: Admin
-advanced_search_syntax.complex.example1: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_»"
-advanced_search_syntax.complex.example2: "Les tickets de statut «\_nouveau\_», ou ceux qui vous sont attribués"
-advanced_search_syntax.complex.example3: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_» ou qui vous sont attribués"
-advanced_search_syntax.complex.title: 'Recherches complexes'
+advanced_search_syntax.contracts.intro1: 'La recherche par syntaxe avancée vous permet de rechercher précisément les contrats qui vous intéressent.'
+advanced_search_syntax.contracts.intro2: 'Trouvez ci-dessous quelques exemples illustrant les possibilités du moteur de recherche.'
+advanced_search_syntax.contracts.keywords.example1: "Les contrats contenant le mot «\_contract\_» <strong>et</strong> le mot «\_2024\_» dans leur nom"
+advanced_search_syntax.contracts.keywords.example2: "Les contrats contenant le mot «\_contract\_» <strong>ou</strong> le mot «\_2024\_» dans leur nom"
+advanced_search_syntax.contracts.keywords.example3: "Les contrats contenant la suite de mots «\_contract 2024\_» dans leur nom"
+advanced_search_syntax.contracts.keywords.title: 'Rechercher par mots-clés'
+advanced_search_syntax.contracts.not.example1: "Les contrats contenant le mot «\_contract\_» mais pas le mot «\_2024\_» dans leur nom"
+advanced_search_syntax.contracts.not.example2: "Les contrats qui n’ont pas un statut «\_fermé\_» (équivalent à «\_<code>NOT status:finished\_»</code>). Cette syntaxe n’est valable qu’avec les qualificateurs."
+advanced_search_syntax.contracts.not.title: 'Rechercher par négation'
+advanced_search_syntax.contracts.title: 'Aide-mémoire de la recherche avancée des contrats'
+advanced_search_syntax.contracts.qualifiers.alert.example1: 'Les contrats dont la consommation de temps a atteint le seuil d’alerte'
+advanced_search_syntax.contracts.qualifiers.alert.example2: 'Les contrats dont la date de fin arrive à échéance'
+advanced_search_syntax.contracts.qualifiers.alert.example3: 'Les contrats ayant une alerte en cours'
+advanced_search_syntax.contracts.qualifiers.alert.example4: 'Les contrats n’ayant aucune une alerte en cours'
+advanced_search_syntax.contracts.qualifiers.alert.title: Alerte
+advanced_search_syntax.contracts.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
+advanced_search_syntax.contracts.qualifiers.status.example1: "Les contrats avec le statut «\_en cours\_»"
+advanced_search_syntax.contracts.qualifiers.status.example2: "Les contrats avec les statuts «\_à venir\_» ou «\_en cours\_»"
+advanced_search_syntax.contracts.qualifiers.status.title: Statut
+advanced_search_syntax.contracts.qualifiers.status.values: "Les valeurs de statut possibles sont\_: <code>coming</code>, <code>ongoing</code>, <code>finished</code>."
+advanced_search_syntax.contracts.qualifiers.title: 'Rechercher par qualificateurs'
 advanced_search_syntax.description: Description
 advanced_search_syntax.example: Exemple
-advanced_search_syntax.identifier.example1: "Le ticket avec l’identifiant «\_42\_»"
-advanced_search_syntax.identifier.title: 'Rechercher par identifiant'
-advanced_search_syntax.intro1: 'La recherche par syntaxe avancée vous permet de rechercher précisément les tickets qui vous intéressent.'
-advanced_search_syntax.intro2: 'Trouvez ci-dessous quelques exemples illustrant les possibilités du moteur de recherche.'
-advanced_search_syntax.keywords.example1: "Les tickets contenant le mot «\_emails\_» <strong>et</strong> le mot «\_spam\_» dans leur titre"
-advanced_search_syntax.keywords.example2: "Les tickets contenant le mot «\_emails\_» <strong>ou</strong> le mot «\_spam\_» dans leur titre"
-advanced_search_syntax.keywords.example3: "Les tickets contenant la suite de mots «\_emails spam\_» dans leur titre"
-advanced_search_syntax.keywords.title: 'Rechercher par mots-clés'
-advanced_search_syntax.not.example1: "Les tickets contenant le mot «\_emails\_» mais pas le mot «\_spam\_» dans leur titre"
-advanced_search_syntax.not.example2: "Les tickets qui n’ont pas un statut «\_ouvert\_» (équivalent à «\_<code>NOT status:open\_»</code>). Cette syntaxe n’est valable qu’avec les qualificateurs."
-advanced_search_syntax.not.title: 'Rechercher par négation'
-advanced_search_syntax.qualifiers.actors.example1: "Les tickets attribués à un utilisateur dont le nom ou l’email contient «\_alix\_»"
-advanced_search_syntax.qualifiers.actors.example2: 'Les tickets pour lesquels vous êtes demandeur'
-advanced_search_syntax.qualifiers.actors.example3: 'Les tickets pour lesquels vous êtes observateur'
-advanced_search_syntax.qualifiers.actors.example4: "Les tickets attribués à un utilisateur «\_alix\_», ou pour lesquels il est demandeur"
-advanced_search_syntax.qualifiers.actors.example5: 'Les tickets n’ayant pas d’agent attribué'
-advanced_search_syntax.qualifiers.actors.example6: 'Les tickets ayant un agent attribué'
-advanced_search_syntax.qualifiers.actors.title: Acteurs
-advanced_search_syntax.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
-advanced_search_syntax.qualifiers.labels.example1: "Les tickets avec l’étiquette «\_Bug\_» (insensible à la casse)"
-advanced_search_syntax.qualifiers.labels.example2: "Les tickets avec les étiquettes «\_Bug\_» et «\_Tickets topic\_»"
-advanced_search_syntax.qualifiers.labels.example3: "Les tickets avec les étiquettes «\_Bug\_» ou «\_Tickets topic\_»"
-advanced_search_syntax.qualifiers.labels.example4: 'Les tickets ayant au moins une étiquette'
-advanced_search_syntax.qualifiers.labels.example5: 'Les tickets n’ayant aucune étiquette'
-advanced_search_syntax.qualifiers.labels.title: Étiquettes
-advanced_search_syntax.qualifiers.organization.example1: "Les tickets des organisations dont le nom contient «\_probesys\_»"
-advanced_search_syntax.qualifiers.organization.title: Organisations
-advanced_search_syntax.qualifiers.priority.example1: "Les tickets d’urgence «\_basse\_»"
-advanced_search_syntax.qualifiers.priority.example2: "Les tickets d’impact «\_bas\_» ou «\_moyen\_»"
-advanced_search_syntax.qualifiers.priority.example3: "Les tickets de priorité «\_haute\_»"
-advanced_search_syntax.qualifiers.priority.title: Priorité
-advanced_search_syntax.qualifiers.solution.example1: 'Les tickets n’ayant pas de solution'
-advanced_search_syntax.qualifiers.solution.example2: 'Les tickets ayant une solution'
-advanced_search_syntax.qualifiers.solution.title: Solution
-advanced_search_syntax.qualifiers.status.example1: "Les tickets avec le statut «\_nouveau\_»"
-advanced_search_syntax.qualifiers.status.example2: "Les tickets avec les statuts «\_nouveau\_» ou «\_en cours\_»"
-advanced_search_syntax.qualifiers.status.title: Statut
-advanced_search_syntax.qualifiers.status.values: "Les valeurs de statut possibles sont\_: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, ainsi que les raccourcis <code>open</code> (incluant les 4 premiers) et <code>finished</code> (incluant les 2 derniers)."
-advanced_search_syntax.qualifiers.title: 'Rechercher par qualificateurs'
-advanced_search_syntax.qualifiers.type.example1: "Les tickets de type «\_incident\_»"
-advanced_search_syntax.qualifiers.type.example2: "Les tickets de type «\_demande\_»"
-advanced_search_syntax.qualifiers.type.title: Type
-advanced_search_syntax.title: 'Aide-mémoire de la syntaxe avancée'
+advanced_search_syntax.tickets.complex.example1: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_»"
+advanced_search_syntax.tickets.complex.example2: "Les tickets de statut «\_nouveau\_», ou ceux qui vous sont attribués"
+advanced_search_syntax.tickets.complex.example3: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_» ou qui vous sont attribués"
+advanced_search_syntax.tickets.complex.title: 'Recherches complexes'
+advanced_search_syntax.tickets.identifier.example1: "Le ticket avec l’identifiant «\_42\_»"
+advanced_search_syntax.tickets.identifier.title: 'Rechercher par identifiant'
+advanced_search_syntax.tickets.intro1: 'La recherche par syntaxe avancée vous permet de rechercher précisément les tickets qui vous intéressent.'
+advanced_search_syntax.tickets.intro2: 'Trouvez ci-dessous quelques exemples illustrant les possibilités du moteur de recherche.'
+advanced_search_syntax.tickets.keywords.example1: "Les tickets contenant le mot «\_emails\_» <strong>et</strong> le mot «\_spam\_» dans leur titre"
+advanced_search_syntax.tickets.keywords.example2: "Les tickets contenant le mot «\_emails\_» <strong>ou</strong> le mot «\_spam\_» dans leur titre"
+advanced_search_syntax.tickets.keywords.example3: "Les tickets contenant la suite de mots «\_emails spam\_» dans leur titre"
+advanced_search_syntax.tickets.keywords.title: 'Rechercher par mots-clés'
+advanced_search_syntax.tickets.not.example1: "Les tickets contenant le mot «\_emails\_» mais pas le mot «\_spam\_» dans leur titre"
+advanced_search_syntax.tickets.not.example2: "Les tickets qui n’ont pas un statut «\_ouvert\_» (équivalent à «\_<code>NOT status:open\_»</code>). Cette syntaxe n’est valable qu’avec les qualificateurs."
+advanced_search_syntax.tickets.not.title: 'Rechercher par négation'
+advanced_search_syntax.tickets.qualifiers.actors.example1: "Les tickets attribués à un utilisateur dont le nom ou l’email contient «\_alix\_»"
+advanced_search_syntax.tickets.qualifiers.actors.example2: 'Les tickets pour lesquels vous êtes demandeur'
+advanced_search_syntax.tickets.qualifiers.actors.example3: 'Les tickets pour lesquels vous êtes observateur'
+advanced_search_syntax.tickets.qualifiers.actors.example4: "Les tickets attribués à un utilisateur «\_alix\_», ou pour lesquels il est demandeur"
+advanced_search_syntax.tickets.qualifiers.actors.example5: 'Les tickets n’ayant pas d’agent attribué'
+advanced_search_syntax.tickets.qualifiers.actors.example6: 'Les tickets ayant un agent attribué'
+advanced_search_syntax.tickets.qualifiers.actors.title: Acteurs
+advanced_search_syntax.tickets.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
+advanced_search_syntax.tickets.qualifiers.labels.example1: "Les tickets avec l’étiquette «\_Bug\_» (insensible à la casse)"
+advanced_search_syntax.tickets.qualifiers.labels.example2: "Les tickets avec les étiquettes «\_Bug\_» et «\_Tickets topic\_»"
+advanced_search_syntax.tickets.qualifiers.labels.example3: "Les tickets avec les étiquettes «\_Bug\_» ou «\_Tickets topic\_»"
+advanced_search_syntax.tickets.qualifiers.labels.example4: 'Les tickets ayant au moins une étiquette'
+advanced_search_syntax.tickets.qualifiers.labels.example5: 'Les tickets n’ayant aucune étiquette'
+advanced_search_syntax.tickets.qualifiers.labels.title: Étiquettes
+advanced_search_syntax.tickets.qualifiers.organization.example1: "Les tickets des organisations dont le nom contient «\_probesys\_»"
+advanced_search_syntax.tickets.qualifiers.organization.title: Organisations
+advanced_search_syntax.tickets.qualifiers.priority.example1: "Les tickets d’urgence «\_basse\_»"
+advanced_search_syntax.tickets.qualifiers.priority.example2: "Les tickets d’impact «\_bas\_» ou «\_moyen\_»"
+advanced_search_syntax.tickets.qualifiers.priority.example3: "Les tickets de priorité «\_haute\_»"
+advanced_search_syntax.tickets.qualifiers.priority.title: Priorité
+advanced_search_syntax.tickets.qualifiers.solution.example1: 'Les tickets n’ayant pas de solution'
+advanced_search_syntax.tickets.qualifiers.solution.example2: 'Les tickets ayant une solution'
+advanced_search_syntax.tickets.qualifiers.solution.title: Solution
+advanced_search_syntax.tickets.qualifiers.status.example1: "Les tickets avec le statut «\_nouveau\_»"
+advanced_search_syntax.tickets.qualifiers.status.example2: "Les tickets avec les statuts «\_nouveau\_» ou «\_en cours\_»"
+advanced_search_syntax.tickets.qualifiers.status.title: Statut
+advanced_search_syntax.tickets.qualifiers.status.values: "Les valeurs de statut possibles sont\_: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, ainsi que les raccourcis <code>open</code> (incluant les 4 premiers) et <code>finished</code> (incluant les 2 derniers)."
+advanced_search_syntax.tickets.qualifiers.title: 'Rechercher par qualificateurs'
+advanced_search_syntax.tickets.qualifiers.type.example1: "Les tickets de type «\_incident\_»"
+advanced_search_syntax.tickets.qualifiers.type.example2: "Les tickets de type «\_demande\_»"
+advanced_search_syntax.tickets.qualifiers.type.title: Type
+advanced_search_syntax.tickets.title: 'Aide-mémoire de la recherche avancée des tickets'
 authorizations.new.global: Global
 authorizations.new.organization_caption: 'L’autorisation peut être limitée à une organisation spécifique, ou appliquée globalement.'
 authorizations.new.organization_scope: 'Champ d’application organisationnelle'
@@ -112,6 +133,11 @@ contracts.show.notes_confidential: Confidentielles
 contracts.show.renew: Renouveler
 contracts.show.set_up_alerts: 'Configurer les alertes'
 contracts.show.warning: Attention
+contracts.sort.alphabetical: 'Ordre alphabétique'
+contracts.sort.antichronological: 'Ordre de fin antichronologique'
+contracts.sort.chronological: 'Ordre de fin chronologique'
+contracts.sort.label: 'Trier par'
+contracts.sort.reverse_alphabetical: 'Ordre alphabétique inverse'
 contracts.status: Statut
 contracts.status.coming: 'À venir'
 contracts.status.finished: Terminé
@@ -143,6 +169,13 @@ forms.optional: (optionnel)
 forms.optional_max_chars: '(optionnel, max. {number} caractères)'
 forms.read_only: '(lecture seule)'
 forms.save_changes: 'Enregistrer les modifications'
+forms.search.advanced_label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
+forms.search.advanced_help: 'Afficher l’aide de la syntaxe'
+forms.search.advanced_title: 'Recherche avancée'
+forms.search.quick_label: 'Rechercher par mots-clés ou par #id'
+forms.search.quick_placeholder: 'Mots-clés ou #id'
+forms.search.quick_title: 'Recherche rapide'
+forms.search.submit: Rechercher
 forms.show_password: 'Afficher le mot de passe sous forme de texte. Attention, cela exposera votre mot de passe visuellement.'
 home.all_your_tickets: 'Voir tous vos tickets'
 home.new_ticket: 'Nouveau ticket'
@@ -454,12 +487,6 @@ tickets.priority.high: Haute
 tickets.priority.low: Basse
 tickets.priority.medium: Moyenne
 tickets.requester: Demandeur
-tickets.search.advanced_search: 'Recherche avancée'
-tickets.search.help: 'Afficher l’aide de la syntaxe'
-tickets.search.label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
-tickets.search.placeholder: 'Mots-clés ou #id'
-tickets.search.quick_search: 'Recherche rapide'
-tickets.search.submit: Rechercher
 tickets.show.actions.rename: 'Renommer le ticket'
 tickets.show.actions.reopen: 'Réouvrir le ticket'
 tickets.show.actions.reopen.confirm: "Le ticket est actuellement fermé. Il est généralement préférable d’ouvrir un nouveau ticket, sauf en cas d’erreur. Êtes-vous sûr de vouloir réouvrir ce ticket\_?"

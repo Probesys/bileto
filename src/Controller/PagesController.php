@@ -11,6 +11,7 @@ use App\Repository;
 use App\SearchEngine;
 use App\Service;
 use App\Service\Sorter;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -59,8 +60,15 @@ class PagesController extends BaseController
     }
 
     #[Route('/advanced-search-syntax', name: 'advanced search syntax', methods: ['GET', 'HEAD'])]
-    public function advancedSearchSyntax(): Response
+    public function advancedSearchSyntax(Request $request): Response
     {
-        return $this->render('pages/advanced_search_syntax.html.twig');
+        $supportedSubjects = ['tickets', 'contracts'];
+        $subject = $request->query->getString('subject');
+
+        if (!in_array($subject, $supportedSubjects)) {
+            throw $this->createNotFoundException('The subject is not supported');
+        }
+
+        return $this->render("pages/advanced_search_syntax/{$subject}.html.twig");
     }
 }

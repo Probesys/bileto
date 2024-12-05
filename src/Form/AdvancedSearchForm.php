@@ -4,7 +4,7 @@
 // Copyright 2022-2024 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Form\Ticket;
+namespace App\Form;
 
 use App\SearchEngine;
 use Symfony\Component\Form\AbstractType;
@@ -36,7 +36,7 @@ class AdvancedSearchForm extends AbstractType
             'required' => false,
             'label' => false,
             'attr' => [
-                'aria-label' => $this->translator->trans('tickets.search.label'),
+                'aria-label' => $this->translator->trans('forms.search.advanced_label'),
             ],
         ]);
 
@@ -49,7 +49,7 @@ class AdvancedSearchForm extends AbstractType
                     return SearchEngine\Query::fromString($queryString);
                 } catch (SearchEngine\Query\SyntaxError $e) {
                     $failure = new TransformationFailedException($e->getMessage());
-                    $message = new TranslatableMessage('ticket.search.invalid', domain: 'errors');
+                    $message = new TranslatableMessage('forms.search.syntax_invalid', domain: 'errors');
                     $failure->setInvalidMessage($message);
                     throw $failure;
                 }

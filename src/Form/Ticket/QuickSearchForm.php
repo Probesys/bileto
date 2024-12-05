@@ -36,8 +36,8 @@ class QuickSearchForm extends AbstractType
             'required' => false,
             'label' => false,
             'attr' => [
-                'aria-label' => $this->translator->trans('tickets.search.label'),
-                'aria-placeholder' => $this->translator->trans('tickets.search.placeholder'),
+                'aria-label' => $this->translator->trans('forms.search.quick_label'),
+                'aria-placeholder' => $this->translator->trans('forms.search.quick_placeholder'),
                 'autocomplete' => 'off',
             ],
         ]);
@@ -167,7 +167,7 @@ class QuickSearchForm extends AbstractType
         ]);
 
         $builder->add('submit', Type\SubmitType::class, [
-            'label' => new TranslatableMessage('tickets.search.submit'),
+            'label' => new TranslatableMessage('forms.search.submit'),
             'block_prefix' => 'submit_arrow',
             'attr' => [
                 'class' => 'button',

@@ -1,0 +1,33 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div class="panel flow flow--large">
+    <h2>
+        {{ 'forms.search.advanced_title' | trans }}
+    </h2>
+
+    {{ form_start(advancedSearchForm) }}
+        {{ form_errors(advancedSearchForm) }}
+
+        {{ form_row(advancedSearchForm.q) }}
+
+        <button
+            class="button--anchor text--small"
+            data-controller="modal-opener"
+            data-action="modal-opener#fetch"
+            data-modal-opener-href-value="{{ path('advanced search syntax', { subject: 'contracts' }) }}"
+        >
+            {{ 'forms.search.advanced_help' | trans }}
+        </button>
+
+        <div class="text--right">
+            <button class="button--animated-icon" type="submit">
+                {{ 'forms.search.submit' | trans }}
+                {{ icon('arrow-right') }}
+            </button>
+        </div>
+    {{ form_end(advancedSearchForm) }}
+</div>
