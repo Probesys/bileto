@@ -43,6 +43,7 @@
 }
 
 .popup__container--center {
+    right: auto;
     left: 50%;
 
     margin-top: 0.5rem;
