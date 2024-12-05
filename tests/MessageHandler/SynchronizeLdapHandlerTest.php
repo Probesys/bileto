@@ -30,13 +30,14 @@ class SynchronizeLdapHandlerTest extends WebTestCase
 
         $this->assertSame(2, Factory\UserFactory::count());
 
-        $users = Factory\UserFactory::all();
-        $this->assertSame('charlie', $users[0]->getLdapIdentifier());
-        $this->assertSame('charlie@example.com', $users[0]->getEmail());
-        $this->assertSame('Charlie Gature', $users[0]->getName());
-        $this->assertSame('dominique', $users[1]->getLdapIdentifier());
-        $this->assertSame('dominique@example.org', $users[1]->getEmail());
-        $this->assertSame('Dominique Aragua', $users[1]->getName());
+        $user1 = Factory\UserFactory::first(sortBy: 'email');
+        $user2 = Factory\UserFactory::last(sortBy: 'email');
+        $this->assertSame('charlie', $user1->getLdapIdentifier());
+        $this->assertSame('charlie@example.com', $user1->getEmail());
+        $this->assertSame('Charlie Gature', $user1->getName());
+        $this->assertSame('dominique', $user2->getLdapIdentifier());
+        $this->assertSame('dominique@example.org', $user2->getEmail());
+        $this->assertSame('Dominique Aragua', $user2->getName());
     }
 
     public function testInvokeUpdateUsers(): void
