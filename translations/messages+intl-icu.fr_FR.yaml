@@ -480,7 +480,6 @@ tickets.organization: Organisation
 tickets.organization.edit.information: 'Vous êtes sur le point de transférer un ticket dans une autre organisation. <strong>Vous allez potentiellement donner accès à ce ticket à de nouvelles personnes.</strong> Aussi, les acteurs du ticket n’étant pas dans l’organisation de destination seront retirés. Si le ticket est associé à des contrats, ceux-ci seront également détachés.'
 tickets.organization.edit.title: 'Transférer le ticket'
 tickets.organization.edit.transfer: Transférer
-tickets.show.actions.transfer: 'Transférer le ticket'
 tickets.priority: Priorité
 tickets.priority.edit.title: 'Modifier la priorité'
 tickets.priority.high: Haute
@@ -490,15 +489,19 @@ tickets.requester: Demandeur
 tickets.show.actions.rename: 'Renommer le ticket'
 tickets.show.actions.reopen: 'Réouvrir le ticket'
 tickets.show.actions.reopen.confirm: "Le ticket est actuellement fermé. Il est généralement préférable d’ouvrir un nouveau ticket, sauf en cas d’erreur. Êtes-vous sûr de vouloir réouvrir ce ticket\_?"
+tickets.show.actions.transfer: 'Transférer le ticket'
 tickets.show.actions.turn_into_incident: 'Changer en incident'
 tickets.show.actions.turn_into_request: 'Changer en demande'
 tickets.show.actions.update_status: 'Modifier le statut'
 tickets.show.answer: Répondre
+tickets.show.answer_solution: "Comment évaluez-vous la solution proposée\_?"
+tickets.show.answer_solution.approve: 'Approuver la solution'
+tickets.show.answer_solution.nothing: 'Ne pas statuer'
+tickets.show.answer_solution.refuse: 'Refuser la solution'
 tickets.show.answer_type: 'Type de réponse'
 tickets.show.answer_type.normal: Réponse
 tickets.show.answer_type.confidential: 'Réponse confidentielle'
 tickets.show.answer_type.solution: Solution
-tickets.show.approve: Approuver
 tickets.show.assign_yourself: 'vous attribuer le ticket'
 tickets.show.assignee: "Attribué à\_:"
 tickets.show.hide_history: 'Masquer l’historique des changements'
@@ -513,9 +516,7 @@ tickets.show.observers.none: Aucun
 tickets.show.opened_incident: 'a ouvert cet <strong>incident</strong>'
 tickets.show.opened_on: 'le {date}'
 tickets.show.opened_request: 'a ouvert cette <strong>demande</strong>'
-tickets.show.refuse: Refuser
 tickets.show.requester: "Demandeur\_:"
-tickets.show.resolved: 'Ce ticket est résolu.'
 tickets.show.show_history: 'Afficher l’historique des changements'
 tickets.show.time_spent: '{count} passée(s)'
 tickets.show.time_spent.accounted: '{ count } comptabilisée(s)'

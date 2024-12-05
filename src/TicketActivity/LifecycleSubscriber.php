@@ -77,6 +77,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
 
         $messageAuthor = $message->getCreatedBy();
         $isConfidential = $message->isConfidential();
+        $via = $message->getVia();
         $requester = $ticket->getRequester();
         $assignee = $ticket->getAssignee();
         $status = $ticket->getStatus();
@@ -90,7 +91,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
             if ($status === 'pending') {
                 $ticket->setStatus('in_progress');
                 $this->ticketRepository->save($ticket, true);
-            } elseif ($status === 'resolved') {
+            } elseif ($status === 'resolved' && $via === 'email') {
                 $ticket->setStatus('in_progress');
                 $ticket->setSolution(null);
                 $this->ticketRepository->save($ticket, true);

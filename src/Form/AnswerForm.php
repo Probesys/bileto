@@ -41,6 +41,7 @@ class AnswerForm extends AbstractType
             $requester = $ticket->getRequester();
             $assignee = $ticket->getAssignee();
             $ticketIsResolved = $ticket->getStatus() === 'resolved';
+            $ticketHasSolution = $ticket->hasSolution();
 
             /** @var Entity\User */
             $currentUser = $this->security->getUser();
@@ -100,24 +101,40 @@ class AnswerForm extends AbstractType
                 ],
             ]);
 
-            $canPostSolutionApprovement = $ticketIsResolved && $userIsRequester;
+            $canPostSolutionApprovement = $ticketIsResolved && $ticketHasSolution;
+            $canPostSolutionApprovement &= $userIsRequester || $userIsAssignee;
 
             if ($canPostSolutionApprovement) {
-                $form->add('submitSolutionRefusal', Type\SubmitType::class, [
-                    'label' => new TranslatableMessage('tickets.show.refuse'),
-                    'block_prefix' => 'submit_refusal',
-                ]);
+                if ($userIsAssignee) {
+                    $choices = ['nothing', 'approve', 'refuse'];
+                    $data = 'nothing';
+                } else {
+                    $choices = ['approve', 'refuse'];
+                    $data = 'approve';
+                }
 
-                $form->add('submitSolutionApproval', Type\SubmitType::class, [
-                    'label' => new TranslatableMessage('tickets.show.approve'),
-                    'block_prefix' => 'submit_approval',
-                ]);
-            } else {
-                $form->add('submit', Type\SubmitType::class, [
-                    'label' => new TranslatableMessage('tickets.show.answer'),
-                    'block_prefix' => 'submit_arrow',
+                $form->add('solutionAction', Type\ChoiceType::class, [
+                    'label' => new TranslatableMessage('tickets.show.answer_solution'),
+                    'data' => $data,
+                    'choices' => $choices,
+                    'choice_label' => function (string $choice): TranslatableMessage {
+                        return new TranslatableMessage("tickets.show.answer_solution.{$choice}");
+                    },
+                    'expanded' => true,
+                    'mapped' => false,
+                    'row_attr' => [
+                        'class' => 'panel answer__solution-panel flow',
+                    ],
+                    'attr' => [
+                        'class' => 'cols cols--center flow',
+                    ],
                 ]);
             }
+
+            $form->add('submit', Type\SubmitType::class, [
+                'label' => new TranslatableMessage('tickets.show.answer'),
+                'block_prefix' => 'submit_arrow',
+            ]);
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {

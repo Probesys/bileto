@@ -69,10 +69,7 @@ class MessagesController extends BaseController
         }
 
         $type = $form->has('type') ? $form->get('type')->getData() : 'normal';
-        /** @var ?SubmitButton */
-        $submitSolutionApproval = $form->has('submitSolutionApproval') ? $form->get('submitSolutionApproval') : null;
-        /** @var ?SubmitButton */
-        $submitSolutionRefusal = $form->has('submitSolutionRefusal') ? $form->get('submitSolutionRefusal') : null;
+        $solutionAction = $form->has('solutionAction') ? $form->get('solutionAction')->getData() : 'nothing';
 
         $messageEvent = new TicketActivity\MessageEvent($message);
 
@@ -80,9 +77,9 @@ class MessagesController extends BaseController
 
         if ($type === 'solution') {
             $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED_SOLUTION);
-        } elseif ($submitSolutionApproval && $submitSolutionApproval->isClicked()) {
+        } elseif ($solutionAction === 'approve') {
             $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::APPROVED_SOLUTION);
-        } elseif ($submitSolutionRefusal && $submitSolutionRefusal->isClicked()) {
+        } elseif ($solutionAction === 'refuse') {
             $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::REFUSED_SOLUTION);
         } else {
             $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED_ANSWER);

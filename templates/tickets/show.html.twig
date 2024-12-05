@@ -470,13 +470,6 @@
                             }) }}
                                 {{ form_errors(form) }}
 
-                                {% if ticket.status == 'resolved' %}
-                                    <p class="text--center text--success">
-                                        {{ icon('check') }}
-                                        {{ 'tickets.show.resolved' | trans }}
-                                    </p>
-                                {% endif %}
-
                                 {% if form.type is defined %}
                                     <div class="cols flow">
                                         <div class="col--extend">
@@ -516,17 +509,13 @@
 
                                 {{ form_row(form.content) }}
 
-                                {% if form.submit is defined %}
-                                    <div class="text--center">
-                                        {{ form_row(form.submit) }}
-                                    </div>
-                                {% else %}
-                                    <div class="cols cols--always flow flow--small text--center">
-                                        {{ form_row(form.submitSolutionRefusal) }}
-
-                                        {{ form_row(form.submitSolutionApproval) }}
-                                    </div>
+                                {% if form.solutionAction is defined %}
+                                    {{ form_row(form.solutionAction) }}
                                 {% endif %}
+
+                                <div class="text--center">
+                                    {{ form_row(form.submit) }}
+                                </div>
                             {{ form_end(form) }}
                         {% endif %}
                     </div>

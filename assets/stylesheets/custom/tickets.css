@@ -28,3 +28,53 @@
 .tickets-show .answer__select-answer-type {
     width: auto;
 }
+
+.tickets-show .answer__solution-panel {
+    position: relative;
+
+    padding-right: calc(2.5rem + 1rem);
+
+    background-color: var(--color-grey3);
+
+    transition: background-color 0.2s ease-in-out;
+}
+
+.tickets-show .answer__solution-panel::after {
+    content: '';
+
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+
+    display: inline-block;
+
+    mask-position: center center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+
+    transform: translateY(-50%);
+}
+
+.tickets-show .answer__solution-panel:has(input[type="radio"][value="approve"]:checked) {
+    background-color: var(--color-primary3);
+}
+
+.tickets-show .answer__solution-panel:has(input[type="radio"][value="approve"]:checked)::after {
+    width: 2rem;
+    height: 2rem;
+
+    background-color: var(--color-primary9);
+    mask-image: url("../../icons/check.svg");
+}
+
+.tickets-show .answer__solution-panel:has(input[type="radio"][value="refuse"]:checked) {
+    background-color: var(--color-warning3);
+}
+
+.tickets-show .answer__solution-panel:has(input[type="radio"][value="refuse"]:checked)::after {
+    width: 2.5rem;
+    height: 2.5rem;
+
+    background-color: var(--color-warning9);
+    mask-image: url("../../icons/close.svg");
+}

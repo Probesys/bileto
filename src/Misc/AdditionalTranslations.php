@@ -56,6 +56,9 @@ new TranslatableMessage('tickets.type.request');
 new TranslatableMessage('tickets.type.incident');
 
 // See src/Form/AnswerForm.php
+new TranslatableMessage('tickets.show.answer_solution.approve');
+new TranslatableMessage('tickets.show.answer_solution.nothing');
+new TranslatableMessage('tickets.show.answer_solution.refuse');
 new TranslatableMessage('tickets.show.answer_type.confidential');
 new TranslatableMessage('tickets.show.answer_type.normal');
 new TranslatableMessage('tickets.show.answer_type.solution');

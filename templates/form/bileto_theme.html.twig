@@ -227,31 +227,6 @@
     </button>
 {%- endblock submit_arrow_widget %}
 
-{%- block submit_approval_widget -%}
-    {%- set attr = attr|merge({class: (attr.class|default('button--primary'))|trim}) -%}
-    <button type="submit" {{ block('button_attributes') }}>
-        {{ icon('check') }}&nbsp;
-
-        {%- if label_html is same as(false) -%}
-            {{ label|trans(label_translation_parameters, translation_domain) -}}
-        {%- else -%}
-            {{- label|trans(label_translation_parameters, translation_domain)|raw -}}
-        {%- endif -%}
-    </button>
-{%- endblock submit_approval_widget %}
-
-{%- block submit_refusal_widget -%}
-    <button type="submit" {{ block('button_attributes') }}>
-        {{ icon('close') }}&nbsp;
-
-        {%- if label_html is same as(false) -%}
-            {{ label|trans(label_translation_parameters, translation_domain) -}}
-        {%- else -%}
-            {{- label|trans(label_translation_parameters, translation_domain)|raw -}}
-        {%- endif -%}
-    </button>
-{%- endblock submit_refusal_widget %}
-
 {%- block submit_widget -%}
     {%- set attr = attr|merge({class: (attr.class|default('button--primary'))|trim}) -%}
     {{- parent() -}}

@@ -400,7 +400,7 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('resolved', $ticket->getStatus());
     }
 
-    public function testPostCreateRefusesSolutionIfActionIsRefuseSolutionAndUserIsRequester(): void
+    public function testPostCreateRefusesSolutionIfActionIsRefuseSolution(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -422,7 +422,7 @@ class MessagesControllerTest extends WebTestCase
             'answer' => [
                 '_token' => $this->generateCsrfToken($client, 'answer'),
                 'content' => $messageContent,
-                'submitSolutionRefusal' => true,
+                'solutionAction' => 'refuse',
             ],
         ]);
 
@@ -434,7 +434,7 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('in_progress', $ticket->getStatus());
     }
 
-    public function testPostCreateApprovesSolutionIfActionIsApproveSolutionAndUserIsRequester(): void
+    public function testPostCreateApprovesSolutionIfActionIsApprove(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -456,7 +456,7 @@ class MessagesControllerTest extends WebTestCase
             'answer' => [
                 '_token' => $this->generateCsrfToken($client, 'answer'),
                 'content' => $messageContent,
-                'submitSolutionApproval' => true,
+                'solutionAction' => 'approve',
             ],
         ]);
 
