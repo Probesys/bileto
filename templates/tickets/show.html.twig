@@ -497,6 +497,8 @@
                                                 </div>
 
                                                 <div data-switch-target="panel" id="time-spent-input" {{ not timeSpentChanged ? 'hidden' }}>
+                                                    {{ form_errors(form.timeSpent) }}
+
                                                     <label>
                                                         {{ form_widget(form.timeSpent) }}
                                                         {{ field_label(form.timeSpent) }}

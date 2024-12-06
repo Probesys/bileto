@@ -76,13 +76,15 @@ class AnswerForm extends AbstractType
                 ]);
 
                 if ($this->authorizer->isGranted('orga:create:tickets:time_spent', $organization)) {
-                    $form->add('timeSpent', Type\NumberType::class, [
+                    $form->add('timeSpent', Type\IntegerType::class, [
                         'label' => new TranslatableMessage('tickets.show.minutes'),
-                        'data' => 0,
+                        'empty_data' => '0',
                         'mapped' => false,
+                        'required' => false,
                         'attr' => [
                             'class' => 'input--size2 widget--small',
                             'min' => 0,
+                            'autocomplete' => 'off',
                         ],
                     ]);
                 }
