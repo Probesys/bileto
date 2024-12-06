@@ -5,9 +5,9 @@
 
 :root {
     --checkbox-border-radius: var(--border-radius-smaller);
-    --checkbox-size: 1.0rem;
+    --checkbox-size: 20px;
     --checkbox-tick-color: var(--form-border-color);
-    --checkbox-tick-size: 0.6rem;
+    --checkbox-tick-size: 12px;
     --checkbox-tick-width: 2px;
 
     --form-background-color: var(--color-main-background);
@@ -139,7 +139,7 @@ input[type="radio"] + label::before {
 
     width: var(--checkbox-size);
     height: var(--checkbox-size);
-    margin-right: var(--space-small);
+    margin-right: var(--space-smaller);
 
     flex-shrink: 0;
 
@@ -175,8 +175,8 @@ input[type="radio"]:checked + label::after {
 
     width: var(--checkbox-tick-size);
     height: calc(var(--checkbox-tick-size) / 2);
-    margin-top: -0.15rem;
-    margin-left: 0.2rem;
+    margin-top: calc(-1 * (var(--checkbox-size) - var(--checkbox-tick-size)) / 2);
+    margin-left: calc((var(--checkbox-size) - var(--checkbox-tick-size)) / 2);
 
     border-bottom: var(--checkbox-tick-width) solid var(--checkbox-tick-color);
     border-left: var(--checkbox-tick-width) solid var(--checkbox-tick-color);
