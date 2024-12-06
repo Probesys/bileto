@@ -120,7 +120,7 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
         $this->maxHours = 10;
         $this->startAt = Utils\Time::now();
         $this->endAt = Utils\Time::relative('last day of december');
-        $this->timeAccountingUnit = 0;
+        $this->timeAccountingUnit = 30;
         $this->notes = '';
         $this->hoursAlert = 0;
         $this->dateAlert = 0;
