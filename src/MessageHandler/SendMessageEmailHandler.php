@@ -6,28 +6,31 @@
 
 namespace App\MessageHandler;
 
-use App\Repository\MessageRepository;
-use App\Message\SendMessageEmail;
-use App\Service\MessageDocumentStorage;
+use App\Repository;
+use App\Message;
+use App\Service;
+use App\Utils;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\File;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 class SendMessageEmailHandler
 {
     public function __construct(
-        private MessageRepository $messageRepository,
-        private MessageDocumentStorage $messageDocumentStorage,
+        private Repository\MessageRepository $messageRepository,
+        private Service\MessageDocumentStorage $messageDocumentStorage,
         private TransportInterface $transportInterface,
         private LoggerInterface $logger,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
-    public function __invoke(SendMessageEmail $data): void
+    public function __invoke(Message\SendMessageEmail $data): void
     {
         $messageId = $data->getMessageId();
         $message = $this->messageRepository->find($messageId);
@@ -89,15 +92,10 @@ class SendMessageEmailHandler
         $email->bcc(...$recipients);
         $email->subject($subject);
         $email->locale($locale);
-        $content = $message->getContent();
-        $email->context([
-            'subject' => $subject,
-            'ticket' => $ticket,
-            'content' => $content,
-        ]);
-        $email->htmlTemplate('emails/message.html.twig');
-        $email->textTemplate('emails/message.txt.twig');
 
+        $replacingMapping = [];
+
+        // Attach the message documents as attachments to the email
         foreach ($message->getMessageDocuments() as $messageDocument) {
             $filepath = $this->messageDocumentStorage->getPathname($messageDocument);
             $file = new File($filepath);
@@ -107,7 +105,30 @@ class SendMessageEmailHandler
                 $messageDocument->getMimetype()
             );
             $email->addPart($dataPart);
+
+            $initialUrl = $this->urlGenerator->generate(
+                'message document',
+                [
+                    'uid' => $messageDocument->getUid(),
+                    'extension' => $messageDocument->getExtension(),
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+
+            $replacingMapping[$initialUrl] = 'cid:' . $dataPart->getContentId();
         }
+
+        // Change the images URLs in the email in order to point to the "cid" references.
+        $content = $message->getContent();
+        $content = Utils\DomHelper::replaceImagesUrls($content, $replacingMapping);
+
+        $email->context([
+            'subject' => $subject,
+            'ticket' => $ticket,
+            'content' => $content,
+        ]);
+        $email->htmlTemplate('emails/message.html.twig');
+        $email->textTemplate('emails/message.txt.twig');
 
         // Set correct references headers so email clients can add the email to
         // the conversation thread.

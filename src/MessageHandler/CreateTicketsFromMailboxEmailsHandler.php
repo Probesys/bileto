@@ -295,32 +295,10 @@ class CreateTicketsFromMailboxEmailsHandler
      */
     private function replaceAttachmentsUrls(string $content, array $messageDocuments): string
     {
-        if (!$content) {
-            return '';
-        }
-
-        $contentDom = new \DOMDocument();
-
-        // DOMDocument::loadHTML considers the source string to be encoded in
-        // ISO-8859-1 by default. In order to not ending with weird characters,
-        // we encode the non-ASCII chars (i.e. all chars above >0x80) to HTML
-        // entities.
-        $content = mb_encode_numericentity(
-            $content,
-            [0x80, 0x10FFFF, 0, -1],
-            'UTF-8'
-        );
-
-        $contentDom->loadHTML($content, \LIBXML_NOERROR);
-        $contentDomXPath = new \DomXPath($contentDom);
+        $mapping = [];
 
         foreach ($messageDocuments as $attachmentId => $messageDocument) {
-            $imageNodes = $contentDomXPath->query("//img[@src='cid:{$attachmentId}']");
-
-            if ($imageNodes === false || $imageNodes->length === 0) {
-                // no corresponding node, the document was probably not inlined
-                continue;
-            }
+            $initialUrl = 'cid:' . $attachmentId;
 
             $messageDocumentUrl = $this->urlGenerator->generate(
                 'message document',
@@ -331,20 +309,10 @@ class CreateTicketsFromMailboxEmailsHandler
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
-            foreach ($imageNodes as $imageNode) {
-                if ($imageNode instanceof \DOMElement) {
-                    $imageNode->setAttribute('src', $messageDocumentUrl);
-                }
-            }
+            $mapping[$initialUrl] = $messageDocumentUrl;
         }
 
-        $result = $contentDom->saveHTML();
-
-        if ($result === false) {
-            return $content;
-        }
-
-        return $result;
+        return Utils\DomHelper::replaceImagesUrls($content, $mapping);
     }
 
     private function markError(MailboxEmail $mailboxEmail, string $error): void
