@@ -40,7 +40,7 @@ class SynchronizeLdapHandlerTest extends WebTestCase
         $this->assertSame('Dominique Aragua', $user2->getName());
     }
 
-    public function testInvokeUpdateUsers(): void
+    public function testInvokeUpdateUsersByLdapIdentifier(): void
     {
         $container = static::getContainer();
         /** @var MessageBusInterface */
@@ -49,6 +49,25 @@ class SynchronizeLdapHandlerTest extends WebTestCase
             'email' => 'cgature@example.com',
             'name' => 'C. Gature',
             'ldapIdentifier' => 'charlie',
+        ]);
+
+        $bus->dispatch(new Message\SynchronizeLdap());
+
+        $user->_refresh();
+        $this->assertSame('charlie@example.com', $user->getEmail());
+        $this->assertSame('Charlie Gature', $user->getName());
+        $this->assertSame('charlie', $user->getLdapIdentifier());
+    }
+
+    public function testInvokeUpdateUsersByEmailOtherwise(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+        $user = Factory\UserFactory::createOne([
+            'email' => 'charlie@example.com',
+            'name' => 'C. Gature',
+            'ldapIdentifier' => '',
         ]);
 
         $bus->dispatch(new Message\SynchronizeLdap());

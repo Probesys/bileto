@@ -52,9 +52,16 @@ class SynchronizeLdapHandler
                 'ldapIdentifier' => $ldapUser->getLdapIdentifier(),
             ]);
 
+            if (!$user) {
+                $user = $userRepository->findOneBy([
+                    'email' => $ldapUser->getEmail(),
+                ]);
+            }
+
             if ($user) {
                 $user->setEmail($ldapUser->getEmail());
                 $user->setName($ldapUser->getName());
+                $user->setLdapIdentifier($ldapUser->getLdapIdentifier());
 
                 $errors = $this->validator->validate($user);
                 $errors = ConstraintErrorsFormatter::format($errors);
