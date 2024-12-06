@@ -55,6 +55,9 @@ class MessageDocument implements EntityInterface, MonitorableEntityInterface, Ui
             'png',
             'webp',
         ],
+        'message' => [
+            'rfc822',
+        ],
         'text' => ['*'],
     ];
 
