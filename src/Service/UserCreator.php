@@ -50,6 +50,7 @@ class UserCreator
                     $user,
                     $defaultRole,
                     $defaultOrganization,
+                    $flush,
                 );
             }
         }

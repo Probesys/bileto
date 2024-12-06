@@ -30,14 +30,19 @@ class Authorizer
     ) {
     }
 
-    public function grant(Entity\User $user, Entity\Role $role, ?Entity\Organization $organization = null): void
-    {
+    public function grant(
+        Entity\User $user,
+        Entity\Role $role,
+        ?Entity\Organization $organization = null,
+        bool $flush = true
+    ): void {
         $authorization = new Entity\Authorization();
-        $authorization->setHolder($user);
         $authorization->setRole($role);
         $authorization->setOrganization($organization);
 
-        $this->authorizationRepository->save($authorization, true);
+        $user->addAuthorization($authorization);
+
+        $this->authorizationRepository->save($authorization, $flush);
     }
 
     public function ungrant(Entity\User $user, Entity\Authorization $authorization): void

@@ -150,6 +150,37 @@ class UserCreatorTest extends WebTestCase
         $this->assertSame($defaultOrganization->getUid(), $authOrganization->getUid());
     }
 
+    public function testCreateDoesNotFlushAuthorizationsIfFlushIsFalse(): void
+    {
+        $email = 'alix@example.com';
+        $role = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+        ]);
+        $organization = OrganizationFactory::createOne();
+
+        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, AuthorizationFactory::count());
+
+        $user = $this->userCreator->create(
+            email: $email,
+            organization: $organization->_real(),
+            flush: false,
+        );
+
+        $this->assertSame(0, UserFactory::count());
+        $this->assertSame(0, AuthorizationFactory::count());
+        $authorizations = $user->getAuthorizations();
+        $this->assertSame(1, count($authorizations));
+        $authHolder = $authorizations[0]->getHolder();
+        $authRole = $authorizations[0]->getRole();
+        $authOrganization = $authorizations[0]->getOrganization();
+        $this->assertSame($user->getUid(), $authHolder->getUid());
+        $this->assertSame($role->getUid(), $authRole->getUid());
+        $this->assertNotNull($authOrganization);
+        $this->assertSame($organization->getUid(), $authOrganization->getUid());
+    }
+
     public function testCreateFailsOnError(): void
     {
         $this->expectException(UserCreatorException::class);
