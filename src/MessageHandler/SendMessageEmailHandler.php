@@ -17,6 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
 class SendMessageEmailHandler
@@ -24,6 +25,7 @@ class SendMessageEmailHandler
     public function __construct(
         private Repository\MessageRepository $messageRepository,
         private Service\MessageDocumentStorage $messageDocumentStorage,
+        private TranslatorInterface $translator,
         private TransportInterface $transportInterface,
         private LoggerInterface $logger,
         private UrlGeneratorInterface $urlGenerator,
@@ -56,6 +58,8 @@ class SendMessageEmailHandler
         $observers = $ticket->getObservers();
         $assignee = $ticket->getAssignee();
 
+        $locale = $author->getLocale();
+
         $recipients = [];
 
         if ($requester !== $author) {
@@ -80,13 +84,18 @@ class SendMessageEmailHandler
 
         $previousMessage = $ticket->getMessageBefore($message, confidential: false);
 
-        $subject = "[#{$ticket->getId()}] {$ticket->getTitle()}";
+        $subject = "[#{$ticket->getId()}]";
+
+        if ($ticket->isFinished()) {
+            $status = $this->translator->trans($ticket->getStatusLabel(), locale: $locale);
+            $subject = "{$subject} [{$status}]";
+        }
+
+        $subject = "{$subject} {$ticket->getTitle()}";
 
         if ($previousMessage) {
             $subject = "Re: {$subject}";
         }
-
-        $locale = $author->getLocale();
 
         $email = new TemplatedEmail();
         $email->bcc(...$recipients);
