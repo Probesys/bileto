@@ -150,6 +150,8 @@ emails.politeness.regards: 'Cordialement,'
 emails.politeness.support_team: 'L’équipe support'
 emails.receipt.received: 'Nous avons bien reçu votre demande de support. Celle-ci va être examinée pour un traitement dans les meilleurs délais possibles.'
 emails.receipt.subject: 'Demande de support reçue'
+emails.receipt.view: 'Vous pouvez <a href="{url}">la consulter dans Bileto.</a>'
+emails.receipt.view_txt: "Vous pouvez la consulter dans Bileto\_: {url}"
 emails.reset_password.expiration: 'Si vous ne l’utilisez pas avant, ce lien expirera dans 2 heures.'
 emails.reset_password.intro: 'Vous recevez cet email car une demande de réinialisation de mot de passe a été faite pour votre compte.'
 emails.reset_password.reset: 'Réinitialiser votre mot de passe'

@@ -48,6 +48,7 @@ class SendReceiptEmailHandler
         $email->locale($locale);
         $email->context([
             'subject' => $subject,
+            'ticket' => $ticket,
         ]);
         $email->htmlTemplate('emails/receipt.html.twig');
         $email->textTemplate('emails/receipt.txt.twig');

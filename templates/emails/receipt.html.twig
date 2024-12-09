@@ -12,4 +12,8 @@
     <p>
         {{ 'emails.receipt.received' | trans }}
     </p>
+
+    <p>
+        {{ 'emails.receipt.view' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}
+    </p>
 {% endblock %}
