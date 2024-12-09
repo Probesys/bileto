@@ -23,6 +23,8 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
     /** @phpstan-use CommonTrait<Contract> */
     use CommonTrait;
     use UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<Contract> */
+    use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

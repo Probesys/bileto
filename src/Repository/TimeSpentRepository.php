@@ -20,6 +20,8 @@ class TimeSpentRepository extends ServiceEntityRepository implements UidGenerato
     /** @phpstan-use CommonTrait<TimeSpent> */
     use CommonTrait;
     use UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<TimeSpent> */
+    use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

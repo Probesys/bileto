@@ -146,7 +146,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     private ?Message $solution = null;
 
     /** @var Collection<int, Contract> $contracts */
-    #[ORM\ManyToMany(targetEntity: Contract::class, inversedBy: 'tickets')]
+    #[ORM\ManyToMany(targetEntity: Contract::class, inversedBy: 'tickets', cascade: ['persist'])]
     private Collection $contracts;
 
     /** @var Collection<int, TimeSpent> $timeSpents */
@@ -544,6 +544,15 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
 
         if ($newOngoingContract) {
             $this->addContract($newOngoingContract);
+        }
+
+        return $this;
+    }
+
+    public function setContracts(array $contracts): static
+    {
+        foreach ($contracts as $contract) {
+            $this->contracts->add($contract);
         }
 
         return $this;

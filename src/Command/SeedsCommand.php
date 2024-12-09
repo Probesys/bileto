@@ -6,6 +6,7 @@
 
 namespace App\Command;
 
+use App\ActivityMonitor;
 use App\Entity;
 use App\Repository;
 use App\Security;
@@ -29,16 +30,19 @@ class SeedsCommand extends Command
         private string $environment,
         private EntityManagerInterface $entityManager,
         private Repository\AuthorizationRepository $authorizationRepository,
+        private Repository\ContractRepository $contractRepository,
         private Repository\MailboxRepository $mailboxRepository,
         private Repository\MessageRepository $messageRepository,
         private Repository\OrganizationRepository $orgaRepository,
         private Repository\RoleRepository $roleRepository,
         private Repository\TicketRepository $ticketRepository,
+        private Repository\TimeSpentRepository $timeSpentRepository,
         private Repository\UserRepository $userRepository,
         private Security\Authorizer $authorizer,
         private Security\Encryptor $encryptor,
         private Service\Locales $locales,
         private UserPasswordHasherInterface $passwordHasher,
+        private ActivityMonitor\ActiveUser $activeUser,
     ) {
         parent::__construct();
     }
@@ -206,11 +210,26 @@ class SeedsCommand extends Command
                 'folder' => 'INBOX',
             ]);
 
+            $this->activeUser->change($userAlix);
+
+            // Seed contracts
+            $contract = new Entity\Contract();
+            $contract->setName('Friendly Coop 2024');
+            $contract->setStartAt(new \DateTimeImmutable('2024-01-01 00:00:00'));
+            $contract->setEndAt(new \DateTimeImmutable('2024-12-31 23:59:59'));
+            $contract->setMaxHours(30);
+            $contract->setTimeAccountingUnit(30);
+            $contract->setOrganization($orgaFriendlyCoop);
+            $this->contractRepository->save($contract, true);
+
             // Seed tickets
             $ticketEmails = $this->ticketRepository->findOneOrCreateBy([
-                'title' => 'My emails are not received',
+                'title' => 'Erreur d’envoi d’emails',
             ], [
                 'createdBy' => $userCharlie,
+                'createdAt' => Utils\Time::ago(1, 'day'),
+                'updatedBy' => $userCharlie,
+                'updatedAt' => Utils\Time::ago(5, 'hours'),
                 'type' => 'incident',
                 'status' => 'in_progress',
                 'urgency' => 'high',
@@ -219,12 +238,13 @@ class SeedsCommand extends Command
                 'organization' => $orgaFriendlyCoop,
                 'requester' => $userCharlie,
                 'assignee' => $userAlix,
+                'contracts' => [$contract],
             ]);
 
             $this->messageRepository->findOneOrCreateBy([
                 'content' => <<<HTML
-                    <p>Hello, when I send my email to evil.corp@example.com, I
-                    receive an error concerning its delivery.</p>
+                    <p>Bonjour, lorsque j’envoie un email à evil.corp@example.com,
+                    je reçois une erreur.</p>
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketEmails,
@@ -235,18 +255,7 @@ class SeedsCommand extends Command
 
             $this->messageRepository->findOneOrCreateBy([
                 'content' => <<<HTML
-                    <p>Evil Corp is rejecting our emails again!!</p>
-                HTML,
-                'isConfidential' => true,
-                'ticket' => $ticketEmails,
-                'createdAt' => Utils\Time::ago(10, 'hours'),
-                'createdBy' => $userAlix,
-                'via' => 'webapp',
-            ]);
-
-            $this->messageRepository->findOneOrCreateBy([
-                'content' => <<<HTML
-                    <p>Thanks for the notice, we’re working on it!</p>
+                    <p>Bonjour, pourriez-vous nous indiquer l’erreur que vous recevez ?</p>
                 HTML,
                 'isConfidential' => false,
                 'ticket' => $ticketEmails,
@@ -255,66 +264,99 @@ class SeedsCommand extends Command
                 'via' => 'webapp',
             ]);
 
-            $ticketUpdate = $this->ticketRepository->findOneOrCreateBy([
-                'title' => 'Update Bileto to v1.0',
-            ], [
-                'createdBy' => $userCharlie,
-                'type' => 'request',
-                'status' => 'planned',
-                'urgency' => 'low',
-                'impact' => 'medium',
-                'priority' => 'low',
-                'organization' => $orgaFriendlyCoop,
-                'requester' => $userCharlie,
-                'assignee' => $userAlix,
-            ]);
-
             $this->messageRepository->findOneOrCreateBy([
                 'content' => <<<HTML
-                    <p>It could be nice to update Bileto to the version 1.0 on the server.</p>
+                    <p>Oui bien sûr, l’erreur est la suivante : <code>Recipient
+                        address rejected: User unknown in virtual mailbox table
+                        (in reply to RCPT TO command)</code>.</p>
                 HTML,
                 'isConfidential' => false,
-                'ticket' => $ticketUpdate,
-                'createdAt' => Utils\Time::ago(5, 'days'),
+                'ticket' => $ticketEmails,
+                'createdAt' => Utils\Time::ago(5, 'hours'),
                 'createdBy' => $userCharlie,
                 'via' => 'webapp',
             ]);
 
+            $ticketConnection = $this->ticketRepository->findOneOrCreateBy([
+                'title' => 'Problème connexion Bileto',
+            ], [
+                'createdBy' => $userCharlie,
+                'createdAt' => Utils\Time::ago(4, 'days'),
+                'updatedBy' => $userCharlie,
+                'updatedAt' => Utils\Time::ago(3, 'days'),
+                'type' => 'incident',
+                'status' => 'resolved',
+                'urgency' => 'medium',
+                'impact' => 'medium',
+                'priority' => 'medium',
+                'organization' => $orgaFriendlyCoop,
+                'requester' => $userCharlie,
+                'assignee' => $userAlix,
+                'contracts' => [$contract],
+            ]);
+
             $this->messageRepository->findOneOrCreateBy([
                 'content' => <<<HTML
-                    <p>This is planned for tomorrow morning.</p>
+                    <p>Bonjour, je n’arrive pas à me connecter à Bileto avec mes identifiants habituels. Pouvez-vous m’aider ? Merci.</p>
                 HTML,
                 'isConfidential' => false,
-                'ticket' => $ticketUpdate,
+                'ticket' => $ticketConnection,
+                'createdAt' => Utils\Time::ago(4, 'day'),
+                'createdBy' => $userCharlie,
+                'via' => 'webapp',
+            ]);
+
+            $solution = $this->messageRepository->findOneOrCreateBy([
+                'content' => <<<HTML
+                    <p>Bonjour, comme vu au téléphone, il vous faut réinitialiser votre mot de passe dans Bileto avant de pouvoir vous connecter. Bonne journée.</p>
+                HTML,
+                'isConfidential' => false,
+                'ticket' => $ticketConnection,
                 'createdAt' => Utils\Time::now(),
                 'createdBy' => $userAlix,
                 'via' => 'webapp',
             ]);
 
-            $ticketFilter = $this->ticketRepository->findOneOrCreateBy([
-                'title' => '[Bileto] Allow to filter tickets',
+            $timeSpent = new Entity\TimeSpent();
+            $timeSpent->setTime(30);
+            $timeSpent->setRealTime(30);
+            $timeSpent->setContract($contract);
+            $timeSpent->setTicket($ticketConnection);
+            $timeSpent->setCreatedAt(Utils\Time::now());
+            $timeSpent->setCreatedBy($userAlix);
+            $timeSpent->setUpdatedBy($userAlix);
+
+            $this->timeSpentRepository->save($timeSpent, true);
+
+            $ticketConnection->setSolution($solution);
+            $this->entityManager->persist($ticketConnection);
+
+            $ticketClosed = $this->ticketRepository->findOneOrCreateBy([
+                'title' => 'Besoin restauration d’un backup',
             ], [
-                'createdBy' => $userBenedict,
+                'createdBy' => $userCharlie,
+                'createdAt' => Utils\Time::ago(10, 'days'),
+                'updatedBy' => $userCharlie,
+                'updatedAt' => Utils\Time::ago(9, 'days'),
                 'type' => 'request',
-                'status' => 'new',
-                'urgency' => 'medium',
-                'impact' => 'medium',
-                'priority' => 'medium',
-                'organization' => $orgaProbesys,
-                'requester' => $userBenedict,
-                'assignee' => null,
+                'status' => 'closed',
+                'urgency' => 'high',
+                'impact' => 'high',
+                'priority' => 'high',
+                'organization' => $orgaFriendlyCoop,
+                'requester' => $userCharlie,
+                'assignee' => $userBenedict,
+                'contracts' => [$contract],
             ]);
 
             $this->messageRepository->findOneOrCreateBy([
                 'content' => <<<HTML
-                    <p>As a <strong>user</strong>,<br>
-                    I want to <strong>filter tickets by their attributes</strong>,<br>
-                    so <strong>I quickly find those that interest me.</strong></p>
+                    <p>Bonjour, j’aurais besoin que vous remettiez en place le backup du 25 novembre dernier, merci !</p>
                 HTML,
                 'isConfidential' => false,
-                'ticket' => $ticketFilter,
-                'createdAt' => Utils\Time::ago(42, 'days'),
-                'createdBy' => $userBenedict,
+                'ticket' => $ticketClosed,
+                'createdAt' => Utils\Time::ago(10, 'day'),
+                'createdBy' => $userCharlie,
                 'via' => 'webapp',
             ]);
         }
