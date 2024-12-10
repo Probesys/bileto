@@ -49,6 +49,10 @@ services:
         arguments:
             - "%kernel.project_dir%/public/icons.svg"
 
+    App\Twig\SettingsExtension:
+        arguments:
+            - "%kernel.project_dir%/var/settings/logo.svg"
+
     Symfony\Component\Ldap\Ldap:
         arguments: ['@Symfony\Component\Ldap\Adapter\ExtLdap\Adapter']
         tags:

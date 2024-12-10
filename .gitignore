@@ -2,15 +2,19 @@
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/public/dev_assets/*
-/public/manifest.dev.json
-/uploads/
-/var/
+
 /vendor/
 /node_modules/
 
+/public/dev_assets/*
+
+/uploads/
+/var/cache
+/var/data
+/var/log
+/var/settings/*
+!/var/settings/.keep
+
 /.phpunit.result.cache
 /phpunit.xml
-
 /coverage
