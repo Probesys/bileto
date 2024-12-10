@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\Entity;
 use App\Repository;
 use App\SearchEngine;
+use App\Security;
 use App\Service;
 use App\Service\Sorter;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +24,18 @@ class PagesController extends BaseController
         Repository\OrganizationRepository $orgaRepository,
         Sorter\OrganizationSorter $orgaSorter,
         SearchEngine\Ticket\Searcher $ticketSearcher,
+        Security\Authorizer $authorizer,
         Service\UserService $userService,
     ): Response {
-        $ticketsPagination = $ticketSearcher->getTickets(SearchEngine\Ticket\Searcher::queryOwned(), 'updated-desc', [
+        if ($authorizer->isAgent('any')) {
+            $query = SearchEngine\Ticket\Searcher::queryAssignedMe();
+            $view = 'assigned-me';
+        } else {
+            $query = SearchEngine\Ticket\Searcher::queryOwned();
+            $view = 'owned';
+        }
+
+        $ticketsPagination = $ticketSearcher->getTickets($query, 'updated-desc', [
             'page' => 1,
             'maxResults' => 5,
         ]);
@@ -35,6 +45,7 @@ class PagesController extends BaseController
         $defaultOrganization = $userService->getDefaultOrganization($user);
 
         return $this->render('pages/home.html.twig', [
+            'view' => $view,
             'ticketsPagination' => $ticketsPagination,
             'defaultOrganization' => $defaultOrganization,
         ]);

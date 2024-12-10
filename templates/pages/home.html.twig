@@ -16,7 +16,13 @@
 
         <div class="flow">
             <div class="cols cols--center flow">
-                <h2 class="col--extend">{{ 'home.your_tickets' | trans }}</h2>
+                <h2 class="col--extend">
+                    {% if view == 'owned' %}
+                        {{ 'home.your_tickets' | trans }}
+                    {% elseif view == 'assigned-me' %}
+                        {{ 'home.your_assigned_tickets' | trans }}
+                    {% endif %}
+                </h2>
 
                 {% if defaultOrganization %}
                     <a
@@ -39,7 +45,7 @@
 
                     {% if ticketsPagination.mustPaginate %}
                         <div class="text--center">
-                            <a class="button" href="{{ path('tickets', { 'view': 'owned' }) }}">
+                            <a class="button" href="{{ path('tickets', { 'view': view }) }}">
                                 {{ 'home.all_your_tickets' | trans }}
                             </a>
                         </div>
