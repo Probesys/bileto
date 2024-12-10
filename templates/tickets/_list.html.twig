@@ -47,6 +47,46 @@
                         {% endif %}
                     </p>
 
+                    {% set canSeeRealTimeSpent = is_granted('orga:see:tickets:time_spent:real', ticket.organization) %}
+                    {% set canSeeAccountedTimeSpent = is_granted('orga:see:tickets:time_spent:accounted', ticket.organization) %}
+
+                    {% if canSeeRealTimeSpent and canSeeAccountedTimeSpent %}
+                        {% set accountedTime = ticket.sumTimeSpent('accounted') %}
+                        {% set unaccountedTime = ticket.sumTimeSpent('unaccounted') %}
+
+                        {% if accountedTime > 0 or unaccountedTime > 0 %}
+                            <p class="text--small">
+                                {% if accountedTime > 0 %}
+                                    {{ 'tickets.list.time_spent' | trans({ count: accountedTime | formatMinutes('long') }) }}
+
+                                    {% if unaccountedTime > 0 %}
+                                        —
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if unaccountedTime > 0 %}
+                                    {{ 'tickets.list.time_spent.unaccounted' | trans({ count: unaccountedTime | formatMinutes('long') }) }}
+                                {% endif %}
+                            </p>
+                        {% endif %}
+                    {% elseif canSeeRealTimeSpent %}
+                        {% set realTime = ticket.sumTimeSpent('real') %}
+
+                        {% if realTime > 0 %}
+                            <p class="text--small">
+                                {{ 'tickets.list.time_spent' | trans({ count: realTime | formatMinutes('long') }) }}
+                            </p>
+                        {% endif %}
+                    {% elseif canSeeAccountedTimeSpent %}
+                        {% set accountedTime = ticket.sumTimeSpent('accounted') %}
+
+                        {% if accountedTime > 0 %}
+                            <p class="text--small">
+                                {{ 'tickets.list.time_spent' | trans({ count: accountedTime | formatMinutes('long') }) }}
+                            </p>
+                        {% endif %}
+                    {% endif %}
+
                     {% if ticket.labels %}
                         <ul class="list--nostyle flow flow--inline flow--smaller text--small">
                             {% for label in ticket.labels %}

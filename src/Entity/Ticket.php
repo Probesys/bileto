@@ -610,6 +610,44 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         return $this;
     }
 
+    /**
+     * @param 'accounted'|'real'|'unaccounted' $type
+     */
+    public function getSumTimeSpent(string $type): int
+    {
+        /** @var ArrayCollection<int, TimeSpent> */
+        $timeSpents = $this->timeSpents;
+
+        if ($type === 'accounted') {
+            $criteria = Criteria::create();
+            $expr = Criteria::expr()->neq('contract', null);
+            $criteria->where($expr);
+
+            $timeSpents = $timeSpents->matching($criteria)->toArray();
+            $times = array_map(function ($timeSpent): int {
+                return $timeSpent->getTime();
+            }, $timeSpents);
+        } elseif ($type === 'unaccounted') {
+            $criteria = Criteria::create();
+            $expr = Criteria::expr()->isNull('contract');
+            $criteria->where($expr);
+
+            $timeSpents = $timeSpents->matching($criteria)->toArray();
+            $times = array_map(function ($timeSpent): int {
+                return $timeSpent->getTime();
+            }, $timeSpents);
+        } elseif ($type === 'real') {
+            $timeSpents = $timeSpents->toArray();
+            $times = array_map(function ($timeSpent): int {
+                return $timeSpent->getRealTime();
+            }, $timeSpents);
+        } else {
+            throw new \DomainException("Unexpected type {$type} (possible values: accounted, unaccounted, real)");
+        }
+
+        return array_sum($times);
+    }
+
     public function getUniqueKey(): string
     {
         $createdAt = '';
