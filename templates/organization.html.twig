@@ -9,87 +9,95 @@
 {% set currentPage = 'organizations' %}
 
 {% block submenu %}
-    <nav class="layout__submenu submenu" data-controller="submenu" aria-labelledby="submenu-title">
-        <div class="cols cols--always cols--center">
-            <div class="submenu__title col--extend" id="submenu-title">
-                {{ organization.name }}
+    {% set canSeeContracts = is_granted('orga:see:contracts', organization) %}
+    {% set canSeeUsers = is_granted('orga:see:users', organization) %}
+    {% set canManage = is_granted('orga:manage', organization) %}
+
+    {% set canSeeSubMenu = canSeeContracts or canSeeUsers or canManage %}
+
+    {% if canSeeSubMenu %}
+        <nav class="layout__submenu submenu" data-controller="submenu" aria-labelledby="submenu-title">
+            <div class="cols cols--always cols--center">
+                <div class="submenu__title col--extend" id="submenu-title">
+                    {{ organization.name }}
+                </div>
+
+                <div class="submenu__scroller only-mobile">
+                    <button
+                        class="button--icon button--discreet"
+                        data-submenu-target="buttonLeft"
+                        data-action="submenu#scrollLeft"
+                    >
+                        {{ icon('angle-down', 'icon--rotate90') }}
+
+                        <span class="sr-only">
+                            {{ 'submenu.scroller.scroll_to_left' | trans }}
+                        </span>
+                    </button>
+
+                    <button
+                        class="button--icon button--discreet"
+                        data-submenu-target="buttonRight"
+                        data-action="submenu#scrollRight"
+                    >
+                        {{ icon('angle-down', 'icon--rotate270') }}
+
+                        <span class="sr-only">
+                            {{ 'submenu.scroller.scroll_to_right' | trans }}
+                        </span>
+                    </button>
+                </div>
             </div>
 
-            <div class="submenu__scroller only-mobile">
-                <button
-                    class="button--icon button--discreet"
-                    data-submenu-target="buttonLeft"
-                    data-action="submenu#scrollLeft"
-                >
-                    {{ icon('angle-down', 'icon--rotate90') }}
-
-                    <span class="sr-only">
-                        {{ 'submenu.scroller.scroll_to_left' | trans }}
-                    </span>
-                </button>
-
-                <button
-                    class="button--icon button--discreet"
-                    data-submenu-target="buttonRight"
-                    data-action="submenu#scrollRight"
-                >
-                    {{ icon('angle-down', 'icon--rotate270') }}
-
-                    <span class="sr-only">
-                        {{ 'submenu.scroller.scroll_to_right' | trans }}
-                    </span>
-                </button>
-            </div>
-        </div>
-
-        <ul class="submenu__menu list--nostyle" data-submenu-target="menu">
-            <li class="submenu__item">
-                <a
-                    class="submenu__anchor"
-                    href="{{ path('organization tickets', { uid: organization.uid }) }}"
-                    {{ currentMenu == 'tickets' ? 'aria-current="page"' }}
-                >
-                    {{ 'tickets.index.title' | trans }}
-                </a>
-            </li>
-
-            {% if is_granted('orga:see:contracts', organization) %}
+            <ul class="submenu__menu list--nostyle" data-submenu-target="menu">
                 <li class="submenu__item">
                     <a
                         class="submenu__anchor"
-                        href="{{ path('organization contracts', { uid: organization.uid }) }}"
-                        {{ currentMenu == 'contracts' ? 'aria-current="page"' }}
+                        href="{{ path('organization tickets', { uid: organization.uid }) }}"
+                        {{ currentMenu == 'tickets' ? 'aria-current="page"' }}
                     >
-                        {{ 'contracts.index.title' | trans }}
+                        {{ 'tickets.index.title' | trans }}
                     </a>
                 </li>
-            {% endif %}
 
-            {% if is_granted('orga:see:users', organization) %}
-                <li class="submenu__item">
-                    <a
-                        class="submenu__anchor"
-                        href="{{ path('organization users', { uid: organization.uid }) }}"
-                        {{ currentMenu == 'users' ? 'aria-current="page"' }}
-                    >
-                        {{ 'users.index.title' | trans }}
-                    </a>
-                </li>
-            {% endif %}
+                {% if canSeeContracts %}
+                    <li class="submenu__item">
+                        <a
+                            class="submenu__anchor"
+                            href="{{ path('organization contracts', { uid: organization.uid }) }}"
+                            {{ currentMenu == 'contracts' ? 'aria-current="page"' }}
+                        >
+                            {{ 'contracts.index.title' | trans }}
+                        </a>
+                    </li>
+                {% endif %}
 
-            {% if is_granted('orga:manage', organization) %}
-                <li class="submenu__item">
-                    <a
-                        class="submenu__anchor"
-                        href="{{ path('organization settings', { uid: organization.uid }) }}"
-                        {{ currentMenu == 'settings' ? 'aria-current="page"' }}
-                    >
-                        {{ 'organizations.settings.title' | trans }}
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
+                {% if canSeeUsers %}
+                    <li class="submenu__item">
+                        <a
+                            class="submenu__anchor"
+                            href="{{ path('organization users', { uid: organization.uid }) }}"
+                            {{ currentMenu == 'users' ? 'aria-current="page"' }}
+                        >
+                            {{ 'users.index.title' | trans }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if canManage %}
+                    <li class="submenu__item">
+                        <a
+                            class="submenu__anchor"
+                            href="{{ path('organization settings', { uid: organization.uid }) }}"
+                            {{ currentMenu == 'settings' ? 'aria-current="page"' }}
+                        >
+                            {{ 'organizations.settings.title' | trans }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
 
     {% if currentMenu == 'tickets' and view is defined and is_agent(organization) %}
         {{ include('tickets/_menu.html.twig', {
