@@ -364,9 +364,66 @@
                         {% endif %}
                     </div>
 
-                    <div class="ticket__info-separator"></div>
+                    {% set canSeeAccountedTimeSpent = is_granted('orga:see:tickets:time_spent:accounted', organization) %}
+                    {% set canSeeRealTimeSpent = is_granted('orga:see:tickets:time_spent:real', organization) %}
+
+                    {% if canSeeAccountedTimeSpent or canSeeRealTimeSpent %}
+                        <div class="ticket__info-separator"></div>
+
+                        <div class="flow">
+                            <div class="cols cols--center cols--always flow">
+                                <h2 class="col--extend">
+                                    {{ 'tickets.time_spent' | trans }}
+                                </h2>
+                            </div>
+
+                            {% if canSeeRealTimeSpent and canSeeAccountedTimeSpent %}
+                                <p>
+                                    <span class="text--secondary">
+                                        {{ 'tickets.time_spent.real' | trans }}
+                                    </span>
+
+                                    {{ ticket.sumTimeSpent('real') | formatMinutes('long') }}
+                                </p>
+
+                                <p>
+                                    <span class="text--secondary">
+                                        {{ 'tickets.time_spent.accounted' | trans }}
+                                    </span>
+
+                                    {{ ticket.sumTimeSpent('accounted') | formatMinutes('long') }}
+                                </p>
+
+                                <p>
+                                    <span class="text--secondary">
+                                        {{ 'tickets.time_spent.unaccounted' | trans }}
+                                    </span>
+
+                                    {{ ticket.sumTimeSpent('unaccounted') | formatMinutes('long') }}
+                                </p>
+                            {% elseif canSeeRealTimeSpent %}
+                                <p>
+                                    <span class="text--secondary">
+                                        {{ 'tickets.time_spent.total' | trans }}
+                                    </span>
+
+                                    {{ ticket.sumTimeSpent('real') | formatMinutes('long') }}
+                                </p>
+                            {% elseif canSeeAccountedTimeSpent %}
+                                <p>
+                                    <span class="text--secondary">
+                                        {{ 'tickets.time_spent.total' | trans }}
+                                    </span>
+
+                                    {{ ticket.sumTimeSpent('accounted') | formatMinutes('long') }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
 
                     {% if is_granted('orga:see:tickets:contracts', organization) %}
+                        <div class="ticket__info-separator"></div>
+
                         <div class="flow">
                             <div class="cols cols--center cols--always flow">
                                 <h2 class="col--extend">

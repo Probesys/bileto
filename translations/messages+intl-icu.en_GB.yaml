@@ -548,6 +548,10 @@ tickets.status.resolved: Resolved
 tickets.team: 'Team in charge'
 tickets.team.none: 'No team'
 tickets.time_spent: 'Time spent'
+tickets.time_spent.accounted: 'Accounted time:'
+tickets.time_spent.real: 'Real time:'
+tickets.time_spent.total: 'Total time:'
+tickets.time_spent.unaccounted: 'Unaccounted time:'
 tickets.timeline.diff_days: '{days} days later'
 tickets.timeline.today: (today)
 tickets.title: Title
