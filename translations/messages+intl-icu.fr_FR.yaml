@@ -183,7 +183,7 @@ home.all_your_tickets: 'Voir tous vos tickets'
 home.new_ticket: 'Nouveau ticket'
 home.no_tickets: 'Aucun ticket'
 home.title: 'Bienvenue sur Bileto'
-home.your_assigned_tickets: 'Vos tickets assignés'
+home.your_assigned_tickets: 'Vos tickets attribués'
 home.your_tickets: 'Vos tickets'
 hours_formatter.hours.long: "{ hours, plural, one {1\_heure} other {#\_heures} }"
 hours_formatter.hours.short: "{hours}\_h"
@@ -281,7 +281,7 @@ organizations.observers.add_user: 'Ajouter aux observateurs'
 organizations.observers.confirm_add_user: "En ajoutant cet utilisateur aux observateurs de l’organisation, vous lui permettez d’avoir accès à tous les futurs tickets ouverts dans celle-ci. Confirmez-vous\_?"
 organizations.observers.remove_user: 'Retirer des observateurs'
 organizations.responsible_team: 'Équipe responsable'
-organizations.responsible_team.caption: 'L’équipe responsable de l’organisation sera assignée par défaut aux tickets ouverts dans cette organisation.'
+organizations.responsible_team.caption: 'L’équipe responsable de l’organisation sera attribuée par défaut aux tickets ouverts dans cette organisation.'
 organizations.responsible_team.auto: Automatique
 organizations.settings.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
 organizations.settings.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et contrats associés."
@@ -388,7 +388,7 @@ teams.index.new_team: 'Nouvelle équipe'
 teams.index.none: 'Aucune équipe'
 teams.index.number: '{count, plural, =0 {Aucune équipe} one {1 équipe} other {# équipes}}'
 teams.index.title: 'Équipes & Agents'
-teams.is_responsible: 'Équipe responsable (peut être automatiquement assignée à un ticket)'
+teams.is_responsible: 'Équipe responsable (peut être automatiquement attribuée à un ticket)'
 teams.name: Nom
 teams.new.submit: 'Créer l’équipe'
 teams.new.title: 'Nouvelle équipe'
@@ -463,7 +463,7 @@ tickets.index.tickets: Tickets
 tickets.index.title: Tickets
 tickets.index.title.all: 'Tous les tickets'
 tickets.index.title.to_assign: 'Tickets à attribuer'
-tickets.index.title.your_assigned_tickets: 'Vos tickets assignés'
+tickets.index.title.your_assigned_tickets: 'Vos tickets attribués'
 tickets.index.title.your_tickets: 'Vos tickets'
 tickets.index.views.title: 'Vos vues'
 tickets.involves: Concerne
