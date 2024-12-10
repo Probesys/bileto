@@ -17,8 +17,9 @@ use App\Utils;
 class Searcher
 {
     public const QUERY_DEFAULT = 'status:open';
+    public const QUERY_OWNED = 'status:open,resolved requester:@me';
+    public const QUERY_ASSIGNED_ME = 'status:open assignee:@me';
     public const QUERY_UNASSIGNED = 'status:open no:assignee';
-    public const QUERY_OWNED = 'status:open involves:@me';
 
     private SearchEngine\Query $orgaQuery;
 
@@ -130,14 +131,19 @@ class Searcher
         return SearchEngine\Query::fromString(self::QUERY_DEFAULT);
     }
 
-    public static function queryUnassigned(): SearchEngine\Query
-    {
-        return SearchEngine\Query::fromString(self::QUERY_UNASSIGNED);
-    }
-
     public static function queryOwned(): SearchEngine\Query
     {
         return SearchEngine\Query::fromString(self::QUERY_OWNED);
+    }
+
+    public static function queryAssignedMe(): SearchEngine\Query
+    {
+        return SearchEngine\Query::fromString(self::QUERY_ASSIGNED_ME);
+    }
+
+    public static function queryUnassigned(): SearchEngine\Query
+    {
+        return SearchEngine\Query::fromString(self::QUERY_UNASSIGNED);
     }
 
     /**

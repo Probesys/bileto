@@ -462,6 +462,7 @@ tickets.index.tickets: Tickets
 tickets.index.title: Tickets
 tickets.index.title.all: 'Tous les tickets'
 tickets.index.title.to_assign: 'Tickets à attribuer'
+tickets.index.title.your_assigned_tickets: 'Vos tickets assignés'
 tickets.index.title.your_tickets: 'Vos tickets'
 tickets.index.views.title: 'Vos vues'
 tickets.involves: Concerne

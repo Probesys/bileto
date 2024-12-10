@@ -55,6 +55,24 @@
         <li class="extramenu__item">
             <a
                 class="extramenu__anchor"
+                href="?view=assigned-me"
+                {{ current == 'assigned-me' ? 'aria-current="page"' }}
+            >
+                <span class="col--extend">
+                    {{ 'tickets.index.title.your_assigned_tickets' | trans }}
+                </span>
+
+                {% if countAssignedMe > 0 %}
+                    <span class="badge badge--small badge--border">
+                        {{ countAssignedMe }}
+                    </span>
+                {% endif %}
+            </a>
+        </li>
+
+        <li class="extramenu__item">
+            <a
+                class="extramenu__anchor"
                 href="?view=owned"
                 {{ current == 'owned' ? 'aria-current="page"' }}
             >

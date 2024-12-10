@@ -12,6 +12,8 @@
     {% set title = 'tickets.index.title.all' | trans %}
 {% elseif view == 'unassigned' %}
     {% set title = 'tickets.index.title.to_assign' | trans %}
+{% elseif view == 'assigned-me' %}
+    {% set title = 'tickets.index.title.your_assigned_tickets' | trans %}
 {% elseif view == 'owned' %}
     {% set title = 'tickets.index.title.your_tickets' | trans %}
 {% endif %}
@@ -23,6 +25,7 @@
         {{ include('tickets/_menu.html.twig', {
             current: view,
             countOwned: countOwned,
+            countAssignedMe: countAssignedMe,
             countToAssign: countToAssign,
         }, with_context = false) }}
     {% endif %}

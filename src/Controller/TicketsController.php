@@ -35,6 +35,8 @@ class TicketsController extends BaseController
 
         if ($view === 'unassigned') {
             $defaultQuery = SearchEngine\Ticket\Searcher::queryUnassigned();
+        } elseif ($view === 'assigned-me') {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryAssignedMe();
         } elseif ($view === 'owned') {
             $defaultQuery = SearchEngine\Ticket\Searcher::queryOwned();
         } else {
@@ -78,6 +80,7 @@ class TicketsController extends BaseController
         return $this->render('tickets/index.html.twig', [
             'ticketsPagination' => $ticketsPagination,
             'countToAssign' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryUnassigned()),
+            'countAssignedMe' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryAssignedMe()),
             'countOwned' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryOwned()),
             'view' => $view,
             'query' => $query?->getString(),

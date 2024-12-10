@@ -95,6 +95,7 @@
         {{ include('tickets/_menu.html.twig', {
             current: view,
             countOwned: countOwned,
+            countAssignedMe: countAssignedMe,
             countToAssign: countToAssign,
         }, with_context = false) }}
     {% endif %}

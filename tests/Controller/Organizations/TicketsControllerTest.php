@@ -123,8 +123,46 @@ class TicketsControllerTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="ticket-item"]:nth-child(1)', 'Ticket requested by user');
+        $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Ticket assigned to user');
+        $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Other ticket');
+    }
+
+    public function testGetIndexCanFilterAssignedTickets(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all']);
+        Factory\TicketFactory::createOne([
+            'createdAt' => Utils\Time::ago(1, 'minute'),
+            'title' => 'Ticket assigned to user',
+            'organization' => $organization,
+            'assignee' => $user,
+            'status' => Foundry\faker()->randomElement(Entity\Ticket::OPEN_STATUSES),
+        ]);
+        Factory\TicketFactory::createOne([
+            'createdAt' => Utils\Time::ago(2, 'minutes'),
+            'title' => 'Ticket requested by user',
+            'organization' => $organization,
+            'requester' => $user,
+            'status' => Foundry\faker()->randomElement(Entity\Ticket::OPEN_STATUSES),
+        ]);
+        Factory\TicketFactory::createOne([
+            'title' => 'Other ticket',
+            'organization' => $organization,
+            'status' => Foundry\faker()->randomElement(Entity\Ticket::OPEN_STATUSES),
+        ]);
+
+        $client->request(
+            Request::METHOD_GET,
+            "/organizations/{$organization->getUid()}/tickets?view=assigned-me&sort=title-asc"
+        );
+
+        $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-test="ticket-item"]:nth-child(1)', 'Ticket assigned to user');
-        $this->assertSelectorTextContains('[data-test="ticket-item"]:nth-child(2)', 'Ticket requested by user');
+        $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Ticket requested by user');
         $this->assertSelectorTextNotContains('[data-test="ticket-item"]', 'Other ticket');
     }
 
