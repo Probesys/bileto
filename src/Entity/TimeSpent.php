@@ -62,7 +62,7 @@ class TimeSpent implements EntityInterface, MonitorableEntityInterface, UidEntit
     #[Assert\NotBlank(
         message: new TranslatableMessage('time_spent.time.required', [], 'errors'),
     )]
-    #[Assert\GreaterThan(
+    #[Assert\GreaterThanOrEqual(
         value: 0,
         message: new TranslatableMessage('time_spent.time.greater_than_zero', [], 'errors'),
     )]

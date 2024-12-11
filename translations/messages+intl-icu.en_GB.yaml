@@ -183,6 +183,8 @@ forms.search.quick_placeholder: 'Keywords or #id'
 forms.search.quick_title: 'Quick search'
 forms.search.submit: Search
 forms.show_password: 'Show password as plain text. Note: this will visually expose your password.'
+forms.time_spent.help: 'You can delete this time by setting it to 0.'
+forms.time_spent.label: 'Time spent (in minutes)'
 home.all_your_tickets: 'See all your tickets'
 home.new_ticket: 'New ticket'
 home.no_tickets: 'No tickets'
@@ -526,6 +528,7 @@ tickets.show.requester: 'Requester:'
 tickets.show.show_history: 'Show changes history'
 tickets.show.time_spent: '{count} spent'
 tickets.show.time_spent.accounted: '{ count } accounted'
+tickets.show.time_spent.edit: 'Edit the time'
 tickets.show.time_spent.unaccounted: unaccounted
 tickets.show.urgency: 'Urgency:'
 tickets.sort.alphabetical: 'Alphabetical order'
@@ -563,6 +566,7 @@ tickets.urgency: Urgency
 tickets.urgency.high: High
 tickets.urgency.low: Low
 tickets.urgency.medium: Medium
+time_spents.edit.title: 'Edit time spent'
 users.color_scheme: 'Color scheme'
 users.color_scheme.auto: Auto
 users.color_scheme.dark: Dark

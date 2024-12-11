@@ -12,6 +12,20 @@
             {{ bodyBlock|raw }}
         </p>
 
+        {% if is_granted('orga:create:tickets:time_spent', ticket.organization) and not ticket.isClosed %}
+            <button
+                class="button--icon button--ghost"
+                data-controller="modal-opener"
+                data-action="modal-opener#fetch"
+                data-modal-opener-href-value="{{ path('edit time spent', { uid: timeSpent.uid }) }}"
+            >
+                {{ icon('pen-to-square') }}
+                <span class="sr-only">
+                    {{ 'tickets.show.time_spent.edit' | trans }}
+                </span>
+            </button>
+        {% endif %}
+
         <time class="timeline__time-spent-date" datetime="{{ timeSpent.createdAt | dateIso }}">
             {{ timeSpent.createdAt | dateTrans('HH:mm') }}
         </time>
