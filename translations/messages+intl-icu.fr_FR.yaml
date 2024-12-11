@@ -104,7 +104,7 @@ contracts.alerts.edit.date_alert.before: 'Alerter à'
 contracts.alerts.edit.hours_alert.after: '% des heures seront consommées.'
 contracts.alerts.edit.hours_alert.before: 'Alerter lorsque'
 contracts.alerts.edit.title: 'Configurer les alertes du contrat'
-contracts.days_consumed: "<strong>{days, plural, =0 {0\_j consommé} one {1\_j consommé} other {#\_j consommés}}</strong>"
+contracts.days_consumed: "<strong>{days, plural, one {#\_j consommé} other {#\_j consommés}}</strong>"
 contracts.edit.title: 'Modifier un contrat'
 contracts.form.associate_tickets: 'Associer les tickets existants créés durant la période du contrat'
 contracts.form.associate_unaccounted_times: 'Associer les temps passés existants non comptabilisés'
@@ -127,7 +127,7 @@ contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
 contracts.show.alert: Alerte
 contracts.show.alert.before_end: '{days} jours<br>avant la fin'
-contracts.show.time_accounting_unit: "Unité de comptabilisation du temps\_: {count, plural, one {1 minute} other {# minutes}}"
+contracts.show.time_accounting_unit: "Unité de comptabilisation du temps\_: {count, plural, one {# minute} other {# minutes}}"
 contracts.show.edit: 'Modifier le contrat'
 contracts.show.notes_confidential: Confidentielles
 contracts.show.renew: Renouveler
@@ -187,11 +187,11 @@ home.no_tickets: 'Aucun ticket'
 home.title: 'Bienvenue sur Bileto'
 home.your_assigned_tickets: 'Vos tickets attribués'
 home.your_tickets: 'Vos tickets'
-hours_formatter.hours.long: "{ hours, plural, one {1\_heure} other {#\_heures} }"
+hours_formatter.hours.long: "{ hours, plural, one {#\_heure} other {#\_heures} }"
 hours_formatter.hours.short: "{hours}\_h"
-hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1\_heure} other {#\_heures} }\_{ minutes, plural, one {1\_minute} other {#\_minutes} }"
+hours_formatter.hours_and_minutes.long: "{ hours, plural, one {#\_heure} other {#\_heures} }\_{ minutes, plural, one {#\_minute} other {#\_minutes} }"
 hours_formatter.hours_and_minutes.short: "{hours}\_h\_{minutes}\_m"
-hours_formatter.minutes.long: "{ minutes, plural, one {1\_minute} other {#\_minutes} }"
+hours_formatter.minutes.long: "{ minutes, plural, one {#\_minute} other {#\_minutes} }"
 hours_formatter.minutes.short: "{minutes}\_m"
 labels.color: Couleur
 labels.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette étiquette\_?"
