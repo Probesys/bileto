@@ -1,11 +1,12 @@
 # Reviewing the pull requests
 
 Each change to the repository must be reviewed through a code review.
-A template with a checklist is provided and filled for each pull request.
+A template with a checklist is provided and filled by a reviewer for each pull request.
+
+**This document is intended for the reviewers.**
+If you don’t know how to do a specific task of the checklist, please take a look at the following explanations.
 
 Some items of the checklist may feel out of context: please check them anyway.
-
-If you don’t know how to do a specific task of the checklist, please take a look at the following explanations.
 
 ## “Code is manually tested”
 

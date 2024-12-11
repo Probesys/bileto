@@ -9,7 +9,7 @@
   -- changes manually ("N/A" if not applicable).
   -->
 
-## Checklist
+## Reviewer checklist
 
 <!-- Please don't change or remove this checklist. It will be used by the
   -- reviewer to make sure to not forget important things.
