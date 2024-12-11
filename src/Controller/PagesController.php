@@ -27,26 +27,35 @@ class PagesController extends BaseController
         Security\Authorizer $authorizer,
         Service\UserService $userService,
     ): Response {
-        if ($authorizer->isAgent('any')) {
-            $query = SearchEngine\Ticket\Searcher::queryAssignedMe();
-            $view = 'assigned-me';
-        } else {
-            $query = SearchEngine\Ticket\Searcher::queryOwned();
-            $view = 'owned';
-        }
+        $ticketsOwnedPagination = $ticketSearcher->getTickets(
+            SearchEngine\Ticket\Searcher::queryOwned(),
+            'updated-desc',
+            [
+                'page' => 1,
+                'maxResults' => 5,
+            ]
+        );
 
-        $ticketsPagination = $ticketSearcher->getTickets($query, 'updated-desc', [
-            'page' => 1,
-            'maxResults' => 5,
-        ]);
+        if ($authorizer->isAgent('any')) {
+            $ticketsAssignedPagination = $ticketSearcher->getTickets(
+                SearchEngine\Ticket\Searcher::queryAssignedMe(),
+                'updated-desc',
+                [
+                    'page' => 1,
+                    'maxResults' => 5,
+                ]
+            );
+        } else {
+            $ticketsAssignedPagination = null;
+        }
 
         /** @var Entity\User */
         $user = $this->getUser();
         $defaultOrganization = $userService->getDefaultOrganization($user);
 
         return $this->render('pages/home.html.twig', [
-            'view' => $view,
-            'ticketsPagination' => $ticketsPagination,
+            'ticketsOwnedPagination' => $ticketsOwnedPagination,
+            'ticketsAssignedPagination' => $ticketsAssignedPagination,
             'defaultOrganization' => $defaultOrganization,
         ]);
     }
