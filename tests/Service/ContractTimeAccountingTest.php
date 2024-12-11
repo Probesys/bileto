@@ -217,4 +217,31 @@ class ContractTimeAccountingTest extends WebTestCase
         $this->assertSame(20, $timeSpent->getTime());
         $this->assertSame(20, $timeSpent->getRealTime());
     }
+
+    public function testReaccountTimeSpents(): void
+    {
+        $initialContract = ContractFactory::createOne([
+            'maxHours' => 1,
+            'timeAccountingUnit' => 30,
+        ])->_real();
+        $newContract = ContractFactory::createOne([
+            'maxHours' => 1,
+            'timeAccountingUnit' => 15,
+        ])->_real();
+        $timeSpent = TimeSpentFactory::createOne([
+            'contract' => $initialContract,
+            'realTime' => 10,
+            'time' => 30,
+        ])->_real();
+
+        $this->contractTimeAccounting->reaccountTimeSpents($newContract, [$timeSpent]);
+
+        $this->assertSame($newContract->getId(), $timeSpent->getContract()->getId());
+        $this->assertSame(15, $timeSpent->getTime());
+        $this->assertSame(10, $timeSpent->getRealTime());
+        $contractTimeSpents = $initialContract->getTimeSpents();
+        $this->assertSame(0, count($contractTimeSpents));
+        $contractTimeSpents = $newContract->getTimeSpents();
+        $this->assertSame(1, count($contractTimeSpents));
+    }
 }

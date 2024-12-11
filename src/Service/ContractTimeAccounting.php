@@ -97,6 +97,23 @@ class ContractTimeAccounting
     }
 
     /**
+     * Unaccount the given time spent from their current contract, and
+     * reaccount them on the new specified contract.
+     *
+     * The time is be recalculated from the real time to make sure it's
+     * coherent with the contract time accounting unit.
+     *
+     * Note that the new contract can be the same as the previous one.
+     *
+     * @param TimeSpent[] $timeSpents
+     */
+    public function reaccountTimeSpents(Contract $contract, array $timeSpents): void
+    {
+        $this->unaccountTimeSpents($timeSpents);
+        $this->accountTimeSpents($contract, $timeSpents);
+    }
+
+    /**
      * Round up time to a multiplier of the time accounting unit (in the limit
      * of the available time).
      */
