@@ -93,12 +93,15 @@ services:
         environment:
             - MARIADB_ROOT_PASSWORD=secret
             - MARIADB_DATABASE=bileto
+        volumes:
+            - database:/var/lib/mysql
         healthcheck:
             test: ["CMD", "/usr/local/bin/healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
             interval: 5s
             retries: 30
 
 volumes:
+    database:
     var:
 ```
 
