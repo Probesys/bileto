@@ -80,5 +80,9 @@ RUN chown -R www-data:www-data .
 # Install the dependencies as www-data
 USER www-data
 
-RUN mkdir var var/uploads var/settings
+RUN mkdir var
+
 RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+VOLUME /var/www/html/var
+EXPOSE 80
