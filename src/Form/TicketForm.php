@@ -60,6 +60,15 @@ class TicketForm extends AbstractType
                         'data-form-ticket-actors-target' => 'assignees',
                     ],
                 ]);
+
+                $form->add('observers', AppType\ActorType::class, [
+                    'organization' => $organization,
+                    'multiple' => true,
+                    'by_reference' => false,
+                    'required' => false,
+                    'label' => new TranslatableMessage('tickets.observers'),
+                    'block_prefix' => 'multiselect_actors',
+                ]);
             }
 
             if ($this->authorizer->isGranted('orga:update:tickets:priority', $organization)) {

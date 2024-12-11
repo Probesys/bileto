@@ -220,7 +220,8 @@ class TicketsControllerTest extends WebTestCase
         list(
             $user,
             $requester,
-        ) = Factory\UserFactory::createMany(2);
+            $observer,
+        ) = Factory\UserFactory::createMany(3);
         $client->loginUser($user->_real());
         $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
@@ -232,6 +233,9 @@ class TicketsControllerTest extends WebTestCase
         ], $organization->_real());
         $this->grantOrga($requester->_real(), [
             'orga:create:tickets',
+        ], $organization->_real());
+        $this->grantOrga($observer->_real(), [
+            'orga:see',
         ], $organization->_real());
         $title = 'My ticket';
         $messageContent = 'My message';
@@ -245,6 +249,7 @@ class TicketsControllerTest extends WebTestCase
                 'title' => $title,
                 'content' => $messageContent,
                 'requester' => $requester->getId(),
+                'observers' => [$observer->getId()],
                 'type' => 'incident',
                 'urgency' => 'high',
                 'impact' => 'high',
@@ -270,6 +275,9 @@ class TicketsControllerTest extends WebTestCase
         $this->assertNull($ticket->getSolution());
         $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
         $this->assertNull($ticket->getAssignee());
+        $observers = $ticket->getObservers();
+        $this->assertSame(1, count($observers));
+        $this->assertSame($observer->getId(), $observers[0]->getId());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
         $message = Factory\MessageFactory::last();
         $this->assertSame($messageContent, $message->getContent());
