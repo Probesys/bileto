@@ -38,6 +38,7 @@ class ActorsForm extends AbstractType
                 'by_reference' => false,
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.observers'),
+                'block_prefix' => 'multiselect_actors',
             ]);
 
             $form->add('team', AppType\TeamType::class, [

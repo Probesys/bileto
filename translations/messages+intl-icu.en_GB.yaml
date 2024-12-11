@@ -164,6 +164,8 @@ errors.back_home: 'Back to the homepage'
 errors.generic.description: 'Please tell your administrator what you were doing when the error occurred. This will be fixed as soon as possible.'
 errors.generic.sorry: 'Sorry for any inconvenience caused.'
 errors.generic.title: 'An error has occured!'
+forms.actors.select: 'Select an actor'
+forms.actors.unselect: Unselect
 forms.error: Error
 forms.input_texts.remove: Remove
 forms.max_chars: '(max. {number} characters)'
@@ -440,9 +442,7 @@ tickets.events.title: '<strong>{username}</strong> renamed the ticket from “<i
 tickets.events.type.to_incident: '<strong>{username}</strong> changed the ticket to incident'
 tickets.events.type.to_request: '<strong>{username}</strong> changed the ticket to request'
 tickets.events.urgency: '<strong>{username}</strong> changed the urgency from <i>{oldValue}</i> to <i>{newValue}</i>'
-tickets.filters.actors.select: 'Select an actor'
 tickets.filters.actors.title: 'Filter by actors'
-tickets.filters.actors.unselect: Unselect
 tickets.filters.assignee.no: 'Unassigned only'
 tickets.filters.labels.title: 'Filter by labels'
 tickets.filters.priority.title: 'Filter by priority'
@@ -480,8 +480,6 @@ tickets.new.mark_as_resolved: 'Ticket already resolved'
 tickets.new.submit: 'Create the ticket'
 tickets.new.title: 'New ticket'
 tickets.observers: Observers
-tickets.observers.select: 'Select an observer'
-tickets.observers.unselect: Unselect
 tickets.organization: Organization
 tickets.organization.edit.information: 'You are about to transfer a ticket to another organization. <strong>Please note that you are potentially giving access to this ticket to new people.</strong> Also, the ticket’s actors who are not in the destination organization will be removed. If the ticket is associated with contracts, these will also be removed.'
 tickets.organization.edit.title: 'Transfer the ticket'

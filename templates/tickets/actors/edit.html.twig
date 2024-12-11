@@ -24,62 +24,6 @@
 
         {{ form_row(form.assignee) }}
 
-        <div class="flow flow--small">
-            {{ form_label(form.observers) }}
-
-            {{ form_errors(form.observers) }}
-
-            <div class="multiselect-actors" data-controller="multiselect-actors">
-                <select
-                    id="{{ field_id(form.observers, 'data') }}"
-                    name="{{ field_name(form.observers) }}"
-                    multiple
-                    data-multiselect-actors-target="data"
-                    data-action="multiselect-actors#refresh"
-                    hidden
-                >
-                    {% for choice in form.observers.vars.choices %}
-                        <option
-                            value="{{ choice.value }}"
-                            {{ choice.value in field_value(form.observers) ? 'selected' }}
-                        >
-                            {{ choice.label }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <div class="flow flow--smaller">
-                    <select
-                        id="{{ field_id(form.observers) }}"
-                        class="multiselect-actors__select widget--small"
-                        data-multiselect-actors-target="select"
-                        data-action="multiselect-actors#select"
-                    >
-                        <option disabled value="">
-                            {{ 'tickets.observers.select' | trans }}
-                        </option>
-                    </select>
-
-                    <div class="cols cols--always cols--wrap flow flow--smaller" data-multiselect-actors-target="list">
-                    </div>
-                </div>
-
-                <template data-multiselect-actors-target="template">
-                    <button
-                        type="button"
-                        class="button--discreet-alt"
-                        data-action="multiselect-actors#unselect"
-                        data-target="unselect"
-                        data-value=""
-                        aria-label={{ 'tickets.observers.unselect' | trans }}
-                    >
-                        <span data-target="name">
-                        </span>
-
-                        {{ icon('close') }}
-                    </button>
-                </template>
-            </div>
-        </div>
+        {{ form_row(form.observers) }}
     {{ form_end(form) }}
 {% endblock %}

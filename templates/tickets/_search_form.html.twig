@@ -65,33 +65,15 @@
                         </summary>
 
                         <div class="accordion__body flow flow--large">
-                            {{ include(
-                                'tickets/filters/_multiselect_actors.html.twig',
-                                {
-                                    form: quickSearchForm.involves,
-                                },
-                                with_context = false
-                            ) }}
+                            {{ form_row(quickSearchForm.involves) }}
 
                             <div class="flow flow--small" data-controller="checkboxes">
-                                {{ include(
-                                    'tickets/filters/_multiselect_actors.html.twig',
-                                    {
-                                        form: quickSearchForm.assignees,
-                                    },
-                                    with_context = false
-                                ) }}
+                                {{ form_row(quickSearchForm.assignees) }}
 
                                 {{ form_row(quickSearchForm.unassignedOnly) }}
                             </div>
 
-                            {{ include(
-                                'tickets/filters/_multiselect_actors.html.twig',
-                                {
-                                    form: quickSearchForm.requesters,
-                                },
-                                with_context = false
-                            ) }}
+                            {{ form_row(quickSearchForm.requesters) }}
                         </div>
                     </details>
                 {% endif %}

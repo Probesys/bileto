@@ -164,6 +164,8 @@ errors.back_home: 'Retour à la page d’accueil'
 errors.generic.description: 'Veuillez indiquer à votre administrateur ce que vous faisiez lorsque l’erreur s’est produite. Le problème sera résolu dès que possible.'
 errors.generic.sorry: 'Désolé pour la gêne occasionnée.'
 errors.generic.title: "Une erreur est survenue\_!"
+forms.actors.select: 'Sélectionner un acteur'
+forms.actors.unselect: Désélectionner
 forms.error: Erreur
 forms.input_texts.remove: Retirer
 forms.max_chars: '(max. {number} caractères)'
@@ -440,9 +442,7 @@ tickets.events.title: "<strong>{username}</strong> a renommé le ticket de «\_<
 tickets.events.type.to_incident: '<strong>{username}</strong> a changé le ticket en incident'
 tickets.events.type.to_request: '<strong>{username}</strong> a changé le ticket en demande'
 tickets.events.urgency: '<strong>{username}</strong> a changé l’urgence de <i>{oldValue}</i> à <i>{newValue}</i>'
-tickets.filters.actors.select: 'Sélectionner un acteur'
 tickets.filters.actors.title: 'Filtrer par acteurs'
-tickets.filters.actors.unselect: Désélectionner
 tickets.filters.assignee.no: 'Non attribués seulement'
 tickets.filters.labels.title: 'Filtrer par étiquettes'
 tickets.filters.priority.title: 'Filtrer par priorité'
@@ -480,8 +480,6 @@ tickets.new.mark_as_resolved: 'Ticket déjà résolu'
 tickets.new.submit: 'Créer le ticket'
 tickets.new.title: 'Nouveau ticket'
 tickets.observers: Observateurs
-tickets.observers.select: 'Sélectionner un observateur'
-tickets.observers.unselect: Désélectionner
 tickets.organization: Organisation
 tickets.organization.edit.information: 'Vous êtes sur le point de transférer un ticket dans une autre organisation. <strong>Vous allez potentiellement donner accès à ce ticket à de nouvelles personnes.</strong> Aussi, les acteurs du ticket n’étant pas dans l’organisation de destination seront retirés. Si le ticket est associé à des contrats, ceux-ci seront également détachés.'
 tickets.organization.edit.title: 'Transférer le ticket'
