@@ -54,6 +54,18 @@ Actually, this form is used for buttons that remove elements from a dynamic list
 </button>
 ```
 
+## Ghost button
+
+Ghost buttons are similar to discreet buttons, but should be used only in places that already contain a lot of information.
+Their border color is transparent by default, making them less intrusive.
+They should only be used for secondary actions.
+
+```html
+<button class="button--ghost">
+    Edit
+</button>
+```
+
 ## Anchor button
 
 It is possible to style buttons as links.
