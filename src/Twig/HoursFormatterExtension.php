@@ -60,7 +60,7 @@ class HoursFormatterExtension extends AbstractExtension
     private function format(int $hours, int $minutes, string $format = 'short'): string
     {
         if ($format === 'long') {
-            if ($minutes === 0) {
+            if ($minutes === 0 && $hours !== 0) {
                 return $this->translator->trans('hours_formatter.hours.long', [
                     'hours' => $hours,
                 ]);
@@ -75,7 +75,7 @@ class HoursFormatterExtension extends AbstractExtension
                 ]);
             }
         } else {
-            if ($minutes === 0) {
+            if ($minutes === 0 && $hours !== 0) {
                 return $this->translator->trans('hours_formatter.hours.short', [
                     'hours' => $hours,
                 ]);
