@@ -15,6 +15,7 @@ use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ContractsController extends BaseController
 {
@@ -49,6 +50,32 @@ class ContractsController extends BaseController
             'query' => $query?->getString(),
             'sort' => $sort,
             'advancedSearchForm' => $advancedSearchForm,
+        ]);
+    }
+
+    #[Route('/contracts/new', name: 'new contract')]
+    public function new(
+        Request $request,
+    ): Response {
+        $this->denyAccessUnlessGranted('orga:manage:contracts', 'any');
+
+        $form = $this->createNamedForm('contract', Form\Organization\SelectForm::class, options: [
+            'permission' => 'orga:manage:contracts',
+            'submit_label' => new TranslatableMessage('contracts.new.open_contract'),
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $organization = $form->getData()['organization'];
+
+            return $this->redirectToRoute('new organization contract', [
+                'uid' => $organization->getUid(),
+            ]);
+        }
+
+        return $this->render('contracts/new.html.twig', [
+            'form' => $form,
         ]);
     }
 

@@ -1,0 +1,13 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'contracts.new.title' | trans }}{% endblock %}
+
+{% block body %}
+    {{ form(form, { action: path('new contract') }) }}
+{% endblock %}

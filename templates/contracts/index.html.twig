@@ -53,6 +53,19 @@
                             with_context = false
                         ) }}
                     </div>
+
+                    {% if is_granted('orga:manage:contracts', 'any') %}
+                        <button
+                            class="button button--primary button--uppercase"
+                            type="button"
+                            data-controller="modal-opener"
+                            data-action="modal-opener#fetch"
+                            data-modal-opener-href-value="{{ path('new contract') }}"
+                        >
+                            {{ icon('plus') }}
+                            {{ 'contracts.index.new_contract' | trans }}
+                        </button>
+                    {% endif %}
                 </div>
 
                 {% if contractsPagination.count > 0 %}

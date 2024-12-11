@@ -105,6 +105,49 @@ class ContractsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, '/contracts');
     }
 
+    public function testGetNewRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
+
+        $client->request(Request::METHOD_GET, '/contracts/new');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'New contract');
+    }
+
+    public function testGetNewFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, '/contracts/new');
+    }
+
+    public function testPostNewRedirectsToTheSelectedOrganization(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:manage:contracts'], $organization->_real());
+
+        $client->request(Request::METHOD_POST, '/contracts/new', [
+            'contract' => [
+                '_token' => $this->generateCsrfToken($client, 'organization select'),
+                'organization' => $organization->getId(),
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/contracts/new", 302);
+    }
+
     public function testGetEditRendersCorrectly(): void
     {
         $client = static::createClient();

@@ -123,6 +123,7 @@ contracts.index.no_contracts: 'Aucun contrat'
 contracts.index.number: '{count, plural, =0 {Aucun contrat} one {1 contrat} other {# contrats}}'
 contracts.index.tickets: '{count, plural, =0 {Aucun ticket} one {1 ticket} other {# tickets}}'
 contracts.index.title: Contrats
+contracts.new.open_contract: 'Ouvrir un contrat'
 contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
 contracts.show.alert: Alerte
@@ -171,6 +172,7 @@ forms.input_texts.remove: Retirer
 forms.max_chars: '(max. {number} caractères)'
 forms.optional: (optionnel)
 forms.optional_max_chars: '(optionnel, max. {number} caractères)'
+forms.organization.select.choose: 'Choisir une organisation'
 forms.read_only: '(lecture seule)'
 forms.save_changes: 'Enregistrer les modifications'
 forms.search.advanced_label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
