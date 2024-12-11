@@ -25,7 +25,7 @@ $ mariadb bileto_production < backup-bileto.sql
 You should also backup two more folders and a file:
 
 - `var/data/` stores an encryption key used to encrypt secrets;
-- `uploads/` (or any other folder if you changed `APP_UPLOADS_DIRECTORY`) stores the documents uploaded by the users;
+- `var/uploads/` (or any other folder if you changed `APP_UPLOADS_DIRECTORY`) stores the documents uploaded by the users;
 - `.env.local` stores the configuration of Bileto.
 
 When you restore Bileto, make sure to set the correct owner of these files:

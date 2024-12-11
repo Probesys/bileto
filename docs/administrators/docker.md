@@ -61,7 +61,6 @@ services:
         ports:
             - "8000:80"
         volumes:
-            - uploads:/var/www/html/uploads
             - var:/var/www/html/var
         env_file:
             - .env.app
@@ -79,7 +78,6 @@ services:
         command: php bin/console messenger:consume async scheduler_default -vv
         entrypoint: ""
         volumes:
-            - uploads:/var/www/html/uploads
             - var:/var/www/html/var
         env_file:
             - .env.app
@@ -101,7 +99,6 @@ services:
             retries: 30
 
 volumes:
-    uploads:
     var:
 ```
 

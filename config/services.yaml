@@ -10,7 +10,7 @@
 parameters:
     env(VERSION_FILE): '%kernel.project_dir%/VERSION.txt'
 
-    app.default_uploads_directory: '%kernel.project_dir%/uploads'
+    app.default_uploads_directory: '%kernel.project_dir%/var/uploads'
     app.public_directory: "%kernel.project_dir%/public"
     app.uploads_directory: '%env(default:app.default_uploads_directory:APP_UPLOADS_DIRECTORY)%'
     app.version: '%env(trim:file:VERSION_FILE)%'

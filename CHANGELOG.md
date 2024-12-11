@@ -1,5 +1,13 @@
 # Changelog of Bileto
 
+## unreleased
+
+### Breaking change
+
+The `uploads/` directory is now placed under `var/` by default.
+If you uploaded files on your instance of Bileto, you must either set the `APP_UPLOADS_DIRECTORY` environment variable to the previous `uploads/` directory, or move the directory under `var/`.
+If you move it under `var/`, you no longer need to mount a dedicated Docker volume on `uploads/` as you should already have one mounter on `var/`.
+
 ## 2024-11-22 - 0.12.0-beta
 
 ### Improvements

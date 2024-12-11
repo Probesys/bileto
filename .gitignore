@@ -8,12 +8,13 @@
 
 /public/dev_assets/*
 
-/uploads/
 /var/cache
 /var/data
 /var/log
 /var/settings/*
 !/var/settings/.keep
+/var/uploads/*
+!/var/uploads/.keep
 
 /.phpunit.result.cache
 /phpunit.xml
