@@ -6,14 +6,8 @@
 
 namespace App\Tests\Controller;
 
-use App\Tests\AuthorizationHelper;
-use App\Tests\FactoriesHelper;
-use App\Tests\Factory\ContractFactory;
-use App\Tests\Factory\OrganizationFactory;
-use App\Tests\Factory\TicketFactory;
-use App\Tests\Factory\TimeSpentFactory;
-use App\Tests\Factory\UserFactory;
-use App\Tests\SessionHelper;
+use App\Tests;
+use App\Tests\Factory;
 use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,24 +17,24 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 
 class ContractsControllerTest extends WebTestCase
 {
-    use AuthorizationHelper;
     use Factories;
-    use FactoriesHelper;
     use ResetDatabase;
-    use SessionHelper;
+    use Tests\AuthorizationHelper;
+    use Tests\FactoriesHelper;
+    use Tests\SessionHelper;
 
     public function testGetIndexRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see:contracts']);
-        $contract1 = ContractFactory::createOne([
+        $contract1 = Factory\ContractFactory::createOne([
             'name' => 'My contract 1',
             'startAt' => Utils\Time::ago(1, 'months'),
             'endAt' => Utils\Time::fromNow(1, 'months'),
         ]);
-        $contract2 = ContractFactory::createOne([
+        $contract2 = Factory\ContractFactory::createOne([
             'name' => 'My contract 2',
             'startAt' => Utils\Time::ago(1, 'months'),
             'endAt' => Utils\Time::fromNow(2, 'months'),
@@ -56,11 +50,11 @@ class ContractsControllerTest extends WebTestCase
     public function testGetIndexRendersCorrectlyListsOnlyAccessibleContracts(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization1 = OrganizationFactory::createOne();
-        $organization2 = OrganizationFactory::createOne();
-        $organization3 = OrganizationFactory::createOne();
+        $organization1 = Factory\OrganizationFactory::createOne();
+        $organization2 = Factory\OrganizationFactory::createOne();
+        $organization3 = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see',
             'orga:see:contracts'
@@ -68,19 +62,19 @@ class ContractsControllerTest extends WebTestCase
         $this->grantOrga($user->_real(), [
             'orga:see',
         ], $organization2->_real());
-        $contract1 = ContractFactory::createOne([
+        $contract1 = Factory\ContractFactory::createOne([
             'name' => 'My contract 1',
             'organization' => $organization1,
             'startAt' => Utils\Time::ago(1, 'months'),
             'endAt' => Utils\Time::fromNow(1, 'months'),
         ]);
-        $contract2 = ContractFactory::createOne([
+        $contract2 = Factory\ContractFactory::createOne([
             'name' => 'My contract 2',
             'organization' => $organization2,
             'startAt' => Utils\Time::ago(1, 'months'),
             'endAt' => Utils\Time::fromNow(1, 'months'),
         ]);
-        $contract3 = ContractFactory::createOne([
+        $contract3 = Factory\ContractFactory::createOne([
             'name' => 'My contract 3',
             'organization' => $organization3,
             'startAt' => Utils\Time::ago(1, 'months'),
@@ -99,10 +93,10 @@ class ContractsControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see']);
-        $contract = ContractFactory::createOne([
+        $contract = Factory\ContractFactory::createOne([
             'startAt' => Utils\Time::ago(1, 'months'),
             'endAt' => Utils\Time::fromNow(1, 'months'),
         ]);
@@ -114,10 +108,10 @@ class ContractsControllerTest extends WebTestCase
     public function testGetEditRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:manage:contracts']);
-        $contract = ContractFactory::createOne();
+        $contract = Factory\ContractFactory::createOne();
 
         $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/edit");
 
@@ -130,9 +124,9 @@ class ContractsControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $contract = ContractFactory::createOne();
+        $contract = Factory\ContractFactory::createOne();
 
         $client->catchExceptions(false);
         $client->request(Request::METHOD_GET, "/contracts/{$contract->getUid()}/edit");
@@ -141,14 +135,14 @@ class ContractsControllerTest extends WebTestCase
     public function testPostEditSavesTheContract(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $oldName = 'Contract 2023';
         $newName = 'Contract 2024';
         $oldMaxHours = 5;
         $newMaxHours = 10;
-        $contract = ContractFactory::createOne([
+        $contract = Factory\ContractFactory::createOne([
             'name' => $oldName,
             'maxHours' => $oldMaxHours,
         ]);
@@ -170,18 +164,18 @@ class ContractsControllerTest extends WebTestCase
     public function testPostEditDoesNotAcceptMaxHoursBelowSpentTime(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $oldName = 'Contract 2023';
         $newName = 'Contract 2024';
         $oldMaxHours = 10;
         $newMaxHours = 1;
-        $contract = ContractFactory::createOne([
+        $contract = Factory\ContractFactory::createOne([
             'name' => $oldName,
             'maxHours' => $oldMaxHours,
         ]);
-        $timeSpent = TimeSpentFactory::createOne([
+        $timeSpent = Factory\TimeSpentFactory::createOne([
             'time' => ($newMaxHours + 1) * 60,
             'contract' => $contract,
         ]);
@@ -207,14 +201,14 @@ class ContractsControllerTest extends WebTestCase
     public function testPostEditFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:manage:contracts']);
         $oldName = 'Contract 2023';
         $newName = 'Contract 2024';
         $oldMaxHours = 5;
         $newMaxHours = 10;
-        $contract = ContractFactory::createOne([
+        $contract = Factory\ContractFactory::createOne([
             'name' => $oldName,
             'maxHours' => $oldMaxHours,
         ]);
