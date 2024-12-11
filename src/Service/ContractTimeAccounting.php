@@ -39,7 +39,8 @@ class ContractTimeAccounting
         $timeSpent = new TimeSpent();
         $timeSpent->setTime($timeAccounted);
         $timeSpent->setRealTime($time);
-        $timeSpent->setContract($contract);
+
+        $contract->addTimeSpent($timeSpent);
 
         return $timeSpent;
     }
@@ -72,7 +73,8 @@ class ContractTimeAccounting
             );
 
             $timeSpent->setTime($timeAccounted);
-            $timeSpent->setContract($contract);
+
+            $contract->addTimeSpent($timeSpent);
 
             $availableTime = $availableTime - $timeAccounted;
         }
@@ -84,7 +86,11 @@ class ContractTimeAccounting
     public function unaccountTimeSpents(array $timeSpents): void
     {
         foreach ($timeSpents as $timeSpent) {
-            $timeSpent->setContract(null);
+            $contract = $timeSpent->getContract();
+            if ($contract) {
+                $contract->removeTimeSpent($timeSpent);
+            }
+
             $realTime = $timeSpent->getRealTime();
             $timeSpent->setTime($realTime);
         }
