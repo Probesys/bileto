@@ -4,44 +4,24 @@
  # SPDX-License-Identifier: AGPL-3.0-or-later
  #}
 
-{% if is_granted('orga:see:tickets:time_spent:real', ticket.organization) and is_granted('orga:see:tickets:time_spent:accounted', ticket.organization) %}
-    <div class="timeline__time-spent" data-test="time-spent-item">
-        <p class="timeline__time-spent-message">
-            {{ 'tickets.show.time_spent' | trans({ count: timeSpent.realTime | formatMinutes('long') }) }}
+{% extends 'tickets/_time_spent.html.twig' %}
 
-            {% if timeSpent.contract is null %}
-                <span class="text--secondary text--small">
-                    ({{ 'tickets.show.time_spent.unaccounted' | trans }})
-                </span>
-            {% else %}
-                <span class="text--secondary text--small">
-                    ({{ 'tickets.show.time_spent.accounted' | trans({ count: timeSpent.time | formatMinutes('long')  }) }})
-                </span>
-            {% endif %}
-        </p>
+{% block body %}
+    {% if is_granted('orga:see:tickets:time_spent:real', ticket.organization) and is_granted('orga:see:tickets:time_spent:accounted', ticket.organization) %}
+        {{ 'tickets.show.time_spent' | trans({ count: timeSpent.realTime | formatMinutes('long') }) }}
 
-        <time class="timeline__time-spent-date" datetime="{{ timeSpent.createdAt | dateIso }}">
-            {{ timeSpent.createdAt | dateTrans('HH:mm') }}
-        </time>
-    </div>
-{% elseif is_granted('orga:see:tickets:time_spent:real', ticket.organization) %}
-    <div class="timeline__time-spent" data-test="time-spent-item">
-        <p class="timeline__time-spent-message">
-            {{ 'tickets.show.time_spent' | trans({ count: timeSpent.realTime | formatMinutes('long') }) }}
-        </p>
-
-        <time class="timeline__time-spent-date" datetime="{{ timeSpent.createdAt | dateIso }}">
-            {{ timeSpent.createdAt | dateTrans('HH:mm') }}
-        </time>
-    </div>
-{% elseif is_granted('orga:see:tickets:time_spent:accounted', ticket.organization) and timeSpent.contract is not null %}
-    <div class="timeline__time-spent" data-test="time-spent-item">
-        <p class="timeline__time-spent-message">
-            {{ 'tickets.show.time_spent' | trans({ count: timeSpent.time | formatMinutes('long')  }) }}
-        </p>
-
-        <time class="timeline__time-spent-date" datetime="{{ timeSpent.createdAt | dateIso }}">
-            {{ timeSpent.createdAt | dateTrans('HH:mm') }}
-        </time>
-    </div>
-{% endif %}
+        {% if timeSpent.contract is null %}
+            <span class="text--secondary text--small">
+                ({{ 'tickets.show.time_spent.unaccounted' | trans }})
+            </span>
+        {% else %}
+            <span class="text--secondary text--small">
+                ({{ 'tickets.show.time_spent.accounted' | trans({ count: timeSpent.time | formatMinutes('long')  }) }})
+            </span>
+        {% endif %}
+    {% elseif is_granted('orga:see:tickets:time_spent:real', ticket.organization) %}
+        {{ 'tickets.show.time_spent' | trans({ count: timeSpent.realTime | formatMinutes('long') }) }}
+    {% elseif is_granted('orga:see:tickets:time_spent:accounted', ticket.organization) and timeSpent.contract is not null %}
+        {{ 'tickets.show.time_spent' | trans({ count: timeSpent.time | formatMinutes('long')  }) }}
+    {% endif %}
+{% endblock %}

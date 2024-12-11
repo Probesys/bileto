@@ -1,0 +1,19 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2024 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% set bodyBlock = block('body') | trim %}
+
+{% if bodyBlock is not empty %}
+    <div class="timeline__time-spent" data-test="time-spent-item">
+        <p class="timeline__time-spent-message">
+            {{ bodyBlock|raw }}
+        </p>
+
+        <time class="timeline__time-spent-date" datetime="{{ timeSpent.createdAt | dateIso }}">
+            {{ timeSpent.createdAt | dateTrans('HH:mm') }}
+        </time>
+    </div>
+{% endif %}
