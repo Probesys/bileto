@@ -1,12 +1,66 @@
 # Changelog of Bileto
 
-## unreleased
+## 2024-12-12 - 0.13.0
 
 ### Breaking change
 
 The `uploads/` directory is now placed under `var/` by default.
 If you uploaded files on your instance of Bileto, you must either set the `APP_UPLOADS_DIRECTORY` environment variable to the previous `uploads/` directory, or move the directory under `var/`.
 If you move it under `var/`, you no longer need to mount a dedicated Docker volume on `uploads/` as you should already have one mounter on `var/`.
+
+### New
+
+- Allow to search contracts ([2c83b91](https://github.com/Probesys/bileto/commit/2c83b91), [d146c59](https://github.com/Probesys/bileto/commit/d146c59))
+
+### Improvements
+
+- Display both owned and assigned tickets to agents on home page ([bf1b2c5](https://github.com/Probesys/bileto/commit/bf1b2c5), [7509502](https://github.com/Probesys/bileto/commit/7509502))
+- Add a "Your assigned tickets" view ([818a0e9](https://github.com/Probesys/bileto/commit/818a0e9))
+- Allow to select observers during ticket creation ([4562501](https://github.com/Probesys/bileto/commit/4562501))
+- Rework solution approvement to allow agents to approve or refuse a solution ([ac25249](https://github.com/Probesys/bileto/commit/ac25249))
+- Allow to update spent times ([74e322b](https://github.com/Probesys/bileto/commit/74e322b))
+- Allow to create a contract from the global list of contracts ([1e2dc34](https://github.com/Probesys/bileto/commit/1e2dc34))
+- Don't consider consumed contracts as finished ([eb7f77c](https://github.com/Probesys/bileto/commit/eb7f77c))
+- Add information about the renewed contracts ([d310130](https://github.com/Probesys/bileto/commit/d310130))
+- Set the default value of Contract time accounting unit to 30 ([53be1f1](https://github.com/Probesys/bileto/commit/53be1f1))
+- Display the total time spent in the tickets ([12fd603](https://github.com/Probesys/bileto/commit/12fd603))
+- Display total spent time in tickets lists ([97189b5](https://github.com/Probesys/bileto/commit/97189b5))
+- Improve the UX of the "time spent" input ([6109e56](https://github.com/Probesys/bileto/commit/6109e56))
+- Hide the organization submenu if user can see tickets only ([7699a93](https://github.com/Probesys/bileto/commit/7699a93))
+- Add a link to the ticket in the receipt email ([6a8d13e](https://github.com/Probesys/bileto/commit/6a8d13e))
+- Add the status to the message emails subject if finished ([9464577](https://github.com/Probesys/bileto/commit/9464577))
+- Accept .eml files as attachments ([0ebb324](https://github.com/Probesys/bileto/commit/0ebb324))
+- Remove the "Ticket already solved" checkbox ([d1c4cf5](https://github.com/Probesys/bileto/commit/d1c4cf5))
+- Allow to customize the logo in the emails ([52e39f5](https://github.com/Probesys/bileto/commit/52e39f5))
+
+### Bug fixes
+
+- Display the images in notification emails correctly ([1bcf9c9](https://github.com/Probesys/bileto/commit/1bcf9c9))
+- Find LDAP user by email if identifier is not set yet ([5f4f4ed](https://github.com/Probesys/bileto/commit/5f4f4ed))
+- Change "assigné" to "attribué" in the French translation ([1ed9ade](https://github.com/Probesys/bileto/commit/1ed9ade))
+- Fix the checkbox and radio buttons glitch aspect ([8460602](https://github.com/Probesys/bileto/commit/8460602))
+- Don't flush if creating user with flush false and default authorization ([92c42ce](https://github.com/Probesys/bileto/commit/92c42ce))
+- Fix overflowing centered popup containers ([8e1d428](https://github.com/Probesys/bileto/commit/8e1d428))
+
+### Technical
+
+- Move the uploads directory under var by default ([f51a61a](https://github.com/Probesys/bileto/commit/f51a61a))
+- Update the NPM dependencies ([e02de09](https://github.com/Probesys/bileto/commit/e02de09), [8743710](https://github.com/Probesys/bileto/commit/8743710))
+- Make sure folders under var are created in Docker image ([a7d9cf0](https://github.com/Probesys/bileto/commit/a7d9cf0))
+- Ignore more files and folders in .dockerignore ([5420c3e](https://github.com/Probesys/bileto/commit/5420c3e))
+
+### Documentation
+
+- Remove warnings stating that Bileto is not ready for production ([e588c96](https://github.com/Probesys/bileto/commit/e588c96))
+- Document database volume mounting in the Docker config for admins ([8107b35](https://github.com/Probesys/bileto/commit/8107b35))
+- Make explicit that PR checklist is for reviewers ([fdd8a43](https://github.com/Probesys/bileto/commit/fdd8a43))
+
+### Developers
+
+- Allow to reaccount time spent ([88628e7](https://github.com/Probesys/bileto/commit/88628e7))
+- Make sure ContractTimeAccounting add time spent to contracts ([b27013c](https://github.com/Probesys/bileto/commit/b27013c))
+- Provide a button--ghost variant ([b1508f3](https://github.com/Probesys/bileto/commit/b1508f3))
+- Refactor the "multiselect actors" form fields ([936c7bc](https://github.com/Probesys/bileto/commit/936c7bc))
 
 ## 2024-11-22 - 0.12.0-beta
 
