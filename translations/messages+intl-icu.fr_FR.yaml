@@ -24,6 +24,8 @@ advanced_search_syntax.contracts.qualifiers.alert.example3: 'Les contrats ayant 
 advanced_search_syntax.contracts.qualifiers.alert.example4: 'Les contrats n’ayant aucune une alerte en cours'
 advanced_search_syntax.contracts.qualifiers.alert.title: Alerte
 advanced_search_syntax.contracts.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
+advanced_search_syntax.contracts.qualifiers.renewal.title: 'Renouvellement des contrats'
+advanced_search_syntax.contracts.qualifiers.renewal.example1: 'Les contrats qui ont été renouvelés'
 advanced_search_syntax.contracts.qualifiers.status.example1: "Les contrats avec le statut «\_en cours\_»"
 advanced_search_syntax.contracts.qualifiers.status.example2: "Les contrats avec les statuts «\_à venir\_» ou «\_en cours\_»"
 advanced_search_syntax.contracts.qualifiers.status.title: Statut

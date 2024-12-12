@@ -47,6 +47,7 @@ class QueryBuilder extends SearchEngine\QueryBuilder
             'alert' => $this->buildAlertExpr(...),
             'has:alert' => $this->buildHasAlertExpr(...),
             'no:alert' => $this->buildNoAlertExpr(...),
+            'is:renewed' => $this->buildIsRenewedExpr(...),
         ];
     }
 
@@ -180,6 +181,14 @@ class QueryBuilder extends SearchEngine\QueryBuilder
         } else {
             return "NOT ({$where})";
         }
+    }
+
+    /**
+     * @return literal-string
+     */
+    protected function buildIsRenewedExpr(SearchEngine\Query\Condition $condition): string
+    {
+        return $this->buildExpr('c.renewedBy', null, !$condition->not());
     }
 
     /**

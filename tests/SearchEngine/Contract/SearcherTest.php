@@ -882,6 +882,31 @@ class SearcherTest extends WebTestCase
         $this->assertSame($contract2->getId(), $contractsPagination->items[1]->getId());
     }
 
+    public function testGetContractsCanReturnContractsByRenewalStatus(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        $user = Factory\UserFactory::createOne()->_real();
+        $client->loginUser($user);
+        $organization = Factory\OrganizationFactory::createOne()->_real();
+        $this->grantOrga($user, ['orga:see:contracts'], $organization);
+        $contractSearcher = $container->get(SearchEngine\Contract\Searcher::class);
+        $contract1 = Factory\ContractFactory::createOne([
+            'organization' => $organization,
+            'renewedBy' => null,
+        ]);
+        $contract2 = Factory\ContractFactory::createOne([
+            'organization' => $organization,
+            'renewedBy' => Factory\ContractFactory::createOne(),
+        ]);
+
+        $query = SearchEngine\Query::fromString('is:renewed');
+        $contractsPagination = $contractSearcher->getContracts($query);
+
+        $this->assertSame(1, $contractsPagination->count);
+        $this->assertSame($contract2->getId(), $contractsPagination->items[0]->getId());
+    }
+
     public function testCountContractsReturnsNumberOfContracts(): void
     {
         $client = static::createClient();

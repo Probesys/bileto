@@ -24,6 +24,8 @@ advanced_search_syntax.contracts.qualifiers.alert.example3: 'Contracts with an a
 advanced_search_syntax.contracts.qualifiers.alert.example4: 'Contracts with no alerts in progress'
 advanced_search_syntax.contracts.qualifiers.alert.title: Alert
 advanced_search_syntax.contracts.qualifiers.description: 'Qualifiers are special keywords (e.g. <code>status:</code>) that take a value or a comma-separated list of values. They are used to target a particular property.'
+advanced_search_syntax.contracts.qualifiers.renewal.title: 'Contract renewal'
+advanced_search_syntax.contracts.qualifiers.renewal.example1: 'Contracts that have been renewed'
 advanced_search_syntax.contracts.qualifiers.status.example1: 'Contracts with the status “ongoing”'
 advanced_search_syntax.contracts.qualifiers.status.example2: 'Contracts with the status “coming” or “ongoing”'
 advanced_search_syntax.contracts.qualifiers.status.title: Status
