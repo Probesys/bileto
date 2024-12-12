@@ -134,10 +134,6 @@ class TicketsController extends BaseController
                 $eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::ASSIGNED);
             }
 
-            if ($ticket->getStatus() === 'resolved') {
-                $eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::RESOLVED);
-            }
-
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),
             ]);

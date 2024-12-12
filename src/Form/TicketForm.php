@@ -156,17 +156,6 @@ class TicketForm extends AbstractType
                 ],
             ]);
 
-            if ($this->authorizer->isGranted('orga:update:tickets:status', $organization)) {
-                $form->add('isResolved', Type\CheckboxType::class, [
-                    'required' => false,
-                    'mapped' => false,
-                    'label' => new TranslatableMessage('tickets.new.mark_as_resolved'),
-                    'attr' => [
-                        'data-enclosure' => 'grey',
-                    ],
-                ]);
-            }
-
             $form->add('submit', Type\SubmitType::class, [
                 'label' => new TranslatableMessage('tickets.new.submit'),
                 'block_prefix' => 'submit_arrow',

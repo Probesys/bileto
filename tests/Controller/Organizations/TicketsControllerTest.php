@@ -559,34 +559,6 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($label2->getUid(), $ticketLabels[0]->getUid());
     }
 
-    public function testPostNewCanMarkATicketAsResolved(): void
-    {
-        $client = static::createClient();
-        $user = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $organization = Factory\OrganizationFactory::createOne();
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets',
-            'orga:update:tickets:status',
-        ], $organization->_real());
-        $title = 'My ticket';
-        $messageContent = 'My message';
-
-        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
-            'ticket' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket'),
-                'title' => $title,
-                'content' => $messageContent,
-                'isResolved' => true,
-            ],
-        ]);
-
-        $ticket = Factory\TicketFactory::last();
-        $this->assertNotNull($ticket);
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $this->assertSame('resolved', $ticket->getStatus());
-    }
-
     public function testPostNewFailsIfAssigneeIsNotAgent(): void
     {
         $client = static::createClient();
