@@ -22,9 +22,6 @@ It allows you to:
 - Work in different environments (mobile and dark modes are available);
 - And a lot more to come: [see our roadmap to learn more.](/ROADMAP.md)
 
-**Please note that Bileto is in an active development phase.**
-It is not advised to use Bileto in production yet.
-
 ![Screenshot of the tickets page of Bileto showing 3 opened tickets and a search form.](public/screenshot.webp)
 
 It is written with [Symfony](https://symfony.com/) and works with [PHP](https://www.php.net/) 8.2 or 8.3.

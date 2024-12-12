@@ -7,8 +7,6 @@ In this documentation, it is expected that you're at ease with Docker.
 We only provide instructions for a basic setup.
 You will need to adapt the instructions to your needs, for instance to setup a reverse proxy, or reuse an existing database.
 
-**Warning:** Bileto is not ready for the production yet, but it should be soon!
-
 ## Installation
 
 ### Install Docker

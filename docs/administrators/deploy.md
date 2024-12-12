@@ -7,8 +7,6 @@ In this documentation, it is expected that you're at ease with managing a webser
 Nginx is used as the webserver in this documentation.
 Apache should work as well, but it hasn't been tested.
 
-**Warning:** Bileto is not ready for the production yet, but it should be soon!
-
 ## Installation
 
 ### Check the requirements
