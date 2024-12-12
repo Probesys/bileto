@@ -6,13 +6,8 @@
 
 namespace App\Tests\Controller\Organizations;
 
-use App\Tests\AuthorizationHelper;
-use App\Tests\Factory\ContractFactory;
-use App\Tests\Factory\OrganizationFactory;
-use App\Tests\Factory\TicketFactory;
-use App\Tests\Factory\TimeSpentFactory;
-use App\Tests\Factory\UserFactory;
-use App\Tests\SessionHelper;
+use App\Tests;
+use App\Tests\Factory;
 use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,25 +17,25 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 
 class ContractsControllerTest extends WebTestCase
 {
-    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
-    use SessionHelper;
+    use Tests\AuthorizationHelper;
+    use Tests\SessionHelper;
 
     public function testGetIndexRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), ['orga:see:contracts']);
-        $contract1 = ContractFactory::createOne([
+        $contract1 = Factory\ContractFactory::createOne([
             'name' => 'My contract 1',
             'organization' => $organization,
             'startAt' => Utils\Time::ago(1, 'months'),
             'endAt' => Utils\Time::fromNow(1, 'months'),
         ]);
-        $contract2 = ContractFactory::createOne([
+        $contract2 = Factory\ContractFactory::createOne([
             'name' => 'My contract 2',
             'organization' => $organization,
             'startAt' => Utils\Time::ago(1, 'months'),
@@ -59,13 +54,13 @@ class ContractsControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne([
+        $organization = Factory\OrganizationFactory::createOne([
             'name' => 'My organization',
         ]);
         $this->grantOrga($user->_real(), ['orga:see'], $organization->_real());
-        $contract = ContractFactory::createOne([
+        $contract = Factory\ContractFactory::createOne([
             'name' => 'My contract',
             'organization' => $organization,
         ]);
@@ -77,9 +72,9 @@ class ContractsControllerTest extends WebTestCase
     public function testGetNewRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
@@ -96,9 +91,9 @@ class ContractsControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
         ]);
@@ -110,9 +105,9 @@ class ContractsControllerTest extends WebTestCase
     public function testPostNewCreatesAContractAndRedirects(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
@@ -124,7 +119,7 @@ class ContractsControllerTest extends WebTestCase
         $timeAccountingUnit = 30;
         $notes = 'Some notes';
 
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
 
         $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
@@ -138,8 +133,8 @@ class ContractsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertSame(1, ContractFactory::count());
-        $contract = ContractFactory::first();
+        $this->assertSame(1, Factory\ContractFactory::count());
+        $contract = Factory\ContractFactory::first();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $this->assertSame($name, $contract->getName());
         $this->assertSame($maxHours, $contract->getMaxHours());
@@ -156,21 +151,21 @@ class ContractsControllerTest extends WebTestCase
     public function testPostNewCanAttachTicketsToContract(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
         ]);
         $startAt = new \DateTimeImmutable('2023-01-01');
         $endAt = new \DateTimeImmutable('2023-12-31');
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'organization' => $organization,
             'createdAt' => new \DateTimeImmutable('2023-06-06'),
         ]);
 
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
 
         $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
@@ -183,8 +178,8 @@ class ContractsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertSame(1, ContractFactory::count());
-        $contract = ContractFactory::last();
+        $this->assertSame(1, Factory\ContractFactory::count());
+        $contract = Factory\ContractFactory::last();
         $contract->_refresh();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $tickets = $contract->getTickets();
@@ -195,9 +190,9 @@ class ContractsControllerTest extends WebTestCase
     public function testPostNewDoesNotAttachContractIfTicketsHaveAlreadyOneOngoing(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
@@ -209,18 +204,18 @@ class ContractsControllerTest extends WebTestCase
         // an edge-case that we want to handle correctly.
         $existingStartAt = new \DateTimeImmutable('2023-09-01');
         $existingEndAt = new \DateTimeImmutable('2023-08-31');
-        $existingContract = ContractFactory::createOne([
+        $existingContract = Factory\ContractFactory::createOne([
             'organization' => $organization,
             'startAt' => $startAt,
             'endAt' => $endAt,
         ]);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'organization' => $organization,
             'createdAt' => new \DateTimeImmutable('2023-06-06'),
             'contracts' => [$existingContract],
         ]);
 
-        $this->assertSame(1, ContractFactory::count());
+        $this->assertSame(1, Factory\ContractFactory::count());
 
         $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
@@ -233,8 +228,8 @@ class ContractsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertSame(2, ContractFactory::count());
-        $contract = ContractFactory::last();
+        $this->assertSame(2, Factory\ContractFactory::count());
+        $contract = Factory\ContractFactory::last();
         $contract->_refresh();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $tickets = $contract->getTickets();
@@ -244,9 +239,9 @@ class ContractsControllerTest extends WebTestCase
     public function testPostNewCanAttachUnaccountedTimeSpentsToContract(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
@@ -254,18 +249,18 @@ class ContractsControllerTest extends WebTestCase
         $startAt = new \DateTimeImmutable('2023-01-01');
         $endAt = new \DateTimeImmutable('2023-12-31');
         $timeAccountingUnit = 30;
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'organization' => $organization,
             'createdAt' => new \DateTimeImmutable('2023-06-06'),
         ]);
-        $timeSpent = TimeSpentFactory::createOne([
+        $timeSpent = Factory\TimeSpentFactory::createOne([
             'ticket' => $ticket,
             'contract' => null,
             'time' => 10,
             'realTime' => 10,
         ]);
 
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
 
         $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/contracts/new", [
             'contract' => [
@@ -280,8 +275,8 @@ class ContractsControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertSame(1, ContractFactory::count());
-        $contract = ContractFactory::last();
+        $this->assertSame(1, Factory\ContractFactory::count());
+        $contract = Factory\ContractFactory::last();
         $this->assertResponseRedirects("/contracts/{$contract->getUid()}", 302);
         $timeSpent->_refresh();
         $timeSpentContract = $timeSpent->getContract();
@@ -293,9 +288,9 @@ class ContractsControllerTest extends WebTestCase
     public function testPostNewFailsIfNameIsInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
@@ -318,15 +313,15 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#contract_name-error', 'Enter a name of less than 255 characters.');
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
     }
 
     public function testPostNewFailsIfDatesAreInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
@@ -349,15 +344,15 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#contract_startAt-error', 'Please enter a valid date');
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
     }
 
     public function testPostNewFailsIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $organization = OrganizationFactory::createOne();
+        $organization = Factory\OrganizationFactory::createOne();
         $this->grantOrga($user->_real(), [
             'orga:see:contracts',
             'orga:manage:contracts',
@@ -380,6 +375,6 @@ class ContractsControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains('#contract-error', 'The security token is invalid');
-        $this->assertSame(0, ContractFactory::count());
+        $this->assertSame(0, Factory\ContractFactory::count());
     }
 }
