@@ -70,15 +70,19 @@ class ContractsController extends BaseController
 
         $fromContractUid = $request->query->getString('from');
 
-        $contract = null;
+        $renewedContract = null;
         if ($fromContractUid) {
-            $contract = $contractRepository->findOneBy([
+            $renewedContract = $contractRepository->findOneBy([
                 'uid' => $fromContractUid,
             ]);
         }
 
-        if ($contract) {
-            $contract = $contract->getRenewed();
+        if ($renewedContract && $renewedContract->getRenewedBy()) {
+            throw $this->createAccessDeniedException('You cannot renew a contract that has already been renewed');
+        }
+
+        if ($renewedContract) {
+            $contract = $renewedContract->getRenewed();
         } else {
             $contract = new Entity\Contract();
         }
@@ -93,6 +97,13 @@ class ContractsController extends BaseController
             $contract = $form->getData();
             $contract->setOrganization($organization);
             $contract->initDefaultAlerts();
+
+            if ($renewedContract) {
+                $renewedContract->setRenewedBy($contract);
+
+                $contractRepository->save($renewedContract);
+            }
+
             $contractRepository->save($contract, true);
 
             $contractTickets = $ticketRepository->findAssociableTickets($contract);

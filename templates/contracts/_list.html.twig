@@ -24,6 +24,10 @@
                     <time datetime="{{ contract.endAt | dateIso }}">
                         {{ contract.endAt | dateTrans('dd MMM yyyy') }}
                     </time>
+
+                    {% if contract.renewedBy %}
+                        ({{ 'contracts.index.renewed' | trans }})
+                    {% endif %}
                 </p>
             </div>
 

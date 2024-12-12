@@ -51,6 +51,16 @@
                 </span>
             </div>
 
+            {% if contract.renewedBy %}
+                <p class="text--center">
+                    {{ 'contracts.show.renewed_by' | trans }}
+
+                    <a href="{{ path('contract', { uid: contract.renewedBy.uid }) }} ">
+                        {{ contract.renewedBy.name }}
+                    </a>
+                </p>
+            {% endif %}
+
             {% if is_granted('orga:manage:contracts', organization) %}
                 <div class="text--right">
                     <details
@@ -79,9 +89,11 @@
                                 {{ 'contracts.show.edit' | trans }}
                             </a>
 
-                            <a class="popup__item" href="{{ path('new organization contract', { uid: organization.uid, from: contract.uid }) }}">
-                                {{ 'contracts.show.renew' | trans }}
-                            </a>
+                            {% if not contract.renewedBy %}
+                                <a class="popup__item" href="{{ path('new organization contract', { uid: organization.uid, from: contract.uid }) }}">
+                                    {{ 'contracts.show.renew' | trans }}
+                                </a>
+                            {% endif %}
                         </nav>
                     </details>
                 </div>

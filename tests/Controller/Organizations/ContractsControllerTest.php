@@ -102,6 +102,30 @@ class ContractsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/contracts/new");
     }
 
+    public function testGetNewFailsIfRenewedContractIsAlreadyRenewed(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('You cannot renew a contract that has already been renewed');
+
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), [
+            'orga:see:contracts',
+            'orga:manage:contracts',
+        ]);
+        $renewedContract = Factory\ContractFactory::createOne([
+            'organization' => $organization,
+            'renewedBy' => Factory\ContractFactory::createOne(),
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/contracts/new", [
+            'from' => $renewedContract->getUid(),
+        ]);
+    }
+
     public function testPostNewCreatesAContractAndRedirects(): void
     {
         $client = static::createClient();
@@ -283,6 +307,52 @@ class ContractsControllerTest extends WebTestCase
         $this->assertNotNull($timeSpentContract);
         $this->assertSame($contract->getUid(), $timeSpentContract->getUid());
         $this->assertSame(30, $timeSpent->getTime());
+    }
+
+    public function testPostNewCanRenewAContract(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), [
+            'orga:see:contracts',
+            'orga:manage:contracts',
+        ]);
+        $renewedContract = Factory\ContractFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $name = 'My contract';
+        $maxHours = 10;
+        $startAt = new \DateTimeImmutable('2023-09-01');
+        $endAt = new \DateTimeImmutable('2023-12-31');
+        $timeAccountingUnit = 30;
+        $notes = 'Some notes';
+
+        $this->assertSame(1, Factory\ContractFactory::count());
+
+        $client->request(
+            Request::METHOD_POST,
+            "/organizations/{$organization->getUid()}/contracts/new?from={$renewedContract->getUid()}",
+            [
+                'contract' => [
+                    '_token' => $this->generateCsrfToken($client, 'contract'),
+                    'name' => $name,
+                    'maxHours' => $maxHours,
+                    'startAt' => $startAt->format('Y-m-d'),
+                    'endAt' => $endAt->format('Y-m-d'),
+                    'timeAccountingUnit' => $timeAccountingUnit,
+                    'notes' => $notes,
+                ],
+            ]
+        );
+
+        $this->assertSame(2, Factory\ContractFactory::count());
+        $newContract = Factory\ContractFactory::last();
+        $this->assertResponseRedirects("/contracts/{$newContract->getUid()}", 302);
+        $renewedContract->_refresh();
+        $this->assertSame($name, $newContract->getName());
+        $this->assertSame($newContract->getId(), $renewedContract->getRenewedBy()?->getId());
     }
 
     public function testPostNewFailsIfNameIsInvalid(): void

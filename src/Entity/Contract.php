@@ -112,6 +112,9 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
     #[ORM\Column(options: ['default' => 0])]
     private ?int $dateAlert = null;
 
+    #[ORM\OneToOne(targetEntity: self::class)]
+    private ?self $renewedBy = null;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -486,5 +489,17 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
         }
 
         return md5("{$this->name}-{$organization}-{$startAt}-{$endAt}");
+    }
+
+    public function getRenewedBy(): ?self
+    {
+        return $this->renewedBy;
+    }
+
+    public function setRenewedBy(?self $renewedBy): static
+    {
+        $this->renewedBy = $renewedBy;
+
+        return $this;
     }
 }
