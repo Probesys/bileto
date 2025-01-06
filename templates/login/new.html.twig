@@ -62,100 +62,108 @@
             </div>
 
             <div class="login__form">
-                <div class="wrapper wrapper--small wrapper--center flow flow--larger">
-                    <h1 class="text--left">
-                        {{ 'login.title' | trans }}
-                    </h1>
-
-                    {% if app.flashes('password_changed') %}
-                        {{ include('alerts/_alert.html.twig', {
-                            type: 'success',
-                            title: 'login.password_changed.title' | trans,
-                            message: 'login.password_changed.message' | trans,
-                        }, with_context = false) }}
+                <div class="wrapper wrapper--small wrapper--center flow">
+                    {% if customLogo %}
+                        <p class="text--center">
+                            <img alt="" src="data:image/svg+xml;base64,{{ customLogo }}" width="300">
+                        </p>
                     {% endif %}
 
-                    <form action="{{ path('login') }}" method="post" class="flow flow--large" data-turbo="false">
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <div class="flow flow--larger">
+                        <h1 class="text--left">
+                            {{ 'login.title' | trans }}
+                        </h1>
 
-                        {% if error %}
-                            {{ include(
-                                'alerts/_error.html.twig',
-                                { message: error.messageKey | trans(error.messageData, 'security') },
-                                with_context = false
-                            ) }}
+                        {% if app.flashes('password_changed') %}
+                            {{ include('alerts/_alert.html.twig', {
+                                type: 'success',
+                                title: 'login.password_changed.title' | trans,
+                                message: 'login.password_changed.message' | trans,
+                            }, with_context = false) }}
                         {% endif %}
 
-                        <div class="flow flow--small">
-                            <label for="identifier">
-                                {{ 'users.identifier' | trans }}
-                            </label>
+                        <form action="{{ path('login') }}" method="post" class="flow flow--large" data-turbo="false">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                            <input
-                                type="text"
-                                id="identifier"
-                                name="_identifier"
-                                value="{{ last_identifier }}"
-                                required
-                            />
-                        </div>
+                            {% if error %}
+                                {{ include(
+                                    'alerts/_error.html.twig',
+                                    { message: error.messageKey | trans(error.messageData, 'security') },
+                                    with_context = false
+                                ) }}
+                            {% endif %}
 
-                        <div class="flow flow--small">
-                            <label for="password">
-                                {{ 'users.password' | trans }}
-                            </label>
+                            <div class="flow flow--small">
+                                <label for="identifier">
+                                    {{ 'users.identifier' | trans }}
+                                </label>
 
-                            <div class="input-container" data-controller="password">
                                 <input
-                                    type="password"
-                                    id="password"
-                                    name="_password"
+                                    type="text"
+                                    id="identifier"
+                                    name="_identifier"
+                                    value="{{ last_identifier }}"
                                     required
-                                    autocomplete="current-password"
-                                    data-password-target="input"
+                                />
+                            </div>
+
+                            <div class="flow flow--small">
+                                <label for="password">
+                                    {{ 'users.password' | trans }}
+                                </label>
+
+                                <div class="input-container" data-controller="password">
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        name="_password"
+                                        required
+                                        autocomplete="current-password"
+                                        data-password-target="input"
+                                    />
+
+                                    <button
+                                        class="button--icon"
+                                        type="button"
+                                        role="switch"
+                                        data-action="password#toggle"
+                                        data-password-target="button"
+                                    >
+                                        {{ icon('eye') }}
+                                        {{ icon('eye-slash') }}
+                                        <span class="sr-only">
+                                            {{ 'forms.show_password' | trans }}
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="remember-me"
+                                    name="_remember_me"
                                 />
 
-                                <button
-                                    class="button--icon"
-                                    type="button"
-                                    role="switch"
-                                    data-action="password#toggle"
-                                    data-password-target="button"
-                                >
-                                    {{ icon('eye') }}
-                                    {{ icon('eye-slash') }}
-                                    <span class="sr-only">
-                                        {{ 'forms.show_password' | trans }}
-                                    </span>
+                                <label for="remember-me">
+                                    {{ 'login.remember_me' | trans }}
+                                </label>
+                            </div>
+
+                            <div class="form__actions">
+                                <button id="form-login-submit" class="button--primary button--animated-icon" type="submit">
+                                    {{ 'login.submit' | trans }}
+                                    {{ icon('arrow-right') }}
                                 </button>
                             </div>
-                        </div>
+                        </form>
 
-                        <div>
-                            <input
-                                type="checkbox"
-                                id="remember-me"
-                                name="_remember_me"
-                            />
-
-                            <label for="remember-me">
-                                {{ 'login.remember_me' | trans }}
-                            </label>
-                        </div>
-
-                        <div class="form__actions">
-                            <button id="form-login-submit" class="button--primary button--animated-icon" type="submit">
-                                {{ 'login.submit' | trans }}
-                                {{ icon('arrow-right') }}
-                            </button>
-                        </div>
-                    </form>
-
-                    <p class="text--center">
-                        <a href="{{ path('reset password') }}">
-                            {{ 'login.forgot_password' | trans }}
-                        </a>
-                    </p>
+                        <p class="text--center">
+                            <a href="{{ path('reset password') }}">
+                                {{ 'login.forgot_password' | trans }}
+                            </a>
+                        </p>
+                    </div>
                 </div>
             </div>
 
