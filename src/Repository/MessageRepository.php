@@ -38,6 +38,7 @@ class MessageRepository extends ServiceEntityRepository implements UidGeneratorI
             WHERE JSON_CONTAINS(m.notificationsReferences, :reference) = true
         SQL);
         $query->setParameter('reference', '"' . $reference . '"');
+        $query->setMaxResults(1);
 
         return $query->getOneOrNullResult();
     }
