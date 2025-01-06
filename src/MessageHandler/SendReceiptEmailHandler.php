@@ -8,6 +8,7 @@ namespace App\MessageHandler;
 
 use App\Message;
 use App\Repository;
+use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Transport\TransportInterface;
@@ -62,7 +63,14 @@ class SendReceiptEmailHandler
         if ($message) {
             $emailId = $sentEmail->getMessageId();
             $message->addEmailNotificationReference($emailId);
-            $this->messageRepository->save($message, true);
+
+            try {
+                $this->messageRepository->save($message, true);
+            } catch (EntityNotFoundException $e) {
+                $this->logger->error(
+                    "Message #{$message->getId()} notification reference cannot be saved: {$e->getMessage()}"
+                );
+            }
         }
     }
 }
