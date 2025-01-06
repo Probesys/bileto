@@ -55,7 +55,7 @@ class DomHelper
             }
         }
 
-        $result = $contentDom->saveHTML();
+        $result = $contentDom->saveHTML($contentDom->documentElement);
 
         if ($result === false) {
             return $content;
