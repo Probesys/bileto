@@ -55,7 +55,7 @@
                         {{ include(
                             'contracts/_sort_button.html.twig',
                             {
-                                currentPath: path('contracts', { q: query }),
+                                currentPath: path('organization contracts', { uid: organization.uid, q: query }),
                                 currentSort: sort,
                             },
                             with_context = false
