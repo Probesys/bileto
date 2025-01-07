@@ -142,6 +142,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     private Collection $messages;
 
     #[ORM\OneToOne(cascade: ['persist'])]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Message $solution = null;
 
     /** @var Collection<int, Contract> $contracts */
