@@ -133,6 +133,10 @@ The ids are not imported, but are used to link elements between each other durin
 
 Datetimes must be expressed with [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339), e.g. `2024-02-13T10:00:00+02:00` (see also PHP [`DateTimeInterface::RFC3339`](https://www.php.net/manual/fr/class.datetimeinterface.php)).
 
+> [!CAUTION]
+> It is important that the datetimes are expressed with the date offset corresponding to the timezone of the server.
+> Otherwise, existing data could be duplicated.
+
 A last folder named `documents/` contains the list of documents to import.
 
 A file (or folder) can be missing. In this case, it is considered that there is no corresponding data to import. Be careful though as the references cannot be broken (e.g. if a ticket refers to a user id, the user must exist in the file `users.json`, even though the email already exists in the database).
@@ -147,3 +151,5 @@ Contracts and tickets are harder to handle as there is no unique field that coul
 
 - contracts: same name, startAt, endAt and organization
 - tickets: same name, createdAt and organization
+
+As the uniqueness of these entities is based on dates, it's important that they are expressed with an offset corresponding to the server's timezone.
