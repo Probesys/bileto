@@ -95,6 +95,7 @@ class MessageDocument implements EntityInterface, MonitorableEntityInterface, Ui
     private ?string $hash = null;
 
     #[ORM\ManyToOne(inversedBy: 'messageDocuments')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Message $message = null;
 
     public function getName(): ?string
