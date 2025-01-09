@@ -74,9 +74,9 @@ class UserForm extends AbstractType
             }
 
             if (!$managedByLdap) {
-                if ($user->getUid() === null) {
-                    $help = new TranslatableMessage('users.form.password.empty_prevent_login');
-                } else {
+                $help = null;
+
+                if ($user->getUid() !== null) {
                     $help = new TranslatableMessage('users.form.password.empty_keep_current');
                 }
 
