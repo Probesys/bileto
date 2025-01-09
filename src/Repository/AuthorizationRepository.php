@@ -29,7 +29,7 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
     use CommonTrait;
     use UidGeneratorTrait;
 
-    /** @var array<string, Authorization[]> */
+    /** @var array<string, array{int, Authorization[]}> */
     private array $cacheAuthorizations = [];
 
     public function __construct(ManagerRegistry $registry)
@@ -96,6 +96,8 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
     }
 
     /**
+     * Return the list of user's authorizations.
+     *
      * @return Authorization[]
      */
     public function loadUserAuthorizations(User $user): array
@@ -104,9 +106,21 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
             return [];
         }
 
+        // Remove the entries older than 10 seconds from the cache.
+        foreach ($this->cacheAuthorizations as $key => $cache) {
+            $timestamp = $cache[0];
+
+            if ($timestamp < time() - 10) {
+                unset($this->cacheAuthorizations[$key]);
+            }
+        }
+
         $keyCache = $user->getUid();
 
         if (!isset($this->cacheAuthorizations[$keyCache])) {
+            // Load the authorizations of the user from the database only if
+            // they are not in the cache yet.
+
             $entityManager = $this->getEntityManager();
 
             $query = $entityManager->createQuery(<<<SQL
@@ -118,9 +132,10 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
             SQL);
             $query->setParameter('user', $user);
 
-            $this->cacheAuthorizations[$keyCache] = $query->getResult();
+            // The authorizations are now in the cache for the next 10 seconds.
+            $this->cacheAuthorizations[$keyCache] = [time(), $query->getResult()];
         }
 
-        return $this->cacheAuthorizations[$keyCache];
+        return $this->cacheAuthorizations[$keyCache][1];
     }
 }
