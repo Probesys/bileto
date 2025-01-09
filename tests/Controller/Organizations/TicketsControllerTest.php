@@ -218,13 +218,12 @@ class TicketsControllerTest extends WebTestCase
         Utils\Time::freeze($now);
         $client = static::createClient();
         list(
-            $user,
             $requester,
             $observer,
-        ) = Factory\UserFactory::createMany(3);
-        $client->loginUser($user->_real());
+        ) = Factory\UserFactory::createMany(2);
+        $client->loginUser($requester->_real());
         $organization = Factory\OrganizationFactory::createOne();
-        $this->grantOrga($user->_real(), [
+        $this->grantOrga($requester->_real(), [
             'orga:create:tickets',
             'orga:update:tickets:status',
             'orga:update:tickets:type',
@@ -266,7 +265,7 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($title, $ticket->getTitle());
         $this->assertSame(20, strlen($ticket->getUid()));
         $this->assertEquals($now, $ticket->getCreatedAt());
-        $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
+        $this->assertSame($requester->getId(), $ticket->getCreatedBy()->getId());
         $this->assertSame('incident', $ticket->getType());
         $this->assertSame('new', $ticket->getStatus());
         $this->assertSame('high', $ticket->getUrgency());
@@ -282,7 +281,7 @@ class TicketsControllerTest extends WebTestCase
         $message = Factory\MessageFactory::last();
         $this->assertSame($messageContent, $message->getContent());
         $this->assertEquals($now, $message->getCreatedAt());
-        $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
+        $this->assertSame($requester->getId(), $message->getCreatedBy()->getId());
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('webapp', $message->getVia());

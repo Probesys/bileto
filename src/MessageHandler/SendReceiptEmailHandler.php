@@ -37,7 +37,17 @@ class SendReceiptEmailHandler
             return;
         }
 
+        $createdBy = $ticket->getCreatedBy();
         $requester = $ticket->getRequester();
+
+        if ($createdBy->getUid() !== $requester->getUid()) {
+            // In this case, the requester already receives the "message"
+            // notification, so we don't need to send the receipt email too.
+            $this->logger->notice(
+                "Receipt email of ticket {$ticketId} has not been sent as the requester did not created the ticket."
+            );
+            return;
+        }
 
         $locale = $requester->getLocale();
         $subject = $this->translator->trans('emails.receipt.subject', locale: $locale);
