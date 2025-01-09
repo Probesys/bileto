@@ -45,4 +45,23 @@ class TeamRepository extends ServiceEntityRepository implements UidGeneratorInte
 
         return $query->getResult();
     }
+
+    /**
+     * @return Team[]
+     */
+    public function findLike(string $value): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $value = mb_strtolower($value);
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT t
+            FROM App\Entity\Team t
+            WHERE LOWER(t.name) LIKE :value
+        SQL);
+        $query->setParameter('value', "%{$value}%");
+
+        return $query->getResult();
+    }
 }

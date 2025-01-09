@@ -20,8 +20,9 @@ class QueryBuilder extends SearchEngine\QueryBuilder
 {
     public function __construct(
         protected Repository\LabelRepository $labelRepository,
-        protected Repository\UserRepository $userRepository,
         protected Repository\OrganizationRepository $organizationRepository,
+        protected Repository\TeamRepository $teamRepository,
+        protected Repository\UserRepository $userRepository,
         protected Security $security,
         protected ORM\EntityManagerInterface $entityManager,
     ) {
@@ -49,6 +50,7 @@ class QueryBuilder extends SearchEngine\QueryBuilder
             'assignee' => $this->buildAssigneeExpr(...),
             'requester' => $this->buildRequesterExpr(...),
             'observer' => $this->buildObserverExpr(...),
+            'team' => $this->buildTeamExpr(...),
             'involves' => $this->buildInvolvesExpr(...),
             'org' => $this->buildOrganizationExpr(...),
             'uid' => $this->buildUidExpr(...),
@@ -59,10 +61,12 @@ class QueryBuilder extends SearchEngine\QueryBuilder
             'contract' => $this->buildContractExpr(...),
             'label' => $this->buildLabelExpr(...),
             'no:assignee' => $this->buildNoAssigneeExpr(...),
+            'no:team' => $this->buildNoTeamExpr(...),
             'no:solution' => $this->buildNoSolutionExpr(...),
             'no:contract' => $this->buildNoContractExpr(...),
             'no:label' => $this->buildNoLabelExpr(...),
             'has:assignee' => $this->buildHasAssigneeExpr(...),
+            'has:team' => $this->buildHasTeamExpr(...),
             'has:solution' => $this->buildHasSolutionExpr(...),
             'has:contract' => $this->buildHasContractExpr(...),
             'has:label' => $this->buildHasLabelExpr(...),
@@ -119,6 +123,15 @@ class QueryBuilder extends SearchEngine\QueryBuilder
         } else {
             return "t.id IN ({$observersDql})";
         }
+    }
+
+    /**
+     * @return literal-string
+     */
+    protected function buildTeamExpr(SearchEngine\Query\Condition $condition): string
+    {
+        $value = $this->processValue($condition->getValue(), $this->processTeamValue(...));
+        return $this->buildExpr('COALESCE(IDENTITY(t.team), 0)', $value, $condition->not());
     }
 
     /**
@@ -278,6 +291,14 @@ class QueryBuilder extends SearchEngine\QueryBuilder
     /**
      * @return literal-string
      */
+    protected function buildNoTeamExpr(SearchEngine\Query\Condition $condition): string
+    {
+        return $this->buildExpr('t.team', null, $condition->not());
+    }
+
+    /**
+     * @return literal-string
+     */
     protected function buildNoSolutionExpr(SearchEngine\Query\Condition $condition): string
     {
         return $this->buildExpr('t.solution', null, $condition->not());
@@ -305,6 +326,14 @@ class QueryBuilder extends SearchEngine\QueryBuilder
     protected function buildHasAssigneeExpr(SearchEngine\Query\Condition $condition): string
     {
         return $this->buildExpr('t.assignee', null, !$condition->not());
+    }
+
+    /**
+     * @return literal-string
+     */
+    protected function buildHasTeamExpr(SearchEngine\Query\Condition $condition): string
+    {
+        return $this->buildExpr('t.team', null, !$condition->not());
     }
 
     /**
@@ -353,6 +382,30 @@ class QueryBuilder extends SearchEngine\QueryBuilder
         $ids = array_map(function ($user): int {
             return $user->getId();
         }, $users);
+
+        if ($ids) {
+            return $ids;
+        } else {
+            return [-1];
+        }
+    }
+
+    /**
+     * @return mixed[]
+     */
+    protected function processTeamValue(mixed $value): array
+    {
+        $id = $this->extractId($value);
+
+        if ($id !== null) {
+            return [$id];
+        }
+
+        $teams = $this->teamRepository->findLike($value);
+
+        $ids = array_map(function ($team): int {
+            return $team->getId();
+        }, $teams);
 
         if ($ids) {
             return $ids;

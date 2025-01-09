@@ -304,6 +304,122 @@ class SearcherTest extends WebTestCase
         $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
     }
 
+    public function testGetTicketsCanLimitToTicketsAssignedToSpecificTeam(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $team1 = Factory\TeamFactory::createOne([
+            'name' => 'Team support',
+        ]);
+        $team2 = Factory\TeamFactory::createOne([
+            'name' => 'Team Web',
+        ]);
+        $ticket1 = Factory\TicketFactory::createOne([
+            'requester' => $user,
+            'team' => $team1,
+        ]);
+        $ticket2 = Factory\TicketFactory::createOne([
+            'requester' => $user,
+            'team' => $team2,
+        ]);
+
+        $query = SearchEngine\Query::fromString('team:web');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanExcludeTicketsAssignedToSpecificTeam(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $team1 = Factory\TeamFactory::createOne([
+            'name' => 'Team support',
+        ]);
+        $team2 = Factory\TeamFactory::createOne([
+            'name' => 'Team Web',
+        ]);
+        $ticket1 = Factory\TicketFactory::createOne([
+            'requester' => $user,
+            'team' => $team1,
+        ]);
+        $ticket2 = Factory\TicketFactory::createOne([
+            'requester' => $user,
+            'team' => $team2,
+        ]);
+
+        $query = SearchEngine\Query::fromString('-team:web');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanLimitToTicketsAssignedToAnyTeam(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $team = Factory\TeamFactory::createOne([
+            'name' => 'Team support',
+        ]);
+        $ticket1 = Factory\TicketFactory::createOne([
+            'requester' => $user,
+        ]);
+        $ticket2 = Factory\TicketFactory::createOne([
+            'requester' => $user,
+            'team' => $team,
+        ]);
+
+        $query = SearchEngine\Query::fromString('has:team');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket2->getId(), $ticketsPagination->items[0]->getId());
+    }
+
+    public function testGetTicketsCanExcludeTicketsAssignedToAnyTeam(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var SearchEngine\Ticket\Searcher */
+        $ticketSearcher = $container->get(SearchEngine\Ticket\Searcher::class);
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $team = Factory\TeamFactory::createOne([
+            'name' => 'Team support',
+        ]);
+        $ticket1 = Factory\TicketFactory::createOne([
+            'requester' => $user,
+        ]);
+        $ticket2 = Factory\TicketFactory::createOne([
+            'requester' => $user,
+            'team' => $team,
+        ]);
+
+        $query = SearchEngine\Query::fromString('no:team');
+        $ticketsPagination = $ticketSearcher->getTickets($query);
+
+        $this->assertSame(1, $ticketsPagination->count);
+        $this->assertSame($ticket1->getId(), $ticketsPagination->items[0]->getId());
+    }
+
     public function testGetTicketsCanRestrictToAGivenContract(): void
     {
         $client = static::createClient();

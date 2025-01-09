@@ -75,6 +75,10 @@ advanced_search_syntax.tickets.qualifiers.status.example1: 'Tickets with the sta
 advanced_search_syntax.tickets.qualifiers.status.example2: 'Tickets with the status “new” or “in progress”'
 advanced_search_syntax.tickets.qualifiers.status.title: Status
 advanced_search_syntax.tickets.qualifiers.status.values: 'The possible values for status are: <code>new</code>, <code>in_progress</code>, <code>planned</code>, <code>pending</code>, <code>resolved</code>, <code>closed</code>, as well as the shortcuts <code>open</code> (includes the first 4) and <code>finished</code> (includes the last 2).'
+advanced_search_syntax.tickets.qualifiers.team.example1: 'Tickets assigned to a team whose name contains “web”'
+advanced_search_syntax.tickets.qualifiers.team.example2: 'Tickets with no assigned team'
+advanced_search_syntax.tickets.qualifiers.team.example3: 'Tickets assigned to a team'
+advanced_search_syntax.tickets.qualifiers.team.title: Teams
 advanced_search_syntax.tickets.qualifiers.title: 'Search by qualifiers'
 advanced_search_syntax.tickets.qualifiers.type.example1: 'Tickets of type “incident”'
 advanced_search_syntax.tickets.qualifiers.type.example2: 'Tickets of type “request”'
