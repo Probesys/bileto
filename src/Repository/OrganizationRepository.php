@@ -6,34 +6,30 @@
 
 namespace App\Repository;
 
-use App\Entity\Authorization;
-use App\Entity\Organization;
-use App\Entity\Team;
-use App\Entity\User;
-use App\Uid\UidGeneratorInterface;
-use App\Uid\UidGeneratorTrait;
+use App\Entity;
+use App\Uid;
 use App\Utils;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Organization>
+ * @extends ServiceEntityRepository<Entity\Organization>
  */
-class OrganizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
+class OrganizationRepository extends ServiceEntityRepository implements Uid\UidGeneratorInterface
 {
-    /** @phpstan-use CommonTrait<Organization> */
+    /** @phpstan-use CommonTrait<Entity\Organization> */
     use CommonTrait;
-    use UidGeneratorTrait;
-    /** @phpstan-use FindOrCreateTrait<Organization> */
+    use Uid\UidGeneratorTrait;
+    /** @phpstan-use FindOrCreateTrait<Entity\Organization> */
     use FindOrCreateTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Organization::class);
+        parent::__construct($registry, Entity\Organization::class);
     }
 
     /**
-     * @return Organization[]
+     * @return Entity\Organization[]
      */
     public function findLike(string $value): array
     {
@@ -52,48 +48,42 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
     }
 
     /**
+     * Return the list of organizations that the user has access to.
+     *
+     * The list can be restricted to a specific role type. It means that if
+     * user has access to an organization as a "user", it will not be returned
+     * if role type is set to "agent".
+     *
      * @param 'any'|'user'|'agent' $roleType
      *
-     * @return Organization[]
+     * @return Entity\Organization[]
      */
-    public function findAuthorizedOrganizations(User $user, string $roleType = 'any'): array
+    public function findAuthorizedOrganizations(Entity\User $user, string $roleType = 'any'): array
     {
         $entityManager = $this->getEntityManager();
         /** @var AuthorizationRepository */
-        $authorizationRepository = $entityManager->getRepository(Authorization::class);
-        $authorizations = $authorizationRepository->getOrgaAuthorizationsFor($user, scope: 'any');
+        $authorizationRepository = $entityManager->getRepository(Entity\Authorization::class);
 
-        $authorizations = array_filter(
-            $authorizations,
-            function ($authorization) use ($roleType): bool {
-                return $roleType === 'any' || $authorization->getRole()->getType() === $roleType;
-            }
-        );
+        $authorizations = $authorizationRepository->getOrgaAuthorizations($user, roleType: $roleType);
 
-        $authorizedOrgaIds = array_map(function ($authorization): ?int {
-            $organization = $authorization->getOrganization();
-
-            if ($organization) {
-                return $organization->getId();
-            } else {
-                return null;
-            }
+        $scopedOrganizations = array_map(function ($authorization): ?Entity\Organization {
+            return $authorization->getOrganization();
         }, $authorizations);
 
-        if (in_array(null, $authorizedOrgaIds)) {
-            // If "null" is returned, it means that an authorization is applied globally.
+        if (in_array(null, $scopedOrganizations)) {
+            // If "null" is in the list of the scoped organizations, it means
+            // that an authorization is applied globally and grants a global
+            // access to the user. We can return all the organizations then.
             return $this->findAll();
         } else {
-            return $this->findBy([
-                'id' => $authorizedOrgaIds,
-            ]);
+            return $scopedOrganizations;
         }
     }
 
     /**
-     * @return Organization[]
+     * @return Entity\Organization[]
      */
-    public function findObsoleteSupervisedOrganizations(Team $team): array
+    public function findObsoleteSupervisedOrganizations(Entity\Team $team): array
     {
         $entityManager = $this->getEntityManager();
 
@@ -119,7 +109,7 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
         return $query->getResult();
     }
 
-    public function findOneByDomain(string $domain): ?Organization
+    public function findOneByDomain(string $domain): ?Entity\Organization
     {
         $domain = Utils\Url::sanitizeDomain($domain);
 
@@ -135,7 +125,7 @@ class OrganizationRepository extends ServiceEntityRepository implements UidGener
         return $query->getOneOrNullResult();
     }
 
-    public function findOneByDomainOrDefault(string $domain): ?Organization
+    public function findOneByDomainOrDefault(string $domain): ?Entity\Organization
     {
         $organization = $this->findOneByDomain($domain);
 

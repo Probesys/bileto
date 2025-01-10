@@ -6,58 +6,54 @@
 
 namespace App\Repository;
 
-use App\Entity\Authorization;
-use App\Entity\Organization;
-use App\Entity\Role;
-use App\Entity\Team;
-use App\Entity\TeamAuthorization;
-use App\Entity\User;
-use App\Uid\UidGeneratorInterface;
-use App\Uid\UidGeneratorTrait;
+use App\Entity;
+use App\Uid;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @phpstan-type AuthorizationType 'orga'|'admin'
- * @phpstan-type Scope 'any'|Organization
+ * @phpstan-type Scope 'any'|Entity\Organization
  *
- * @extends ServiceEntityRepository<Authorization>
+ * @extends ServiceEntityRepository<Entity\Authorization>
  */
-class AuthorizationRepository extends ServiceEntityRepository implements UidGeneratorInterface
+class AuthorizationRepository extends ServiceEntityRepository implements Uid\UidGeneratorInterface
 {
-    /** @phpstan-use CommonTrait<Authorization> */
+    /** @phpstan-use CommonTrait<Entity\Authorization> */
     use CommonTrait;
-    use UidGeneratorTrait;
+    use Uid\UidGeneratorTrait;
 
-    /** @var array<string, array{int, Authorization[]}> */
+    /** @var array<string, array{int, Entity\Authorization[]}> */
     private array $cacheAuthorizations = [];
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Authorization::class);
+        parent::__construct($registry, Entity\Authorization::class);
     }
 
     /**
      * @param AuthorizationType $authorizationType
      * @param ?Scope $scope
      *
-     * @return Authorization[]
+     * @return Entity\Authorization[]
      */
-    public function getAuthorizations(string $authorizationType, User $user, mixed $scope): array
+    public function getAuthorizations(string $authorizationType, Entity\User $user, mixed $scope): array
     {
         if ($authorizationType === 'orga' && $scope !== null) {
-            return $this->getOrgaAuthorizationsFor($user, $scope);
+            return $this->getOrgaAuthorizations($user, $scope);
         } elseif ($authorizationType === 'admin' && $scope === null) {
-            return $this->getAdminAuthorizationsFor($user);
+            return $this->getAdminAuthorizations($user);
         } else {
             throw new \DomainException('Given authorization type and scope are not supported together');
         }
     }
 
     /**
-     * @return Authorization[]
+     * Return the 'admin' authorizations of the user.
+     *
+     * @return Entity\Authorization[]
      */
-    public function getAdminAuthorizationsFor(User $user): array
+    public function getAdminAuthorizations(Entity\User $user): array
     {
         $authorizations = $this->loadUserAuthorizations($user);
 
@@ -69,19 +65,30 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
     }
 
     /**
-     * @param Organization|'any' $scope
-     * @return Authorization[]
+     * Return the 'orga' authorizations of the user.
+     *
+     * The list of authorizations can be restricted to a specific organization
+     * or to a specific role type.
+     *
+     * @param Scope $scope
+     * @param 'any'|'user'|'agent' $roleType
+     *
+     * @return Entity\Authorization[]
      */
-    public function getOrgaAuthorizationsFor(User $user, mixed $scope): array
+    public function getOrgaAuthorizations(Entity\User $user, mixed $scope = 'any', string $roleType = 'any'): array
     {
         $authorizations = $this->loadUserAuthorizations($user);
 
-        return array_filter($authorizations, function ($authorization) use ($scope): bool {
+        return array_filter($authorizations, function ($authorization) use ($scope, $roleType): bool {
             $role = $authorization->getRole();
-            $roleType = $role->getType();
-            $correctType = $roleType === 'user' || $roleType === 'agent';
+            $authRoleType = $role->getType();
+            $correctType = $authRoleType === 'user' || $authRoleType === 'agent';
 
-            if ($scope instanceof Organization) {
+            if ($roleType !== 'any') {
+                $correctType = $authRoleType === $roleType;
+            }
+
+            if ($scope instanceof Entity\Organization) {
                 $authOrganization = $authorization->getOrganization();
                 $correctScope = (
                     $authOrganization === null ||
@@ -98,9 +105,9 @@ class AuthorizationRepository extends ServiceEntityRepository implements UidGene
     /**
      * Return the list of user's authorizations.
      *
-     * @return Authorization[]
+     * @return Entity\Authorization[]
      */
-    public function loadUserAuthorizations(User $user): array
+    public function loadUserAuthorizations(Entity\User $user): array
     {
         if ($user->getId() === null) {
             return [];
