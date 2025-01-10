@@ -78,12 +78,11 @@ class CreateTicketsFromMailboxEmailsHandler
             try {
                 $this->processMailboxEmail($mailboxEmail);
             } catch (\Exception $e) {
-                $error = $e->getMessage();
-
+                $error = $e->getMessage() . "\n\n" . $e->getTraceAsString();
                 $mailboxEmail->setLastError($error);
                 $this->mailboxEmailRepository->save($mailboxEmail, true);
 
-                $this->logger->error("MailboxEmail #{$mailboxEmail->getId()} error: {$error}");
+                $this->logger->error("MailboxEmail #{$mailboxEmail->getId()} error: {$e->getMessage()}");
             } finally {
                 $lock->release();
             }

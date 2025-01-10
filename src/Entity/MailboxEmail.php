@@ -93,6 +93,16 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
         return $this->lastError;
     }
 
+    public function getLastErrorSummary(): string
+    {
+        if (!$this->lastError) {
+            return '';
+        }
+
+        $splitError = explode("\n", trim($this->lastError));
+        return $splitError[0];
+    }
+
     public function setLastError(string $lastError): self
     {
         $this->lastError = $lastError;

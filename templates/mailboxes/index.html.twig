@@ -112,10 +112,23 @@
                             </div>
 
                             <div class="cols flow">
-                                <p class="col--extend text--error">
-                                    {{ 'mailboxes.index.emails.error' | trans }}
-                                    {{ mailboxEmail.lastError }}
-                                </p>
+                                <div class="col--extend">
+                                    {% if mailboxEmail.lastErrorSummary == mailboxEmail.lastError %}
+                                        <p class="text--error text--bold">
+                                            {{ 'mailboxes.index.emails.error' | trans }}
+                                            {{ mailboxEmail.lastError }}
+                                        </p>
+                                    {% else %}
+                                        <details>
+                                            <summary class="text--error text--bold">
+                                                {{ 'mailboxes.index.emails.error' | trans }}
+                                                {{ mailboxEmail.lastErrorSummary }}
+                                            </summary>
+
+                                            <pre class="pre--formatted">{{ mailboxEmail.lastError }}</pre>
+                                        </details>
+                                    {% endif %}
+                                </div>
 
                                 <form method="POST" action="{{ path('delete mailbox email', { uid: mailboxEmail.uid }) }}">
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete mailbox email') }}">

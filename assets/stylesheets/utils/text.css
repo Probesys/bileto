@@ -78,6 +78,15 @@
     word-wrap: anywhere;
 }
 
+.pre--formatted {
+    padding: var(--space-small);
+
+    white-space: pre-wrap;
+
+    background-color: var(--color-grey3);
+    border-radius: var(--border-radius);
+}
+
 code {
     padding: 0 0.5rem;
 
