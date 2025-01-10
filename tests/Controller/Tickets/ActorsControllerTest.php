@@ -198,6 +198,39 @@ class ActorsControllerTest extends WebTestCase
         $this->assertNull($ticket->getAssignee());
     }
 
+    public function testPostEditAcceptsActualActorsEvenIfTheyHaveNoAccessToOrganization(): void
+    {
+        $client = static::createClient();
+        list(
+            $user,
+            $requester,
+            $observer,
+        ) = UserFactory::createMany(4);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
+            'createdBy' => $user,
+            'requester' => $requester,
+            'observers' => [$observer],
+        ]);
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => $requester->getId(),
+                'observers' => [$observer->getId()],
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->_refresh();
+        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
+        $observers = $ticket->getObservers();
+        $this->assertSame(1, count($observers));
+        $this->assertSame($observer->getId(), $observers[0]->getId());
+    }
+
     public function testPostEditFailsIfRequesterIsNotInOrganization(): void
     {
         $client = static::createClient();

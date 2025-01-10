@@ -189,7 +189,7 @@ class QuickSearchForm extends AbstractType
                 'multiple' => true,
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.involves'),
-                'organization' => $organization,
+                'with_access_to' => $organization,
                 'label_attr' => [
                     'class' => 'text--bold',
                 ],
@@ -217,8 +217,8 @@ class QuickSearchForm extends AbstractType
                 'multiple' => true,
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.assignee'),
-                'organization' => $organization,
-                'roleType' => 'agent',
+                'with_access_to' => $organization,
+                'role_type' => 'agent',
                 'label_attr' => [
                     'class' => 'text--bold',
                 ],
@@ -242,7 +242,7 @@ class QuickSearchForm extends AbstractType
                 'multiple' => true,
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.requester'),
-                'organization' => $organization,
+                'with_access_to' => $organization,
                 'label_attr' => [
                     'class' => 'text--bold',
                 ],

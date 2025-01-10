@@ -87,12 +87,13 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
      * method will return false if the user has access to an organization as a
      * "user" but that the role type is set to "agent".
      *
-     * @return Entity\Organization[]
-     *
      * @param 'any'|'user'|'agent' $roleType
      */
-    public function isAuthorizedInOrganization(User $user, Organization $organization, string $roleType = 'any'): bool
-    {
+    public function isAuthorizedInOrganization(
+        Entity\User $user,
+        Entity\Organization $organization,
+        string $roleType = 'any',
+    ): bool {
         $authorizedOrganizations = $this->findAuthorizedOrganizations($user, $roleType);
         return in_array($organization, $authorizedOrganizations);
     }

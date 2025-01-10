@@ -30,16 +30,15 @@ class ActorsForm extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
             $ticket = $event->getData();
-
             $organization = $ticket->getOrganization();
 
             $form->add('requester', AppType\ActorType::class, [
-                'organization' => $organization,
+                'with_access_to' => $ticket,
                 'label' => new TranslatableMessage('tickets.requester'),
             ]);
 
             $form->add('observers', AppType\ActorType::class, [
-                'organization' => $organization,
+                'with_access_to' => $ticket,
                 'multiple' => true,
                 'by_reference' => false,
                 'required' => false,
@@ -62,8 +61,8 @@ class ActorsForm extends AbstractType
             ]);
 
             $form->add('assignee', AppType\ActorType::class, [
-                'organization' => $organization,
-                'roleType' => 'agent',
+                'with_access_to' => $ticket,
+                'role_type' => 'agent',
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.assignee'),
                 'placeholder' => new TranslatableMessage('tickets.unassigned'),

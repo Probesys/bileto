@@ -37,7 +37,7 @@ class TicketForm extends AbstractType
 
             if ($this->authorizer->isGranted('orga:update:tickets:actors', $organization)) {
                 $form->add('requester', AppType\ActorType::class, [
-                    'organization' => $organization,
+                    'with_access_to' => $organization,
                     'label' => new TranslatableMessage('tickets.requester'),
                 ]);
 
@@ -53,8 +53,8 @@ class TicketForm extends AbstractType
                 ]);
 
                 $form->add('assignee', AppType\ActorType::class, [
-                    'organization' => $organization,
-                    'roleType' => 'agent',
+                    'with_access_to' => $organization,
+                    'role_type' => 'agent',
                     'required' => false,
                     'label' => new TranslatableMessage('tickets.assignee'),
                     'placeholder' => new TranslatableMessage('tickets.unassigned'),
@@ -64,7 +64,7 @@ class TicketForm extends AbstractType
                 ]);
 
                 $form->add('observers', AppType\ActorType::class, [
-                    'organization' => $organization,
+                    'with_access_to' => $organization,
                     'multiple' => true,
                     'by_reference' => false,
                     'required' => false,

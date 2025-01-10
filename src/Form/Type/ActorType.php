@@ -35,16 +35,18 @@ class ActorType extends AbstractType
             'class' => Entity\User::class,
 
             'choice_loader' => function (Options $options): ChoiceLoaderInterface {
-                $organization = $options['organization'];
-                $roleType = $options['roleType'];
+                $withAccessTo = $options['with_access_to'];
+                $roleType = $options['role_type'];
 
-                $vary = [$organization, $roleType];
+                $vary = [$withAccessTo, $roleType];
 
                 return ChoiceList::lazy(
                     $this,
-                    function () use ($organization, $roleType): array {
-                        if ($organization) {
-                            return $this->actorsLister->findByOrganization($organization, $roleType);
+                    function () use ($withAccessTo, $roleType): array {
+                        if ($withAccessTo instanceof Entity\Organization) {
+                            return $this->actorsLister->findByOrganization($withAccessTo, $roleType);
+                        } elseif ($withAccessTo instanceof Entity\Ticket) {
+                            return $this->actorsLister->findByTicket($withAccessTo, $roleType);
                         } else {
                             return $this->actorsLister->findAll($roleType);
                         }
@@ -66,12 +68,16 @@ class ActorType extends AbstractType
 
             'choice_value' => 'id',
 
-            'organization' => null,
-            'roleType' => 'any',
+            'with_access_to' => null,
+            'role_type' => 'any',
         ]);
 
-        $resolver->setAllowedTypes('organization', [Entity\Organization::class, 'null']);
-        $resolver->setAllowedValues('roleType', Service\ActorsLister::VALID_ROLE_TYPES);
+        $resolver->setAllowedTypes('with_access_to', [
+            Entity\Organization::class,
+            Entity\Ticket::class,
+            'null',
+        ]);
+        $resolver->setAllowedValues('role_type', Service\ActorsLister::VALID_ROLE_TYPES);
     }
 
     public function getParent(): string
