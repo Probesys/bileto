@@ -8,14 +8,20 @@
     {% set eventMessage = event | formatTicketChanges(field) %}
 
     {% if eventMessage %}
-        <div class="timeline__event" data-test="event-item">
+        <div
+            id="event-{{ event.uid }}-{{ loop.index }}"
+            class="timeline__event"
+            data-test="event-item"
+        >
             <div class="timeline__event-message">
                 {{ eventMessage | raw }}
             </div>
 
-            <time class="timeline__event-date" datetime="{{ event.createdAt | dateIso }}">
-                {{ event.createdAt | dateTrans('HH:mm') }}
-            </time>
+            <a class="timeline__event-date" href="#event-{{ event.uid }}-{{ loop.index }}">
+                <time datetime="{{ event.createdAt | dateIso }}">
+                    {{ event.createdAt | dateTrans('HH:mm') }}
+                </time>
+            </a>
         </div>
     {% endif %}
 {% endfor %}

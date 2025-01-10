@@ -7,7 +7,11 @@
 {% set bodyBlock = block('body') | trim %}
 
 {% if bodyBlock is not empty %}
-    <div class="timeline__time-spent" data-test="time-spent-item">
+    <div
+        id="time-{{ timeSpent.uid }}"
+        class="timeline__time-spent"
+        data-test="time-spent-item"
+    >
         <p class="timeline__time-spent-message">
             {{ bodyBlock|raw }}
         </p>
@@ -26,8 +30,10 @@
             </button>
         {% endif %}
 
-        <time class="timeline__time-spent-date" datetime="{{ timeSpent.createdAt | dateIso }}">
-            {{ timeSpent.createdAt | dateTrans('HH:mm') }}
-        </time>
+        <a class="timeline__time-spent-date" href="#time-{{ timeSpent.uid }}">
+            <time datetime="{{ timeSpent.createdAt | dateIso }}">
+                {{ timeSpent.createdAt | dateTrans('HH:mm') }}
+            </time>
+        </a>
     </div>
 {% endif %}

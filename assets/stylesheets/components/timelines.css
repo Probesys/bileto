@@ -97,7 +97,13 @@
 
     flex-shrink: 0;
 
+    color: var(--color-grey11);
     text-align: right;
+    text-decoration: none;
+}
+
+.timeline__event-date:hover {
+    text-decoration: underline;
 }
 
 .timeline__time-spent {
@@ -157,6 +163,11 @@
     color: var(--color-grey11);
     font-size: var(--font-size-small);
     text-align: right;
+    text-decoration: none;
+}
+
+.timeline__time-spent-date:hover {
+    text-decoration: underline;
 }
 
 .timeline__editor {

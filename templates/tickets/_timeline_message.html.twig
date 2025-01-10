@@ -5,6 +5,7 @@
  #}
 
 <article
+    id="message-{{ message.uid }}"
     class="message {{ ticket.solution == message ? 'message--solution' }} {{ message.isConfidential ? 'message--confidential' }}"
     data-test="message-item"
 >
@@ -58,9 +59,11 @@
 
             <div class="message__top-separator"></div>
 
-            <time datetime="{{ message.createdAt | dateIso }}" class="message__date">
-                {{ message.createdAt | dateTrans('HH:mm') }}
-            </time>
+            <a class="message__date" href="#message-{{ message.uid }}">
+                <time datetime="{{ message.createdAt | dateIso }}" class="message__date">
+                    {{ message.createdAt | dateTrans('HH:mm') }}
+                </time>
+            </a>
         </div>
 
         <div class="message__content">
