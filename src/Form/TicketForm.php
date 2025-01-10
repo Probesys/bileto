@@ -17,12 +17,14 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class TicketForm extends AbstractType
 {
     public function __construct(
         private Security\Authorizer $authorizer,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -67,7 +69,10 @@ class TicketForm extends AbstractType
                     'by_reference' => false,
                     'required' => false,
                     'label' => new TranslatableMessage('tickets.observers'),
-                    'block_prefix' => 'multiselect_actors',
+                    'attr' => [
+                        'data-placeholder' => $this->translator->trans('forms.multiselect.select_actor'),
+                    ],
+                    'block_prefix' => 'multiselect',
                 ]);
             }
 

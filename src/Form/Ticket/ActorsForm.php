@@ -16,9 +16,15 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ActorsForm extends AbstractType
 {
+    public function __construct(
+        private TranslatorInterface $translator,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
@@ -38,7 +44,10 @@ class ActorsForm extends AbstractType
                 'by_reference' => false,
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.observers'),
-                'block_prefix' => 'multiselect_actors',
+                'attr' => [
+                    'data-placeholder' => $this->translator->trans('forms.multiselect.select_actor'),
+                ],
+                'block_prefix' => 'multiselect',
             ]);
 
             $form->add('team', AppType\TeamType::class, [

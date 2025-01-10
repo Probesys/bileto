@@ -63,7 +63,7 @@ export default class extends Controller {
             }
 
             // Send a "change" event to the node element.
-            // It is especially useful to refresh the "assignee" multiselect_actors
+            // It is especially useful to refresh the "assignee" multiselect
             // select so it can refresh the list.
             const event = new Event('change');
             node.dispatchEvent(event);

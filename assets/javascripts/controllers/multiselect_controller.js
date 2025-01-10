@@ -28,12 +28,21 @@ export default class extends Controller {
     }
 
     refreshSelect () {
-        // Reset the options of the select (only keep the "Select an actor"
-        // option).
-        const selectActorOption = this.selectTarget.item(0);
-        selectActorOption.selected = true;
+        // Reset the options of the select.
         this.selectTarget.innerHTML = '';
-        this.selectTarget.add(selectActorOption);
+
+        // Add a placeholder if one is passed via the dataset.
+        const placeholder = this.selectTarget.dataset.placeholder;
+        if (placeholder) {
+            const selectOption = document.createElement('option');
+            selectOption.value = '';
+            selectOption.text = placeholder;
+            selectOption.selected = true;
+            selectOption.disabled = true;
+            this.selectTarget.add(selectOption);
+        } else {
+            console.warn('You should pass a data-placeholder attribute to the multiselect widget.', this.element);
+        }
 
         // Read options that have not been selected yet, and add them to the
         // select.

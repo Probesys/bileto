@@ -192,22 +192,22 @@
     {%- endif -%}
 {%- endblock form_widget_compound -%}
 
-{%- block multiselect_actors_row -%}
+{%- block multiselect_row -%}
     <div class="flow flow--small">
         {{- form_label(form) -}}
         {{- form_errors(form) -}}
         {{- form_widget(form) -}}
     </div>
-{%- endblock multiselect_actors_row -%}
+{%- endblock multiselect_row -%}
 
-{%- block multiselect_actors_widget -%}
-    <div class="multiselect-actors" data-controller="multiselect-actors">
+{%- block multiselect_widget -%}
+    <div class="multiselect" data-controller="multiselect">
         <select
             id="{{ field_id(form, 'data') }}"
             name="{{ field_name(form) }}"
             multiple
-            data-multiselect-actors-target="data"
-            data-action="multiselect-actors#refresh"
+            data-multiselect-target="data"
+            data-action="multiselect#refresh"
             hidden
         >
             {% for choice in form.vars.choices %}
@@ -223,27 +223,25 @@
         <div class="flow flow--smaller">
             <select
                 id="{{ field_id(form) }}"
-                class="multiselect-actors__select widget--small"
-                data-multiselect-actors-target="select"
-                data-action="multiselect-actors#select"
+                class="multiselect__select widget--small"
+                data-multiselect-target="select"
+                data-action="multiselect#select"
+                {% with {attr: attr} %}{{ block('attributes') }}{% endwith %}
             >
-                <option disabled value="">
-                    {{ 'forms.actors.select' | trans }}
-                </option>
             </select>
 
-            <div class="cols cols--always cols--wrap flow flow--smaller" data-multiselect-actors-target="list">
+            <div class="cols cols--always cols--wrap flow flow--smaller" data-multiselect-target="list">
             </div>
         </div>
 
-        <template data-multiselect-actors-target="template">
+        <template data-multiselect-target="template">
             <button
                 type="button"
                 class="button--discreet-alt"
-                data-action="multiselect-actors#unselect"
+                data-action="multiselect#unselect"
                 data-target="unselect"
                 data-value=""
-                aria-label={{ 'forms.actors.unselect' | trans }}
+                aria-label={{ 'forms.multiselect.unselect' | trans }}
             >
                 <span data-target="name">
                 </span>
@@ -252,7 +250,7 @@
             </button>
         </template>
     </div>
-{%- endblock multiselect_actors_widget -%}
+{%- endblock multiselect_widget -%}
 
 {%- block password_widget -%}
     <div class="input-container" data-controller="password">

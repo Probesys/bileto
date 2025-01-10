@@ -22,6 +22,7 @@ Dedicated to the frontend:
 - [Working with the buttons](/docs/developers/buttons.md)
 - [Working with the icons](/docs/developers/icons.md)
 - [Working with the modals](/docs/developers/modals.md)
+- [Working with the multiselect widget](/docs/developers/multiselect.md)
 - [Working with the popups](/docs/developers/popups.md)
 - [Working with the notifications](/docs/developers/notifications.md)
 - [Working with columns and grids](/docs/developers/columns-and-grids.md)

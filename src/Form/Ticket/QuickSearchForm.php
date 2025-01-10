@@ -193,7 +193,10 @@ class QuickSearchForm extends AbstractType
                 'label_attr' => [
                     'class' => 'text--bold',
                 ],
-                'block_prefix' => 'multiselect_actors',
+                'attr' => [
+                    'data-placeholder' => $this->translator->trans('forms.multiselect.select_actor'),
+                ],
+                'block_prefix' => 'multiselect',
             ]);
 
             $form->add('assignees', AppType\ActorType::class, [
@@ -205,7 +208,10 @@ class QuickSearchForm extends AbstractType
                 'label_attr' => [
                     'class' => 'text--bold',
                 ],
-                'block_prefix' => 'multiselect_actors',
+                'attr' => [
+                    'data-placeholder' => $this->translator->trans('forms.multiselect.select_actor'),
+                ],
+                'block_prefix' => 'multiselect',
             ]);
 
             $form->add('unassignedOnly', Type\CheckboxType::class, [
@@ -226,7 +232,10 @@ class QuickSearchForm extends AbstractType
                 'label_attr' => [
                     'class' => 'text--bold',
                 ],
-                'block_prefix' => 'multiselect_actors',
+                'attr' => [
+                    'data-placeholder' => $this->translator->trans('forms.multiselect.select_actor'),
+                ],
+                'block_prefix' => 'multiselect',
             ]);
         });
     }
