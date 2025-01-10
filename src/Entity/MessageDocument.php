@@ -62,6 +62,7 @@ class MessageDocument implements EntityInterface, MonitorableEntityInterface, Ui
         'audio' => [
             'aac',
             'midi',
+            'mpeg',
             'ogg',
             'webm',
             'x-wav',
