@@ -1232,6 +1232,11 @@ class DataImporter
         foreach ($existingTickets as $ticket) {
             $uniqueKey = $ticket->getUniqueKey();
             $this->indexTickets->refreshUnique($ticket, uniqueKey: $uniqueKey);
+
+            foreach ($ticket->getMessages() as $message) {
+                $messageUniqueKey = $message->getUniqueKey();
+                $this->indexMessages->refreshUnique($message, uniqueKey: $messageUniqueKey);
+            }
         }
 
         // Validate the tickets
@@ -1426,14 +1431,15 @@ class DataImporter
                 $this->errors[] = "Ticket {$ticketId} error: message {$id}: {$error}";
             }
 
-            // Add the message to the index and to the ticket
+            // Add the message to the ticket and to the index
+            $ticket->addMessage($message);
+
             try {
-                $this->indexMessages->add($id, $message);
+                $uniqueKey = $message->getUniqueKey();
+                $this->indexMessages->add($id, $message, uniqueKey: $uniqueKey);
             } catch (IndexError $e) {
                 $this->errors[] = "Ticket {$ticketId} error: message {$id}: {$e->getMessage()}";
             }
-
-            $ticket->addMessage($message);
         }
     }
 
@@ -1571,13 +1577,8 @@ class DataImporter
         foreach ($this->indexMessageToDocuments->list() as $messageId => $jsonMessageDocuments) {
             $message = $this->indexMessages->get($messageId);
 
-            if ($message->getId() === null) {
-                // Ignore this Message as it is not saved in database. It
-                // happens when the ticket is duplicated in the database: the
-                // related messages are not saved as they should already exist
-                // in the database as well. The index of messages is not
-                // updated as for the other entities in order to improve the
-                // performance.
+            // Don't reupload the documents of this message as it already has some.
+            if (!$message->getMessageDocuments()->isEmpty()) {
                 continue;
             }
 

@@ -1446,6 +1446,89 @@ class DataImporterTest extends WebTestCase
         $this->assertTrue(file_exists("{$documentsPath}/bug.txt"));
     }
 
+    public function testImportTicketsCanImportDocumentsIfTicketAlreadyExistsInDatabase(): void
+    {
+        $existingOrganization = Factory\OrganizationFactory::createOne([
+            'name' => 'Foo',
+        ]);
+        $existingUser = Factory\UserFactory::createOne([
+            'email' => 'alix@example.com',
+        ]);
+        $existingTicket = Factory\TicketFactory::createOne([
+            'title' => 'It does not work',
+            'createdAt' => new \DateTimeImmutable('2024-04-25T17:38:00+00:00'),
+            'organization' => $existingOrganization,
+        ]);
+        $existingMessage = Factory\MessageFactory::createOne([
+            'ticket' => $existingTicket,
+            'createdAt' => new \DateTimeImmutable('2024-04-25T17:38:00+00:00'),
+            'createdBy' => $existingUser,
+            'content' => '<p>This is not working!</p>',
+        ]);
+
+        $organizations = [
+            [
+                'id' => '1',
+                'name' => 'Foo',
+            ],
+        ];
+        $users = [
+            [
+                'id' => '1',
+                'email' => 'alix@example.com',
+            ],
+        ];
+        $tickets = [
+            [
+                'id' => '1',
+                'createdAt' => '2024-04-25T17:38:00+00:00',
+                'createdById' => '1',
+                'title' => 'It does not work',
+                'requesterId' => '1',
+                'organizationId' => '1',
+                'messages' => [
+                    [
+                        'id' => '1',
+                        'createdAt' => '2024-04-25T17:38:00+00:00',
+                        'createdById' => '1',
+                        'isConfidential' => false,
+                        'via' => 'email',
+                        'content' => '<p>This is not working!</p>',
+                        'messageDocuments' => [
+                            [
+                                'name' => 'The bug',
+                                'filepath' => 'bug.txt',
+                            ]
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $documentsPath = $this->createDocumentsFolder();
+        $content = 'My bug';
+        $hash = hash('sha256', $content);
+        file_put_contents($documentsPath . '/bug.txt', $content);
+
+        $this->processGenerator($this->dataImporter->import(
+            organizations: $organizations,
+            users: $users,
+            tickets: $tickets,
+            documentsPath: $documentsPath,
+        ));
+
+        $this->assertSame(1, Factory\MessageFactory::count());
+        $existingMessage->_refresh();
+        $this->assertSame(1, Factory\MessageDocumentFactory::count());
+        $messageDocument = Factory\MessageDocumentFactory::first();
+        $this->assertSame('The bug', $messageDocument->getName());
+        $this->assertSame($hash . '.txt', $messageDocument->getFilename());
+        $this->assertSame('text/plain', $messageDocument->getMimetype());
+        $this->assertSame('sha256:' . $hash, $messageDocument->getHash());
+        $this->assertNotNull($messageDocument->getMessage());
+        $this->assertSame($existingMessage->getUid(), $messageDocument->getMessage()->getUid());
+        $this->assertTrue(file_exists("{$documentsPath}/bug.txt"));
+    }
+
     public function testImportTicketsFailsIfIdIsDuplicatedInFile(): void
     {
         $this->expectException(DataImporterError::class);

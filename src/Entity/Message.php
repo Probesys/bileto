@@ -185,4 +185,14 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
 
         return $this;
     }
+
+    public function getUniqueKey(): string
+    {
+        $createdAt = $this->getCreatedAt()->getTimestamp();
+        $createdBy = $this->getCreatedBy()?->getEmail();
+        $ticketKey = $this->getTicket()?->getUniqueKey();
+        $content = $this->getContent();
+
+        return md5("{$createdAt}-{$createdBy}-{$ticketKey}-{$content}");
+    }
 }
