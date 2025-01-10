@@ -100,12 +100,18 @@ class UserRepository extends ServiceEntityRepository implements
     }
 
     /**
-     * @param int[] $orgaIds
+     * Return the list of users having access to the given organizations.
+     *
+     * The list can be restricted to a specific role type (user or agent). It
+     * means that it will not return agents of organizations if role type is
+     * set to "user".
+     *
+     * @param Organization[] $organizations
      * @param 'any'|'user'|'agent' $roleType
      *
      * @return User[]
      */
-    public function findByOrganizationIds(array $orgaIds, string $roleType = 'any'): array
+    public function findByAccessToOrganizations(array $organizations, string $roleType = 'any'): array
     {
         $entityManager = $this->getEntityManager();
 
@@ -124,7 +130,7 @@ class UserRepository extends ServiceEntityRepository implements
             $types = [$roleType];
         }
 
-        $query->setParameter('organizations', $orgaIds);
+        $query->setParameter('organizations', $organizations);
         $query->setParameter('types', $types);
 
         return $query->getResult();

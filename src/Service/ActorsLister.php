@@ -6,11 +6,8 @@
 
 namespace App\Service;
 
-use App\Entity\Organization;
-use App\Entity\User;
-use App\Repository\OrganizationRepository;
-use App\Repository\UserRepository;
-use App\Service\Sorter\UserSorter;
+use App\Entity;
+use App\Repository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class ActorsLister
@@ -18,70 +15,86 @@ class ActorsLister
     public const VALID_ROLE_TYPES = ['any', 'user', 'agent'];
 
     public function __construct(
-        private OrganizationRepository $orgaRepository,
-        private UserRepository $userRepository,
-        private UserSorter $userSorter,
+        private Repository\OrganizationRepository $orgaRepository,
+        private Repository\UserRepository $userRepository,
+        private Sorter\UserSorter $userSorter,
         private Security $security,
     ) {
     }
 
     /**
+     * Return the users with access to the given organization.
+     *
+     * The list can be restricted to a specific role type (user or agent).
+     *
+     * The list is ordered. If the logged-in user is part of the list, they are
+     * placed at the beginning of the list.
+     *
+     * If the logged-in user doesn't have access to the organization, an empty
+     * list is returned.
+     *
      * @param value-of<self::VALID_ROLE_TYPES> $roleType
      *
-     * @return User[]
+     * @return Entity\User[]
      */
-    public function findByOrganization(Organization $organization, string $roleType = 'any'): array
+    public function findByOrganization(Entity\Organization $organization, string $roleType = 'any'): array
     {
-        /** @var User */
+        /** @var Entity\User */
         $currentUser = $this->security->getUser();
 
-        $authorizedOrgas = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
-        $authorizedOrgaIds = array_map(fn ($orga): int => $orga->getId(), $authorizedOrgas);
-
-        if (!in_array($organization->getId(), $authorizedOrgaIds)) {
+        if (!$this->orgaRepository->isAuthorizedInOrganization($currentUser, $organization)) {
             return [];
         }
 
-        return $this->findByOrganizationIds([$organization->getId()], $roleType);
+        $users = $this->userRepository->findByAccessToOrganizations([$organization], $roleType);
+
+        return $this->sortUsers($users);
     }
 
     /**
+     * Return the users of the organizations to which the logged-in user has access.
+     *
+     * The list can be restricted to a specific role type (user or agent).
+     *
+     * The list is ordered. If the logged-in user is part of the list, they are
+     * placed at the beginning of the list.
+     *
      * @param value-of<self::VALID_ROLE_TYPES> $roleType
      *
-     * @return User[]
+     * @return Entity\User[]
      */
     public function findAll(string $roleType = 'any'): array
     {
-        /** @var User */
+        /** @var Entity\User */
         $currentUser = $this->security->getUser();
 
-        $authorizedOrgas = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
-        $authorizedOrgaIds = array_map(fn ($orga): int => $orga->getId(), $authorizedOrgas);
+        $authorizedOrganizations = $this->orgaRepository->findAuthorizedOrganizations($currentUser);
+        $users = $this->userRepository->findByAccessToOrganizations($authorizedOrganizations, $roleType);
 
-        return $this->findByOrganizationIds($authorizedOrgaIds, $roleType);
+        return $this->sortUsers($users);
     }
 
     /**
-     * @param int[] $organizationIds
-     * @param value-of<self::VALID_ROLE_TYPES> $roleType
+     * Sort a list of users and put the logged-in user to the beginning of the
+     * list.
      *
-     * @return User[]
+     * @param Entity\User[] $users
+     *
+     * @return Entity\User[]
      */
-    private function findByOrganizationIds(array $organizationIds, string $roleType): array
+    private function sortUsers(array $users): array
     {
-        $users = $this->userRepository->findByOrganizationIds($organizationIds, $roleType);
-
         $this->userSorter->sort($users);
 
-        // Make sure that the current user is the first of the list
+        // Make sure that the logged-in user is the first of the list.
         $currentUser = $this->security->getUser();
         $currentUserKey = array_search($currentUser, $users);
         if ($currentUserKey !== false) {
             $user = $users[$currentUserKey];
             unset($users[$currentUserKey]);
-            return array_merge([$user], $users);
-        } else {
-            return $users;
+            $users = array_merge([$user], $users);
         }
+
+        return $users;
     }
 }

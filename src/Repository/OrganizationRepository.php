@@ -81,6 +81,23 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
     }
 
     /**
+     * Return whether or not the user has access to the organization.
+     *
+     * The check can be restricted to a specific role type. It means that the
+     * method will return false if the user has access to an organization as a
+     * "user" but that the role type is set to "agent".
+     *
+     * @return Entity\Organization[]
+     *
+     * @param 'any'|'user'|'agent' $roleType
+     */
+    public function isAuthorizedInOrganization(User $user, Organization $organization, string $roleType = 'any'): bool
+    {
+        $authorizedOrganizations = $this->findAuthorizedOrganizations($user, $roleType);
+        return in_array($organization, $authorizedOrganizations);
+    }
+
+    /**
      * @return Entity\Organization[]
      */
     public function findObsoleteSupervisedOrganizations(Entity\Team $team): array
