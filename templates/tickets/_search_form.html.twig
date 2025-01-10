@@ -55,17 +55,24 @@
 
                 {% if quickSearchForm.involves is defined %}
                     {% set involvesIsSet = field_value(quickSearchForm.involves) is not empty %}
+                    {% set teamsIsSet = field_value(quickSearchForm.teams) is not empty %}
                     {% set assigneesIsSet = field_value(quickSearchForm.assignees) is not empty %}
                     {% set unassignedOnlyIsSet = quickSearchForm.unassignedOnly.vars.checked %}
                     {% set requestersIsSet = field_value(quickSearchForm.requesters) is not empty %}
 
-                    <details class="accordion" {{ involvesIsSet or assigneesIsSet or unassignedOnlyIsSet or requestersIsSet ? 'open' }}>
+                    <details class="accordion" {{ involvesIsSet or teamsIsSet or assigneesIsSet or unassignedOnlyIsSet or requestersIsSet ? 'open' }}>
                         <summary class="accordion__title">
                             {{ 'tickets.filters.actors.title' | trans }}
                         </summary>
 
                         <div class="accordion__body flow flow--large">
                             {{ form_row(quickSearchForm.involves) }}
+
+                            {% if quickSearchForm.teams.vars.choices is not empty %}
+                                {{ form_row(quickSearchForm.teams) }}
+                            {% else %}
+                                {% do quickSearchForm.teams.setRendered %}
+                            {% endif %}
 
                             <div class="flow flow--small" data-controller="checkboxes">
                                 {{ form_row(quickSearchForm.assignees) }}

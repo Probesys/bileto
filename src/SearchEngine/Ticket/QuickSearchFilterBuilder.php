@@ -16,6 +16,7 @@ class QuickSearchFilterBuilder
 {
     public function __construct(
         private Repository\LabelRepository $labelRepository,
+        private Repository\TeamRepository $teamRepository,
         private Repository\UserRepository $userRepository,
         private Security $security,
     ) {
@@ -85,6 +86,9 @@ class QuickSearchFilterBuilder
                 } elseif ($qualifier === 'requester') {
                     $users = $this->processUsers($values);
                     $quickSearchFilter->setRequesters($users);
+                } elseif ($qualifier === 'team') {
+                    $teams = $this->processTeams($values);
+                    $quickSearchFilter->setTeams($teams);
                 } elseif ($qualifier === 'label') {
                     foreach ($values as $value) {
                         $labels = $this->labelRepository->findByName($value);
@@ -134,5 +138,28 @@ class QuickSearchFilterBuilder
         ]);
 
         return new Collections\ArrayCollection($users);
+    }
+
+    /**
+     * @param string[] $values
+     *
+     * @return Collections\ArrayCollection<int, Entity\Team>
+     */
+    private function processTeams(array $values): Collections\ArrayCollection
+    {
+        $ids = [];
+
+        foreach ($values as $value) {
+            if (preg_match('/^#[\d]+$/', $value)) {
+                $value = substr($value, 1);
+                $ids[] = intval($value);
+            }
+        }
+
+        $teams = $this->teamRepository->findBy([
+            'id' => $ids,
+        ]);
+
+        return new Collections\ArrayCollection($teams);
     }
 }

@@ -199,6 +199,20 @@ class QuickSearchForm extends AbstractType
                 'block_prefix' => 'multiselect',
             ]);
 
+            $form->add('teams', AppType\TeamType::class, [
+                'multiple' => true,
+                'required' => false,
+                'label' => new TranslatableMessage('tickets.team'),
+                'organization' => $organization,
+                'label_attr' => [
+                    'class' => 'text--bold',
+                ],
+                'attr' => [
+                    'data-placeholder' => $this->translator->trans('forms.multiselect.select_team'),
+                ],
+                'block_prefix' => 'multiselect',
+            ]);
+
             $form->add('assignees', AppType\ActorType::class, [
                 'multiple' => true,
                 'required' => false,

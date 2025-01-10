@@ -177,6 +177,7 @@ forms.error: Erreur
 forms.input_texts.remove: Retirer
 forms.max_chars: '(max. {number} caractères)'
 forms.multiselect.select_actor: 'Sélectionner un acteur'
+forms.multiselect.select_team: 'Sélectionner une équipe'
 forms.multiselect.unselect: Désélectionner
 forms.optional: (optionnel)
 forms.optional_max_chars: '(optionnel, max. {number} caractères)'

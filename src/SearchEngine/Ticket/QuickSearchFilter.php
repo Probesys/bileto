@@ -30,6 +30,9 @@ class QuickSearchFilter
     /** @var Collections\Collection<int, Entity\User> */
     private Collections\Collection $requesters;
 
+    /** @var Collections\Collection<int, Entity\Team> */
+    private Collections\Collection $teams;
+
     /** @var Collections\Collection<int, Entity\Label> */
     private Collections\Collection $labels;
 
@@ -49,6 +52,7 @@ class QuickSearchFilter
         $this->involves = new Collections\ArrayCollection();
         $this->assignees = new Collections\ArrayCollection();
         $this->requesters = new Collections\ArrayCollection();
+        $this->teams = new Collections\ArrayCollection();
         $this->labels = new Collections\ArrayCollection();
     }
 
@@ -193,6 +197,22 @@ class QuickSearchFilter
     }
 
     /**
+     * @return Collections\Collection<int, Entity\Team>
+     */
+    public function getTeams(): Collections\Collection
+    {
+        return $this->teams;
+    }
+
+    /**
+     * @param Collections\Collection<int, Entity\Team> $values
+     */
+    public function setTeams(Collections\Collection $values): void
+    {
+        $this->teams = $values;
+    }
+
+    /**
      * @return Collections\Collection<int, Entity\Label>
      */
     public function getLabels(): Collections\Collection
@@ -303,6 +323,11 @@ class QuickSearchFilter
             $textualQueryParts[] = "requester:{$values}";
         }
 
+        if (!$this->teams->isEmpty()) {
+            $values = $this->processTeamValues($this->teams);
+            $textualQueryParts[] = "team:{$values}";
+        }
+
         foreach ($this->labels as $label) {
             $value = $label->getName();
 
@@ -348,5 +373,17 @@ class QuickSearchFilter
         }, $actors->toArray());
 
         return implode(',', $actorIds);
+    }
+
+    /**
+     * @param Collections\Collection<int, Entity\Team> $teams
+     */
+    private function processTeamValues(Collections\Collection $teams): string
+    {
+        $teamIds = array_map(function (Entity\Team $team): string {
+            return "#{$team->getId()}";
+        }, $teams->toArray());
+
+        return implode(',', $teamIds);
     }
 }
