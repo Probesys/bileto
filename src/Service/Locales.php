@@ -27,10 +27,10 @@ class Locales
     }
 
     public function __construct(
-        #[Autowire(env: 'default::APP_DEFAULT_LOCALE')]
-        ?string $defaultLocale,
+        #[Autowire(env: 'APP_DEFAULT_LOCALE')]
+        string $defaultLocale,
     ) {
-        if ($defaultLocale && $this->isAvailable($defaultLocale)) {
+        if ($this->isAvailable($defaultLocale)) {
             /** @var key-of<self::SUPPORTED_LOCALES> */
             $defaultLocale = $defaultLocale;
             $this->defaultLocale = $defaultLocale;

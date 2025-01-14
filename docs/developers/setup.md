@@ -44,7 +44,8 @@ Open [localhost:8000](http://localhost:8000) and login with one of the following
 
 - `alix@example.com` / `secret` (super-admin and technician for all the organizations)
 - `benedict@example.com` / `secret` (salesman for all the organizations)
-- `charlie@example.com` / `secret` (user in the “Friendly Coop” organization)
+- `charlie` / `secret` (LDAP user, in the “Friendly Coop” organization)
+- `dominique` / `secret` (LDAP user, in the “Probesys” organization)
 
 A note about the `make` commands: they might feel magic, but they are not!
 They are just shortcuts for common commands.
@@ -53,32 +54,26 @@ They are hopefully easily readable by newcomers.
 
 ## Use MariaDB
 
-By default, `make docker-start` starts a PostgreSQL database.
-If you want to use MariaDB, just pass the `DATABASE` variable to the command:
+By default, the development environment starts with a PostgreSQL database.
+To use MariaDB, you must set the `DATABASE_URL` value in the `.env.dev.local` file:
+
+```dotenv
+DATABASE_URL="mysql://root:mariadb@mariadb:3306/bileto?serverVersion=10.4.29-MariaDB"
+```
+
+Then, restart the `docker-start` command with the `DATABASE` variable set to `mariadb`:
 
 ```console
 $ make docker-start DATABASE=mariadb
 ```
 
-You’ll also need to change the `DATABASE_URL` value in the [`.env` file](/.env) (just uncomment the second line).
-If you want to make this change permanent, create a `.env.local` file and copy the line into it.
+You may have to setup or migrate the database:
 
-## Work with LDAP
-
-You’ll have to create an `.env.local` file to enable LDAP support in Bileto:
-
-```dotenv
-LDAP_ENABLED=true
+```console
+$ make db-setup
+$ # or
+$ make db-migrate
 ```
-
-Everything else is already configured in the [`.env`](/.env) file.
-
-You can login with two users with LDAP:
-
-- `charlie` / `secret` (same as the previous `charlie@example.com` user, instead that you can't login with its email anymore)
-- `dominique` / `secret` (this user is created at login, so they have no organization nor permissions)
-
-You can still log in using the `alix@example.com` and `benedict@example.com` emails.
 
 ## Working in the Docker containers
 
