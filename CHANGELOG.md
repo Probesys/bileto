@@ -1,5 +1,11 @@
 # Changelog of Bileto
 
+## unreleased
+
+### Breaking changes
+
+PostgreSQL 13+ is now required as [PostgreSQL 12 is no longer supported.](https://www.postgresql.org/support/versioning/)
+
 ## 2024-12-12 - 0.13.0
 
 ### Breaking change

@@ -27,7 +27,7 @@ jobs:
 
         services:
             postgres:
-                image: postgres:12-alpine
+                image: postgres:13-alpine
                 env:
                     POSTGRES_USER: postgres
                     POSTGRES_PASSWORD: postgres
@@ -40,7 +40,7 @@ jobs:
                     --health-timeout 5s
                     --health-retries 5
 
-        name: Tests over PostgreSQL 12
+        name: Tests over PostgreSQL
 
         steps:
             - uses: actions/checkout@v3
@@ -66,7 +66,7 @@ jobs:
             - name: Run the test suite
               run: make test
               env:
-                  DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/bileto_test?serverVersion=12&charset=utf8"
+                  DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/bileto_test?serverVersion=13&charset=utf8"
 
     mariadb:
         runs-on: ${{ matrix.operating-system }}
