@@ -304,6 +304,13 @@ www-data$ php bin/console app:ldap:sync
 You can configure Bileto to send errors (exceptions and logs) to a Sentry server.
 All you need to do is set the `SENTRY_DSN` environment variable to the value that Sentry gives you when you create a new project.
 
+You can also set `SENTRY_SEND_DEFAULT_PII` to `true` to send personally identifiable information (PII) to Sentry (e.g. IP, logged-in user's email, etc.).
+
+> [!CAUTION]
+> Sending PII to Sentry is subject to GDPR.
+> Don't enable this option unless you're sure you're compliant.
+> More information about collected data in [the Sentry documentation](https://docs.sentry.io/platforms/php/guides/symfony/data-management/data-collected/).
+
 ## Updating the production environment
 
 **Please always start by checking the migration notes in [the changelog](/CHANGELOG.md) before updating Bileto.**

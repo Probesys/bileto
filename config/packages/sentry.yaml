@@ -9,3 +9,4 @@ when@prod:
         register_error_handler: false
         options:
             release: '%app.version%'
+            send_default_pii: '%env(bool:SENTRY_SEND_DEFAULT_PII)%'
