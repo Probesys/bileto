@@ -36,16 +36,13 @@ class Ldap
         private string $querySearchUser,
         #[Autowire(env: 'LDAP_QUERY_LIST_USERS')]
         private string $queryListUsers,
-        #[Autowire(env: 'default::LDAP_FIELD_IDENTIFIER')]
-        private ?string $fieldIdentifier,
-        #[Autowire(env: 'default::LDAP_FIELD_EMAIL')]
-        private ?string $fieldEmail,
-        #[Autowire(env: 'default::LDAP_FIELD_FULLNAME')]
-        private ?string $fieldFullName,
+        #[Autowire(env: 'LDAP_FIELD_IDENTIFIER')]
+        private string $fieldIdentifier,
+        #[Autowire(env: 'LDAP_FIELD_EMAIL')]
+        private string $fieldEmail,
+        #[Autowire(env: 'LDAP_FIELD_FULLNAME')]
+        private string $fieldFullName,
     ) {
-        $this->fieldIdentifier ??= 'cn';
-        $this->fieldEmail ??= 'mail';
-        $this->fieldFullName ??= 'displayName';
     }
 
     /**
