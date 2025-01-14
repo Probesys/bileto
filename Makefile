@@ -38,7 +38,7 @@ docker-build: ## Rebuild Docker containers
 
 .PHONY: docker-pull
 docker-pull: ## Pull the Docker images from the Docker Hub
-	$(DOCKER_COMPOSE) pull --ignore-buildable
+	$(DOCKER_COMPOSE) --profile pgsql --profile mariadb pull --ignore-buildable
 
 .PHONY: docker-clean
 docker-clean: ## Clean the Docker stuff
