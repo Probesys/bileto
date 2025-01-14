@@ -59,7 +59,7 @@ services:
             - pgsql
 
     mariadb:
-        image: mariadb:10.4
+        image: mariadb:10.5
         restart: unless-stopped
         environment:
             MARIADB_ROOT_PASSWORD: mariadb

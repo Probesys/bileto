@@ -5,6 +5,7 @@
 ### Breaking changes
 
 PostgreSQL 13+ is now required as [PostgreSQL 12 is no longer supported.](https://www.postgresql.org/support/versioning/)
+MariaDB 10.5+ is now required as [MariaDB 10.4 is no longer supported.](https://mariadb.org/about/#maintenance-policy)
 
 ## 2024-12-12 - 0.13.0
 

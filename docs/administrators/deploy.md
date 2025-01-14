@@ -33,7 +33,7 @@ $ psql --version
 psql (PostgreSQL) 14.3
 ```
 
-Or if you use MariaDB (must be >= 10.4):
+Or if you use MariaDB (must be >= 10.5):
 
 ```console
 $ mariadb --version
