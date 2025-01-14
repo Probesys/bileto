@@ -75,7 +75,7 @@
 }
 
 .text--wrap {
-    word-wrap: anywhere;
+    overflow-wrap: anywhere;
 }
 
 .pre--formatted {
