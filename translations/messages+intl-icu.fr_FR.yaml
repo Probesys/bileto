@@ -173,6 +173,8 @@ errors.back_home: 'Retour à la page d’accueil'
 errors.generic.description: 'Veuillez indiquer à votre administrateur ce que vous faisiez lorsque l’erreur s’est produite. Le problème sera résolu dès que possible.'
 errors.generic.sorry: 'Désolé pour la gêne occasionnée.'
 errors.generic.title: "Une erreur est survenue\_!"
+forms.actors.group.agents: Agents
+forms.actors.group.users: Utilisateurs
 forms.error: Erreur
 forms.input_texts.remove: Retirer
 forms.max_chars: '(max. {number} caractères)'

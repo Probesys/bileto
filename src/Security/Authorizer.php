@@ -156,6 +156,14 @@ class Authorizer
             return false;
         }
 
+        return $this->isUserAgent($user, $scope);
+    }
+
+    /**
+     * @param Scope $scope
+     */
+    public function isUserAgent(Entity\User $user, mixed $scope): bool
+    {
         $authorizations = $this->authorizationRepository->getAuthorizations('orga', $user, $scope);
 
         foreach ($authorizations as $authorization) {

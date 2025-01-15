@@ -173,6 +173,8 @@ errors.back_home: 'Back to the homepage'
 errors.generic.description: 'Please tell your administrator what you were doing when the error occurred. This will be fixed as soon as possible.'
 errors.generic.sorry: 'Sorry for any inconvenience caused.'
 errors.generic.title: 'An error has occured!'
+forms.actors.group.agents: Agents
+forms.actors.group.users: Users
 forms.error: Error
 forms.input_texts.remove: Remove
 forms.max_chars: '(max. {number} characters)'

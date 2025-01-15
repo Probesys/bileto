@@ -7,9 +7,10 @@
 namespace App\Form\Type;
 
 use App\Entity;
+use App\Security;
 use App\Service;
 use Symfony\Bridge\Doctrine\Form\Type;
-use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
@@ -20,7 +21,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ActorType extends AbstractType
 {
     public function __construct(
-        private Security $security,
+        private SymfonySecurity $security,
+        private Security\Authorizer $authorizer,
         private Service\ActorsLister $actorsLister,
         private TranslatorInterface $translator,
     ) {
@@ -44,12 +46,37 @@ class ActorType extends AbstractType
                     $this,
                     function () use ($withAccessTo, $roleType): array {
                         if ($withAccessTo instanceof Entity\Organization) {
-                            return $this->actorsLister->findByOrganization($withAccessTo, $roleType);
+                            $users = $this->actorsLister->findByOrganization($withAccessTo, $roleType);
+                            $scope = $withAccessTo;
                         } elseif ($withAccessTo instanceof Entity\Ticket) {
-                            return $this->actorsLister->findByTicket($withAccessTo, $roleType);
+                            $users = $this->actorsLister->findByTicket($withAccessTo, $roleType);
+                            $scope = $withAccessTo->getOrganization();
                         } else {
-                            return $this->actorsLister->findAll($roleType);
+                            $users = $this->actorsLister->findAll($roleType);
+                            $scope = 'any';
                         }
+
+                        if ($roleType !== 'any') {
+                            return $users;
+                        }
+
+                        $usersGroupLabel = $this->translator->trans('forms.actors.group.users');
+                        $agentsGroupLabel = $this->translator->trans('forms.actors.group.agents');
+
+                        $groupedUsers = [
+                            $usersGroupLabel => [],
+                            $agentsGroupLabel => [],
+                        ];
+
+                        foreach ($users as $user) {
+                            if ($this->authorizer->isUserAgent($user, $scope)) {
+                                $groupedUsers[$agentsGroupLabel][] = $user;
+                            } else {
+                                $groupedUsers[$usersGroupLabel][] = $user;
+                            }
+                        }
+
+                        return $groupedUsers;
                     },
                     $vary,
                 );
