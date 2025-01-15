@@ -489,6 +489,7 @@ tickets.list.request_opened_on: 'Request opened on <time datetime="{dateIso}">{d
 tickets.list.request_updated_on: 'Request updated on <time datetime="{dateIso}">{date}</time>'
 tickets.list.time_spent: '{ count } spent'
 tickets.list.time_spent.unaccounted: '{ count } unaccounted'
+tickets.new.open_ticket: 'Open a ticket'
 tickets.new.submit: 'Create the ticket'
 tickets.new.title: 'New ticket'
 tickets.observers: Observers

@@ -489,6 +489,7 @@ tickets.list.request_opened_on: 'Demande ouverte le <time datetime="{dateIso}">{
 tickets.list.request_updated_on: 'Demande mise à jour le <time datetime="{dateIso}">{date}</time>'
 tickets.list.time_spent: '{ count } passée(s)'
 tickets.list.time_spent.unaccounted: '{ count } non comptabilisée(s)'
+tickets.new.open_ticket: 'Ouvrir un ticket'
 tickets.new.submit: 'Créer le ticket'
 tickets.new.title: 'Nouveau ticket'
 tickets.observers: Observateurs

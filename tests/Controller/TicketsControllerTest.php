@@ -42,6 +42,49 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="ticket-item"]', "#{$ticket->getId()} My ticket");
     }
 
+    public function testGetNewRendersCorrectly(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets']);
+
+        $client->request(Request::METHOD_GET, '/tickets/new');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'New ticket');
+    }
+
+    public function testGetNewFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, '/tickets/new');
+    }
+
+    public function testPostNewRedirectsToTheSelectedOrganization(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:create:tickets']);
+
+        $client->request(Request::METHOD_POST, '/tickets/new', [
+            'ticket' => [
+                '_token' => $this->generateCsrfToken($client, 'organization select'),
+                'organization' => $organization->getId(),
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets/new", 302);
+    }
+
     public function testGetShowRendersCorrectlyIfTicketIsCreatedByUser(): void
     {
         $client = static::createClient();

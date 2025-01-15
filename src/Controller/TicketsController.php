@@ -17,6 +17,7 @@ use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class TicketsController extends BaseController
 {
@@ -26,6 +27,7 @@ class TicketsController extends BaseController
         Repository\OrganizationRepository $organizationRepository,
         SearchEngine\Ticket\Searcher $ticketSearcher,
         SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder,
+        Security\Authorizer $authorizer,
         Service\UserService $userService,
     ): Response {
         $page = $request->query->getInt('page', 1);
@@ -75,6 +77,8 @@ class TicketsController extends BaseController
             $ticketsPagination = Utils\Pagination::empty();
         }
 
+        $grantedOrganizations = $authorizer->getGrantedOrganizationsToUser($user, permission: 'orga:create:tickets');
+        $mustSelectOrganization = count($grantedOrganizations) > 1;
         $defaultOrganization = $userService->getDefaultOrganization($user);
 
         return $this->render('tickets/index.html.twig', [
@@ -88,7 +92,34 @@ class TicketsController extends BaseController
             'searchMode' => $searchMode,
             'quickSearchForm' => $quickSearchForm,
             'advancedSearchForm' => $advancedSearchForm,
+            'mustSelectOrganization' => $mustSelectOrganization,
             'defaultOrganization' => $defaultOrganization,
+        ]);
+    }
+
+    #[Route('/tickets/new', name: 'new ticket')]
+    public function new(
+        Request $request,
+    ): Response {
+        $this->denyAccessUnlessGranted('orga:create:tickets', 'any');
+
+        $form = $this->createNamedForm('ticket', Form\Organization\SelectForm::class, options: [
+            'permission' => 'orga:create:tickets',
+            'submit_label' => new TranslatableMessage('tickets.new.open_ticket'),
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $organization = $form->getData()['organization'];
+
+            return $this->redirectToRoute('new organization ticket', [
+                'uid' => $organization->getUid(),
+            ]);
+        }
+
+        return $this->render('tickets/new.html.twig', [
+            'form' => $form,
         ]);
     }
 

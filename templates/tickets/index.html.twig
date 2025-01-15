@@ -81,14 +81,27 @@
                         ) }}
                     </div>
 
-                    {% if defaultOrganization %}
-                        <a
-                            class="button button--primary button--uppercase"
-                            href="{{ path('new organization ticket', { uid: defaultOrganization.uid }) }}"
-                        >
-                            {{ icon('plus') }}
-                            {{ 'tickets.index.new_ticket' | trans }}
-                        </a>
+                    {% if is_granted('orga:create:tickets', 'any') %}
+                        {% if mustSelectOrganization %}
+                            <button
+                                class="button button--primary button--uppercase"
+                                type="button"
+                                data-controller="modal-opener"
+                                data-action="modal-opener#fetch"
+                                data-modal-opener-href-value="{{ path('new ticket') }}"
+                            >
+                                {{ icon('plus') }}
+                                {{ 'tickets.index.new_ticket' | trans }}
+                            </button>
+                        {% else %}
+                            <a
+                                class="button button--primary button--uppercase"
+                                href="{{ path('new organization ticket', { uid: defaultOrganization.uid }) }}"
+                            >
+                                {{ icon('plus') }}
+                                {{ 'tickets.index.new_ticket' | trans }}
+                            </a>
+                        {% endif %}
                     {% endif %}
                 </div>
 

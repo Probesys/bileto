@@ -24,6 +24,7 @@ class Authorizer
 {
     public function __construct(
         private Repository\AuthorizationRepository $authorizationRepository,
+        private Repository\OrganizationRepository $organizationRepository,
         private Repository\UserRepository $userRepository,
         private Security $security,
         private AccessDecisionManagerInterface $accessDecisionManager,
@@ -121,6 +122,27 @@ class Authorizer
     {
         $token = new Authentication\UserToken($user);
         return $this->accessDecisionManager->decide($token, [$attribute], $subject);
+    }
+
+    /**
+     * Return a list of organizations the user has the given permission.
+     *
+     * If the permission is "any", it returns all organizations to which the
+     * user has access.
+     *
+     * @return Entity\Organization[]
+     */
+    public function getGrantedOrganizationsToUser(Entity\User $user, string $permission = 'any'): array
+    {
+        $organizations = $this->organizationRepository->findAuthorizedOrganizations($user);
+
+        if ($permission === 'any') {
+            return $organizations;
+        }
+
+        return array_filter($organizations, function ($organization) use ($user, $permission): bool {
+            return $this->isGrantedToUser($user, $permission, $organization);
+        });
     }
 
     /**
