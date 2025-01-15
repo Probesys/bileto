@@ -6,38 +6,34 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Organization;
-use App\Entity\Ticket;
-use App\Tests\AuthorizationHelper;
-use App\Tests\Factory\MessageFactory;
-use App\Tests\Factory\OrganizationFactory;
-use App\Tests\Factory\TicketFactory;
-use App\Tests\Factory\UserFactory;
+use App\Entity;
+use App\Tests;
+use App\Tests\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zenstruck\Foundry;
-use Zenstruck\Foundry\Factory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class TicketsControllerTest extends WebTestCase
 {
-    use AuthorizationHelper;
     use Factories;
     use ResetDatabase;
+    use Tests\AuthorizationHelper;
+    use Tests\SessionHelper;
 
     public function testGetIndexRendersCorrectly(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
             'assignee' => $user,
-            'status' => Foundry\faker()->randomElement(Ticket::OPEN_STATUSES),
+            'status' => Foundry\faker()->randomElement(Entity\Ticket::OPEN_STATUSES),
         ]);
 
         $client->request(Request::METHOD_GET, '/tickets');
@@ -49,10 +45,10 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRendersCorrectlyIfTicketIsCreatedByUser(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
             'createdBy' => $user,
         ]);
@@ -66,10 +62,10 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRendersCorrectlyIfTicketIsRequestedByUser(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
             'requester' => $user,
         ]);
@@ -83,10 +79,10 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRendersCorrectlyIfTicketIsAssignedToUser(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
             'assignee' => $user,
         ]);
@@ -100,10 +96,10 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRendersCorrectlyIfUserIsObserverOfTheTicket(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
             'observers' => [$user],
         ]);
@@ -117,10 +113,10 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRendersCorrectlyIfAccessIsGranted(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
         ]);
 
@@ -133,15 +129,15 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRendersMessages(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
             'createdBy' => $user,
         ]);
         $this->grantOrga($user->_real(), ['orga:see']);
         $content = 'The content of the answer';
-        $message = MessageFactory::createOne([
+        $message = Factory\MessageFactory::createOne([
             'isConfidential' => false,
             'ticket' => $ticket,
             'content' => $content
@@ -156,7 +152,7 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRendersConfidentialMessagesIfAccessIsGranted(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
             'orga:see',
@@ -164,8 +160,8 @@ class TicketsControllerTest extends WebTestCase
             'orga:see:tickets:messages:confidential',
         ]);
         $content = 'The content of the answer';
-        $ticket = TicketFactory::createOne();
-        $message = MessageFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne();
+        $message = Factory\MessageFactory::createOne([
             'isConfidential' => true,
             'ticket' => $ticket,
             'content' => $content
@@ -180,12 +176,12 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowHidesConfidentialMessagesIfAccessIsNotGranted(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all']);
         $content = 'The content of the answer';
-        $ticket = TicketFactory::createOne();
-        $message = MessageFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne();
+        $message = Factory\MessageFactory::createOne([
             'isConfidential' => true,
             'ticket' => $ticket,
             'content' => $content
@@ -200,9 +196,9 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRendersEvents(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'The old title',
             'createdBy' => $user,
         ]);
@@ -215,7 +211,7 @@ class TicketsControllerTest extends WebTestCase
         $registry = $container->get('doctrine');
         $entityManager = $registry->getManager();
         /** @var \App\Repository\TicketRepository $ticketRepository */
-        $ticketRepository = $entityManager->getRepository(Ticket::class);
+        $ticketRepository = $entityManager->getRepository(Entity\Ticket::class);
         $ticketRepository->save($ticket->_real(), true);
 
         $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
@@ -229,10 +225,10 @@ class TicketsControllerTest extends WebTestCase
         $this->expectException(AccessDeniedException::class);
 
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:see']);
-        $ticket = TicketFactory::createOne([
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
         ]);
 
@@ -243,8 +239,8 @@ class TicketsControllerTest extends WebTestCase
     public function testGetShowRedirectsToLoginIfNotConnected(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
-        $ticket = TicketFactory::createOne([
+        $user = Factory\UserFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne([
             'title' => 'My ticket',
             'createdBy' => $user,
         ]);
