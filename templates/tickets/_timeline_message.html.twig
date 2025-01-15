@@ -61,7 +61,7 @@
 
             <a class="message__date" href="#message-{{ message.uid }}">
                 <time datetime="{{ message.createdAt | dateIso }}" class="message__date">
-                    {{ message.createdAt | dateTrans('HH:mm') }}
+                    {{ message.createdAt | dateTrans }}
                 </time>
             </a>
         </div>

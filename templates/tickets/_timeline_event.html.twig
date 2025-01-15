@@ -19,7 +19,7 @@
 
             <a class="timeline__event-date" href="#event-{{ event.uid }}-{{ loop.index }}">
                 <time datetime="{{ event.createdAt | dateIso }}">
-                    {{ event.createdAt | dateTrans('HH:mm') }}
+                    {{ event.createdAt | dateTrans }}
                 </time>
             </a>
         </div>
