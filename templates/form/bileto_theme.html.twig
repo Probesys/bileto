@@ -210,14 +210,8 @@
             data-action="multiselect#refresh"
             hidden
         >
-            {% for choice in form.vars.choices %}
-                <option
-                    value="{{ choice.value }}"
-                    {{ choice.value in field_value(form) ? 'selected' }}
-                >
-                    {{ choice.label }}
-                </option>
-            {% endfor %}
+            {%- set options = choices -%}
+            {{- block('choice_widget_options') -}}
         </select>
 
         <div class="flow flow--smaller">

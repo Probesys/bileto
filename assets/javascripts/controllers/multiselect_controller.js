@@ -46,12 +46,36 @@ export default class extends Controller {
 
         // Read options that have not been selected yet, and add them to the
         // select.
-        for (const option of this.dataTarget.options) {
+        const optionsNoGroup = this.dataTarget.querySelectorAll('select > option');
+        for (const option of optionsNoGroup) {
             if (!option.selected) {
                 const newOption = document.createElement('option');
                 newOption.value = option.value;
                 newOption.text = option.text;
                 this.selectTarget.add(newOption);
+            }
+        }
+
+        // Same with the options in optgroups.
+        const groups = this.dataTarget.querySelectorAll('select > optgroup');
+        for (const group of groups) {
+            const newOptGroup = document.createElement('optgroup');
+            newOptGroup.label = group.label;
+
+            let groupIsEmpty = true;
+            const groupOptions = group.querySelectorAll('optgroup > option');
+            for (const option of groupOptions) {
+                if (!option.selected) {
+                    const newOption = document.createElement('option');
+                    newOption.value = option.value;
+                    newOption.text = option.text;
+                    newOptGroup.append(newOption);
+                    groupIsEmpty = false;
+                }
+            }
+
+            if (!groupIsEmpty) {
+                this.selectTarget.add(newOptGroup);
             }
         }
 
