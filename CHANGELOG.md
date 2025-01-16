@@ -1,11 +1,53 @@
 # Changelog of Bileto
 
-## unreleased
+## 2025-01-16 - 0.14.0
 
 ### Breaking changes
 
 PostgreSQL 13+ is now required as [PostgreSQL 12 is no longer supported.](https://www.postgresql.org/support/versioning/)
 MariaDB 10.5+ is now required as [MariaDB 10.4 is no longer supported.](https://mariadb.org/about/#maintenance-policy)
+
+### Improvements
+
+- Allow to select the organization when opening a ticket from the global list ([8c81af0](https://github.com/Probesys/bileto/commit/8c81af0))
+- Group the actors by their role type in the "select" lists ([ed366c0](https://github.com/Probesys/bileto/commit/ed366c0))
+- Allow to search tickets by team ([83f0008](https://github.com/Probesys/bileto/commit/83f0008), [44e2ddc](https://github.com/Probesys/bileto/commit/44e2ddc))
+- Reopen resolved ticket if answerer is not an agent ([fd8152e](https://github.com/Probesys/bileto/commit/fd8152e))
+- Display the date next to the time in the ticket timeline ([9b59a87](https://github.com/Probesys/bileto/commit/9b59a87))
+- Add id/anchors on the timelines' items ([cd0d53e](https://github.com/Probesys/bileto/commit/cd0d53e))
+- Allow to upload more different files ([03f07bf](https://github.com/Probesys/bileto/commit/03f07bf), [9b7d8b3](https://github.com/Probesys/bileto/commit/9b7d8b3))
+- Send the email receipt only if the requester created the ticket ([99bc3f6](https://github.com/Probesys/bileto/commit/99bc3f6))
+- Display the custom logo on the login page ([4ce31d3](https://github.com/Probesys/bileto/commit/4ce31d3))
+- Remove the deprecated password help from the new user form ([fcd5de6](https://github.com/Probesys/bileto/commit/fcd5de6))
+- Add more context to the MailboxEmail errors ([3d65c4c](https://github.com/Probesys/bileto/commit/3d65c4c))
+
+### Bug fixes
+
+- Fix the alignment of ticket's id and title ([c04ae99](https://github.com/Probesys/bileto/commit/c04ae99))
+- Make sure to keep current actors in the ticket even if they lose their access ([3a0f138](https://github.com/Probesys/bileto/commit/3a0f138))
+- Redirect to organization's contracts when changing contracts order ([9d80942](https://github.com/Probesys/bileto/commit/9d80942))
+- Catch errors if the message notification reference cannot be saved ([8302cdb](https://github.com/Probesys/bileto/commit/8302cdb))
+- Make sure to return a valid UTF8 string in DomHelper so that the message doesn't go empty ([92eb56e](https://github.com/Probesys/bileto/commit/92eb56e))
+- Handle the answers to tickets containing messages with the same references ([025d484](https://github.com/Probesys/bileto/commit/025d484))
+- Expire cache of authorizations after 10s so the worker considers authorization changes ([c0fec9a](https://github.com/Probesys/bileto/commit/c0fec9a))
+
+### Technical
+
+- Allow administrators to send personally identifiable information (PII) to Sentry ([5141ff7](https://github.com/Probesys/bileto/commit/5141ff7))
+- Warn about datetimes' offsets in the documentation of data importation ([ae06de9](https://github.com/Probesys/bileto/commit/ae06de9))
+- Allow to reimport message documents if the first import failed ([d32e7db](https://github.com/Probesys/bileto/commit/d32e7db))
+- Require MariaDB >= 10.5 ([2ad0844](https://github.com/Probesys/bileto/commit/2ad0844))
+- Require PostgreSQL >= 13 ([8eca54e](https://github.com/Probesys/bileto/commit/8eca54e))
+- Update the dependencies ([ed0805c](https://github.com/Probesys/bileto/commit/ed0805c), [6cc7329](https://github.com/Probesys/bileto/commit/6cc7329), [a5a053a](https://github.com/Probesys/bileto/commit/a5a053a))
+- Allow to delete messages with documents in database ([658c21f](https://github.com/Probesys/bileto/commit/658c21f))
+- Allow to delete tickets with solution in database ([53f0061](https://github.com/Probesys/bileto/commit/53f0061))
+
+### Developers
+
+- Make the multiselect widget generic ([411185e](https://github.com/Probesys/bileto/commit/411185e))
+- Add support for optgroup to the multiselect component ([c3af805](https://github.com/Probesys/bileto/commit/c3af805))
+- Pull pgsql and mariadb images with the docker-pull command ([f91c9ef](https://github.com/Probesys/bileto/commit/f91c9ef))
+- Update the copyright year ([c63525a](https://github.com/Probesys/bileto/commit/c63525a))
 
 ## 2024-12-12 - 0.13.0
 
