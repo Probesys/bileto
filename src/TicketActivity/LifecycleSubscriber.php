@@ -6,7 +6,8 @@
 
 namespace App\TicketActivity;
 
-use App\Repository\TicketRepository;
+use App\Repository;
+use App\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -31,7 +32,8 @@ class LifecycleSubscriber implements EventSubscriberInterface
     }
 
     public function __construct(
-        private TicketRepository $ticketRepository,
+        private Repository\TicketRepository $ticketRepository,
+        private Security\Authorizer $authorizer,
         private EventDispatcherInterface $eventDispatcher,
     ) {
     }
@@ -74,6 +76,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
     {
         $message = $event->getMessage();
         $ticket = $message->getTicket();
+        $organization = $ticket->getOrganization();
 
         $messageAuthor = $message->getCreatedBy();
         $isConfidential = $message->isConfidential();
@@ -85,18 +88,19 @@ class LifecycleSubscriber implements EventSubscriberInterface
         if ($messageAuthor == $assignee) {
             if ($status === 'in_progress' && !$isConfidential) {
                 $ticket->setStatus('pending');
-                $this->ticketRepository->save($ticket, true);
             }
         } elseif ($messageAuthor == $requester) {
             if ($status === 'pending') {
                 $ticket->setStatus('in_progress');
-                $this->ticketRepository->save($ticket, true);
-            } elseif ($status === 'resolved' && $via === 'email') {
-                $ticket->setStatus('in_progress');
-                $ticket->setSolution(null);
-                $this->ticketRepository->save($ticket, true);
             }
         }
+
+        if ($status === 'resolved' && !$this->authorizer->isUserAgent($messageAuthor, $organization)) {
+            $ticket->setStatus('in_progress');
+            $ticket->setSolution(null);
+        }
+
+        $this->ticketRepository->save($ticket, true);
     }
 
     /**

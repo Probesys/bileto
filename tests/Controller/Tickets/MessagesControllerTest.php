@@ -400,6 +400,38 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame('resolved', $ticket->getStatus());
     }
 
+    public function testPostCreateRefusesSolutionByDefaultIfUserIsNotAnAgent(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets:messages',
+            'orga:see:tickets:all',
+        ], type: 'user');
+        $initialStatus = 'resolved';
+        $solution = Factory\MessageFactory::createOne();
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => $initialStatus,
+            'solution' => $solution,
+        ]);
+        $messageContent = 'My message';
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
+        ]);
+
+        $this->assertSame(2, Factory\MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->_refresh();
+        $this->assertNull($ticket->getSolution());
+        $this->assertSame('in_progress', $ticket->getStatus());
+    }
+
     public function testPostCreateRefusesSolutionIfActionIsRefuseSolution(): void
     {
         $client = static::createClient();
