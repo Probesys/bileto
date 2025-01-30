@@ -96,11 +96,6 @@ class AnswerForm extends AbstractType
                 'sanitize_html' => true,
                 'sanitizer' => 'app.message_sanitizer',
                 'block_prefix' => 'editor',
-                'constraints' => [
-                    new Assert\NotBlank(
-                        message: new TranslatableMessage('message.content.required', [], 'errors'),
-                    ),
-                ],
             ]);
 
             $canPostSolutionApprovement = $ticketIsResolved && $ticketHasSolution;
