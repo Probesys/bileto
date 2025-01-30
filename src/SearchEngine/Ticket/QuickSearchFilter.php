@@ -220,16 +220,12 @@ class QuickSearchFilter
         return $this->labels;
     }
 
-    public function addLabel(Entity\Label $label): void
+    /**
+     * @param Collections\Collection<int, Entity\Label> $values
+     */
+    public function setLabels(Collections\Collection $values): void
     {
-        if (!$this->labels->contains($label)) {
-            $this->labels->add($label);
-        }
-    }
-
-    public function removeLabel(Entity\Label $label): void
-    {
-        $this->labels->removeElement($label);
+        $this->labels = $values;
     }
 
     /**
@@ -328,17 +324,9 @@ class QuickSearchFilter
             $textualQueryParts[] = "team:{$values}";
         }
 
-        foreach ($this->labels as $label) {
-            $value = $label->getName();
-
-            if (
-                str_contains($value, ' ') &&
-                (!str_starts_with($value, '"') || !str_ends_with($value, '"'))
-            ) {
-                $value = '"' . $value . '"';
-            }
-
-            $textualQueryParts[] = "label:{$value}";
+        if (!$this->labels->isEmpty()) {
+            $values = $this->processLabelValues($this->labels);
+            $textualQueryParts[] = "label:{$values}";
         }
 
         if ($this->priorities) {
@@ -385,5 +373,26 @@ class QuickSearchFilter
         }, $teams->toArray());
 
         return implode(',', $teamIds);
+    }
+
+    /**
+     * @param Collections\Collection<int, Entity\Label> $labels
+     */
+    private function processLabelValues(Collections\Collection $labels): string
+    {
+        $labelNames = array_map(function (Entity\Label $label): string {
+            $value = $label->getName();
+
+            if (
+                str_contains($value, ' ') &&
+                (!str_starts_with($value, '"') || !str_ends_with($value, '"'))
+            ) {
+                $value = '"' . $value . '"';
+            }
+
+            return $value;
+        }, $labels->toArray());
+
+        return implode(',', $labelNames);
     }
 }

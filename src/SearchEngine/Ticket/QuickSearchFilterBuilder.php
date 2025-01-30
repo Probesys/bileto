@@ -57,7 +57,7 @@ class QuickSearchFilterBuilder
                 $qualifier = $condition->getQualifier();
                 $value = $condition->getValue();
 
-                if ($qualifier !== 'label' && isset($qualifiersAlreadySet[$qualifier])) {
+                if (isset($qualifiersAlreadySet[$qualifier])) {
                     return null;
                 }
 
@@ -90,13 +90,8 @@ class QuickSearchFilterBuilder
                     $teams = $this->processTeams($values);
                     $quickSearchFilter->setTeams($teams);
                 } elseif ($qualifier === 'label') {
-                    foreach ($values as $value) {
-                        $labels = $this->labelRepository->findByName($value);
-
-                        foreach ($labels as $label) {
-                            $quickSearchFilter->addLabel($label);
-                        }
-                    }
+                    $labels = $this->processLabels($values);
+                    $quickSearchFilter->setLabels($labels);
                 } elseif ($qualifier === 'type' && count($values) === 1) {
                     $quickSearchFilter->setType($values[0]);
                 } elseif ($qualifier === 'no' && $values[0] === 'assignee') {
@@ -161,5 +156,28 @@ class QuickSearchFilterBuilder
         ]);
 
         return new Collections\ArrayCollection($teams);
+    }
+
+    /**
+     * @param string[] $values
+     *
+     * @return Collections\ArrayCollection<int, Entity\Label>
+     */
+    private function processLabels(array $values): Collections\ArrayCollection
+    {
+        /** @var Collections\ArrayCollection<int, Entity\Label> */
+        $labels = new Collections\ArrayCollection();
+
+        foreach ($values as $value) {
+            $matchingLabels = $this->labelRepository->findByName($value);
+
+            foreach ($matchingLabels as $label) {
+                if (!$labels->contains($label)) {
+                    $labels->add($label);
+                }
+            }
+        }
+
+        return $labels;
     }
 }

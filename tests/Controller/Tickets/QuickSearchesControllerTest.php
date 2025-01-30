@@ -108,7 +108,7 @@ class QuickSearchesControllerTest extends WebTestCase
             ],
         ]);
 
-        $expectedQuery = urlencode('label:bar label:foo');
+        $expectedQuery = urlencode('label:bar,foo');
         $this->assertResponseRedirects("/tickets?q={$expectedQuery}", 302);
     }
 

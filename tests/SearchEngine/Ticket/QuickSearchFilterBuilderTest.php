@@ -180,7 +180,7 @@ class QuickSearchFilterBuilderTest extends WebTestCase
         $this->assertSame(['high'], $ticketQuickSearchFilter->getPriorities());
     }
 
-    public function testGetFilterWithLabelConditionsReturnsFilter(): void
+    public function testGetFilterWithLabelConditionReturnsFilter(): void
     {
         $fooLabel = Factory\LabelFactory::createOne([
             'name' => 'foo',
@@ -191,7 +191,7 @@ class QuickSearchFilterBuilderTest extends WebTestCase
         $bazLabel = Factory\LabelFactory::createOne([
             'name' => 'BAZ',
         ]);
-        $query = SearchEngine\Query::fromString('label:foo label:baz');
+        $query = SearchEngine\Query::fromString('label:foo,baz');
 
         $ticketQuickSearchFilter = $this->ticketQuickSearchFilterBuilder->getFilter($query);
 
@@ -368,12 +368,12 @@ class QuickSearchFilterBuilderTest extends WebTestCase
         Factory\LabelFactory::createOne([
             'name' => 'Bar Baz',
         ]);
-        $query = SearchEngine\Query::fromString('label:foo label:"bar baz"');
+        $query = SearchEngine\Query::fromString('label:foo,"bar baz"');
         $ticketQuickSearchFilter = $this->ticketQuickSearchFilterBuilder->getFilter($query);
 
         $textualQuery = $ticketQuickSearchFilter->toTextualQuery();
 
-        $this->assertSame('label:foo label:"Bar Baz"', $textualQuery);
+        $this->assertSame('label:foo,"Bar Baz"', $textualQuery);
     }
 
     public function testSetText(): void
