@@ -527,6 +527,7 @@ tickets.show.hide_history: 'Hide changes history'
 tickets.show.impact: 'Impact:'
 tickets.show.message.confidential: Confidential
 tickets.show.message.solution: Solution
+tickets.show.message.via_api: 'This message has been sent by an external service'
 tickets.show.message.via_email: 'This message has been sent by email'
 tickets.show.minutes: minutes
 tickets.show.number_messages: "{count, plural, =0 {No\_messages} one {1\_message} other {#\_messages}}"

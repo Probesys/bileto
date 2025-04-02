@@ -40,6 +40,10 @@
                     <span title="{{ 'tickets.show.message.via_email' | trans }}">
                         {{ icon('envelope') }}
                     </span>
+                {% elseif message.via == 'api' %}
+                    <span title="{{ 'tickets.show.message.via_api' | trans }}">
+                        {{ icon('cloud') }}
+                    </span>
                 {% endif %}
             </p>
 

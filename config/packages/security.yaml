@@ -47,6 +47,7 @@ security:
         - { path: ^/passwords/(\w+)/edit, role: PUBLIC_ACCESS }
         - { path: ^/session/locale, role: PUBLIC_ACCESS }
         - { path: ^/app.manifest, role: PUBLIC_ACCESS }
+        - { path: ^/api/tickets, role: PUBLIC_ACCESS }
         - { path: ^/, role: ROLE_USER }
 
 when@test:
