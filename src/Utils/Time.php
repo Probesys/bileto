@@ -48,9 +48,15 @@ class Time
         return self::relative("-{$number} {$unit}");
     }
 
-    public static function freeze(\DateTimeImmutable $datetime): void
+    public static function freeze(?\DateTimeImmutable $datetime = null): \DateTimeImmutable
     {
+        if ($datetime === null) {
+            $datetime = self::now();
+        }
+
         self::$freezedNow = $datetime;
+
+        return self::$freezedNow;
     }
 
     public static function unfreeze(): void
