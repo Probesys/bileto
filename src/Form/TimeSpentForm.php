@@ -7,7 +7,6 @@
 namespace App\Form;
 
 use App\Entity;
-use App\Form\Type as AppType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,8 +18,8 @@ class TimeSpentForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('realTime', Type\IntegerType::class, [
-            'label' => new TranslatableMessage('forms.time_spent.label'),
-            'help' => new TranslatableMessage('forms.time_spent.help'),
+            'label' => new TranslatableMessage('forms.time_spent.real_time.label'),
+            'help' => new TranslatableMessage('forms.time_spent.real_time.help'),
             'empty_data' => '0',
             'required' => true,
             'attr' => [
@@ -28,6 +27,11 @@ class TimeSpentForm extends AbstractType
                 'min' => 0,
                 'autocomplete' => 'off',
             ],
+        ]);
+
+        $builder->add('mustNotBeAccounted', Type\CheckboxType::class, [
+            'required' => false,
+            'label' => new TranslatableMessage('forms.time_spent.must_not_be_accounted.label'),
         ]);
 
         $builder->add('submit', Type\SubmitType::class, [

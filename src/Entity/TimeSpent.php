@@ -76,6 +76,9 @@ class TimeSpent implements EntityInterface, MonitorableEntityInterface, UidEntit
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Message $message = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $mustNotBeAccounted = false;
+
     public function getTicket(): ?Ticket
     {
         return $this->ticket;
@@ -137,6 +140,18 @@ class TimeSpent implements EntityInterface, MonitorableEntityInterface, UidEntit
     public function setMessage(?Message $message): static
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function mustNotBeAccounted(): bool
+    {
+        return $this->mustNotBeAccounted;
+    }
+
+    public function setMustNotBeAccounted(bool $mustNotBeAccounted): static
+    {
+        $this->mustNotBeAccounted = $mustNotBeAccounted;
 
         return $this;
     }

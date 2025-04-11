@@ -183,6 +183,24 @@ class ContractTimeAccountingTest extends WebTestCase
         $this->assertSame(1, count($contractTimeSpents));
     }
 
+    public function testAccountTimeSpentsIgnoresTimesThatMustNotBeAccounted(): void
+    {
+        $contract = ContractFactory::createOne([
+            'maxHours' => 1,
+            'timeAccountingUnit' => 0,
+        ])->_real();
+        $minutes = 20;
+        $timeSpent = TimeSpentFactory::createOne([
+            'contract' => null,
+            'realTime' => $minutes,
+            'mustNotBeAccounted' => true,
+        ])->_real();
+
+        $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent]);
+
+        $this->assertNull($timeSpent->getContract());
+    }
+
     public function testUnaccountTimeSpents(): void
     {
         $contract = ContractFactory::createOne([

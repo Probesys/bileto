@@ -60,6 +60,10 @@ class ContractTimeAccounting
         $timeAccountingUnit = $contract->getTimeAccountingUnit();
 
         foreach ($timeSpents as $timeSpent) {
+            if ($timeSpent->mustNotBeAccounted()) {
+                continue;
+            }
+
             // If there is more spent time than time available in the contract,
             // we consider that we can't account more time so we stop here.
             if ($timeSpent->getRealTime() > $availableTime) {

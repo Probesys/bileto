@@ -152,6 +152,50 @@ class TimeSpentsControllerTest extends WebTestCase
         $this->assertSame($contract->getId(), $timeSpent->getContract()?->getId());
     }
 
+    public function testPostEditUnaccountTimeIfMustNotBeAccountedIsChecked(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:time_spent']);
+        $contract = Factory\ContractFactory::createOne([
+            'startAt' => Utils\Time::ago(1, 'week'),
+            'endAt' => Utils\Time::fromNow(1, 'week'),
+            'timeAccountingUnit' => 10,
+        ]);
+        $ticket = Factory\TicketFactory::createOne([
+            'requester' => $user,
+            'status' => 'in_progress',
+            'contracts' => [$contract],
+        ]);
+        $oldRealTime = 5;
+        $oldTime = 10;
+        $newRealTime = 15;
+        $newTime = 15;
+        $timeSpent = Factory\TimeSpentFactory::createOne([
+            'ticket' => $ticket,
+            'contract' => $contract,
+            'realTime' => $oldRealTime,
+            'time' => $oldTime,
+            'mustNotBeAccounted' => false,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/time-spents/{$timeSpent->getUid()}/edit", [
+            'time_spent' => [
+                '_token' => $this->generateCsrfToken($client, 'time_spent'),
+                'realTime' => $newRealTime,
+                'mustNotBeAccounted' => true,
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $timeSpent->_refresh();
+        $this->assertSame($newRealTime, $timeSpent->getRealTime());
+        $this->assertSame($newTime, $timeSpent->getTime());
+        $this->assertTrue($timeSpent->mustNotBeAccounted());
+        $this->assertNull($timeSpent->getContract());
+    }
+
     public function testPostEditDeletesTimeSpentIfTimeIsZero(): void
     {
         $client = static::createClient();

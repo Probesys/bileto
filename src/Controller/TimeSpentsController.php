@@ -41,7 +41,9 @@ class TimeSpentsController extends BaseController
             } else {
                 $contract = $timeSpent->getContract();
 
-                if ($contract) {
+                if ($contract && $timeSpent->mustNotBeAccounted()) {
+                    $contractTimeAccounting->unaccountTimeSpents([$timeSpent]);
+                } elseif ($contract) {
                     $contractTimeAccounting->reaccountTimeSpents($contract, [$timeSpent]);
                 }
 
