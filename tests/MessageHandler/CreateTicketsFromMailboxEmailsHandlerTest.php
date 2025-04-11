@@ -37,6 +37,8 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $bus = $container->get(MessageBusInterface::class);
         /** @var HtmlSanitizerInterface */
         $appMessageSanitizer = $container->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $now = Time::freeze();
+        $emailDate = Time::ago(1, 'hour');
 
         $organization = OrganizationFactory::createOne();
         $user = UserFactory::createOne([
@@ -49,6 +51,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
             'from' => $user->getEmail(),
             'subject' => $subject,
             'htmlBody' => $body,
+            'date' => $emailDate,
         ]);
 
         $this->assertSame(1, MailboxEmailFactory::count());
@@ -63,17 +66,20 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
 
         $ticket = TicketFactory::first();
         $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
+        $this->assertSame($now->getTimestamp(), $ticket->getCreatedAt()->getTimestamp());
         $this->assertSame($subject, $ticket->getTitle());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
         $this->assertSame($user->getId(), $ticket->getRequester()->getId());
 
         $message = MessageFactory::first();
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
+        $this->assertSame($emailDate->getTimestamp(), $message->getCreatedAt()->getTimestamp());
         $sanitizedBody = trim($appMessageSanitizer->sanitize($body));
         $this->assertSame($sanitizedBody, $message->getContent());
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('email', $message->getVia());
+        Time::unfreeze();
     }
 
     public function testInvokeCreatesATicketAndCanAttachAContractIfItExists(): void

@@ -175,6 +175,7 @@ class CreateTicketsFromMailboxEmailsHandler
         $messageContent = $this->appMessageSanitizer->sanitize($messageContent);
 
         $message = new Message();
+        $message->setCreatedAt($mailboxEmail->getDate());
         $message->setContent($messageContent);
         $message->setTicket($ticket);
         $message->setIsConfidential(false);
