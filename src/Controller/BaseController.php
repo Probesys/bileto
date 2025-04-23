@@ -17,7 +17,7 @@ class BaseController extends AbstractController
     /**
      * @param mixed[] $parameters
      */
-    protected function renderBadRequest(string $view, array $parameters = [], Response $response = null): Response
+    protected function renderBadRequest(string $view, array $parameters = [], ?Response $response = null): Response
     {
         if ($response === null) {
             $response = new Response('', Response::HTTP_BAD_REQUEST);
