@@ -18,6 +18,9 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @extends AbstractType<Entity\User>
+ */
 class ActorType extends AbstractType
 {
     public function __construct(

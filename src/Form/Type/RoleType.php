@@ -18,6 +18,9 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @extends AbstractType<Entity\Role>
+ */
 class RoleType extends AbstractType
 {
     public function __construct(
@@ -54,7 +57,7 @@ class RoleType extends AbstractType
 
                 return ChoiceList::lazy(
                     $this,
-                    function () use ($types) {
+                    function () use ($types): array {
                         $roles = $this->roleRepository->findBy([
                             'type' => $types,
                         ]);

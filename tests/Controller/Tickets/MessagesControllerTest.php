@@ -197,7 +197,6 @@ class MessagesControllerTest extends WebTestCase
         $message = Factory\MessageFactory::first();
         $messageDocument1->_refresh();
         $messageDocument2->_refresh();
-        $this->assertNotNull($message);
         $this->assertSame($message->getUid(), $messageDocument1->getMessage()->getUid());
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
     }
@@ -394,7 +393,6 @@ class MessagesControllerTest extends WebTestCase
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $message = Factory\MessageFactory::first();
         $ticket->_refresh();
-        $this->assertNotNull($message);
         $this->assertNotNull($ticket->getSolution());
         $this->assertSame($message->getId(), $ticket->getSolution()->getId());
         $this->assertSame('resolved', $ticket->getStatus());

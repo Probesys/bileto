@@ -29,6 +29,9 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
         parent::__construct($registry, Contract::class);
     }
 
+    /**
+     * @return ORM\Query<Contract>
+     */
     public function findByOrganizationQuery(Organization $organization): ORM\Query
     {
         $entityManager = $this->getEntityManager();
@@ -49,6 +52,7 @@ class ContractRepository extends ServiceEntityRepository implements UidGenerator
 
     /**
      * @param Organization[] $organizations
+     * @return ORM\Query<Contract>
      */
     public function findOngoingByOrganizationsQuery(array $organizations): ORM\Query
     {

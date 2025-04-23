@@ -18,6 +18,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @extends AbstractType<Entity\Ticket>
+ */
 class ActorsForm extends AbstractType
 {
     public function __construct(

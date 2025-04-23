@@ -16,6 +16,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @extends AbstractType<array{
+ *     'q': SearchEngine\Query,
+ * }>
+ */
 class AdvancedSearchForm extends AbstractType
 {
     public function __construct(

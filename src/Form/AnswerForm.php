@@ -21,6 +21,9 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @extends AbstractType<Entity\Message>
+ */
 class AnswerForm extends AbstractType
 {
     public function __construct(

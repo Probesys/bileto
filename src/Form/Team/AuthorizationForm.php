@@ -16,6 +16,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<Entity\TeamAuthorization>
+ */
 class AuthorizationForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

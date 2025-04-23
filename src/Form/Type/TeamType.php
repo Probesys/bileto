@@ -16,6 +16,9 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<Entity\Team>
+ */
 class TeamType extends AbstractType
 {
     public function __construct(
@@ -37,7 +40,7 @@ class TeamType extends AbstractType
 
                 return ChoiceList::lazy(
                     $this,
-                    function () use ($organization, $responsibleOnly) {
+                    function () use ($organization, $responsibleOnly): array {
                         if ($organization && $organization->getId() === null) {
                             $teams = [];
                         } elseif ($organization) {

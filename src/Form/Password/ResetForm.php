@@ -20,6 +20,11 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<array{
+ *     user: Entity\User,
+ * }>
+ */
 class ResetForm extends AbstractType
 {
     public function __construct(

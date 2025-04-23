@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<Entity\Team>
+ */
 class TeamForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

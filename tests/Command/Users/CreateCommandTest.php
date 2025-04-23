@@ -40,7 +40,6 @@ class CreateCommandTest extends KernelTestCase
             $tester->getDisplay()
         );
         $user = UserFactory::first();
-        $this->assertNotNull($user);
         $this->assertSame($email, $user->getEmail());
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $password));
         $this->assertSame('en_GB', $user->getLocale());
@@ -73,7 +72,6 @@ class CreateCommandTest extends KernelTestCase
             $tester->getDisplay()
         );
         $user = UserFactory::first();
-        $this->assertNotNull($user);
         $this->assertSame($email, $user->getEmail());
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $password));
         $this->assertSame($locale, $user->getLocale());

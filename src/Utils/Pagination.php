@@ -48,6 +48,7 @@ class Pagination
      *
      * @param PaginationOptions $paginationOptions
      *
+     * @param ORM\Query<null, T> $query
      * @return Pagination<T>
      */
     public static function paginate(ORM\Query $query, array $paginationOptions): self

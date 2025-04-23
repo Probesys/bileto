@@ -166,8 +166,6 @@ class Persister
         Entity\EntityInterface $sourceEntity,
         Mapping\ManyToManyOwningSideMapping $association
     ): void {
-        assert($association->isManyToManyOwningSide());
-
         $databaseConnection = $this->entityManager->getConnection();
 
         $tableName = $association->joinTable->name;

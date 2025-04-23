@@ -113,7 +113,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $bus->dispatch(new CreateTicketsFromMailboxEmails());
 
         $ticket = TicketFactory::first();
-        $this->assertNotNull($ticket);
         $ticketContract = $ticket->getOngoingContract();
         $this->assertNotNull($ticketContract);
         $this->assertSame($ongoingContract->getId(), $ticketContract->getId());

@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<Entity\TimeSpent>
+ */
 class TimeSpentForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

@@ -218,7 +218,7 @@ class ContractTimeAccountingTest extends WebTestCase
         $this->assertNull($timeSpent->getContract());
         $this->assertSame(20, $timeSpent->getTime());
         $this->assertSame(20, $timeSpent->getRealTime());
-        $this->assertEmpty($contract->getTimeSpents());
+        $this->assertEmpty($contract->getTimeSpents()->toArray());
     }
 
     public function testUnaccountTimeSpentsWithTimeSpentWithoutContract(): void

@@ -217,7 +217,10 @@ class Tokenizer
 
         if (empty($tokens)) {
             // The list of tokens always starts by an AND
-            $tokens[] = ['type' => TokenType::And];
+            $tokens[] = [
+                'type' => TokenType::And,
+                'position' => 0
+            ];
         } elseif (
             // These tokens must be preceded by an AND
             $token['type'] === TokenType::Text ||
@@ -234,7 +237,10 @@ class Tokenizer
                 $lastToken['type'] !== TokenType::Or &&
                 $lastToken['type'] !== TokenType::And
             ) {
-                $tokens[] = ['type' => TokenType::And];
+                $tokens[] = [
+                    'type' => TokenType::And,
+                    'position' => $token['position'],
+                ];
             }
         }
 

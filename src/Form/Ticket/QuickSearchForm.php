@@ -20,6 +20,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @extends AbstractType<SearchEngine\Ticket\QuickSearchFilter>
+ */
 class QuickSearchForm extends AbstractType
 {
     public function __construct(

@@ -36,10 +36,13 @@ class RolesController extends BaseController
         ];
 
         foreach ($roles as $role) {
-            if ($role->getType() === 'super') {
+            /** @var value-of<Role::TYPES> */
+            $type = $role->getType();
+
+            if ($type === 'super') {
                 $rolesByTypes['super'] = $role;
             } else {
-                $rolesByTypes[$role->getType()][] = $role;
+                $rolesByTypes[$type][] = $role;
             }
         }
 

@@ -313,7 +313,6 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $ticket = Factory\TicketFactory::last();
-        $this->assertNotNull($ticket);
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $this->assertSame($title, $ticket->getTitle());
         $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
@@ -326,7 +325,6 @@ class TicketsControllerTest extends WebTestCase
         $this->assertNull($ticket->getAssignee());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
         $message = Factory\MessageFactory::last();
-        $this->assertNotNull($message);
         $this->assertSame($messageContent, $message->getContent());
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
@@ -353,10 +351,8 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $ticket = Factory\TicketFactory::last();
-        $this->assertNotNull($ticket);
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $message = Factory\MessageFactory::last();
-        $this->assertNotNull($message);
         $this->assertSame('My message', $message->getContent());
     }
 
@@ -384,7 +380,6 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $ticket = Factory\TicketFactory::last();
-        $this->assertNotNull($ticket);
         $ticketContract = $ticket->getOngoingContract();
         $this->assertNotNull($ticketContract);
         $this->assertSame($ongoingContract->getId(), $ticketContract->getId());
@@ -415,7 +410,6 @@ class TicketsControllerTest extends WebTestCase
         $message = Factory\MessageFactory::last();
         $messageDocument1->_refresh();
         $messageDocument2->_refresh();
-        $this->assertNotNull($message);
         $this->assertSame($message->getUid(), $messageDocument1->getMessage()->getUid());
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
     }
@@ -445,7 +439,6 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $ticket = Factory\TicketFactory::last();
-        $this->assertNotNull($ticket);
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $this->assertSame('new', $ticket->getStatus());
         $this->assertSame($team->getId(), $ticket->getTeam()->getId());
@@ -485,7 +478,6 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $ticket = Factory\TicketFactory::last();
-        $this->assertNotNull($ticket);
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $this->assertSame('in_progress', $ticket->getStatus());
         $this->assertSame($team->getId(), $ticket->getTeam()->getId());
@@ -517,7 +509,6 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $ticket = Factory\TicketFactory::last();
-        $this->assertNotNull($ticket);
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticketObservers = $ticket->getObservers();
         $this->assertSame(1, count($ticketObservers));
@@ -551,7 +542,6 @@ class TicketsControllerTest extends WebTestCase
         ]);
 
         $ticket = Factory\TicketFactory::last();
-        $this->assertNotNull($ticket);
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
         $ticketLabels = $ticket->getLabels();
         $this->assertSame(1, count($ticketLabels));

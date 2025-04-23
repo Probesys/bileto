@@ -14,6 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<Entity\Ticket>
+ */
 class OrganizationForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

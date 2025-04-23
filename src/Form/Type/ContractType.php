@@ -18,6 +18,9 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<Entity\Contract>
+ */
 class ContractType extends AbstractType
 {
     public function __construct(
@@ -56,7 +59,7 @@ class ContractType extends AbstractType
             'ongoing' => null,
         ]);
 
-        $resolver->setAllowedTypes('ongoing', [Entity\Organization::class, null]);
+        $resolver->setAllowedTypes('ongoing', [Entity\Organization::class, 'null']);
     }
 
     public function getParent(): string

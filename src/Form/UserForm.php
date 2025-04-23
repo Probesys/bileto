@@ -20,6 +20,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<Entity\User>
+ */
 class UserForm extends AbstractType
 {
     public function __construct(

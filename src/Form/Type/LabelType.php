@@ -16,6 +16,9 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<Entity\Label>
+ */
 class LabelType extends AbstractType
 {
     public function __construct(
@@ -32,7 +35,7 @@ class LabelType extends AbstractType
             'choice_loader' => function (Options $options): ChoiceLoaderInterface {
                 return ChoiceList::lazy(
                     $this,
-                    function () {
+                    function (): array {
                         $labels = $this->labelRepository->findAll();
                         $this->labelSorter->sort($labels);
                         return $labels;

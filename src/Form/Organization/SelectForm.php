@@ -13,6 +13,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<array{
+ *     organization: \App\Entity\Organization,
+ * }>
+ */
 class SelectForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

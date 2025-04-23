@@ -227,7 +227,7 @@ class QuickSearchFilterBuilderTest extends WebTestCase
         $ticketQuickSearchFilter = $this->ticketQuickSearchFilterBuilder->getFilter($query);
 
         $this->assertNotNull($ticketQuickSearchFilter);
-        $this->assertEmpty($ticketQuickSearchFilter->getAssignees());
+        $this->assertEmpty($ticketQuickSearchFilter->getAssignees()->toArray());
     }
 
     public function testGetFilterWithQueryConditionReturnsNull(): void

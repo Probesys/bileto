@@ -18,6 +18,9 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<Entity\Organization>
+ */
 class OrganizationType extends AbstractType
 {
     public function __construct(
