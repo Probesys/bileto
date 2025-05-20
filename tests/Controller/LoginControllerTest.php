@@ -62,6 +62,13 @@ class LoginControllerTest extends WebTestCase
         $this->assertResponseRedirects('/', 302);
         $user = $this->getLoggedUser();
         $this->assertNotNull($user);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('login success', $sessionLog->getType());
+        $this->assertSame($identifier, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostLoginWithLdapCreatesUser(): void
@@ -73,6 +80,7 @@ class LoginControllerTest extends WebTestCase
         // This user exists in the LDAP directory.
         // See the docker/development/ldap-ldifs/tree.ldif file.
         $identifier = 'dominique';
+        $email = 'dominique@example.org';
         $password = 'secret';
 
         $client->request(Request::METHOD_GET, '/login');
@@ -84,6 +92,13 @@ class LoginControllerTest extends WebTestCase
         $this->assertResponseRedirects('/', 302);
         $user = $this->getLoggedUser();
         $this->assertNotNull($user);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('login success', $sessionLog->getType());
+        $this->assertSame($email, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostLoginFailsIfPasswordIsIncorrect(): void
@@ -111,6 +126,13 @@ class LoginControllerTest extends WebTestCase
         );
         $user = $this->getLoggedUser();
         $this->assertNull($user);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('login failure', $sessionLog->getType());
+        $this->assertSame($identifier, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostLoginFailsIfUserDoesNotExist(): void
@@ -134,12 +156,20 @@ class LoginControllerTest extends WebTestCase
         );
         $user = $this->getLoggedUser();
         $this->assertNull($user);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('login failure', $sessionLog->getType());
+        $this->assertSame($identifier, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostLogoutLogsUserOutAndRedirects(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
+        $identifier = $user->getUserIdentifier();
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_GET, '/profile');
@@ -148,6 +178,13 @@ class LoginControllerTest extends WebTestCase
         $this->assertResponseRedirects('http://localhost/', 302);
         $user = $this->getLoggedUser();
         $this->assertNull($user);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('logout', $sessionLog->getType());
+        $this->assertSame($identifier, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     protected function getLoggedUser(): ?Entity\User

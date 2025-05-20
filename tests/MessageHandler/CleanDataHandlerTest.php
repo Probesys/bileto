@@ -41,4 +41,27 @@ class CleanDataHandlerTest extends WebTestCase
         $token = Factory\TokenFactory::last();
         $this->assertSame($tokenNotExpired->getId(), $token->getId());
     }
+
+    public function testInvokeDeletesSessionLogsOlderThanOneYear(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $sessionLogExpired = Factory\SessionLogFactory::createOne([
+            'createdAt' => Utils\Time::ago(1, 'year'),
+        ]);
+        $sessionLogNotExpired = Factory\SessionLogFactory::createOne([
+            'createdAt' => Utils\Time::ago(6, 'months'),
+        ]);
+
+        $this->assertSame(2, Factory\SessionLogFactory::count());
+
+        $bus->dispatch(new Message\CleanData());
+
+        $this->assertSame(1, Factory\SessionLogFactory::count());
+
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame($sessionLogNotExpired->getId(), $sessionLog->getId());
+    }
 }

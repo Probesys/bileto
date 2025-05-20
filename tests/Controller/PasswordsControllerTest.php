@@ -50,9 +50,9 @@ class PasswordsControllerTest extends WebTestCase
     public function testPostResetRedirectsAndSendsAnEmail(): void
     {
         $client = static::createClient();
-        $email = 'alix@example.com';
+        $emailAddress = 'alix@example.com';
         $user = Factory\UserFactory::createOne([
-            'email' => $email,
+            'email' => $emailAddress,
             'ldapIdentifier' => '',
             'resetPasswordToken' => null,
         ]);
@@ -60,7 +60,7 @@ class PasswordsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, '/passwords/reset', [
             'reset_password' => [
                 '_token' => $this->generateCsrfToken($client, 'reset password'),
-                'user' => $email,
+                'user' => $emailAddress,
             ],
         ]);
 
@@ -72,14 +72,21 @@ class PasswordsControllerTest extends WebTestCase
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, 'Reset your password');
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('reset password', $sessionLog->getType());
+        $this->assertSame($emailAddress, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostResetRedirectsEvenIfEmailIsUnknown(): void
     {
         $client = static::createClient();
-        $email = 'alix@example.com';
+        $emailAddress = 'not-the-email@example.com';
         $user = Factory\UserFactory::createOne([
-            'email' => $email,
+            'email' => 'alix@example.com',
             'ldapIdentifier' => '',
             'resetPasswordToken' => null,
         ]);
@@ -87,7 +94,7 @@ class PasswordsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, '/passwords/reset', [
             'reset_password' => [
                 '_token' => $this->generateCsrfToken($client, 'reset password'),
-                'user' => 'not-the-email@example.com',
+                'user' => $emailAddress,
             ],
         ]);
 
@@ -96,14 +103,21 @@ class PasswordsControllerTest extends WebTestCase
         $resetPasswordToken = $user->getResetPasswordToken();
         $this->assertNull($resetPasswordToken);
         $this->assertEmailCount(0);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('reset password', $sessionLog->getType());
+        $this->assertSame($emailAddress, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostResetRedirectsEvenIfUserIsManagedByLdap(): void
     {
         $client = static::createClient();
-        $email = 'alix@example.com';
+        $emailAddress = 'alix@example.com';
         $user = Factory\UserFactory::createOne([
-            'email' => $email,
+            'email' => $emailAddress,
             'ldapIdentifier' => 'alix',
             'resetPasswordToken' => null,
         ]);
@@ -111,7 +125,7 @@ class PasswordsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, '/passwords/reset', [
             'reset_password' => [
                 '_token' => $this->generateCsrfToken($client, 'reset password'),
-                'user' => $email,
+                'user' => $emailAddress,
             ],
         ]);
 
@@ -120,14 +134,21 @@ class PasswordsControllerTest extends WebTestCase
         $resetPasswordToken = $user->getResetPasswordToken();
         $this->assertNull($resetPasswordToken);
         $this->assertEmailCount(0);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('reset password', $sessionLog->getType());
+        $this->assertSame($emailAddress, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostResetRedirectsEvenIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
-        $email = 'alix@example.com';
+        $emailAddress = 'alix@example.com';
         $user = Factory\UserFactory::createOne([
-            'email' => $email,
+            'email' => $emailAddress,
             'ldapIdentifier' => '',
             'resetPasswordToken' => null,
         ]);
@@ -135,7 +156,7 @@ class PasswordsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, '/passwords/reset', [
             'reset_password' => [
                 '_token' => 'not the token',
-                'user' => $email,
+                'user' => $emailAddress,
             ],
         ]);
 
@@ -144,6 +165,13 @@ class PasswordsControllerTest extends WebTestCase
         $resetPasswordToken = $user->getResetPasswordToken();
         $this->assertNull($resetPasswordToken);
         $this->assertEmailCount(0);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('reset password', $sessionLog->getType());
+        $this->assertSame($emailAddress, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testGetEditRendersCorrectly(): void
@@ -224,10 +252,12 @@ class PasswordsControllerTest extends WebTestCase
         ]);
         $initialPassword = 'a password';
         $newPassword = 'secret';
+        $email = 'alix@example.com';
         $user = Factory\UserFactory::createOne([
             'resetPasswordToken' => $token,
             'ldapIdentifier' => '',
             'password' => $initialPassword,
+            'email' => $email,
         ]);
 
         $client->request(Request::METHOD_POST, "/passwords/{$token->getValue()}/edit", [
@@ -242,6 +272,13 @@ class PasswordsControllerTest extends WebTestCase
         $this->assertFalse($passwordHasher->isPasswordValid($user->_real(), $initialPassword));
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $newPassword));
         Factory\TokenFactory::assert()->notExists(['id' => $token->getId()]);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('changed password', $sessionLog->getType());
+        $this->assertSame($email, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostEditFailsIfCsrfTokenIsInvalid(): void
@@ -254,10 +291,12 @@ class PasswordsControllerTest extends WebTestCase
         ]);
         $initialPassword = 'a password';
         $newPassword = 'secret';
+        $email = 'alix@example.com';
         $user = Factory\UserFactory::createOne([
             'resetPasswordToken' => $token,
             'ldapIdentifier' => '',
             'password' => $initialPassword,
+            'email' => $email,
         ]);
 
         $client->request(Request::METHOD_POST, "/passwords/{$token->getValue()}/edit", [
@@ -272,5 +311,6 @@ class PasswordsControllerTest extends WebTestCase
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $initialPassword));
         $this->assertFalse($passwordHasher->isPasswordValid($user->_real(), $newPassword));
         Factory\TokenFactory::assert()->exists(['id' => $token->getId()]);
+        Factory\SessionLogFactory::assert()->empty();
     }
 }

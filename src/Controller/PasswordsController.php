@@ -10,7 +10,9 @@ use App\Entity;
 use App\Form;
 use App\Message;
 use App\Repository;
+use App\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -23,6 +25,7 @@ class PasswordsController extends BaseController
         Request $request,
         Repository\UserRepository $userRepository,
         MessageBusInterface $bus,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $sent = $request->query->getBoolean('sent');
 
@@ -47,6 +50,13 @@ class PasswordsController extends BaseController
                 $bus->dispatch(new Message\SendResetPasswordEmail($user->getId()));
             }
 
+            $identifier = $request->request->all('reset_password')['user'] ?? '';
+            $identifier = trim($identifier);
+            if ($identifier) {
+                $resetPasswordEvent = new Security\Event\ResetPasswordEvent($request, $identifier);
+                $eventDispatcher->dispatch($resetPasswordEvent);
+            }
+
             return $this->redirectToRoute('reset password', ['sent' => true]);
         }
 
@@ -62,6 +72,7 @@ class PasswordsController extends BaseController
         Request $request,
         Repository\TokenRepository $tokenRepository,
         Repository\UserRepository $userRepository,
+        EventDispatcherInterface $eventDispatcher,
         #[Autowire(env: 'bool:LDAP_ENABLED')]
         bool $ldapEnabled,
     ): Response {
@@ -94,6 +105,9 @@ class PasswordsController extends BaseController
             $userRepository->save($user, true);
 
             $tokenRepository->remove($resetPasswordToken, true);
+
+            $changedPasswordEvent = new Security\Event\ChangedPasswordEvent($request, $user);
+            $eventDispatcher->dispatch($changedPasswordEvent);
 
             $this->addFlash('password_changed', true);
 

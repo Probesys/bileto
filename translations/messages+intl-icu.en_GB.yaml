@@ -387,6 +387,14 @@ roles.super_admin.description: 'A special role with an access to all the adminis
 roles.type.admin: Administrator
 roles.type.agent: Agent
 roles.type.user: User
+session_logs.changed_password: 'has changed the password'
+session_logs.ip: IP
+session_logs.login_failure: 'has tried to login but failed'
+session_logs.login_success: 'has logged in'
+session_logs.logout: 'has logout'
+session_logs.reset_password: 'has asked to reset the password'
+session_logs.session_hash_id: 'Session identifier hash'
+session_logs.someone: Someone
 submenu.scroller.scroll_to_left: 'Scroll the menu to the left'
 submenu.scroller.scroll_to_right: 'Scroll the menu to the right'
 teams.agents.new.add_agent: 'Add the agent'
@@ -612,4 +620,6 @@ users.show.no_organization: 'Organization: None'
 users.show.organization: 'Organization: {name}'
 users.show.organization_automatic: 'Organization: {name} (automatic)'
 users.show.profile: 'User profile'
+users.show.sessions_activity.none: 'No activity'
+users.show.sessions_activity.title: 'Session activity'
 users.yourself: yourself

@@ -78,6 +78,10 @@
     overflow-wrap: anywhere;
 }
 
+.text--monospace {
+    font-family: monospace;
+}
+
 .pre--formatted {
     padding: var(--space-small);
 

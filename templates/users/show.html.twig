@@ -108,5 +108,74 @@
                 {% endfor %}
             </div>
         </div>
+
+        <div class="panel flow flow--large">
+            <h2 class="col--extend">{{ 'users.show.sessions_activity.title' | trans }}</h2>
+
+            {% if sessionLogs is empty %}
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'users.show.sessions_activity.none' | trans }}
+                    </p>
+                </div>
+            {% else %}
+                <div class="flow flow--larger timeline" data-controller="timeline">
+                    {% for sessionLog in sessionLogs %}
+                        <div
+                            id="log-{{ sessionLog.uid }}"
+                            class="timeline__event"
+                        >
+                            <div class="timeline__event-message">
+                                <details class="flow flow--small">
+                                    <summary>
+                                        {% if sessionLog.createdBy %}
+                                            <strong>{{ sessionLog.createdBy.displayName }}</strong>
+                                        {% else %}
+                                            <strong>{{ 'session_logs.someone' | trans }}</strong>
+                                        {% endif %}
+
+                                        {% if sessionLog.isLoginSuccess %}
+                                            {{ 'session_logs.login_success' | trans }}
+                                        {% elseif sessionLog.isLoginFailure %}
+                                            {{ 'session_logs.login_failure' | trans }}
+                                        {% elseif sessionLog.isLogout %}
+                                            {{ 'session_logs.logout' | trans }}
+                                        {% elseif sessionLog.isResetPassword %}
+                                            {{ 'session_logs.reset_password' | trans }}
+                                        {% elseif sessionLog.isChangedPassword %}
+                                            {{ 'session_logs.changed_password' | trans }}
+                                        {% endif %}
+                                    </summary>
+
+                                    <ul class="list--nostyle flow flow--small text--monospace text--big">
+                                        <li>
+                                            <strong>{{ 'session_logs.ip' | trans }}:</strong> {{ sessionLog.ip }}
+                                        </li>
+
+                                        {% for name, value in sessionLog.httpHeaders %}
+                                            <li><strong>{{ name }}:</strong> {{ value }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </details>
+                            </div>
+
+                            <div class="cols flow flow--smaller">
+                                <span class="badge badge--grey text--monospace" title="{{ 'session_logs.session_hash_id' | trans }}">
+                                    {{ sessionLog.shortHash }}
+                                </span>
+
+                                <a class="timeline__event-date" href="#log-{{ sessionLog.uid }}">
+                                    <time datetime="{{ sessionLog.createdAt | dateIso }}">
+                                        {{ sessionLog.createdAt | dateTrans }}
+                                    </time>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
     </main>
 {% endblock %}

@@ -60,6 +60,7 @@ class UsersController extends BaseController
     public function show(
         Entity\User $user,
         Repository\AuthorizationRepository $authorizationRepository,
+        Repository\SessionLogRepository $sessionLogRepository,
         Sorter\AuthorizationSorter $authorizationSorter,
         Service\UserService $userService,
     ): Response {
@@ -72,10 +73,13 @@ class UsersController extends BaseController
         ]);
         $authorizationSorter->sort($authorizations);
 
+        $sessionLogs = $sessionLogRepository->findByIdentifier($user->getUserIdentifier());
+
         return $this->render('users/show.html.twig', [
             'user' => $user,
             'defaultOrganization' => $defaultOrganization,
             'authorizations' => $authorizations,
+            'sessionLogs' => $sessionLogs,
         ]);
     }
 

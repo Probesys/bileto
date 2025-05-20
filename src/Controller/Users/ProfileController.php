@@ -10,6 +10,8 @@ use App\Controller\BaseController;
 use App\Entity;
 use App\Form;
 use App\Repository;
+use App\Security;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +23,7 @@ class ProfileController extends BaseController
     public function edit(
         Request $request,
         Repository\UserRepository $userRepository,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         /** @var Entity\User */
         $user = $this->getUser();
@@ -32,6 +35,11 @@ class ProfileController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
             $userRepository->save($user, true);
+
+            if ($form->has('plainPassword') && $form->get('plainPassword')->getData() !== '') {
+                $changedPasswordEvent = new Security\Event\ChangedPasswordEvent($request, $user);
+                $eventDispatcher->dispatch($changedPasswordEvent);
+            }
 
             $this->addFlash('success', new TranslatableMessage('notifications.saved'));
 

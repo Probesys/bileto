@@ -387,6 +387,14 @@ roles.super_admin.description: 'Un rôle spécial avec un accès à toute l’ad
 roles.type.admin: Administrateur
 roles.type.agent: Agent
 roles.type.user: Utilisateur
+session_logs.changed_password: 'a changé le mot de passe'
+session_logs.ip: IP
+session_logs.login_failure: 'a tenté de se connecter mais a échoué'
+session_logs.login_success: 's’est connecté'
+session_logs.logout: 's’est déconnecté'
+session_logs.reset_password: 'a demandé à réinitialiser le mot de passe'
+session_logs.session_hash_id: 'Hash de l’identifiant de session'
+session_logs.someone: Quelqu’un
 submenu.scroller.scroll_to_left: 'Défile le menu vers la gauche'
 submenu.scroller.scroll_to_right: 'Défile le menu vers la droite'
 teams.agents.new.add_agent: 'Ajouter l’agent'
@@ -612,4 +620,6 @@ users.show.no_organization: "Organisation\_: Aucune"
 users.show.organization: "Organisation\_: {name}"
 users.show.organization_automatic: "Organisation\_: {name} (automatique)"
 users.show.profile: 'Profil utilisateur'
+users.show.sessions_activity.none: 'Aucune activité'
+users.show.sessions_activity.title: 'Activité de session'
 users.yourself: vous

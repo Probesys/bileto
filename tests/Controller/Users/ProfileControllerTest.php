@@ -67,6 +67,7 @@ class ProfileControllerTest extends WebTestCase
         $user->_refresh();
         $this->assertSame($newName, $user->getName());
         $this->assertSame($newEmail, $user->getEmail());
+        Factory\SessionLogFactory::assert()->empty();
     }
 
     public function testPostEditChangesThePassword(): void
@@ -76,6 +77,7 @@ class ProfileControllerTest extends WebTestCase
         $passwordHasher = self::getContainer()->get('security.user_password_hasher');
         $initialPassword = Foundry\faker()->unique()->password();
         $newPassword = Foundry\faker()->unique()->password();
+        $email = 'alix@example.coop';
         $user = Factory\UserFactory::createOne([
             'password' => $initialPassword,
         ]);
@@ -85,7 +87,7 @@ class ProfileControllerTest extends WebTestCase
             'profile' => [
                 '_token' => $this->generateCsrfToken($client, 'profile'),
                 'name' => 'Alix',
-                'email' => 'alix@example.coop',
+                'email' => $email,
                 'currentPassword' => $initialPassword,
                 'plainPassword' => $newPassword,
             ],
@@ -95,6 +97,13 @@ class ProfileControllerTest extends WebTestCase
         $user->_refresh();
         $this->assertFalse($passwordHasher->isPasswordValid($user->_real(), $initialPassword));
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $newPassword));
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('changed password', $sessionLog->getType());
+        $this->assertSame($email, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
     }
 
     public function testPostEditFailsIfNameIsInvalid(): void
@@ -123,6 +132,7 @@ class ProfileControllerTest extends WebTestCase
         $user->_refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
+        Factory\SessionLogFactory::assert()->empty();
     }
 
     public function testPostEditFailsIfEmailIsInvalid(): void
@@ -151,6 +161,7 @@ class ProfileControllerTest extends WebTestCase
         $user->_refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
+        Factory\SessionLogFactory::assert()->empty();
     }
 
     public function testPostEditFailsIfCurrentPasswordIsInvalid(): void
@@ -183,6 +194,7 @@ class ProfileControllerTest extends WebTestCase
         $user->_refresh();
         $this->assertTrue($passwordHasher->isPasswordValid($user->_real(), $initialPassword));
         $this->assertFalse($passwordHasher->isPasswordValid($user->_real(), $newPassword));
+        Factory\SessionLogFactory::assert()->empty();
     }
 
     public function testPostEditFailsIfManagedByLdap(): void
@@ -210,6 +222,7 @@ class ProfileControllerTest extends WebTestCase
         $user->_refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
+        Factory\SessionLogFactory::assert()->empty();
     }
 
     public function testPostEditFailsIfCsrfTokenIsInvalid(): void
@@ -238,5 +251,6 @@ class ProfileControllerTest extends WebTestCase
         $user->_refresh();
         $this->assertSame($initialName, $user->getName());
         $this->assertSame($initialEmail, $user->getEmail());
+        Factory\SessionLogFactory::assert()->empty();
     }
 }
