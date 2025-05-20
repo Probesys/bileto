@@ -6,8 +6,8 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\User;
-use App\Tests\Factory\UserFactory;
+use App\Entity;
+use App\Tests\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
@@ -33,7 +33,7 @@ class LoginControllerTest extends WebTestCase
     public function testGetLoginRedirectsIfAlreadyConnected(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_GET, '/login');
@@ -48,7 +48,7 @@ class LoginControllerTest extends WebTestCase
         $client = static::createClient();
         $identifier = 'alix@example.com';
         $password = 'secret';
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'email' => $identifier,
             'password' => $password,
         ]);
@@ -91,7 +91,7 @@ class LoginControllerTest extends WebTestCase
         $client = static::createClient();
         $identifier = 'alix@example.com';
         $password = 'secret';
-        $user = UserFactory::createOne([
+        $user = Factory\UserFactory::createOne([
             'email' => $identifier,
             'password' => $password,
         ]);
@@ -139,7 +139,7 @@ class LoginControllerTest extends WebTestCase
     public function testPostLogoutLogsUserOutAndRedirects(): void
     {
         $client = static::createClient();
-        $user = UserFactory::createOne();
+        $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
 
         $client->request(Request::METHOD_GET, '/profile');
@@ -150,7 +150,7 @@ class LoginControllerTest extends WebTestCase
         $this->assertNull($user);
     }
 
-    protected function getLoggedUser(): ?User
+    protected function getLoggedUser(): ?Entity\User
     {
         /** @var \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface */
         $tokenStorage = $this->getContainer()->get('security.token_storage');
@@ -159,7 +159,7 @@ class LoginControllerTest extends WebTestCase
             return null;
         }
 
-        /** @var User|null $user */
+        /** @var ?Entity\User */
         $user = $token->getUser();
         return $user;
     }
