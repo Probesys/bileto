@@ -30,19 +30,10 @@ class CleanDataHandler
 
     private function cleanInvalidTokens(): void
     {
-        $tokens = $this->tokenRepository->findAll();
-        $tokensToRemove = [];
+        $now = Utils\Time::now();
+        $countRemovedTokens = $this->tokenRepository->removeInvalidSince($now);
 
-        foreach ($tokens as $token) {
-            if (!$token->isValid()) {
-                $tokensToRemove[] = $token;
-            }
-        }
-
-        if ($tokensToRemove) {
-            $this->tokenRepository->remove($tokensToRemove, true);
-
-            $countRemovedTokens = count($tokensToRemove);
+        if ($countRemovedTokens > 0) {
             $this->logger->notice("[CleanData] {$countRemovedTokens} expired token(s) deleted");
         }
     }

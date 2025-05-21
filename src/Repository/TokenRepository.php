@@ -22,4 +22,18 @@ class TokenRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Entity\Token::class);
     }
+
+    public function removeInvalidSince(\DateTimeInterface $date): int
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            DELETE App\Entity\Token t
+            WHERE t.expiredAt <= :date
+        SQL);
+
+        $query->setParameter('date', $date);
+
+        return $query->execute();
+    }
 }
