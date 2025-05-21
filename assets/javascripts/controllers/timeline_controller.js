@@ -19,7 +19,7 @@ export default class extends Controller {
         if (bottom) {
             lastElement = bottom.previousElementSibling;
         } else {
-            lastElement = this.element.lastChild;
+            lastElement = this.element.lastElementChild;
         }
 
         if (!lastElement) {

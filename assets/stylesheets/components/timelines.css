@@ -4,6 +4,7 @@
 
 .timeline {
     --timeline-icons-col-width: 0;
+    --timeline-bar-top: 10px;
     --timeline-bar-height: 0;
 
     position: relative;
@@ -18,10 +19,10 @@
         content: " ";
 
         position: absolute;
-        top: 5rem;
+        top: var(--timeline-bar-top);
         left: calc(var(--timeline-icons-col-width) / 2 - 2px);
 
-        height: calc(var(--timeline-bar-height) - 5rem);
+        height: calc(var(--timeline-bar-height) - var(--timeline-bar-top));
 
         border-left: 4px solid var(--color-grey3);
     }
@@ -70,7 +71,7 @@
         content: " ";
 
         position: absolute;
-        top: 50%;
+        top: 0.2rem;
         left: calc(var(--timeline-icons-col-width) / 2 - var(--bullet-size) / 2);
 
         display: block;
@@ -79,8 +80,6 @@
 
         background-color: var(--color-primary12);
         border-radius: 50%;
-
-        transform: translateY(-50%);
     }
 }
 

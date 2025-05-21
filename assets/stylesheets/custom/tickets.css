@@ -78,3 +78,9 @@
     background-color: var(--color-warning9);
     mask-image: url("../../icons/close.svg");
 }
+
+@media (min-width: 800px) {
+    .tickets-show .ticket__timeline .timeline::before {
+        --timeline-bar-top: 5rem;
+    }
+}
