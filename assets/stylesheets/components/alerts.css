@@ -4,12 +4,12 @@
 
 .alert {
     padding: 1.5rem;
-    padding-left: 5rem;
+    padding-left: 4.5rem;
 
     background-repeat: no-repeat;
     background-position: left 1rem top 1.5rem;
-    background-size: 3rem;
-    border-width: var(--width-border-bold);
+    background-size: 2.5rem;
+    border-width: var(--border-width);
     border-style: solid;
     border-radius: 0.5rem;
 }
