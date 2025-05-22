@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -140,6 +141,18 @@ class User implements
     public function getEmail(): ?string
     {
         return $this->email;
+    }
+
+    public function getEmailAddress(): Address
+    {
+        $email = $this->getEmail();
+        $name = $this->getDisplayName();
+
+        if ($email === $name) {
+            return new Address($email);
+        } else {
+            return new Address($email, $name);
+        }
     }
 
     public function setEmail(string $email): self

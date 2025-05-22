@@ -13,8 +13,10 @@ use App\Utils;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -30,6 +32,8 @@ class SendMessageEmailHandler
         private TransportInterface $transportInterface,
         private LoggerInterface $logger,
         private UrlGeneratorInterface $urlGenerator,
+        #[Autowire(env: 'MAILER_FROM')]
+        private string $mailerFrom,
     ) {
     }
 
@@ -64,20 +68,18 @@ class SendMessageEmailHandler
         $recipients = [];
 
         if ($requester !== $author) {
-            $recipients[] = $requester->getEmail();
+            $recipients[$requester->getEmail()] = $requester->getEmailAddress();
         }
 
         foreach ($observers as $observer) {
             if ($observer !== $author) {
-                $recipients[] = $observer->getEmail();
+                $recipients[$observer->getEmail()] = $observer->getEmailAddress();
             }
         }
 
         if ($assignee && $assignee !== $author) {
-            $recipients[] = $assignee->getEmail();
+            $recipients[$assignee->getEmail()] = $assignee->getEmailAddress();
         }
-
-        $recipients = array_unique($recipients);
 
         if (empty($recipients)) {
             return;
@@ -99,6 +101,8 @@ class SendMessageEmailHandler
         }
 
         $email = new TemplatedEmail();
+        $from = new Address($this->mailerFrom, $author->getDisplayName());
+        $email->from($from);
         $email->subject($subject);
         $email->locale($locale);
 
