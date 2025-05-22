@@ -232,7 +232,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHeaderSame($email, 'Bcc', $assignee->getEmail());
+        $this->assertEmailHeaderSame($email, 'To', $assignee->getEmail());
     }
 
     public function testInvokeAnswersToTicketIfInReplyToRepliesToExistingMessage(): void
@@ -293,7 +293,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHeaderSame($email, 'Bcc', $assignee->getEmail());
+        $this->assertEmailHeaderSame($email, 'To', $assignee->getEmail());
     }
 
     public function testInvokeAnswersToTicketIfInReplyToCorrespondsToGlpiAnswers(): void
@@ -356,7 +356,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHeaderSame($email, 'Bcc', $assignee->getEmail());
+        $this->assertEmailHeaderSame($email, 'To', $assignee->getEmail());
     }
 
     public function testInvokeCreatesATicketIfTicketIdIsGivenButPermissionsAreInsufficient(): void

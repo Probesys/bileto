@@ -99,7 +99,6 @@ class SendMessageEmailHandler
         }
 
         $email = new TemplatedEmail();
-        $email->bcc(...$recipients);
         $email->subject($subject);
         $email->locale($locale);
 
@@ -137,6 +136,7 @@ class SendMessageEmailHandler
             'ticket' => $ticket,
             'content' => $content,
         ]);
+
         $email->htmlTemplate('emails/message.html.twig');
         $email->textTemplate('emails/message.txt.twig');
 
@@ -165,10 +165,14 @@ class SendMessageEmailHandler
         // Ask compliant autoresponders to not reply to this email
         $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
 
-        $sentEmail = $this->transportInterface->send($email);
+        foreach ($recipients as $recipient) {
+            $email->to($recipient);
 
-        $emailId = $sentEmail->getMessageId();
-        $message->addEmailNotificationReference($emailId);
+            $sentEmail = $this->transportInterface->send($email);
+
+            $emailId = $sentEmail->getMessageId();
+            $message->addEmailNotificationReference($emailId);
+        }
 
         try {
             $this->messageRepository->save($message, true);
