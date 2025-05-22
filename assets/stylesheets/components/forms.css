@@ -11,14 +11,14 @@
     --checkbox-tick-width: 2px;
 
     --form-background-color: var(--color-main-background);
-    --form-background-color-disabled: var(--color-grey7);
+    --form-background-color-disabled: var(--color-grey2);
     --form-background-color-error: var(--color-error2);
 
     --form-color-disabled: var(--color-grey11);
     --form-color-error: var(--color-error11);
 
     --form-border-color: var(--color-primary12);
-    --form-border-color-disabled: var(--color-grey2);
+    --form-border-color-disabled: var(--color-grey7);
     --form-border-color-error: var(--color-error11);
 
     --form-border-width: var(--border-width);
@@ -78,6 +78,9 @@ textarea {
 input[disabled],
 textarea[disabled] {
     color: var(--form-color-disabled);
+
+    background-color: var(--form-background-color-disabled);
+    border-color: var(--form-border-color-disabled);
 }
 
 input[aria-invalid],
