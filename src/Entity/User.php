@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use App\Service;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
+use App\Utils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -126,6 +127,9 @@ class User implements
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Token $resetPasswordToken = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $loginDisabledAt = null;
 
     public function __construct()
     {
@@ -334,6 +338,35 @@ class User implements
     public function setResetPasswordToken(?Token $resetPasswordToken): static
     {
         $this->resetPasswordToken = $resetPasswordToken;
+
+        return $this;
+    }
+
+    public function canLogin(): bool
+    {
+        return $this->loginDisabledAt === null;
+    }
+
+    public function allowLogin(): static
+    {
+        $this->loginDisabledAt = null;
+
+        return $this;
+    }
+
+    public function disableLogin(): static
+    {
+        if (!$this->loginDisabledAt) {
+            $this->loginDisabledAt = Utils\Time::now();
+            $this->password = Utils\Random::hex(64);
+        }
+
+        return $this;
+    }
+
+    public function setLoginDisabledAt(?\DateTimeImmutable $loginDisabledAt): static
+    {
+        $this->loginDisabledAt = $loginDisabledAt;
 
         return $this;
     }

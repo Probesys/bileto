@@ -153,6 +153,7 @@ contracts.status.finished: Terminé
 contracts.status.ongoing: 'En cours'
 emails.message.receiving: 'Vous recevez cet email car vous êtes concerné par { ticketType, select, request {cette demande} incident {cet incident} other {} }.'
 emails.message.reply: 'Répondez à cet email directement ou <a href="{url}">consultez-le dans Bileto</a>.'
+emails.message.reply_nolink: 'Répondez à cet email directement.'
 emails.message.reply_txt: 'Répondez à cet email directement ou consultez-le dans Bileto : {url}'
 emails.politeness.hello: 'Bonjour,'
 emails.politeness.regards: 'Cordialement,'
@@ -596,6 +597,7 @@ users.email: 'Adresse email'
 users.form.ldap.managed: 'Certaines informations ne sont pas modifiables car ce compte est géré avec LDAP.'
 users.form.organization_caption: 'Les tickets ouverts par email par cet utilisateur seront attachés à cette organisation.'
 users.form.password.empty_keep_current: 'Laissez vide pour conserver le mot de passe actuel.'
+users.form.prevent_login: 'Empêcher l’utilisateur de se connecter à l’interface Web'
 users.identifier: 'Adresse email ou identifiant'
 users.index.authorizations: '{count, plural, =0 {Aucune autorisation} one {1 autorisation} other {# autorisations}}'
 users.index.new_user: 'Nouvel utilisateur'
@@ -612,6 +614,7 @@ users.organization.auto: Automatique
 users.password: 'Mot de passe'
 users.show.authorizations.new: 'Donner une autorisation'
 users.show.authorizations.title: Autorisations
+users.show.cannot_login: 'Cet utilisateur n’a pas la permission de se connecter à l’interface Web.'
 users.show.edit: 'Modifier l’utilisateur'
 users.show.email: "Email\_: {email}"
 users.show.ldap_identifier: "Identifiant LDAP\_: {identifier}"

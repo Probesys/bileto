@@ -76,6 +76,18 @@ class UserForm extends AbstractType
                 ]);
             }
 
+            $form->add('preventLogin', Type\CheckboxType::class, [
+                'mapped' => false,
+                'required' => false,
+                'data' => !$user->canLogin(),
+                'label' => new TranslatableMessage('users.form.prevent_login'),
+                'attr' => [
+                    'data-checkboxes-target' => 'control',
+                    'data-checkboxes-control' => '#user_plainPassword#switchDisabled',
+                    'data-action' => 'checkboxes#execute',
+                ],
+            ]);
+
             if (!$managedByLdap) {
                 $help = null;
 
@@ -114,6 +126,18 @@ class UserForm extends AbstractType
             $form->add('submit', Type\SubmitType::class, [
                 'label' => $submitLabel,
             ]);
+        });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+            $form = $event->getForm();
+            $user = $event->getData();
+
+            $preventLogin = $form->get('preventLogin')->getData();
+            if ($preventLogin) {
+                $user->disableLogin();
+            } else {
+                $user->allowLogin();
+            }
         });
     }
 

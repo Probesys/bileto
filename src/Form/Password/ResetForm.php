@@ -57,7 +57,7 @@ class ResetForm extends AbstractType
                     'email' => $email,
                 ]);
 
-                if (!$user) {
+                if (!$user || !$user->canLogin()) {
                     $failure = new TransformationFailedException('User with given email does not exist');
                     $failureMessage = new TranslatableMessage('reset_password.user.unknown', [], 'errors');
                     $failure->setInvalidMessage($failureMessage);

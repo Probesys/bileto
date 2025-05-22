@@ -60,6 +60,7 @@ class SendReceiptEmailHandler
         $email->context([
             'subject' => $subject,
             'ticket' => $ticket,
+            'linkToBileto' => $requester->canLogin(),
         ]);
         $email->htmlTemplate('emails/receipt.html.twig');
         $email->textTemplate('emails/receipt.txt.twig');

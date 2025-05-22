@@ -153,6 +153,7 @@ contracts.status.finished: Finished
 contracts.status.ongoing: Ongoing
 emails.message.receiving: 'You are receiving this email because you are concerned by this { ticketType, select, request {request} incident {incident} other {} }.'
 emails.message.reply: 'Reply to this email directly or <a href="{url}">view it on Bileto</a>.'
+emails.message.reply_nolink: 'Reply to this email directly.'
 emails.message.reply_txt: 'Reply to this email directly or view it on Bileto: {url}'
 emails.politeness.hello: 'Hello,'
 emails.politeness.regards: 'Best regards,'
@@ -596,6 +597,7 @@ users.email: 'Email address'
 users.form.ldap.managed: 'You can’t change some information because this account is managed by LDAP.'
 users.form.organization_caption: 'The tickets opened by email by this user will be attached to this organization.'
 users.form.password.empty_keep_current: 'Leave blank to keep the current password.'
+users.form.prevent_login: 'Prevent the user from logging in to the Web interface'
 users.identifier: 'Email address or identifier'
 users.index.authorizations: '{count, plural, =0 {No authorizations} one {1 authorization} other {# authorizations}}'
 users.index.no_users: 'No users'
@@ -612,6 +614,7 @@ users.organization.auto: Automatic
 users.password: Password
 users.show.authorizations.new: 'Give an authorization'
 users.show.authorizations.title: Authorizations
+users.show.cannot_login: 'This user does not have permission to login to the Web interface.'
 users.show.edit: 'Edit the user'
 users.show.email: 'Email: {email}'
 users.show.ldap_identifier: 'LDAP identifier: {identifier}'

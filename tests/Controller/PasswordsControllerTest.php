@@ -143,6 +143,38 @@ class PasswordsControllerTest extends WebTestCase
         $this->assertArrayHasKey('Host', $headers);
     }
 
+    public function testPostResetRedirectsEvenIfLoginIsDisabled(): void
+    {
+        $client = static::createClient();
+        $emailAddress = 'alix@example.com';
+        $user = Factory\UserFactory::createOne([
+            'email' => $emailAddress,
+            'ldapIdentifier' => '',
+            'resetPasswordToken' => null,
+            'loginDisabledAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_POST, '/passwords/reset', [
+            'reset_password' => [
+                '_token' => $this->generateCsrfToken($client, 'reset password'),
+                'user' => $emailAddress,
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/passwords/reset?sent=1', 302);
+        $user->_refresh();
+        $resetPasswordToken = $user->getResetPasswordToken();
+        $this->assertNull($resetPasswordToken);
+        $this->assertEmailCount(0);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('reset password', $sessionLog->getType());
+        $this->assertSame($emailAddress, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
+    }
+
     public function testPostResetRedirectsEvenIfCsrfTokenIsInvalid(): void
     {
         $client = static::createClient();
@@ -236,6 +268,24 @@ class PasswordsControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne([
             'resetPasswordToken' => $token,
             'ldapIdentifier' => 'alix',
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/passwords/{$token->getValue()}/edit");
+    }
+
+    public function testGetEditFailsIfLoginIsDisabled(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+
+        $client = static::createClient();
+        $token = Factory\TokenFactory::createOne([
+            'expiredAt' => Utils\Time::fromNow(2, 'hours'),
+        ]);
+        $user = Factory\UserFactory::createOne([
+            'resetPasswordToken' => $token,
+            'ldapIdentifier' => '',
+            'loginDisabledAt' => Utils\Time::now(),
         ]);
 
         $client->catchExceptions(false);

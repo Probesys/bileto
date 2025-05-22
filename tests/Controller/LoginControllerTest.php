@@ -8,6 +8,7 @@ namespace App\Tests\Controller;
 
 use App\Entity;
 use App\Tests\Factory;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
@@ -143,6 +144,41 @@ class LoginControllerTest extends WebTestCase
 
         $client->request(Request::METHOD_GET, '/login');
         $client->submitForm('form-login-submit', [
+            '_identifier' => $identifier,
+            '_password' => $password,
+        ]);
+
+        $this->assertResponseRedirects('/login', 302);
+        $client->followRedirect();
+
+        $this->assertSelectorTextContains(
+            '[data-test="alert-error"]',
+            'Invalid credentials.'
+        );
+        $user = $this->getLoggedUser();
+        $this->assertNull($user);
+        $sessionLog = Factory\SessionLogFactory::last();
+        $this->assertSame('login failure', $sessionLog->getType());
+        $this->assertSame($identifier, $sessionLog->getIdentifier());
+        $headers = $sessionLog->getHttpHeaders();
+        $this->assertArrayHasKey('User-Agent', $headers);
+        $this->assertArrayHasKey('Referer', $headers);
+        $this->assertArrayHasKey('Host', $headers);
+    }
+
+    public function testPostLoginFailsIfLoginIsDisabled(): void
+    {
+        $client = static::createClient();
+        $identifier = 'alix@example.com';
+        $password = 'secret';
+        $user = Factory\UserFactory::createOne([
+            'email' => $identifier,
+            'password' => $password,
+            'loginDisabledAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, '/login');
+        $crawler = $client->submitForm('form-login-submit', [
             '_identifier' => $identifier,
             '_password' => $password,
         ]);

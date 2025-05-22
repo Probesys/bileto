@@ -7,5 +7,9 @@
 {{ content | striptags }}
 
 -- 
+{% if linkToBileto %}
 {{ 'emails.message.reply_txt' | trans({ url: url('ticket', { uid: ticket.uid }) }) }}
+{% else %}
+{{ 'emails.message.reply_nolink' | trans }}
+{% endif %}
 {{ 'emails.message.receiving' | trans({ ticketType: ticket.type }) }}

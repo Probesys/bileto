@@ -13,7 +13,9 @@
         {{ 'emails.receipt.received' | trans }}
     </p>
 
-    <p>
-        {{ 'emails.receipt.view' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}
-    </p>
+    {% if linkToBileto %}
+        <p>
+            {{ 'emails.receipt.view' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}
+        </p>
+    {% endif %}
 {% endblock %}

@@ -68,17 +68,17 @@ class SendMessageEmailHandler
         $recipients = [];
 
         if ($requester !== $author) {
-            $recipients[$requester->getEmail()] = $requester->getEmailAddress();
+            $recipients[$requester->getEmail()] = $requester;
         }
 
         foreach ($observers as $observer) {
             if ($observer !== $author) {
-                $recipients[$observer->getEmail()] = $observer->getEmailAddress();
+                $recipients[$observer->getEmail()] = $observer;
             }
         }
 
         if ($assignee && $assignee !== $author) {
-            $recipients[$assignee->getEmail()] = $assignee->getEmailAddress();
+            $recipients[$assignee->getEmail()] = $assignee;
         }
 
         if (empty($recipients)) {
@@ -135,12 +135,6 @@ class SendMessageEmailHandler
         $content = $message->getContent();
         $content = Utils\DomHelper::replaceImagesUrls($content, $replacingMapping);
 
-        $email->context([
-            'subject' => $subject,
-            'ticket' => $ticket,
-            'content' => $content,
-        ]);
-
         $email->htmlTemplate('emails/message.html.twig');
         $email->textTemplate('emails/message.txt.twig');
 
@@ -169,8 +163,15 @@ class SendMessageEmailHandler
         // Ask compliant autoresponders to not reply to this email
         $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
 
-        foreach ($recipients as $recipient) {
-            $email->to($recipient);
+        foreach ($recipients as $user) {
+            $email->context([
+                'subject' => $subject,
+                'ticket' => $ticket,
+                'content' => $content,
+                'linkToBileto' => $user->canLogin(),
+            ]);
+
+            $email->to($user->getEmailAddress());
 
             $sentEmail = $this->transportInterface->send($email);
 

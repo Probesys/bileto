@@ -20,7 +20,11 @@
 
             <p class="email__footer">
                 &mdash;<br />
-                {{ 'emails.message.reply' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}<br />
+                {% if linkToBileto %}
+                    {{ 'emails.message.reply' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}<br />
+                {% else %}
+                    {{ 'emails.message.reply_nolink' | trans }}<br />
+                {% endif %}
                 {{ 'emails.message.receiving' | trans({ ticketType: ticket.type }) }}
             </p>
         </body>

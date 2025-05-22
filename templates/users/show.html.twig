@@ -85,6 +85,12 @@
                             {{ 'users.show.no_organization' | trans }}
                         {% endif %}
                     </p>
+
+                    {% if not user.canLogin %}
+                        <p class="alert alert--info">
+                            {{ 'users.show.cannot_login' | trans }}
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>

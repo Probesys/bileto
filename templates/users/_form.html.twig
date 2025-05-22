@@ -25,9 +25,13 @@
         {{ form_row(form.ldapIdentifier) }}
     {% endif %}
 
-    {% if form.plainPassword is defined %}
-        {{ form_row(form.plainPassword) }}
-    {% endif %}
+    <div class="flow flow--large" data-controller="checkboxes">
+        {{ form_row(form.preventLogin) }}
+
+        {% if form.plainPassword is defined %}
+            {{ form_row(form.plainPassword) }}
+        {% endif %}
+    </div>
 
     {% if form.organization.vars.choices is not empty %}
         {{ form_row(form.organization) }}

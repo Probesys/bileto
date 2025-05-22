@@ -94,6 +94,10 @@ class PasswordsController extends BaseController
             throw $this->createNotFoundException('The user is managed by LDAP.');
         }
 
+        if (!$user->canLogin()) {
+            throw $this->createNotFoundException('The user cannot login.');
+        }
+
         $form = $this->createNamedForm('edit_password', Form\Password\EditForm::class, $user);
         $form->handleRequest($request);
 

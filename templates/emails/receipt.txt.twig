@@ -9,5 +9,7 @@
 {% block body %}
 {{ 'emails.receipt.received' | trans }}
 
+{% if linkToBileto %}
 {{ 'emails.receipt.view_txt' | trans({ url: url('ticket', { uid: ticket.uid }) }) }}
+{% endif %}
 {% endblock %}
