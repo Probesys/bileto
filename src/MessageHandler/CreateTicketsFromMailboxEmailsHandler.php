@@ -181,6 +181,9 @@ class CreateTicketsFromMailboxEmailsHandler
         $message->setIsConfidential(false);
         $message->setVia('email');
 
+        $emailId = $mailboxEmail->getMessageId();
+        $message->addEmailNotificationReference($emailId);
+
         $this->messageRepository->save($message, true);
 
         if ($isNewTicket) {

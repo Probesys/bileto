@@ -79,6 +79,10 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());
         $this->assertFalse($message->isConfidential());
         $this->assertSame('email', $message->getVia());
+        $this->assertEquals(
+            [$mailboxEmail->getMessageId()],
+            $message->getEmailNotificationsReferences()
+        );
         Time::unfreeze();
     }
 

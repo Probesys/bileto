@@ -26,6 +26,7 @@ final class MailboxEmailFactory extends PersistentProxyObjectFactory
             'subject' => self::faker()->words(3, true),
             'htmlBody' => self::faker()->randomHtml(),
             'mailbox' => MailboxFactory::new(),
+            'id' => self::faker()->randomNumber(5, strict: true) . '@' . self::faker()->safeEmailDomain(),
         ];
     }
 
@@ -36,6 +37,7 @@ final class MailboxEmailFactory extends PersistentProxyObjectFactory
         // @phpstan-ignore argument.type
         return $this->instantiateWith(function (array $attributes, string $class): MailboxEmail {
             $headers = <<<TEXT
+                Message-ID: {$attributes['id']}\r
                 Subject: {$attributes['subject']}\r
                 From: <{$attributes['from']}>\r
                 To: support@example.com\r
