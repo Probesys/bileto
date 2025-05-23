@@ -27,7 +27,7 @@ class Mailbox implements EntityInterface, MonitorableEntityInterface, UidEntityI
     public const HOST_MAX_LENGTH = 255;
     public const PROTOCOL_MAX_LENGTH = 10;
     public const PORT_RANGE = [0, 65535];
-    public const ENCRYPTION_VALUES = ['tls', 'ssl', 'none'];
+    public const ENCRYPTION_VALUES = ['ssl', 'starttls', 'none'];
     public const USERNAME_MAX_LENGTH = 255;
     public const PASSWORD_MAX_LENGTH = 255;
     public const AUTHENTICATION_VALUES = ['normal', 'oauth'];

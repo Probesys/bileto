@@ -257,8 +257,8 @@ mailboxes.edit.test_mailbox: 'Tester la connexion'
 mailboxes.edit.title: 'Modifier une boite mail'
 mailboxes.encryption: 'Méthode de chiffrement'
 mailboxes.encryption.none: Aucune
-mailboxes.encryption.ssl: SSL
-mailboxes.encryption.tls: TLS
+mailboxes.encryption.ssl: SSL/TLS
+mailboxes.encryption.starttls: StartTLS
 mailboxes.folder: Répertoire
 mailboxes.host: 'Nom d’hôte'
 mailboxes.index.collect: 'Collecter les boites'
