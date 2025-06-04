@@ -33,12 +33,14 @@ class Authorization implements EntityInterface, MonitorableEntityInterface, UidE
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: "SET NULL")]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: "SET NULL")]
     private ?User $updatedBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'authorizations')]

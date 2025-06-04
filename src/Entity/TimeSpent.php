@@ -34,14 +34,14 @@ class TimeSpent implements EntityInterface, MonitorableEntityInterface, UidEntit
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $updatedBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'timeSpents')]

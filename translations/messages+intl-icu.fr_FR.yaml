@@ -622,6 +622,7 @@ users.show.authorizations.new: 'Donner une autorisation'
 users.show.authorizations.title: Autorisations
 users.show.cannot_login: 'Cet utilisateur n’a pas la permission de se connecter à l’interface Web.'
 users.show.edit: 'Modifier l’utilisateur'
+users.show.delete: 'Supprimer l’utilisateur'
 users.show.email: "Email\_: {email}"
 users.show.is_anonymized: 'Cet utilisateur a été anonymisé par {by} le {date}.'
 users.show.ldap_identifier: "Identifiant LDAP\_: {identifier}"
@@ -633,3 +634,7 @@ users.show.profile: 'Profil utilisateur'
 users.show.sessions_activity.none: 'Aucune activité'
 users.show.sessions_activity.title: 'Activité de session'
 users.yourself: vous
+users.deletion.going_delete: 'Vous allez supprimer l’utilisateur {user}. Cette utilisateur sera supprimée de tous les tickets, messages, etc.'
+users.deletion.title: 'Suppression'
+users.deletion.confirm: 'Êtes-vous sûr de vouloir supprimer cet utilisateur ?'
+users.deletion.submit: 'Supprimer l’utilisateur'
