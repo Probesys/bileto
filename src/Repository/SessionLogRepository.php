@@ -57,4 +57,18 @@ class SessionLogRepository extends ServiceEntityRepository implements Uid\UidGen
 
         return $query->execute();
     }
+
+    public function removeByIdentifier(string $identifier): int
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            DELETE App\Entity\SessionLog sl
+            WHERE sl.identifier <= :identifier
+        SQL);
+
+        $query->setParameter('identifier', $identifier);
+
+        return $query->execute();
+    }
 }

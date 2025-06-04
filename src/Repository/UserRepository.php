@@ -78,6 +78,7 @@ class UserRepository extends ServiceEntityRepository implements
             SELECT u, a
             FROM App\Entity\User u
             LEFT JOIN u.authorizations a
+            WHERE u.anonymizedAt IS NULL
         SQL);
 
         return $query->getResult();
@@ -95,8 +96,11 @@ class UserRepository extends ServiceEntityRepository implements
         $query = $entityManager->createQuery(<<<SQL
             SELECT u
             FROM App\Entity\User u
-            WHERE LOWER(u.name) LIKE :value
-            OR LOWER(u.email) LIKE :value
+            WHERE u.anonymizedAt IS NULL
+            AND (
+                LOWER(u.name) LIKE :value
+                OR LOWER(u.email) LIKE :value
+            )
         SQL);
         $query->setParameter('value', "%{$value}%");
 
@@ -126,6 +130,7 @@ class UserRepository extends ServiceEntityRepository implements
             JOIN a.role r
             WHERE (a.organization IN (:organizations) OR a.organization IS NULL)
             AND r.type IN (:types)
+            AND u.anonymizedAt IS NULL
         SQL);
 
         if ($roleType === 'any') {
@@ -149,6 +154,7 @@ class UserRepository extends ServiceEntityRepository implements
             FROM App\Entity\User u
             INNER JOIN u.resetPasswordToken t
             WHERE t.value = :token
+            AND u.anonymizedAt IS NULL
         SQL);
 
         $query->setParameter('token', $token);

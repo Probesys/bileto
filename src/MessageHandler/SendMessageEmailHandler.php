@@ -6,6 +6,7 @@
 
 namespace App\MessageHandler;
 
+use App\Entity;
 use App\Repository;
 use App\Message;
 use App\Service;
@@ -80,6 +81,12 @@ class SendMessageEmailHandler
         if ($assignee && $assignee !== $author) {
             $recipients[$assignee->getEmail()] = $assignee;
         }
+
+        $recipients = array_filter($recipients, function (?Entity\User $user): bool {
+            // Remove the anonymous users from the list of recipients to avoid
+            // to send emails to wrong addresses.
+            return $user && !$user->isAnonymized();
+        });
 
         if (empty($recipients)) {
             return;

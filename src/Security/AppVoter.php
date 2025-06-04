@@ -40,8 +40,8 @@ class AppVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof Entity\User) {
-            // deny access if the user is not logged in
+        if (!($user instanceof Entity\User) || $user->isAnonymized()) {
+            // Deny access if the user is not set or if the user is anonymized.
             return false;
         }
 

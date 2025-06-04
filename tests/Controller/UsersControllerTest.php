@@ -12,6 +12,7 @@ use App\Tests\FactoriesHelper;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -253,6 +254,21 @@ class UsersControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Edit a user');
+    }
+
+    public function testGetEditFailsIfUserIsAnonymized(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne([
+            'anonymizedAt' => Utils\Time::now(),
+        ]);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/edit");
     }
 
     public function testGetEditFailsIfAccessIsForbidden(): void

@@ -14,6 +14,7 @@ use App\Tests\Factory\AuthorizationFactory;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\UserFactory;
+use App\Utils;
 use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
@@ -138,6 +139,36 @@ class ActorsListerTest extends WebTestCase
         $this->assertNotContains($otherUser->getId(), $userIds);
     }
 
+    public function testFindAllDoesNotListAnonymousUsers(): void
+    {
+        $otherUser = UserFactory::createOne([
+            'anonymizedAt' => Utils\Time::now(),
+        ]);
+        $role = RoleFactory::createOne([
+            'type' => \Zenstruck\Foundry\faker()->randomElement(['agent', 'user']),
+        ]);
+        // The current user must have an authorization on the users'
+        // organizations that we want to list.
+        $this->authorizer->grant(
+            $this->currentUser,
+            $role->_real(),
+            null,
+        );
+        // The listed users must have authorizations on some organizations
+        // themselves. Otherwise, they are not part of any organization and we
+        // don't want to list them.
+        $this->authorizer->grant(
+            $otherUser->_real(),
+            $role->_real(),
+            null,
+        );
+
+        $users = $this->actorsLister->findAll();
+
+        $this->assertSame(1, count($users));
+        $this->assertSame($this->currentUser->getId(), $users[0]->getId());
+    }
+
     public function testFindByOrganization(): void
     {
         $organization = OrganizationFactory::createOne();
@@ -217,5 +248,33 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findByOrganization($otherOrganization->_real());
 
         $this->assertSame(0, count($users));
+    }
+
+    public function testFindByOrganizationDoesNotListAnonymousUsers(): void
+    {
+        $organization = OrganizationFactory::createOne();
+        $otherUser = UserFactory::createOne([
+            'anonymizedAt' => Utils\Time::now(),
+        ]);
+        $role = RoleFactory::createOne([
+            'type' => \Zenstruck\Foundry\faker()->randomElement(['agent', 'user']),
+        ]);
+        // The $currentUser must have an authorization on the requested
+        // organization.
+        $this->authorizer->grant(
+            $this->currentUser,
+            $role->_real(),
+            $organization->_real(),
+        );
+        $this->authorizer->grant(
+            $otherUser->_real(),
+            $role->_real(),
+            $organization->_real(),
+        );
+
+        $users = $this->actorsLister->findByOrganization($organization->_real());
+
+        $this->assertSame(1, count($users));
+        $this->assertSame($this->currentUser->getId(), $users[0]->getId());
     }
 }

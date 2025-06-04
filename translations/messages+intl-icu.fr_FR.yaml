@@ -84,6 +84,9 @@ advanced_search_syntax.tickets.qualifiers.type.example1: "Les tickets de type «
 advanced_search_syntax.tickets.qualifiers.type.example2: "Les tickets de type «\_demande\_»"
 advanced_search_syntax.tickets.qualifiers.type.title: Type
 advanced_search_syntax.tickets.title: 'Aide-mémoire de la recherche avancée des tickets'
+anonymizations.new.information: 'Vous êtes sur le point d’anonymiser l’utilisateur {user}. Cela va supprimer toutes ses données personnelles, mais ses messages (qui peuvent également contenir des informations personnelles) seront conservés en base de données afin de garantir la traçabilité des tickets.'
+anonymizations.new.submit: Confirmer
+anonymizations.new.title: 'Anonymiser un utilisateur'
 authorizations.new.global: Global
 authorizations.new.organization_caption: 'L’autorisation peut être limitée à une organisation spécifique, ou appliquée globalement.'
 authorizations.new.organization_scope: 'Champ d’application organisationnelle'
@@ -588,10 +591,12 @@ tickets.urgency.high: Haute
 tickets.urgency.low: Basse
 tickets.urgency.medium: Moyenne
 time_spents.edit.title: 'Modifier du temps passé'
+users.anonymous: 'Utilisateur anonyme'
 users.color_scheme: 'Schéma de couleurs'
 users.color_scheme.auto: Auto
 users.color_scheme.dark: Sombre
 users.color_scheme.light: Clair
+users.deleted: 'Utilisateur supprimé'
 users.edit.title: 'Modifier un utilisateur'
 users.email: 'Adresse email'
 users.form.ldap.managed: 'Certaines informations ne sont pas modifiables car ce compte est géré avec LDAP.'
@@ -612,11 +617,13 @@ users.new.title: 'Nouvel utilisateur'
 users.organization: Organisation
 users.organization.auto: Automatique
 users.password: 'Mot de passe'
+users.show.anonymize: 'Anonymiser l’utilisateur'
 users.show.authorizations.new: 'Donner une autorisation'
 users.show.authorizations.title: Autorisations
 users.show.cannot_login: 'Cet utilisateur n’a pas la permission de se connecter à l’interface Web.'
 users.show.edit: 'Modifier l’utilisateur'
 users.show.email: "Email\_: {email}"
+users.show.is_anonymized: 'Cet utilisateur a été anonymisé par {by} le {date}.'
 users.show.ldap_identifier: "Identifiant LDAP\_: {identifier}"
 users.show.name: "Nom\_: {name}"
 users.show.no_organization: "Organisation\_: Aucune"

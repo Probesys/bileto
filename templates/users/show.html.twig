@@ -35,26 +35,40 @@
         <div class="flow flow--smaller">
             <h1>{{ user.displayName }}</h1>
 
-            <div class="text--right">
-                <details
-                    class="popup"
-                    data-controller="popup"
-                    data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
-                >
-                    <summary class="popup__opener">
-                        <span class="button button--discreet">
-                            {{ 'common.actions' | trans }}
-                            {{ icon('angle-down') }}
-                        </span>
-                    </summary>
+            {% if not user.isAnonymized %}
+                <div class="text--right">
+                    <details
+                        class="popup"
+                        data-controller="popup"
+                        data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+                    >
+                        <summary class="popup__opener">
+                            <span class="button button--discreet">
+                                {{ 'common.actions' | trans }}
+                                {{ icon('angle-down') }}
+                            </span>
+                        </summary>
 
-                    <nav class="popup__container popup__container--right">
-                        <a class="popup__item" href="{{ path('edit user', { uid: user.uid }) }}">
-                            {{ 'users.show.edit' | trans }}
-                        </a>
-                    </nav>
-                </details>
-            </div>
+                        <nav class="popup__container popup__container--right">
+                            <a class="popup__item" href="{{ path('edit user', { uid: user.uid }) }}">
+                                {{ 'users.show.edit' | trans }}
+                            </a>
+
+                            {% if user != app.user %}
+                                <button
+                                    class="popup__item"
+                                    type="button"
+                                    data-controller="modal-opener"
+                                    data-action="modal-opener#fetch"
+                                    data-modal-opener-href-value="{{ path('new user anonymization', { uid: user.uid }) }}"
+                                >
+                                    {{ 'users.show.anonymize' | trans }}
+                                </button>
+                            {% endif %}
+                        </nav>
+                    </details>
+                </div>
+            {% endif %}
         </div>
 
         <div class="panel">
@@ -86,7 +100,14 @@
                         {% endif %}
                     </p>
 
-                    {% if not user.canLogin %}
+                    {% if user.isAnonymized %}
+                        <p class="alert alert--info">
+                            {{ 'users.show.is_anonymized' | trans({
+                                by: user.anonymizedBy ? user.anonymizedBy.displayName : ('users.deleted' | trans),
+                                date: user.anonymizedAt | dateTrans,
+                            }) }}
+                        </p>
+                    {% elseif not user.canLogin %}
                         <p class="alert alert--info">
                             {{ 'users.show.cannot_login' | trans }}
                         </p>
@@ -95,93 +116,95 @@
             </div>
         </div>
 
-        <div class="panel flow">
-            <div class="cols cols--center flow">
-                <h2 class="col--extend">{{ 'users.show.authorizations.title' | trans }}</h2>
+        {% if not user.isAnonymized %}
+            <div class="panel flow">
+                <div class="cols cols--center flow">
+                    <h2 class="col--extend">{{ 'users.show.authorizations.title' | trans }}</h2>
 
-                <a class="button button--primary button--uppercase" href="{{ path('new user authorization', { uid: user.uid }) }}">
-                    {{ icon('plus') }}
-                    {{ 'users.show.authorizations.new' | trans }}
-                </a>
-            </div>
-
-            <div class="grid">
-                {% for authorization in authorizations %}
-                    {{ include('authorizations/_authorization.html.twig', {
-                        authorization: authorization,
-                        mode: 'user',
-                    }, with_context = false) }}
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="panel flow flow--large">
-            <h2 class="col--extend">{{ 'users.show.sessions_activity.title' | trans }}</h2>
-
-            {% if sessionLogs is empty %}
-                <div class="placeholder flow flow--larger">
-                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
-
-                    <p class="placeholder__text">
-                        {{ 'users.show.sessions_activity.none' | trans }}
-                    </p>
+                    <a class="button button--primary button--uppercase" href="{{ path('new user authorization', { uid: user.uid }) }}">
+                        {{ icon('plus') }}
+                        {{ 'users.show.authorizations.new' | trans }}
+                    </a>
                 </div>
-            {% else %}
-                <div class="flow flow--larger timeline" data-controller="timeline">
-                    {% for sessionLog in sessionLogs %}
-                        <div
-                            id="log-{{ sessionLog.uid }}"
-                            class="timeline__event"
-                        >
-                            <div class="timeline__event-message">
-                                <details class="flow flow--small">
-                                    <summary>
-                                        {% if sessionLog.createdBy %}
-                                            <strong>{{ sessionLog.createdBy.displayName }}</strong>
-                                        {% else %}
-                                            <strong>{{ 'session_logs.someone' | trans }}</strong>
-                                        {% endif %}
 
-                                        {% if sessionLog.isLoginSuccess %}
-                                            {{ 'session_logs.login_success' | trans }}
-                                        {% elseif sessionLog.isLoginFailure %}
-                                            {{ 'session_logs.login_failure' | trans }}
-                                        {% elseif sessionLog.isLogout %}
-                                            {{ 'session_logs.logout' | trans }}
-                                        {% elseif sessionLog.isResetPassword %}
-                                            {{ 'session_logs.reset_password' | trans }}
-                                        {% elseif sessionLog.isChangedPassword %}
-                                            {{ 'session_logs.changed_password' | trans }}
-                                        {% endif %}
-                                    </summary>
-
-                                    <ul class="list--nostyle flow flow--small text--monospace text--big">
-                                        <li>
-                                            <strong>{{ 'session_logs.ip' | trans }}:</strong> {{ sessionLog.ip }}
-                                        </li>
-
-                                        {% for name, value in sessionLog.httpHeaders %}
-                                            <li><strong>{{ name }}:</strong> {{ value }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </details>
-                            </div>
-
-                            <div class="cols flow flow--smaller">
-                                <span class="badge badge--grey text--monospace" title="{{ 'session_logs.session_hash_id' | trans }}">
-                                    {{ sessionLog.shortHash }}
-                                </span>
-
-                                <a class="timeline__event-date" href="#log-{{ sessionLog.uid }}">
-                                    <time datetime="{{ sessionLog.createdAt | dateIso }}">
-                                        {{ sessionLog.createdAt | dateTrans }}
-                                    </time>
-                                </a>
-                            </div>
-                        </div>
+                <div class="grid">
+                    {% for authorization in authorizations %}
+                        {{ include('authorizations/_authorization.html.twig', {
+                            authorization: authorization,
+                            mode: 'user',
+                        }, with_context = false) }}
                     {% endfor %}
                 </div>
-            {% endif %}
-        </div>
+            </div>
+
+            <div class="panel flow flow--large">
+                <h2 class="col--extend">{{ 'users.show.sessions_activity.title' | trans }}</h2>
+
+                {% if sessionLogs is empty %}
+                    <div class="placeholder flow flow--larger">
+                        <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                        <p class="placeholder__text">
+                            {{ 'users.show.sessions_activity.none' | trans }}
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="flow flow--larger timeline" data-controller="timeline">
+                        {% for sessionLog in sessionLogs %}
+                            <div
+                                id="log-{{ sessionLog.uid }}"
+                                class="timeline__event"
+                            >
+                                <div class="timeline__event-message">
+                                    <details class="flow flow--small">
+                                        <summary>
+                                            {% if sessionLog.createdBy %}
+                                                <strong>{{ sessionLog.createdBy.displayName }}</strong>
+                                            {% else %}
+                                                <strong>{{ 'session_logs.someone' | trans }}</strong>
+                                            {% endif %}
+
+                                            {% if sessionLog.isLoginSuccess %}
+                                                {{ 'session_logs.login_success' | trans }}
+                                            {% elseif sessionLog.isLoginFailure %}
+                                                {{ 'session_logs.login_failure' | trans }}
+                                            {% elseif sessionLog.isLogout %}
+                                                {{ 'session_logs.logout' | trans }}
+                                            {% elseif sessionLog.isResetPassword %}
+                                                {{ 'session_logs.reset_password' | trans }}
+                                            {% elseif sessionLog.isChangedPassword %}
+                                                {{ 'session_logs.changed_password' | trans }}
+                                            {% endif %}
+                                        </summary>
+
+                                        <ul class="list--nostyle flow flow--small text--monospace text--big">
+                                            <li>
+                                                <strong>{{ 'session_logs.ip' | trans }}:</strong> {{ sessionLog.ip }}
+                                            </li>
+
+                                            {% for name, value in sessionLog.httpHeaders %}
+                                                <li><strong>{{ name }}:</strong> {{ value }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </details>
+                                </div>
+
+                                <div class="cols flow flow--smaller">
+                                    <span class="badge badge--grey text--monospace" title="{{ 'session_logs.session_hash_id' | trans }}">
+                                        {{ sessionLog.shortHash }}
+                                    </span>
+
+                                    <a class="timeline__event-date" href="#log-{{ sessionLog.uid }}">
+                                        <time datetime="{{ sessionLog.createdAt | dateIso }}">
+                                            {{ sessionLog.createdAt | dateTrans }}
+                                        </time>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
     </main>
 {% endblock %}

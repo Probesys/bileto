@@ -131,6 +131,13 @@ class User implements
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $loginDisabledAt = null;
 
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $anonymizedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?self $anonymizedBy = null;
+
     public function __construct()
     {
         $this->name = '';
@@ -367,6 +374,50 @@ class User implements
     public function setLoginDisabledAt(?\DateTimeImmutable $loginDisabledAt): static
     {
         $this->loginDisabledAt = $loginDisabledAt;
+
+        return $this;
+    }
+
+    public function isAnonymized(): bool
+    {
+        return $this->anonymizedAt !== null;
+    }
+
+    public function anonymize(string $name, self $by): static
+    {
+        $this->disableLogin();
+
+        $this->name = $name;
+        $this->email = "anonymous+{$this->uid}@example.com";
+        $this->organization = null;
+        $this->ldapIdentifier = '';
+
+        $this->anonymizedAt = Utils\Time::now();
+        $this->anonymizedBy = $by;
+
+        return $this;
+    }
+
+    public function getAnonymizedAt(): ?\DateTimeImmutable
+    {
+        return $this->anonymizedAt;
+    }
+
+    public function setAnonymizedAt(?\DateTimeImmutable $anonymizedAt): static
+    {
+        $this->anonymizedAt = $anonymizedAt;
+
+        return $this;
+    }
+
+    public function getAnonymizedBy(): ?self
+    {
+        return $this->anonymizedBy;
+    }
+
+    public function setAnonymizedBy(?self $anonymizedBy): static
+    {
+        $this->anonymizedBy = $anonymizedBy;
 
         return $this;
     }

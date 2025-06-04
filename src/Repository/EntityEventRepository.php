@@ -6,23 +6,39 @@
 
 namespace App\Repository;
 
-use App\Entity\EntityEvent;
-use App\Uid\UidGeneratorInterface;
-use App\Uid\UidGeneratorTrait;
+use App\ActivityMonitor;
+use App\Entity;
+use App\Uid;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<EntityEvent>
+ * @extends ServiceEntityRepository<Entity\EntityEvent>
  */
-class EntityEventRepository extends ServiceEntityRepository implements UidGeneratorInterface
+class EntityEventRepository extends ServiceEntityRepository implements Uid\UidGeneratorInterface
 {
-    /** @phpstan-use CommonTrait<EntityEvent> */
+    /** @phpstan-use CommonTrait<Entity\EntityEvent> */
     use CommonTrait;
-    use UidGeneratorTrait;
+    use Uid\UidGeneratorTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, EntityEvent::class);
+        parent::__construct($registry, Entity\EntityEvent::class);
+    }
+
+    public function removeByEntity(ActivityMonitor\RecordableEntityInterface $entity): int
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            DELETE App\Entity\EntityEvent ee
+            WHERE ee.entityType = :entityType
+            AND ee.entityId = :entityId
+        SQL);
+
+        $query->setParameter('entityType', $entity->getEntityType());
+        $query->setParameter('entityId', $entity->getId());
+
+        return $query->execute();
     }
 }

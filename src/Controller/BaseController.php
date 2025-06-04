@@ -75,4 +75,13 @@ class BaseController extends AbstractController
             throw $this->createAccessDeniedException($message);
         }
     }
+
+    protected function denyAccessIfUserIsAnonymized(
+        Entity\User $user,
+        string $message = 'Access denied because user is anonymized.',
+    ): void {
+        if ($user->isAnonymized()) {
+            throw $this->createAccessDeniedException($message);
+        }
+    }
 }

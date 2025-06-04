@@ -49,6 +49,16 @@ class SendReceiptEmailHandler
             return;
         }
 
+        if ($requester->isAnonymized()) {
+            // Just to be clear: it should be impossible to set an anonymous
+            // user as the requester of a new ticket. This is just an additionnal
+            // check to be really really sure the mail is never sent.
+            $this->logger->warning(
+                "Receipt email of ticket {$ticketId} has not been sent as the requester is an anonymous user."
+            );
+            return;
+        }
+
         $locale = $requester->getLocale();
         $subject = $this->translator->trans('emails.receipt.subject', locale: $locale);
         $subject = "[#{$ticket->getId()}] {$subject}";

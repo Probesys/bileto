@@ -71,10 +71,12 @@ class MessagesControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
+        $requester = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
         $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
+            'requester' => $requester,
             'status' => 'pending',
         ]);
         $previousEmailId = 'foo@example.com';
@@ -101,11 +103,48 @@ class MessagesControllerTest extends WebTestCase
         $message = Factory\MessageFactory::last();
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
+        $this->assertEmailAddressContains($email, 'To', $requester->getEmail());
         $this->assertEmailHtmlBodyContains($email, $messageContent);
         $this->assertEmailHasHeader($email, 'References');
         $this->assertEmailHeaderSame($email, 'References', "<{$previousEmailId}>");
         $this->assertEmailHasHeader($email, 'In-Reply-To');
         $this->assertEmailHeaderSame($email, 'In-Reply-To', "<{$previousEmailId}>");
+    }
+
+    public function testPostCreateDoesNotSendEmailNotificationToAnonymousUsers(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $requester = Factory\UserFactory::createOne([
+            'anonymizedAt' => Utils\Time::now(),
+        ]);
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $ticket = Factory\TicketFactory::createOne([
+            'createdBy' => $user,
+            'requester' => $requester,
+            'status' => 'pending',
+        ]);
+        $previousMessage = Factory\MessageFactory::createOne([
+            'ticket' => $ticket,
+            'createdAt' => Utils\Time::ago(1, 'hour'),
+            'isConfidential' => false,
+        ]);
+        $messageContent = 'My message';
+
+        $this->assertSame(1, Factory\MessageFactory::count());
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+            ],
+        ]);
+
+        $this->assertSame(2, Factory\MessageFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $this->assertEmailCount(0);
     }
 
     public function testPostCreateCanCreateConfidentialMessage(): void

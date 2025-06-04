@@ -90,6 +90,7 @@ class UsersController extends BaseController
         Repository\UserRepository $userRepository,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
+        $this->denyAccessIfUserIsAnonymized($user);
 
         $form = $this->createNamedForm('user', Form\UserForm::class, $user);
 

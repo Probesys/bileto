@@ -15,6 +15,7 @@ use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\RoleFactory;
 use App\Tests\Factory\TeamAuthorizationFactory;
 use App\Tests\Factory\UserFactory;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -53,6 +54,21 @@ class AuthorizationsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('#authorization_role', 'Super-admin');
+    }
+
+    public function testGetNewFailsIfUserIsAnonymized(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne([
+            'anonymizedAt' => Utils\Time::now(),
+        ]);
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:manage:users']);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/users/{$user->getUid()}/authorizations/new");
     }
 
     public function testGetNewFailsIfAccessIsForbidden(): void

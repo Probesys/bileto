@@ -27,6 +27,7 @@ class AuthorizationsController extends BaseController
         Repository\OrganizationRepository $organizationRepository,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
+        $this->denyAccessIfUserIsAnonymized($holder);
 
         $defaultOrganizationUid = $request->query->getString('orga', '');
 

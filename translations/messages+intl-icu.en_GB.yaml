@@ -84,6 +84,9 @@ advanced_search_syntax.tickets.qualifiers.type.example1: 'Tickets of type “inc
 advanced_search_syntax.tickets.qualifiers.type.example2: 'Tickets of type “request”'
 advanced_search_syntax.tickets.qualifiers.type.title: Type
 advanced_search_syntax.tickets.title: 'Quick reference for the tickets advanced search'
+anonymizations.new.information: 'You are about to anonymize user {user}. This will remove all their personal data, but their messages (which may also contain personal information) will still be stored in the database in order to ensure the traceability of tickets.'
+anonymizations.new.submit: Confirm
+anonymizations.new.title: 'Anonymize the user'
 authorizations.new.global: Global
 authorizations.new.organization_caption: 'The authorization can be limited to a specific organization, or be applied globally.'
 authorizations.new.organization_scope: 'Organizational scope'
@@ -588,10 +591,12 @@ tickets.urgency.high: High
 tickets.urgency.low: Low
 tickets.urgency.medium: Medium
 time_spents.edit.title: 'Edit time spent'
+users.anonymous: 'Anonymous user'
 users.color_scheme: 'Color scheme'
 users.color_scheme.auto: Auto
 users.color_scheme.dark: Dark
 users.color_scheme.light: Light
+users.deleted: 'Deleted user'
 users.edit.title: 'Edit a user'
 users.email: 'Email address'
 users.form.ldap.managed: 'You can’t change some information because this account is managed by LDAP.'
@@ -612,11 +617,13 @@ users.new.title: 'New user'
 users.organization: Organization
 users.organization.auto: Automatic
 users.password: Password
+users.show.anonymize: 'Anonymize the user'
 users.show.authorizations.new: 'Give an authorization'
 users.show.authorizations.title: Authorizations
 users.show.cannot_login: 'This user does not have permission to login to the Web interface.'
 users.show.edit: 'Edit the user'
 users.show.email: 'Email: {email}'
+users.show.is_anonymized: 'This user has been anonymized by {by} the {date}.'
 users.show.ldap_identifier: 'LDAP identifier: {identifier}'
 users.show.name: 'Name: {name}'
 users.show.no_organization: 'Organization: None'
