@@ -597,6 +597,10 @@ users.color_scheme.auto: Auto
 users.color_scheme.dark: Sombre
 users.color_scheme.light: Clair
 users.deleted: 'Utilisateur supprimé'
+users.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur\_?"
+users.deletion.going_delete: 'Vous êtes sur le point de supprimer l’utilisateur {user}. Cela supprimera également tous ses tickets, messages, documents et temps passés. Cela peut dégrader la traçabilité des tickets concernés, ainsi que le suivi contractuel (si cela vous concerne, vous pouvez anonymiser l’utilisateur à la place).'
+users.deletion.submit: 'Supprimer l’utilisateur'
+users.deletion.title: Suppression
 users.edit.title: 'Modifier un utilisateur'
 users.email: 'Adresse email'
 users.form.ldap.managed: 'Certaines informations ne sont pas modifiables car ce compte est géré avec LDAP.'

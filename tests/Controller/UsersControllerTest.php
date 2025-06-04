@@ -551,4 +551,69 @@ class UsersControllerTest extends WebTestCase
         $this->assertTrue($passwordHasher->isPasswordValid($otherUser->_real(), $oldPassword));
         $this->assertSame($oldOrganization->getId(), $otherUser->getOrganization()->getId());
     }
+
+    public function testPostDeleteRemovesTheUserAndRedirects(): void
+    {
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $otherUser = UserFactory::createOne();
+        $client->loginUser($currentUser->_real());
+        $this->grantAdmin($currentUser->_real(), ['admin:manage:users']);
+
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user'),
+        ]);
+
+        $this->assertResponseRedirects('/users', 302);
+        UserFactory::assert()->notExists(['id' => $otherUser->getId()]);
+    }
+
+    public function testPostDeleteFailsIfUserIsTheLoggedInUser(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $otherUser = UserFactory::createOne();
+        $client->loginUser($currentUser->_real());
+        $this->grantAdmin($currentUser->_real(), ['admin:manage:users']);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/users/{$currentUser->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user'),
+        ]);
+    }
+
+    public function testPostDeleteFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $otherUser = UserFactory::createOne();
+        $client->loginUser($currentUser->_real());
+        $this->grantAdmin($currentUser->_real(), ['admin:manage:users']);
+
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/deletion", [
+            '_csrf_token' => 'not a token',
+        ]);
+
+        $this->assertResponseRedirects("/users/{$otherUser->getUid()}/edit", 302);
+        $client->followRedirect();
+        $this->assertSelectorTextContains('#notifications', 'The security token is invalid');
+        UserFactory::assert()->exists(['id' => $otherUser->getId()]);
+    }
+
+    public function testPostDeleteFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $currentUser = UserFactory::createOne();
+        $otherUser = UserFactory::createOne();
+        $client->loginUser($currentUser->_real());
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/users/{$otherUser->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete user'),
+        ]);
+    }
 }

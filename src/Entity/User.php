@@ -54,12 +54,14 @@ class User implements
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $updatedBy = null;
 
     #[ORM\Column(length: 255, unique: true)]

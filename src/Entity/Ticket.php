@@ -53,13 +53,14 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: "SET NULL")]
     private ?User $updatedBy = null;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_TYPE])]
@@ -114,9 +115,11 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     #[Assert\NotBlank(
         message: new TranslatableMessage('ticket.requester.invalid', [], 'errors'),
     )]
+    #[ORM\JoinColumn(onDelete: "SET NULL")]
     private ?User $requester = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: "SET NULL")]
     private ?User $assignee = null;
 
     #[ORM\ManyToOne]

@@ -46,12 +46,14 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $updatedBy = null;
 
     #[ORM\Column(length: self::TITLE_MAX_LENGTH, unique: true)]

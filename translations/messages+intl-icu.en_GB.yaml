@@ -597,6 +597,10 @@ users.color_scheme.auto: Auto
 users.color_scheme.dark: Dark
 users.color_scheme.light: Light
 users.deleted: 'Deleted user'
+users.deletion.confirm: 'Are you sure that you want to delete this user?'
+users.deletion.going_delete: 'You’re going to delete the user {user}. This will also delete all his tickets, messages, documents and time spent. This can degrade the traceability of the concerned tickets, as well as contractual tracking (if this concerns you, you can anonymize the user instead).'
+users.deletion.submit: 'Delete the user'
+users.deletion.title: Deletion
 users.edit.title: 'Edit a user'
 users.email: 'Email address'
 users.form.ldap.managed: 'You can’t change some information because this account is managed by LDAP.'
