@@ -622,7 +622,6 @@ users.show.authorizations.new: 'Give an authorization'
 users.show.authorizations.title: Authorizations
 users.show.cannot_login: 'This user does not have permission to login to the Web interface.'
 users.show.edit: 'Edit the user'
-users.show.delete: 'Delete the user'
 users.show.email: 'Email: {email}'
 users.show.is_anonymized: 'This user has been anonymized by {by} the {date}.'
 users.show.ldap_identifier: 'LDAP identifier: {identifier}'
