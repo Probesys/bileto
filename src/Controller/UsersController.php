@@ -121,6 +121,13 @@ class UsersController extends BaseController
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
+        /** @var Entity\User */
+        $currentUser = $this->getUser();
+
+        if ($user->getUid() === $currentUser->getUid()) {
+            throw $this->createAccessDeniedException('Users cannot delete themselves');
+        }
+
         $csrfToken = $request->request->getString('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('delete user', $csrfToken)) {
