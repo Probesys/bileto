@@ -48,6 +48,9 @@ final class Version20250604070746UpdateForeignKeysFromUser extends AbstractMigra
         $tableAuthorization->removeForeignKey('FK_2BC15D69896DBBDE');
         $tableAuthorization->addForeignKeyConstraint('users', ['updated_by_id'], ['id'], ['onDelete' => 'SET NULL'], 'FK_2BC15D69896DBBDE');
 
+        $tableAuthorization->removeForeignKey('FK_2BC15D69DEEE62D0');
+        $tableAuthorization->addForeignKeyConstraint('users', ['holder_id'], ['id'], ['onDelete' => 'CASCADE'], 'FK_2BC15D69DEEE62D0');
+
         $tableContract = $schema->getTable('contract');
         $tableContract->removeForeignKey('FK_E98F2859B03A8386');
         $tableContract->addForeignKeyConstraint('users', ['created_by_id'], ['id'], ['onDelete' => 'SET NULL'], 'FK_E98F2859B03A8386');
@@ -168,6 +171,9 @@ final class Version20250604070746UpdateForeignKeysFromUser extends AbstractMigra
 
         $tableAuthorization->removeForeignKey('FK_2BC15D69896DBBDE');
         $tableAuthorization->addForeignKeyConstraint('users', ['updated_by_id'], ['id'], [], 'FK_2BC15D69896DBBDE');
+
+        $tableAuthorization->removeForeignKey('FK_2BC15D69DEEE62D0');
+        $tableAuthorization->addForeignKeyConstraint('users', ['holder_id'], ['id'], [], 'FK_2BC15D69DEEE62D0');
 
         $tableContract = $schema->getTable('contract');
         $tableContract->removeForeignKey('FK_E98F2859B03A8386');
