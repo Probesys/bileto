@@ -16,6 +16,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class CleanDataHandler
 {
     public function __construct(
+        private Repository\EntityEventRepository $entityEventRepository,
         private Repository\TokenRepository $tokenRepository,
         private Repository\SessionLogRepository $sessionLogRepository,
         private LoggerInterface $logger,
@@ -26,6 +27,7 @@ class CleanDataHandler
     {
         $this->cleanInvalidTokens();
         $this->cleanOldSessionLogs();
+        $this->cleanExpiredEntityEvents();
     }
 
     private function cleanInvalidTokens(): void
@@ -45,6 +47,16 @@ class CleanDataHandler
 
         if ($countRemovedLogs > 0) {
             $this->logger->notice("[CleanData] {$countRemovedLogs} session log(s) deleted");
+        }
+    }
+
+    private function cleanExpiredEntityEvents(): void
+    {
+        $oneWeekAgo = Utils\Time::ago(1, 'week');
+        $countRemovedEvents = $this->entityEventRepository->removeExpiredOlderThan($oneWeekAgo);
+
+        if ($countRemovedEvents > 0) {
+            $this->logger->notice("[CleanData] {$countRemovedEvents} entity event(s) deleted");
         }
     }
 }
