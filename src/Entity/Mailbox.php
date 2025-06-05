@@ -247,7 +247,12 @@ class Mailbox implements EntityInterface, MonitorableEntityInterface, UidEntityI
     public function setLastError(string $lastError): self
     {
         $this->lastError = $lastError;
-        $this->lastErrorAt = Time::now();
+
+        if ($lastError) {
+            $this->lastErrorAt = Time::now();
+        } else {
+            $this->lastErrorAt = null;
+        }
 
         return $this;
     }
