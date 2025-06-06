@@ -17,20 +17,20 @@ advanced_search_syntax.contracts.keywords.title: 'Search by keywords'
 advanced_search_syntax.contracts.not.example1: 'Contracts containing the word “contract” but not the word “2024” in their name'
 advanced_search_syntax.contracts.not.example2: 'Contracts that do not have a status of “finished” (equivalent to “<code>NOT status:finished</code>”). This syntax is only valid with qualifiers.'
 advanced_search_syntax.contracts.not.title: 'Search by negation'
-advanced_search_syntax.contracts.title: 'Quick reference for the contracts advanced search'
 advanced_search_syntax.contracts.qualifiers.alert.example1: 'Contracts whose time consumption has reached the alert threshold'
 advanced_search_syntax.contracts.qualifiers.alert.example2: 'Contracts approaching their end date'
 advanced_search_syntax.contracts.qualifiers.alert.example3: 'Contracts with an alert in progress'
 advanced_search_syntax.contracts.qualifiers.alert.example4: 'Contracts with no alerts in progress'
 advanced_search_syntax.contracts.qualifiers.alert.title: Alert
 advanced_search_syntax.contracts.qualifiers.description: 'Qualifiers are special keywords (e.g. <code>status:</code>) that take a value or a comma-separated list of values. They are used to target a particular property.'
-advanced_search_syntax.contracts.qualifiers.renewal.title: 'Contract renewal'
 advanced_search_syntax.contracts.qualifiers.renewal.example1: 'Contracts that have been renewed'
+advanced_search_syntax.contracts.qualifiers.renewal.title: 'Contract renewal'
 advanced_search_syntax.contracts.qualifiers.status.example1: 'Contracts with the status “ongoing”'
 advanced_search_syntax.contracts.qualifiers.status.example2: 'Contracts with the status “coming” or “ongoing”'
 advanced_search_syntax.contracts.qualifiers.status.title: Status
 advanced_search_syntax.contracts.qualifiers.status.values: 'The possible values for status are: <code>coming</code>, <code>ongoing</code>, <code>finished</code>.'
 advanced_search_syntax.contracts.qualifiers.title: 'Search by qualifiers'
+advanced_search_syntax.contracts.title: 'Quick reference for the contracts advanced search'
 advanced_search_syntax.description: Description
 advanced_search_syntax.example: Example
 advanced_search_syntax.tickets.complex.example1: 'Tickets with the word “emails” in their title and a priority of “high”.'
@@ -101,8 +101,8 @@ common.caution: Caution!
 common.colors.blue: Blue
 common.colors.green: Green
 common.colors.grey: Grey
-common.colors.primary: Primary
 common.colors.orange: Orange
+common.colors.primary: Primary
 common.colors.red: Red
 common.information: Information
 common.join.and: ' and '
@@ -117,14 +117,14 @@ contracts.days_consumed: "<strong>{days}\_d consumed</strong>"
 contracts.edit.title: 'Edit a contract'
 contracts.form.associate_tickets: 'Associate existing tickets created during the contract period'
 contracts.form.associate_unaccounted_times: 'Associate existing unaccounted spent times'
-contracts.form.time_accounting_unit: 'Time accounting unit (minutes)'
-contracts.form.time_accounting_unit.caption: 'The time spent on tickets will be rounded up for contractual purposes. For example, if the time accounting unit is 30 minutes, and a technician spends 15 minutes on a ticket, 30 minutes will be accounted for in the contract.'
 contracts.form.end_at: 'End on'
 contracts.form.max_hours: 'Max number of hours'
 contracts.form.name: Name
 contracts.form.new: 'Create the contract'
 contracts.form.notes: 'Private notes'
 contracts.form.start_at: 'Start on'
+contracts.form.time_accounting_unit: 'Time accounting unit (minutes)'
+contracts.form.time_accounting_unit.caption: 'The time spent on tickets will be rounded up for contractual purposes. For example, if the time accounting unit is 30 minutes, and a technician spends 15 minutes on a ticket, 30 minutes will be accounted for in the contract.'
 contracts.hours_consumed: "<strong>{hours} consumed</strong> on {maxHours}\_h ({percentage, number, percent})"
 contracts.index.alert: Alert
 contracts.index.new_contract: 'New contract'
@@ -138,12 +138,12 @@ contracts.new.title: 'New contract'
 contracts.notes: 'Private notes'
 contracts.show.alert: Alert
 contracts.show.alert.before_end: '{days} days<br>before end'
-contracts.show.time_accounting_unit: 'Time accounting unit: {count, plural, one {1 minute} other {# minutes}}'
 contracts.show.edit: 'Edit the contract'
 contracts.show.notes_confidential: Confidential
 contracts.show.renew: Renew
 contracts.show.renewed_by: 'Renewed by'
 contracts.show.set_up_alerts: 'Set up alerts'
+contracts.show.time_accounting_unit: 'Time accounting unit: {count, plural, one {1 minute} other {# minutes}}'
 contracts.show.warning: Warning
 contracts.sort.alphabetical: 'Alphabetical order'
 contracts.sort.antichronological: 'Antichronological end order'
@@ -190,8 +190,8 @@ forms.optional_max_chars: '(optional, max. {number} characters)'
 forms.organization.select.choose: 'Choose an organization'
 forms.read_only: '(read only)'
 forms.save_changes: 'Save the changes'
-forms.search.advanced_label: 'Search using keywords or by using the advanced syntax'
 forms.search.advanced_help: 'Show syntax help'
+forms.search.advanced_label: 'Search using keywords or by using the advanced syntax'
 forms.search.advanced_title: 'Advanced search'
 forms.search.quick_label: 'Search using keywords or #id'
 forms.search.quick_placeholder: 'Keywords or #id'
@@ -244,8 +244,8 @@ layout.organizations: Organizations
 layout.scroll_to_top: 'Scroll to top'
 layout.skip_to_main_content: 'Skip to main content'
 layout.tickets: Tickets
-login.intro: 'Manage your support<br><b>with ease</b>'
 login.forgot_password: 'Forgot your password?'
+login.intro: 'Manage your support<br><b>with ease</b>'
 login.password_changed.message: 'Your password has been changed. All you have to do now is log in.'
 login.password_changed.title: 'Password changed'
 login.remember_me: 'Remember me'
@@ -303,8 +303,8 @@ organizations.observers.add_user: 'Add to observers'
 organizations.observers.confirm_add_user: 'By adding this user to the organization’s observers, you give him access to all future tickets opened in the organization. Can you confirm?'
 organizations.observers.remove_user: 'Remove from observers'
 organizations.responsible_team: 'Responsible team'
-organizations.responsible_team.caption: 'The team responsible for the organization will be assigned by default to the tickets opened in that organization.'
 organizations.responsible_team.auto: Automatic
+organizations.responsible_team.caption: 'The team responsible for the organization will be assigned by default to the tickets opened in that organization.'
 organizations.settings.deletion.confirm: 'Are you sure that you want to delete this organization?'
 organizations.settings.deletion.going_delete: 'You’re going to delete the organization “{organization}”. This will also delete the associated tickets and contracts.'
 organizations.settings.deletion.submit: 'Delete the organization'
@@ -605,8 +605,8 @@ users.form.password.empty_keep_current: 'Leave blank to keep the current passwor
 users.form.prevent_login: 'Prevent the user from logging in to the Web interface'
 users.identifier: 'Email address or identifier'
 users.index.authorizations: '{count, plural, =0 {No authorizations} one {1 authorization} other {# authorizations}}'
-users.index.no_users: 'No users'
 users.index.new_user: 'New user'
+users.index.no_users: 'No users'
 users.index.number: '{count, plural, =0 {No users} one {1 user} other {# users}}'
 users.index.title: Users
 users.language: Language

@@ -177,10 +177,18 @@ class User implements
      * A visual identifier that represents this user.
      *
      * @see UserInterface
+     *
+     * @return non-empty-string
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        $identifier = $this->email;
+
+        if (!$identifier) {
+            throw new \LogicException('User identifier (email) cannot be empty');
+        }
+
+        return $identifier;
     }
 
     /**

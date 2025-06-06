@@ -10,3 +10,6 @@ when@prod:
         options:
             release: '%app.version%'
             send_default_pii: '%env(bool:SENTRY_SEND_DEFAULT_PII)%'
+            ignore_exceptions:
+                - 'Symfony\Component\ErrorHandler\Error\FatalError'
+                - 'Symfony\Component\Debug\Exception\FatalErrorException'

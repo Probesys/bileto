@@ -1,0 +1,11 @@
+# This file is part of Bileto.
+# Copyright 2022-2025 Probesys
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+framework:
+    form:
+        csrf_protection:
+            token_id: submit
+
+    csrf_protection:
+        stateless_token_ids:
