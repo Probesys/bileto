@@ -43,6 +43,7 @@ class OrganizationsController extends BaseController
     public function new(
         Request $request,
         OrganizationRepository $organizationRepository,
+        Authorizer $authorizer,
     ): Response {
         $this->denyAccessUnlessGranted('admin:create:organizations');
 
@@ -56,7 +57,13 @@ class OrganizationsController extends BaseController
             $organization->normalizeDomains();
             $organizationRepository->save($organization, true);
 
-            return $this->redirectToRoute('organizations');
+            if ($authorizer->isGranted('orga:manage:contracts', $organization)) {
+                return $this->redirectToRoute('new organization contract', [
+                    'uid' => $organization->getUid(),
+                ]);
+            } else {
+                return $this->redirectToRoute('organizations');
+            }
         }
 
         return $this->render('organizations/new.html.twig', [

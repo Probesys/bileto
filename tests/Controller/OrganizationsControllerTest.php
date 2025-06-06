@@ -123,6 +123,26 @@ class OrganizationsControllerTest extends WebTestCase
         $this->assertSame(20, strlen($organization->getUid()));
     }
 
+    public function testPostNewRedirectsToNewContractsIfPermissionIsGiven(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:create:organizations']);
+        $this->grantOrga($user->_real(), ['orga:manage:contracts']);
+        $name = 'My organization';
+
+        $client->request(Request::METHOD_POST, '/organizations/new', [
+            'organization' => [
+                '_token' => $this->generateCsrfToken($client, 'organization'),
+                'name' => $name,
+            ],
+        ]);
+
+        $organization = OrganizationFactory::first();
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/contracts/new", 302);
+    }
+
     public function testPostNewFailsIfNameIsEmpty(): void
     {
         $client = static::createClient();
