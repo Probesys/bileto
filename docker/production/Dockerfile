@@ -6,7 +6,7 @@
 FROM node:20-alpine AS assets
 
 WORKDIR /app
-COPY package*.json /app
+COPY package*.json /app/
 COPY assets/ /app/assets
 RUN npm install && npm run build
 
