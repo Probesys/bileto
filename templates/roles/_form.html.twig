@@ -65,7 +65,7 @@
                         {# Don't display admin:see and orga:see checkboxes as they
                          # are inherent in the orga/admin roles and are added manually
                          # when sanitizing the permissions in the form. #}
-                        <!-- {{ field_name(permission) }} -->
+                         {% do permission.setRendered %}
                     {% endif %}
                 {% endfor %}
 

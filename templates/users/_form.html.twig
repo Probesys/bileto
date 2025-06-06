@@ -36,6 +36,6 @@
     {% if form.organization.vars.choices is not empty %}
         {{ form_row(form.organization) }}
     {% else %}
-        <!-- {{ field_name(form.organization) }} -->
+        {% do form.organization.setRendered %}
     {% endif %}
 {{ form_end(form) }}

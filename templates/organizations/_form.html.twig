@@ -29,6 +29,6 @@
     {% if form.responsibleTeam.vars.choices is not empty %}
         {{ form_row(form.responsibleTeam) }}
     {% else %}
-        <!-- {{ field_name(form.responsibleTeam) }} -->
+        {% do form.responsibleTeam.setRendered %}
     {% endif %}
 {{ form_end(form) }}

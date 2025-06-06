@@ -19,7 +19,7 @@
         {% if form.team.vars.choices is not empty %}
             {{ form_row(form.team) }}
         {% else %}
-            <!-- {{ field_name(form.team) }} -->
+            {% do form.team.setRendered %}
         {% endif %}
 
         {{ form_row(form.assignee) }}
