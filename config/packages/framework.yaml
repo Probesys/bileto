@@ -10,6 +10,9 @@ framework:
     http_method_override: false
     handle_all_throwables: true
 
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    trusted_headers: ['forwarded', 'x-forwarded-for']
+
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
