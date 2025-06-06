@@ -17,20 +17,20 @@ advanced_search_syntax.contracts.keywords.title: 'Rechercher par mots-clés'
 advanced_search_syntax.contracts.not.example1: "Les contrats contenant le mot «\_contract\_» mais pas le mot «\_2024\_» dans leur nom"
 advanced_search_syntax.contracts.not.example2: "Les contrats qui n’ont pas un statut «\_fermé\_» (équivalent à «\_<code>NOT status:finished\_»</code>). Cette syntaxe n’est valable qu’avec les qualificateurs."
 advanced_search_syntax.contracts.not.title: 'Rechercher par négation'
-advanced_search_syntax.contracts.title: 'Aide-mémoire de la recherche avancée des contrats'
 advanced_search_syntax.contracts.qualifiers.alert.example1: 'Les contrats dont la consommation de temps a atteint le seuil d’alerte'
 advanced_search_syntax.contracts.qualifiers.alert.example2: 'Les contrats dont la date de fin arrive à échéance'
 advanced_search_syntax.contracts.qualifiers.alert.example3: 'Les contrats ayant une alerte en cours'
 advanced_search_syntax.contracts.qualifiers.alert.example4: 'Les contrats n’ayant aucune une alerte en cours'
 advanced_search_syntax.contracts.qualifiers.alert.title: Alerte
 advanced_search_syntax.contracts.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
-advanced_search_syntax.contracts.qualifiers.renewal.title: 'Renouvellement des contrats'
 advanced_search_syntax.contracts.qualifiers.renewal.example1: 'Les contrats qui ont été renouvelés'
+advanced_search_syntax.contracts.qualifiers.renewal.title: 'Renouvellement des contrats'
 advanced_search_syntax.contracts.qualifiers.status.example1: "Les contrats avec le statut «\_en cours\_»"
 advanced_search_syntax.contracts.qualifiers.status.example2: "Les contrats avec les statuts «\_à venir\_» ou «\_en cours\_»"
 advanced_search_syntax.contracts.qualifiers.status.title: Statut
 advanced_search_syntax.contracts.qualifiers.status.values: "Les valeurs de statut possibles sont\_: <code>coming</code>, <code>ongoing</code>, <code>finished</code>."
 advanced_search_syntax.contracts.qualifiers.title: 'Rechercher par qualificateurs'
+advanced_search_syntax.contracts.title: 'Aide-mémoire de la recherche avancée des contrats'
 advanced_search_syntax.description: Description
 advanced_search_syntax.example: Exemple
 advanced_search_syntax.tickets.complex.example1: "Les tickets contenant le mot «\_emails\_» dans leur titre et dont la priorité est «\_haute\_»"
@@ -101,8 +101,8 @@ common.caution: "Attention\_!"
 common.colors.blue: Bleu
 common.colors.green: Vert
 common.colors.grey: Gris
-common.colors.primary: Principale
 common.colors.orange: Orange
+common.colors.primary: Principale
 common.colors.red: Rouge
 common.information: Information
 common.join.and: ' et '
@@ -117,14 +117,14 @@ contracts.days_consumed: "<strong>{days, plural, one {#\_j consommé} other {#\_
 contracts.edit.title: 'Modifier un contrat'
 contracts.form.associate_tickets: 'Associer les tickets existants créés durant la période du contrat'
 contracts.form.associate_unaccounted_times: 'Associer les temps passés existants non comptabilisés'
-contracts.form.time_accounting_unit: 'Unité de comptabilisation du temps (minutes)'
-contracts.form.time_accounting_unit.caption: 'Le temps passé sur les tickets sera arrondi à l’unité supérieure à des fins contractuelles. Par exemple, si l’unité de comptabilisation du temps est de 30 minutes et qu’un technicien passe 15 minutes sur un ticket, 30 minutes seront comptabilisées dans le contrat.'
 contracts.form.end_at: 'Termine le'
 contracts.form.max_hours: 'Nombre max. d’heures'
 contracts.form.name: Nom
 contracts.form.new: 'Créer le contrat'
 contracts.form.notes: 'Notes privées'
 contracts.form.start_at: 'Démarre le'
+contracts.form.time_accounting_unit: 'Unité de comptabilisation du temps (minutes)'
+contracts.form.time_accounting_unit.caption: 'Le temps passé sur les tickets sera arrondi à l’unité supérieure à des fins contractuelles. Par exemple, si l’unité de comptabilisation du temps est de 30 minutes et qu’un technicien passe 15 minutes sur un ticket, 30 minutes seront comptabilisées dans le contrat.'
 contracts.hours_consumed: "<strong>{hours} consommée(s)</strong> sur {maxHours}\_h ({percentage, number, percent})"
 contracts.index.alert: Alerte
 contracts.index.new_contract: 'Nouveau contrat'
@@ -138,12 +138,12 @@ contracts.new.title: 'Nouveau contrat'
 contracts.notes: 'Notes privées'
 contracts.show.alert: Alerte
 contracts.show.alert.before_end: '{days} jours<br>avant la fin'
-contracts.show.time_accounting_unit: "Unité de comptabilisation du temps\_: {count, plural, one {# minute} other {# minutes}}"
 contracts.show.edit: 'Modifier le contrat'
 contracts.show.notes_confidential: Confidentielles
 contracts.show.renew: Renouveler
 contracts.show.renewed_by: 'Renouvelé par'
 contracts.show.set_up_alerts: 'Configurer les alertes'
+contracts.show.time_accounting_unit: "Unité de comptabilisation du temps\_: {count, plural, one {# minute} other {# minutes}}"
 contracts.show.warning: Attention
 contracts.sort.alphabetical: 'Ordre alphabétique'
 contracts.sort.antichronological: 'Ordre de fin antichronologique'
@@ -190,8 +190,8 @@ forms.optional_max_chars: '(optionnel, max. {number} caractères)'
 forms.organization.select.choose: 'Choisir une organisation'
 forms.read_only: '(lecture seule)'
 forms.save_changes: 'Enregistrer les modifications'
-forms.search.advanced_label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
 forms.search.advanced_help: 'Afficher l’aide de la syntaxe'
+forms.search.advanced_label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
 forms.search.advanced_title: 'Recherche avancée'
 forms.search.quick_label: 'Rechercher par mots-clés ou par #id'
 forms.search.quick_placeholder: 'Mots-clés ou #id'
@@ -244,8 +244,8 @@ layout.organizations: Organisations
 layout.scroll_to_top: 'Défiler en haut'
 layout.skip_to_main_content: 'Accéder au contenu principal'
 layout.tickets: Tickets
-login.intro: 'Gérez votre support<br><b>en toute simplicité</b>'
 login.forgot_password: "Mot de passe oublié\_?"
+login.intro: 'Gérez votre support<br><b>en toute simplicité</b>'
 login.password_changed.message: 'Votre mot de passe a bien été changé. Vous n’avez plus qu’à vous connecter.'
 login.password_changed.title: 'Mot de passe changé'
 login.remember_me: 'Se souvenir de moi'
@@ -303,8 +303,8 @@ organizations.observers.add_user: 'Ajouter aux observateurs'
 organizations.observers.confirm_add_user: "En ajoutant cet utilisateur aux observateurs de l’organisation, vous lui permettez d’avoir accès à tous les futurs tickets ouverts dans celle-ci. Confirmez-vous\_?"
 organizations.observers.remove_user: 'Retirer des observateurs'
 organizations.responsible_team: 'Équipe responsable'
-organizations.responsible_team.caption: 'L’équipe responsable de l’organisation sera attribuée par défaut aux tickets ouverts dans cette organisation.'
 organizations.responsible_team.auto: Automatique
+organizations.responsible_team.caption: 'L’équipe responsable de l’organisation sera attribuée par défaut aux tickets ouverts dans cette organisation.'
 organizations.settings.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
 organizations.settings.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et contrats associés."
 organizations.settings.deletion.submit: 'Supprimer l’organisation'
@@ -531,8 +531,8 @@ tickets.show.answer_solution.approve: 'Approuver la solution'
 tickets.show.answer_solution.nothing: 'Ne pas statuer'
 tickets.show.answer_solution.refuse: 'Refuser la solution'
 tickets.show.answer_type: 'Type de réponse'
-tickets.show.answer_type.normal: Réponse
 tickets.show.answer_type.confidential: 'Réponse confidentielle'
+tickets.show.answer_type.normal: Réponse
 tickets.show.answer_type.solution: Solution
 tickets.show.assign_yourself: 'vous attribuer le ticket'
 tickets.show.assignee: "Attribué à\_:"

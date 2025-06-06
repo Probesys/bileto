@@ -4,20 +4,29 @@
 // Copyright 2022-2025 Probesys
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace App\Scheduler;
+namespace App;
 
 use App\Message;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
-use Symfony\Component\Scheduler\Schedule;
+use Symfony\Component\Scheduler\Schedule as SymfonySchedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
-#[AsSchedule('default')]
-class DefaultScheduleProvider implements ScheduleProviderInterface
+#[AsSchedule]
+class Schedule implements ScheduleProviderInterface
 {
-    public function getSchedule(): Schedule
+    public function __construct(
+        private CacheInterface $cache,
+    ) {
+    }
+
+    public function getSchedule(): SymfonySchedule
     {
-        $schedule = new Schedule();
+        $schedule = new SymfonySchedule();
+
+        $schedule->stateful($this->cache);
+        $schedule->processOnlyLastMissedRun(true);
 
         $schedule->add(RecurringMessage::every('1 minute', new Message\FetchMailboxes()));
         $schedule->add(RecurringMessage::every('1 minute', new Message\CreateTicketsFromMailboxEmails()));

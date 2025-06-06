@@ -351,12 +351,16 @@ class CreateTicketsFromMailboxEmailsHandler
 
         foreach ($mailboxEmail->getAttachments() as $attachment) {
             $id = $attachment->getId();
-            $filename = $attachment->getName();
+            $originalFilename = $attachment->getName();
             // PHP-IMAP can return invalid UTF-8 characters in some circumstances.
             // mb_convert_encoding will replace these characters with the
             // character "?".
             // Bug issue: https://github.com/Webklex/php-imap/issues/459
-            $filename = mb_convert_encoding($filename, 'UTF-8', 'UTF-8');
+            $filename = mb_convert_encoding($originalFilename, 'UTF-8', 'UTF-8');
+            if ($filename === false) {
+                $filename = $originalFilename;
+            }
+
             $status = $attachment->save($tmpPath, $filename);
 
             if (!$status) {

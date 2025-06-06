@@ -105,10 +105,10 @@ endif
 
 .PHONY: translations
 translations: ## Update the translations from the code
-	$(CONSOLE) translation:extract --format=yaml --force --clean en_GB
-	$(CONSOLE) translation:extract --format=yaml --force --clean fr_FR
+	$(CONSOLE) translation:extract --format=yaml --force --clean --sort=asc en_GB
+	$(CONSOLE) translation:extract --format=yaml --force --clean --sort=asc fr_FR
 	# Restore these files as keys are removed from them whereas they should not.
-	git restore translations/security+intl-icu.* translations/validators+intl-icu.*
+	git restore translations/security.* translations/validators.*
 
 .PHONY: migration
 migration: ## Generate a database migration from entities changes
@@ -147,7 +147,7 @@ endif
 ifeq ($(LINTER), $(filter $(LINTER), all symfony))
 	$(CONSOLE) lint:container
 	$(CONSOLE) lint:twig
-	$(CONSOLE) lint:yaml translations/*
+	$(CONSOLE) lint:translations --locale=en_GB --locale=fr_FR
 endif
 ifeq ($(LINTER), $(filter $(LINTER), all js))
 	$(NPM) run lint-js
