@@ -6,30 +6,13 @@
 
 namespace App\MessageHandler;
 
-use App\ActivityMonitor\ActiveUser;
-use App\Entity\MailboxEmail;
-use App\Entity\Message;
-use App\Entity\MessageDocument;
-use App\Entity\Ticket;
-use App\Entity\User;
-use App\Message\CreateTicketsFromMailboxEmails;
-use App\Repository\MailboxRepository;
-use App\Repository\MailboxEmailRepository;
-use App\Repository\MessageRepository;
-use App\Repository\MessageDocumentRepository;
-use App\Repository\OrganizationRepository;
-use App\Repository\TicketRepository;
-use App\Repository\UserRepository;
-use App\Security\Authorizer;
-use App\Security\Encryptor;
-use App\Service\MessageDocumentStorage;
-use App\Service\MessageDocumentStorageError;
-use App\Service\TicketAssigner;
-use App\Service\UserCreator;
-use App\Service\UserCreatorException;
-use App\Service\UserService;
-use App\TicketActivity\MessageEvent;
-use App\TicketActivity\TicketEvent;
+use App\ActivityMonitor;
+use App\Entity;
+use App\Message;
+use App\Repository;
+use App\Security;
+use App\Service;
+use App\TicketActivity;
 use App\Utils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -44,27 +27,27 @@ use Webklex\PHPIMAP;
 class CreateTicketsFromMailboxEmailsHandler
 {
     public function __construct(
-        private MailboxEmailRepository $mailboxEmailRepository,
-        private MessageRepository $messageRepository,
-        private MessageDocumentRepository $messageDocumentRepository,
-        private MessageDocumentStorage $messageDocumentStorage,
-        private OrganizationRepository $organizationRepository,
-        private TicketRepository $ticketRepository,
-        private TicketAssigner $ticketAssigner,
-        private UserRepository $userRepository,
-        private UserCreator $userCreator,
-        private UserService $userService,
-        private Authorizer $authorizer,
+        private Repository\MailboxEmailRepository $mailboxEmailRepository,
+        private Repository\MessageRepository $messageRepository,
+        private Repository\MessageDocumentRepository $messageDocumentRepository,
+        private Repository\OrganizationRepository $organizationRepository,
+        private Repository\TicketRepository $ticketRepository,
+        private Repository\UserRepository $userRepository,
+        private Service\MessageDocumentStorage $messageDocumentStorage,
+        private Service\TicketAssigner $ticketAssigner,
+        private Service\UserCreator $userCreator,
+        private Service\UserService $userService,
+        private Security\Authorizer $authorizer,
+        private ActivityMonitor\ActiveUser $activeUser,
         private HtmlSanitizerInterface $appMessageSanitizer,
         private LoggerInterface $logger,
         private UrlGeneratorInterface $urlGenerator,
-        private ActiveUser $activeUser,
         private EventDispatcherInterface $eventDispatcher,
         private LockFactory $lockFactory,
     ) {
     }
 
-    public function __invoke(CreateTicketsFromMailboxEmails $message): void
+    public function __invoke(Message\CreateTicketsFromMailboxEmails $message): void
     {
         $mailboxEmails = $this->mailboxEmailRepository->findAll();
 
@@ -89,7 +72,11 @@ class CreateTicketsFromMailboxEmailsHandler
         }
     }
 
-    private function processMailboxEmail(MailboxEmail $mailboxEmail): void
+    /**
+     * Create a message (and eventually a ticket) corresponding to the given
+     * mailbox email.
+     */
+    private function processMailboxEmail(Entity\MailboxEmail $mailboxEmail): void
     {
         if ($mailboxEmail->isAutoreply()) {
             $this->logger->notice("MailboxEmail #{$mailboxEmail->getId()} ignored: detected as auto reply");
@@ -99,103 +86,46 @@ class CreateTicketsFromMailboxEmailsHandler
             return;
         }
 
-        $senderEmail = $mailboxEmail->getFrom();
+        // First, get the user matching with the sender of the email.
+        $sender = $this->getSender($mailboxEmail);
 
-        $domain = Utils\Email::extractDomain($senderEmail);
-        $domainOrganization = $this->organizationRepository->findOneByDomainOrDefault($domain);
-
-        $requester = $this->userRepository->findOneBy([
-            'email' => $senderEmail,
-        ]);
-
-        if (!$requester && $domainOrganization) {
-            try {
-                $requester = $this->userCreator->create(email: $senderEmail);
-            } catch (UserCreatorException $e) {
-                $errors = Utils\ConstraintErrorsFormatter::format($e->getErrors());
-                $errors = implode(' ', $errors);
-                $this->markError($mailboxEmail, 'cannot create sender: ' . $errors);
-                return;
-            }
-        } elseif (!$requester) {
-            $this->markError($mailboxEmail, 'unknown sender');
+        if (!$sender) {
             return;
         }
 
-        $requesterOrganization = $this->userService->getDefaultOrganization($requester);
+        // Set the active user so the created entities (e.g. ticket, message)
+        // will have the sender as `createdAt`.
+        $this->activeUser->change($sender);
 
-        if (!$requesterOrganization) {
-            $this->markError($mailboxEmail, 'sender has not permission to create tickets');
+        // Then, get the ticket corresponding to the email. If the email
+        // doesn't answer to a ticket, a new one will be returned if possible.
+        $ticket = $this->getTicket($mailboxEmail, $sender);
+
+        if (!$ticket) {
             $this->activeUser->change(null);
             return;
         }
 
-        $this->activeUser->change($requester);
-
-        $ticket = $this->getAnsweredTicket($mailboxEmail);
-
-        if ($ticket) {
-            $canAnswerTicket = $this->authorizer->isGrantedToUser(
-                $requester,
-                'orga:create:tickets:messages',
-                $ticket,
-            );
-
-            if (!$canAnswerTicket || $ticket->getStatus() === 'closed') {
-                $ticket = null;
-            }
-        }
-
-        $isNewTicket = false;
-
-        if (!$ticket) {
-            $subject = $mailboxEmail->getSubject();
-
-            $ticket = new Ticket();
-            $ticket->setTitle($subject);
-            $ticket->setOrganization($requesterOrganization);
-            $ticket->setRequester($requester);
-
-            $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($requesterOrganization);
-            $ticket->setTeam($responsibleTeam);
-
-            $this->ticketRepository->save($ticket, true);
-            $isNewTicket = true;
-        }
-
-        $messageDocuments = $this->storeAttachments($mailboxEmail);
-        $this->messageDocumentRepository->save($messageDocuments, true);
-
-        $messageContent = $mailboxEmail->getBody();
-        // Inline attachments (i.e. <img>) have URLs of type: `cid:<id>`.
-        // Here we replace these URLs with the application URLs to the message documents.
-        $messageContent = $this->replaceAttachmentsUrls($messageContent, $messageDocuments);
-        // Sanitize the HTML only after replacing the URLs or it would
-        // remove the `src` attributes as the `cid:` scheme is forbidden.
-        $messageContent = $this->appMessageSanitizer->sanitize($messageContent);
-
-        $message = new Message();
-        $message->setCreatedAt($mailboxEmail->getDate());
-        $message->setContent($messageContent);
-        $message->setTicket($ticket);
-        $message->setIsConfidential(false);
-        $message->setVia('email');
-
-        $emailId = $mailboxEmail->getMessageId();
-        $message->addEmailNotificationReference($emailId);
-
-        $this->messageRepository->save($message, true);
-
+        $isNewTicket = $ticket->getId() === null;
         if ($isNewTicket) {
-            $ticketEvent = new TicketEvent($ticket);
-            $this->eventDispatcher->dispatch($ticketEvent, TicketEvent::CREATED);
+            $this->ticketRepository->save($ticket, flush: true);
         }
 
-        $messageEvent = new MessageEvent($message);
-        $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED);
+        // The important part: create the message by using the email
+        // information and attach it to the ticket.
+        $message = $this->createMessage($mailboxEmail, $ticket);
+
+        // Finally, dispatch the different events corresponding to what happened.
+        if ($isNewTicket) {
+            $ticketEvent = new TicketActivity\TicketEvent($ticket);
+            $this->eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::CREATED);
+        }
+
+        $messageEvent = new TicketActivity\MessageEvent($message);
+        $this->eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED);
 
         if (!$isNewTicket) {
-            $this->eventDispatcher->dispatch($messageEvent, MessageEvent::CREATED_ANSWER);
+            $this->eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED_ANSWER);
         }
 
         $this->mailboxEmailRepository->remove($mailboxEmail, true);
@@ -203,7 +133,114 @@ class CreateTicketsFromMailboxEmailsHandler
         $this->activeUser->change(null);
     }
 
-    private function getAnsweredTicket(MailboxEmail $mailboxEmail): ?Ticket
+    /**
+     * Return the user corresponding to the email sender address.
+     *
+     * If the user is unknown, but the email domain is handled by an
+     * organization, a new user is created and returned.
+     *
+     * Otherwise, the email is marked with an error and null is returned.
+     */
+    private function getSender(Entity\MailboxEmail $mailboxEmail): ?Entity\User
+    {
+        $senderEmail = $mailboxEmail->getFrom();
+
+        $sender = $this->userRepository->findOneBy([
+            'email' => $senderEmail,
+        ]);
+
+        if (!$sender) {
+            // We don't know the sender, but maybe there is a default organization
+            // matching the domain of his email?
+            $domain = Utils\Email::extractDomain($senderEmail);
+            $domainOrganization = $this->organizationRepository->findOneByDomainOrDefault($domain);
+
+            if (!$domainOrganization) {
+                $this->markError($mailboxEmail, 'unknown sender');
+                return null;
+            }
+
+            // There is a default organization? Then try to create the user.
+            try {
+                $sender = $this->userCreator->create(email: $senderEmail);
+            } catch (Service\UserCreatorException $e) {
+                $errors = Utils\ConstraintErrorsFormatter::format($e->getErrors());
+                $errors = implode(' ', $errors);
+                $this->markError($mailboxEmail, 'cannot create sender: ' . $errors);
+                return null;
+            }
+        }
+
+        return $sender;
+    }
+
+    /**
+     * Return the ticket corresponding to the email.
+     *
+     * It returns a ticket in two cases:
+     *
+     * - The email answers to an existing ticket and the sender has the
+     *   permission to answer to it.
+     * - Otherwise, if the sender has a default organization, a new ticket is
+     *   built. In this case, the code calling this method is in charge to save
+     *   it in the database.
+     *
+     * In other cases, the email is marked with an error and null is returned.
+     */
+    private function getTicket(
+        Entity\MailboxEmail $mailboxEmail,
+        Entity\User $sender,
+    ): ?Entity\Ticket {
+        $ticket = $this->getAnsweredTicket($mailboxEmail);
+
+        if ($ticket && $this->canAnswerTicket($sender, $ticket)) {
+            // The easiest case: the email answers to a ticket and the sender
+            // can answer to it.
+            return $ticket;
+        }
+
+        if ($ticket) {
+            $this->logger->notice(
+                "MailboxEmail #{$mailboxEmail->getId()}: " .
+                "sender {$sender->getEmail()} cannot answer to ticket #{$ticket->getId()}"
+            );
+            $ticket = null;
+        }
+
+        $defaultOrganization = $this->userService->getDefaultOrganization($sender);
+
+        if (!$defaultOrganization) {
+            // By definition, the default organization is an organization in
+            // which the user can create tickets. If he has none, then he
+            // cannot create tickets.
+            $this->markError($mailboxEmail, 'sender has not permission to create tickets');
+            return null;
+        }
+
+        // Finally, build a ticket.
+        $subject = $mailboxEmail->getSubject();
+
+        $ticket = new Entity\Ticket();
+        $ticket->setTitle($subject);
+        $ticket->setOrganization($defaultOrganization);
+        $ticket->setRequester($sender);
+
+        $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($defaultOrganization);
+        $ticket->setTeam($responsibleTeam);
+
+        return $ticket;
+    }
+
+    /**
+     * Return a ticket referenced by the email.
+     *
+     * A ticket is referenced by an email either if:
+     *
+     * - The `In-Reply-To` header references a previous email sent by Bileto
+     *   (i.e. referenced by a Message).
+     * - The subject or content is referencing a ticket id.
+     */
+    private function getAnsweredTicket(Entity\MailboxEmail $mailboxEmail): ?Entity\Ticket
     {
         $replyId = $mailboxEmail->getInReplyTo();
 
@@ -249,9 +286,64 @@ class CreateTicketsFromMailboxEmailsHandler
     }
 
     /**
-     * @return array<string, MessageDocument>
+     * Return whether the user can answer the ticket.
+     *
+     * The user must have the orga:create:tickets:messages permission on the
+     * ticket's organization, and the ticket must not be closed.
      */
-    private function storeAttachments(MailboxEmail $mailboxEmail): array
+    private function canAnswerTicket(Entity\User $user, Entity\Ticket $ticket): bool
+    {
+        $canAnswerTicket = $this->authorizer->isGrantedToUser(
+            $user,
+            'orga:create:tickets:messages',
+            $ticket,
+        );
+
+        return $canAnswerTicket && !$ticket->isClosed();
+    }
+
+    /**
+     * Create and return a message by using the email data (e.g. headers, body,
+     * attachments) and attach it to the ticket.
+     */
+    private function createMessage(
+        Entity\MailboxEmail $mailboxEmail,
+        Entity\Ticket $ticket,
+    ): Entity\Message {
+        // Extract the attachments and format the email body correctly.
+        $messageDocuments = $this->storeAttachments($mailboxEmail);
+        $this->messageDocumentRepository->save($messageDocuments, true);
+
+        $messageContent = $mailboxEmail->getBody();
+        // Inline attachments (i.e. <img>) have URLs of type: `cid:<id>`.
+        // Here we replace these URLs with the application URLs to the message documents.
+        $messageContent = $this->replaceAttachmentsUrls($messageContent, $messageDocuments);
+        // Sanitize the HTML only after replacing the URLs or it would
+        // remove the `src` attributes as the `cid:` scheme is forbidden.
+        $messageContent = $this->appMessageSanitizer->sanitize($messageContent);
+
+        // Finally, we create the message corresponding to the email.
+        $message = new Entity\Message();
+        $message->setCreatedAt($mailboxEmail->getDate());
+        $message->setContent($messageContent);
+        $message->setTicket($ticket);
+        $message->setIsConfidential(false);
+        $message->setVia('email');
+
+        $emailId = $mailboxEmail->getMessageId();
+        $message->addEmailNotificationReference($emailId);
+
+        $this->messageRepository->save($message, true);
+
+        return $message;
+    }
+
+    /**
+     * Store the email attachments as MessageDocuments.
+     *
+     * @return array<string, Entity\MessageDocument>
+     */
+    private function storeAttachments(Entity\MailboxEmail $mailboxEmail): array
     {
         $messageDocuments = [];
 
@@ -269,7 +361,7 @@ class CreateTicketsFromMailboxEmailsHandler
 
             if (!$status) {
                 $this->logger->warning(
-                    "MailboxEmail {$mailboxEmail->getId()} cannot import {$filename}: can't save in temporary dir"
+                    "MailboxEmail #{$mailboxEmail->getId()} cannot import {$filename}: can't save in temporary dir"
                 );
                 continue;
             }
@@ -279,9 +371,9 @@ class CreateTicketsFromMailboxEmailsHandler
 
             try {
                 $messageDocuments[$id] = $this->messageDocumentStorage->store($file, $filename);
-            } catch (MessageDocumentStorageError $e) {
+            } catch (Service\MessageDocumentStorageError $e) {
                 $this->logger->warning(
-                    "MailboxEmail {$mailboxEmail->getId()} cannot import {$filename}: {$e->getMessage()}"
+                    "MailboxEmail #{$mailboxEmail->getId()} cannot import {$filename}: {$e->getMessage()}"
                 );
                 continue;
             }
@@ -294,7 +386,7 @@ class CreateTicketsFromMailboxEmailsHandler
      * Replace (in the given content) the image src attributes of the inline
      * attachments with the URLs of the corresponding message documents.
      *
-     * @param array<string, MessageDocument> $messageDocuments
+     * @param array<string, Entity\MessageDocument> $messageDocuments
      */
     private function replaceAttachmentsUrls(string $content, array $messageDocuments): string
     {
@@ -318,9 +410,9 @@ class CreateTicketsFromMailboxEmailsHandler
         return Utils\DomHelper::replaceImagesUrls($content, $mapping);
     }
 
-    private function markError(MailboxEmail $mailboxEmail, string $error): void
+    private function markError(Entity\MailboxEmail $mailboxEmail, string $error): void
     {
-        $this->logger->warning("MailboxEmail {$mailboxEmail->getId()} cannot be imported: {$error}");
+        $this->logger->warning("MailboxEmail #{$mailboxEmail->getId()} cannot be imported: {$error}");
 
         $mailboxEmail->setLastError($error);
         $this->mailboxEmailRepository->save($mailboxEmail, true);

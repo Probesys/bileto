@@ -363,6 +363,50 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertEmailHeaderSame($email, 'To', $assignee->getEmail());
     }
 
+    public function testInvokeAnswersToTicketIfSenderIsObserverOnlyAllowedToAnswer(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => null,
+        ]);
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets:messages',
+        ], $organization->_real());
+        $ticket = TicketFactory::createOne([
+            'status' => 'new',
+            'organization' => $organization,
+            'observers' => [$user],
+        ]);
+        /** @var string */
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $subject = "Re: [#{$ticket->getId()}] " . $subject;
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $message = MessageFactory::first();
+        $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
+        $this->assertSame($ticket->getId(), $message->getTicket()->getId());
+        $this->assertSame('email', $message->getVia());
+    }
+
     public function testInvokeCreatesATicketIfTicketIdIsGivenButPermissionsAreInsufficient(): void
     {
         $container = static::getContainer();
