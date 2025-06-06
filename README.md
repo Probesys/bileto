@@ -22,6 +22,8 @@ It allows you to:
 - Work in different environments (mobile and dark modes are available);
 - And a lot more to come: [see our roadmap to learn more.](/ROADMAP.md)
 
+Bileto is [<abbr>GDPR</abbr>](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation)-compliant.
+
 ![Screenshot of the tickets page of Bileto showing 3 opened tickets and a search form.](public/screenshot.webp)
 
 It is written with [Symfony](https://symfony.com/) and works with [PHP](https://www.php.net/) 8.2+.
