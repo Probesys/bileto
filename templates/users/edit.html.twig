@@ -41,6 +41,7 @@
         <div class="panel">
             {{ include('users/_form.html.twig', { 'form': form }) }}
         </div>
+
         {% if user != app.user %}
             <div class="panel">
                 <form action="{{ path('delete user', { uid: user.uid }) }}" method="post" class="form--standard">
