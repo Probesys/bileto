@@ -78,7 +78,7 @@ jobs:
 
         services:
             mariadb:
-                image: mariadb:10.5
+                image: mariadb:10.6
                 ports:
                     - 3306:3306
                 env:
@@ -116,4 +116,4 @@ jobs:
             - name: Run the test suite
               run: make test
               env:
-                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/bileto_test?serverVersion=10.5.27-MariaDB'
+                  DATABASE_URL: 'mysql://root:mariadb@127.0.0.1:3306/bileto_test?serverVersion=10.6.22-MariaDB'

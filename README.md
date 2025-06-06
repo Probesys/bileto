@@ -27,7 +27,7 @@ Bileto is [<abbr>GDPR</abbr>](https://en.wikipedia.org/wiki/General_Data_Protect
 ![Screenshot of the tickets page of Bileto showing 3 opened tickets and a search form.](public/screenshot.webp)
 
 It is written with [Symfony](https://symfony.com/) and works with [PHP](https://www.php.net/) 8.2+.
-The supported databases are PostgreSQL >= 13 and MariaDB >= 10.5.
+The supported databases are PostgreSQL >= 13 and MariaDB >= 10.6.
 
 It is developed by [Probesys](https://probesys.coop) as a community project.
 

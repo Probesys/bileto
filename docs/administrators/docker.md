@@ -91,6 +91,7 @@ services:
         environment:
             - MARIADB_ROOT_PASSWORD=secret
             - MARIADB_DATABASE=bileto
+            - MARIADB_AUTO_UPGRADE=1
         volumes:
             - database:/var/lib/mysql
         healthcheck:

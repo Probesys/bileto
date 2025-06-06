@@ -7,6 +7,8 @@
 It is now possible to declare trusted proxies to get the real client IP by
 setting the `TRUSTED_PROXIES` environment variable.
 
+MariaDB 10.6+ is now required as [MariaDB 10.5 will soon reach its end of life](https://mariadb.org/about/#maintenance-policy).
+
 ## 2025-01-16 - 0.14.0
 
 ### Breaking changes

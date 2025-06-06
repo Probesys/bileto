@@ -59,10 +59,11 @@ services:
             - pgsql
 
     mariadb:
-        image: mariadb:10.5
+        image: mariadb:10.6
         restart: unless-stopped
         environment:
             MARIADB_ROOT_PASSWORD: mariadb
+            MARIADB_AUTO_UPGRADE: 1
         profiles:
             - mariadb
 

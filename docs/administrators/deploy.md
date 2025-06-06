@@ -33,11 +33,11 @@ $ psql --version
 psql (PostgreSQL) 14.3
 ```
 
-Or if you use MariaDB (must be >= 10.5):
+Or if you use MariaDB (must be >= 10.6):
 
 ```console
 $ mariadb --version
-mariadb 10.6.11-MariaDB
+mariadb 10.6.22-MariaDB
 ```
 
 Check [Composer](https://getcomposer.org/) is installed:
