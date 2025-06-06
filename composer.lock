@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0edba89d390c72dcd396d9d2516f8072",
+    "content-hash": "d3d8c01e04249b63a910686e74ff5f5b",
     "packages": [
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -8386,16 +8386,16 @@
         },
         {
             "name": "webklex/php-imap",
-            "version": "dev-master",
+            "version": "6.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Webklex/php-imap.git",
-                "reference": "6d999438d29ed0bb920cd897b200a3a5fd6b6380"
+                "reference": "6b8ef85d621bbbaf52741b00cca8e9237e2b2e05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Webklex/php-imap/zipball/6d999438d29ed0bb920cd897b200a3a5fd6b6380",
-                "reference": "6d999438d29ed0bb920cd897b200a3a5fd6b6380",
+                "url": "https://api.github.com/repos/Webklex/php-imap/zipball/6b8ef85d621bbbaf52741b00cca8e9237e2b2e05",
+                "reference": "6b8ef85d621bbbaf52741b00cca8e9237e2b2e05",
                 "shasum": ""
             },
             "require": {
@@ -8418,7 +8418,6 @@
                 "symfony/mime": "Recomended for better extension support",
                 "symfony/var-dumper": "Usefull tool for debugging"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -8452,7 +8451,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Webklex/php-imap/issues",
-                "source": "https://github.com/Webklex/php-imap/tree/master"
+                "source": "https://github.com/Webklex/php-imap/tree/6.2.0"
             },
             "funding": [
                 {
@@ -8464,7 +8463,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2025-01-28T12:03:30+00:00"
+            "time": "2025-04-25T06:02:37+00:00"
         }
     ],
     "packages-dev": [
@@ -11171,9 +11170,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "webklex/php-imap": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
