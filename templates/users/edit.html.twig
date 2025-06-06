@@ -41,5 +41,31 @@
         <div class="panel">
             {{ include('users/_form.html.twig', { 'form': form }) }}
         </div>
+
+        {% if user != app.user %}
+            <div class="panel">
+                <form action="{{ path('delete user', { uid: user.uid }) }}" method="post" class="form--standard">
+                    <h2>{{ 'users.deletion.title' | trans }}</h2>
+
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'warning',
+                        title: 'common.caution' | trans,
+                        message: 'users.deletion.going_delete' | trans({ user: user.displayName }),
+                    }, with_context = false) }}
+
+                    <div class="form__actions">
+                        <button
+                            class="button--primary"
+                            type="submit"
+                            data-turbo-confirm="{{ 'users.deletion.confirm' | trans }}"
+                        >
+                            {{ 'users.deletion.submit' | trans }}
+                        </button>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete user') }}">
+                </form>
+            </div>
+        {% endif %}
     </main>
 {% endblock %}

@@ -14,6 +14,7 @@ use App\Service\Sorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UsersController extends BaseController
 {
@@ -109,5 +110,33 @@ class UsersController extends BaseController
             'user' => $user,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/users/{uid:user}/deletion', name: 'delete user', methods: ['POST'])]
+    public function delete(
+        Entity\User $user,
+        Request $request,
+        Repository\UserRepository $userRepository,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('admin:manage:users');
+
+        /** @var Entity\User */
+        $currentUser = $this->getUser();
+
+        if ($user->getUid() === $currentUser->getUid()) {
+            throw $this->createAccessDeniedException('Users cannot delete themselves');
+        }
+
+        $csrfToken = $request->request->getString('_csrf_token', '');
+
+        if (!$this->isCsrfTokenValid('delete user', $csrfToken)) {
+            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            return $this->redirectToRoute('edit user', ['uid' => $user->getUid()]);
+        }
+
+        $userRepository->remove($user, true);
+
+        return $this->redirectToRoute('users');
     }
 }
