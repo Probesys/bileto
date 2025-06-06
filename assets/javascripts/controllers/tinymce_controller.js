@@ -48,6 +48,7 @@ export default class extends Controller {
             relative_urls: false,
             remove_script_host: false,
             highlight_on_focus: false,
+            browser_spellcheck: true,
 
             setup: (editor) => {
                 editor.on('focus', () => {
