@@ -10,6 +10,7 @@ use App\Entity;
 use App\Repository;
 use App\Utils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -36,12 +37,21 @@ class AppVoter extends Voter
         );
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
-    {
+    protected function voteOnAttribute(
+        string $attribute,
+        mixed $subject,
+        TokenInterface $token,
+        ?Vote $vote = null,
+    ): bool {
         $user = $token->getUser();
 
-        if (!($user instanceof Entity\User) || $user->isAnonymized()) {
-            // Deny access if the user is not set or if the user is anonymized.
+        if (!$user instanceof Entity\User) {
+            $vote?->addReason('User is not logged in');
+            return false;
+        }
+
+        if ($user->isAnonymized()) {
+            $vote?->addReason("User (id: {$user->getId()}) is anonymized");
             return false;
         }
 
@@ -72,11 +82,16 @@ class AppVoter extends Voter
         });
 
         if (!$isGranted) {
+            $reason = "Permission {$attribute} is not granted to user (id: {$user->getId()})";
+            if ($scope instanceof Entity\Organization) {
+                $reason .= " in the organization {$scope->getId()}";
+            }
+            $vote?->addReason($reason);
             return false;
         } elseif (!$ticket || $ticket->hasActor($user)) {
             return true;
         } else {
-            return $this->voteOnAttribute('orga:see:tickets:all', $scope, $token);
+            return $this->voteOnAttribute('orga:see:tickets:all', $scope, $token, $vote);
         }
     }
 }
