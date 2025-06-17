@@ -174,12 +174,6 @@ class TicketForm extends AbstractType
             $form = $event->getForm();
             $ticket = $event->getData();
 
-            $isResolved = $form->has('isResolved') && $form->get('isResolved')->getData();
-
-            if ($isResolved) {
-                $ticket->setStatus('resolved');
-            }
-
             $team = $ticket->getTeam();
             $assignee = $ticket->getAssignee();
 
