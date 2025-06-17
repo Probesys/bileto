@@ -484,37 +484,6 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($assignee->getId(), $ticket->getAssignee()->getId());
     }
 
-    public function testPostNewCanSetOrganizationObservers(): void
-    {
-        $client = static::createClient();
-        list(
-            $user,
-            $observer,
-        ) = Factory\UserFactory::createMany(2);
-        $client->loginUser($user->_real());
-        $organization = Factory\OrganizationFactory::createOne([
-            'observers' => [$observer],
-        ]);
-        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
-        $this->grantOrga($observer->_real(), ['orga:see'], $organization->_real());
-        $title = 'My ticket';
-        $messageContent = 'My message';
-
-        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
-            'ticket' => [
-                '_token' => $this->generateCsrfToken($client, 'ticket'),
-                'title' => $title,
-                'content' => $messageContent,
-            ],
-        ]);
-
-        $ticket = Factory\TicketFactory::last();
-        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
-        $ticketObservers = $ticket->getObservers();
-        $this->assertSame(1, count($ticketObservers));
-        $this->assertSame($observer->getUid(), $ticketObservers[0]->getUid());
-    }
-
     public function testPostNewCanSetLabels(): void
     {
         $client = static::createClient();

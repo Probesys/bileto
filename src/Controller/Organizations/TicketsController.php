@@ -111,6 +111,10 @@ class TicketsController extends BaseController
         $ticket->setRequester($user);
         $ticket->setTeam($responsibleTeam);
 
+        foreach ($organization->getObservers() as $observer) {
+            $ticket->addObserver($observer);
+        }
+
         $form = $this->createNamedForm('ticket', Form\TicketForm::class, $ticket);
 
         $form->handleRequest($request);
