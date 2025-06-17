@@ -32,11 +32,11 @@
         padding: var(--space-small) var(--space-medium);
 
         background-color: var(--color-teal12);
-        border-top: var(--border-width) solid rgba(255 255 255 / 15%);
+        border-top: var(--border-width) solid rgb(255 255 255 / 15%);
     }
 
     .layout__header-item + .layout__header-item {
-        border-top: var(--border-width) solid rgba(255 255 255 / 15%);
+        border-top: var(--border-width) solid rgb(255 255 255 / 15%);
     }
 }
 
