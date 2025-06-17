@@ -6,43 +6,33 @@
 
 namespace App\Twig;
 
-use App\Service\DateTranslator;
-use App\Utils\Time;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use App\Service;
+use App\Utils;
+use Twig\Attribute\AsTwigFilter;
 
-class DateFormatterExtension extends AbstractExtension
+class DateFormatterExtension
 {
-    private DateTranslator $dateTranslator;
-
-    public function __construct(DateTranslator $dateTranslator)
-    {
-        $this->dateTranslator = $dateTranslator;
+    public function __construct(
+        private Service\DateTranslator $dateTranslator,
+    ) {
     }
 
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('dateTrans', [$this, 'dateTrans']),
-            new TwigFilter('dateIso', [$this, 'dateIso']),
-            new TwigFilter('dateFull', [$this, 'dateFull']),
-            new TwigFilter('dateShort', [$this, 'dateShort']),
-        ];
-    }
-
+    #[AsTwigFilter('dateTrans')]
     public function dateTrans(\DateTimeInterface $date, string $format = 'dd MMM yyyy, HH:mm'): string
     {
         return $this->dateTranslator->format($date, $format);
     }
 
+    #[AsTwigFilter('dateIso')]
     public function dateIso(\DateTimeInterface $date): string
     {
         return $date->format(\DateTimeInterface::ATOM);
     }
 
+    #[AsTwigFilter('dateFull')]
     public function dateFull(\DateTimeInterface $date, bool $fullMonth = false, bool $cleverYear = true): string
     {
-        $today = Time::relative('today');
+        $today = Utils\Time::relative('today');
         $currentYear = $today->format('Y');
         $dateYear = $date->format('Y');
 
@@ -63,9 +53,10 @@ class DateFormatterExtension extends AbstractExtension
         return $this->dateTrans($date, $format);
     }
 
+    #[AsTwigFilter('dateShort')]
     public function dateShort(\DateTimeInterface $date, bool $fullMonth = false, bool $cleverYear = true): string
     {
-        $today = Time::relative('today');
+        $today = Utils\Time::relative('today');
         $currentYear = $today->format('Y');
         $dateYear = $date->format('Y');
 

@@ -9,10 +9,9 @@ namespace App\Twig;
 use App\Utils;
 use Symfony\Component\Asset;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class EsbuildAssetExtension extends AbstractExtension
+class EsbuildAssetExtension
 {
     public function __construct(
         private string $pathToAssets,
@@ -21,13 +20,7 @@ class EsbuildAssetExtension extends AbstractExtension
     ) {
     }
 
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('esbuild_asset', [$this, 'esbuildAsset']),
-        ];
-    }
-
+    #[AsTwigFunction('esbuild_asset')]
     public function esbuildAsset(string $assetPath): string
     {
         $assetStrategy = new Utils\AssetsMtimeStrategy($this->pathToPublic);

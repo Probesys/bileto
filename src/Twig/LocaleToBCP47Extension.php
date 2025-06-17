@@ -6,21 +6,11 @@
 
 namespace App\Twig;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use Twig\Attribute\AsTwigFilter;
 
-class LocaleToBCP47Extension extends AbstractExtension
+class LocaleToBCP47Extension
 {
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter(
-                'locale_to_bcp47',
-                [$this, 'localeToBCP47'],
-            ),
-        ];
-    }
-
+    #[AsTwigFilter('locale_to_bcp47')]
     public function localeToBCP47(string $locale): string
     {
         $splittedLocale = explode('_', $locale, 2);

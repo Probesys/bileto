@@ -6,27 +6,16 @@
 
 namespace App\Twig;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class SettingsExtension extends AbstractExtension
+class SettingsExtension
 {
     public function __construct(
         private string $customLogoPathname,
     ) {
     }
 
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction(
-                'logo',
-                [$this, 'logo'],
-                ['is_safe' => ['html']]
-            ),
-        ];
-    }
-
+    #[AsTwigFunction('logo', isSafe: ['html'])]
     public function logo(): string
     {
         if (file_exists($this->customLogoPathname)) {

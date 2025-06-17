@@ -16,14 +16,13 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
     name: 'db:seeds:load',
     description: 'Load seeds in database.',
 )]
-class SeedsCommand extends Command
+class SeedsCommand
 {
     public function __construct(
         private string $environment,
@@ -40,10 +39,9 @@ class SeedsCommand extends Command
         private Service\Locales $locales,
         private UserPasswordHasherInterface $passwordHasher,
     ) {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(): int
     {
         // Seed roles (for both development and production environments)
         $roleSuper = $this->roleRepository->findOrCreateSuperRole();

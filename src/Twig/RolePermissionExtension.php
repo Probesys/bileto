@@ -6,18 +6,11 @@
 
 namespace App\Twig;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use Twig\Attribute\AsTwigFilter;
 
-class RolePermissionExtension extends AbstractExtension
+class RolePermissionExtension
 {
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('rolePermissionToLabel', [$this, 'rolePermissionToLabel']),
-        ];
-    }
-
+    #[AsTwigFilter('rolePermissionToLabel')]
     public function rolePermissionToLabel(string $permission): string
     {
         $label = str_replace(':', '.', $permission);

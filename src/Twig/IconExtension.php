@@ -7,32 +7,17 @@
 namespace App\Twig;
 
 use Symfony\Component\Asset\Packages;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class IconExtension extends AbstractExtension
+class IconExtension
 {
-    private string $pathToIcons = '';
-
-    private Packages $assetPackages;
-
-    public function __construct(string $pathToIcons, Packages $assetPackages)
-    {
-        $this->pathToIcons = $pathToIcons;
-        $this->assetPackages = $assetPackages;
+    public function __construct(
+        private string $pathToIcons,
+        private Packages $assetPackages,
+    ) {
     }
 
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction(
-                'icon',
-                [$this, 'icon'],
-                ['is_safe' => ['html']]
-            ),
-        ];
-    }
-
+    #[AsTwigFunction('icon', isSafe: ['html'])]
     public function icon(string $iconName, string $additionalClassNames = ''): string
     {
         $iconName = htmlspecialchars($iconName);

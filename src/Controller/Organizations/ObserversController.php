@@ -10,7 +10,6 @@ use App\Controller\BaseController;
 use App\Entity;
 use App\Repository;
 use App\Security;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,13 +18,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ObserversController extends BaseController
 {
     #[Route(
-        '/organizations/{uid:organization}/observers/{uidUser:user}/switch',
+        '/organizations/{uid:organization}/observers/{uidUser:user.uid}/switch',
         name: 'switch organization observer',
         methods: ['POST'],
     )]
     public function switch(
         Entity\Organization $organization,
-        #[MapEntity(mapping: ['user' => 'uid'])]
         Entity\User $user,
         Request $request,
         Repository\OrganizationRepository $organizationRepository,

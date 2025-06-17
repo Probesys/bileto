@@ -96,17 +96,18 @@ class SynchronizeLdapHandlerTest extends WebTestCase
         $this->assertSame(2, Factory\UserFactory::count());
         $this->assertSame(1, Factory\AuthorizationFactory::count());
 
-        $users = Factory\UserFactory::all();
-        $this->assertSame('charlie@example.com', $users[0]->getEmail());
+        $user1 = Factory\UserFactory::first(sortBy: 'email');
+        $user2 = Factory\UserFactory::last(sortBy: 'email');
+        $this->assertSame('charlie@example.com', $user1->getEmail());
         Factory\AuthorizationFactory::assert()->exists([
-            'holder' => $users[0],
+            'holder' => $user1,
             'role' => $defaultRole,
             'organization' => $defaultOrganization,
         ]);
-        $this->assertSame('dominique@example.org', $users[1]->getEmail());
+        $this->assertSame('dominique@example.org', $user2->getEmail());
         // example.org is not handled by any organization
         Factory\AuthorizationFactory::assert()->notExists([
-            'holder' => $users[1],
+            'holder' => $user2,
         ]);
     }
 }

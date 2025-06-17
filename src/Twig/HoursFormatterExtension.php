@@ -7,22 +7,13 @@
 namespace App\Twig;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use Twig\Attribute\AsTwigFilter;
 
-class HoursFormatterExtension extends AbstractExtension
+class HoursFormatterExtension
 {
     public function __construct(
         private TranslatorInterface $translator,
     ) {
-    }
-
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('formatHours', [$this, 'formatHours']),
-            new TwigFilter('formatMinutes', [$this, 'formatMinutes']),
-        ];
     }
 
     /**
@@ -33,6 +24,7 @@ class HoursFormatterExtension extends AbstractExtension
      *
      * @param 'short'|'long' $format
      */
+    #[AsTwigFilter('formatHours')]
     public function formatHours(int|float $hours, string $format = 'short'): string
     {
         $hoursOnly = intval(floor($hours));
@@ -46,6 +38,7 @@ class HoursFormatterExtension extends AbstractExtension
      *
      * @param 'short'|'long' $format
      */
+    #[AsTwigFilter('formatMinutes')]
     public function formatMinutes(int $minutes, string $format = 'short'): string
     {
         $hours = intdiv($minutes, 60);

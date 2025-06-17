@@ -9,10 +9,9 @@ namespace App\Twig;
 use App\Entity;
 use App\Repository;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use Twig\Attribute\AsTwigFilter;
 
-class TicketEventChangesFormatterExtension extends AbstractExtension
+class TicketEventChangesFormatterExtension
 {
     public function __construct(
         private Repository\ContractRepository $contractRepository,
@@ -24,13 +23,7 @@ class TicketEventChangesFormatterExtension extends AbstractExtension
     ) {
     }
 
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('formatTicketChanges', [$this, 'formatTicketChanges']),
-        ];
-    }
-
+    #[AsTwigFilter('formatTicketChanges')]
     public function formatTicketChanges(Entity\EntityEvent $event, string $field): string
     {
         $user = $event->getCreatedBy();

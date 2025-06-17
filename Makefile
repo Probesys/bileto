@@ -146,7 +146,7 @@ ifeq ($(LINTER), $(filter $(LINTER), all phpcs))
 endif
 ifeq ($(LINTER), $(filter $(LINTER), all symfony))
 	$(CONSOLE) lint:container
-	$(CONSOLE) lint:twig
+	$(CONSOLE) lint:twig --show-deprecations
 	$(CONSOLE) lint:translations --locale=en_GB --locale=fr_FR
 endif
 ifeq ($(LINTER), $(filter $(LINTER), all js))

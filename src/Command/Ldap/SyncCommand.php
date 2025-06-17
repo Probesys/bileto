@@ -9,9 +9,6 @@ namespace App\Command\Ldap;
 use App\Message\SynchronizeLdap;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
@@ -19,15 +16,14 @@ use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
     name: 'app:ldap:sync',
     description: 'Synchronize the LDAP directory manually',
 )]
-class SyncCommand extends Command
+class SyncCommand
 {
     public function __construct(
         private MessageBusInterface $bus,
     ) {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(): int
     {
         $this->bus->dispatch(new SynchronizeLdap(), [
             new TransportNamesStamp('sync'),
