@@ -293,7 +293,7 @@ class CreateTicketsFromMailboxEmailsHandler
      */
     private function canAnswerTicket(Entity\User $user, Entity\Ticket $ticket): bool
     {
-        $canAnswerTicket = $this->authorizer->isGrantedToUser(
+        $canAnswerTicket = $this->authorizer->isGrantedForUser(
             $user,
             'orga:create:tickets:messages',
             $ticket,

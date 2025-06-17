@@ -42,7 +42,7 @@ class ObserversController extends BaseController
             ]);
         }
 
-        if (!$authorizer->isGrantedToUser($user, 'orga:see', $organization)) {
+        if (!$authorizer->isGrantedForUser($user, 'orga:see', $organization)) {
             $this->addFlash('error', $translator->trans('organization.observers.not_authorized', [], 'errors'));
             return $this->redirectToRoute('organization users', [
                 'uid' => $organization->getUid(),

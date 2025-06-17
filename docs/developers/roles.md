@@ -124,7 +124,7 @@ if ($authorizer->isGranted('orga:see', $organization)) {
 }
 
 // Or to check the permission of a specific user
-if ($authorizer->isGrantedToUser($a_user, 'orga:see', $organization)) {
+if ($authorizer->isGrantedForUser($a_user, 'orga:see', $organization)) {
     // …
 }
 
@@ -143,7 +143,7 @@ In templates:
 {% endif %}
 
 {# Or to check the permission of a specific user #}
-{% if is_granted_to_user(a_user, 'orga:manage', organization) %}
+{% if is_granted_for_user(a_user, 'orga:manage', organization) %}
     <a href="...">Delete</a>
 {% endif %}
 

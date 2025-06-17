@@ -50,12 +50,12 @@ class TransfersSubscriber implements EventSubscriberInterface
         }
 
         $assignee = $ticket->getAssignee();
-        if ($assignee && !$this->authorizer->isGrantedToUser($assignee, 'orga:see', $organization)) {
+        if ($assignee && !$this->authorizer->isGrantedForUser($assignee, 'orga:see', $organization)) {
             $ticket->setAssignee(null);
         }
 
         foreach ($ticket->getObservers() as $observer) {
-            if (!$this->authorizer->isGrantedToUser($observer, 'orga:see', $organization)) {
+            if (!$this->authorizer->isGrantedForUser($observer, 'orga:see', $organization)) {
                 $ticket->removeObserver($observer);
             }
         }

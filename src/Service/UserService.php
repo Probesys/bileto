@@ -34,7 +34,7 @@ class UserService
 
         if (
             $organization &&
-            $this->authorizer->isGrantedToUser($user, 'orga:create:tickets', $organization)
+            $this->authorizer->isGrantedForUser($user, 'orga:create:tickets', $organization)
         ) {
             return $organization;
         }
@@ -44,7 +44,7 @@ class UserService
 
         if (
             $domainOrganization &&
-            $this->authorizer->isGrantedToUser($user, 'orga:create:tickets', $domainOrganization)
+            $this->authorizer->isGrantedForUser($user, 'orga:create:tickets', $domainOrganization)
         ) {
             return $domainOrganization;
         }
@@ -58,7 +58,7 @@ class UserService
         return Utils\ArrayHelper::find(
             $authorizedOrganizations,
             function ($organization) use ($user): bool {
-                return $this->authorizer->isGrantedToUser(
+                return $this->authorizer->isGrantedForUser(
                     $user,
                     'orga:create:tickets',
                     $organization

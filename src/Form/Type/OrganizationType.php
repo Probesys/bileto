@@ -85,7 +85,7 @@ class OrganizationType extends AbstractType
             $organizations = array_filter(
                 $organizations,
                 function ($organization) use ($contextUser, $permission): bool {
-                    return $this->authorizer->isGrantedToUser(
+                    return $this->authorizer->isGrantedForUser(
                         $contextUser,
                         $permission,
                         $organization

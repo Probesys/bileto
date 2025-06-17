@@ -9,7 +9,6 @@ namespace App\Security;
 use App\Entity;
 use App\Repository;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -27,7 +26,6 @@ class Authorizer
         private Repository\OrganizationRepository $organizationRepository,
         private Repository\UserRepository $userRepository,
         private Security $security,
-        private AccessDecisionManagerInterface $accessDecisionManager,
     ) {
     }
 
@@ -118,10 +116,9 @@ class Authorizer
     /**
      * Check that the attribute is granted for the given user.
      */
-    public function isGrantedToUser(UserInterface $user, mixed $attribute, mixed $subject = null): bool
+    public function isGrantedForUser(UserInterface $user, mixed $attribute, mixed $subject = null): bool
     {
-        $token = new Authentication\UserToken($user);
-        return $this->accessDecisionManager->decide($token, [$attribute], $subject);
+        return $this->security->isGrantedForUser($user, $attribute, $subject);
     }
 
     /**
@@ -141,7 +138,7 @@ class Authorizer
         }
 
         return array_filter($organizations, function ($organization) use ($user, $permission): bool {
-            return $this->isGrantedToUser($user, $permission, $organization);
+            return $this->isGrantedForUser($user, $permission, $organization);
         });
     }
 
@@ -187,7 +184,7 @@ class Authorizer
 
         if (
             $defaultOrganization &&
-            !$this->isGrantedToUser($user, 'orga:create:tickets', $defaultOrganization)
+            !$this->isGrantedForUser($user, 'orga:create:tickets', $defaultOrganization)
         ) {
             $user->setOrganization(null);
             $this->userRepository->save($user, true);
