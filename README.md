@@ -2,7 +2,7 @@
 
 <p align="center">
     <strong>The ergonomic ticketing tool for managing your Help Desk.</strong><br>
-    <a href="https://bileto.fr">bileto.fr</a>
+    <a href="https://bileto.coop">bileto.coop</a>
 </p>
 
 ---

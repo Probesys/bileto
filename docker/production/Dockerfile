@@ -24,8 +24,8 @@ ENTRYPOINT ["sh", "/entrypoint.sh"]
 ARG VERSION
 ARG SOURCE_COMMIT
 
-LABEL org.opencontainers.image.authors="Probesys <https://www.probesys.coop>" \
-      org.opencontainers.image.url="https://bileto.fr/" \
+LABEL org.opencontainers.image.authors="Probesys <https://probesys.coop>" \
+      org.opencontainers.image.url="https://bileto.coop" \
       org.opencontainers.image.documentation="https://github.com/Probesys/bileto/tree/main/docs" \
       org.opencontainers.image.source="https://github.com/Probesys/bileto" \
       org.opencontainers.image.version="${VERSION}" \
