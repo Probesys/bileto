@@ -44,17 +44,17 @@ class CleanDataHandlerTest extends WebTestCase
         $this->assertSame($tokenNotExpired->getId(), $token->getId());
     }
 
-    public function testInvokeDeletesSessionLogsOlderThanOneYear(): void
+    public function testInvokeDeletesSessionLogsOlderThanSixMonths(): void
     {
         $container = static::getContainer();
         /** @var MessageBusInterface */
         $bus = $container->get(MessageBusInterface::class);
 
         $sessionLogExpired = Factory\SessionLogFactory::createOne([
-            'createdAt' => Utils\Time::ago(1, 'year'),
+            'createdAt' => Utils\Time::ago(6, 'months'),
         ]);
         $sessionLogNotExpired = Factory\SessionLogFactory::createOne([
-            'createdAt' => Utils\Time::ago(6, 'months'),
+            'createdAt' => Utils\Time::ago(5, 'months'),
         ]);
 
         $this->assertSame(2, Factory\SessionLogFactory::count());

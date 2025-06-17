@@ -42,7 +42,7 @@ class CleanDataHandler
 
     private function cleanOldSessionLogs(): void
     {
-        $oneYearAgo = Utils\Time::ago(1, 'year');
+        $oneYearAgo = Utils\Time::ago(6, 'months');
         $countRemovedLogs = $this->sessionLogRepository->removeOlderThan($oneYearAgo);
 
         if ($countRemovedLogs > 0) {
