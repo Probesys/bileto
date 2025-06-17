@@ -288,8 +288,8 @@ class MessagesControllerTest extends WebTestCase
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
+            'contracts' => [$contract],
         ]);
-        $ticket->addContract($contract->_real());
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
@@ -324,8 +324,8 @@ class MessagesControllerTest extends WebTestCase
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
+            'contracts' => [$contract],
         ]);
-        $ticket->addContract($contract->_real());
         $messageContent = 'My message';
 
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
