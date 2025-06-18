@@ -1,13 +1,71 @@
 # Changelog of Bileto
 
-## unreleased
+## 2025-06-19 - 0.15.0
 
 ### Migration notes
 
-It is now possible to declare trusted proxies to get the real client IP by
-setting the `TRUSTED_PROXIES` environment variable.
+It is now possible to declare trusted proxies to get the real client IP by setting the `TRUSTED_PROXIES` environment variable.
 
-MariaDB 10.6+ is now required as [MariaDB 10.5 will soon reach its end of life](https://mariadb.org/about/#maintenance-policy).
+MariaDB 10.6+ is now required as [MariaDB 10.5 has reached its end of life](https://mariadb.org/about/#maintenance-policy).
+
+### New
+
+- Log the activity of the users' sessions ([4514ae0](https://github.com/Probesys/bileto/commit/4514ae0), [9477a2f](https://github.com/Probesys/bileto/commit/9477a2f))
+- Allow to anonymize the users ([5983087](https://github.com/Probesys/bileto/commit/5983087))
+- Allow to delete the users ([a0514cc](https://github.com/Probesys/bileto/commit/a0514cc))
+- Allow to prevent users from logging in to the Web interface ([e7b157d](https://github.com/Probesys/bileto/commit/e7b157d))
+- Allow to mark time spent not to be accounted ([daceddf](https://github.com/Probesys/bileto/commit/daceddf))
+- Allow browser spell check in rich text editor ([9c966e9](https://github.com/Probesys/bileto/commit/9c966e9))
+- Allow to remove default observers when opening a ticket ([30d76a2](https://github.com/Probesys/bileto/commit/30d76a2))
+
+### Improvements
+
+- Change quick search so it searches for tickets with any of the selected labels ([2f7cf1c](https://github.com/Probesys/bileto/commit/2f7cf1c))
+- Redirect to new contract after creating an organization if possible ([745fef6](https://github.com/Probesys/bileto/commit/745fef6))
+- Add user names to sent emails ([3654fd3](https://github.com/Probesys/bileto/commit/3654fd3))
+- Send individual "message" emails for each actor of the ticket ([e948e58](https://github.com/Probesys/bileto/commit/e948e58))
+- Use the email's date as message's creation date ([0ce6c95](https://github.com/Probesys/bileto/commit/0ce6c95))
+- Reference the incoming email Message-ID in messages ([f0ac0d3](https://github.com/Probesys/bileto/commit/f0ac0d3))
+- Improve the look of the alerts ([e1526f4](https://github.com/Probesys/bileto/commit/e1526f4))
+- Improve the look of the disabled inputs and textarea ([82623c2](https://github.com/Probesys/bileto/commit/82623c2))
+- Change bileto.fr website to bileto.coop ([14cd60d](https://github.com/Probesys/bileto/commit/14cd60d))
+
+### Bug fixes
+
+- Allow invited users to answer if they have no organization ([e7a2e66](https://github.com/Probesys/bileto/commit/e7a2e66))
+- Remove duplicated error on the message's content ([f9ad014](https://github.com/Probesys/bileto/commit/f9ad014))
+- Fix Mailbox encryption options ([9bd2fde](https://github.com/Probesys/bileto/commit/9bd2fde))
+- Don't change the last error date each time a Mailbox is synchronized ([9671d4c](https://github.com/Probesys/bileto/commit/9671d4c))
+
+### Technical
+
+- Allow to declare trusted proxies ([6f44c95](https://github.com/Probesys/bileto/commit/6f44c95))
+- Add a robots.txt file in public folder ([2c4dc28](https://github.com/Probesys/bileto/commit/2c4dc28))
+- Require MariaDB >= 10.6 ([75b0eb7](https://github.com/Probesys/bileto/commit/75b0eb7))
+- Add official support for PHP 8.4 ([4630402](https://github.com/Probesys/bileto/commit/4630402))
+- Remove the `app:secret` command ([a52ea08](https://github.com/Probesys/bileto/commit/a52ea08))
+
+### Documentation
+
+- Add a note about compliance with the GDPR ([f31e7e0](https://github.com/Probesys/bileto/commit/f31e7e0))
+
+### Developers
+
+- Upgrade to Symfony 7.3 ([e06d31f](https://github.com/Probesys/bileto/commit/e06d31f), [9f00c8a](https://github.com/Probesys/bileto/commit/9f00c8a))
+- Upgrade to PHPStan and Rector 2 ([cc8d207](https://github.com/Probesys/bileto/commit/cc8d207))
+- Upgrade to PHPImap 6.2.0 ([a8bd1cf](https://github.com/Probesys/bileto/commit/a8bd1cf))
+- Upgrade to TinyMCE 7.9.1 ([34af062](https://github.com/Probesys/bileto/commit/34af062))
+- Update the dependencies ([c9e7479](https://github.com/Probesys/bileto/commit/c9e7479), [b255bd6](https://github.com/Probesys/bileto/commit/b255bd6), [1cc6dda](https://github.com/Probesys/bileto/commit/1cc6dda))
+- Delete EntityEvents associated to deleted entities ([16499a1](https://github.com/Probesys/bileto/commit/16499a1))
+- Explain denied votes in AppVoter ([b926b5c](https://github.com/Probesys/bileto/commit/b926b5c))
+- Make timelines more generic ([0c0acca](https://github.com/Probesys/bileto/commit/0c0acca))
+- Reorganize and document the env files ([341aa50](https://github.com/Probesys/bileto/commit/341aa50))
+- Fix `serverVersion` number in `.env.dev` ([439fba3](https://github.com/Probesys/bileto/commit/439fba3))
+- Allow to not pass date to `Time::freeze` ([fa18d74](https://github.com/Probesys/bileto/commit/fa18d74))
+- Replace custom `isGrantedToUser` by the new SF `isGrantedForUser` ([015de85](https://github.com/Probesys/bileto/commit/015de85))
+- Fix copying the package files in the Dockerfile ([a40fdc6](https://github.com/Probesys/bileto/commit/a40fdc6))
+- Mark fields as rendered with `setRendered` ([8074484](https://github.com/Probesys/bileto/commit/8074484))
+- Add `displayDetailsOnPhpunitDeprecations` to PHPUnit config ([496bdab](https://github.com/Probesys/bileto/commit/496bdab))
 
 ## 2025-01-16 - 0.14.0
 
