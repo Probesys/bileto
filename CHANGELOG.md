@@ -1,5 +1,15 @@
 # Changelog of Bileto
 
+## 2025-06-30 - 0.15.1
+
+### Bug fixes
+
+- Fix transfer event when an organization has been deleted ([5b35a66](https://github.com/Probesys/bileto/commit/5b35a66))
+
+### Technical
+
+- Update the dependencies ([4ceccae](https://github.com/Probesys/bileto/commit/4ceccae))
+
 ## 2025-06-19 - 0.15.0
 
 ### Migration notes
