@@ -456,6 +456,7 @@ tickets.events.observers.added: '<strong>{username}</strong> added <i>{added}</i
 tickets.events.observers.added_and_removed: '<strong>{username}</strong> added {added}</i> and removed <i>{removed}</i> from observers'
 tickets.events.observers.removed: '<strong>{username}</strong> removed <i>{removed}</i> from observers'
 tickets.events.organization: '<strong>{username}</strong> transferred the ticket from <i>{oldValue}</i> to <i>{newValue}</i>'
+tickets.events.organization.deleted: 'deleted organization'
 tickets.events.priority: '<strong>{username}</strong> changed the priority from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.events.requester: '<strong>{username}</strong> changed the requester from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.events.solution.changed: '<strong>{username}</strong> changed the solution'

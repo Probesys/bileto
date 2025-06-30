@@ -468,10 +468,20 @@ class TicketEventChangesFormatterExtension
     private function formatOrganizationChanges(?Entity\User $user, array $changes): string
     {
         $username = $this->formatUserName($user);
+
         $oldOrganization = $this->organizationRepository->find($changes[0]);
-        $oldOrganizationName = $this->escape($oldOrganization->getName());
+        if ($oldOrganization) {
+            $oldOrganizationName = $this->escape($oldOrganization->getName());
+        } else {
+            $oldOrganizationName = $this->translator->trans('tickets.events.organization.deleted');
+        }
+
         $newOrganization = $this->organizationRepository->find($changes[1]);
-        $newOrganizationName = $this->escape($newOrganization->getName());
+        if ($newOrganization) {
+            $newOrganizationName = $this->escape($newOrganization->getName());
+        } else {
+            $newOrganizationName = $this->translator->trans('tickets.events.organization.deleted');
+        }
 
         return $this->translator->trans(
             'tickets.events.organization',
