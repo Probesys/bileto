@@ -42,7 +42,7 @@ In order to be able to open a pull request, you must fork the project first:
 
 1. open an account on [GitHub](https://github.com);
 2. fork the repository on your profile (i.e. the “fork” button on the top right of the repository page);
-3. clone the repository locally (e.g. `git clone https://github.com/<your-username>/bileto.git`);
+3. clone the repository locally (e.g. `git clone git@github.com:<your-username>/bileto.git`);
 4. start a new branch (e.g. `git switch -c patch`);
 
 ### Get help
