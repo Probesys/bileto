@@ -12,7 +12,7 @@ The `docker` command must be executable by your normal user.
 Clone the repository:
 
 ```console
-$ git clone https://github.com/Probesys/bileto.git
+$ git clone git@github.com:<your-username>/bileto.git
 ```
 
 Install the dependencies:
