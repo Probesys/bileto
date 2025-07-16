@@ -10,11 +10,13 @@ use App\Controller\BaseController;
 use App\Entity;
 use App\Form;
 use App\Repository;
+use App\Security;
 use App\TicketActivity\TicketEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ActorsController extends BaseController
 {
@@ -23,7 +25,9 @@ class ActorsController extends BaseController
         Entity\Ticket $ticket,
         Request $request,
         Repository\TicketRepository $ticketRepository,
+        Security\Authorizer $authorizer,
         EventDispatcherInterface $eventDispatcher,
+        TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
@@ -43,6 +47,14 @@ class ActorsController extends BaseController
             if ($initialAssignee != $newAssignee) {
                 $ticketEvent = new TicketEvent($ticket);
                 $eventDispatcher->dispatch($ticketEvent, TicketEvent::ASSIGNED);
+            }
+
+            if (!$authorizer->isGranted('orga:see', $ticket)) {
+                $this->addFlash('success', $translator->trans('tickets.actors.edit.no_access'));
+
+                return $this->redirectToRoute('organization tickets', [
+                    'uid' => $ticket->getOrganization()->getUid(),
+                ]);
             }
 
             return $this->redirectToRoute('ticket', [

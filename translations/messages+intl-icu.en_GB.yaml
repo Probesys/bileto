@@ -433,6 +433,7 @@ teams.show.authorizations.title: Authorizations
 teams.show.edit: 'Edit the team'
 teams.show.team_responsible: 'Responsible team'
 tickets.actors: Actors
+tickets.actors.edit.no_access: 'The actors have been updated, but you no longer have access to the ticket.'
 tickets.actors.edit.title: 'Edit the actors'
 tickets.assignee: Assignee
 tickets.contracts.edit.associate_unaccounted_times: 'Associate existing unaccounted spent times'
