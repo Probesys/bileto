@@ -12,6 +12,8 @@ The `docker` command must be executable by your normal user.
 Clone the repository:
 
 ```console
+$ git clone git@github.com:Probesys/bileto.git
+$ # or fork the project and clone your own repository
 $ git clone git@github.com:<your-username>/bileto.git
 ```
 
