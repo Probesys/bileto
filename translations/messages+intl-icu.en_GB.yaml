@@ -439,6 +439,7 @@ tickets.contracts.edit.associate_unaccounted_times: 'Associate existing unaccoun
 tickets.contracts.edit.title: 'Edit the contract'
 tickets.contracts.none: 'No contract'
 tickets.contracts.ongoing: 'Ongoing contract'
+tickets.actors.edit.no_access: 'The actors have been updated, but you no longer have access to the ticket'
 tickets.events.assignee.assigned: '<strong>{username}</strong> assigned the ticket to <i>{newValue}</i>'
 tickets.events.assignee.changed: '<strong>{username}</strong> changed the assignee from <i>{oldValue}</i> to <i>{newValue}</i>'
 tickets.events.assignee.unassigned: '<strong>{username}</strong> removed the assignee <i>{oldValue}</i>'
