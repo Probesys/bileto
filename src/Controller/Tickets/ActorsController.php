@@ -10,7 +10,7 @@ use App\Controller\BaseController;
 use App\Entity;
 use App\Form;
 use App\Repository;
-use App\Security\Authorizer;
+use App\Security;
 use App\TicketActivity\TicketEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +26,7 @@ class ActorsController extends BaseController
         Request $request,
         Repository\TicketRepository $ticketRepository,
         EventDispatcherInterface $eventDispatcher,
-        Authorizer $authorizer,
+        Security\Authorizer $authorizer,
         TranslatorInterface $translator,
     ): Response {
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $ticket);
