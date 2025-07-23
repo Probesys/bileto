@@ -85,17 +85,24 @@
                     </details>
                 {% endif %}
 
-                {% set labelsIsSet = field_value(quickSearchForm.labels) is not empty %}
+                {% if quickSearchForm.labels.vars.choices is not empty %}
+                      {% set labelsIsSet = field_value(quickSearchForm.labels) is not empty %}
 
-                <details class="accordion" {{ labelsIsSet ? 'open' }}>
-                    <summary class="accordion__title">
-                        {{ 'tickets.filters.labels.title' | trans }}
-                    </summary>
+                      <details class="accordion" {{ labelsIsSet ? 'open' }}>
+                          <summary class="accordion__title">
+                              {{ 'tickets.filters.labels.title' | trans }}
+                          </summary>
 
-                    <div class="accordion__body">
-                        {{ form_row(quickSearchForm.labels) }}
-                    </div>
-                </details>
+                          <div class="accordion__body">
+                              {{ form_row(quickSearchForm.labels) }}
+                          </div>
+                      </details>
+
+                {% else %}
+
+                     {% do quickSearchForm.labels.setRendered %}
+
+                {% endif %}
 
                 {% set prioritiesIsSet = field_value(quickSearchForm.priorities) is not empty %}
                 {% set urgenciesIsSet = field_value(quickSearchForm.urgencies) is not empty %}

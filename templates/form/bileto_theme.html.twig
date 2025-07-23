@@ -323,3 +323,66 @@
         {% endfor %}
     </div>
 {%- endblock labels_row -%}
+
+{%- block multitext_widget -%}
+    {% if inputAttrs is not defined %}
+        {% set inputAttrs = {} %}
+    {% endif %}
+
+    {% set hasPrototype = form.vars.prototype is defined %}
+
+    <div
+        class="input-texts"
+        data-controller="input-texts"
+        data-action="click->input-texts#focusInput"
+        data-input-texts-index-value="{{ form|length > 0 ? form|last.vars.name + 1 : 0 }}"
+        data-input-texts-name-value="{{ full_name }}"
+        {% if hasPrototype %}
+            data-input-texts-name-template-value="{{ form.vars.prototype.vars.full_name }}"
+        {% endif %}
+    >
+        <span class="input-texts__list" data-input-texts-target="list"></span>
+
+        <input
+            class="input-texts__input"
+            type="text"
+            id="{{ id }}"
+            value=""
+            data-input-texts-target="input"
+            data-action="keydown->input-texts#handleInput blur->input-texts#addCurrentValue"
+            {% if not valid %}
+                aria-invalid="true"
+                aria-errormessage="{{ id }}_error"
+            {% endif %}
+            {% for attr, value in inputAttrs %}
+                {{ attr }}="{{ value }}"
+            {% endfor %}
+        />
+
+        <template data-input-texts-target="template">
+            <button
+                type="button"
+                class="button--discreet-alt"
+                data-action="input-texts#remove keydown->input-texts#removeCurrent"
+                data-value=""
+                aria-label="{{ 'forms.input_texts.remove' | trans }}"
+            >
+                <span data-target="value"></span>
+                {{ icon('close') }}
+            </button>
+        </template>
+
+        {% for child in form %}
+            <input
+                type="hidden"
+                name="{{ child.vars.full_name }}"
+                value="{{ child.vars.value }}"
+                data-input-texts-target="data"
+                {% if not child.vars.valid %}
+                    aria-invalid="true"
+                    aria-errormessage="{{ child.vars.id }}_error"
+                {% endif %}
+            />
+        {% endfor %}
+    </div>
+{%- endblock %}
