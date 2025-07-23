@@ -39,7 +39,6 @@ class OrganizationForm extends AbstractType
             ],
             'allow_add' => true,
             'allow_delete' => true,
-            'prototype' => true, 
             'required' => false,
             'label' => new TranslatableMessage('organizations.domains'),
             'help' => new TranslatableMessage('organizations.domains.caption'),

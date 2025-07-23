@@ -14,12 +14,6 @@
             {{ form_errors(childField) }}
         {% endfor %}
 
-        {{ include('form/_input_texts.html.twig', {
-            field: form.domains,
-            inputAttrs: {
-                'aria-describedby': field_id(form.domains, 'caption'),
-            }
-        }, with_context = false) }}
     </div>
 
     {% if form.responsibleTeam.vars.choices is not empty %}
