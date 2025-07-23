@@ -42,6 +42,7 @@ class OrganizationForm extends AbstractType
             'required' => false,
             'label' => new TranslatableMessage('organizations.domains'),
             'help' => new TranslatableMessage('organizations.domains.caption'),
+            'block_prefix' => 'multitext',
         ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {

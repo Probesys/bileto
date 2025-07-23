@@ -433,6 +433,7 @@ teams.show.authorizations.title: Autorisations
 teams.show.edit: 'Modifier l’équipe'
 teams.show.team_responsible: 'Équipe responsable'
 tickets.actors: Acteurs
+tickets.actors.edit.no_access: 'Les acteurs ont été mis à jour, mais vous n’avez plus accès au ticket.'
 tickets.actors.edit.title: 'Modifier les acteurs'
 tickets.assignee: 'Attribué à'
 tickets.contracts.edit.associate_unaccounted_times: 'Associer les temps passés existants non comptabilisés'
