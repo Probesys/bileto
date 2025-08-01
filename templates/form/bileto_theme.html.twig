@@ -324,6 +324,11 @@
     </div>
 {%- endblock labels_row -%}
 
+{%- block multitext_label -%}
+    {% set label_attr = label_attr|merge({'for': id}) %}
+    {{ block('form_label') }}
+{%- endblock %}
+
 {%- block multitext_widget -%}
     {% for child in form %}
         {{ form_errors(child) }}
