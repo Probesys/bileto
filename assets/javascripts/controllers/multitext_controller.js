@@ -76,7 +76,7 @@ export default class extends Controller {
         dataNode.setAttribute('type', 'hidden');
         dataNode.setAttribute('name', name);
         dataNode.setAttribute('value', value);
-        dataNode.setAttribute('data-input-texts-target', 'data');
+        dataNode.setAttribute('data-multitext-target', 'data');
         this.element.appendChild(dataNode);
 
         this.inputTarget.value = '';

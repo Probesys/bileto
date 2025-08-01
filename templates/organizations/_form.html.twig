@@ -9,22 +9,7 @@
 
     {{ form_row(form.name) }}
 
-    <div class="flow flow--small">
-        {{ form_label(form.domains) }}
-
-        {{ form_help(form.domains) }}
-
-        {% for childField in form.domains %}
-            {{ form_errors(childField) }}
-        {% endfor %}
-
-        {{ include('form/_input_texts.html.twig', {
-            field: form.domains,
-            inputAttrs: {
-                'aria-describedby': field_id(form.domains, 'caption'),
-            }
-        }, with_context = false) }}
-    </div>
+    {{ form_row(form.domains) }}
 
     {% if form.responsibleTeam.vars.choices is not empty %}
         {{ form_row(form.responsibleTeam) }}

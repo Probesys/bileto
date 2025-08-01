@@ -180,11 +180,11 @@ errors.generic.title: 'An error has occured!'
 forms.actors.group.agents: Agents
 forms.actors.group.users: Users
 forms.error: Error
-forms.input_texts.remove: Remove
 forms.max_chars: '(max. {number} characters)'
 forms.multiselect.select_actor: 'Select an actor'
 forms.multiselect.select_team: 'Select a team'
 forms.multiselect.unselect: Unselect
+forms.multitext.remove: Remove
 forms.optional: (optional)
 forms.optional_max_chars: '(optional, max. {number} characters)'
 forms.organization.select.choose: 'Choose an organization'
