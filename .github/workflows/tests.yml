@@ -53,15 +53,15 @@ jobs:
             - name: Start OpenLDAP server
               run: |
                   # The server cannot be run as a normal service because it
-                  # wouldn't have access to the docker/development/ldap-ldifs/ folder.
+                  # wouldn't have access to the docker/development/ldap/ folder.
                   docker run -d \
                       -p "1389:1389" \
-                      -v ${{ github.workspace }}/docker/development/ldap-ldifs:/ldifs \
+                      -v ${{ github.workspace }}/docker/development/ldap:/ldifs \
                       -e LDAP_ROOT="dc=example,dc=com" \
                       -e LDAP_ADMIN_USERNAME=admin \
                       -e LDAP_ADMIN_PASSWORD=secret \
                       -e BITNAMI_DEBUG=true \
-                      bitnami/openldap:2
+                      bitnamilegacy/openldap:2
 
             - name: Run the test suite
               run: make test
@@ -103,15 +103,15 @@ jobs:
             - name: Start OpenLDAP server
               run: |
                   # The server cannot be run as a normal service because it
-                  # wouldn't have access to the docker/development/ldap-ldifs/ folder.
+                  # wouldn't have access to the docker/development/ldap/ folder.
                   docker run -d \
                       -p "1389:1389" \
-                      -v ${{ github.workspace }}/docker/development/ldap-ldifs:/ldifs \
+                      -v ${{ github.workspace }}/docker/development/ldap:/ldifs \
                       -e LDAP_ROOT="dc=example,dc=com" \
                       -e LDAP_ADMIN_USERNAME=admin \
                       -e LDAP_ADMIN_PASSWORD=secret \
                       -e BITNAMI_DEBUG=true \
-                      bitnami/openldap:2
+                      bitnamilegacy/openldap:2
 
             - name: Run the test suite
               run: make test

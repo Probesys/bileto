@@ -75,7 +75,7 @@ services:
             - "3143:3143"
 
     ldap:
-        image: bitnami/openldap:2
+        image: bitnamilegacy/openldap:2
         ports:
             - "1389:1389"
             - "1636:1636"
@@ -85,4 +85,4 @@ services:
             - LDAP_ADMIN_PASSWORD=secret
             - BITNAMI_DEBUG=true
         volumes:
-            - ./ldap-ldifs:/ldifs:z
+            - ./ldap:/ldifs:z
