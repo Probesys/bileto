@@ -11,12 +11,12 @@ COPY assets/ /app/assets
 RUN npm install && npm run build
 
 # Configure the application
-FROM php:8.2-apache
+FROM php:8.2-apache-bookworm
 
 WORKDIR /var/www/html
-ENV APP_ENV prod
-ENV COMPOSER_HOME /tmp
-ENV TZ Europe/Paris
+ENV APP_ENV="prod"
+ENV COMPOSER_HOME="/tmp"
+ENV TZ="Europe/Paris"
 
 CMD ["apache2-foreground"]
 ENTRYPOINT ["sh", "/entrypoint.sh"]

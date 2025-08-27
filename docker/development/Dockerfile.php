@@ -2,9 +2,9 @@
 # Copyright 2022-2025 Probesys
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-FROM php:8.2-fpm
+FROM php:8.2-fpm-bookworm
 
-ENV COMPOSER_HOME /tmp
+ENV COMPOSER_HOME="/tmp"
 
 RUN apt-get update && apt-get install -y \
     git \
