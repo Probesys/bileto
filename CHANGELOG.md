@@ -1,5 +1,26 @@
 # Changelog of Bileto
 
+## 2025-10-08 - 0.15.2
+
+### New
+
+- Account time on contracts with no available time ([fc50b82](https://github.com/Probesys/bileto/commit/fc50b82))
+
+### Bug fixes
+
+- Fix messages order received by email ([7823739](https://github.com/Probesys/bileto/commit/7823739))
+- Associate the "Linked domains" label to the input ([790fc1e](https://github.com/Probesys/bileto/commit/790fc1e))
+- Redirect after losing access to ticket on actor change ([2ad0012](https://github.com/Probesys/bileto/commit/2ad0012))
+- Don't show empty labels section in search form ([a244d0b](https://github.com/Probesys/bileto/commit/a244d0b))
+
+### Developers
+
+- Fix PHP Docker images failing because of missing libc-client-dev dependency ([198c06a](https://github.com/Probesys/bileto/commit/198c06a))
+- Use bitnamilegacy LDAP image ([8ea4641](https://github.com/Probesys/bileto/commit/8ea4641))
+- Provide an editorconfig file ([0dc79c1](https://github.com/Probesys/bileto/commit/0dc79c1))
+- Recommend to Git clone by SSH instead of HTTPS ([f1a620b](https://github.com/Probesys/bileto/commit/f1a620b))
+- Rename the `input_texts` component in `multitext` ([f010ca8](https://github.com/Probesys/bileto/commit/f010ca8))
+
 ## 2025-06-30 - 0.15.1
 
 ### Bug fixes
