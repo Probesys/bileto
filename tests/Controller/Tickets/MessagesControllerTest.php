@@ -307,44 +307,6 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
     }
 
-    public function testPostCreateCanCreateTwoTimeSpentIfContractIsAlmostFinished(): void
-    {
-        $client = static::createClient();
-        $user = Factory\UserFactory::createOne();
-        $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-            'orga:create:tickets:time_spent',
-        ]);
-        $contract = Factory\ContractFactory::createOne([
-            'startAt' => Utils\Time::ago(1, 'week'),
-            'endAt' => Utils\Time::fromNow(1, 'week'),
-            'maxHours' => 1,
-        ]);
-        $ticket = Factory\TicketFactory::createOne([
-            'status' => 'in_progress',
-            'createdBy' => $user,
-            'contracts' => [$contract],
-        ]);
-        $messageContent = 'My message';
-
-        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
-            'answer' => [
-                '_token' => $this->generateCsrfToken($client, 'answer'),
-                'content' => $messageContent,
-                'timeSpent' => 80,
-            ],
-        ]);
-
-        list($timeSpent1, $timeSpent2) = Factory\TimeSpentFactory::all();
-        $this->assertSame(60, $timeSpent1->getTime());
-        $this->assertSame($ticket->getId(), $timeSpent1->getTicket()->getId());
-        $this->assertSame($contract->getId(), $timeSpent1->getContract()->getId());
-        $this->assertSame(20, $timeSpent2->getTime());
-        $this->assertSame($ticket->getId(), $timeSpent2->getTicket()->getId());
-        $this->assertNull($timeSpent2->getContract());
-    }
-
     public function testPostCreateChangesStatusToInProgressIfUserIsRequester(): void
     {
         $client = static::createClient();

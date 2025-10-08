@@ -84,10 +84,6 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
         value: 0,
         message: new TranslatableMessage('contract.max_hours.greater_than_zero', [], 'errors'),
     )]
-    #[Assert\GreaterThanOrEqual(
-        propertyPath: 'consumedHours',
-        message: new TranslatableMessage('contract.max_hours.greater_than_or_equal', [], 'errors'),
-    )]
     private ?int $maxHours = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -195,7 +191,6 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
             return $timeSpent->getTime();
         }, $this->getTimeSpents()->getValues());
 
-        /** @var int */
         $consumedHours = array_sum($times);
 
         return $consumedHours;
@@ -211,11 +206,6 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
         $consumedHours = $this->getConsumedHours();
         $maxHours = $this->getMaxHours();
         return $consumedHours / $maxHours;
-    }
-
-    public function getRemainingMinutes(): int
-    {
-        return ($this->getMaxHours() * 60) - $this->getConsumedMinutes();
     }
 
     public function getNotes(): ?string

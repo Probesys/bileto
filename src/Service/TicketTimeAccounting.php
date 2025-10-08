@@ -32,36 +32,17 @@ class TicketTimeAccounting
     ): void {
         $contract = $ticket->getOngoingContract();
 
-        if (!$contract) {
+        if ($contract) {
+            $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
+        } else {
             $timeSpent = new Entity\TimeSpent();
-            $timeSpent->setTicket($ticket);
             $timeSpent->setTime($minutes);
             $timeSpent->setRealTime($minutes);
-            $timeSpent->setMessage($message);
-
-            $this->timeSpentRepository->save($timeSpent, true);
-
-            return;
         }
 
-        $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
         $timeSpent->setTicket($ticket);
         $timeSpent->setMessage($message);
 
         $this->timeSpentRepository->save($timeSpent, true);
-
-        // Calculate the remaining time that is not accounted (i.e. because
-        // there wasn't enough time in the contract).
-        $remainingUnaccountedTime = $minutes - $timeSpent->getRealTime();
-
-        if ($remainingUnaccountedTime > 0) {
-            $timeSpent = new Entity\TimeSpent();
-            $timeSpent->setTicket($ticket);
-            $timeSpent->setTime($remainingUnaccountedTime);
-            $timeSpent->setRealTime($remainingUnaccountedTime);
-            $timeSpent->setMessage($message);
-
-            $this->timeSpentRepository->save($timeSpent, true);
-        }
     }
 }

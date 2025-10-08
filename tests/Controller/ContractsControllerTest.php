@@ -204,7 +204,7 @@ class ContractsControllerTest extends WebTestCase
         $this->assertSame($newMaxHours, $contract->getMaxHours());
     }
 
-    public function testPostEditDoesNotAcceptMaxHoursBelowSpentTime(): void
+    public function testPostEditDoesNotAcceptMaxHoursBelowZero(): void
     {
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
@@ -213,14 +213,10 @@ class ContractsControllerTest extends WebTestCase
         $oldName = 'Contract 2023';
         $newName = 'Contract 2024';
         $oldMaxHours = 10;
-        $newMaxHours = 1;
+        $newMaxHours = -10;
         $contract = Factory\ContractFactory::createOne([
             'name' => $oldName,
             'maxHours' => $oldMaxHours,
-        ]);
-        $timeSpent = Factory\TimeSpentFactory::createOne([
-            'time' => ($newMaxHours + 1) * 60,
-            'contract' => $contract,
         ]);
 
         $response = $client->request(Request::METHOD_POST, "/contracts/{$contract->getUid()}/edit", [
@@ -233,7 +229,7 @@ class ContractsControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains(
             '#contract_maxHours-error',
-            'Enter a number of hours greater than or equal 2.'
+            'Enter a number of hours greater than zero.'
         );
         $this->clearEntityManager();
         $contract->_refresh();

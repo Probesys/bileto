@@ -52,7 +52,7 @@ class ContractTimeAccountingTest extends WebTestCase
         $this->assertSame(1, count($contractTimeSpents));
     }
 
-    public function testAccountTimeAccountsMaximumOfAvailableTime(): void
+    public function testAccountTimeCanAccountMoreThanMaximumOfAvailableTime(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
@@ -63,10 +63,8 @@ class ContractTimeAccountingTest extends WebTestCase
         $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
 
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
-        $this->assertSame(60, $timeSpent->getTime());
-        $this->assertSame(60, $timeSpent->getRealTime());
-        $contractTimeSpents = $contract->getTimeSpents();
-        $this->assertSame(1, count($contractTimeSpents));
+        $this->assertSame(70, $timeSpent->getTime());
+        $this->assertSame(70, $timeSpent->getRealTime());
     }
 
     public function testAccountTimeAccountsConsideringTimeAccountingUnit(): void
@@ -84,27 +82,6 @@ class ContractTimeAccountingTest extends WebTestCase
         $this->assertSame($minutes, $timeSpent->getRealTime());
         $contractTimeSpents = $contract->getTimeSpents();
         $this->assertSame(1, count($contractTimeSpents));
-    }
-
-    public function testAccountTimeWithTimeAccountingUnitDoesNotAccountMoreThanAvailableTime(): void
-    {
-        $contract = ContractFactory::createOne([
-            'maxHours' => 1,
-            'timeAccountingUnit' => 30,
-        ])->_real();
-        TimeSpentFactory::createOne([
-            'contract' => $contract,
-            'time' => 45, // 45 minutes are already deducted from the contract
-        ]);
-        $minutes = 5;
-
-        $timeSpent = $this->contractTimeAccounting->accountTime($contract, $minutes);
-
-        $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
-        $this->assertSame(15, $timeSpent->getTime());
-        $this->assertSame($minutes, $timeSpent->getRealTime());
-        $contractTimeSpents = $contract->getTimeSpents();
-        $this->assertSame(2, count($contractTimeSpents));
     }
 
     public function testAccountTimeSpents(): void
@@ -128,7 +105,7 @@ class ContractTimeAccountingTest extends WebTestCase
         $this->assertSame(1, count($contractTimeSpents));
     }
 
-    public function testAccountTimeSpentsDoNotAccountMoreThanAvailableTime(): void
+    public function testAccountTimeSpentsCanAccountMoreThanAvailableTime(): void
     {
         $contract = ContractFactory::createOne([
             'maxHours' => 1,
@@ -136,30 +113,23 @@ class ContractTimeAccountingTest extends WebTestCase
         ])->_real();
         $timeSpent1 = TimeSpentFactory::createOne([
             'contract' => null,
-            'realTime' => 20,
+            'realTime' => 60,
         ])->_real();
         $timeSpent2 = TimeSpentFactory::createOne([
             'contract' => null,
-            'realTime' => 50,
-        ])->_real();
-        $timeSpent3 = TimeSpentFactory::createOne([
-            'contract' => null,
-            'realTime' => 20,
+            'realTime' => 30,
         ])->_real();
 
-        $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent1, $timeSpent2, $timeSpent3]);
+        $this->contractTimeAccounting->accountTimeSpents($contract, [$timeSpent1, $timeSpent2]);
 
         $this->assertSame($contract->getId(), $timeSpent1->getContract()->getId());
-        $this->assertSame(20, $timeSpent1->getTime());
-        $this->assertSame(20, $timeSpent1->getRealTime());
-        $this->assertNull($timeSpent2->getContract());
-        // Even if this TimeSpent could have been associated to the contract,
-        // the ContractTimeAccounting service stopped at the first TimeSpent
-        // overflowing the available time.
-        $this->assertNull($timeSpent3->getContract());
-        $contractTimeSpents = $contract->getTimeSpents();
-        $this->assertSame(1, count($contractTimeSpents));
-        $this->assertSame($timeSpent1->getId(), $contractTimeSpents[0]->getId());
+        $this->assertSame(60, $timeSpent1->getTime());
+        $this->assertSame(60, $timeSpent1->getRealTime());
+        $this->assertSame($contract->getId(), $timeSpent2->getContract()->getId());
+        $this->assertSame(30, $timeSpent2->getTime());
+        $this->assertSame(30, $timeSpent2->getRealTime());
+        $this->assertSame(90, $contract->getConsumedMinutes());
+        $this->assertSame(1.5, $contract->getConsumedPercentage());
     }
 
     public function testAccountTimeSpentsAccountsConsideringTimeAccountingUnit(): void
