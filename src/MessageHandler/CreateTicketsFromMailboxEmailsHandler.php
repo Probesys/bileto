@@ -328,7 +328,7 @@ class CreateTicketsFromMailboxEmailsHandler
 
         // Finally, we create the message corresponding to the email.
         $message = new Entity\Message();
-        $message->setCreatedAt($mailboxEmail->getDate());
+        $message->setPostedAt($mailboxEmail->getDate());
         $message->setContent($messageContent);
         $message->setTicket($ticket);
         $message->setIsConfidential(false);

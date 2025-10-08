@@ -1251,6 +1251,7 @@ class DataImporterTest extends WebTestCase
                     [
                         'id' => '1',
                         'createdAt' => '2024-04-25T17:38:00+00:00',
+                        'postedAt' => '2024-04-25T16:38:00+00:00',
                         'createdById' => '1',
                         'isConfidential' => false,
                         'via' => 'email',
@@ -1259,6 +1260,7 @@ class DataImporterTest extends WebTestCase
                     [
                         'id' => '2',
                         'createdAt' => '2024-04-25T18:00:00+00:00',
+                        'postedAt' => '2024-04-25T17:00:00+00:00',
                         'createdById' => '2',
                         'isConfidential' => true,
                         'via' => 'webapp',
@@ -1318,12 +1320,14 @@ class DataImporterTest extends WebTestCase
         $messages = $ticket->getMessages();
         $this->assertSame(2, count($messages));
         $this->assertSame(1714066680, $messages[0]->getCreatedAt()->getTimestamp());
+        $this->assertSame(1714063080, $messages[0]->getPostedAt()->getTimestamp());
         $this->assertSame($requester->getUid(), $messages[0]->getCreatedBy()->getUid());
         $this->assertFalse($messages[0]->isConfidential());
         $this->assertSame('email', $messages[0]->getVia());
         $this->assertEmpty($messages[0]->getEmailNotificationsReferences());
         $this->assertSame('<p>This is not working!</p>', $messages[0]->getContent());
         $this->assertSame(1714068000, $messages[1]->getCreatedAt()->getTimestamp());
+        $this->assertSame(1714064400, $messages[1]->getPostedAt()->getTimestamp());
         $this->assertSame($assignee->getUid(), $messages[1]->getCreatedBy()->getUid());
         $this->assertTrue($messages[1]->isConfidential());
         $this->assertSame('webapp', $messages[1]->getVia());

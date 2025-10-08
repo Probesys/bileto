@@ -60,8 +60,8 @@
             <div class="message__top-separator"></div>
 
             <a class="message__date" href="#message-{{ message.uid }}">
-                <time datetime="{{ message.createdAt | dateIso }}" class="message__date">
-                    {{ message.createdAt | dateTrans }}
+                <time datetime="{{ message.postedAt | dateIso }}" class="message__date">
+                    {{ message.postedAt | dateTrans }}
                 </time>
             </a>
         </div>

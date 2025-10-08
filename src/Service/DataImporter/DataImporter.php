@@ -1357,6 +1357,11 @@ class DataImporter
             $content = strval($jsonMessage['content']);
             $content = $this->appMessageSanitizer->sanitize($content);
 
+            $postedAt = null;
+            if (isset($jsonMessage['postedAt'])) {
+                $postedAt = self::parseDatetime($jsonMessage['postedAt']);
+            }
+
             $isConfidential = null;
             if (isset($jsonMessage['isConfidential'])) {
                 $isConfidential = boolval($jsonMessage['isConfidential']);
@@ -1384,6 +1389,12 @@ class DataImporter
             $message->setContent($content);
 
             $message->setUid(Utils\Random::hex(20));
+
+            if ($postedAt) {
+                $message->setPostedAt($postedAt);
+            } else {
+                $message->setPostedAt($createdAt);
+            }
 
             if ($isConfidential !== null) {
                 $message->setIsConfidential($isConfidential);

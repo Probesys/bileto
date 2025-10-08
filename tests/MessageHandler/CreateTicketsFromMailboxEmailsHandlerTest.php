@@ -73,7 +73,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
 
         $message = MessageFactory::first();
         $this->assertSame($user->getId(), $message->getCreatedBy()->getId());
-        $this->assertSame($emailDate->getTimestamp(), $message->getCreatedAt()->getTimestamp());
+        $this->assertSame($emailDate->getTimestamp(), $message->getPostedAt()->getTimestamp());
         $sanitizedBody = trim($appMessageSanitizer->sanitize($body));
         $this->assertSame($sanitizedBody, $message->getContent());
         $this->assertSame($ticket->getId(), $message->getTicket()->getId());

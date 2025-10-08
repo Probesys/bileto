@@ -121,6 +121,7 @@ It also contains a `tickets/` folder where each file corresponds to a ticket. Fo
   - id: string (unique)
   - createdAt: datetime
   - createdById: string (reference to a user)
+  - postedAt: datetime, optional (default to createdAt)
   - isConfidential: boolean, optional
   - via: string, optional (must be `webapp`, or `email`)
   - content: string (not empty, HTML, will be sanitized)

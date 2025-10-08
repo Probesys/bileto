@@ -11,6 +11,7 @@ use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\MessageRepository;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
+use App\Utils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -74,8 +75,12 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
     #[ORM\Column(options: ['default' => '[]'])]
     private array $notificationsReferences = [];
 
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $postedAt = null;
+
     public function __construct()
     {
+        $this->postedAt = Utils\Time::now();
         $this->messageDocuments = new ArrayCollection();
     }
 
@@ -195,5 +200,17 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
         $content = $this->getContent();
 
         return md5("{$createdAt}-{$createdBy}-{$ticketKey}-{$content}");
+    }
+
+    public function getPostedAt(): ?\DateTimeImmutable
+    {
+        return $this->postedAt;
+    }
+
+    public function setPostedAt(\DateTimeImmutable $postedAt): static
+    {
+        $this->postedAt = $postedAt;
+
+        return $this;
     }
 }
