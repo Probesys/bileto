@@ -10,7 +10,7 @@
 
 {% block body %}
     <p>
-        {{ 'emails.receipt.received' | trans }}
+        {{ 'emails.receipt.received' | trans({ title: ticket.title | escape }) | raw }}
     </p>
 
     {% if linkToBileto %}

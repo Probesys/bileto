@@ -291,7 +291,10 @@ class TicketsControllerTest extends WebTestCase
         $this->assertMatchesRegularExpression('/^[\w\d]*@example.com$/', $references[1]);
         $this->assertEmailCount(2);
         $email = $this->getMailerMessage();
-        $this->assertEmailHtmlBodyContains($email, 'We have received your support request.');
+        $this->assertEmailHtmlBodyContains(
+            $email,
+            "We have received your support request titled “<strong>{$title}</strong>”."
+        );
     }
 
     public function testPostNewCanCreateATicketWithMinimalPermissions(): void

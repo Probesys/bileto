@@ -7,7 +7,7 @@
 {% extends 'emails/transactional.txt.twig' %}
 
 {% block body %}
-{{ 'emails.receipt.received' | trans }}
+{{ 'emails.receipt.received_txt' | trans({ title: ticket.title }) }}
 
 {% if linkToBileto %}
 {{ 'emails.receipt.view_txt' | trans({ url: url('ticket', { uid: ticket.uid }) }) }}

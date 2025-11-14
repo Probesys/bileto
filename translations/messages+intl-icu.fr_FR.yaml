@@ -161,7 +161,8 @@ emails.message.reply_txt: 'Répondez à cet email directement ou consultez-le da
 emails.politeness.hello: 'Bonjour,'
 emails.politeness.regards: 'Cordialement,'
 emails.politeness.support_team: 'L’équipe support'
-emails.receipt.received: 'Nous avons bien reçu votre demande de support. Celle-ci va être examinée pour un traitement dans les meilleurs délais possibles.'
+emails.receipt.received: "Nous avons bien reçu votre demande de support intitulée «\_<strong>{title}</strong>\_». Celle-ci va être examinée pour un traitement dans les meilleurs délais possibles."
+emails.receipt.received_txt: "Nous avons bien reçu votre demande de support intitulée «\_{title}\_». Celle-ci va être examinée pour un traitement dans les meilleurs délais possibles."
 emails.receipt.subject: 'Demande de support reçue'
 emails.receipt.view: 'Vous pouvez <a href="{url}">la consulter dans Bileto.</a>'
 emails.receipt.view_txt: "Vous pouvez la consulter dans Bileto\_: {url}"
