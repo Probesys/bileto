@@ -61,7 +61,7 @@ class SendReceiptEmailHandler
 
         $locale = $requester->getLocale();
         $subject = $this->translator->trans('emails.receipt.subject', locale: $locale);
-        $subject = "[#{$ticket->getId()}] {$subject}";
+        $subject = "[#{$ticket->getId()}] {$subject} {$ticket->getTitle()}";
 
         $email = new TemplatedEmail();
         $email->to($requester->getEmail());
