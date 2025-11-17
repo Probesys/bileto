@@ -111,7 +111,12 @@ class CleanDataHandlerTest extends WebTestCase
         $this->assertSame(3, Factory\EntityEventFactory::count());
 
         $entityEvents = Factory\EntityEventFactory::all();
-        $entityEventIds = array_map(fn ($entityEvent): int => $entityEvent->getId(), $entityEvents);
+        $entityEventIds = array_map(
+            function (Entity\EntityEvent&\Zenstruck\Foundry\Persistence\Proxy $entityEvent): int {
+                return $entityEvent->getId();
+            },
+            $entityEvents
+        );
         $this->assertContains($entityEventNotTooOldExpired->getId(), $entityEventIds);
         $this->assertContains($entityEventDeleteExpired->getId(), $entityEventIds);
         $this->assertContains($entityEventNotExpired->getId(), $entityEventIds);

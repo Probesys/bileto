@@ -137,9 +137,12 @@ class Authorizer
             return $organizations;
         }
 
-        return array_filter($organizations, function ($organization) use ($user, $permission): bool {
-            return $this->isGrantedForUser($user, $permission, $organization);
-        });
+        return array_filter(
+            $organizations,
+            function (Entity\Organization $organization) use ($user, $permission): bool {
+                return $this->isGrantedForUser($user, $permission, $organization);
+            }
+        );
     }
 
     /**

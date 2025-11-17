@@ -361,9 +361,6 @@ class CreateTicketsFromMailboxEmailsHandler
             // character "?".
             // Bug issue: https://github.com/Webklex/php-imap/issues/459
             $filename = mb_convert_encoding($originalFilename, 'UTF-8', 'UTF-8');
-            if ($filename === false) {
-                $filename = $originalFilename;
-            }
 
             $status = $attachment->save($tmpPath, $filename);
 

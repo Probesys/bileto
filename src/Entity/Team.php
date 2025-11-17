@@ -117,7 +117,7 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
      */
     public function getAgentsIds(): array
     {
-        return array_map(function ($agent): ?int {
+        return array_map(function (User $agent): ?int {
             return $agent->getId();
         }, $this->agents->toArray());
     }
@@ -128,7 +128,7 @@ class Team implements EntityInterface, MonitorableEntityInterface, UidEntityInte
      */
     public function getAgentsUids(): array
     {
-        return array_map(function ($agent): ?string {
+        return array_map(function (User $agent): ?string {
             return $agent->getUid();
         }, $this->agents->toArray());
     }

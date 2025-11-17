@@ -50,7 +50,7 @@ class TeamType extends AbstractType
                         }
 
                         if ($responsibleOnly) {
-                            $teams = array_filter($teams, function ($team): bool {
+                            $teams = array_filter($teams, function (Entity\Team $team): bool {
                                 return $team->isResponsible();
                             });
                         }

@@ -103,7 +103,7 @@ class QueryBuilder extends SearchEngine\QueryBuilder
 
             $organizations = $this->organizationRepository->findLike($value);
 
-            $ids = array_map(function ($orga): int {
+            $ids = array_map(function (Entity\Organization $orga): int {
                 return $orga->getId();
             }, $organizations);
 

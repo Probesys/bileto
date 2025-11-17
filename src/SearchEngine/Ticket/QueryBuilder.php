@@ -174,7 +174,7 @@ class QueryBuilder extends SearchEngine\QueryBuilder
 
             $organizations = $this->organizationRepository->findLike($value);
 
-            $ids = array_map(function ($orga): int {
+            $ids = array_map(function (Entity\Organization $orga): int {
                 return $orga->getId();
             }, $organizations);
 
@@ -260,7 +260,7 @@ class QueryBuilder extends SearchEngine\QueryBuilder
         $value = $this->processValue($condition->getValue(), function (mixed $value): array {
             $labels = $this->labelRepository->findByName($value);
 
-            $ids = array_map(function ($label): int {
+            $ids = array_map(function (Entity\Label $label): int {
                 return $label->getId();
             }, $labels);
 
@@ -379,7 +379,7 @@ class QueryBuilder extends SearchEngine\QueryBuilder
 
         $users = $this->userRepository->findLike($value);
 
-        $ids = array_map(function ($user): int {
+        $ids = array_map(function (Entity\User $user): int {
             return $user->getId();
         }, $users);
 
@@ -403,7 +403,7 @@ class QueryBuilder extends SearchEngine\QueryBuilder
 
         $teams = $this->teamRepository->findLike($value);
 
-        $ids = array_map(function ($team): int {
+        $ids = array_map(function (Entity\Team $team): int {
             return $team->getId();
         }, $teams);
 

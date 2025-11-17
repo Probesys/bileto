@@ -316,12 +316,12 @@ class TicketEventChangesFormatterExtension
           'id' => $changes[1],
         ]);
 
-        $removed = array_map(function ($contract): string {
+        $removed = array_map(function (Entity\Contract $contract): string {
             return $this->escape($contract->getName());
         }, $removedContracts);
         $removed = implode(', ', $removed);
 
-        $added = array_map(function ($contract): string {
+        $added = array_map(function (Entity\Contract $contract): string {
             return $this->escape($contract->getName());
         }, $addedContracts);
         $added = implode(', ', $added);
@@ -368,14 +368,14 @@ class TicketEventChangesFormatterExtension
           'id' => $changes[1],
         ]);
 
-        $removed = array_map(function ($label): string {
+        $removed = array_map(function (Entity\Label $label): string {
             $name = $this->escape($label->getName());
             $color = $this->escape($label->getColor());
             return "<span class=\"badge badge--{$color}\">{$name}</span>";
         }, $removedLabels);
         $removed = implode(', ', $removed);
 
-        $added = array_map(function ($label): string {
+        $added = array_map(function (Entity\Label $label): string {
             $name = $this->escape($label->getName());
             $color = $this->escape($label->getColor());
             return "<span class=\"badge badge--{$color}\">{$name}</span>";
@@ -424,12 +424,12 @@ class TicketEventChangesFormatterExtension
           'id' => $changes[1],
         ]);
 
-        $removed = array_map(function ($user): string {
+        $removed = array_map(function (Entity\User $user): string {
             return $this->formatUserName($user);
         }, $removedObservers);
         $removed = implode(', ', $removed);
 
-        $added = array_map(function ($user): string {
+        $added = array_map(function (Entity\User $user): string {
             return $this->formatUserName($user);
         }, $addedObservers);
         $added = implode(', ', $added);

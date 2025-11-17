@@ -68,14 +68,14 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         choices: self::TYPES,
         message: new TranslatableMessage('ticket.type.invalid', [], 'errors'),
     )]
-    private ?string $type = self::DEFAULT_TYPE;
+    private string $type = self::DEFAULT_TYPE;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_STATUS])]
     #[Assert\Choice(
         choices: self::STATUSES,
         message: new TranslatableMessage('ticket.status.invalid', [], 'errors'),
     )]
-    private ?string $status = self::DEFAULT_STATUS;
+    private string $status = self::DEFAULT_STATUS;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $statusChangedAt = null;
@@ -95,21 +95,21 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         choices: self::WEIGHTS,
         message: new TranslatableMessage('ticket.urgency.invalid', [], 'errors'),
     )]
-    private ?string $urgency = self::DEFAULT_WEIGHT;
+    private string $urgency = self::DEFAULT_WEIGHT;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_WEIGHT])]
     #[Assert\Choice(
         choices: self::WEIGHTS,
         message: new TranslatableMessage('ticket.impact.invalid', [], 'errors'),
     )]
-    private ?string $impact = self::DEFAULT_WEIGHT;
+    private string $impact = self::DEFAULT_WEIGHT;
 
     #[ORM\Column(length: 32, options: ['default' => self::DEFAULT_WEIGHT])]
     #[Assert\Choice(
         choices: self::WEIGHTS,
         message: new TranslatableMessage('ticket.priority.invalid', [], 'errors'),
     )]
-    private ?string $priority = self::DEFAULT_WEIGHT;
+    private string $priority = self::DEFAULT_WEIGHT;
 
     #[ORM\ManyToOne]
     #[Assert\NotBlank(
@@ -175,7 +175,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         $this->observers = new ArrayCollection();
     }
 
-    public function getType(): ?string
+    public function getType(): string
     {
         return $this->type;
     }
@@ -187,18 +187,18 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    public function getStatusLabel(): ?string
+    public function getStatusLabel(): string
     {
         $statusesWithLabels = self::getStatusesWithLabels();
         return $statusesWithLabels[$this->status];
     }
 
-    public function getStatusBadgeColor(): ?string
+    public function getStatusBadgeColor(): string
     {
         if ($this->status === 'new') {
             return 'red';
@@ -263,12 +263,12 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         return $this;
     }
 
-    public function getUrgency(): ?string
+    public function getUrgency(): string
     {
         return $this->urgency;
     }
 
-    public function getUrgencyLabel(): ?string
+    public function getUrgencyLabel(): string
     {
         $weightsWithLabels = [
             'low' => new TranslatableMessage('tickets.urgency.low'),
@@ -285,12 +285,12 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         return $this;
     }
 
-    public function getImpact(): ?string
+    public function getImpact(): string
     {
         return $this->impact;
     }
 
-    public function getImpactLabel(): ?string
+    public function getImpactLabel(): string
     {
         $weightsWithLabels = [
             'low' => new TranslatableMessage('tickets.impact.low'),
@@ -307,12 +307,12 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         return $this;
     }
 
-    public function getPriority(): ?string
+    public function getPriority(): string
     {
         return $this->priority;
     }
 
-    public function getPriorityLabel(): ?string
+    public function getPriorityLabel(): string
     {
         $weightsWithLabels = [
             'low' => new TranslatableMessage('tickets.priority.low'),
@@ -322,7 +322,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         return $weightsWithLabels[$this->priority];
     }
 
-    public function getPriorityBadgeColor(): ?string
+    public function getPriorityBadgeColor(): string
     {
         if ($this->priority === 'low') {
             return 'blue';
@@ -628,7 +628,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
             $criteria->where($expr);
 
             $timeSpents = $timeSpents->matching($criteria)->toArray();
-            $times = array_map(function ($timeSpent): int {
+            $times = array_map(function (TimeSpent $timeSpent): int {
                 return $timeSpent->getTime();
             }, $timeSpents);
         } elseif ($type === 'unaccounted') {
@@ -637,12 +637,12 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
             $criteria->where($expr);
 
             $timeSpents = $timeSpents->matching($criteria)->toArray();
-            $times = array_map(function ($timeSpent): int {
+            $times = array_map(function (TimeSpent $timeSpent): int {
                 return $timeSpent->getTime();
             }, $timeSpents);
         } elseif ($type === 'real') {
             $timeSpents = $timeSpents->toArray();
-            $times = array_map(function ($timeSpent): int {
+            $times = array_map(function (TimeSpent $timeSpent): int {
                 return $timeSpent->getRealTime();
             }, $timeSpents);
         } else {

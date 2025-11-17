@@ -66,7 +66,7 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
 
         $authorizations = $authorizationRepository->getOrgaAuthorizations($user, roleType: $roleType);
 
-        $scopedOrganizations = array_map(function ($authorization): ?Entity\Organization {
+        $scopedOrganizations = array_map(function (Entity\Authorization $authorization): ?Entity\Organization {
             return $authorization->getOrganization();
         }, $authorizations);
 

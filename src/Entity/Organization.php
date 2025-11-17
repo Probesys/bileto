@@ -146,7 +146,7 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
      **/
     public function getDomains(): array
     {
-        return array_map(function ($domain): string {
+        return array_map(function (string $domain): string {
             if ($domain === '*') {
                 return '*';
             } else {
@@ -160,7 +160,7 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
      **/
     public function setDomains(array $domains): static
     {
-        $this->domains = array_map(function ($domain): string {
+        $this->domains = array_map(function (string $domain): string {
             if ($domain === '*') {
                 return '*';
             } else {

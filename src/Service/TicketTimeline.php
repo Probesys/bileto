@@ -6,24 +6,24 @@
 
 namespace App\Service;
 
-use App\Entity\Ticket;
-use App\Repository\EntityEventRepository;
-use App\Security\Authorizer;
-use App\Utils\Timeline;
+use App\Entity;
+use App\Repository;
+use App\Security as AppSecurity;
+use App\Utils;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class TicketTimeline
 {
     public function __construct(
-        private EntityEventRepository $entityEventRepository,
-        private Authorizer $authorizer,
+        private Repository\EntityEventRepository $entityEventRepository,
+        private AppSecurity\Authorizer $authorizer,
         private Security $security,
     ) {
     }
 
-    public function build(Ticket $ticket): Timeline
+    public function build(Entity\Ticket $ticket): Utils\Timeline
     {
-        $timeline = new Timeline();
+        $timeline = new Utils\Timeline();
 
         $organization = $ticket->getOrganization();
 
@@ -48,7 +48,7 @@ class TicketTimeline
         $user = $this->security->getUser();
         if (!$user->areEventsHidden()) {
             $events = $this->entityEventRepository->findBy([
-                'entityType' => Ticket::class,
+                'entityType' => Entity\Ticket::class,
                 'entityId' => $ticket->getId(),
                 'type' => 'update',
             ]);
@@ -56,7 +56,7 @@ class TicketTimeline
             if (!$this->authorizer->isGranted('orga:see:tickets:contracts', $organization)) {
                 // Make sure to remove events referencing contracts if the user
                 // doesn't have the permission to see them.
-                $events = array_filter($events, function ($event): bool {
+                $events = array_filter($events, function (Entity\EntityEvent $event): bool {
                     return !$event->refersTo('ongoingContract');
                 });
             }

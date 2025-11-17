@@ -45,11 +45,11 @@ class Searcher
      */
     public function setOrganizations(array $organizations): self
     {
-        $organizations = array_filter($organizations, function ($organization): bool {
+        $organizations = array_filter($organizations, function (Entity\Organization $organization): bool {
             return $this->authorizer->isGranted('orga:see:contracts', $organization);
         });
 
-        $organizationIds = array_map(function ($organization): string {
+        $organizationIds = array_map(function (Entity\Organization $organization): string {
             return "#{$organization->getId()}";
         }, $organizations);
 

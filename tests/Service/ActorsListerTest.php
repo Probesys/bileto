@@ -75,7 +75,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findAll();
 
         $this->assertSame(2, count($users));
-        $userIds = array_map(fn ($user): int => $user->getId(), $users);
+        $userIds = array_map(fn (Entity\User $user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertContains($otherUser->getId(), $userIds);
     }
@@ -103,7 +103,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findAll();
 
         $this->assertSame(1, count($users));
-        $userIds = array_map(fn ($user): int => $user->getId(), $users);
+        $userIds = array_map(fn (Entity\User $user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertNotContains($otherUser->getId(), $userIds);
     }
@@ -134,7 +134,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findAll(roleType: 'agent');
 
         $this->assertSame(1, count($users));
-        $userIds = array_map(fn ($user): int => $user->getId(), $users);
+        $userIds = array_map(fn (Entity\User $user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertNotContains($otherUser->getId(), $userIds);
     }
@@ -192,7 +192,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findByOrganization($organization->_real());
 
         $this->assertSame(2, count($users));
-        $userIds = array_map(fn ($user): int => $user->getId(), $users);
+        $userIds = array_map(fn (Entity\User $user): int => $user->getId(), $users);
         $this->assertContains($this->currentUser->getId(), $userIds);
         $this->assertContains($otherUser->getId(), $userIds);
     }
@@ -221,7 +221,7 @@ class ActorsListerTest extends WebTestCase
         $users = $this->actorsLister->findByOrganization($organization->_real(), roleType: 'user');
 
         $this->assertSame(1, count($users));
-        $userIds = array_map(fn ($user): int => $user->getId(), $users);
+        $userIds = array_map(fn (Entity\User $user): int => $user->getId(), $users);
         $this->assertNotContains($this->currentUser->getId(), $userIds);
         $this->assertContains($otherUser->getId(), $userIds);
     }

@@ -57,7 +57,7 @@ class AuthorizationRepository extends ServiceEntityRepository implements Uid\Uid
     {
         $authorizations = $this->loadUserAuthorizations($user);
 
-        return array_filter($authorizations, function ($authorization): bool {
+        return array_filter($authorizations, function (Entity\Authorization $authorization): bool {
             $role = $authorization->getRole();
             $roleType = $role->getType();
             return $roleType === 'admin' || $roleType === 'super';
@@ -79,27 +79,30 @@ class AuthorizationRepository extends ServiceEntityRepository implements Uid\Uid
     {
         $authorizations = $this->loadUserAuthorizations($user);
 
-        return array_filter($authorizations, function ($authorization) use ($scope, $roleType): bool {
-            $role = $authorization->getRole();
-            $authRoleType = $role->getType();
-            $correctType = $authRoleType === 'user' || $authRoleType === 'agent';
+        return array_filter(
+            $authorizations,
+            function (Entity\Authorization $authorization) use ($scope, $roleType): bool {
+                $role = $authorization->getRole();
+                $authRoleType = $role->getType();
+                $correctType = $authRoleType === 'user' || $authRoleType === 'agent';
 
-            if ($roleType !== 'any') {
-                $correctType = $authRoleType === $roleType;
+                if ($roleType !== 'any') {
+                    $correctType = $authRoleType === $roleType;
+                }
+
+                if ($scope instanceof Entity\Organization) {
+                    $authOrganization = $authorization->getOrganization();
+                    $correctScope = (
+                        $authOrganization === null ||
+                        $authOrganization->getId() === $scope->getId()
+                    );
+                } else {
+                    $correctScope = true;
+                }
+
+                return $correctType && $correctScope;
             }
-
-            if ($scope instanceof Entity\Organization) {
-                $authOrganization = $authorization->getOrganization();
-                $correctScope = (
-                    $authOrganization === null ||
-                    $authOrganization->getId() === $scope->getId()
-                );
-            } else {
-                $correctScope = true;
-            }
-
-            return $correctType && $correctScope;
-        });
+        );
     }
 
     /**
