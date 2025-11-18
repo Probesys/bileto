@@ -71,6 +71,7 @@
                                 {% for agent in agents %}
                                     <option value="{{ agent.email }}">
                                         {{ agent.displayName }}
+                                        ({{ agent.email }})
                                     </option>
                                 {% endfor %}
                             </select>

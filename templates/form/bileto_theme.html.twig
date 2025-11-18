@@ -231,16 +231,18 @@
         <template data-multiselect-target="template">
             <button
                 type="button"
-                class="button--discreet-alt"
+                class="button--discreet-alt cols cols--always cols--baseline flow flow--smaller text--small text--left"
                 data-action="multiselect#unselect"
                 data-target="unselect"
                 data-value=""
                 aria-label={{ 'forms.multiselect.unselect' | trans }}
             >
-                <span data-target="name">
+                <span data-target="name" class="col--extend">
                 </span>
 
-                {{ icon('close') }}
+                <span>
+                    {{ icon('close') }}
+                </span>
             </button>
         </template>
     </div>
@@ -364,7 +366,7 @@
                 class="button--discreet-alt"
                 data-action="multitext#remove keydown->multitext#removeCurrent"
                 data-value=""
-                aria-label={{ 'forms.multitext.remove' | trans }}
+                aria-label="{{ 'forms.multitext.remove' | trans }}"
             >
                 <span data-target="value">
                 </span>

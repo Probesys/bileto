@@ -88,6 +88,10 @@ class ActorType extends AbstractType
             'choice_label' => function (Entity\User $user) use ($currentUser): string {
                 $label = $user->getDisplayName();
 
+                if ($user->getDisplayName() !== $user->getEmail()) {
+                    $label .= " ({$user->getEmail()})";
+                }
+
                 if ($user->getId() === $currentUser->getId()) {
                     $yourself = $this->translator->trans('users.yourself');
                     $label .= " ({$yourself})";
