@@ -1,5 +1,15 @@
 # Changelog of Bileto
 
+## 2025-11-18 - 0.15.3
+
+### Improvements
+
+- Display email in actors selectors ([f6581cf](https://github.com/Probesys/bileto/commit/f6581cf))
+
+### Maintenance
+
+- Update the dependencies ([c99094d](https://github.com/Probesys/bileto/commit/c99094d))
+
 ## 2025-10-08 - 0.15.2
 
 ### New
