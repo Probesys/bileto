@@ -44,17 +44,13 @@ COPY docker/production/apache.conf /etc/apache2/sites-available/000-default.conf
 # Install the dependencies
 RUN apt-get update \
     && apt-get install -y \
-        libc-client-dev \
         libicu-dev \
-        libkrb5-dev \
         libldap-dev  \
         libpq-dev \
         libxslt-dev \
         libzip-dev \
         unzip \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install -j$(nproc) \
-        imap \
         intl \
         ldap \
         pdo \

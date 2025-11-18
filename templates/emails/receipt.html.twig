@@ -13,6 +13,10 @@
         {{ 'emails.receipt.received' | trans }}
     </p>
 
+     <p>
+        <strong>{{ ticket.title }}</strong>
+    </p>
+
     {% if linkToBileto %}
         <p>
             {{ 'emails.receipt.view' | trans({ url: url('ticket', { uid: ticket.uid }) }) | raw }}

@@ -8,9 +8,7 @@ ENV COMPOSER_HOME="/tmp"
 
 RUN apt-get update && apt-get install -y \
     git \
-    libc-client-dev \
     libicu-dev \
-    libkrb5-dev \
     libldap-dev  \
     libpq-dev \
     libxslt-dev \
@@ -18,8 +16,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
   && pecl install xdebug \
   && docker-php-ext-configure intl \
-  && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-  && docker-php-ext-install -j$(nproc) imap intl ldap pdo pdo_mysql pdo_pgsql xsl zip \
+  && docker-php-ext-install -j$(nproc) intl ldap pdo pdo_mysql pdo_pgsql xsl zip \
   && docker-php-ext-enable xdebug \
   && echo "xdebug.mode=coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini;
 
