@@ -10,7 +10,6 @@ use App\ActivityMonitor;
 use App\Entity;
 use App\Message;
 use App\Repository;
-use App\Security;
 use App\Service;
 use App\TicketActivity;
 use App\Utils;
@@ -37,7 +36,6 @@ class CreateTicketsFromMailboxEmailsHandler
         private Service\TicketAssigner $ticketAssigner,
         private Service\UserCreator $userCreator,
         private Service\UserService $userService,
-        private Security\Authorizer $authorizer,
         private ActivityMonitor\ActiveUser $activeUser,
         private HtmlSanitizerInterface $appMessageSanitizer,
         private LoggerInterface $logger,
@@ -114,6 +112,9 @@ class CreateTicketsFromMailboxEmailsHandler
         // The important part: create the message by using the email
         // information and attach it to the ticket.
         $message = $this->createMessage($mailboxEmail, $ticket);
+
+        // Ensure CC recipients are added as observers
+        $this->ensureCcRecipientsAreObservers($ticket, $mailboxEmail);
 
         // Finally, dispatch the different events corresponding to what happened.
         if ($isNewTicket) {
@@ -291,19 +292,10 @@ class CreateTicketsFromMailboxEmailsHandler
 
     /**
      * Return whether the user can answer the ticket.
-     *
-     * The user must have the orga:create:tickets:messages permission on the
-     * ticket's organization, and the ticket must not be closed.
      */
     private function canAnswerTicket(Entity\User $user, Entity\Ticket $ticket): bool
     {
-        $canAnswerTicket = $this->authorizer->isGrantedForUser(
-            $user,
-            'orga:create:tickets:messages',
-            $ticket,
-        );
-
-        return $canAnswerTicket && !$ticket->isClosed();
+        return $ticket->hasActor($user) && !$ticket->isClosed();
     }
 
     /**
@@ -342,6 +334,51 @@ class CreateTicketsFromMailboxEmailsHandler
         return $message;
     }
 
+      /**
+     * Ensure all CC recipients are observers of the ticket.
+     * Create users if they don't exist (without granting default authorizations).
+     */
+    private function ensureCcRecipientsAreObservers(
+        Entity\Ticket $ticket,
+        Entity\MailboxEmail $mailboxEmail
+    ): void {
+        $ccEmails = $mailboxEmail->getCc();
+
+        foreach ($ccEmails as $ccEmail) {
+            // Vérifier si l'email est déjà acteur du ticket
+            $ccUser = $this->userRepository->findOneBy(['email' => $ccEmail]);
+
+            if ($ccUser && $ticket->hasActor($ccUser)) {
+                // Déjà acteur, rien à faire
+                continue;
+            }
+
+            // Si l'utilisateur n'existe pas, le créer sans autorisations par défaut
+            if (!$ccUser) {
+                try {
+                    $ccUser = $this->userCreator->create(
+                        email: $ccEmail,
+                        grantDefaultAuthorizations: false
+                    );
+                } catch (Service\UserCreatorException $e) {
+                    // Logger l'erreur mais continuer avec les autres CC
+                    $errors = Utils\ConstraintErrorsFormatter::format($e->getErrors());
+                    $errors = implode(' ', $errors);
+                    $this->logger->warning(
+                        "MailboxEmail #{$mailboxEmail->getId()} cannot create CC user {$ccEmail}: {$errors}"
+                    );
+                    continue;
+                }
+            }
+
+            // Ajouter comme observateur
+            $ticket->addObserver($ccUser);
+        }
+
+        // Sauvegarder le ticket avec les nouveaux observateurs
+        $this->ticketRepository->save($ticket, true);
+    }
+
     /**
      * Store the email attachments as MessageDocuments.
      *
@@ -355,7 +392,7 @@ class CreateTicketsFromMailboxEmailsHandler
 
         foreach ($mailboxEmail->getAttachments() as $attachment) {
             $id = $attachment->getId();
-            $originalFilename = $attachment->getName();
+            $originalFilename = $attachment->getName() ?: 'undefined';
             // PHP-IMAP can return invalid UTF-8 characters in some circumstances.
             // mb_convert_encoding will replace these characters with the
             // character "?".
