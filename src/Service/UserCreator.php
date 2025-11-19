@@ -27,7 +27,7 @@ class UserCreator
     ) {
     }
 
-    public function createUser(Entity\User $user, bool $flush = true,bool $grantDefaultAuthorizations = true): void
+    public function createUser(Entity\User $user, bool $flush = true, bool $grantDefaultAuthorizations = true): void
     {
         if ($user->getLocale() === '') {
             $defaultLocale = $this->locales->getDefaultLocale();
@@ -40,7 +40,7 @@ class UserCreator
         }
 
         $this->userRepository->save($user, $flush);
-    if ($grantDefaultAuthorizations) {
+        if ($grantDefaultAuthorizations) {
             $defaultRole = $this->roleRepository->findDefault();
             if ($defaultRole) {
                 $defaultOrganization = $this->getDefaultOrganization($user);
