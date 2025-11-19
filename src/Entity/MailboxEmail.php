@@ -139,6 +139,32 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
         return $this->getEmail()->getFrom()->first()->mail;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getTo(): array
+    {
+        $email = $this->getEmail();
+        $ccAddresses = $email->getTo()->all();
+
+        return array_map(function (PHPIMAP\Address $address): string {
+            return $address->mail;
+        }, $ccAddresses);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCc(): array
+    {
+        $email = $this->getEmail();
+        $ccAddresses = $email->getCc()->all();
+
+        return array_map(function (PHPIMAP\Address $address): string {
+            return $address->mail;
+        }, $ccAddresses);
+    }
+
     public function getInReplyTo(): ?string
     {
         $inReplyTo = $this->getEmail()->getInReplyTo()->first();

@@ -50,6 +50,18 @@ final class MailboxEmailFactory extends PersistentProxyObjectFactory
                 $headers .= "\nIn-Reply-To: <{$attributes['inReplyTo']}>\r";
             }
 
+            if (isset($attributes['to'])) {
+                $toString = implode(', ', $attributes['to']);
+                $headers .= "\nTo: {$toString}\r";
+            } else {
+                $headers .= "\nTo: support@example.com\r";
+            }
+
+            if (isset($attributes['cc'])) {
+                $ccString = implode(', ', $attributes['cc']);
+                $headers .= "\nCc: {$ccString}\r";
+            }
+
             $attributesHeaders = $attributes['headers'] ?? [];
             foreach ($attributesHeaders as $name => $value) {
                 $headers .= "\n{$name}: {$value}\r";

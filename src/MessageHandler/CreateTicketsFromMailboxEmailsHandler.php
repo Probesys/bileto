@@ -14,6 +14,7 @@ use App\Service;
 use App\TicketActivity;
 use App\Utils;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File;
@@ -42,6 +43,8 @@ class CreateTicketsFromMailboxEmailsHandler
         private UrlGeneratorInterface $urlGenerator,
         private EventDispatcherInterface $eventDispatcher,
         private LockFactory $lockFactory,
+        #[Autowire(env: 'MAILER_FROM')]
+        private string $mailerFrom,
     ) {
     }
 
@@ -108,6 +111,10 @@ class CreateTicketsFromMailboxEmailsHandler
         if ($isNewTicket) {
             $this->ticketRepository->save($ticket, flush: true);
         }
+
+        // Ensure recipients that aren't actors of the ticket yet are added
+        // as observers.
+        $this->ensureRecipientsAreActors($sender, $ticket, $mailboxEmail);
 
         // The important part: create the message by using the email
         // information and attach it to the ticket.
@@ -339,6 +346,62 @@ class CreateTicketsFromMailboxEmailsHandler
         $this->messageRepository->save($message, true);
 
         return $message;
+    }
+
+    /**
+     * Ensure that all To and Cc recipients are actors of the ticket.
+     *
+     * Recipients that aren't actors yet are added as observers of the ticket.
+     * If they don't exist, users are created without granting default
+     * authorizations.
+     */
+    private function ensureRecipientsAreActors(
+        Entity\User $sender,
+        Entity\Ticket $ticket,
+        Entity\MailboxEmail $mailboxEmail,
+    ): void {
+        $toEmails = $mailboxEmail->getTo();
+        $ccEmails = $mailboxEmail->getCc();
+
+        $recipientEmails = array_merge($toEmails, $ccEmails);
+        $recipientEmails = array_unique($recipientEmails);
+
+        foreach ($recipientEmails as $recipientEmail) {
+            if ($recipientEmail === $this->mailerFrom) {
+                // Ignore the email which sends the notifications.
+                continue;
+            }
+
+            $user = $this->userRepository->findOneBy(['email' => $recipientEmail]);
+
+            if ($user && $ticket->hasActor($user)) {
+                // The user is already actor of the ticket.
+                continue;
+            }
+
+            // If the user doesn't exist, create him without the default authorizations.
+            // This prevents priviledge escalation attack from standard users.
+            if (!$user) {
+                try {
+                    $user = $this->userCreator->create(
+                        email: $recipientEmail,
+                        locale: $sender->getLocale(),
+                        grantDefaultAuthorizations: false,
+                    );
+                } catch (Service\UserCreatorException $e) {
+                    $errors = Utils\ConstraintErrorsFormatter::format($e->getErrors());
+                    $errors = implode(' ', $errors);
+                    $this->logger->warning(
+                        "MailboxEmail #{$mailboxEmail->getId()} cannot create user {$recipientEmail}: {$errors}"
+                    );
+                    continue;
+                }
+            }
+
+            $ticket->addObserver($user);
+        }
+
+        $this->ticketRepository->save($ticket, flush: true);
     }
 
     /**

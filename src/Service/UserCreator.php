@@ -27,8 +27,11 @@ class UserCreator
     ) {
     }
 
-    public function createUser(Entity\User $user, bool $flush = true): void
-    {
+    public function createUser(
+        Entity\User $user,
+        bool $grantDefaultAuthorizations = true,
+        bool $flush = true,
+    ): void {
         if ($user->getLocale() === '') {
             $defaultLocale = $this->locales->getDefaultLocale();
             $user->setLocale($defaultLocale);
@@ -41,11 +44,11 @@ class UserCreator
 
         $this->userRepository->save($user, $flush);
 
-        $defaultRole = $this->roleRepository->findDefault();
-        if ($defaultRole) {
+        if ($grantDefaultAuthorizations) {
+            $defaultRole = $this->roleRepository->findDefault();
             $defaultOrganization = $this->getDefaultOrganization($user);
 
-            if ($defaultOrganization) {
+            if ($defaultRole && $defaultOrganization) {
                 $this->authorizer->grant(
                     $user,
                     $defaultRole,
@@ -63,6 +66,7 @@ class UserCreator
         string $locale = '',
         string $ldapIdentifier = '',
         ?Entity\Organization $organization = null,
+        bool $grantDefaultAuthorizations = true,
         bool $flush = true,
     ): Entity\User {
         $user = new Entity\User();
@@ -77,7 +81,7 @@ class UserCreator
             $user->setPassword($hashedPassword);
         }
 
-        $this->createUser($user, $flush);
+        $this->createUser($user, $grantDefaultAuthorizations, $flush);
 
         return $user;
     }

@@ -6,6 +6,7 @@
 
 namespace App\Tests\MessageHandler;
 
+use App\Entity;
 use App\Message\CreateTicketsFromMailboxEmails;
 use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\ContractFactory;
@@ -610,6 +611,67 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
         $this->assertSame($user->getId(), $ticket->getRequester()->getId());
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
+    }
+
+    public function testInvokeAddsAdditionalRecipientsAsObservers(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+        /** @var HtmlSanitizerInterface */
+        $appMessageSanitizer = $container->get('html_sanitizer.sanitizer.app.message_sanitizer');
+
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets',
+        ], $organization->_real());
+        $assignee = UserFactory::createOne();
+        $ticket = TicketFactory::createOne([
+            'status' => 'new',
+            'organization' => $organization,
+            'requester' => $user,
+            'assignee' => $assignee,
+        ]);
+        /** @var string */
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $subject = "Re: [#{$ticket->getId()}] " . $subject;
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $defaultAppFrom = 'support@example.com';
+        $recipient1 = 'alix@example.com';
+        $recipient2 = 'charlie@example.com';
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'to' => [$defaultAppFrom, $recipient1],
+            'cc' => [$recipient2],
+            'subject' => $subject,
+            'htmlBody' => $body,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $observers = $ticket->getObservers()->toArray();
+        $this->assertSame(2, count($observers));
+        foreach ($observers as $observer) {
+            $observerEmail = $observer->getEmail();
+
+            // Note that $defaultAppFrom is not part of the observers as it is the
+            // email address of the application.
+            $this->assertContains($observerEmail, [$recipient1, $recipient2]);
+
+            $authorizations = $observer->getAuthorizations();
+            $this->assertSame(0, count($authorizations));
+        }
     }
 
     public function testInvokeIgnoresEmailsWithAutoSubmittedHeader(): void
