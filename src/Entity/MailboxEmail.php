@@ -138,6 +138,24 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
         return $this->getEmail()->getFrom()->first()->mail;
     }
 
+    /**
+ * @return string[]
+ */
+    public function getCc(): array
+    {
+        $email = $this->getEmail();
+        $ccAddresses = $email->getCc()->all();
+
+        $ccEmails = [];
+        foreach ($ccAddresses as $ccAddress) {
+            if ($ccAddress->mail) {
+                $ccEmails[] = $ccAddress->mail;
+            }
+        }
+
+        return $ccEmails;
+    }
+
     public function getInReplyTo(): ?string
     {
         $inReplyTo = $this->getEmail()->getInReplyTo()->first();
