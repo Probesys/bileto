@@ -11,6 +11,7 @@ use App\Repository;
 use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -18,12 +19,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsMessageHandler]
 class SendReceiptEmailHandler
 {
+    use EmailSender;
+
     public function __construct(
         private Repository\MessageRepository $messageRepository,
         private Repository\TicketRepository $ticketRepository,
         private LoggerInterface $logger,
         private TranslatorInterface $translator,
         private TransportInterface $transportInterface,
+        #[Autowire(env: 'MAILER_FROM')]
+        private string $mailerFrom,
     ) {
     }
 
@@ -64,6 +69,7 @@ class SendReceiptEmailHandler
         $subject = "[#{$ticket->getId()}] {$subject}";
 
         $email = new TemplatedEmail();
+        $email->from($this->mailerFrom);
         $email->to($requester->getEmail());
         $email->subject($subject);
         $email->locale($locale);
@@ -78,11 +84,10 @@ class SendReceiptEmailHandler
         // Ask compliant autoresponders to not reply to this email
         $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
 
-        $sentEmail = $this->transportInterface->send($email);
+        $emailId = $this->sendEmail($email);
 
         $message = $ticket->getMessages()->first();
         if ($message) {
-            $emailId = $sentEmail->getMessageId();
             $message->addEmailNotificationReference($emailId);
 
             try {

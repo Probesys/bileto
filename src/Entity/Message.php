@@ -16,6 +16,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Exception\RfcComplianceException;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -146,16 +148,35 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
     }
 
     /**
+     * Return the list of email notifications references associated to this email.
+     *
+     * If $onlyRfcCompliant is set to true (default), it only returns
+     * references that comply with RFC 2822. It's useful as these references
+     * are used as values in References and In-Reply-To headers of the
+     * notifications emails (which require the compliance).
+     *
      * @return string[]
      */
-    public function getEmailNotificationsReferences(): array
+    public function getEmailNotificationsReferences(bool $onlyRfcCompliant = true): array
     {
         $references = [];
 
         foreach ($this->notificationsReferences as $reference) {
-            if (str_starts_with($reference, 'email:')) {
-                $references[] = substr($reference, strlen('email:'));
+            if (!str_starts_with($reference, 'email:')) {
+                continue;
             }
+
+            $reference = substr($reference, strlen('email:'));
+
+            if ($onlyRfcCompliant) {
+                try {
+                    new Address($reference);
+                } catch (RfcComplianceException $e) {
+                    continue;
+                }
+            }
+
+            $references[] = $reference;
         }
 
         return $references;

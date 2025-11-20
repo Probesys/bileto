@@ -26,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsMessageHandler]
 class SendMessageEmailHandler
 {
+    use EmailSender;
+
     public function __construct(
         private Repository\MessageRepository $messageRepository,
         private Service\MessageDocumentStorage $messageDocumentStorage,
@@ -180,9 +182,8 @@ class SendMessageEmailHandler
 
             $email->to($user->getEmailAddress());
 
-            $sentEmail = $this->transportInterface->send($email);
+            $emailId = $this->sendEmail($email);
 
-            $emailId = $sentEmail->getMessageId();
             $message->addEmailNotificationReference($emailId);
         }
 
