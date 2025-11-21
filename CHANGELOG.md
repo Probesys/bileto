@@ -1,5 +1,11 @@
 # Changelog of Bileto
 
+## 2025-11-21 - 0.15.4
+
+### Bug fixes
+
+- Fix sending email notifications ([a5d008d](https://github.com/Probesys/bileto/commit/a5d008d))
+
 ## 2025-11-18 - 0.15.3
 
 ### Improvements
