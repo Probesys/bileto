@@ -96,6 +96,9 @@ class DataImporter
     /** @var Index<Entity\Label> */
     private Index $indexLabels;
 
+    /** @var Index<Entity\MessageTemplate> */
+    private Index $indexMessageTemplates;
+
     /** @var Index<Entity\Ticket> */
     private Index $indexTickets;
 
@@ -113,6 +116,7 @@ class DataImporter
     public function __construct(
         private Repository\ContractRepository $contractRepository,
         private Repository\LabelRepository $labelRepository,
+        private Repository\MessageTemplateRepository $messageTemplateRepository,
         private Repository\OrganizationRepository $organizationRepository,
         private Repository\RoleRepository $roleRepository,
         private Repository\TeamRepository $teamRepository,
@@ -193,6 +197,13 @@ class DataImporter
             yield "The file labels.json is missing, so ignoring labels.\n";
         }
 
+        $messageTemplates = [];
+        if (file_exists("{$tmpPath}/message_templates.json")) {
+            $messageTemplates = Utils\FSHelper::readJson("{$tmpPath}/message_templates.json");
+        } else {
+            yield "The file message_templates.json is missing, so ignoring message templates.\n";
+        }
+
         $tickets = [];
         foreach (Utils\FSHelper::recursiveScandir("{$tmpPath}/tickets/") as $ticketFilepath) {
             $tickets[] = Utils\FSHelper::readJson($ticketFilepath);
@@ -218,6 +229,7 @@ class DataImporter
                 teams: $teams,
                 contracts: $contracts,
                 labels: $labels,
+                messageTemplates: $messageTemplates,
                 tickets: $tickets,
                 documentsPath: $documentsPath,
                 trustMimeTypes: $trustMimeTypes,
@@ -244,6 +256,7 @@ class DataImporter
      * @param mixed[] $teams
      * @param mixed[] $contracts
      * @param mixed[] $labels
+     * @param mixed[] $messageTemplates
      * @param mixed[] $tickets
      * @param string $documentsPath
      *
@@ -256,6 +269,7 @@ class DataImporter
         array $teams = [],
         array $contracts = [],
         array $labels = [],
+        array $messageTemplates = [],
         array $tickets = [],
         string $documentsPath = '',
         bool $trustMimeTypes = false,
@@ -270,6 +284,7 @@ class DataImporter
         $this->indexTeams = new Index();
         $this->indexContracts = new Index();
         $this->indexLabels = new Index();
+        $this->indexMessageTemplates = new Index();
         $this->indexTickets = new Index();
         $this->indexMessages = new Index();
         $this->indexMessageToDocuments = new Index();
@@ -280,6 +295,7 @@ class DataImporter
         yield from $this->processTeams($teams);
         yield from $this->processContracts($contracts);
         yield from $this->processLabels($labels);
+        yield from $this->processMessageTemplates($messageTemplates);
         yield from $this->processTickets($tickets);
 
         if ($this->errors) {
@@ -292,6 +308,7 @@ class DataImporter
         yield from $this->importEntities($this->indexTeams->list(), ['teamAuthorizations']);
         yield from $this->importEntities($this->indexContracts->list());
         yield from $this->importEntities($this->indexLabels->list());
+        yield from $this->importEntities($this->indexMessageTemplates->list());
         yield from $this->importEntities($this->indexTickets->list(), ['timeSpents', 'messages']);
         yield from $this->importMessageDocuments($trustMimeTypes);
     }
@@ -982,6 +999,74 @@ class DataImporter
             $error = $this->validate($label);
             if ($error) {
                 $this->errors[] = "Label {$id} error: {$error}";
+            }
+        }
+
+        yield "ok\n";
+    }
+
+    /**
+     * @phpstan-impure
+     *
+     * @param mixed[] $json
+     *
+     * @return \Generator<int, string, void, void>
+     */
+    private function processMessageTemplates(array $json): \Generator
+    {
+        yield 'Processing message templates… ';
+
+        $requiredFields = [
+            'id',
+            'name',
+            'content',
+            'type',
+        ];
+
+        foreach ($json as $jsonMessageTemplate) {
+            // Check the structure of the message template
+            $error = self::checkStructure($jsonMessageTemplate, required: $requiredFields);
+            if ($error) {
+                $this->errors[] = "Message templates file contains invalid data: {$error}";
+                continue;
+            }
+
+            $id = strval($jsonMessageTemplate['id']);
+            $name = strval($jsonMessageTemplate['name']);
+            $content = strval($jsonMessageTemplate['content']);
+            $content = $this->appMessageSanitizer->sanitize($content);
+            $type = strval($jsonMessageTemplate['type']);
+
+            // Build the message template
+            $messageTemplate = new Entity\MessageTemplate();
+            $messageTemplate->setName($name);
+            $messageTemplate->setContent($content);
+            $messageTemplate->setType($type);
+
+            $messageTemplate->setUid(Utils\Random::hex(20));
+            $messageTemplate->setCreatedAt(Utils\Time::now());
+            $messageTemplate->setUpdatedAt(Utils\Time::now());
+
+            // Add the message template to the index
+            try {
+                $this->indexMessageTemplates->add($id, $messageTemplate, uniqueKey: $name);
+            } catch (IndexError $e) {
+                $this->errors[] = "MessageTemplate {$id} error: {$e->getMessage()}";
+            }
+        }
+
+        // Load existing values from the database and update the indexes
+        $existingMessageTemplates = $this->messageTemplateRepository->findAll();
+        foreach ($existingMessageTemplates as $messageTemplate) {
+            $name = $messageTemplate->getName();
+            $this->indexMessageTemplates->refreshUnique($messageTemplate, uniqueKey: $name);
+        }
+
+        // Validate the message templates
+        foreach ($this->indexMessageTemplates->list() as $id => $messageTemplate) {
+            $error = $this->validate($messageTemplate);
+            if ($error) {
+                $this->errors[] = "MessageTemplate {$id} error: {$error}";
             }
         }
 

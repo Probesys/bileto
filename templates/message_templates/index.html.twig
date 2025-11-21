@@ -1,0 +1,80 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2026 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'admin.html.twig' %}
+
+{% set currentMenu = 'message_templates' %}
+
+{% block title %}{{ 'message_templates.index.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('admin') }}">
+            {{ 'admin.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'message_templates.index.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'message_templates.index.title' | trans }}</h1>
+
+        <div class="flow">
+            <div class="cols cols--center flow">
+                <div class="col--extend">
+                    {% if messageTemplates|length > 0 %}
+                        <p class="text--secondary">
+                            {{ 'message_templates.index.number' | trans({ count: messageTemplates|length }) }}
+                        </p>
+                    {% endif %}
+                </div>
+
+                <a href="{{ path('new message template') }}" class="button button--primary button--uppercase">
+                    {{ icon('plus') }}
+                    {{ 'message_templates.index.new_template' | trans }}
+                </a>
+            </div>
+
+            {% if messageTemplates|length > 0 %}
+                <ul class="list--padded list--border list--nostyle">
+                    {% for messageTemplate in messageTemplates %}
+                        <li class="cols cols--center flow flow--small" data-test="message-template-item">
+                            <span class="col--extend">
+                                {{ messageTemplate.name }}
+                            </span>
+
+                            <span class="col--noshrink">
+                                <span class="badge badge--grey">
+                                    {{ messageTemplate.typeLabel | trans }}
+                                </span>
+                            </span>
+
+                            <a href="{{ path('edit message template', { uid: messageTemplate.uid }) }}">
+                                {{ 'message_templates.index.edit' | trans }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'message_templates.index.none' | trans }}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

@@ -102,6 +102,18 @@
                     </a>
                 </li>
             {% endif %}
+
+            {% if is_granted('admin:manage:templates') %}
+                <li class="submenu__item">
+                    <a
+                        class="submenu__anchor"
+                        href="{{ path('message templates') }}"
+                        {{ currentMenu == 'message_templates' ? 'aria-current="page"' }}
+                    >
+                        {{ 'message_templates.index.title' | trans }}
+                    </a>
+                </li>
+            {% endif %}
         </ul>
     </nav>
 {% endblock %}

@@ -290,6 +290,25 @@ mailboxes.username: 'Nom d’utilisateur'
 message_documents.attachments: Pièces-jointes
 message_documents.attachments.attach: 'Ajouter une pièce-jointe'
 message_documents.remove: 'Retirer la pièce-jointe'
+message_templates.applier.apply_template: 'Appliquer un modèle de réponse'
+message_templates.applier.modal.title: 'Sélectionner un modèle de réponse'
+message_templates.deletion.confirm: "Êtes-vous sûr de vouloir supprimer ce modèle de réponse\_?"
+message_templates.deletion.going_delete: "Vous êtes sur le point de supprimer le modèle de réponse «\_{name}\_»."
+message_templates.deletion.submit: 'Supprimer le modèle'
+message_templates.deletion.title: Suppression
+message_templates.edit.title: 'Modifier un modèle de réponse'
+message_templates.index.edit: Modifier
+message_templates.index.new_template: 'Nouveau modèle'
+message_templates.index.none: 'Aucun modèle'
+message_templates.index.number: '{count, plural, =0 {Aucun modèle} one {1 modèle} other {# modèles}}'
+message_templates.index.title: 'Modèles de réponses'
+message_templates.name: 'Nom du modèle'
+message_templates.new.submit: 'Créer le modèle'
+message_templates.new.title: 'Nouveau modèle de réponse'
+message_templates.type: 'Type de réponse'
+message_templates.type.confidential: 'Réponse confidentielle'
+message_templates.type.normal: Réponse
+message_templates.type.solution: Solution
 notifications.saved: 'Vos changements ont été sauvegardés.'
 organizations.domains: 'Domaines liés'
 organizations.domains.caption: "Les utilisateurs dont l’adresse email correspond à l’un de ces domaines seront associés à cette organisation par défaut. Utilisez le caractère «\_*\_» pour prendre en charge tous les domaines."
@@ -362,6 +381,7 @@ roles.permissions.admin.manage.agents: 'Gérer les agents'
 roles.permissions.admin.manage.labels: 'Gérer les étiquettes'
 roles.permissions.admin.manage.mailboxes: 'Gérer les boites mails'
 roles.permissions.admin.manage.roles: 'Gérer les roles'
+roles.permissions.admin.manage.templates: 'Gérer les modèles'
 roles.permissions.admin.manage.users: 'Gérer les utilisateurs'
 roles.permissions.be_assigned_to_tickets: 'Être attribué aux tickets'
 roles.permissions.check_all: 'Tout cocher'

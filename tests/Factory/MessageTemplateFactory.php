@@ -1,0 +1,37 @@
+<?php
+
+// This file is part of Bileto.
+// Copyright 2022-2026 Probesys
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+namespace App\Tests\Factory;
+
+use App\Entity\MessageTemplate;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+
+/**
+ * @extends PersistentProxyObjectFactory<MessageTemplate>
+ */
+final class MessageTemplateFactory extends PersistentProxyObjectFactory
+{
+    /**
+     * @return mixed[]
+     */
+    protected function defaults(): array
+    {
+        return [
+            'name' => self::faker()->words(3, true),
+            'content' => self::faker()->text(),
+        ];
+    }
+
+    protected function initialize(): static
+    {
+        return $this;
+    }
+
+    public static function class(): string
+    {
+        return MessageTemplate::class;
+    }
+}

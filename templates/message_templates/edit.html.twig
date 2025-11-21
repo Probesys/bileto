@@ -1,0 +1,69 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2026 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'admin.html.twig' %}
+
+{% set currentMenu = 'message_templates' %}
+
+{% block title %}{{ 'message_templates.edit.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('admin') }}">
+            {{ 'admin.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('message templates') }}">
+            {{ 'message_templates.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'message_templates.edit.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'message_templates.edit.title' | trans }}</h1>
+
+        <div class="panel">
+            {{ include('message_templates/_form.html.twig', { form: form }) }}
+        </div>
+
+        <div class="panel">
+            <form action="{{ path('delete message template', { uid: messageTemplate.uid }) }}" method="post" class="form--standard">
+                <h2>{{ 'message_templates.deletion.title' | trans }}</h2>
+
+                {{ include('alerts/_alert.html.twig', {
+                    type: 'warning',
+                    title: 'common.caution' | trans,
+                    message: 'message_templates.deletion.going_delete' | trans({ name: messageTemplate.name }),
+                }, with_context = false) }}
+
+                {% if error %}
+                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                {% endif %}
+
+                <div class="form__actions">
+                    <button
+                        class="button--primary"
+                        type="submit"
+                        data-turbo-confirm="{{ 'message_templates.deletion.confirm' | trans }}"
+                    >
+                        {{ 'message_templates.deletion.submit' | trans }}
+                    </button>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete message template') }}">
+            </form>
+        </div>
+    </main>
+{% endblock %}

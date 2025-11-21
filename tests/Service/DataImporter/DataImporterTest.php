@@ -1176,6 +1176,127 @@ class DataImporterTest extends WebTestCase
         $this->assertSame(0, Factory\LabelFactory::count());
     }
 
+    public function testImportMessageTemplates(): void
+    {
+        $messageTemplates = [
+            [
+                'id' => '1',
+                'name' => 'My template',
+                'content' => '<p>Lorem ipsum</p>',
+                'type' => 'solution',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            messageTemplates: $messageTemplates,
+        ));
+
+        $this->assertSame(1, Factory\MessageTemplateFactory::count());
+        $messageTemplate = Factory\MessageTemplateFactory::last();
+        $this->assertSame('My template', $messageTemplate->getName());
+        $this->assertSame('<p>Lorem ipsum</p>', $messageTemplate->getContent());
+        $this->assertSame('solution', $messageTemplate->getType());
+    }
+
+    public function testImportMessageTemplatesKeepsExistingMessageTemplatesInDatabase(): void
+    {
+        $existingMessageTemplate = Factory\MessageTemplateFactory::createOne([
+            'name' => 'My template',
+        ]);
+
+        $messageTemplates = [
+            [
+                'id' => '1',
+                'name' => 'My template',
+                'content' => '<p>Lorem ipsum</p>',
+                'type' => 'solution',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            messageTemplates: $messageTemplates,
+        ));
+
+        $this->assertSame(1, Factory\MessageTemplateFactory::count());
+        $messageTemplate = Factory\MessageTemplateFactory::last();
+        $this->assertSame('My template', $messageTemplate->getName());
+        $this->assertSame($existingMessageTemplate->getUid(), $messageTemplate->getUid());
+    }
+
+    public function testImportMessageTemplatesFailsIfIdIsDuplicatedInFile(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('MessageTemplate 1 error: id is duplicated');
+
+        $messageTemplates = [
+            [
+                'id' => '1',
+                'name' => 'My template 1',
+                'content' => '<p>Lorem ipsum</p>',
+                'type' => 'solution',
+            ],
+            [
+                'id' => '1',
+                'name' => 'My template 2',
+                'content' => '<p>Lorem ipsum</p>',
+                'type' => 'solution',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            messageTemplates: $messageTemplates,
+        ));
+
+        $this->assertSame(0, Factory\MessageTemplateFactory::count());
+    }
+
+    public function testImportMessageTemplatesFailsIfNameIsDuplicatedInFile(): void
+    {
+        $this->expectException(DataImporterError::class);
+        $this->expectExceptionMessage('MessageTemplate 2 error: duplicates id 1');
+
+        $messageTemplates = [
+            [
+                'id' => '1',
+                'name' => 'My template',
+                'content' => '<p>Lorem ipsum</p>',
+                'type' => 'solution',
+            ],
+            [
+                'id' => '2',
+                'name' => 'My template',
+                'content' => '<p>Lorem ipsum</p>',
+                'type' => 'solution',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            messageTemplates: $messageTemplates,
+        ));
+
+        $this->assertSame(0, Factory\MessageTemplateFactory::count());
+    }
+
+    public function testImportMessageTemplatesFailsIfMessageTemplateIsInvalid(): void
+    {
+        $this->expectExceptionMessage('MessageTemplate 1 error: Enter a name.');
+
+        $messageTemplates = [
+            [
+                'id' => '1',
+                'name' => '',
+                'content' => '<p>Lorem ipsum</p>',
+                'type' => 'solution',
+            ],
+        ];
+
+        $this->processGenerator($this->dataImporter->import(
+            messageTemplates: $messageTemplates,
+        ));
+
+        $this->assertSame(0, Factory\MessageTemplateFactory::count());
+    }
+
     public function testImportTickets(): void
     {
         $organizations = [

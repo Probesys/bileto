@@ -19,6 +19,7 @@ new TranslatableMessage('roles.permissions.admin.manage.agents');
 new TranslatableMessage('roles.permissions.admin.manage.labels');
 new TranslatableMessage('roles.permissions.admin.manage.mailboxes');
 new TranslatableMessage('roles.permissions.admin.manage.roles');
+new TranslatableMessage('roles.permissions.admin.manage.templates');
 new TranslatableMessage('roles.permissions.admin.manage.users');
 new TranslatableMessage('roles.permissions.orga.create.tickets');
 new TranslatableMessage('roles.permissions.orga.create.tickets.messages');
@@ -51,6 +52,11 @@ new TranslatableMessage('common.colors.blue');
 new TranslatableMessage('common.colors.green');
 new TranslatableMessage('common.colors.orange');
 new TranslatableMessage('common.colors.red');
+
+// see src/Entity/MessageTemplate.php
+new TranslatableMessage('message_templates.type.confidential');
+new TranslatableMessage('message_templates.type.normal');
+new TranslatableMessage('message_templates.type.solution');
 
 // See src/Form/TicketForm.php
 new TranslatableMessage('tickets.type.request');

@@ -529,10 +529,19 @@
 
                                 {% if form.type is defined %}
                                     <div class="cols flow">
-                                        <div class="col--extend">
+                                        <div>
                                             {{ form_errors(form.type) }}
                                             {{ form_widget(form.type) }}
                                         </div>
+
+                                        <div>
+                                            {{ include('message_templates/_applier.html.twig', {
+                                                typeSelector: '#' ~ field_id(form.type),
+                                                contentSelector: '#' ~ field_id(form.content),
+                                            }) }}
+                                        </div>
+
+                                        <div class="col--extend"></div>
 
                                         {% if form.timeSpent is defined %}
                                             {% set timeSpentChanged = field_value(form.timeSpent) > 0 %}

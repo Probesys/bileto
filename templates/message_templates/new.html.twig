@@ -1,0 +1,41 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2026 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'admin.html.twig' %}
+
+{% set currentMenu = 'message_templates' %}
+
+{% block title %}{{ 'message_templates.new.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('admin') }}">
+            {{ 'admin.index.title' | trans }}
+        </a>
+
+        <a href="{{ path('message templates') }}">
+            {{ 'message_templates.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'message_templates.new.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'message_templates.new.title' | trans }}</h1>
+
+        <div class="panel">
+            {{ include('message_templates/_form.html.twig', { form: form }) }}
+        </div>
+    </main>
+{% endblock %}

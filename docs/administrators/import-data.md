@@ -17,6 +17,7 @@ It allows you to import:
 - teams;
 - contracts;
 - labels;
+- message templates;
 - and tickets with their messages, documents and spent time.
 
 Before importing the data into the database, the command performs some checks to verify the integrity and validity of the files to be imported.

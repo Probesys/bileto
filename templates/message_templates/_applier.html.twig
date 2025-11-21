@@ -1,0 +1,48 @@
+<button
+    class="button--icon button--discreet"
+    type="button"
+    title="{{ 'message_templates.applier.apply_template' | trans }}"
+    data-controller="modal-opener"
+    data-action="modal-opener#copy"
+    data-modal-opener-selector-value="#modal-apply-template"
+>
+    {{ icon('swatchbook') }}
+    <span class="sr-only">
+        {{ 'message_templates.applier.apply_template' | trans }}
+    </span>
+</button>
+
+<template id="modal-apply-template">
+    <div>
+        <h1 id="modal-title" class="modal__title">{{ 'message_templates.applier.modal.title' | trans }}</h1>
+
+        <div
+            class="wrapper wrapper--small wrapper--center flow"
+            data-controller="message-template-applier"
+            data-message-template-applier-type-selector-value="{{ typeSelector }}"
+            data-message-template-applier-content-selector-value="{{ contentSelector }}"
+        >
+            {% for templateGroup in form.messageTemplates.vars.choices %}
+                <fieldset class="flow flow--small">
+                    <legend>{{ templateGroup.label | trans }}</legend>
+
+                    {% for templateForm in templateGroup.choices %}
+                        <button
+                            class="template-button"
+                            data-action="message-template-applier#apply modal#close"
+                            {% for attrname, attrvalue in templateForm.attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %}
+                        >
+                            <span class="template-button__label">
+                                {{ templateForm.label }}
+                            </span>
+
+                            {{ icon('arrow-right') }}
+                        </button>
+                    {% endfor %}
+                </fieldset>
+            {% endfor %}
+
+            {% do form.messageTemplates.setRendered %}
+        </div>
+    </div>
+</template>

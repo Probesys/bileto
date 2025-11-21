@@ -78,6 +78,14 @@ class AnswerForm extends AbstractType
                     ],
                 ]);
 
+                $form->add('messageTemplates', AppType\MessageTemplateType::class, [
+                    'mapped' => false,
+                    'required' => false,
+                    'attr' => [
+                        'class' => 'widget--small',
+                    ],
+                ]);
+
                 if ($this->authorizer->isGranted('orga:create:tickets:time_spent', $organization)) {
                     $form->add('timeSpent', Type\IntegerType::class, [
                         'label' => new TranslatableMessage('tickets.show.minutes'),
