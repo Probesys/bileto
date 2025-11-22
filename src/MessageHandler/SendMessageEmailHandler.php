@@ -35,6 +35,7 @@ class SendMessageEmailHandler
         private TransportInterface $transportInterface,
         private LoggerInterface $logger,
         private UrlGeneratorInterface $urlGenerator,
+        private \App\Security\Authorizer $authorizer,
         #[Autowire(env: 'MAILER_FROM')]
         private string $mailerFrom,
     ) {
@@ -47,15 +48,6 @@ class SendMessageEmailHandler
 
         if (!$message) {
             $this->logger->error("Message {$messageId} cannot be found in SendMessageEmailHandler.");
-            return;
-        }
-
-        if ($message->isConfidential()) {
-            // If the message is confidential, it should not be sent to recipients
-            // who don't have the orga:see:tickets:messages:confidential
-            // permission. At the moment, I don't know what's the best solution
-            // to handle that so I've decided to never send the notification in
-            // that case. This will have to be improved in the future.
             return;
         }
 
@@ -84,12 +76,24 @@ class SendMessageEmailHandler
             $recipients[$assignee->getEmail()] = $assignee;
         }
 
-        $recipients = array_filter($recipients, function (?Entity\User $user): bool {
+        $recipients = array_filter($recipients, function (?Entity\User $user) use ($message): bool {
             // Remove the anonymous users from the list of recipients to avoid
             // to send emails to wrong addresses.
-            return $user && !$user->isAnonymized();
-        });
+            if (!$user || $user->isAnonymized()) {
+                return false;
+            }
+            // If the message is confidential, only send to users with the permission
+            if ($message->isConfidential()) {
+                $ticket = $message->getTicket();
+                return $this->authorizer->isGrantedForUser(
+                    $user,
+                    'orga:see:tickets:messages:confidential',
+                    $ticket->getOrganization()
+                );
+            }
 
+            return true;
+        });
         if (empty($recipients)) {
             return;
         }
