@@ -6,8 +6,8 @@
 
 namespace App\Entity;
 
-use App\ActivityMonitor\RecordableEntityInterface;
-use App\ActivityMonitor\RecordableEntityTrait;
+use App\ActivityMonitor\MonitorableEntityInterface;
+use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\MessageTemplateRepository;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
@@ -16,12 +16,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageTemplateRepository::class)]
-class MessageTemplate implements
-    UidEntityInterface,
-    RecordableEntityInterface
+class MessageTemplate implements EntityInterface, MonitorableEntityInterface, UidEntityInterface
 {
+    use MonitorableEntityTrait;
     use UidEntityTrait;
-    use RecordableEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,14 +33,14 @@ class MessageTemplate implements
     #[ORM\JoinColumn]
     private ?User $createdBy = null;
 
-    #[ORM\Column(nullable: false)]
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn]
     private ?User $updatedBy = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255)]

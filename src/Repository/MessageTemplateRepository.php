@@ -7,16 +7,19 @@
 namespace App\Repository;
 
 use App\Entity\MessageTemplate;
+use App\Uid\UidGeneratorInterface;
+use App\Uid\UidGeneratorTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<MessageTemplate>
  */
-class MessageTemplateRepository extends ServiceEntityRepository
+class MessageTemplateRepository extends ServiceEntityRepository implements UidGeneratorInterface
 {
     /** @use CommonTrait<MessageTemplate> */
     use CommonTrait;
+    use UidGeneratorTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
