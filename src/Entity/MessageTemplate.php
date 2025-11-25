@@ -59,10 +59,6 @@ class MessageTemplate implements EntityInterface, MonitorableEntityInterface, Ui
     )]
     private ?string $type = 'normal';
 
-    #[ORM\Column]
-    #[Assert\GreaterThanOrEqual(0, message: 'message_template.time_spent.min')]
-    private int $timeSpent = 0;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -100,18 +96,6 @@ class MessageTemplate implements EntityInterface, MonitorableEntityInterface, Ui
     public function setType(string $type): self
     {
         $this->type = $type;
-
-        return $this;
-    }
-
-    public function getTimeSpent(): int
-    {
-        return $this->timeSpent;
-    }
-
-    public function setTimeSpent(int $timeSpent): self
-    {
-        $this->timeSpent = $timeSpent;
 
         return $this;
     }

@@ -299,11 +299,11 @@ message_templates.index.title: Modèles
 message_templates.name: Nom
 message_templates.new.submit: 'Créer le modèle'
 message_templates.new.title: 'Nouveau modèle'
-message_templates.time_spent: 'Temps passé (minutes)'
 message_templates.type: Type
 message_templates.type.confidential: Confidentiel
 message_templates.type.normal: Normal
 message_templates.type.solution: Solution
+message_templates.select.placeholder: 'Utiliser un modèle...'
 notifications.saved: 'Vos changements ont été sauvegardés.'
 organizations.domains: 'Domaines liés'
 organizations.domains.caption: "Les utilisateurs dont l’adresse email correspond à l’un de ces domaines seront associés à cette organisation par défaut. Utilisez le caractère «\_*\_» pour prendre en charge tous les domaines."

@@ -50,15 +50,6 @@ class MessageTemplateForm extends AbstractType
             'label' => new TranslatableMessage('message_templates.type'),
         ]);
 
-        $builder->add('timeSpent', Type\IntegerType::class, [
-            'required' => false,
-            'empty_data' => '0',
-            'label' => new TranslatableMessage('message_templates.time_spent'),
-            'attr' => [
-                'min' => 0,
-            ],
-        ]);
-
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
             $messageTemplate = $event->getData();

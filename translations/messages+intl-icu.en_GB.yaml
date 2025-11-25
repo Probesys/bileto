@@ -299,11 +299,11 @@ message_templates.index.title: Templates
 message_templates.name: Name
 message_templates.new.submit: 'Create the template'
 message_templates.new.title: 'New template'
-message_templates.time_spent: 'Time spent (minutes)'
 message_templates.type: Type
 message_templates.type.confidential: Confidential
 message_templates.type.normal: Normal
 message_templates.type.solution: Solution
+message_templates.select.placeholder: 'Use a template...'
 notifications.saved: 'Your changes have been successfully saved.'
 organizations.domains: 'Linked domains'
 organizations.domains.caption: 'Users whose email address corresponds to one of these domains will be associated with this organization by default. Use the “*” character to handle all domains.'

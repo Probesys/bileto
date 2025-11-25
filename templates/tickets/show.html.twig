@@ -522,6 +522,15 @@
 
                     <div id="bottom">
                         {% if is_granted('orga:create:tickets:messages', organization) and not ticket.isClosed %}
+                            {% set templatesJson = [] %}
+                            {% for template in messageTemplates %}
+                                {% set templatesJson = templatesJson|merge([{
+                                    uid: template.uid,
+                                    name: template.name,
+                                    content: template.content,
+                                    type: template.type,
+                                }]) %}
+                            {% endfor %}
                             {{ form_start(form, {
                                 action: path('create ticket message', {'uid': ticket.uid})
                             }) }}
@@ -561,6 +570,23 @@
                                                         {{ field_label(form.timeSpent) }}
                                                     </label>
                                                 </div>
+                                                                                            </div>
+                                        {% endif %}
+                                        {% if messageTemplates|length > 0 %}
+                                            <div
+                                                data-controller="message-template"
+                                                data-message-template-templates-value="{{ templatesJson | json_encode | e('html_attr') }}"
+                                            >
+                                                <select
+                                                    class="widget--small"
+                                                    data-message-template-target="select"
+                                                    data-action="change->message-template#apply"
+                                                >
+                                                    <option value="">{{ 'message_templates.select.placeholder' | trans }}</option>
+                                                    {% for template in messageTemplates %}
+                                                        <option value="{{ template.uid }}">{{ template.name }}</option>
+                                                    {% endfor %}
+                                                </select>
                                             </div>
                                         {% endif %}
                                     </div>

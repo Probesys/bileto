@@ -29,7 +29,6 @@ final class Version20251121150558 extends AbstractMigration
             'name VARCHAR(255) NOT NULL, ' .
             'content TEXT DEFAULT NULL, ' .
             'type VARCHAR(20) NOT NULL, ' .
-            'time_spent INT NOT NULL, ' .
             'created_by_id INT DEFAULT NULL, ' .
             'updated_by_id INT DEFAULT NULL, ' .
             'PRIMARY KEY(id))'
