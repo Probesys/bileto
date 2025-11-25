@@ -18,6 +18,7 @@ import ModalController from './controllers/modal_controller.js';
 import ModalOpenerController from './controllers/modal_opener_controller.js';
 import MultiselectController from './controllers/multiselect_controller.js';
 import MultitextController from './controllers/multitext_controller.js';
+import MessageTemplateController from './controllers/message_template_controller.js';
 import NavigationController from './controllers/navigation_controller.js';
 import NotificationsController from './controllers/notifications_controller.js';
 import PasswordController from './controllers/password_controller.js';
@@ -53,6 +54,7 @@ application.register('switch', SwitchController);
 application.register('timeline', TimelineController);
 application.register('tinymce', TinymceController);
 application.register('user-selector', UserSelectorController);
+application.register('message-template', MessageTemplateController);
 
 // Make sure to visit the response when receiving the `turbo:frame-missing` event.
 // This happens most of the time on redirection after submitting a form in a modal.

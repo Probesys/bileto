@@ -127,6 +127,7 @@ class TicketsController extends BaseController
     public function show(
         Entity\Ticket $ticket,
         Service\TicketTimeline $ticketTimeline,
+        Repository\MessageTemplateRepository $messageTemplateRepository,
     ): Response {
         $this->denyAccessUnlessGranted('orga:see', $ticket);
 
@@ -137,12 +138,18 @@ class TicketsController extends BaseController
 
         $form = $this->createNamedForm('answer', Form\AnswerForm::class, $message);
 
+        $messageTemplates = [];
+        if ($this->isGranted('orga:create:tickets:messages', $ticket->getOrganization())) {
+            $messageTemplates = $messageTemplateRepository->findAll();
+        }
+
         return $this->render('tickets/show.html.twig', [
             'ticket' => $ticket,
             'timeline' => $timeline,
             'organization' => $ticket->getOrganization(),
             'today' => Utils\Time::relative('today'),
             'form' => $form,
+            'messageTemplates' => $messageTemplates,
         ]);
     }
 }

@@ -1,0 +1,13 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2025 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.content) }}
+    {{ form_row(form.type) }}
+{{ form_end(form) }}

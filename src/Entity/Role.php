@@ -45,6 +45,7 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
             'admin:manage:agents',
             'admin:manage:labels',
             'admin:manage:mailboxes',
+            'admin:manage:templates',
             'admin:manage:roles',
             'admin:manage:users',
             'admin:see',
