@@ -1,18 +1,24 @@
-# Roadmap
+# Roadmap 2026
 
-Here, we list the different features that we would like to develop for Bileto.
-Please note we will not necessarily develop the features in the same order as the list.
-Also, everything will not be in the version 1.0.
+Here, we list the different features that we want to add to Bileto.
 
-- Templates of answers;
-- Save searches as custom “views”;
-- Business rules;
-- <abbr>API</abbr>;
-- <abbr>SLA</abbr>;
-- Assets management;
-- Plugins system;
-- Statistics;
-- Login with Azure;
-- More poweful notification system.
+## Bileto 0.16
 
-If you’re looking for what we’re working on right now, check out [the milestones](https://github.com/Probesys/bileto/milestones) and the [“ready” label](https://github.com/Probesys/bileto/issues?q=is%3Aissue+is%3Aopen+label%3A%22ready+%E2%9C%85%22) on GitHub.
+- Templates of answers
+- "CC" email addresses added as ticket observers
+- Ticket interventions planification
+- Pinnable information about organizations
+
+## Bileto 0.17
+
+- Organizations archiving
+- Full-text search in messages
+- Tickets merging
+- Various improvements on contracts and time spent
+
+## Bileto 1.0 (2027)
+
+- More poweful notification system
+- Save searches as custom “views”
+- <abbr>API</abbr>
+- [Prometheus](https://prometheus.io/) integration
