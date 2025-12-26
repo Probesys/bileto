@@ -84,7 +84,7 @@ advanced_search_syntax.tickets.qualifiers.type.example1: 'Tickets of type “inc
 advanced_search_syntax.tickets.qualifiers.type.example2: 'Tickets of type “request”'
 advanced_search_syntax.tickets.qualifiers.type.title: Type
 advanced_search_syntax.tickets.title: 'Quick reference for the tickets advanced search'
-anonymizations.new.information: 'You are about to anonymize user {user}. This will remove all their personal data, but their messages (which may also contain personal information) will still be stored in the database in order to ensure the traceability of tickets.'
+anonymizations.new.information: 'You are about to anonymize user {user}. This will remove all their personal data, but their messages (which may also contain personal information) will remain visible in order to ensure the traceability of tickets.'
 anonymizations.new.submit: Confirm
 anonymizations.new.title: 'Anonymize the user'
 authorizations.new.global: Global

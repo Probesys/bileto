@@ -84,7 +84,7 @@ advanced_search_syntax.tickets.qualifiers.type.example1: "Les tickets de type «
 advanced_search_syntax.tickets.qualifiers.type.example2: "Les tickets de type «\_demande\_»"
 advanced_search_syntax.tickets.qualifiers.type.title: Type
 advanced_search_syntax.tickets.title: 'Aide-mémoire de la recherche avancée des tickets'
-anonymizations.new.information: 'Vous êtes sur le point d’anonymiser l’utilisateur {user}. Cela va supprimer toutes ses données personnelles, mais ses messages (qui peuvent également contenir des informations personnelles) seront conservés en base de données afin de garantir la traçabilité des tickets.'
+anonymizations.new.information: 'Vous êtes sur le point d’anonymiser l’utilisateur {user}. Cela va supprimer toutes ses données personnelles, mais ses messages (qui peuvent également contenir des informations personnelles) resteront visibles afin de garantir la traçabilité des tickets.'
 anonymizations.new.submit: Confirmer
 anonymizations.new.title: 'Anonymiser un utilisateur'
 authorizations.new.global: Global
