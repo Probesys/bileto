@@ -10,7 +10,6 @@ use App\Entity;
 use App\Form;
 use App\Message;
 use App\Repository;
-use App\Security;
 use App\Service;
 use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +19,6 @@ use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Webklex\PHPIMAP;
 
 class MailboxesController extends BaseController
 {
@@ -103,7 +101,7 @@ class MailboxesController extends BaseController
         Entity\Mailbox $mailbox,
         Repository\MailboxRepository $mailboxRepository,
         TranslatorInterface $translator,
-        Security\Encryptor $encryptor,
+        Service\MailboxService $mailboxService,
     ): Response {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
@@ -115,16 +113,7 @@ class MailboxesController extends BaseController
             return $this->redirectToRoute('mailboxes');
         }
 
-        $clientManager = new PHPIMAP\ClientManager();
-        $client = $clientManager->make([
-            'host' => $mailbox->getHost(),
-            'protocol' => $mailbox->getProtocol(),
-            'port' => $mailbox->getPort(),
-            'encryption' => $mailbox->getEncryption(),
-            'validate_cert' => true,
-            'username' => $mailbox->getUsername(),
-            'password' => $encryptor->decrypt($mailbox->getPassword()),
-        ]);
+        $client = $mailboxService->getClient($mailbox);
 
         try {
             $client->connect();

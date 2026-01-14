@@ -9,6 +9,7 @@ namespace App\Entity;
 use App\ActivityMonitor\MonitorableEntityInterface;
 use App\ActivityMonitor\MonitorableEntityTrait;
 use App\Repository\MailboxEmailRepository;
+use App\Service;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
 use App\Utils\Time;
@@ -121,8 +122,8 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
     public function getEmail(): PHPIMAP\Message
     {
         if (!$this->email) {
-            $clientManager = new PHPIMAP\ClientManager();
-            $this->email = PHPIMAP\Message::fromString($this->raw);
+            $config = Service\MailboxService::getConfig();
+            $this->email = PHPIMAP\Message::fromString($this->raw, $config);
         }
 
         return $this->email;

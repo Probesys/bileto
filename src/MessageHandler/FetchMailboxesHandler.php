@@ -11,11 +11,10 @@ use App\Entity\MailboxEmail;
 use App\Message\FetchMailboxes;
 use App\Repository\MailboxRepository;
 use App\Repository\MailboxEmailRepository;
-use App\Security\Encryptor;
+use App\Service;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Webklex\PHPIMAP;
 
 #[AsMessageHandler]
 class FetchMailboxesHandler
@@ -23,9 +22,9 @@ class FetchMailboxesHandler
     public function __construct(
         private MailboxRepository $mailboxRepository,
         private MailboxEmailRepository $mailboxEmailRepository,
-        private Encryptor $encryptor,
         private LockFactory $lockFactory,
         private LoggerInterface $logger,
+        private Service\MailboxService $mailboxService,
     ) {
     }
 
@@ -56,16 +55,7 @@ class FetchMailboxesHandler
 
     protected function fetchMailbox(Mailbox $mailbox): void
     {
-        $clientManager = new PHPIMAP\ClientManager();
-        $client = $clientManager->make([
-            'host' => $mailbox->getHost(),
-            'protocol' => $mailbox->getProtocol(),
-            'port' => $mailbox->getPort(),
-            'encryption' => $mailbox->getEncryption(),
-            'validate_cert' => true,
-            'username' => $mailbox->getUsername(),
-            'password' => $this->encryptor->decrypt($mailbox->getPassword()),
-        ]);
+        $client = $this->mailboxService->getClient($mailbox);
 
         $client->connect();
 

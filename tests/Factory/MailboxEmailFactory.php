@@ -7,6 +7,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\MailboxEmail;
+use App\Service;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 use Webklex\PHPIMAP;
 
@@ -56,8 +57,8 @@ final class MailboxEmailFactory extends PersistentProxyObjectFactory
 
             $rawEmail = "{$headers}\n\r\n\r{$attributes['htmlBody']}";
 
-            $clientManager = new PHPIMAP\ClientManager();
-            $email = PHPIMAP\Message::fromString($rawEmail);
+            $config = Service\MailboxService::getConfig();
+            $email = PHPIMAP\Message::fromString($rawEmail, $config);
 
             $mailboxEmail = new MailboxEmail($attributes['mailbox'], $email);
 
