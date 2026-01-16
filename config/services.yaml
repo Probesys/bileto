@@ -61,6 +61,7 @@ services:
               version: '%env(int:LDAP_VERSION)%'
               port: '%env(int:LDAP_PORT)%'
               encryption: '%env(LDAP_ENCRYPTION)%'
+              debug: '%env(bool:LDAP_DEBUG)%'
 
 when@dev:
     services:

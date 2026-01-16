@@ -1,5 +1,11 @@
 # Changelog of Bileto
 
+## unreleased
+
+### Migration notes
+
+A new `LDAP_DEBUG` environment variable is available to enable the debug mode when using LDAP.
+
 ## 2025-11-21 - 0.15.4
 
 ### Bug fixes
