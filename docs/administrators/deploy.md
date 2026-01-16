@@ -246,7 +246,7 @@ Create the file `/etc/systemd/system/bileto-worker.service`:
 Description=The Messenger worker for Bileto
 
 [Service]
-ExecStart=php /var/www/bileto/bin/console messenger:consume async scheduler_default --time-limit=3600
+ExecStart=php /var/www/bileto/bin/console messenger:consume async scheduler_default --limit=50
 
 User=www-data
 Group=www-data

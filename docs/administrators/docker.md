@@ -73,7 +73,7 @@ services:
     worker:
         image: ghcr.io/probesys/bileto:0.5.0-alpha
         restart: unless-stopped
-        command: php bin/console messenger:consume async scheduler_default -vv
+        command: php bin/console messenger:consume async scheduler_default --limit=50
         entrypoint: ""
         volumes:
             - var:/var/www/html/var
