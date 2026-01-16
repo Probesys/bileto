@@ -58,6 +58,7 @@ With PostgreSQL:
 postgres=# CREATE DATABASE bileto_production;
 postgres=# CREATE USER bileto_user WITH ENCRYPTED PASSWORD 'secret';
 postgres=# GRANT ALL PRIVILEGES ON DATABASE bileto_production TO bileto_user;
+postgres=# ALTER DATABASE bileto_production OWNER TO bileto_user;
 ```
 
 With MariaDB:
