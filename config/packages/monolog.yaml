@@ -51,6 +51,13 @@ when@prod:
                 level: debug
                 formatter: monolog.formatter.json
 
+            file:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
+                level: notice
+                max_files: 14
+                channels: ["!event"]
+
             console:
                 type: console
                 process_psr_3_messages: false
