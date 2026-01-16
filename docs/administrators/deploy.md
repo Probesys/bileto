@@ -313,7 +313,9 @@ You can also set `SENTRY_SEND_DEFAULT_PII` to `true` to send personally identifi
 
 ## Updating the production environment
 
-**Please always start by checking the migration notes in [the changelog](/CHANGELOG.md) before updating Bileto.**
+> [!IMPORTANT]
+> Always backup your data (database and volumes) and check [the changelog](/CHANGELOG.md) **before** beginning the upgrade process.
+> Breaking changes are highlighted in the migration notes for each version.
 
 Remember that commands prefixed by `www-data$` need to be run as the `www-data` user.
 [Read more about file permissions.](#about-file-permissions)
