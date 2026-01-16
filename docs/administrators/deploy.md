@@ -123,7 +123,7 @@ The commands that need to be executed as `www-data` **will be prefixed by `www-d
 Checkout the code to the latest version of Bileto:
 
 ```
-www-data$ git switch $(git describe --tags $(git rev-list --tags --max-count=1))
+www-data$ git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 ```
 
 Go to GitHub if you want to find [the full list of releases](https://github.com/Probesys/bileto/releases).
@@ -327,7 +327,7 @@ www-data$ git fetch
 Switch to the latest version:
 
 ```console
-www-data$ git switch $(git describe --tags $(git rev-list --tags --max-count=1))
+www-data$ git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 ```
 
 Install the new/updated dependencies:
