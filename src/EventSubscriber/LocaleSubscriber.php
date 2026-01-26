@@ -13,22 +13,17 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class LocaleSubscriber implements EventSubscriberInterface
 {
-    public function __construct(
-        private Service\Locales $locales,
-    ) {
-    }
-
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
-        $preferredLocale = $this->locales->getBest($request->getLanguages());
+        $locale = $request->getPreferredLanguage(Service\Locales::getSupportedLocalesCodes());
+
         if ($request->hasPreviousSession()) {
-            $locale = $request->getSession()->get('_locale', $preferredLocale);
-            $request->setLocale($locale);
-        } else {
-            $request->setLocale($preferredLocale);
+            $locale = $request->getSession()->get('_locale', $locale);
         }
+
+        $request->setLocale($locale);
     }
 
     public static function getSubscribedEvents(): array
