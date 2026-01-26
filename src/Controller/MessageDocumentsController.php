@@ -32,7 +32,7 @@ class MessageDocumentsController extends BaseController
         MessageDocumentStorage $messageDocumentStorage,
         TranslatorInterface $translator,
     ): Response {
-        $this->denyAccessUnlessGranted('orga:create:tickets:messages', 'any');
+        $this->denyAccessUnlessGranted('orga:see', 'any');
 
         $file = $request->files->get('document');
 

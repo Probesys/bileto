@@ -4,6 +4,11 @@
 
 ### Migration notes
 
+The permission "Answer to tickets" has been removed.
+We now consider that being actor of a ticket is sufficient to be allowed to answer to it.
+If you had some sort of "read only" roles in Bileto, make sure to revise the permissions of the corresponding users.
+Note that answering by email doesn't require the user to have the authorization to access the organization, while it is required when answering using the Web interface.
+
 A new `LDAP_DEBUG` environment variable is available to enable the debug mode when using LDAP.
 
 ## 2025-11-21 - 0.15.4

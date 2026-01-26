@@ -521,7 +521,7 @@
                     {% endfor %}
 
                     <div id="bottom">
-                        {% if is_granted('orga:create:tickets:messages', organization) and not ticket.isClosed %}
+                        {% if not ticket.isClosed %}
                             {{ form_start(form, {
                                 action: path('create ticket message', {'uid': ticket.uid})
                             }) }}

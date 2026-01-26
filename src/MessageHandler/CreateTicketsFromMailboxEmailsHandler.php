@@ -10,7 +10,6 @@ use App\ActivityMonitor;
 use App\Entity;
 use App\Message;
 use App\Repository;
-use App\Security;
 use App\Service;
 use App\TicketActivity;
 use App\Utils;
@@ -37,7 +36,6 @@ class CreateTicketsFromMailboxEmailsHandler
         private Service\TicketAssigner $ticketAssigner,
         private Service\UserCreator $userCreator,
         private Service\UserService $userService,
-        private Security\Authorizer $authorizer,
         private ActivityMonitor\ActiveUser $activeUser,
         private HtmlSanitizerInterface $appMessageSanitizer,
         private LoggerInterface $logger,
@@ -290,20 +288,21 @@ class CreateTicketsFromMailboxEmailsHandler
     }
 
     /**
-     * Return whether the user can answer the ticket.
+     * Return whether the user can answer to the ticket.
      *
-     * The user must have the orga:create:tickets:messages permission on the
-     * ticket's organization, and the ticket must not be closed.
+     * Note that we don't check for the orga:see permission here: users can
+     * answer by email while they are actors of the ticket.
+     *
+     * This is slightly different from the Web interface as the orga:see
+     * permission is required there. This is because the interface displays
+     * more information potentially sensitive for people outside of the
+     * organization.
+     *
+     * The user cannot answer if the ticket is closed.
      */
     private function canAnswerTicket(Entity\User $user, Entity\Ticket $ticket): bool
     {
-        $canAnswerTicket = $this->authorizer->isGrantedForUser(
-            $user,
-            'orga:create:tickets:messages',
-            $ticket,
-        );
-
-        return $canAnswerTicket && !$ticket->isClosed();
+        return $ticket->hasActor($user) && !$ticket->isClosed();
     }
 
     /**

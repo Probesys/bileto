@@ -31,7 +31,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'status' => 'pending',
@@ -73,7 +73,7 @@ class MessagesControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne();
         $requester = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $requester,
@@ -119,7 +119,7 @@ class MessagesControllerTest extends WebTestCase
             'anonymizedAt' => Utils\Time::now(),
         ]);
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $requester,
@@ -153,7 +153,7 @@ class MessagesControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
+            'orga:see',
             'orga:create:tickets:messages:confidential',
         ]);
         $ticket = Factory\TicketFactory::createOne([
@@ -188,7 +188,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
@@ -215,7 +215,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
@@ -246,7 +246,7 @@ class MessagesControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
+            'orga:see',
             'orga:create:tickets:time_spent',
         ]);
         $ticket = Factory\TicketFactory::createOne([
@@ -276,7 +276,7 @@ class MessagesControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
+            'orga:see',
             'orga:create:tickets:time_spent',
         ]);
         $contract = Factory\ContractFactory::createOne([
@@ -312,9 +312,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ]);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'requester' => $user,
@@ -340,9 +338,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ]);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
             'assignee' => $user,
@@ -368,9 +364,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ]);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $initialStatus = Foundry\faker()->randomElement(Entity\Ticket::OPEN_STATUSES);
         $ticket = Factory\TicketFactory::createOne([
             'createdBy' => $user,
@@ -404,14 +398,12 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-            'orga:see:tickets:all',
-        ], type: 'user');
+        $this->grantOrga($user->_real(), ['orga:see'], type: 'user');
         $initialStatus = 'resolved';
         $solution = Factory\MessageFactory::createOne();
         $ticket = Factory\TicketFactory::createOne([
             'status' => $initialStatus,
+            'requester' => $user,
             'solution' => $solution,
         ]);
         $messageContent = 'My message';
@@ -423,9 +415,9 @@ class MessagesControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertSame(2, Factory\MessageFactory::count());
 
         $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $this->assertSame(2, Factory\MessageFactory::count());
         $ticket->_refresh();
         $this->assertNull($ticket->getSolution());
         $this->assertSame('in_progress', $ticket->getStatus());
@@ -436,9 +428,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ]);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $initialStatus = 'resolved';
         $solution = Factory\MessageFactory::createOne();
         $ticket = Factory\TicketFactory::createOne([
@@ -470,9 +460,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ]);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $initialStatus = 'resolved';
         $solution = Factory\MessageFactory::createOne();
         $ticket = Factory\TicketFactory::createOne([
@@ -505,7 +493,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
@@ -530,7 +518,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
@@ -555,7 +543,7 @@ class MessagesControllerTest extends WebTestCase
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
         $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
+            'orga:see',
             'orga:create:tickets:messages:confidential',
         ]);
         $solution = Factory\MessageFactory::createOne();
@@ -586,9 +574,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ]);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
@@ -615,7 +601,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
             'createdBy' => $user,
@@ -640,7 +626,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'closed',
             'createdBy' => $user,
@@ -685,7 +671,7 @@ class MessagesControllerTest extends WebTestCase
         $client = static::createClient();
         $user = Factory\UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $ticket = Factory\TicketFactory::createOne([
             'status' => 'in_progress',
         ]);

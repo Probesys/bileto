@@ -39,7 +39,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $router = static::getContainer()->get('router');
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $filepath = sys_get_temp_dir() . '/document.txt';
         $content = 'Hello World!';
         $hash = hash('sha256', $content);
@@ -84,7 +84,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $filepath = sys_get_temp_dir() . '/document.txt';
         $content = 'Hello World!';
         $hash = hash('sha256', $content);
@@ -112,7 +112,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
         $filepath = sys_get_temp_dir() . '/document.mp3';
         touch($filepath);
         $document = new UploadedFile($filepath, 'My audio file');
@@ -138,7 +138,7 @@ class MessageDocumentsControllerTest extends WebTestCase
         $client = static::createClient();
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
-        $this->grantOrga($user->_real(), ['orga:create:tickets:messages']);
+        $this->grantOrga($user->_real(), ['orga:see']);
 
         $client->request(Request::METHOD_POST, '/messages/documents/new', [
             '_csrf_token' => $this->generateCsrfToken($client, 'create message document'),

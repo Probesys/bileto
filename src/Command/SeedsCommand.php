@@ -57,7 +57,6 @@ class SeedsCommand
         } else {
             $techPermissions = [
                 'orga:create:tickets',
-                'orga:create:tickets:messages',
                 'orga:create:tickets:messages:confidential',
                 'orga:create:tickets:time_spent',
                 'orga:manage',
@@ -92,7 +91,6 @@ class SeedsCommand
             'type' => 'agent',
             'permissions' => [
                 'orga:create:tickets',
-                'orga:create:tickets:messages',
                 'orga:create:tickets:messages:confidential',
                 'orga:create:tickets:time_spent',
                 'orga:manage:contracts',
@@ -116,7 +114,6 @@ class SeedsCommand
             'isDefault' => true,
             'permissions' => [
                 'orga:create:tickets',
-                'orga:create:tickets:messages',
                 'orga:see',
                 'orga:see:tickets:contracts',
                 'orga:see:tickets:time_spent:accounted',

@@ -32,7 +32,7 @@ class MessagesController extends BaseController
         Service\TicketTimeline $ticketTimeline,
         EventDispatcherInterface $eventDispatcher,
     ): Response {
-        $this->denyAccessUnlessGranted('orga:create:tickets:messages', $ticket);
+        $this->denyAccessUnlessGranted('orga:see', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
         $timeline = $ticketTimeline->build($ticket);

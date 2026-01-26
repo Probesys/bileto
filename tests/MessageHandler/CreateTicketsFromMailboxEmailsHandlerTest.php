@@ -197,7 +197,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         ]);
         $this->grantOrga($user->_real(), [
             'orga:create:tickets',
-            'orga:create:tickets:messages',
         ], $organization->_real());
         $assignee = UserFactory::createOne();
         $ticket = TicketFactory::createOne([
@@ -253,7 +252,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         ]);
         $this->grantOrga($user->_real(), [
             'orga:create:tickets',
-            'orga:create:tickets:messages',
         ], $organization->_real());
         $emailId = 'abc@example.com';
         $assignee = UserFactory::createOne();
@@ -314,7 +312,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         ]);
         $this->grantOrga($user->_real(), [
             'orga:create:tickets',
-            'orga:create:tickets:messages',
         ], $organization->_real());
         $uid = 'm1Li5KGHCCfzgAygETyCTWJBHMzrSeXIR5mirM4n';
         $emailId = "GLPI_{$uid}-Ticket-42@example.com";
@@ -363,7 +360,7 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertEmailHeaderSame($email, 'To', $assignee->getEmail());
     }
 
-    public function testInvokeAnswersToTicketIfSenderIsObserverOnlyAllowedToAnswer(): void
+    public function testInvokeAnswersToTicketIfSenderIsActorOfTheTicket(): void
     {
         $container = static::getContainer();
         /** @var MessageBusInterface */
@@ -373,9 +370,8 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $user = UserFactory::createOne([
             'organization' => null,
         ]);
-        $this->grantOrga($user->_real(), [
-            'orga:create:tickets:messages',
-        ], $organization->_real());
+        // Note that we don't grant any permission to the user: being actor of
+        // the ticket is enough to answer by email.
         $ticket = TicketFactory::createOne([
             'status' => 'new',
             'organization' => $organization,
@@ -505,7 +501,6 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         // The user has the expected permissions on its organization.
         $this->grantOrga($user->_real(), [
             'orga:create:tickets',
-            'orga:create:tickets:messages',
         ], $organization->_real());
         // But the ticket is associated to another organization!
         $ticket = TicketFactory::createOne([

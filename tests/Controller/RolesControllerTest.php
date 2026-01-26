@@ -596,7 +596,7 @@ class RolesControllerTest extends WebTestCase
             $newPermissions = ['admin:manage:roles'];
         } else {
             $oldPermissions = ['orga:create:tickets'];
-            $newPermissions = ['orga:create:tickets:messages'];
+            $newPermissions = ['orga:see:tickets:contracts'];
         }
         $role = RoleFactory::createOne([
             'type' => $type,
@@ -623,7 +623,7 @@ class RolesControllerTest extends WebTestCase
         } else {
             $newPermissions[] = 'orga:see';
         }
-        $this->assertEquals($newPermissions, $role->getPermissions());
+        $this->assertEqualsCanonicalizing($newPermissions, $role->getPermissions());
     }
 
     public function testPostEditSanitizesThePermissions(): void
@@ -746,7 +746,7 @@ class RolesControllerTest extends WebTestCase
             $newPermissions = ['admin:manage:roles', 'admin:see'];
         } else {
             $oldPermissions = ['orga:create:tickets', 'orga:see'];
-            $newPermissions = ['orga:create:tickets:messages', 'orga:see'];
+            $newPermissions = ['orga:see:tickets:contracts', 'orga:see'];
         }
         $role = RoleFactory::createOne([
             'type' => $type,
@@ -769,7 +769,7 @@ class RolesControllerTest extends WebTestCase
         $role->_refresh();
         $this->assertSame($oldName, $role->getName());
         $this->assertSame($oldDescription, $role->getDescription());
-        $this->assertEquals($oldPermissions, $role->getPermissions());
+        $this->assertEqualsCanonicalizing($oldPermissions, $role->getPermissions());
     }
 
     public function testPostEditFailsIfCsrfTokenIsInvalid(): void
@@ -788,7 +788,7 @@ class RolesControllerTest extends WebTestCase
             $newPermissions = ['admin:manage:roles', 'admin:see'];
         } else {
             $oldPermissions = ['orga:create:tickets', 'orga:see'];
-            $newPermissions = ['orga:create:tickets:messages', 'orga:see'];
+            $newPermissions = ['orga:see:tickets:contracts', 'orga:see'];
         }
         $role = RoleFactory::createOne([
             'type' => $type,
@@ -811,7 +811,7 @@ class RolesControllerTest extends WebTestCase
         $role->_refresh();
         $this->assertSame($oldName, $role->getName());
         $this->assertSame($oldDescription, $role->getDescription());
-        $this->assertEquals($oldPermissions, $role->getPermissions());
+        $this->assertEqualsCanonicalizing($oldPermissions, $role->getPermissions());
     }
 
     public function testPostEditFailsIfTypeIsSuper(): void

@@ -9,6 +9,7 @@ namespace App\MessageHandler;
 use App\Entity;
 use App\Repository;
 use App\Message;
+use App\Security;
 use App\Service;
 use App\Utils;
 use Psr\Log\LoggerInterface;
@@ -31,6 +32,7 @@ class SendMessageEmailHandler
     public function __construct(
         private Repository\MessageRepository $messageRepository,
         private Service\MessageDocumentStorage $messageDocumentStorage,
+        private Security\Authorizer $authorizer,
         private TranslatorInterface $translator,
         private TransportInterface $transportInterface,
         private LoggerInterface $logger,
@@ -173,11 +175,13 @@ class SendMessageEmailHandler
         $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
 
         foreach ($recipients as $user) {
+            $userCanSeeTicket = $this->authorizer->isGrantedForUser($user, 'orga:see', $ticket);
+
             $email->context([
                 'subject' => $subject,
                 'ticket' => $ticket,
                 'content' => $content,
-                'linkToBileto' => $user->canLogin(),
+                'linkToBileto' => $user->canLogin() && $userCanSeeTicket,
             ]);
 
             $email->to($user->getEmailAddress());
