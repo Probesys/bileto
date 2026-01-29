@@ -32,6 +32,7 @@
 @import "./components/notifications.css";
 @import "./components/pagination.css";
 @import "./components/panel.css";
+@import "./components/pinned-information.css";
 @import "./components/placeholders.css";
 @import "./components/popups.css";
 @import "./components/progress.css";

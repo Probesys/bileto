@@ -11,6 +11,8 @@
 
     {{ form_row(form.domains) }}
 
+    {{ form_row(form.pinnedInformation) }}
+
     {% if form.responsibleTeam.vars.choices is not empty %}
         {{ form_row(form.responsibleTeam) }}
     {% else %}

@@ -45,6 +45,17 @@ class OrganizationForm extends AbstractType
             'block_prefix' => 'multitext',
         ]);
 
+        $builder->add('pinnedInformation', Type\TextareaType::class, [
+            'required' => false,
+            'empty_data' => '',
+            'trim' => true,
+            'label' => new TranslatableMessage('organizations.pinned_information'),
+            'help' => new TranslatableMessage('organizations.pinned_information.caption'),
+            'attr' => [
+                'class' => 'textarea--small',
+            ]
+        ]);
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
             $organization = $event->getData();

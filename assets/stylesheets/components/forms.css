@@ -75,6 +75,10 @@ textarea {
     min-height: 15rem;
 }
 
+.textarea--small {
+    min-height: 8rem;
+}
+
 input[disabled],
 textarea[disabled] {
     color: var(--form-color-disabled);

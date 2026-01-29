@@ -263,6 +263,28 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="event-item"]', 'The old title');
     }
 
+    public function testGetShowRendersPinnedInformation(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $information = 'Lorem ipsum';
+        $organization = Factory\OrganizationFactory::createOne([
+            'pinnedInformation' => $information,
+        ]);
+        $ticket = Factory\TicketFactory::createOne([
+            'title' => 'My ticket',
+            'createdBy' => $user,
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:pinned_information']);
+
+        $client->request(Request::METHOD_GET, "/tickets/{$ticket->getUid()}");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="organization-pinned-information"]', $information);
+    }
+
     public function testGetShowFailsIfAccessIsForbidden(): void
     {
         $this->expectException(AccessDeniedException::class);

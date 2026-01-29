@@ -59,6 +59,7 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
             'orga:see',
             'orga:see:contracts',
             'orga:see:contracts:notes',
+            'orga:see:pinned_information',
             'orga:see:tickets:all',
             'orga:see:tickets:contracts',
             'orga:see:tickets:messages:confidential',

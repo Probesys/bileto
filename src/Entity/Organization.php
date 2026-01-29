@@ -96,9 +96,13 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Team $responsibleTeam = null;
 
+    #[ORM\Column(type: Types::TEXT, options: ['default' => ''])]
+    private ?string $pinnedInformation = null;
+
     public function __construct()
     {
         $this->name = '';
+        $this->pinnedInformation = '';
         $this->tickets = new ArrayCollection();
         $this->authorizations = new ArrayCollection();
         $this->teamAuthorizations = new ArrayCollection();
@@ -228,6 +232,18 @@ class Organization implements EntityInterface, MonitorableEntityInterface, UidEn
     public function setResponsibleTeam(?Team $responsibleTeam): static
     {
         $this->responsibleTeam = $responsibleTeam;
+
+        return $this;
+    }
+
+    public function getPinnedInformation(): ?string
+    {
+        return $this->pinnedInformation;
+    }
+
+    public function setPinnedInformation(string $pinnedInformation): static
+    {
+        $this->pinnedInformation = $pinnedInformation;
 
         return $this;
     }

@@ -28,6 +28,7 @@ new TranslatableMessage('roles.permissions.orga.manage');
 new TranslatableMessage('roles.permissions.orga.manage.contracts');
 new TranslatableMessage('roles.permissions.orga.see.contracts');
 new TranslatableMessage('roles.permissions.orga.see.contracts.notes');
+new TranslatableMessage('roles.permissions.orga.see.pinned_information');
 new TranslatableMessage('roles.permissions.orga.see.tickets.all');
 new TranslatableMessage('roles.permissions.orga.see.tickets.contracts');
 new TranslatableMessage('roles.permissions.orga.see.tickets.messages.confidential');

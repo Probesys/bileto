@@ -107,4 +107,16 @@
             countToAssign: countToAssign,
         }, with_context = false) }}
     {% endif %}
+
+    {% if organization.pinnedInformation and is_granted('orga:see:pinned_information', organization) %}
+        <div class="pinned-information" data-test="organization-pinned-information">
+            <div class="pinned-information__container">
+                <p class="pinned-information__title">{{ 'organizations.pinned_information' | trans }}</p>
+
+                <p class="pinned-information__message">
+                    {{ organization.pinnedInformation | nl2br }}
+                </p>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

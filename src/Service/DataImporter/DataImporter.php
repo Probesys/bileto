@@ -328,6 +328,11 @@ class DataImporter
                 $domains = $jsonOrganization['domains'];
             }
 
+            $pinnedInformation = null;
+            if (isset($jsonOrganization['pinnedInformation'])) {
+                $pinnedInformation = strval($jsonOrganization['pinnedInformation']);
+            }
+
             // Build the organization
             $organization = new Entity\Organization();
             $organization->setName($name);
@@ -340,6 +345,10 @@ class DataImporter
                 $organization->setDomains($domains);
             } else {
                 $this->errors[] = "Organization {$id} error: domains: not an array.";
+            }
+
+            if ($pinnedInformation) {
+                $organization->setPinnedInformation($pinnedInformation);
             }
 
             // Add the organization to the index

@@ -51,6 +51,7 @@ class DataImporterTest extends WebTestCase
                 'id' => '1',
                 'name' => 'Foo',
                 'domains' => ['example.org', '*'],
+                'pinnedInformation' => 'Lorem ipsum',
             ],
         ];
 
@@ -60,6 +61,7 @@ class DataImporterTest extends WebTestCase
         $organization = Factory\OrganizationFactory::last();
         $this->assertSame('Foo', $organization->getName());
         $this->assertEquals(['example.org', '*'], $organization->getDomains());
+        $this->assertSame('Lorem ipsum', $organization->getPinnedInformation());
     }
 
     public function testImportOrganizationsKeepsExistingOrganizationsInDatabase(): void

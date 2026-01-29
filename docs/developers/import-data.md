@@ -50,6 +50,7 @@ The data is stored in a ZIP archive. It contains several files:
   - id: string (unique)
   - name: string (unique, not empty, max 255 chars)
   - domains: array of strings (each must be unique and valid domains)
+  - pinnedInformation: string, optional
 - `roles.json` an array of roles defined as:
   - id: string (unique)
   - name: string (unique, not empty, max 50 chars)
