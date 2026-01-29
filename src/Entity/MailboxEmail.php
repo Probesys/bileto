@@ -177,25 +177,56 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
         return $inReplyTo;
     }
 
+    /**
+     * Return whether the email is an autoreply or not.
+     *
+     * Detecting such a thing is tricky. RFC 3834 specifies how it should be
+     * done, in particular by using the "Auto-Submitted" header. However, many
+     * mail providers don't care, so we're left with some rules learnt from the
+     * experience of others.
+     *
+     * Some references that helped to build this method:
+     *
+     * - RFC 3834: https://datatracker.ietf.org/doc/html/rfc3834
+     * - FreeScout code: https://github.com/freescout-help-desk/freescout/blob/1.8.203/app/Misc/Mail.php#L646
+     * - Stackoverflow answer: https://stackoverflow.com/a/14320010
+     * - Blog post by arp242: https://www.arp242.net/autoreply.html
+     * - Blog post on jitbit.com: https://www.jitbit.com/maxblog/18-detecting-outlook-autoreplyout-of-office-emails-and-x-auto-response-suppress-header/
+     * - Wiki of multi_mail Ruby gem: https://github.com/jpmckinney/multi_mail/wiki/Detecting-autoresponders
+     *
+     * Note that we don't use all of the techniques listed in these references.
+     * In particular, we don't want detecting autoreplies based on the subject
+     * prefix (e.g. "Auto:") because this is used as a hint for humans, not as
+     * an information for algorithms.
+     */
     public function isAutoreply(): bool
     {
         $email = $this->getEmail();
 
-        $isAutosubmitted = false;
-        $autosubmittedHeader = $email->get('Auto-Submitted');
-        if ($autosubmittedHeader instanceof PHPIMAP\Attribute) {
-            $autosubmitted = $autosubmittedHeader->first();
-            $isAutosubmitted = $autosubmitted !== false && $autosubmitted !== 'no';
+        $headerChecks = [
+            'Auto-Submitted' => fn (string $value): bool => $value !== 'no',
+            'X-Autoreply' => fn (string $value): bool => $value === 'yes',
+            'X-Autorespond' => fn (string $value): bool => $value !== '',
+            'X-Autoresponder' => fn (string $value): bool => $value !== '',
+            'Precedence' => fn (string $value): bool => $value === 'auto_reply',
+            'X-Precedence' => fn (string $value): bool => $value === 'auto_reply',
+            'Delivered-To' => fn (string $value): bool => $value === 'autoresponder',
+        ];
+
+        foreach ($headerChecks as $headerName => $headerCheck) {
+            $header = $email->get($headerName);
+            if (!$header instanceof PHPIMAP\Attribute) {
+                continue;
+            }
+
+            $value = $header->first() ?? '';
+            $value = strtolower($value);
+            if ($value && $headerCheck($value)) {
+                return true;
+            }
         }
 
-        $isAutoreply = false;
-        $autoreplyHeader = $email->get('X-Autoreply');
-        if ($autoreplyHeader instanceof PHPIMAP\Attribute) {
-            $autoreply = $autoreplyHeader->first();
-            $isAutoreply = $autoreply !== false && $autoreply === 'yes';
-        }
-
-        return $isAutosubmitted || $isAutoreply;
+        return false;
     }
 
     public function getSubject(): string
