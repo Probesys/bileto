@@ -92,8 +92,17 @@ export default class extends Controller {
         layout.setAttribute('aria-hidden', true);
         document.body.classList.add('modal-opened');
 
-        // load the modal content via turbo-frame
-        this.contentTarget.setAttribute('src', event.detail.href);
+        if (event.detail.mode === 'fetch') {
+            // load the modal content via turbo-frame
+            this.contentTarget.setAttribute('src', event.detail.selector);
+        } else if (event.detail.mode === 'copy') {
+            const template = document.querySelector(event.detail.selector);
+            const content = template.content.firstElementChild.cloneNode(true);
+            this.contentTarget.innerHTML = content.outerHTML;
+
+            this.setFocus();
+            this.boxTarget.scrollIntoView(true);
+        }
 
         // remember the current element to give it the focus back on close
         this.focusBackElement = event.detail.target;

@@ -108,7 +108,7 @@
                                 type="button"
                                 data-controller="modal-opener"
                                 data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
+                                data-modal-opener-selector-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
                             >
                                 {{ 'tickets.show.actions.rename' | trans }}
                             </button>
@@ -133,7 +133,7 @@
                                     type="button"
                                     data-controller="modal-opener"
                                     data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
+                                    data-modal-opener-selector-value="{{ path('edit ticket status', { uid: ticket.uid }) }}"
                                 >
                                     {{ 'tickets.show.actions.update_status' | trans }}
                                 </button>
@@ -146,7 +146,7 @@
                                 type="button"
                                 data-controller="modal-opener"
                                 data-action="modal-opener#fetch"
-                                data-modal-opener-href-value="{{ path('edit ticket organization', { uid: ticket.uid }) }}"
+                                data-modal-opener-selector-value="{{ path('edit ticket organization', { uid: ticket.uid }) }}"
                             >
                                 {{ 'tickets.show.actions.transfer' | trans }}
                             </button>
@@ -193,7 +193,7 @@
                                     class="button--icon button--discreet"
                                     data-controller="modal-opener"
                                     data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                                    data-modal-opener-selector-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
                                 >
                                     {{ icon('pen-to-square') }}
                                     <span class="sr-only">
@@ -230,7 +230,7 @@
                                         class="button--anchor"
                                         data-controller="modal-opener"
                                         data-action="modal-opener#fetch"
-                                        data-modal-opener-href-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
+                                        data-modal-opener-selector-value="{{ path('edit ticket actors', { uid: ticket.uid }) }}"
                                     >
                                         <strong>{{ 'tickets.unassigned' | trans }}</strong>
                                     </button>
@@ -290,7 +290,7 @@
                                     class="button--icon button--discreet"
                                     data-controller="modal-opener"
                                     data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket priority', { uid: ticket.uid }) }}"
+                                    data-modal-opener-selector-value="{{ path('edit ticket priority', { uid: ticket.uid }) }}"
                                 >
                                     {{ icon('pen-to-square') }}
                                     <span class="sr-only">
@@ -338,7 +338,7 @@
                                     class="button--icon button--discreet"
                                     data-controller="modal-opener"
                                     data-action="modal-opener#fetch"
-                                    data-modal-opener-href-value="{{ path('edit ticket labels', { uid: ticket.uid }) }}"
+                                    data-modal-opener-selector-value="{{ path('edit ticket labels', { uid: ticket.uid }) }}"
                                 >
                                     {{ icon('pen-to-square') }}
 
@@ -435,7 +435,7 @@
                                         class="button--icon button--discreet"
                                         data-controller="modal-opener"
                                         data-action="modal-opener#fetch"
-                                        data-modal-opener-href-value="{{ path('edit ticket contracts', { uid: ticket.uid }) }}"
+                                        data-modal-opener-selector-value="{{ path('edit ticket contracts', { uid: ticket.uid }) }}"
                                     >
                                         {{ icon('pen-to-square') }}
                                         <span class="sr-only">

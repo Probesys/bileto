@@ -48,7 +48,7 @@ A button to open a modal:
     type="button"
     data-controller="modal-opener"
     data-action="modal-opener#fetch"
-    data-modal-opener-href-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
+    data-modal-opener-selector-value="{{ path('edit ticket title', { uid: ticket.uid }) }}"
 >
     {{ 'Rename the ticket' | trans }}
 </button>
