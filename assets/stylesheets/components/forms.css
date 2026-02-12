@@ -274,14 +274,15 @@ fieldset {
     min-width: auto;
     padding: var(--form-padding);
 
-    background-color: var(--form-background-color);
-    border: var(--border-width) solid var(--form-border-color);
+    border: var(--border-width) solid var(--color-grey6);
     border-radius: var(--form-border-radius);
 }
 
 legend {
-    padding-right: 1rem;
-    padding-left: 1rem;
+    padding-right: var(--space-small);
+    padding-left: var(--space-small);
+
+    font-weight: 600;
 }
 
 .editor {
