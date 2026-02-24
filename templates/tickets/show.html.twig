@@ -515,6 +515,8 @@
                             {{ include('tickets/_timeline_message.html.twig', { message: timelineItem }) }}
                         {% elseif timelineItem.timelineType == 'time_spent' %}
                             {{ include('tickets/_timeline_time_spent.html.twig', { timeSpent: timelineItem }) }}
+                        {% elseif timelineItem.timelineType == 'task' %}
+                            {{ include('tickets/_timeline_task.html.twig', { task: timelineItem }) }}
                         {% elseif timelineItem.timelineType == 'event' %}
                             {{ include('tickets/_timeline_event.html.twig', { event: timelineItem }) }}
                         {% endif %}
@@ -571,6 +573,116 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                        {% endif %}
+
+                                        {% if form.tasksData is defined %}
+                                            {{ form_widget(form.tasksData, { attr: { 'id': 'tasks-data-input' } }) }}
+
+                                            {% set plannedTasksCount = ticket.tasks | filter(t => not t.isFinished) | length %}
+
+                                            <div>
+                                                <button
+                                                    class="button--discreet text--small"
+                                                    type="button"
+                                                    data-controller="modal-opener"
+                                                    data-action="modal-opener#copy"
+                                                    data-modal-opener-selector-value="#modal-task-planner"
+                                                >
+                                                    {{ icon('clock') }}
+                                                    {{ 'tickets.tasks.plan' | trans }}
+                                                    <span
+                                                        id="tasks-count-display"
+                                                        class="badge badge--circle"
+                                                        {{ plannedTasksCount == 0 ? 'hidden' }}
+                                                    >{{ plannedTasksCount > 0 ? plannedTasksCount }}</span>
+                                                </button>
+                                            </div>
+
+                                            <template id="modal-task-planner">
+                                                <div
+                                                    data-controller="task-planner"
+                                                    data-task-planner-hidden-input-selector-value="#tasks-data-input"
+                                                    data-task-planner-count-selector-value="#tasks-count-display"
+                                                >
+                                                    <h1 id="modal-title" class="modal__title">{{ 'tickets.tasks.plan' | trans }}</h1>
+
+                                                    <div class="wrapper wrapper--small wrapper--center flow">
+                                                        <div class="flow">
+                                                            <div class="flow flow--small">
+                                                                <label>{{ 'forms.task.label.label' | trans }}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    data-task-planner-target="labelInput"
+                                                                    autocomplete="off"
+                                                                />
+                                                            </div>
+
+                                                            <div class="flow flow--small">
+                                                                <label>{{ 'forms.task.start_at.label' | trans }}</label>
+                                                                <input
+                                                                    type="datetime-local"
+                                                                    data-task-planner-target="startAtInput"
+                                                                    data-action="change->task-planner#onStartAtChange"
+                                                                />
+                                                            </div>
+
+                                                            <div class="flow flow--small">
+                                                                <label>{{ 'forms.task.end_at.label' | trans }}</label>
+                                                                <input
+                                                                    type="datetime-local"
+                                                                    data-task-planner-target="endAtInput"
+                                                                    data-action="change->task-planner#onEndAtChange"
+                                                                />
+                                                            </div>
+
+                                                            <p data-task-planner-target="warning" class="alert alert--warning" hidden>
+                                                                {{ 'tickets.tasks.end_before_start' | trans }}
+                                                            </p>
+
+                                                            <div class="cols cols--center flow flow--small">
+                                                                <button
+                                                                    type="button"
+                                                                    class="button--discreet button--small"
+                                                                    data-task-planner-target="cancelButton"
+                                                                    data-action="task-planner#cancelEdit"
+                                                                    hidden
+                                                                >
+                                                                    {{ 'tickets.tasks.cancel_edit' | trans }}
+                                                                </button>
+                                                                <div class="col--extend"></div>
+                                                                <button
+                                                                    type="button"
+                                                                    class="button--secondary button--small"
+                                                                    data-task-planner-target="addButton"
+                                                                    data-action="task-planner#addTask"
+                                                                    data-add-label="{{ 'tickets.tasks.add' | trans }}"
+                                                                    data-edit-label="{{ 'tickets.tasks.update' | trans }}"
+                                                                >
+                                                                    {{ 'tickets.tasks.add' | trans }}
+                                                                </button>
+                                                                <form
+                                                                    action="{{ path('create ticket tasks', {uid: ticket.uid}) }}"
+                                                                    method="post"
+                                                                    data-turbo-frame="_top"
+                                                                >
+                                                                    <input type="hidden" name="_token" value="{{ csrf_token('create ticket tasks') }}">
+                                                                    <input type="hidden" name="tasksData" data-task-planner-target="submitInput">
+                                                                    <button type="submit" class="button--primary button--small">
+                                                                        {{ 'tickets.tasks.validate' | trans }}
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+
+                                                        <div data-task-planner-target="taskList">
+                                                            <p class="text--small text--secondary" data-task-planner-target="taskListLabel" hidden style="margin-bottom: var(--space-small)">
+                                                                {{ 'tickets.tasks.list' | trans }}
+                                                            </p>
+                                                            <div data-task-planner-target="taskItems" class="flow flow--small"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
                                         {% endif %}
                                     </div>
                                 {% endif %}

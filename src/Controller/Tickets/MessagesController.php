@@ -27,6 +27,7 @@ class MessagesController extends BaseController
         Entity\Ticket $ticket,
         Request $request,
         Repository\MessageRepository $messageRepository,
+        Repository\TaskRepository $taskRepository,
         Repository\TicketRepository $ticketRepository,
         Service\TicketTimeAccounting $ticketTimeAccounting,
         Service\TicketTimeline $ticketTimeline,
@@ -66,6 +67,39 @@ class MessagesController extends BaseController
         $minutesSpent = $form->has('timeSpent') ? $form->get('timeSpent')->getData() : 0;
         if ($minutesSpent > 0) {
             $ticketTimeAccounting->accountTime($minutesSpent, $ticket, $message);
+        }
+
+        if ($form->has('tasksData')) {
+            $tasksJson = $form->get('tasksData')->getData() ?? '[]';
+            $tasksData = json_decode($tasksJson, true);
+
+            if (is_array($tasksData) && count($tasksData) > 0) {
+                $timezone = new \DateTimeZone(date_default_timezone_get());
+                $newTasks = [];
+
+                foreach ($tasksData as $taskData) {
+                    if (empty($taskData['label']) || empty($taskData['startAt']) || empty($taskData['endAt'])) {
+                        continue;
+                    }
+
+                    $task = new Entity\Task();
+                    $task->setTicket($ticket);
+                    $task->setMessage($message);
+                    $task->setLabel($taskData['label']);
+                    $task->setStartAt(new \DateTimeImmutable($taskData['startAt'], $timezone));
+                    $task->setEndAt(new \DateTimeImmutable($taskData['endAt'], $timezone));
+                    $newTasks[] = $task;
+                }
+
+                if (count($newTasks) > 0) {
+                    $taskRepository->save($newTasks, true);
+
+                    // Set ticket to "planned" status when tasks are created
+                    $ticket->setStatus('planned');
+                    $ticket->setStatusChangedAt(Utils\Time::now());
+                    $ticketRepository->save($ticket, true);
+                }
+            }
         }
 
         $type = $form->has('type') ? $form->get('type')->getData() : 'normal';
