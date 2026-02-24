@@ -132,6 +132,11 @@ class TimeSpent implements EntityInterface, MonitorableEntityInterface, UidEntit
         return 'time_spent';
     }
 
+    public function getTimelineDate(): \DateTimeImmutable
+    {
+        return $this->getCreatedAt();
+    }
+
     public function getMessage(): ?Message
     {
         return $this->message;

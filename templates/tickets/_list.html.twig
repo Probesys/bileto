@@ -96,6 +96,30 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
+
+                    {% if is_granted('orga:see:tickets:tasks', ticket.organization) %}
+                        {% set unfinishedTasks = ticket.unfinishedTasks %}
+                        {% if unfinishedTasks | length > 0 %}
+                            {% set visibleTasks = unfinishedTasks | slice(0, 2) %}
+                            {% set extraCount = (unfinishedTasks | length) - (visibleTasks | length) %}
+
+                            <ul class="list--nostyle flow flow--inline flow--smaller">
+                                {% for task in visibleTasks %}
+                                    <li class="badge badge--grey text--small">
+                                        {{ icon('calendar') }}
+                                        {{ task.label }}
+                                        (<time datetime="{{ task.startAt | dateIso }}">{{ task.startAt | dateTrans }}</time>)
+                                    </li>
+                                {% endfor %}
+
+                                {% if extraCount > 0 %}
+                                    <li class="badge badge--grey text--small">
+                                        +{{ extraCount }}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
 

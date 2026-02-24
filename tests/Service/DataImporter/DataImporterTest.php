@@ -1361,6 +1361,15 @@ class DataImporterTest extends WebTestCase
                 'solutionId' => '2',
                 'contractIds' => ['1'],
                 'labelIds' => ['1'],
+                'tasks' => [
+                    [
+                        'createdAt' => '2024-04-25T18:00:00+00:00',
+                        'createdById' => '2',
+                        'label' => 'My task',
+                        'startAt' => '2024-04-26T10:00:00+00:00',
+                        'endAt' => '2024-04-26T12:00:00+00:00',
+                    ],
+                ],
                 'timeSpents' => [
                     [
                         'createdAt' => '2024-04-25T18:00:00+00:00',
@@ -1433,6 +1442,14 @@ class DataImporterTest extends WebTestCase
         $labels = $ticket->getLabels();
         $this->assertSame(1, count($labels));
         $this->assertSame('My label', $labels[0]->getName());
+        $tasks = $ticket->getTasks();
+        $this->assertSame(1, count($tasks));
+        $this->assertSame(1714068000, $tasks[0]->getCreatedAt()->getTimestamp());
+        $this->assertSame($assignee->getUid(), $tasks[0]->getCreatedBy()->getUid());
+        $this->assertSame('My task', $tasks[0]->getLabel());
+        $this->assertSame(1714125600, $tasks[0]->getStartAt()->getTimestamp());
+        $this->assertSame(1714132800, $tasks[0]->getEndAt()->getTimestamp());
+        $this->assertNull($tasks[0]->getFinishedAt());
         $timeSpents = $ticket->getTimeSpents();
         $this->assertSame(1, count($timeSpents));
         $this->assertSame(1714068000, $timeSpents[0]->getCreatedAt()->getTimestamp());

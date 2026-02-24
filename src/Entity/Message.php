@@ -73,6 +73,14 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
     #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageDocument::class)]
     private Collection $messageDocuments;
 
+    /** @var Collection<int, Task> $tasks */
+    #[ORM\OneToMany(
+        mappedBy: 'message',
+        targetEntity: Task::class,
+        cascade: ['persist'],
+    )]
+    private Collection $tasks;
+
     /** @var string[] */
     #[ORM\Column(options: ['default' => '[]'])]
     private array $notificationsReferences = [];
@@ -84,6 +92,7 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
     {
         $this->postedAt = Utils\Time::now();
         $this->messageDocuments = new ArrayCollection();
+        $this->tasks = new ArrayCollection();
     }
 
     public function isConfidential(): ?bool
@@ -139,12 +148,46 @@ class Message implements EntityInterface, MonitorableEntityInterface, UidEntityI
         return 'message';
     }
 
+    public function getTimelineDate(): \DateTimeImmutable
+    {
+        return $this->getCreatedAt();
+    }
+
     /**
      * @return Collection<int, MessageDocument>
      */
     public function getMessageDocuments(): Collection
     {
         return $this->messageDocuments;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    public function addTask(Task $task): static
+    {
+        if (!$this->tasks->contains($task)) {
+            $this->tasks->add($task);
+            $task->setMessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): static
+    {
+        if ($this->tasks->removeElement($task)) {
+            if ($task->getMessage() === $this) {
+                $task->setMessage(null);
+            }
+        }
+
+        return $this;
     }
 
     /**

@@ -483,11 +483,11 @@
                 <div class="flow flow--larger timeline wrapper" data-controller="timeline">
                     {% set timelineDate = null %}
                     {% for timelineItem in timeline.sortedItems %}
-                        {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.createdAt.format('Y-m-d') %}
+                        {% if timelineDate == null or timelineDate.format('Y-m-d') != timelineItem.timelineDate.format('Y-m-d') %}
                             {# On the next line, "0 + numerical string" converts the string to an integer. #}
-                            {% set diff = timelineDate ? 0 + timelineDate.diff(timelineItem.createdAt).format('%a') : 0 %}
-                            {% set timelineDate = timelineItem.createdAt %}
-                            {% set isToday = today.format('Y-m-d') == timelineItem.createdAt.format('Y-m-d') %}
+                            {% set diff = timelineDate ? 0 + timelineDate.diff(timelineItem.timelineDate).format('%a') : 0 %}
+                            {% set timelineDate = timelineItem.timelineDate %}
+                            {% set isToday = today.format('Y-m-d') == timelineItem.timelineDate.format('Y-m-d') %}
                             {% set olderThanOneWeek = diff >= 7 %}
 
                             <div class="timeline__date">
@@ -515,6 +515,8 @@
                             {{ include('tickets/_timeline_message.html.twig', { message: timelineItem }) }}
                         {% elseif timelineItem.timelineType == 'time_spent' %}
                             {{ include('tickets/_timeline_time_spent.html.twig', { timeSpent: timelineItem }) }}
+                        {% elseif timelineItem.timelineType == 'task' %}
+                            {{ include('tickets/_timeline_task.html.twig', { task: timelineItem }) }}
                         {% elseif timelineItem.timelineType == 'event' %}
                             {{ include('tickets/_timeline_event.html.twig', { event: timelineItem }) }}
                         {% endif %}
@@ -528,54 +530,83 @@
                                 {{ form_errors(form) }}
 
                                 {% if form.type is defined %}
-                                    <div class="cols flow">
-                                        <div>
-                                            {{ form_errors(form.type) }}
-                                            {{ form_widget(form.type) }}
-                                        </div>
-
-                                        <div>
-                                            {{ include('message_templates/_applier.html.twig', {
-                                                typeSelector: '#' ~ field_id(form.type),
-                                                contentSelector: '#' ~ field_id(form.content),
-                                            }) }}
-                                        </div>
-
-                                        <div class="col--extend"></div>
-
-                                        {% if form.timeSpent is defined %}
-                                            {% set timeSpentChanged = field_value(form.timeSpent) > 0 %}
-                                            <div
-                                                data-controller="switch"
-                                                data-action="keydown.esc->switch#change"
-                                                data-switch-for-param="time-spent-button"
-                                            >
-                                                <div data-switch-target="panel" id="time-spent-button" {{ timeSpentChanged ? 'hidden' }}>
-                                                    <button
-                                                        class="button--discreet text--small"
-                                                        type="button"
-                                                        data-action="switch#change"
-                                                        data-switch-for-param="time-spent-input"
-                                                    >
-                                                        {{ icon('clock') }}
-                                                        {{ 'tickets.time_spent' | trans }}
-                                                    </button>
-                                                </div>
-
-                                                <div data-switch-target="panel" id="time-spent-input" {{ not timeSpentChanged ? 'hidden' }}>
-                                                    {{ form_errors(form.timeSpent) }}
-
-                                                    <label>
-                                                        {{ form_widget(form.timeSpent) }}
-                                                        {{ field_label(form.timeSpent) }}
-                                                    </label>
-                                                </div>
+                                    <div class="cols cols--center flow">
+                                        <div class="col--extend cols cols--always flow flow--smaller">
+                                            <div>
+                                                {{ form_errors(form.type) }}
+                                                {{ form_widget(form.type) }}
                                             </div>
-                                        {% endif %}
+
+                                            <div>
+                                                {{ include('message_templates/_applier.html.twig', {
+                                                    typeSelector: '#' ~ field_id(form.type),
+                                                    contentSelector: '#' ~ field_id(form.content),
+                                                }) }}
+                                            </div>
+                                        </div>
+
+                                        <div class="cols cols--always flow flow--smaller">
+                                            {% if form.timeSpent is defined %}
+                                                {% set timeSpentChanged = field_value(form.timeSpent) > 0 %}
+                                                <div
+                                                    data-controller="switch"
+                                                    data-action="keydown.esc->switch#change"
+                                                    data-switch-for-param="time-spent-button"
+                                                >
+                                                    <div data-switch-target="panel" id="time-spent-button" {{ timeSpentChanged ? 'hidden' }}>
+                                                        <button
+                                                            class="button--discreet text--small"
+                                                            type="button"
+                                                            data-action="switch#change"
+                                                            data-switch-for-param="time-spent-input"
+                                                        >
+                                                            {{ icon('clock') }}
+                                                            {{ 'tickets.time_spent' | trans }}
+                                                        </button>
+                                                    </div>
+
+                                                    <div data-switch-target="panel" id="time-spent-input" {{ not timeSpentChanged ? 'hidden' }}>
+                                                        {{ form_errors(form.timeSpent) }}
+
+                                                        <label>
+                                                            {{ form_widget(form.timeSpent) }}
+                                                            {{ field_label(form.timeSpent) }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 {% endif %}
 
                                 {{ form_row(form.content) }}
+
+                                {% if form.tasks is defined %}
+                                    <div
+                                        class="flow flow--smaller"
+                                        data-controller="form-collection"
+                                        data-form-collection-index-value="{{ form.tasks|length > 0 ? form.tasks|last.vars.name + 1 : 0 }}"
+                                    >
+                                        <div data-form-collection-target="container" class="flow">
+                                            {% for taskForm in form.tasks %}
+                                                {{ include('tasks/_form_collection_item.html.twig', { form: taskForm }) }}
+                                            {% endfor %}
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            class="button--discreet"
+                                            data-action="form-collection#addItem"
+                                        >
+                                            {{ icon('calendar-plus') }}
+                                            {{ 'tickets.tasks.plan' | trans }}
+                                        </button>
+
+                                        <template data-form-collection-target="prototype">
+                                            {{ include('tasks/_form_collection_item.html.twig', { form: form.tasks.vars.prototype }) }}
+                                        </template>
+                                    </div>
+                                {% endif %}
 
                                 {% if form.solutionAction is defined %}
                                     {{ form_row(form.solutionAction) }}

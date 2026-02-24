@@ -99,6 +99,25 @@ class AnswerForm extends AbstractType
                         ],
                     ]);
                 }
+
+                $canCreateTasks = (
+                    !$ticket->isFinished() &&
+                    $userIsAssignee &&
+                    $this->authorizer->isGranted('orga:create:tickets:tasks', $organization)
+                );
+
+                if ($canCreateTasks) {
+                    $form->add('tasks', Type\CollectionType::class, [
+                        'entry_type' => TaskForm::class,
+                        'entry_options' => [
+                            'label' => false,
+                        ],
+                        'label' => false,
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                        'by_reference' => false,
+                    ]);
+                }
             }
 
             $form->add('content', Type\TextareaType::class, [

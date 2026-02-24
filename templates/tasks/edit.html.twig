@@ -1,0 +1,55 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2026 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'tasks.edit.title' | trans }}{% endblock %}
+
+{% block body %}
+    {{ form_start(form, {
+        action: path('edit task', { uid: task.uid }),
+    }) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.label) }}
+
+        <div class="cols flow">
+            <div class="col--extend">
+                {{ form_row(form.startAt) }}
+            </div>
+
+            <div class="col--extend">
+                {{ form_row(form.endAt) }}
+            </div>
+        </div>
+
+        {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+
+    <div class="panel">
+        <form action="{{ path('delete task', { uid: task.uid }) }}" method="post" class="form--standard">
+            <h2>{{ 'tasks.deletion.title' | trans }}</h2>
+
+            {{ include('alerts/_alert.html.twig', {
+                type: 'warning',
+                title: 'common.caution' | trans,
+                message: 'tasks.deletion.going_delete' | trans({ task: task.label }),
+            }, with_context = false) }}
+
+            <div class="form__actions">
+                <button
+                    class="button--primary"
+                    type="submit"
+                    data-turbo-confirm="{{ 'tasks.deletion.confirm' | trans }}"
+                >
+                    {{ 'tasks.deletion.submit' | trans }}
+                </button>
+            </div>
+
+            <input type="hidden" name="_token" value="{{ csrf_token('delete task') }}">
+        </form>
+    </div>
+{% endblock %}

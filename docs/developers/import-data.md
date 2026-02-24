@@ -117,6 +117,13 @@ It also contains a `tickets/` folder where each file corresponds to a ticket. Fo
 - solutionId: string or null, optional (reference to a message, included in ticket.messages)
 - contractIds: array of strings, optional (references to contracts)
 - labelIds: array of strings, optional (references to labels)
+- tasks: array of, optional:
+  - createdAt: datetime
+  - createdById: string (reference to a user)
+  - label: string (max 255 chars, not empty)
+  - startAt: datetime
+  - endAt: datetime (greater than startAt)
+  - finishedAt: datetime, optional
 - timeSpents: array of, optional:
   - createdAt: datetime
   - createdById: string (reference to a user)

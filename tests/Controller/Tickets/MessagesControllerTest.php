@@ -307,6 +307,47 @@ class MessagesControllerTest extends WebTestCase
         $this->assertSame($contract->getId(), $timeSpent->getContract()->getId());
     }
 
+    public function testPostCreateAcceptsTasks(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), [
+            'orga:see',
+            'orga:create:tickets:tasks',
+        ]);
+        $ticket = Factory\TicketFactory::createOne([
+            'status' => 'in_progress',
+            'assignee' => $user,
+        ]);
+        $messageContent = 'My message';
+        $label = 'My task';
+        $startAt = new \DateTimeImmutable('2026-03-25T12:00:00');
+        $endAt = new \DateTimeImmutable('2026-03-25T14:00:00');
+
+        $crawler = $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/messages/new", [
+            'answer' => [
+                '_token' => $this->generateCsrfToken($client, 'answer'),
+                'content' => $messageContent,
+                'tasks' => [
+                    [
+                        'label' => $label,
+                        'startAt' => $startAt->format('Y-m-d\TH:i'),
+                        'endAt' => $endAt->format('Y-m-d\TH:i'),
+                    ],
+                ],
+            ],
+        ]);
+
+        $message = Factory\MessageFactory::last();
+        $task = Factory\TaskFactory::first();
+        $this->assertSame($label, $task->getLabel());
+        $this->assertSame($ticket->getId(), $task->getTicket()->getId());
+        $this->assertSame($message->getId(), $task->getMessage()->getId());
+        $this->assertEquals($startAt, $task->getStartAt());
+        $this->assertEquals($endAt, $task->getEndAt());
+    }
+
     public function testPostCreateChangesStatusToInProgressIfUserIsRequester(): void
     {
         $client = static::createClient();

@@ -44,6 +44,11 @@ class TicketTimeline
             $timeline->addItems($timeSpents);
         }
 
+        if ($this->authorizer->isGranted('orga:see:tickets:tasks', $organization)) {
+            $tasks = $ticket->getTasks()->getValues();
+            $timeline->addItems($tasks);
+        }
+
         /** @var \App\Entity\User $user */
         $user = $this->security->getUser();
         if (!$user->areEventsHidden()) {

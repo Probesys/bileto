@@ -161,4 +161,9 @@ class EntityEvent implements TrackableEntityInterface, UidEntityInterface
     {
         return 'event';
     }
+
+    public function getTimelineDate(): \DateTimeImmutable
+    {
+        return $this->getCreatedAt();
+    }
 }

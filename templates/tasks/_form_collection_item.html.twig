@@ -1,0 +1,41 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2026 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<fieldset
+    class="cols cols--baseline cols--always flow flow--small"
+    data-form-collection-target="item"
+    data-controller="form-task"
+    data-form-task-end-at-invalid-error-value="{{ 'task.end_at.greater_than_start_at' | trans(domain: 'errors') }}"
+>
+    <legend>
+        {{ 'forms.task.task_number' | trans }}
+    </legend>
+
+    <div class="col--extend flow flow--small">
+        {{ form_row(form.label, { attr: { class: 'widget--small' } }) }}
+
+        <div class="cols flow flow--small">
+            <div class="col--extend">
+                {{ form_row(form.startAt, { attr: { class: 'widget--small' } }) }}
+            </div>
+
+            <div class="col--extend">
+                {{ form_row(form.endAt, { attr: { class: 'widget--small' } }) }}
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <button
+            type="button"
+            class="button--discreet"
+            title="{{ 'common.delete' | trans }}"
+            data-action="form-collection#removeItem"
+        >
+            {{ icon('trash') }}
+        </button>
+    </div>
+</fieldset>

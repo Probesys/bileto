@@ -80,13 +80,16 @@ class LifecycleSubscriber implements EventSubscriberInterface
 
         $messageAuthor = $message->getCreatedBy();
         $isConfidential = $message->isConfidential();
+        $hasTasks = !$message->getTasks()->isEmpty();
         $via = $message->getVia();
         $requester = $ticket->getRequester();
         $assignee = $ticket->getAssignee();
         $status = $ticket->getStatus();
 
         if ($messageAuthor == $assignee) {
-            if ($status === 'in_progress' && !$isConfidential) {
+            if ($hasTasks) {
+                $ticket->setStatus('planned');
+            } elseif ($status === 'in_progress' && !$isConfidential) {
                 $ticket->setStatus('pending');
             }
         } elseif ($messageAuthor == $requester) {

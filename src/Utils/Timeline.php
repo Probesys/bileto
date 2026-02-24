@@ -8,15 +8,16 @@ namespace App\Utils;
 
 use App\Entity\EntityEvent;
 use App\Entity\Message;
+use App\Entity\Task;
 use App\Entity\TimeSpent;
 
 class Timeline
 {
-    /** @var array<string, array<Message|TimeSpent|EntityEvent>> $items */
+    /** @var array<string, array<Message|TimeSpent|EntityEvent|Task>> $items */
     private array $items = [];
 
     /**
-     * @param array<Message|TimeSpent|EntityEvent> $items
+     * @param array<Message|TimeSpent|EntityEvent|Task> $items
      */
     public function addItems(array $items): void
     {
@@ -27,7 +28,7 @@ class Timeline
     }
 
     /**
-     * @return array<Message|TimeSpent|EntityEvent>
+     * @return array<Message|TimeSpent|EntityEvent|Task>
      */
     public function getItems(?string $type = null): array
     {
@@ -39,15 +40,15 @@ class Timeline
     }
 
     /**
-     * @return array<Message|TimeSpent|EntityEvent>
+     * @return array<Message|TimeSpent|EntityEvent|Task>
      */
     public function getSortedItems(?string $type = null): array
     {
         $items = $this->getItems($type);
 
         uasort($items, function ($i1, $i2): int {
-            $createdAt1 = $i1->getCreatedAt();
-            $createdAt2 = $i2->getCreatedAt();
+            $createdAt1 = $i1->getTimelineDate();
+            $createdAt2 = $i2->getTimelineDate();
 
             if ($createdAt1 < $createdAt2) {
                 return -1;
@@ -55,10 +56,12 @@ class Timeline
                 return 1;
             } elseif ($i1->getTimelineType() === 'message') {
                 return -1;
-            } elseif ($i1->getTimelineType() === 'time_spent') {
+            } elseif ($i1->getTimelineType() === 'task') {
                 return 1;
-            } elseif ($i1->getTimelineType() === 'event') {
+            } elseif ($i1->getTimelineType() === 'time_spent') {
                 return 2;
+            } elseif ($i1->getTimelineType() === 'event') {
+                return 3;
             } else {
                 return 0;
             }

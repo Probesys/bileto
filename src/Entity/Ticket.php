@@ -160,6 +160,14 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
     )]
     private Collection $timeSpents;
 
+    /** @var Collection<int, Task> $tasks */
+    #[ORM\OneToMany(
+        mappedBy: 'ticket',
+        targetEntity: Task::class,
+        cascade: ['persist'],
+    )]
+    private Collection $tasks;
+
     /** @var Collection<int, Label> */
     #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'tickets')]
     #[ORM\OrderBy(['name' => 'ASC'])]
@@ -171,6 +179,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         $this->messages = new ArrayCollection();
         $this->contracts = new ArrayCollection();
         $this->timeSpents = new ArrayCollection();
+        $this->tasks = new ArrayCollection();
         $this->labels = new ArrayCollection();
         $this->observers = new ArrayCollection();
     }
@@ -608,6 +617,45 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
             // set the owning side to null (unless already changed)
             if ($timeSpent->getTicket() === $this) {
                 $timeSpent->setTicket(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    /**
+     * @return Task[]
+     */
+    public function getUnfinishedTasks(): array
+    {
+        return array_filter($this->tasks->toArray(), function (Task $task): bool {
+            return !$task->isFinished();
+        });
+    }
+
+    public function addTask(Task $task): static
+    {
+        if (!$this->tasks->contains($task)) {
+            $this->tasks->add($task);
+            $task->setTicket($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): static
+    {
+        if ($this->tasks->removeElement($task)) {
+            if ($task->getTicket() === $this) {
+                $task->setTicket(null);
             }
         }
 

@@ -309,7 +309,7 @@ class DataImporter
         yield from $this->importEntities($this->indexContracts->list());
         yield from $this->importEntities($this->indexLabels->list());
         yield from $this->importEntities($this->indexMessageTemplates->list());
-        yield from $this->importEntities($this->indexTickets->list(), ['timeSpents', 'messages']);
+        yield from $this->importEntities($this->indexTickets->list(), ['tasks', 'timeSpents', 'messages']);
         yield from $this->importMessageDocuments($trustMimeTypes);
     }
 
@@ -1176,6 +1176,11 @@ class DataImporter
                 $labelIds = $jsonTicket['labelIds'];
             }
 
+            $tasks = [];
+            if (isset($jsonTicket['tasks'])) {
+                $tasks = $jsonTicket['tasks'];
+            }
+
             $timeSpents = [];
             if (isset($jsonTicket['timeSpents'])) {
                 $timeSpents = $jsonTicket['timeSpents'];
@@ -1302,6 +1307,12 @@ class DataImporter
                 $this->errors[] = "Ticket {$id} error: labelIds: not an array.";
             }
 
+            if (is_array($tasks)) {
+                $this->processTicketTasks($id, $ticket, $tasks);
+            } else {
+                $this->errors[] = "Ticket {$id} error: tasks: not an array.";
+            }
+
             if (is_array($timeSpents)) {
                 $this->processTicketTimeSpents($id, $ticket, $timeSpents);
             } else {
@@ -1348,6 +1359,73 @@ class DataImporter
         }
 
         yield "ok\n";
+    }
+
+    /**
+     * @phpstan-impure
+     *
+     * @param mixed[] $json
+     */
+    private function processTicketTasks(string $ticketId, Entity\Ticket $ticket, array $json): void
+    {
+        $requiredFields = [
+            'createdAt',
+            'createdById',
+            'label',
+            'startAt',
+            'endAt',
+        ];
+
+        foreach ($json as $jsonTask) {
+            // Check the structure of the time spent
+            $error = self::checkStructure($jsonTask, required: $requiredFields);
+            if ($error) {
+                $this->errors[] = "Ticket {$ticketId} error: tasks: {$error}";
+                continue;
+            }
+
+            $createdAt = self::parseDatetime($jsonTask['createdAt']);
+            $createdById = strval($jsonTask['createdById']);
+            $label = strval($jsonTask['label']);
+            $startAt = self::parseDatetime($jsonTask['startAt']);
+            $endAt = self::parseDatetime($jsonTask['endAt']);
+
+            $finishedAt = null;
+            if (isset($jsonTask['finishedAt'])) {
+                $finishedAt = self::parseDatetime($jsonTask['finishedAt']);
+            }
+
+            // Build the time spent
+            $task = new Entity\Task();
+            $task->setCreatedAt($createdAt);
+            $task->setUpdatedAt($createdAt);
+            $task->setLabel($label);
+            $task->setStartAt($startAt);
+            $task->setEndAt($endAt);
+            $task->setFinishedAt($finishedAt);
+
+            $task->setUid(Utils\Random::hex(20));
+
+            // Check and set references
+            $createdBy = $this->indexUsers->get($createdById);
+
+            if ($createdBy) {
+                $task->setCreatedBy($createdBy);
+                $task->setUpdatedBy($createdBy);
+            } else {
+                $this->errors[] = "Ticket {$ticketId} error: tasks: "
+                                . "references an unknown user {$createdById}";
+            }
+
+            // Validate the task
+            $error = $this->validate($task);
+            if ($error) {
+                $this->errors[] = "Ticket {$ticketId} error: tasks: {$error}";
+            }
+
+            // Add the task to the ticket
+            $ticket->addTask($task);
+        }
     }
 
     /**

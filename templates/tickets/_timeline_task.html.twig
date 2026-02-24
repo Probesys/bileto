@@ -1,0 +1,92 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2026 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+<div
+    id="task-{{ task.uid }}"
+    class="timeline__task"
+>
+    <div class="timeline__task-body cols cols--always cols--center flow flow--smaller">
+        <p class="col--extend">
+            <span class="text--bold">
+                {{ task.label }}
+            </span>
+
+            {% if task.isFinished %}
+                <span class="badge badge--{{ task.statusColor }}" title="{{ 'tickets.tasks.finished_at' | trans({ date: task.finishedAt | dateTrans }) }}">
+                    {{ icon('check') }}
+                    {{ 'tickets.tasks.finished' | trans }}
+                </span>
+            {% elseif task.isPlanned %}
+                <span class="badge badge--{{ task.statusColor }}">
+                    {{ 'tickets.tasks.planned' | trans }}
+                </span>
+            {% else %}
+                <span class="badge badge--{{ task.statusColor }}">
+                    {{ 'tickets.tasks.ongoing' | trans }}
+                </span>
+            {% endif %}
+        </p>
+
+        <div class="cols cols--always flow flow--smaller">
+            <details
+                class="popup"
+                data-controller="popup"
+                data-action="toggle->popup#update click@window->popup#closeOnClickOutside"
+            >
+                <summary class="popup__opener">
+                    <span class="button button--icon button--ghost">
+                        {{ icon('angle-down') }}
+
+                        <span class="sr-only">
+                            {{ 'common.actions' | trans }}
+                        </span>
+                    </span>
+                </summary>
+
+                <nav class="popup__container popup__container--middle">
+                    <a
+                        class="popup__item"
+                        href="{{ path('task ics', { uid: task.uid }) }}"
+                        data-turbo="false"
+                    >
+                        {{ 'tickets.tasks.add_to_calendar' | trans }}
+                    </a>
+
+                    {% if is_granted('orga:create:tickets:tasks', ticket.organization) and not ticket.isClosed %}
+                        <button
+                            class="popup__item"
+                            type="button"
+                            data-controller="modal-opener"
+                            data-action="modal-opener#fetch"
+                            data-modal-opener-selector-value="{{ path('edit task', { uid: task.uid }) }}"
+                        >
+                            {{ 'tickets.tasks.edit' | trans }}
+                        </button>
+
+                        {% if not task.isFinished %}
+                            <form class="form--inline" action="{{ path('finish task', { uid: task.uid }) }}" method="post">
+                                <button type="submit" class="popup__item">
+                                    {{ 'tickets.tasks.finish' | trans }}
+                                </button>
+                                <input type="hidden" name="_token" value="{{ csrf_token('finish task') }}" />
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </nav>
+            </details>
+
+            <a class="timeline__task-date" href="#task-{{ task.uid }}">
+                <time datetime="{{ task.startAt | dateIso }}">
+                    {{ task.startAt | dateTrans }}
+                </time>
+
+                <time datetime="{{ task.endAt | dateIso }}">
+                    {{ task.endAt | dateTrans }}
+                </time>
+            </a>
+        </div>
+    </div>
+</div>
