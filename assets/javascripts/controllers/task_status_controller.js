@@ -72,7 +72,7 @@ export default class extends Controller {
                 use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', newHref);
                 use.setAttribute('href', newHref);
             }
-        } catch (e) {
+        } catch (_e) {
             // Icon swap failed silently, badge update continues
         }
     }

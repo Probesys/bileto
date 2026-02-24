@@ -233,7 +233,7 @@ export default class extends Controller {
             const input = document.querySelector(this.hiddenInputSelectorValue);
             const value = input ? input.value : '';
             this.tasks = value ? JSON.parse(value) : [];
-        } catch (e) {
+        } catch (_e) {
             this.tasks = [];
         }
     }
