@@ -9,9 +9,11 @@ button,
     --button-color: var(--color-primary1);
 
     display: inline-flex;
-    align-items: center;
-    column-gap: 0.4em;
     padding: var(--button-padding);
+
+    column-gap: 0.4em;
+
+    align-items: center;
 
     color: var(--button-color);
     font-family: inherit;
@@ -175,12 +177,12 @@ button[disabled],
     border-radius: 5rem;
 }
 
-.button--icon .icon {
+button .icon,
+.button .icon {
     margin-top: 0;
 }
 
-button .icon,
-.button .icon {
+.button--icon .icon {
     margin-top: 0;
 }
 
