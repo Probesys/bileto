@@ -596,17 +596,33 @@
                                                 </button>
                                                 <script>
                                                     (function () {
-                                                        var json = sessionStorage.getItem('task_planner:' + location.pathname);
-                                                        if (!json) { return; }
-                                                        try {
-                                                            var tasks = JSON.parse(json);
-                                                            if (tasks.length === 0) { return; }
-                                                            var badge = document.getElementById('tasks-count-display');
-                                                            if (!badge) { return; }
-                                                            badge.dataset.tasks = json;
-                                                            badge.textContent = tasks.length;
-                                                            badge.hidden = false;
-                                                        } catch {}
+                                                        var key = 'task_planner:' + location.pathname;
+
+                                                        // Restore badge count from sessionStorage on page load
+                                                        var json = sessionStorage.getItem(key);
+                                                        if (json) {
+                                                            try {
+                                                                var tasks = JSON.parse(json);
+                                                                if (tasks.length > 0) {
+                                                                    var badge = document.getElementById('tasks-count-display');
+                                                                    if (badge) {
+                                                                        badge.dataset.tasks = json;
+                                                                        badge.textContent = tasks.length;
+                                                                        badge.hidden = false;
+                                                                    }
+                                                                }
+                                                            } catch {}
+                                                        }
+
+                                                        // Clear sessionStorage when the answer form is submitted
+                                                        // (tasks are persisted to DB at that point)
+                                                        var input = document.querySelector('[name="answer[tasksData]"]');
+                                                        var form = input ? input.closest('form') : null;
+                                                        if (form) {
+                                                            form.addEventListener('submit', function () {
+                                                                sessionStorage.removeItem(key);
+                                                            });
+                                                        }
                                                     }());
                                                 </script>
                                             </div>

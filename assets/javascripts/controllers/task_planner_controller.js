@@ -23,22 +23,6 @@ export default class extends Controller {
         this._updateCount();
         this._resetForm();
         this._renderTaskList();
-
-        // Clear sessionStorage when the answer form is submitted (tasks saved to DB)
-        const input = document.querySelector(this.hiddenInputSelectorValue);
-        const form = input ? input.closest('form') : null;
-        if (form) {
-            this._onFormSubmit = () => sessionStorage.removeItem(this._storageKey());
-            form.addEventListener('submit', this._onFormSubmit);
-        }
-    }
-
-    disconnect () {
-        const input = document.querySelector(this.hiddenInputSelectorValue);
-        const form = input ? input.closest('form') : null;
-        if (form && this._onFormSubmit) {
-            form.removeEventListener('submit', this._onFormSubmit);
-        }
     }
 
     addTask (event) {
