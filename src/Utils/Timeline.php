@@ -8,15 +8,16 @@ namespace App\Utils;
 
 use App\Entity\EntityEvent;
 use App\Entity\Message;
+use App\Entity\Task;
 use App\Entity\TimeSpent;
 
 class Timeline
 {
-    /** @var array<string, array<Message|TimeSpent|EntityEvent>> $items */
+    /** @var array<string, array<Message|TimeSpent|EntityEvent|Task>> $items */
     private array $items = [];
 
     /**
-     * @param array<Message|TimeSpent|EntityEvent> $items
+     * @param array<Message|TimeSpent|EntityEvent|Task> $items
      */
     public function addItems(array $items): void
     {
@@ -27,7 +28,7 @@ class Timeline
     }
 
     /**
-     * @return array<Message|TimeSpent|EntityEvent>
+     * @return array<Message|TimeSpent|EntityEvent|Task>
      */
     public function getItems(?string $type = null): array
     {
@@ -39,7 +40,7 @@ class Timeline
     }
 
     /**
-     * @return array<Message|TimeSpent|EntityEvent>
+     * @return array<Message|TimeSpent|EntityEvent|Task>
      */
     public function getSortedItems(?string $type = null): array
     {

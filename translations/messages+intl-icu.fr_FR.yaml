@@ -190,7 +190,11 @@ forms.optional: (optionnel)
 forms.optional_max_chars: '(optionnel, max. {number} caractères)'
 forms.organization.select.choose: 'Choisir une organisation'
 forms.read_only: '(lecture seule)'
+forms.cancel: Annuler
 forms.save_changes: 'Enregistrer les modifications'
+forms.task.end_at.label: 'Fin'
+forms.task.label.label: 'Intitulé'
+forms.task.start_at.label: 'Début'
 forms.search.advanced_help: 'Afficher l’aide de la syntaxe'
 forms.search.advanced_label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
 forms.search.advanced_title: 'Recherche avancée'
@@ -388,6 +392,7 @@ roles.permissions.check_all: 'Tout cocher'
 roles.permissions.orga.create.tickets: 'Créer des tickets'
 roles.permissions.orga.create.tickets.messages: 'Répondre aux tickets'
 roles.permissions.orga.create.tickets.messages.confidential: 'Répondre confidentiellement aux tickets'
+roles.permissions.orga.create.tickets.tasks: 'Planifier des tâches'
 roles.permissions.orga.create.tickets.time_spent: 'Saisir du temps passé'
 roles.permissions.orga.manage: 'Gérer l’organisation'
 roles.permissions.orga.manage.contracts: 'Gérer les contrats'
@@ -397,6 +402,7 @@ roles.permissions.orga.see.pinned_information: 'Voir les informations épinglée
 roles.permissions.orga.see.tickets.all: 'Voir tous les tickets de l’organisation'
 roles.permissions.orga.see.tickets.contracts: 'Voir le contrat des tickets'
 roles.permissions.orga.see.tickets.messages.confidential: 'Voir les réponses confidentielles'
+roles.permissions.orga.see.tickets.tasks: 'Voir les tâches des tickets'
 roles.permissions.orga.see.tickets.time_spent.accounted: 'Voir les temps passés comptabilisés sur les contrats'
 roles.permissions.orga.see.tickets.time_spent.real: 'Voir les temps passés réels'
 roles.permissions.orga.see.users: 'Voir les utilisateurs'
@@ -521,6 +527,22 @@ tickets.index.title.your_assigned_tickets: 'Vos tickets attribués'
 tickets.index.title.your_tickets: 'Vos tickets'
 tickets.index.views.title: 'Vos vues'
 tickets.involves: Concerne
+tickets.tasks.add: Ajouter
+tickets.tasks.update: Modifier
+tickets.tasks.cancel_edit: 'Annuler modifications'
+tickets.tasks.list: 'Liste des tâches'
+tickets.tasks.confirm: Confirmer
+tickets.tasks.download_ics: 'Télécharger (.ics)'
+tickets.tasks.validate: Valider
+tickets.tasks.edit: Éditer
+tickets.tasks.end_before_start: 'La date de fin doit être après la date de début.'
+tickets.tasks.finish: Terminer
+tickets.tasks.finished: Terminée
+tickets.tasks.finished_at: 'Terminée le {date}'
+tickets.tasks.ongoing: 'En cours'
+tickets.tasks.planned: Planifiée
+tickets.tasks.plan: 'Planifier une tâche'
+tickets.tasks.planned_count: '{count, plural, one {1 tâche planifiée} other {# tâches planifiées}}'
 tickets.labels: Étiquettes
 tickets.labels.edit.title: 'Modifier les étiquettes'
 tickets.labels.none: 'Aucune étiquette'
@@ -616,6 +638,8 @@ tickets.urgency: Urgence
 tickets.urgency.high: Haute
 tickets.urgency.low: Basse
 tickets.urgency.medium: Moyenne
+tasks.edit.delete: 'Supprimer la tâche'
+tasks.edit.title: 'Modifier la tâche'
 time_spents.edit.title: 'Modifier du temps passé'
 users.anonymous: 'Utilisateur anonyme'
 users.color_scheme: 'Schéma de couleurs'

@@ -54,6 +54,7 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
         'agent' => [
             'orga:create:tickets',
             'orga:create:tickets:messages:confidential',
+            'orga:create:tickets:tasks',
             'orga:create:tickets:time_spent',
             'orga:manage',
             'orga:manage:contracts',
@@ -64,6 +65,7 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
             'orga:see:tickets:all',
             'orga:see:tickets:contracts',
             'orga:see:tickets:messages:confidential',
+            'orga:see:tickets:tasks',
             'orga:see:tickets:time_spent:accounted',
             'orga:see:tickets:time_spent:real',
             'orga:see:users',
@@ -83,6 +85,7 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
             'orga:see:contracts',
             'orga:see:tickets:all',
             'orga:see:tickets:contracts',
+            'orga:see:tickets:tasks',
             'orga:see:tickets:time_spent:accounted',
             'orga:see:tickets:time_spent:real',
             'orga:see:users',

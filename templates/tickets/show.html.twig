@@ -515,6 +515,8 @@
                             {{ include('tickets/_timeline_message.html.twig', { message: timelineItem }) }}
                         {% elseif timelineItem.timelineType == 'time_spent' %}
                             {{ include('tickets/_timeline_time_spent.html.twig', { timeSpent: timelineItem }) }}
+                        {% elseif timelineItem.timelineType == 'task' %}
+                            {{ include('tickets/_timeline_task.html.twig', { task: timelineItem }) }}
                         {% elseif timelineItem.timelineType == 'event' %}
                             {{ include('tickets/_timeline_event.html.twig', { event: timelineItem }) }}
                         {% endif %}
@@ -571,6 +573,143 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                        {% endif %}
+
+                                        {% if form.tasksData is defined %}
+                                            {{ form_widget(form.tasksData) }}
+
+                                            <div>
+                                                <button
+                                                    class="button--discreet text--small"
+                                                    type="button"
+                                                    data-controller="modal-opener"
+                                                    data-action="modal-opener#copy"
+                                                    data-modal-opener-selector-value="#modal-task-planner"
+                                                >
+                                                    {{ icon('clock') }}
+                                                    {{ 'tickets.tasks.plan' | trans }}
+                                                    <span
+                                                        id="tasks-count-display"
+                                                        class="badge badge--circle"
+                                                        hidden
+                                                    ></span>
+                                                </button>
+                                                <script>
+                                                    (function () {
+                                                        var key = 'task_planner:' + location.pathname;
+
+                                                        // Restore badge count from sessionStorage on page load
+                                                        var json = sessionStorage.getItem(key);
+                                                        if (json) {
+                                                            try {
+                                                                var tasks = JSON.parse(json);
+                                                                if (tasks.length > 0) {
+                                                                    var badge = document.getElementById('tasks-count-display');
+                                                                    if (badge) {
+                                                                        badge.dataset.tasks = json;
+                                                                        badge.textContent = tasks.length;
+                                                                        badge.hidden = false;
+                                                                    }
+                                                                }
+                                                            } catch {}
+                                                        }
+
+                                                        // Clear sessionStorage when the answer form is submitted
+                                                        // (tasks are persisted to DB at that point)
+                                                        var input = document.querySelector('[name="answer[tasksData]"]');
+                                                        var form = input ? input.closest('form') : null;
+                                                        if (form) {
+                                                            form.addEventListener('submit', function () {
+                                                                sessionStorage.removeItem(key);
+                                                            });
+                                                        }
+                                                    }());
+                                                </script>
+                                            </div>
+
+                                            <template id="modal-task-planner">
+                                                <div
+                                                    data-controller="task-planner"
+                                                    data-task-planner-hidden-input-selector-value="[name='answer[tasksData]']"
+                                                    data-task-planner-count-selector-value="#tasks-count-display"
+                                                >
+                                                    <h1 id="modal-title" class="modal__title">{{ 'tickets.tasks.plan' | trans }}</h1>
+
+                                                    <div class="wrapper wrapper--small wrapper--center flow">
+                                                        <div class="flow">
+                                                            <div class="flow flow--small">
+                                                                <label>{{ 'forms.task.label.label' | trans }}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    data-task-planner-target="labelInput"
+                                                                    autocomplete="off"
+                                                                />
+                                                            </div>
+
+                                                            <div class="cols cols--always flow flow--small">
+                                                                <div class="col--extend flow flow--small">
+                                                                    <label>{{ 'forms.task.start_at.label' | trans }}</label>
+                                                                    <input
+                                                                        type="datetime-local"
+                                                                        data-task-planner-target="startAtInput"
+                                                                        data-action="change->task-planner#onStartAtChange"
+                                                                    />
+                                                                </div>
+
+                                                                <div class="col--extend flow flow--small">
+                                                                    <label>{{ 'forms.task.end_at.label' | trans }}</label>
+                                                                    <input
+                                                                        type="datetime-local"
+                                                                        data-task-planner-target="endAtInput"
+                                                                        data-action="change->task-planner#onEndAtChange"
+                                                                    />
+                                                                </div>
+                                                            </div>
+
+                                                            <p data-task-planner-target="warning" class="alert alert--warning" hidden>
+                                                                {{ 'tickets.tasks.end_before_start' | trans }}
+                                                            </p>
+
+                                                            <div class="cols cols--center flow flow--small">
+                                                                <button
+                                                                    type="button"
+                                                                    class="button--discreet button--small"
+                                                                    data-task-planner-target="cancelButton"
+                                                                    data-action="task-planner#cancelEdit"
+                                                                    hidden
+                                                                >
+                                                                    {{ 'tickets.tasks.cancel_edit' | trans }}
+                                                                </button>
+                                                                <div class="col--extend"></div>
+                                                                <button
+                                                                    type="button"
+                                                                    class="button--secondary button--small"
+                                                                    data-task-planner-target="addButton"
+                                                                    data-action="task-planner#addTask"
+                                                                    data-add-label="{{ 'tickets.tasks.add' | trans }}"
+                                                                    data-edit-label="{{ 'tickets.tasks.update' | trans }}"
+                                                                >
+                                                                    {{ 'tickets.tasks.add' | trans }}
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    class="button--primary button--small"
+                                                                    data-action="modal#close"
+                                                                >
+                                                                    {{ 'tickets.tasks.validate' | trans }}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="task-planner__task-list flow flow--small" data-task-planner-target="taskList">
+                                                            <p class="text--big text--bold text--primary-dark text--center" data-task-planner-target="taskListLabel" hidden style="margin-bottom: var(--space-medium)">
+                                                                {{ 'tickets.tasks.list' | trans }}
+                                                            </p>
+                                                            <div data-task-planner-target="taskItems" class="flow flow--small"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
                                         {% endif %}
                                     </div>
                                 {% endif %}

@@ -1,0 +1,38 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2026 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'modal.html.twig' %}
+
+{% block title %}{{ 'tasks.edit.title' | trans }}{% endblock %}
+
+{% block body %}
+    {{ form_start(form, { action: path('edit task', { uid: task.uid }) }) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.label) }}
+        {{ form_row(form.startAt) }}
+        {{ form_row(form.endAt) }}
+
+        {% if not task.isFinished %}
+            <input type="hidden" name="_delete_token" value="{{ csrf_token('delete task') }}" />
+        {% endif %}
+
+        <div class="cols cols--center">
+            {% if not task.isFinished %}
+                <button
+                    type="submit"
+                    class="button--danger"
+                    formaction="{{ path('delete task', { uid: task.uid }) }}"
+                >
+                    {{ 'tasks.edit.delete' | trans }}
+                </button>
+            {% endif %}
+
+            <div class="col--extend"></div>
+
+            {{ form_row(form.submit, { attr: { class: 'button--primary' } }) }}
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

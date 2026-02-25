@@ -33,6 +33,24 @@
     font-size: var(--font-size-smaller);
 }
 
+.badge--circle {
+    display: inline-flex;
+    min-width: 1.6em;
+    padding: 0;
+    aspect-ratio: 1 / 1;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: var(--font-size-smaller);
+    font-weight: 700;
+    line-height: 1;
+
+    background: transparent;
+    border: 1.5px solid currentcolor;
+    border-radius: 50%;
+}
+
 .badge--border {
     border: var(--border-width) solid currentcolor;
 }

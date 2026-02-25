@@ -96,6 +96,28 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
+
+                    {% if is_granted('orga:see:tickets:tasks', ticket.organization) %}
+                        {% set pendingTasks = ticket.tasks | filter(t => not t.isFinished) %}
+                        {% if pendingTasks | length > 0 %}
+                            {% set visibleTasks = pendingTasks | slice(0, 3) %}
+                            {% set extraCount = (pendingTasks | length) - (visibleTasks | length) %}
+                            <ul class="list--nostyle flow flow--inline flow--smaller">
+                                {% for task in visibleTasks %}
+                                    <li class="badge badge--primary text--small">
+                                        {{ icon('clock') }}
+                                        <time datetime="{{ task.startAt | dateIso }}">{{ task.startAt | dateTrans }}</time>
+                                        — {{ task.label }}
+                                    </li>
+                                {% endfor %}
+                                {% if extraCount > 0 %}
+                                    <li class="badge text--small text--secondary">
+                                        +{{ extraCount }}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
 
