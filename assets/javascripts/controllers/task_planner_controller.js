@@ -13,7 +13,7 @@ export default class extends Controller {
     }
 
     static get targets () {
-        return ['taskList', 'taskItems', 'labelInput', 'startAtInput', 'endAtInput', 'warning', 'cancelButton', 'submitInput', 'addButton', 'taskListLabel'];
+        return ['taskList', 'taskItems', 'labelInput', 'startAtInput', 'endAtInput', 'warning', 'cancelButton', 'addButton', 'taskListLabel'];
     }
 
     connect () {
@@ -21,7 +21,6 @@ export default class extends Controller {
         this.editingIndex = null;
         this._syncFromHiddenInput();
         this._updateCount();
-        this._updateSubmitInput();
         this._resetForm();
         this._renderTaskList();
     }
@@ -201,17 +200,19 @@ export default class extends Controller {
     }
 
     _syncToHiddenInput () {
+        const json = JSON.stringify(this.tasks);
+
         const input = document.querySelector(this.hiddenInputSelectorValue);
         if (input) {
-            input.value = JSON.stringify(this.tasks);
+            input.value = json;
         }
-        this._updateSubmitInput();
-    }
 
-    _updateSubmitInput () {
-        if (this.hasSubmitInputTarget) {
-            this.submitInputTarget.value = JSON.stringify(this.tasks);
+        const countEl = document.querySelector(this.countSelectorValue);
+        if (countEl) {
+            countEl.dataset.tasks = json;
         }
+
+        this._updateCount();
     }
 
     _updateCount () {
@@ -230,6 +231,14 @@ export default class extends Controller {
 
     _syncFromHiddenInput () {
         try {
+            // Primary: read from the count element's data-tasks (survives modal open/close)
+            const countEl = document.querySelector(this.countSelectorValue);
+            const stored = countEl ? (countEl.dataset.tasks || '') : '';
+            if (stored) {
+                this.tasks = JSON.parse(stored);
+                return;
+            }
+            // Fallback: read from the form hidden input
             const input = document.querySelector(this.hiddenInputSelectorValue);
             const value = input ? input.value : '';
             this.tasks = value ? JSON.parse(value) : [];

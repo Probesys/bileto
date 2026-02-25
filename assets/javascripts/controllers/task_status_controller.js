@@ -30,11 +30,8 @@ export default class extends Controller {
         const now = new Date();
 
         if (isNaN(startAt.getTime())) {
-            console.warn('[task-status] invalid startAt:', this.startAtValue);
             return;
         }
-
-        console.debug('[task-status] now:', now.toISOString(), 'startAt:', startAt.toISOString(), 'ongoing:', now >= startAt);
 
         if (now >= startAt) {
             if (this.hasAvatarTarget) {

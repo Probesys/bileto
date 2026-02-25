@@ -576,9 +576,7 @@
                                         {% endif %}
 
                                         {% if form.tasksData is defined %}
-                                            {{ form_widget(form.tasksData, { attr: { 'id': 'tasks-data-input' } }) }}
-
-                                            {% set plannedTasksCount = ticket.tasks | filter(t => not t.isFinished) | length %}
+                                            {{ form_widget(form.tasksData) }}
 
                                             <div>
                                                 <button
@@ -593,15 +591,15 @@
                                                     <span
                                                         id="tasks-count-display"
                                                         class="badge badge--circle"
-                                                        {{ plannedTasksCount == 0 ? 'hidden' }}
-                                                    >{{ plannedTasksCount > 0 ? plannedTasksCount }}</span>
+                                                        hidden
+                                                    ></span>
                                                 </button>
                                             </div>
 
                                             <template id="modal-task-planner">
                                                 <div
                                                     data-controller="task-planner"
-                                                    data-task-planner-hidden-input-selector-value="#tasks-data-input"
+                                                    data-task-planner-hidden-input-selector-value="[name='answer[tasksData]']"
                                                     data-task-planner-count-selector-value="#tasks-count-display"
                                                 >
                                                     <h1 id="modal-title" class="modal__title">{{ 'tickets.tasks.plan' | trans }}</h1>
@@ -660,17 +658,13 @@
                                                                 >
                                                                     {{ 'tickets.tasks.add' | trans }}
                                                                 </button>
-                                                                <form
-                                                                    action="{{ path('create ticket tasks', {uid: ticket.uid}) }}"
-                                                                    method="post"
-                                                                    data-turbo-frame="_top"
+                                                                <button
+                                                                    type="button"
+                                                                    class="button--primary button--small"
+                                                                    data-action="modal#close"
                                                                 >
-                                                                    <input type="hidden" name="_token" value="{{ csrf_token('create ticket tasks') }}">
-                                                                    <input type="hidden" name="tasksData" data-task-planner-target="submitInput">
-                                                                    <button type="submit" class="button--primary button--small">
-                                                                        {{ 'tickets.tasks.validate' | trans }}
-                                                                    </button>
-                                                                </form>
+                                                                    {{ 'tickets.tasks.validate' | trans }}
+                                                                </button>
                                                             </div>
                                                         </div>
 
