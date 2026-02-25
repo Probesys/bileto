@@ -23,6 +23,22 @@ export default class extends Controller {
         this._updateCount();
         this._resetForm();
         this._renderTaskList();
+
+        // Clear sessionStorage when the answer form is submitted (tasks saved to DB)
+        const input = document.querySelector(this.hiddenInputSelectorValue);
+        const form = input ? input.closest('form') : null;
+        if (form) {
+            this._onFormSubmit = () => sessionStorage.removeItem(this._storageKey());
+            form.addEventListener('submit', this._onFormSubmit);
+        }
+    }
+
+    disconnect () {
+        const input = document.querySelector(this.hiddenInputSelectorValue);
+        const form = input ? input.closest('form') : null;
+        if (form && this._onFormSubmit) {
+            form.removeEventListener('submit', this._onFormSubmit);
+        }
     }
 
     addTask (event) {
@@ -212,6 +228,13 @@ export default class extends Controller {
             countEl.dataset.tasks = json;
         }
 
+        // Persist to sessionStorage so the badge survives a page reload
+        if (this.tasks.length > 0) {
+            sessionStorage.setItem(this._storageKey(), json);
+        } else {
+            sessionStorage.removeItem(this._storageKey());
+        }
+
         this._updateCount();
     }
 
@@ -231,20 +254,30 @@ export default class extends Controller {
 
     _syncFromHiddenInput () {
         try {
-            // Primary: read from the count element's data-tasks (survives modal open/close)
+            // 1. dataset.tasks: survives modal close/reopen within the same page load
             const countEl = document.querySelector(this.countSelectorValue);
             const stored = countEl ? (countEl.dataset.tasks || '') : '';
             if (stored) {
                 this.tasks = JSON.parse(stored);
                 return;
             }
-            // Fallback: read from the form hidden input
+            // 2. sessionStorage: survives a page reload
+            const fromSession = sessionStorage.getItem(this._storageKey());
+            if (fromSession) {
+                this.tasks = JSON.parse(fromSession);
+                return;
+            }
+            // 3. Form hidden input: browser restoration as last resort
             const input = document.querySelector(this.hiddenInputSelectorValue);
             const value = input ? input.value : '';
             this.tasks = value ? JSON.parse(value) : [];
         } catch {
             this.tasks = [];
         }
+    }
+
+    _storageKey () {
+        return `task_planner:${location.pathname}`;
     }
 
     _checkEndBeforeStart () {

@@ -594,6 +594,21 @@
                                                         hidden
                                                     ></span>
                                                 </button>
+                                                <script>
+                                                    (function () {
+                                                        var json = sessionStorage.getItem('task_planner:' + location.pathname);
+                                                        if (!json) { return; }
+                                                        try {
+                                                            var tasks = JSON.parse(json);
+                                                            if (tasks.length === 0) { return; }
+                                                            var badge = document.getElementById('tasks-count-display');
+                                                            if (!badge) { return; }
+                                                            badge.dataset.tasks = json;
+                                                            badge.textContent = tasks.length;
+                                                            badge.hidden = false;
+                                                        } catch {}
+                                                    }());
+                                                </script>
                                             </div>
 
                                             <template id="modal-task-planner">
@@ -615,22 +630,24 @@
                                                                 />
                                                             </div>
 
-                                                            <div class="flow flow--small">
-                                                                <label>{{ 'forms.task.start_at.label' | trans }}</label>
-                                                                <input
-                                                                    type="datetime-local"
-                                                                    data-task-planner-target="startAtInput"
-                                                                    data-action="change->task-planner#onStartAtChange"
-                                                                />
-                                                            </div>
+                                                            <div class="cols cols--always flow flow--small">
+                                                                <div class="col--extend flow flow--small">
+                                                                    <label>{{ 'forms.task.start_at.label' | trans }}</label>
+                                                                    <input
+                                                                        type="datetime-local"
+                                                                        data-task-planner-target="startAtInput"
+                                                                        data-action="change->task-planner#onStartAtChange"
+                                                                    />
+                                                                </div>
 
-                                                            <div class="flow flow--small">
-                                                                <label>{{ 'forms.task.end_at.label' | trans }}</label>
-                                                                <input
-                                                                    type="datetime-local"
-                                                                    data-task-planner-target="endAtInput"
-                                                                    data-action="change->task-planner#onEndAtChange"
-                                                                />
+                                                                <div class="col--extend flow flow--small">
+                                                                    <label>{{ 'forms.task.end_at.label' | trans }}</label>
+                                                                    <input
+                                                                        type="datetime-local"
+                                                                        data-task-planner-target="endAtInput"
+                                                                        data-action="change->task-planner#onEndAtChange"
+                                                                    />
+                                                                </div>
                                                             </div>
 
                                                             <p data-task-planner-target="warning" class="alert alert--warning" hidden>
@@ -668,8 +685,8 @@
                                                             </div>
                                                         </div>
 
-                                                        <div data-task-planner-target="taskList">
-                                                            <p class="text--small text--secondary" data-task-planner-target="taskListLabel" hidden style="margin-bottom: var(--space-small)">
+                                                        <div class="task-planner__task-list flow flow--small" data-task-planner-target="taskList">
+                                                            <p class="text--big text--bold text--primary-dark text--center" data-task-planner-target="taskListLabel" hidden style="margin-bottom: var(--space-medium)">
                                                                 {{ 'tickets.tasks.list' | trans }}
                                                             </p>
                                                             <div data-task-planner-target="taskItems" class="flow flow--small"></div>

@@ -84,3 +84,9 @@
         --timeline-bar-top: 5rem;
     }
 }
+
+.task-planner__task-list {
+    padding-top: var(--space-medium);
+
+    border-top: var(--border-width) solid var(--color-grey6);
+}
