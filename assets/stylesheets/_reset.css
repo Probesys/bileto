@@ -2,11 +2,6 @@
 /* Copyright 2022-2026 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
-/* Ensure [hidden] always wins over component display rules */
-[hidden] {
-    display: none !important;
-}
-
 p,
 h1,
 h2,
