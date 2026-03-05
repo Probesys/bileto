@@ -486,8 +486,14 @@ class DataImporter
             }
 
             if ($role->isDefault()) {
+                // If a default role already exists in the database, make sure
+                // that any imported role declared as default is reset.
+                // We give priority to the existing default role to avoid
+                // changing the existing behaviour of the platform.
                 $declaredDefaultRole = $this->indexRoles->getByKey($defaultUniqueKey);
-                $declaredDefaultRole->setIsDefault(false);
+                if ($declaredDefaultRole) {
+                    $declaredDefaultRole->setIsDefault(false);
+                }
             }
         }
 
