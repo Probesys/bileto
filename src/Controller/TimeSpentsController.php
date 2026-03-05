@@ -13,17 +13,19 @@ use App\Repository;
 use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class TimeSpentsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\TimeSpentRepository $timeSpentRepository,
+        private readonly Service\ContractTimeAccounting $contractTimeAccounting,
+    ) {
+    }
+
     #[Route('/time-spents/{uid:timeSpent}/edit', name: 'edit time spent')]
-    public function edit(
-        Entity\TimeSpent $timeSpent,
-        Request $request,
-        Repository\TimeSpentRepository $timeSpentRepository,
-        Service\ContractTimeAccounting $contractTimeAccounting,
-    ): Response {
+    public function edit(Entity\TimeSpent $timeSpent, Request $request): Response
+    {
         $ticket = $timeSpent->getTicket();
 
         $this->denyAccessUnlessGranted('orga:create:tickets:time_spent', $ticket);
@@ -37,17 +39,17 @@ class TimeSpentsController extends BaseController
             $timeSpent = $form->getData();
 
             if ($timeSpent->getRealTime() === 0) {
-                $timeSpentRepository->remove($timeSpent, true);
+                $this->timeSpentRepository->remove($timeSpent, true);
             } else {
                 $contract = $timeSpent->getContract();
 
                 if ($contract && $timeSpent->mustNotBeAccounted()) {
-                    $contractTimeAccounting->unaccountTimeSpents([$timeSpent]);
+                    $this->contractTimeAccounting->unaccountTimeSpents([$timeSpent]);
                 } elseif ($contract) {
-                    $contractTimeAccounting->reaccountTimeSpents($contract, [$timeSpent]);
+                    $this->contractTimeAccounting->reaccountTimeSpents($contract, [$timeSpent]);
                 }
 
-                $timeSpentRepository->save($timeSpent, true);
+                $this->timeSpentRepository->save($timeSpent, true);
             }
 
             return $this->redirectToRoute('ticket', [

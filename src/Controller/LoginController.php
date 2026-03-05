@@ -8,23 +8,28 @@ namespace App\Controller;
 
 use App\Service;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends BaseController
 {
+    public function __construct(
+        private readonly AuthenticationUtils $authenticationUtils
+    ) {
+    }
+
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
-    public function new(AuthenticationUtils $authenticationUtils): Response
+    public function new(): Response
     {
         $user = $this->getUser();
         if ($user) {
             return $this->redirectToRoute('home');
         }
 
-        $error = $authenticationUtils->getLastAuthenticationError();
+        $error = $this->authenticationUtils->getLastAuthenticationError();
 
         // last identifier entered by the user
-        $lastIdentifier = $authenticationUtils->getLastUsername();
+        $lastIdentifier = $this->authenticationUtils->getLastUsername();
 
         $customLogoPathname = $this->getParameter('kernel.project_dir') . '/var/settings/logo.svg';
         $customLogo = '';

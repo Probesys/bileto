@@ -7,30 +7,33 @@
 namespace App\Controller\Teams;
 
 use App\Controller\BaseController;
-use App\Entity\Team;
-use App\Entity\User;
-use App\Repository\UserRepository;
-use App\Service\ActorsLister;
-use App\Service\TeamService;
-use App\Service\UserCreator;
-use App\Service\UserCreatorException;
+use App\Entity;
+use App\Repository;
+use App\Service;
 use App\Utils\ConstraintErrorsFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AgentsController extends BaseController
 {
+    public function __construct(
+        private readonly Service\ActorsLister $actorsLister,
+        private readonly Repository\UserRepository $userRepository,
+        private readonly Service\UserCreator $userCreator,
+        private readonly Service\TeamService $teamService,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/teams/{uid:team}/agents/new', name: 'new team agent', methods: ['GET', 'HEAD'])]
-    public function new(
-        Team $team,
-        ActorsLister $actorsLister,
-    ): Response {
+    public function new(Entity\Team $team): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
-        $agents = $actorsLister->findAll('agent');
-        $agents = array_filter($agents, function (User $agent) use ($team): bool {
+        $agents = $this->actorsLister->findAll('agent');
+        $agents = array_filter($agents, function (Entity\User $agent) use ($team): bool {
             return !$team->hasAgent($agent);
         });
 
@@ -42,18 +45,11 @@ class AgentsController extends BaseController
     }
 
     #[Route('/teams/{uid:team}/agents/new', name: 'add team agent', methods: ['POST'])]
-    public function add(
-        Team $team,
-        Request $request,
-        UserRepository $userRepository,
-        UserCreator $userCreator,
-        TeamService $teamService,
-        ActorsLister $actorsLister,
-        TranslatorInterface $translator,
-    ): Response {
+    public function add(Entity\Team $team, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
-        /** @var \App\Entity\User */
+        /** @var Entity\User */
         $currentUser = $this->getUser();
 
         /** @var string */
@@ -62,8 +58,8 @@ class AgentsController extends BaseController
         /** @var string */
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        $agents = $actorsLister->findAll('agent');
-        $agents = array_filter($agents, function (User $agent) use ($team): bool {
+        $agents = $this->actorsLister->findAll('agent');
+        $agents = array_filter($agents, function (Entity\User $agent) use ($team): bool {
             return !$team->hasAgent($agent);
         });
 
@@ -72,21 +68,21 @@ class AgentsController extends BaseController
                 'team' => $team,
                 'agents' => $agents,
                 'agentEmail' => $agentEmail,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'error' => $this->translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
-        $agent = $userRepository->findOneBy([
+        $agent = $this->userRepository->findOneBy([
             'email' => $agentEmail,
         ]);
 
         if (!$agent) {
             try {
-                $agent = $userCreator->create(
+                $agent = $this->userCreator->create(
                     email: $agentEmail,
                     locale: $currentUser->getLocale(),
                 );
-            } catch (UserCreatorException $e) {
+            } catch (Service\UserCreatorException $e) {
                 return $this->renderBadRequest('teams/agents/new.html.twig', [
                     'team' => $team,
                     'agents' => $agents,
@@ -96,7 +92,7 @@ class AgentsController extends BaseController
             }
         }
 
-        $teamService->addAgent($team, $agent);
+        $this->teamService->addAgent($team, $agent);
 
         return $this->redirectToRoute('team', [
             'uid' => $team->getUid(),
@@ -104,13 +100,8 @@ class AgentsController extends BaseController
     }
 
     #[Route('/teams/{uid:team}/agents/deletion', name: 'remove team agent', methods: ['POST'])]
-    public function remove(
-        Team $team,
-        Request $request,
-        UserRepository $userRepository,
-        TeamService $teamService,
-        TranslatorInterface $translator,
-    ): Response {
+    public function remove(Entity\Team $team, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         /** @var string */
@@ -120,16 +111,16 @@ class AgentsController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('remove team agent', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
 
             return $this->redirectToRoute('team', [
                 'uid' => $team->getUid(),
             ]);
         }
 
-        $agent = $userRepository->findOneBy(['uid' => $agentUid]);
+        $agent = $this->userRepository->findOneBy(['uid' => $agentUid]);
         if ($agent) {
-            $teamService->removeAgent($team, $agent);
+            $this->teamService->removeAgent($team, $agent);
         }
 
         return $this->redirectToRoute('team', [

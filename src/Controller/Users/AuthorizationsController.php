@@ -14,24 +14,28 @@ use App\Security;
 use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AuthorizationsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\AuthorizationRepository $authorizationRepository,
+        private readonly Repository\OrganizationRepository $organizationRepository,
+        private readonly Security\Authorizer $authorizer,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/users/{uid:holder}/authorizations/new', name: 'new user authorization')]
-    public function new(
-        Entity\User $holder,
-        Request $request,
-        Repository\AuthorizationRepository $authorizationRepository,
-        Repository\OrganizationRepository $organizationRepository,
-    ): Response {
+    public function new(Entity\User $holder, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
         $this->denyAccessIfUserIsAnonymized($holder);
 
         $defaultOrganizationUid = $request->query->getString('orga', '');
 
-        $defaultOrganization = $organizationRepository->findOneBy([
+        $defaultOrganization = $this->organizationRepository->findOneBy([
             'uid' => $defaultOrganizationUid,
         ]);
 
@@ -45,7 +49,7 @@ class AuthorizationsController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $authorization = $form->getData();
-            $authorizationRepository->save($authorization, true);
+            $this->authorizationRepository->save($authorization, true);
 
             return $this->redirectToRoute('user', [
                 'uid' => $holder->getUid(),
@@ -59,12 +63,8 @@ class AuthorizationsController extends BaseController
     }
 
     #[Route('/authorizations/{uid:authorization}/deletion', name: 'delete user authorization', methods: ['POST'])]
-    public function delete(
-        Entity\Authorization $authorization,
-        Request $request,
-        Security\Authorizer $authorizer,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\Authorization $authorization, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         /** @var Entity\User */
@@ -76,7 +76,7 @@ class AuthorizationsController extends BaseController
         $role = $authorization->getRole();
 
         if (!$this->isCsrfTokenValid('delete user authorization', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('user', [
                 'uid' => $holder->getUid(),
             ]);
@@ -84,24 +84,30 @@ class AuthorizationsController extends BaseController
 
         if (
             $role->getType() === 'super' && (
-                !$authorizer->isGranted('admin:*') ||
+                !$this->authorizer->isGranted('admin:*') ||
                 $user->getId() === $holder->getId()
             )
         ) {
-            $this->addFlash('error', $translator->trans('authorization.cannot_revoke.super', [], 'errors'));
+            $this->addFlash(
+                'error',
+                $this->translator->trans('authorization.cannot_revoke.super', [], 'errors'),
+            );
             return $this->redirectToRoute('user', [
                 'uid' => $holder->getUid(),
             ]);
         }
 
         if ($authorization->getTeamAuthorization() !== null) {
-            $this->addFlash('error', $translator->trans('authorization.cannot_revoke.managed_by_team', [], 'errors'));
+            $this->addFlash(
+                'error',
+                $this->translator->trans('authorization.cannot_revoke.managed_by_team', [], 'errors')
+            );
             return $this->redirectToRoute('user', [
                 'uid' => $holder->getUid(),
             ]);
         }
 
-        $authorizer->ungrant($holder, $authorization);
+        $this->authorizer->ungrant($holder, $authorization);
 
         return $this->redirectToRoute('user', [
             'uid' => $holder->getUid(),

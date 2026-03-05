@@ -16,20 +16,24 @@ use App\Service;
 use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TicketsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\OrganizationRepository $organizationRepository,
+        private readonly SearchEngine\Ticket\Searcher $ticketSearcher,
+        private readonly SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder,
+        private readonly Security\Authorizer $authorizer,
+        private readonly Service\UserService $userService,
+        private readonly Service\TicketTimeline $ticketTimeline,
+    ) {
+    }
+
     #[Route('/tickets', name: 'tickets', methods: ['GET', 'HEAD'])]
-    public function index(
-        Request $request,
-        Repository\OrganizationRepository $organizationRepository,
-        SearchEngine\Ticket\Searcher $ticketSearcher,
-        SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder,
-        Security\Authorizer $authorizer,
-        Service\UserService $userService,
-    ): Response {
+    public function index(Request $request): Response
+    {
         $page = $request->query->getInt('page', 1);
         $view = $request->query->getString('view', 'all');
         $searchMode = $request->query->getString('mode', 'quick');
@@ -52,7 +56,7 @@ class TicketsController extends BaseController
 
         $query = $advancedSearchForm->get('q')->getData();
 
-        $ticketQuickSearchFilter = $ticketQuickSearchFilterBuilder->getFilter($query);
+        $ticketQuickSearchFilter = $this->ticketQuickSearchFilterBuilder->getFilter($query);
         $quickSearchForm = $this->createNamedForm(
             'search',
             Form\Ticket\QuickSearchForm::class,
@@ -64,12 +68,12 @@ class TicketsController extends BaseController
 
         /** @var Entity\User */
         $user = $this->getUser();
-        $organizations = $organizationRepository->findAuthorizedOrganizations($user);
+        $organizations = $this->organizationRepository->findAuthorizedOrganizations($user);
 
-        $ticketSearcher->setOrganizations($organizations);
+        $this->ticketSearcher->setOrganizations($organizations);
 
         if ($query) {
-            $ticketsPagination = $ticketSearcher->getTickets($query, $sort, [
+            $ticketsPagination = $this->ticketSearcher->getTickets($query, $sort, [
                 'page' => $page,
                 'maxResults' => 25,
             ]);
@@ -77,15 +81,18 @@ class TicketsController extends BaseController
             $ticketsPagination = Utils\Pagination::empty();
         }
 
-        $grantedOrganizations = $authorizer->getGrantedOrganizationsToUser($user, permission: 'orga:create:tickets');
+        $grantedOrganizations = $this->authorizer->getGrantedOrganizationsToUser(
+            $user,
+            permission: 'orga:create:tickets',
+        );
         $mustSelectOrganization = count($grantedOrganizations) > 1;
-        $defaultOrganization = $userService->getDefaultOrganization($user);
+        $defaultOrganization = $this->userService->getDefaultOrganization($user);
 
         return $this->render('tickets/index.html.twig', [
             'ticketsPagination' => $ticketsPagination,
-            'countToAssign' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryUnassigned()),
-            'countAssignedMe' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryAssignedMe()),
-            'countOwned' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryOwned()),
+            'countToAssign' => $this->ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryUnassigned()),
+            'countAssignedMe' => $this->ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryAssignedMe()),
+            'countOwned' => $this->ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryOwned()),
             'view' => $view,
             'query' => $query?->getString(),
             'sort' => $sort,
@@ -98,9 +105,8 @@ class TicketsController extends BaseController
     }
 
     #[Route('/tickets/new', name: 'new ticket')]
-    public function new(
-        Request $request,
-    ): Response {
+    public function new(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:create:tickets', 'any');
 
         $form = $this->createNamedForm('ticket', Form\Organization\SelectForm::class, options: [
@@ -124,13 +130,11 @@ class TicketsController extends BaseController
     }
 
     #[Route('/tickets/{uid:ticket}', name: 'ticket', methods: ['GET', 'HEAD'])]
-    public function show(
-        Entity\Ticket $ticket,
-        Service\TicketTimeline $ticketTimeline,
-    ): Response {
+    public function show(Entity\Ticket $ticket): Response
+    {
         $this->denyAccessUnlessGranted('orga:see', $ticket);
 
-        $timeline = $ticketTimeline->build($ticket);
+        $timeline = $this->ticketTimeline->build($ticket);
 
         $message = new Entity\Message();
         $message->setTicket($ticket);

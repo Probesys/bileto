@@ -6,48 +6,47 @@
 
 namespace App\Controller;
 
-use App\Entity\Organization;
+use App\Entity;
 use App\Form;
-use App\Repository\OrganizationRepository;
-use App\Security\Authorizer;
-use App\Service\Sorter\OrganizationSorter;
-use App\Utils\ConstraintErrorsFormatter;
-use App\Utils\Time;
+use App\Repository;
+use App\Security;
+use App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrganizationsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\OrganizationRepository $organizationRepository,
+        private readonly Service\Sorter\OrganizationSorter $orgaSorter,
+        private readonly Security\Authorizer $authorizer,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/organizations', name: 'organizations', methods: ['GET', 'HEAD'])]
-    public function index(
-        OrganizationRepository $organizationRepository,
-        OrganizationSorter $orgaSorter,
-    ): Response {
+    public function index(): Response
+    {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-
-        $organizations = $organizationRepository->findAuthorizedOrganizations($user);
-        $orgaSorter->sort($organizations);
-
+        $organizations = $this->organizationRepository->findAuthorizedOrganizations($user);
+        $this->orgaSorter->sort($organizations);
         return $this->render('organizations/index.html.twig', [
             'organizations' => $organizations,
         ]);
     }
 
     #[Route('/organizations/new', name: 'new organization')]
-    public function new(
-        Request $request,
-        OrganizationRepository $organizationRepository,
-        Authorizer $authorizer,
-    ): Response {
+    public function new(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:create:organizations');
 
-        $organization = new Organization();
+        $organization = new Entity\Organization();
         $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
 
         $form->handleRequest($request);
@@ -55,9 +54,9 @@ class OrganizationsController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             $organization = $form->getData();
             $organization->normalizeDomains();
-            $organizationRepository->save($organization, true);
+            $this->organizationRepository->save($organization, true);
 
-            if ($authorizer->isGranted('orga:manage:contracts', $organization)) {
+            if ($this->authorizer->isGranted('orga:manage:contracts', $organization)) {
                 return $this->redirectToRoute('new organization contract', [
                     'uid' => $organization->getUid(),
                 ]);
@@ -72,10 +71,8 @@ class OrganizationsController extends BaseController
     }
 
     #[Route('/organizations/{uid:organization}', name: 'organization', methods: ['GET', 'HEAD'])]
-    public function show(
-        Organization $organization,
-        Authorizer $authorizer,
-    ): Response {
+    public function show(Entity\Organization $organization): Response
+    {
         $this->denyAccessUnlessGranted('orga:see', $organization);
 
         return $this->redirectToRoute('organization tickets', [
@@ -84,11 +81,8 @@ class OrganizationsController extends BaseController
     }
 
     #[Route('/organizations/{uid:organization}/settings', name: 'organization settings')]
-    public function edit(
-        Organization $organization,
-        Request $request,
-        OrganizationRepository $organizationRepository,
-    ): Response {
+    public function edit(Entity\Organization $organization, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
 
         $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
@@ -98,7 +92,7 @@ class OrganizationsController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             $organization = $form->getData();
             $organization->normalizeDomains();
-            $organizationRepository->save($organization, true);
+            $this->organizationRepository->save($organization, true);
 
             $this->addFlash('success', new TranslatableMessage('notifications.saved'));
 
@@ -114,12 +108,8 @@ class OrganizationsController extends BaseController
     }
 
     #[Route('/organizations/{uid:organization}/deletion', name: 'delete organization', methods: ['POST'])]
-    public function delete(
-        Organization $organization,
-        Request $request,
-        OrganizationRepository $organizationRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\Organization $organization, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:manage', $organization);
 
         /** @var \App\Entity\User $user */
@@ -129,7 +119,7 @@ class OrganizationsController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('delete organization', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('organizations');
         }
 
@@ -140,7 +130,7 @@ class OrganizationsController extends BaseController
             $user->setOrganization(null);
         }
 
-        $organizationRepository->remove($organization, true);
+        $this->organizationRepository->remove($organization, true);
 
         return $this->redirectToRoute('organizations');
     }

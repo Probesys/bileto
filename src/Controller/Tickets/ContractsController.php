@@ -13,18 +13,20 @@ use App\Repository;
 use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ContractsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\TicketRepository $ticketRepository,
+        private readonly Repository\TimeSpentRepository $timeSpentRepository,
+        private readonly Service\ContractTimeAccounting $contractTimeAccounting,
+    ) {
+    }
+
     #[Route('/tickets/{uid:ticket}/contracts/edit', name: 'edit ticket contracts')]
-    public function edit(
-        Entity\Ticket $ticket,
-        Request $request,
-        Repository\TicketRepository $ticketRepository,
-        Repository\TimeSpentRepository $timeSpentRepository,
-        Service\ContractTimeAccounting $contractTimeAccounting,
-    ): Response {
+    public function edit(Entity\Ticket $ticket, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:update:tickets:contracts', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
@@ -34,15 +36,15 @@ class ContractsController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $ticket = $form->getData();
-            $ticketRepository->save($ticket, true);
+            $this->ticketRepository->save($ticket, true);
 
             $ongoingContract = $form->get('ongoingContract')->getData();
             $includeUnaccountedTime = $form->get('includeUnaccountedTime')->getData();
 
             if ($includeUnaccountedTime && $ongoingContract) {
                 $timeSpents = $ticket->getUnaccountedTimeSpents()->getValues();
-                $contractTimeAccounting->accountTimeSpents($ongoingContract, $timeSpents);
-                $timeSpentRepository->save($timeSpents, true);
+                $this->contractTimeAccounting->accountTimeSpents($ongoingContract, $timeSpents);
+                $this->timeSpentRepository->save($timeSpents, true);
             }
 
             return $this->redirectToRoute('ticket', [

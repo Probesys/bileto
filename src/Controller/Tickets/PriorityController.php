@@ -12,16 +12,18 @@ use App\Form;
 use App\Repository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class PriorityController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\TicketRepository $ticketRepository,
+    ) {
+    }
+
     #[Route('/tickets/{uid:ticket}/priority/edit', name: 'edit ticket priority')]
-    public function edit(
-        Entity\Ticket $ticket,
-        Request $request,
-        Repository\TicketRepository $ticketRepository,
-    ): Response {
+    public function edit(Entity\Ticket $ticket, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:update:tickets:priority', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
@@ -31,7 +33,7 @@ class PriorityController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $ticket = $form->getData();
-            $ticketRepository->save($ticket, true);
+            $this->ticketRepository->save($ticket, true);
 
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),

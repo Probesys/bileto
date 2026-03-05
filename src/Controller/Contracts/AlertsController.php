@@ -7,19 +7,24 @@
 namespace App\Controller\Contracts;
 
 use App\Controller\BaseController;
-use App\Entity\Contract;
-use App\Repository\ContractRepository;
+use App\Entity;
+use App\Repository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AlertsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\ContractRepository $contractRepository,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/contracts/{uid:contract}/alerts/edit', name: 'edit contract alerts', methods: ['GET', 'HEAD'])]
-    public function edit(
-        Contract $contract,
-    ): Response {
+    public function edit(Entity\Contract $contract): Response
+    {
         $organization = $contract->getOrganization();
 
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
@@ -33,12 +38,8 @@ class AlertsController extends BaseController
     }
 
     #[Route('/contracts/{uid:contract}/alerts/edit', name: 'update contract alerts', methods: ['POST'])]
-    public function update(
-        Contract $contract,
-        Request $request,
-        ContractRepository $contractRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function update(Entity\Contract $contract, Request $request): Response
+    {
         $organization = $contract->getOrganization();
 
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
@@ -65,14 +66,14 @@ class AlertsController extends BaseController
                 'contract' => $contract,
                 'hoursAlert' => $hoursAlert,
                 'dateAlert' => $dateAlert,
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'error' => $this->translator->trans('csrf.invalid', [], 'errors'),
             ]);
         }
 
         $contract->setHoursAlert($hoursAlert);
         $contract->setDateAlert($dateAlert);
 
-        $contractRepository->save($contract, true);
+        $this->contractRepository->save($contract, true);
 
         return $this->redirectToRoute('contract', [
             'uid' => $contract->getUid(),

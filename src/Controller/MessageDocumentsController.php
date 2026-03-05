@@ -6,15 +6,14 @@
 
 namespace App\Controller;
 
-use App\Entity\MessageDocument;
-use App\Repository\MessageDocumentRepository;
-use App\Service\MessageDocumentStorage;
-use App\Service\MessageDocumentStorageError;
+use App\Entity;
+use App\Repository;
+use App\Service;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -25,13 +24,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class MessageDocumentsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\MessageDocumentRepository $messageDocumentRepository,
+        private readonly Service\MessageDocumentStorage $messageDocumentStorage,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/messages/documents/new', name: 'create message document', methods: ['POST'])]
-    public function create(
-        Request $request,
-        MessageDocumentRepository $messageDocumentRepository,
-        MessageDocumentStorage $messageDocumentStorage,
-        TranslatorInterface $translator,
-    ): Response {
+    public function create(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:see', 'any');
 
         $file = $request->files->get('document');
@@ -41,13 +43,13 @@ class MessageDocumentsController extends BaseController
 
         if (!$this->isCsrfTokenValid('create message document', $csrfToken)) {
             return new JsonResponse([
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'error' => $this->translator->trans('csrf.invalid', [], 'errors'),
             ], Response::HTTP_BAD_REQUEST);
         }
 
         if (!($file instanceof UploadedFile)) {
             return new JsonResponse([
-                'error' => $translator->trans('message_document.required', [], 'errors'),
+                'error' => $this->translator->trans('message_document.required', [], 'errors'),
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -56,34 +58,34 @@ class MessageDocumentsController extends BaseController
             $file->getError() === \UPLOAD_ERR_FORM_SIZE
         ) {
             return new JsonResponse([
-                'error' => $translator->trans('message_document.too_large', [], 'errors'),
+                'error' => $this->translator->trans('message_document.too_large', [], 'errors'),
             ], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$file->isValid()) {
             return new JsonResponse([
-                'error' => $translator->trans('message_document.server_error', [], 'errors'),
+                'error' => $this->translator->trans('message_document.server_error', [], 'errors'),
                 'description' => $file->getErrorMessage(),
             ], Response::HTTP_BAD_REQUEST);
         }
 
         try {
-            $messageDocument = $messageDocumentStorage->store($file, $file->getClientOriginalName());
-        } catch (MessageDocumentStorageError $e) {
-            if ($e->getCode() === MessageDocumentStorageError::REJECTED_MIMETYPE) {
+            $messageDocument = $this->messageDocumentStorage->store($file, $file->getClientOriginalName());
+        } catch (Service\MessageDocumentStorageError $e) {
+            if ($e->getCode() === Service\MessageDocumentStorageError::REJECTED_MIMETYPE) {
                 return new JsonResponse([
-                    'error' => $translator->trans('message_document.mimetype.rejected', [], 'errors'),
+                    'error' => $this->translator->trans('message_document.mimetype.rejected', [], 'errors'),
                     'description' => $e->getMessage(),
                 ], Response::HTTP_BAD_REQUEST);
             } else {
                 return new JsonResponse([
-                    'error' => $translator->trans('message_document.server_error', [], 'errors'),
+                    'error' => $this->translator->trans('message_document.server_error', [], 'errors'),
                     'description' => $e->getMessage(),
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
-        $messageDocumentRepository->save($messageDocument, true);
+        $this->messageDocumentRepository->save($messageDocument, true);
 
         $urlShow = $this->generateUrl(
             'message document',
@@ -111,11 +113,8 @@ class MessageDocumentsController extends BaseController
         name: 'message document',
         methods: ['GET', 'HEAD']
     )]
-    public function show(
-        MessageDocument $messageDocument,
-        string $extension,
-        MessageDocumentStorage $messageDocumentStorage,
-    ): Response {
+    public function show(Entity\MessageDocument $messageDocument, string $extension): Response
+    {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -146,9 +145,9 @@ class MessageDocumentsController extends BaseController
         }
 
         try {
-            $content = $messageDocumentStorage->read($messageDocument);
-            $contentLength = $messageDocumentStorage->size($messageDocument);
-        } catch (MessageDocumentStorageError $e) {
+            $content = $this->messageDocumentStorage->read($messageDocument);
+            $contentLength = $this->messageDocumentStorage->size($messageDocument);
+        } catch (Service\MessageDocumentStorageError $e) {
             throw $this->createNotFoundException('The file does not exist.');
         }
 
@@ -172,13 +171,8 @@ class MessageDocumentsController extends BaseController
     }
 
     #[Route('/messages/documents/{uid:messageDocument}/deletion', name: 'delete message document', methods: ['POST'])]
-    public function delete(
-        MessageDocument $messageDocument,
-        Request $request,
-        MessageDocumentRepository $messageDocumentRepository,
-        MessageDocumentStorage $messageDocumentStorage,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\MessageDocument $messageDocument, Request $request): Response
+    {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -191,15 +185,15 @@ class MessageDocumentsController extends BaseController
 
         if (!$this->isCsrfTokenValid('delete message document', $csrfToken)) {
             return new JsonResponse([
-                'error' => $translator->trans('csrf.invalid', [], 'errors'),
+                'error' => $this->translator->trans('csrf.invalid', [], 'errors'),
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $messageDocumentRepository->remove($messageDocument, true);
+        $this->messageDocumentRepository->remove($messageDocument, true);
 
-        $countSameHashDocuments = $messageDocumentRepository->countByHash($messageDocument->getHash());
+        $countSameHashDocuments = $this->messageDocumentRepository->countByHash($messageDocument->getHash());
         if ($countSameHashDocuments === 0) {
-            $messageDocumentStorage->remove($messageDocument);
+            $this->messageDocumentStorage->remove($messageDocument);
         }
 
         $urlShow = $this->generateUrl(
@@ -218,10 +212,8 @@ class MessageDocumentsController extends BaseController
     }
 
     #[Route('/messages/documents', name: 'message documents', methods: ['GET', 'HEAD'])]
-    public function index(
-        Request $request,
-        MessageDocumentRepository $messageDocumentRepository,
-    ): Response {
+    public function index(Request $request): Response
+    {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -234,7 +226,7 @@ class MessageDocumentsController extends BaseController
             $conditions['message'] = null;
         }
 
-        $messageDocuments = $messageDocumentRepository->findBy(
+        $messageDocuments = $this->messageDocumentRepository->findBy(
             $conditions,
             ['createdAt' => 'ASC'],
         );

@@ -10,21 +10,32 @@ use App\Entity;
 use App\Form;
 use App\Repository;
 use App\Service;
-use App\Service\Sorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UsersController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\UserRepository $userRepository,
+        private readonly Service\Sorter\UserSorter $userSorter,
+        private readonly Service\UserCreator $userCreator,
+        private readonly Repository\AuthorizationRepository $authorizationRepository,
+        private readonly Repository\SessionLogRepository $sessionLogRepository,
+        private readonly Service\Sorter\AuthorizationSorter $authorizationSorter,
+        private readonly Service\UserService $userService,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/users', name: 'users', methods: ['GET', 'HEAD'])]
-    public function index(Repository\UserRepository $userRepository, Sorter\UserSorter $userSorter): Response
+    public function index(): Response
     {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        $users = $userRepository->findAllWithAuthorizations();
-        $userSorter->sort($users);
+        $users = $this->userRepository->findAllWithAuthorizations();
+        $this->userSorter->sort($users);
 
         return $this->render('users/index.html.twig', [
             'users' => $users,
@@ -32,10 +43,8 @@ class UsersController extends BaseController
     }
 
     #[Route('/users/new', name: 'new user')]
-    public function new(
-        Request $request,
-        Service\UserCreator $userCreator,
-    ): Response {
+    public function new(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         $user = new Entity\User();
@@ -45,7 +54,7 @@ class UsersController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-            $userCreator->createUser($user);
+            $this->userCreator->createUser($user);
 
             return $this->redirectToRoute('new user authorization', [
                 'uid' => $user->getUid(),
@@ -58,23 +67,18 @@ class UsersController extends BaseController
     }
 
     #[Route('/users/{uid:user}', name: 'user', methods: ['GET', 'HEAD'])]
-    public function show(
-        Entity\User $user,
-        Repository\AuthorizationRepository $authorizationRepository,
-        Repository\SessionLogRepository $sessionLogRepository,
-        Sorter\AuthorizationSorter $authorizationSorter,
-        Service\UserService $userService,
-    ): Response {
+    public function show(Entity\User $user): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
-        $defaultOrganization = $userService->getDefaultOrganization($user);
+        $defaultOrganization = $this->userService->getDefaultOrganization($user);
 
-        $authorizations = $authorizationRepository->findBy([
+        $authorizations = $this->authorizationRepository->findBy([
             'holder' => $user,
         ]);
-        $authorizationSorter->sort($authorizations);
+        $this->authorizationSorter->sort($authorizations);
 
-        $sessionLogs = $sessionLogRepository->findByIdentifier($user->getUserIdentifier());
+        $sessionLogs = $this->sessionLogRepository->findByIdentifier($user->getUserIdentifier());
 
         return $this->render('users/show.html.twig', [
             'user' => $user,
@@ -85,11 +89,8 @@ class UsersController extends BaseController
     }
 
     #[Route('/users/{uid:user}/edit', name: 'edit user')]
-    public function edit(
-        Entity\User $user,
-        Request $request,
-        Repository\UserRepository $userRepository,
-    ): Response {
+    public function edit(Entity\User $user, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
         $this->denyAccessIfUserIsAnonymized($user);
 
@@ -99,7 +100,7 @@ class UsersController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-            $userRepository->save($user, true);
+            $this->userRepository->save($user, true);
 
             return $this->redirectToRoute('user', [
                 'uid' => $user->getUid(),
@@ -113,12 +114,8 @@ class UsersController extends BaseController
     }
 
     #[Route('/users/{uid:user}/deletion', name: 'delete user', methods: ['POST'])]
-    public function delete(
-        Entity\User $user,
-        Request $request,
-        Repository\UserRepository $userRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\User $user, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
 
         /** @var Entity\User */
@@ -131,11 +128,11 @@ class UsersController extends BaseController
         $csrfToken = $request->request->getString('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('delete user', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('edit user', ['uid' => $user->getUid()]);
         }
 
-        $userRepository->remove($user, true);
+        $this->userRepository->remove($user, true);
 
         return $this->redirectToRoute('users');
     }

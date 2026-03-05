@@ -12,16 +12,18 @@ use App\Form;
 use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class AnonymizationsController extends BaseController
 {
+    public function __construct(
+        private readonly Service\UserService $userService,
+    ) {
+    }
+
     #[Route('/users/{uid:user}/anonymizations/new', name: 'new user anonymization')]
-    public function new(
-        Entity\User $user,
-        Request $request,
-        Service\UserService $userService,
-    ): Response {
+    public function new(Entity\User $user, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:users');
         $this->denyAccessIfUserIsAnonymized($user);
 
@@ -37,7 +39,7 @@ class AnonymizationsController extends BaseController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $userService->anonymize($user);
+            $this->userService->anonymize($user);
 
             return $this->redirectToRoute('user', [
                 'uid' => $user->getUid(),

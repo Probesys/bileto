@@ -6,27 +6,33 @@
 
 namespace App\Controller;
 
-use App\Entity\Role;
+use App\Entity;
 use App\Form;
-use App\Repository\RoleRepository;
-use App\Service\Sorter\RoleSorter;
+use App\Repository;
+use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RolesController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\RoleRepository $roleRepository,
+        private readonly Service\Sorter\RoleSorter $roleSorter,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/roles', name: 'roles', methods: ['GET', 'HEAD'])]
-    public function index(RoleRepository $roleRepository, RoleSorter $roleSorter): Response
+    public function index(): Response
     {
         $this->denyAccessUnlessGranted('admin:manage:roles');
-
         // Make sure the "super" role exists
-        $roleRepository->findOrCreateSuperRole();
+        $this->roleRepository->findOrCreateSuperRole();
 
-        $roles = $roleRepository->findAll();
-        $roleSorter->sort($roles);
+        $roles = $this->roleRepository->findAll();
+        $this->roleSorter->sort($roles);
 
         $rolesByTypes = [
             'super' => null,
@@ -36,7 +42,7 @@ class RolesController extends BaseController
         ];
 
         foreach ($roles as $role) {
-            /** @var value-of<Role::TYPES> */
+            /** @var value-of<Entity\Role::TYPES> */
             $type = $role->getType();
 
             if ($type === 'super') {
@@ -52,22 +58,20 @@ class RolesController extends BaseController
     }
 
     #[Route('/roles/new', name: 'new role')]
-    public function new(
-        Request $request,
-        RoleRepository $roleRepository,
-    ): Response {
+    public function new(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
         /** @var string */
         $type = $request->query->get('type', 'user');
 
-        if (!in_array($type, Role::TYPES) || $type === 'super') {
+        if (!in_array($type, Entity\Role::TYPES) || $type === 'super') {
             $type = 'user';
         }
 
-        $role = new Role();
+        $role = new Entity\Role();
 
-        $defaultRole = $roleRepository->findDefault();
+        $defaultRole = $this->roleRepository->findDefault();
         if ($type === 'user' && !$defaultRole) {
             $role->setIsDefault(true);
         }
@@ -82,10 +86,10 @@ class RolesController extends BaseController
             $role = $form->getData();
 
             if ($role->isDefault() && $role->getType() === 'user') {
-                $roleRepository->unsetDefault();
+                $this->roleRepository->unsetDefault();
             }
 
-            $roleRepository->save($role, true);
+            $this->roleRepository->save($role, true);
 
             return $this->redirectToRoute('roles');
         }
@@ -96,11 +100,8 @@ class RolesController extends BaseController
     }
 
     #[Route('/roles/{uid:role}/edit', name: 'edit role')]
-    public function edit(
-        Role $role,
-        Request $request,
-        RoleRepository $roleRepository,
-    ): Response {
+    public function edit(Entity\Role $role, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
         if ($role->getType() === 'super') {
@@ -117,10 +118,10 @@ class RolesController extends BaseController
             $role = $form->getData();
 
             if ($role->isDefault() && $role->getType() === 'user') {
-                $roleRepository->unsetDefault();
+                $this->roleRepository->unsetDefault();
             }
 
-            $roleRepository->save($role, true);
+            $this->roleRepository->save($role, true);
 
             return $this->redirectToRoute('roles');
         }
@@ -132,12 +133,8 @@ class RolesController extends BaseController
     }
 
     #[Route('/roles/{uid:role}/deletion', name: 'delete role', methods: ['POST'])]
-    public function delete(
-        Role $role,
-        Request $request,
-        RoleRepository $roleRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\Role $role, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:roles');
 
         if ($role->getType() === 'super') {
@@ -148,11 +145,11 @@ class RolesController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('delete role', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('edit role', ['uid' => $role->getUid()]);
         }
 
-        $roleRepository->remove($role, true);
+        $this->roleRepository->remove($role, true);
 
         return $this->redirectToRoute('roles');
     }

@@ -12,17 +12,20 @@ use App\Form;
 use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AuthorizationsController extends BaseController
 {
+    public function __construct(
+        private readonly Service\TeamService $teamService,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/teams/{uid:team}/authorizations/new', name: 'new team authorization')]
-    public function new(
-        Entity\Team $team,
-        Request $request,
-        Service\TeamService $teamService,
-    ): Response {
+    public function new(Entity\Team $team, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         $teamAuthorization = new Entity\TeamAuthorization();
@@ -34,7 +37,7 @@ class AuthorizationsController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $teamAuthorization = $form->getData();
-            $teamService->createAuthorization($teamAuthorization);
+            $this->teamService->createAuthorization($teamAuthorization);
 
             return $this->redirectToRoute('team', [
                 'uid' => $team->getUid(),
@@ -52,12 +55,8 @@ class AuthorizationsController extends BaseController
         name: 'delete team authorization',
         methods: ['POST']
     )]
-    public function delete(
-        Entity\TeamAuthorization $teamAuthorization,
-        Request $request,
-        Service\TeamService $teamService,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\TeamAuthorization $teamAuthorization, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         /** @var string $csrfToken */
@@ -66,13 +65,13 @@ class AuthorizationsController extends BaseController
         $team = $teamAuthorization->getTeam();
 
         if (!$this->isCsrfTokenValid('delete team authorization', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('team', [
                 'uid' => $team->getUid(),
             ]);
         }
 
-        $teamService->removeAuthorization($teamAuthorization);
+        $this->teamService->removeAuthorization($teamAuthorization);
 
         return $this->redirectToRoute('team', [
             'uid' => $team->getUid(),

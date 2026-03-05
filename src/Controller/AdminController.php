@@ -6,14 +6,19 @@
 
 namespace App\Controller;
 
-use App\Security\Authorizer;
+use App\Security;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class AdminController extends BaseController
 {
+    public function __construct(
+        private readonly Security\Authorizer $authorizer,
+    ) {
+    }
+
     #[Route('/admin', name: 'admin', methods: ['GET', 'HEAD'])]
-    public function index(Authorizer $authorizer): Response
+    public function index(): Response
     {
         $this->denyAccessUnlessGranted('admin:see');
 
@@ -26,7 +31,7 @@ class AdminController extends BaseController
         ];
 
         foreach ($permissionsToRoutes as $permission => $route) {
-            if ($authorizer->isGranted($permission)) {
+            if ($this->authorizer->isGranted($permission)) {
                 return $this->redirectToRoute($route);
             }
         }

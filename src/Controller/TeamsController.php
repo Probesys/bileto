@@ -6,28 +6,33 @@
 
 namespace App\Controller;
 
-use App\Entity\Team;
+use App\Entity;
 use App\Form;
-use App\Repository\TeamRepository;
-use App\Service\Sorter\AuthorizationSorter;
-use App\Service\Sorter\TeamSorter;
-use App\Service\Sorter\UserSorter;
+use App\Repository;
+use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TeamsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\TeamRepository $teamRepository,
+        private readonly Service\Sorter\TeamSorter $teamSorter,
+        private readonly Service\Sorter\UserSorter $userSorter,
+        private readonly Service\Sorter\AuthorizationSorter $authorizationSorter,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/teams', name: 'teams', methods: ['GET', 'HEAD'])]
-    public function index(
-        TeamRepository $teamRepository,
-        TeamSorter $teamSorter,
-    ): Response {
+    public function index(): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
-        $teams = $teamRepository->findAll();
-        $teamSorter->sort($teams);
+        $teams = $this->teamRepository->findAll();
+        $this->teamSorter->sort($teams);
 
         return $this->render('teams/index.html.twig', [
             'teams' => $teams,
@@ -35,20 +40,18 @@ class TeamsController extends BaseController
     }
 
     #[Route('/teams/new', name: 'new team')]
-    public function new(
-        Request $request,
-        TeamRepository $teamRepository,
-    ): Response {
+    public function new(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
-        $team = new Team();
+        $team = new Entity\Team();
         $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $team = $form->getData();
-            $teamRepository->save($team, true);
+            $this->teamRepository->save($team, true);
 
             return $this->redirectToRoute('team', [
                 'uid' => $team->getUid(),
@@ -61,18 +64,15 @@ class TeamsController extends BaseController
     }
 
     #[Route('/teams/{uid:team}', name: 'team', methods: ['GET', 'HEAD'])]
-    public function show(
-        Team $team,
-        UserSorter $userSorter,
-        AuthorizationSorter $authorizationSorter,
-    ): Response {
+    public function show(Entity\Team $team): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         $agents = $team->getAgents()->toArray();
-        $userSorter->sort($agents);
+        $this->userSorter->sort($agents);
 
         $teamAuthorizations = $team->getTeamAuthorizations()->toArray();
-        $authorizationSorter->sort($teamAuthorizations);
+        $this->authorizationSorter->sort($teamAuthorizations);
 
         return $this->render('teams/show.html.twig', [
             'team' => $team,
@@ -82,11 +82,8 @@ class TeamsController extends BaseController
     }
 
     #[Route('/teams/{uid:team}/edit', name: 'edit team')]
-    public function edit(
-        Team $team,
-        Request $request,
-        TeamRepository $teamRepository,
-    ): Response {
+    public function edit(Entity\Team $team, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         $form = $this->createNamedForm('team', Form\TeamForm::class, $team);
@@ -95,7 +92,7 @@ class TeamsController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $team = $form->getData();
-            $teamRepository->save($team, true);
+            $this->teamRepository->save($team, true);
 
             return $this->redirectToRoute('team', [
                 'uid' => $team->getUid(),
@@ -109,23 +106,19 @@ class TeamsController extends BaseController
     }
 
     #[Route('/teams/{uid:team}/deletion', name: 'delete team', methods: ['POST'])]
-    public function delete(
-        Team $team,
-        Request $request,
-        TeamRepository $teamRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\Team $team, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:agents');
 
         /** @var string */
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('delete team', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('edit team', ['uid' => $team->getUid()]);
         }
 
-        $teamRepository->remove($team, true);
+        $this->teamRepository->remove($team, true);
 
         return $this->redirectToRoute('teams');
     }

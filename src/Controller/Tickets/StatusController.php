@@ -12,17 +12,20 @@ use App\Form;
 use App\Repository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StatusController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\TicketRepository $ticketRepository,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/tickets/{uid:ticket}/status/edit', name: 'edit ticket status')]
-    public function edit(
-        Entity\Ticket $ticket,
-        Request $request,
-        Repository\TicketRepository $ticketRepository,
-    ): Response {
+    public function edit(Entity\Ticket $ticket, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
@@ -32,7 +35,7 @@ class StatusController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $ticket = $form->getData();
-            $ticketRepository->save($ticket, true);
+            $this->ticketRepository->save($ticket, true);
 
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),
@@ -46,12 +49,8 @@ class StatusController extends BaseController
     }
 
     #[Route('/tickets/{uid:ticket}/status/reopening', name: 'reopen ticket', methods: ['POST'])]
-    public function reopen(
-        Entity\Ticket $ticket,
-        Request $request,
-        Repository\TicketRepository $ticketRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function reopen(Entity\Ticket $ticket, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:update:tickets:status', $ticket);
 
         if (!$ticket->isClosed()) {
@@ -62,7 +61,7 @@ class StatusController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('reopen ticket', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
 
             return $this->redirectToRoute('ticket', [
                 'uid' => $ticket->getUid(),
@@ -75,7 +74,7 @@ class StatusController extends BaseController
             $ticket->setStatus('in_progress');
         }
 
-        $ticketRepository->save($ticket, true);
+        $this->ticketRepository->save($ticket, true);
 
         return $this->redirectToRoute('ticket', [
             'uid' => $ticket->getUid(),

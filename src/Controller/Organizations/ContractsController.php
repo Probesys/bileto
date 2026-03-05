@@ -15,16 +15,22 @@ use App\Service;
 use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ContractsController extends BaseController
 {
+    public function __construct(
+        private readonly SearchEngine\Contract\Searcher $contractSearcher,
+        private readonly Repository\ContractRepository $contractRepository,
+        private readonly Repository\TicketRepository $ticketRepository,
+        private readonly Repository\TimeSpentRepository $timeSpentRepository,
+        private readonly Service\ContractTimeAccounting $contractTimeAccounting,
+    ) {
+    }
+
     #[Route('/organizations/{uid:organization}/contracts', name: 'organization contracts', methods: ['GET', 'HEAD'])]
-    public function index(
-        Request $request,
-        Entity\Organization $organization,
-        SearchEngine\Contract\Searcher $contractSearcher,
-    ): Response {
+    public function index(Request $request, Entity\Organization $organization): Response
+    {
         $this->denyAccessUnlessGranted('orga:see:contracts', $organization);
 
         $page = $request->query->getInt('page', 1);
@@ -37,10 +43,10 @@ class ContractsController extends BaseController
 
         $query = $advancedSearchForm->get('q')->getData();
 
-        $contractSearcher->setOrganization($organization);
+        $this->contractSearcher->setOrganization($organization);
 
         if ($query) {
-            $contractsPagination = $contractSearcher->getContracts($query, $sort, [
+            $contractsPagination = $this->contractSearcher->getContracts($query, $sort, [
                 'page' => $page,
                 'maxResults' => 25,
             ]);
@@ -58,21 +64,15 @@ class ContractsController extends BaseController
     }
 
     #[Route('/organizations/{uid:organization}/contracts/new', name: 'new organization contract')]
-    public function new(
-        Entity\Organization $organization,
-        Request $request,
-        Repository\ContractRepository $contractRepository,
-        Repository\TicketRepository $ticketRepository,
-        Repository\TimeSpentRepository $timeSpentRepository,
-        Service\ContractTimeAccounting $contractTimeAccounting,
-    ): Response {
+    public function new(Entity\Organization $organization, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
 
         $fromContractUid = $request->query->getString('from');
 
         $renewedContract = null;
         if ($fromContractUid) {
-            $renewedContract = $contractRepository->findOneBy([
+            $renewedContract = $this->contractRepository->findOneBy([
                 'uid' => $fromContractUid,
             ]);
         }
@@ -101,19 +101,19 @@ class ContractsController extends BaseController
             if ($renewedContract) {
                 $renewedContract->setRenewedBy($contract);
 
-                $contractRepository->save($renewedContract);
+                $this->contractRepository->save($renewedContract);
             }
 
-            $contractRepository->save($contract, true);
+            $this->contractRepository->save($contract, true);
 
-            $contractTickets = $ticketRepository->findAssociableTickets($contract);
+            $contractTickets = $this->ticketRepository->findAssociableTickets($contract);
 
             if ($form->get('associateTickets')->getData()) {
                 foreach ($contractTickets as $ticket) {
                     $ticket->addContract($contract);
                 }
 
-                $ticketRepository->save($contractTickets, true);
+                $this->ticketRepository->save($contractTickets, true);
             }
 
             if ($form->get('associateUnaccountedTimes')->getData()) {
@@ -126,8 +126,8 @@ class ContractsController extends BaseController
                     );
                 }
 
-                $contractTimeAccounting->accountTimeSpents($contract, $timeSpents);
-                $timeSpentRepository->save($timeSpents, true);
+                $this->contractTimeAccounting->accountTimeSpents($contract, $timeSpents);
+                $this->timeSpentRepository->save($timeSpents, true);
             }
 
             return $this->redirectToRoute('contract', [

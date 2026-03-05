@@ -17,17 +17,22 @@ use App\Utils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class TicketsController extends BaseController
 {
+    public function __construct(
+        private readonly SearchEngine\Ticket\Searcher $ticketSearcher,
+        private readonly SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder,
+        private readonly Repository\TicketRepository $ticketRepository,
+        private readonly Service\TicketAssigner $ticketAssigner,
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
+    }
+
     #[Route('/organizations/{uid:organization}/tickets', name: 'organization tickets', methods: ['GET', 'HEAD'])]
-    public function index(
-        Entity\Organization $organization,
-        Request $request,
-        SearchEngine\Ticket\Searcher $ticketSearcher,
-        SearchEngine\Ticket\QuickSearchFilterBuilder $ticketQuickSearchFilterBuilder,
-    ): Response {
+    public function index(Entity\Organization $organization, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:see', $organization);
 
         $page = $request->query->getInt('page', 1);
@@ -52,7 +57,7 @@ class TicketsController extends BaseController
 
         $query = $advancedSearchForm->get('q')->getData();
 
-        $ticketQuickSearchFilter = $ticketQuickSearchFilterBuilder->getFilter($query);
+        $ticketQuickSearchFilter = $this->ticketQuickSearchFilterBuilder->getFilter($query);
         $quickSearchForm = $this->createNamedForm(
             'search',
             Form\Ticket\QuickSearchForm::class,
@@ -65,10 +70,10 @@ class TicketsController extends BaseController
             ]
         );
 
-        $ticketSearcher->setOrganization($organization);
+        $this->ticketSearcher->setOrganization($organization);
 
         if ($query) {
-            $ticketsPagination = $ticketSearcher->getTickets($query, $sort, [
+            $ticketsPagination = $this->ticketSearcher->getTickets($query, $sort, [
                 'page' => $page,
                 'maxResults' => 25,
             ]);
@@ -79,9 +84,9 @@ class TicketsController extends BaseController
         return $this->render('organizations/tickets/index.html.twig', [
             'organization' => $organization,
             'ticketsPagination' => $ticketsPagination,
-            'countToAssign' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryUnassigned()),
-            'countAssignedMe' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryAssignedMe()),
-            'countOwned' => $ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryOwned()),
+            'countToAssign' => $this->ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryUnassigned()),
+            'countAssignedMe' => $this->ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryAssignedMe()),
+            'countOwned' => $this->ticketSearcher->countTickets(SearchEngine\Ticket\Searcher::queryOwned()),
             'view' => $view,
             'query' => $query?->getString(),
             'sort' => $sort,
@@ -92,19 +97,14 @@ class TicketsController extends BaseController
     }
 
     #[Route('/organizations/{uid:organization}/tickets/new', name: 'new organization ticket')]
-    public function new(
-        Entity\Organization $organization,
-        Request $request,
-        Repository\TicketRepository $ticketRepository,
-        Service\TicketAssigner $ticketAssigner,
-        EventDispatcherInterface $eventDispatcher,
-    ): Response {
+    public function new(Entity\Organization $organization, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:create:tickets', $organization);
 
         /** @var Entity\User */
         $user = $this->getUser();
 
-        $responsibleTeam = $ticketAssigner->getDefaultResponsibleTeam($organization);
+        $responsibleTeam = $this->ticketAssigner->getDefaultResponsibleTeam($organization);
 
         $ticket = new Entity\Ticket();
         $ticket->setOrganization($organization);
@@ -120,7 +120,7 @@ class TicketsController extends BaseController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $ticketRepository->save($ticket, true);
+            $this->ticketRepository->save($ticket, true);
 
             $message = $ticket->getMessages()->first();
 
@@ -129,13 +129,13 @@ class TicketsController extends BaseController
             }
 
             $ticketEvent = new TicketActivity\TicketEvent($ticket);
-            $eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::CREATED);
+            $this->eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::CREATED);
 
             $messageEvent = new TicketActivity\MessageEvent($message);
-            $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED);
+            $this->eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED);
 
             if ($ticket->getAssignee() !== null) {
-                $eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::ASSIGNED);
+                $this->eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::ASSIGNED);
             }
 
             return $this->redirectToRoute('ticket', [

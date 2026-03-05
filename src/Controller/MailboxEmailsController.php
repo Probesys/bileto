@@ -6,33 +6,35 @@
 
 namespace App\Controller;
 
-use App\Entity\MailboxEmail;
-use App\Repository\MailboxEmailRepository;
+use App\Entity;
+use App\Repository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MailboxEmailsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\MailboxEmailRepository $mailboxEmailRepository,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/mailbox-emails/{uid:mailboxEmail}/deletion', name: 'delete mailbox email', methods: ['POST'])]
-    public function delete(
-        MailboxEmail $mailboxEmail,
-        Request $request,
-        MailboxEmailRepository $mailboxEmailRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\MailboxEmail $mailboxEmail, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('delete mailbox email', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('mailboxes');
         }
 
-        $mailboxEmailRepository->remove($mailboxEmail, true);
+        $this->mailboxEmailRepository->remove($mailboxEmail, true);
 
         return $this->redirectToRoute('mailboxes');
     }

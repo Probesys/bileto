@@ -7,27 +7,26 @@
 namespace App\Controller;
 
 use App\Entity;
-use App\Repository;
 use App\SearchEngine;
 use App\Security;
 use App\Service;
-use App\Service\Sorter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class PagesController extends BaseController
 {
+    public function __construct(
+        private readonly SearchEngine\Ticket\Searcher $ticketSearcher,
+        private readonly Security\Authorizer $authorizer,
+        private readonly Service\UserService $userService,
+    ) {
+    }
+
     #[Route('/', name: 'home', methods: ['GET', 'HEAD'])]
-    public function home(
-        Repository\AuthorizationRepository $authorizationRepository,
-        Repository\OrganizationRepository $orgaRepository,
-        Sorter\OrganizationSorter $orgaSorter,
-        SearchEngine\Ticket\Searcher $ticketSearcher,
-        Security\Authorizer $authorizer,
-        Service\UserService $userService,
-    ): Response {
-        $ticketsOwnedPagination = $ticketSearcher->getTickets(
+    public function home(): Response
+    {
+        $ticketsOwnedPagination = $this->ticketSearcher->getTickets(
             SearchEngine\Ticket\Searcher::queryOwned(),
             'updated-desc',
             [
@@ -35,9 +34,8 @@ class PagesController extends BaseController
                 'maxResults' => 5,
             ]
         );
-
-        if ($authorizer->isAgent('any')) {
-            $ticketsAssignedPagination = $ticketSearcher->getTickets(
+        if ($this->authorizer->isAgent('any')) {
+            $ticketsAssignedPagination = $this->ticketSearcher->getTickets(
                 SearchEngine\Ticket\Searcher::queryAssignedMe(),
                 'updated-desc',
                 [
@@ -51,7 +49,7 @@ class PagesController extends BaseController
 
         /** @var Entity\User */
         $user = $this->getUser();
-        $defaultOrganization = $userService->getDefaultOrganization($user);
+        $defaultOrganization = $this->userService->getDefaultOrganization($user);
 
         return $this->render('pages/home.html.twig', [
             'ticketsOwnedPagination' => $ticketsOwnedPagination,

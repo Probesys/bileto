@@ -14,17 +14,19 @@ use App\TicketActivity;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class OrganizationController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\TicketRepository $ticketRepository,
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
+    }
+
     #[Route('/tickets/{uid:ticket}/organization/edit', name: 'edit ticket organization')]
-    public function edit(
-        Entity\Ticket $ticket,
-        Request $request,
-        Repository\TicketRepository $ticketRepository,
-        EventDispatcherInterface $eventDispatcher,
-    ): Response {
+    public function edit(Entity\Ticket $ticket, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:update:tickets:organization', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
@@ -36,13 +38,13 @@ class OrganizationController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $ticket = $form->getData();
-            $ticketRepository->save($ticket, true);
+            $this->ticketRepository->save($ticket, true);
 
             $newOrganization = $ticket->getOrganization();
 
             if ($oldOrganization->getId() !== $newOrganization->getId()) {
                 $ticketEvent = new TicketActivity\TicketEvent($ticket);
-                $eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::TRANSFERRED);
+                $this->eventDispatcher->dispatch($ticketEvent, TicketActivity\TicketEvent::TRANSFERRED);
             }
 
             return $this->redirectToRoute('ticket', [

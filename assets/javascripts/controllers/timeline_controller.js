@@ -15,12 +15,7 @@ export default class extends Controller {
     resizeBar () {
         const bottom = this.element.querySelector('#bottom');
 
-        let lastElement = null
-        if (bottom) {
-            lastElement = bottom.previousElementSibling;
-        } else {
-            lastElement = this.element.lastElementChild;
-        }
+        const lastElement = bottom ? bottom.previousElementSibling : this.element.lastElementChild;
 
         if (!lastElement) {
             return;

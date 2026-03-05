@@ -14,16 +14,20 @@ use App\SearchEngine;
 use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ContractsController extends BaseController
 {
+    public function __construct(
+        private readonly SearchEngine\Contract\Searcher $contractSearcher,
+        private readonly Repository\ContractRepository $contractRepository,
+    ) {
+    }
+
     #[Route('/contracts', name: 'contracts', methods: ['GET', 'HEAD'])]
-    public function index(
-        Request $request,
-        SearchEngine\Contract\Searcher $contractSearcher,
-    ): Response {
+    public function index(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:see:contracts', 'any');
 
         $page = $request->query->getInt('page', 1);
@@ -37,7 +41,7 @@ class ContractsController extends BaseController
         $query = $advancedSearchForm->get('q')->getData();
 
         if ($query) {
-            $contractsPagination = $contractSearcher->getContracts($query, $sort, [
+            $contractsPagination = $this->contractSearcher->getContracts($query, $sort, [
                 'page' => $page,
                 'maxResults' => 25,
             ]);
@@ -54,9 +58,8 @@ class ContractsController extends BaseController
     }
 
     #[Route('/contracts/new', name: 'new contract')]
-    public function new(
-        Request $request,
-    ): Response {
+    public function new(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:manage:contracts', 'any');
 
         $form = $this->createNamedForm('contract', Form\Organization\SelectForm::class, options: [
@@ -93,11 +96,8 @@ class ContractsController extends BaseController
     }
 
     #[Route('/contracts/{uid:contract}/edit', name: 'edit contract')]
-    public function edit(
-        Entity\Contract $contract,
-        Request $request,
-        Repository\ContractRepository $contractRepository,
-    ): Response {
+    public function edit(Entity\Contract $contract, Request $request): Response
+    {
         $organization = $contract->getOrganization();
 
         $this->denyAccessUnlessGranted('orga:manage:contracts', $organization);
@@ -110,7 +110,7 @@ class ContractsController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $contract = $form->getData();
-            $contractRepository->save($contract, true);
+            $this->contractRepository->save($contract, true);
 
             return $this->redirectToRoute('contract', [
                 'uid' => $contract->getUid(),

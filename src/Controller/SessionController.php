@@ -10,17 +10,20 @@ use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SessionController extends BaseController
 {
+    public function __construct(
+        private readonly Service\Locales $locales,
+        private readonly RequestStack $requestStack,
+    ) {
+    }
+
     #[Route('/session/locale', name: 'update session locale', methods: ['POST'])]
-    public function updateLocale(
-        Request $request,
-        RequestStack $requestStack,
-        Service\Locales $locales,
-    ): Response {
+    public function updateLocale(Request $request): Response
+    {
         /** @var string $locale */
         $locale = $request->request->get('locale', $request->getLocale());
 
@@ -34,11 +37,11 @@ class SessionController extends BaseController
             return $this->redirectToRoute($from);
         }
 
-        if (!$locales->isAvailable($locale)) {
+        if (!$this->locales->isAvailable($locale)) {
             return $this->redirectToRoute($from);
         }
 
-        $session = $requestStack->getSession();
+        $session = $this->requestStack->getSession();
         $session->set('_locale', $locale);
 
         return $this->redirectToRoute($from);

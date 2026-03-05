@@ -18,24 +18,26 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class MessagesController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\MessageRepository $messageRepository,
+        private readonly Repository\TicketRepository $ticketRepository,
+        private readonly Service\TicketTimeAccounting $ticketTimeAccounting,
+        private readonly Service\TicketTimeline $ticketTimeline,
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
+    }
+
     #[Route('/tickets/{uid:ticket}/messages/new', name: 'create ticket message', methods: ['POST'])]
-    public function create(
-        Entity\Ticket $ticket,
-        Request $request,
-        Repository\MessageRepository $messageRepository,
-        Repository\TicketRepository $ticketRepository,
-        Service\TicketTimeAccounting $ticketTimeAccounting,
-        Service\TicketTimeline $ticketTimeline,
-        EventDispatcherInterface $eventDispatcher,
-    ): Response {
+    public function create(Entity\Ticket $ticket, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:see', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
-        $timeline = $ticketTimeline->build($ticket);
+        $timeline = $this->ticketTimeline->build($ticket);
 
         $message = new Entity\Message();
         $message->setTicket($ticket);
@@ -60,12 +62,12 @@ class MessagesController extends BaseController
         $ticket->setUpdatedAt(Utils\Time::now());
         $ticket->setUpdatedBy($user);
 
-        $ticketRepository->save($ticket, true);
-        $messageRepository->save($message, true);
+        $this->ticketRepository->save($ticket, true);
+        $this->messageRepository->save($message, true);
 
         $minutesSpent = $form->has('timeSpent') ? $form->get('timeSpent')->getData() : 0;
         if ($minutesSpent > 0) {
-            $ticketTimeAccounting->accountTime($minutesSpent, $ticket, $message);
+            $this->ticketTimeAccounting->accountTime($minutesSpent, $ticket, $message);
         }
 
         $type = $form->has('type') ? $form->get('type')->getData() : 'normal';
@@ -73,16 +75,16 @@ class MessagesController extends BaseController
 
         $messageEvent = new TicketActivity\MessageEvent($message);
 
-        $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED);
+        $this->eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED);
 
         if ($type === 'solution') {
-            $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED_SOLUTION);
+            $this->eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED_SOLUTION);
         } elseif ($solutionAction === 'approve') {
-            $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::APPROVED_SOLUTION);
+            $this->eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::APPROVED_SOLUTION);
         } elseif ($solutionAction === 'refuse') {
-            $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::REFUSED_SOLUTION);
+            $this->eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::REFUSED_SOLUTION);
         } else {
-            $eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED_ANSWER);
+            $this->eventDispatcher->dispatch($messageEvent, TicketActivity\MessageEvent::CREATED_ANSWER);
         }
 
         return $this->redirectToRoute('ticket', [

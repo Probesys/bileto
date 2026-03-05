@@ -16,25 +16,29 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MailboxesController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\MailboxRepository $mailboxRepository,
+        private readonly Repository\MailboxEmailRepository $mailboxEmailRepository,
+        private readonly Service\Sorter\MailboxSorter $mailboxSorter,
+        private readonly Service\MailboxService $mailboxService,
+        private readonly TranslatorInterface $translator,
+        private readonly MessageBusInterface $bus
+    ) {
+    }
+
     #[Route('/mailboxes', name: 'mailboxes', methods: ['GET', 'HEAD'])]
-    public function index(
-        Repository\MailboxRepository $mailboxRepository,
-        Repository\MailboxEmailRepository $mailboxEmailRepository,
-        Service\Sorter\MailboxSorter $mailboxSorter,
-    ): Response {
+    public function index(): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
-
-        $mailboxes = $mailboxRepository->findAll();
-        $mailboxSorter->sort($mailboxes);
-
-        $errorMailboxEmails = $mailboxEmailRepository->findInError();
-
+        $mailboxes = $this->mailboxRepository->findAll();
+        $this->mailboxSorter->sort($mailboxes);
+        $errorMailboxEmails = $this->mailboxEmailRepository->findInError();
         return $this->render('mailboxes/index.html.twig', [
             'mailboxes' => $mailboxes,
             'errorMailboxEmails' => $errorMailboxEmails,
@@ -42,10 +46,8 @@ class MailboxesController extends BaseController
     }
 
     #[Route('/mailboxes/new', name: 'new mailbox')]
-    public function new(
-        Request $request,
-        Repository\MailboxRepository $mailboxRepository,
-    ): Response {
+    public function new(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
         $mailbox = new Entity\Mailbox();
@@ -55,7 +57,7 @@ class MailboxesController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mailbox = $form->getData();
-            $mailboxRepository->save($mailbox, true);
+            $this->mailboxRepository->save($mailbox, true);
 
             return $this->redirectToRoute('mailboxes');
         }
@@ -66,11 +68,8 @@ class MailboxesController extends BaseController
     }
 
     #[Route('/mailboxes/{uid:mailbox}/edit', name: 'edit mailbox')]
-    public function edit(
-        Entity\Mailbox $mailbox,
-        Request $request,
-        Repository\MailboxRepository $mailboxRepository,
-    ): Response {
+    public function edit(Entity\Mailbox $mailbox, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
         $form = $this->createNamedForm('mailbox', Form\MailboxForm::class, $mailbox);
@@ -80,7 +79,7 @@ class MailboxesController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             $mailbox = $form->getData();
             $mailbox->resetLastError();
-            $mailboxRepository->save($mailbox, true);
+            $this->mailboxRepository->save($mailbox, true);
 
             $this->addFlash('success', new TranslatableMessage('notifications.saved'));
 
@@ -96,38 +95,33 @@ class MailboxesController extends BaseController
     }
 
     #[Route('/mailboxes/{uid:mailbox}/test', name: 'test mailbox', methods: ['POST'])]
-    public function test(
-        Request $request,
-        Entity\Mailbox $mailbox,
-        Repository\MailboxRepository $mailboxRepository,
-        TranslatorInterface $translator,
-        Service\MailboxService $mailboxService,
-    ): Response {
+    public function test(Request $request, Entity\Mailbox $mailbox): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('test mailbox', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('mailboxes');
         }
 
-        $client = $mailboxService->getClient($mailbox);
+        $client = $this->mailboxService->getClient($mailbox);
 
         try {
             $client->connect();
             $client->disconnect();
 
             $mailbox->setLastError('');
-            $mailboxRepository->save($mailbox, true);
+            $this->mailboxRepository->save($mailbox, true);
 
             $this->addFlash('success', new TranslatableMessage('mailboxes.test.success'));
         } catch (\Exception $e) {
             $error = $e->getMessage();
 
             $mailbox->setLastError($error);
-            $mailboxRepository->save($mailbox, true);
+            $this->mailboxRepository->save($mailbox, true);
         }
 
         return $this->redirectToRoute('edit mailbox', [
@@ -136,25 +130,22 @@ class MailboxesController extends BaseController
     }
 
     #[Route('/mailboxes/collect', name: 'collect mailboxes', methods: ['POST'])]
-    public function collect(
-        Request $request,
-        TranslatorInterface $translator,
-        MessageBusInterface $bus,
-    ): Response {
+    public function collect(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
         /** @var string $csrfToken */
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('collect mailboxes', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('mailboxes');
         }
 
-        $bus->dispatch(new Message\FetchMailboxes(), [
+        $this->bus->dispatch(new Message\FetchMailboxes(), [
             new TransportNamesStamp('sync'),
         ]);
-        $bus->dispatch(new Message\CreateTicketsFromMailboxEmails(), [
+        $this->bus->dispatch(new Message\CreateTicketsFromMailboxEmails(), [
             new TransportNamesStamp('sync'),
         ]);
 
@@ -162,12 +153,8 @@ class MailboxesController extends BaseController
     }
 
     #[Route('/mailboxes/{uid:mailbox}/deletion', name: 'delete mailbox', methods: ['POST'])]
-    public function delete(
-        Entity\Mailbox $mailbox,
-        Request $request,
-        Repository\MailboxRepository $mailboxRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\Mailbox $mailbox, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:mailboxes');
 
         /** @var \App\Entity\User $user */
@@ -177,13 +164,13 @@ class MailboxesController extends BaseController
         $csrfToken = $request->request->get('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('delete mailbox', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('edit mailbox', [
                 'uid' => $mailbox->getUid(),
             ]);
         }
 
-        $mailboxRepository->remove($mailbox, true);
+        $this->mailboxRepository->remove($mailbox, true);
 
         return $this->redirectToRoute('mailboxes');
     }

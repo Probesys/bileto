@@ -13,18 +13,22 @@ use App\Repository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PreferencesController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\UserRepository $userRepository,
+        private readonly RequestStack $requestStack,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/preferences', name: 'preferences')]
-    public function edit(
-        Request $request,
-        RequestStack $requestStack,
-        Repository\UserRepository $userRepository,
-    ): Response {
+    public function edit(Request $request): Response
+    {
         /** @var Entity\User */
         $user = $this->getUser();
 
@@ -34,9 +38,9 @@ class PreferencesController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-            $userRepository->save($user, true);
+            $this->userRepository->save($user, true);
 
-            $session = $requestStack->getSession();
+            $session = $this->requestStack->getSession();
             $session->set('_locale', $user->getLocale());
 
             $this->addFlash('success', new TranslatableMessage('notifications.saved'));
@@ -50,11 +54,8 @@ class PreferencesController extends BaseController
     }
 
     #[Route('/preferences/hide-events', name: 'update hide events', methods: ['POST'])]
-    public function updateHideEvents(
-        Request $request,
-        Repository\UserRepository $userRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function updateHideEvents(Request $request): Response
+    {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -71,12 +72,12 @@ class PreferencesController extends BaseController
         }
 
         if (!$this->isCsrfTokenValid('update hide events', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirect($from);
         }
 
         $user->setHideEvents($hideEvents);
-        $userRepository->save($user, true);
+        $this->userRepository->save($user, true);
 
         return $this->redirect($from);
     }

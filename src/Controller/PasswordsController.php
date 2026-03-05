@@ -16,17 +16,23 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class PasswordsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\UserRepository $userRepository,
+        private readonly Repository\TokenRepository $tokenRepository,
+        private readonly MessageBusInterface $bus,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        #[Autowire(env: 'bool:LDAP_ENABLED')]
+        private readonly bool $ldapEnabled,
+    ) {
+    }
+
     #[Route('/passwords/reset', name: 'reset password')]
-    public function reset(
-        Request $request,
-        Repository\UserRepository $userRepository,
-        MessageBusInterface $bus,
-        EventDispatcherInterface $eventDispatcher,
-    ): Response {
+    public function reset(Request $request): Response
+    {
         $sent = $request->query->getBoolean('sent');
 
         $form = $this->createNamedForm('reset_password', Form\Password\ResetForm::class);
@@ -45,16 +51,16 @@ class PasswordsController extends BaseController
                 );
                 $user->setResetPasswordToken($token);
 
-                $userRepository->save($user, true);
+                $this->userRepository->save($user, true);
 
-                $bus->dispatch(new Message\SendResetPasswordEmail($user->getId()));
+                $this->bus->dispatch(new Message\SendResetPasswordEmail($user->getId()));
             }
 
             $identifier = $request->request->all('reset_password')['user'] ?? '';
             $identifier = trim($identifier);
             if ($identifier) {
                 $resetPasswordEvent = new Security\Event\ResetPasswordEvent($request, $identifier);
-                $eventDispatcher->dispatch($resetPasswordEvent);
+                $this->eventDispatcher->dispatch($resetPasswordEvent);
             }
 
             return $this->redirectToRoute('reset password', ['sent' => true]);
@@ -67,16 +73,9 @@ class PasswordsController extends BaseController
     }
 
     #[Route('/passwords/{token}/edit', name: 'edit password')]
-    public function edit(
-        string $token,
-        Request $request,
-        Repository\TokenRepository $tokenRepository,
-        Repository\UserRepository $userRepository,
-        EventDispatcherInterface $eventDispatcher,
-        #[Autowire(env: 'bool:LDAP_ENABLED')]
-        bool $ldapEnabled,
-    ): Response {
-        $user = $userRepository->findOneByResetPasswordToken($token);
+    public function edit(string $token, Request $request): Response
+    {
+        $user = $this->userRepository->findOneByResetPasswordToken($token);
 
         if (!$user) {
             throw $this->createNotFoundException('The token does not exist.');
@@ -88,7 +87,7 @@ class PasswordsController extends BaseController
             throw $this->createNotFoundException('The token does not exist.');
         }
 
-        $managedByLdap = $ldapEnabled && $user->getAuthType() === 'ldap';
+        $managedByLdap = $this->ldapEnabled && $user->getAuthType() === 'ldap';
 
         if ($managedByLdap) {
             throw $this->createNotFoundException('The user is managed by LDAP.');
@@ -106,12 +105,12 @@ class PasswordsController extends BaseController
 
             $user->setResetPasswordToken(null);
 
-            $userRepository->save($user, true);
+            $this->userRepository->save($user, true);
 
-            $tokenRepository->remove($resetPasswordToken, true);
+            $this->tokenRepository->remove($resetPasswordToken, true);
 
             $changedPasswordEvent = new Security\Event\ChangedPasswordEvent($request, $user);
-            $eventDispatcher->dispatch($changedPasswordEvent);
+            $this->eventDispatcher->dispatch($changedPasswordEvent);
 
             $this->addFlash('password_changed', true);
 

@@ -6,45 +6,48 @@
 
 namespace App\Controller;
 
-use App\Entity\Label;
+use App\Entity;
 use App\Form;
-use App\Repository\LabelRepository;
-use App\Service\Sorter\LabelSorter;
+use App\Repository;
+use App\Service;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LabelsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\LabelRepository $labelRepository,
+        private readonly Service\Sorter\LabelSorter $labelSorter,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/labels', name: 'labels', methods: ['GET', 'HEAD'])]
-    public function index(LabelRepository $labelRepository, LabelSorter $labelSorter): Response
+    public function index(): Response
     {
         $this->denyAccessUnlessGranted('admin:manage:labels');
-
-        $labels = $labelRepository->findAll();
-        $labelSorter->sort($labels);
-
+        $labels = $this->labelRepository->findAll();
+        $this->labelSorter->sort($labels);
         return $this->render('labels/index.html.twig', [
             'labels' => $labels,
         ]);
     }
 
     #[Route('/labels/new', name: 'new label')]
-    public function new(
-        Request $request,
-        LabelRepository $labelRepository,
-    ): Response {
+    public function new(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:labels');
 
-        $label = new Label();
+        $label = new Entity\Label();
         $form = $this->createNamedForm('label', Form\LabelForm::class, $label);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $label = $form->getData();
-            $labelRepository->save($label, true);
+            $this->labelRepository->save($label, true);
 
             return $this->redirectToRoute('labels');
         }
@@ -55,11 +58,8 @@ class LabelsController extends BaseController
     }
 
     #[Route('/labels/{uid:label}/edit', name: 'edit label')]
-    public function edit(
-        Label $label,
-        Request $request,
-        LabelRepository $labelRepository,
-    ): Response {
+    public function edit(Entity\Label $label, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:labels');
 
         $form = $this->createNamedForm('label', Form\LabelForm::class, $label);
@@ -68,7 +68,7 @@ class LabelsController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $label = $form->getData();
-            $labelRepository->save($label, true);
+            $this->labelRepository->save($label, true);
 
             return $this->redirectToRoute('labels');
         }
@@ -80,22 +80,18 @@ class LabelsController extends BaseController
     }
 
     #[Route('/labels/{uid:label}/deletion', name: 'delete label', methods: ['POST'])]
-    public function delete(
-        Label $label,
-        Request $request,
-        LabelRepository $labelRepository,
-        TranslatorInterface $translator,
-    ): Response {
+    public function delete(Entity\Label $label, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('admin:manage:labels');
 
         $csrfToken = $request->request->getString('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('delete label', $csrfToken)) {
-            $this->addFlash('error', $translator->trans('csrf.invalid', [], 'errors'));
+            $this->addFlash('error', $this->translator->trans('csrf.invalid', [], 'errors'));
             return $this->redirectToRoute('edit label', ['uid' => $label->getUid()]);
         }
 
-        $labelRepository->remove($label, true);
+        $this->labelRepository->remove($label, true);
 
         return $this->redirectToRoute('labels');
     }

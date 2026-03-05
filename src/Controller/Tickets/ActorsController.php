@@ -15,20 +15,22 @@ use App\TicketActivity\TicketEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ActorsController extends BaseController
 {
+    public function __construct(
+        private readonly Repository\TicketRepository $ticketRepository,
+        private readonly Security\Authorizer $authorizer,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly TranslatorInterface $translator
+    ) {
+    }
+
     #[Route('/tickets/{uid:ticket}/actors/edit', name: 'edit ticket actors')]
-    public function edit(
-        Entity\Ticket $ticket,
-        Request $request,
-        Repository\TicketRepository $ticketRepository,
-        Security\Authorizer $authorizer,
-        EventDispatcherInterface $eventDispatcher,
-        TranslatorInterface $translator,
-    ): Response {
+    public function edit(Entity\Ticket $ticket, Request $request): Response
+    {
         $this->denyAccessUnlessGranted('orga:update:tickets:actors', $ticket);
         $this->denyAccessIfTicketIsClosed($ticket);
 
@@ -40,17 +42,17 @@ class ActorsController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $ticket = $form->getData();
-            $ticketRepository->save($ticket, true);
+            $this->ticketRepository->save($ticket, true);
 
             $newAssignee = $ticket->getAssignee();
 
             if ($initialAssignee != $newAssignee) {
                 $ticketEvent = new TicketEvent($ticket);
-                $eventDispatcher->dispatch($ticketEvent, TicketEvent::ASSIGNED);
+                $this->eventDispatcher->dispatch($ticketEvent, TicketEvent::ASSIGNED);
             }
 
-            if (!$authorizer->isGranted('orga:see', $ticket)) {
-                $this->addFlash('success', $translator->trans('tickets.actors.edit.no_access'));
+            if (!$this->authorizer->isGranted('orga:see', $ticket)) {
+                $this->addFlash('success', $this->translator->trans('tickets.actors.edit.no_access'));
 
                 return $this->redirectToRoute('organization tickets', [
                     'uid' => $ticket->getOrganization()->getUid(),
