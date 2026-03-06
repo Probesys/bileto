@@ -19,57 +19,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class TasksController extends BaseController
 {
-    #[Route('/tickets/{uid:ticket}/tasks', name: 'create ticket tasks', methods: ['POST'])]
-    public function create(
-        Entity\Ticket $ticket,
-        Request $request,
-        Repository\TaskRepository $taskRepository,
-        Repository\TicketRepository $ticketRepository,
-    ): Response {
-        $this->denyAccessUnlessGranted('orga:create:tickets:tasks', $ticket);
-        $this->denyAccessIfTicketIsClosed($ticket);
-
-        if (!$this->isCsrfTokenValid('create ticket tasks', $request->request->getString('_token'))) {
-            $this->addFlash('error', new TranslatableMessage('csrf.invalid', [], 'errors'));
-
-            return $this->redirectToRoute('ticket', [
-                'uid' => $ticket->getUid(),
-            ]);
-        }
-
-        $tasksJson = $request->request->getString('tasksData', '[]');
-        $tasksData = json_decode($tasksJson, true);
-
-        if (is_array($tasksData) && count($tasksData) > 0) {
-            $timezone = new \DateTimeZone(date_default_timezone_get());
-            $newTasks = [];
-
-            foreach ($tasksData as $taskData) {
-                if (empty($taskData['label']) || empty($taskData['startAt']) || empty($taskData['endAt'])) {
-                    continue;
-                }
-
-                $task = new Entity\Task();
-                $task->setTicket($ticket);
-                $task->setLabel($taskData['label']);
-                $task->setStartAt(new \DateTimeImmutable($taskData['startAt'], $timezone));
-                $task->setEndAt(new \DateTimeImmutable($taskData['endAt'], $timezone));
-                $newTasks[] = $task;
-            }
-
-            if (count($newTasks) > 0) {
-                $taskRepository->save($newTasks, true);
-                $ticket->setStatus('planned');
-                $ticket->setStatusChangedAt(Utils\Time::now());
-                $ticketRepository->save($ticket, true);
-            }
-        }
-
-        return $this->redirectToRoute('ticket', [
-            'uid' => $ticket->getUid(),
-        ]);
-    }
-
     #[Route('/tasks/{uid:task}/edit', name: 'edit task', methods: ['GET', 'POST'])]
     public function edit(
         Entity\Task $task,
