@@ -16,13 +16,8 @@
     id="task-{{ task.uid }}"
     class="message {{ taskStatus == 'finished' ? 'message--solution' }}"
     data-test="task-item"
-    {% if taskStatus != 'finished' %}
-        data-controller="task-status"
-        data-task-status-start-at-value="{{ task.startAt.getTimestamp() * 1000 }}"
-        data-task-status-ongoing-label-value="{{ 'tickets.tasks.ongoing' | trans }}"
-    {% endif %}
 >
-    <div class="message__avatar" {% if taskStatus != 'finished' %}data-task-status-target="avatar"{% endif %}>
+    <div class="message__avatar">
         {% if taskStatus == 'finished' %}
             {{ icon('circle-check-success') }}
         {% elseif taskStatus == 'ongoing' %}
@@ -42,11 +37,11 @@
                     {{ 'tickets.tasks.finished' | trans }}
                 </div>
             {% elseif taskStatus == 'ongoing' %}
-                <div class="badge badge--orange" data-task-status-target="badge">
+                <div class="badge badge--orange">
                     {{ 'tickets.tasks.ongoing' | trans }}
                 </div>
             {% else %}
-                <div class="badge badge--blue" data-task-status-target="badge">
+                <div class="badge badge--blue">
                     {{ 'tickets.tasks.planned' | trans }}
                 </div>
             {% endif %}
