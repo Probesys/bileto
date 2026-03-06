@@ -190,11 +190,7 @@ forms.optional: (optional)
 forms.optional_max_chars: '(optional, max. {number} characters)'
 forms.organization.select.choose: 'Choose an organization'
 forms.read_only: '(read only)'
-forms.cancel: Cancel
 forms.save_changes: 'Save the changes'
-forms.task.end_at.label: End
-forms.task.label.label: Label
-forms.task.start_at.label: Start
 forms.search.advanced_help: 'Show syntax help'
 forms.search.advanced_label: 'Search using keywords or by using the advanced syntax'
 forms.search.advanced_title: 'Advanced search'
@@ -203,6 +199,10 @@ forms.search.quick_placeholder: 'Keywords or #id'
 forms.search.quick_title: 'Quick search'
 forms.search.submit: Search
 forms.show_password: 'Show password as plain text. Note: this will visually expose your password.'
+forms.submit: Submit
+forms.task.end_at.label: End
+forms.task.label.label: Label
+forms.task.start_at.label: Start
 forms.time_spent.must_not_be_accounted.label: 'Mark this time as not to be accounted'
 forms.time_spent.real_time.help: 'You can delete this time by setting it to 0.'
 forms.time_spent.real_time.label: 'Time spent (in minutes)'
@@ -400,9 +400,9 @@ roles.permissions.orga.see.contracts: 'See the contracts'
 roles.permissions.orga.see.contracts.notes: 'See the private notes of the contracts'
 roles.permissions.orga.see.pinned_information: 'See the pinned information'
 roles.permissions.orga.see.tickets.all: 'See all the tickets of the organization'
-roles.permissions.orga.see.tickets.tasks: 'See the tasks of tickets'
 roles.permissions.orga.see.tickets.contracts: 'See the contract of the tickets'
 roles.permissions.orga.see.tickets.messages.confidential: 'See confidential answers'
+roles.permissions.orga.see.tickets.tasks: 'See the tasks of tickets'
 roles.permissions.orga.see.tickets.time_spent.accounted: 'See times spent accounted for contracts'
 roles.permissions.orga.see.tickets.time_spent.real: 'See real times spent'
 roles.permissions.orga.see.users: 'See the users'
@@ -431,6 +431,8 @@ session_logs.session_hash_id: 'Session identifier hash'
 session_logs.someone: Someone
 submenu.scroller.scroll_to_left: 'Scroll the menu to the left'
 submenu.scroller.scroll_to_right: 'Scroll the menu to the right'
+tasks.edit.delete: 'Delete the task'
+tasks.edit.title: 'Edit the task'
 teams.agents.new.add_agent: 'Add the agent'
 teams.agents.new.enter_agent_email: 'Enter the agent’s email'
 teams.agents.new.go_to_create_agent: 'Create a new agent instead'
@@ -604,24 +606,20 @@ tickets.status.open: Open
 tickets.status.pending: Pending
 tickets.status.planned: Planned
 tickets.status.resolved: Resolved
-tickets.team: 'Team in charge'
-tickets.team.none: 'No team'
-tickets.tasks.add: Add
-tickets.tasks.update: Update
 tickets.tasks.cancel_edit: 'Cancel edit'
-tickets.tasks.list: 'Task list'
-tickets.tasks.confirm: Confirm
 tickets.tasks.download_ics: 'Download (.ics)'
-tickets.tasks.validate: Validate
 tickets.tasks.edit: Edit
 tickets.tasks.end_before_start: 'The end date must be after the start date.'
 tickets.tasks.finish: Finish
 tickets.tasks.finished: Finished
 tickets.tasks.finished_at: 'Finished on {date}'
+tickets.tasks.list: 'Task list'
 tickets.tasks.ongoing: Ongoing
-tickets.tasks.planned: Planned
 tickets.tasks.plan: 'Plan a task'
-tickets.tasks.planned_count: '{count, plural, one {1 planned task} other {# planned tasks}}'
+tickets.tasks.planned: Planned
+tickets.tasks.validate: Validate
+tickets.team: 'Team in charge'
+tickets.team.none: 'No team'
 tickets.time_spent: 'Time spent'
 tickets.time_spent.accounted: 'Accounted time:'
 tickets.time_spent.real: 'Real time:'
@@ -638,8 +636,6 @@ tickets.urgency: Urgency
 tickets.urgency.high: High
 tickets.urgency.low: Low
 tickets.urgency.medium: Medium
-tasks.edit.delete: 'Delete the task'
-tasks.edit.title: 'Edit the task'
 time_spents.edit.title: 'Edit time spent'
 users.anonymous: 'Anonymous user'
 users.color_scheme: 'Color scheme'

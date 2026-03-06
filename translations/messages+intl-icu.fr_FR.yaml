@@ -190,11 +190,7 @@ forms.optional: (optionnel)
 forms.optional_max_chars: '(optionnel, max. {number} caractères)'
 forms.organization.select.choose: 'Choisir une organisation'
 forms.read_only: '(lecture seule)'
-forms.cancel: Annuler
 forms.save_changes: 'Enregistrer les modifications'
-forms.task.end_at.label: 'Fin'
-forms.task.label.label: 'Intitulé'
-forms.task.start_at.label: 'Début'
 forms.search.advanced_help: 'Afficher l’aide de la syntaxe'
 forms.search.advanced_label: 'Rechercher par mots-clés ou avec la syntaxe avancée'
 forms.search.advanced_title: 'Recherche avancée'
@@ -203,6 +199,10 @@ forms.search.quick_placeholder: 'Mots-clés ou #id'
 forms.search.quick_title: 'Recherche rapide'
 forms.search.submit: Rechercher
 forms.show_password: 'Afficher le mot de passe sous forme de texte. Attention, cela exposera votre mot de passe visuellement.'
+forms.submit: Confirmer
+forms.task.end_at.label: Fin
+forms.task.label.label: Intitulé
+forms.task.start_at.label: Début
 forms.time_spent.must_not_be_accounted.label: 'Marquer ce temps comme ne devant pas être comptabilisé'
 forms.time_spent.real_time.help: 'Vous pouvez supprimer ce temps en le mettant à 0.'
 forms.time_spent.real_time.label: 'Temps passé (en minutes)'
@@ -431,6 +431,8 @@ session_logs.session_hash_id: 'Hash de l’identifiant de session'
 session_logs.someone: Quelqu’un
 submenu.scroller.scroll_to_left: 'Défile le menu vers la gauche'
 submenu.scroller.scroll_to_right: 'Défile le menu vers la droite'
+tasks.edit.delete: 'Supprimer la tâche'
+tasks.edit.title: 'Modifier la tâche'
 teams.agents.new.add_agent: 'Ajouter l’agent'
 teams.agents.new.enter_agent_email: 'Saisir l’email de l’agent'
 teams.agents.new.go_to_create_agent: 'Créer plutôt un agent'
@@ -527,22 +529,6 @@ tickets.index.title.your_assigned_tickets: 'Vos tickets attribués'
 tickets.index.title.your_tickets: 'Vos tickets'
 tickets.index.views.title: 'Vos vues'
 tickets.involves: Concerne
-tickets.tasks.add: Ajouter
-tickets.tasks.update: Modifier
-tickets.tasks.cancel_edit: 'Annuler modifications'
-tickets.tasks.list: 'Liste des tâches'
-tickets.tasks.confirm: Confirmer
-tickets.tasks.download_ics: 'Télécharger (.ics)'
-tickets.tasks.validate: Valider
-tickets.tasks.edit: Éditer
-tickets.tasks.end_before_start: 'La date de fin doit être après la date de début.'
-tickets.tasks.finish: Terminer
-tickets.tasks.finished: Terminée
-tickets.tasks.finished_at: 'Terminée le {date}'
-tickets.tasks.ongoing: 'En cours'
-tickets.tasks.planned: Planifiée
-tickets.tasks.plan: 'Planifier une tâche'
-tickets.tasks.planned_count: '{count, plural, one {1 tâche planifiée} other {# tâches planifiées}}'
 tickets.labels: Étiquettes
 tickets.labels.edit.title: 'Modifier les étiquettes'
 tickets.labels.none: 'Aucune étiquette'
@@ -620,6 +606,18 @@ tickets.status.open: Ouvert
 tickets.status.pending: 'En attente'
 tickets.status.planned: Planifié
 tickets.status.resolved: Résolu
+tickets.tasks.cancel_edit: 'Annuler modifications'
+tickets.tasks.download_ics: 'Télécharger (.ics)'
+tickets.tasks.edit: Éditer
+tickets.tasks.end_before_start: 'La date de fin doit être après la date de début.'
+tickets.tasks.finish: Terminer
+tickets.tasks.finished: Terminée
+tickets.tasks.finished_at: 'Terminée le {date}'
+tickets.tasks.list: 'Liste des tâches'
+tickets.tasks.ongoing: 'En cours'
+tickets.tasks.plan: 'Planifier une tâche'
+tickets.tasks.planned: Planifiée
+tickets.tasks.validate: Valider
 tickets.team: 'Équipe responsable'
 tickets.team.none: 'Aucune équipe'
 tickets.time_spent: 'Temps passé'
@@ -638,8 +636,6 @@ tickets.urgency: Urgence
 tickets.urgency.high: Haute
 tickets.urgency.low: Basse
 tickets.urgency.medium: Moyenne
-tasks.edit.delete: 'Supprimer la tâche'
-tasks.edit.title: 'Modifier la tâche'
 time_spents.edit.title: 'Modifier du temps passé'
 users.anonymous: 'Utilisateur anonyme'
 users.color_scheme: 'Schéma de couleurs'
