@@ -22,9 +22,6 @@ class TaskForm extends AbstractType
     {
         $builder->add('label', Type\TextType::class, [
             'label' => new TranslatableMessage('forms.task.label.label'),
-            'attr' => [
-                'autocomplete' => 'off',
-            ],
         ]);
 
         $builder->add('startAt', Type\DateTimeType::class, [
@@ -40,7 +37,7 @@ class TaskForm extends AbstractType
         ]);
 
         $builder->add('submit', Type\SubmitType::class, [
-            'label' => new TranslatableMessage('forms.save_changes'),
+            'label' => new TranslatableMessage('forms.submit'),
         ]);
     }
 
