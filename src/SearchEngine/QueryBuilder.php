@@ -194,6 +194,38 @@ abstract class QueryBuilder
     }
 
     /**
+     * Return an expression that can be used to match date conditions.
+     *
+     * @param literal-string $field
+     * @param non-empty-string|non-empty-string[]|null $value
+     * @return literal-string
+     */
+    protected function buildExprDate(string $field, mixed $value, bool $not): string
+    {
+        if ($value === null) {
+            return $this->buildExpr($field, null, $not);
+        }
+
+        if (is_array($value)) {
+            $values = $value;
+        } else {
+            $values = [$value];
+        }
+
+        $dqlExpression = '';
+
+        foreach ($values as $value) {
+            // TODO parse value and build DQL condition.
+        }
+
+        if ($not) {
+            return "NOT ({$dqlExpression})";
+        } else {
+            return $dqlExpression;
+        }
+    }
+
+    /**
      * Return a DQL sub-query that returns a list of entity ids for which the
      * ids of the many-to-many associations match the given value.
      *
