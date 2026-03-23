@@ -60,6 +60,8 @@ class QueryBuilder extends SearchEngine\QueryBuilder
             'priority' => $this->buildPriorityExpr(...),
             'contract' => $this->buildContractExpr(...),
             'label' => $this->buildLabelExpr(...),
+            'date' => $this->buildDateExpr(...),
+            'lastUpdate' => $this->buildLastUpdateExpr(...),
             'no:assignee' => $this->buildNoAssigneeExpr(...),
             'no:team' => $this->buildNoTeamExpr(...),
             'no:solution' => $this->buildNoSolutionExpr(...),
@@ -278,6 +280,22 @@ class QueryBuilder extends SearchEngine\QueryBuilder
         } else {
             return "t.id IN ({$labelsDql})";
         }
+    }
+
+    /**
+     * @return literal-string
+     */
+    protected function buildDateExpr(SearchEngine\Query\Condition $condition): string
+    {
+        return $this->buildExprDate('t.createdAt', $condition->getValue(), $condition->not());
+    }
+
+    /**
+     * @return literal-string
+     */
+    protected function buildLastUpdateExpr(SearchEngine\Query\Condition $condition): string
+    {
+        return $this->buildExprDate('t.updatedAt', $condition->getValue(), $condition->not());
     }
 
     /**
