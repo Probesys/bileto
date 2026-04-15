@@ -212,17 +212,94 @@ abstract class QueryBuilder
             $values = [$value];
         }
 
-        $dqlExpression = '';
+        $exprs = [];
 
-        foreach ($values as $value) {
-            // TODO parse value and build DQL condition.
+        foreach ($values as $singleValue) {
+            if (str_contains($singleValue, '..')) {
+                $parts = explode('..', $singleValue, 2);
+                [$start] = $this->parseDateToPeriod($parts[0]);
+                [, $end] = $this->parseDateToPeriod($parts[1]);
+                $keyStart = $this->registerParameter($start);
+                $keyEnd = $this->registerParameter($end);
+                $exprs[] = "({$field} >= :{$keyStart} AND {$field} <= :{$keyEnd})";
+            } elseif (str_starts_with($singleValue, '>=')) {
+                [$start] = $this->parseDateToPeriod(substr($singleValue, 2));
+                $key = $this->registerParameter($start);
+                $exprs[] = "{$field} >= :{$key}";
+            } elseif (str_starts_with($singleValue, '>')) {
+                [, $end] = $this->parseDateToPeriod(substr($singleValue, 1));
+                $key = $this->registerParameter($end);
+                $exprs[] = "{$field} > :{$key}";
+            } elseif (str_starts_with($singleValue, '<=')) {
+                [, $end] = $this->parseDateToPeriod(substr($singleValue, 2));
+                $key = $this->registerParameter($end);
+                $exprs[] = "{$field} <= :{$key}";
+            } elseif (str_starts_with($singleValue, '<')) {
+                [$start] = $this->parseDateToPeriod(substr($singleValue, 1));
+                $key = $this->registerParameter($start);
+                $exprs[] = "{$field} < :{$key}";
+            } elseif (str_starts_with($singleValue, '=')) {
+                [$start, $end] = $this->parseDateToPeriod(substr($singleValue, 1));
+                $keyStart = $this->registerParameter($start);
+                $keyEnd = $this->registerParameter($end);
+                $exprs[] = "({$field} >= :{$keyStart} AND {$field} <= :{$keyEnd})";
+            } else {
+                [$start, $end] = $this->parseDateToPeriod($singleValue);
+                $keyStart = $this->registerParameter($start);
+                $keyEnd = $this->registerParameter($end);
+                $exprs[] = "({$field} >= :{$keyStart} AND {$field} <= :{$keyEnd})";
+            }
         }
+
+        $where = implode(' OR ', $exprs);
 
         if ($not) {
-            return "NOT ({$dqlExpression})";
+            return "NOT ({$where})";
         } else {
-            return $dqlExpression;
+            return "({$where})";
         }
+    }
+
+    /**
+     * Parse a date string and return a period as an array of two DateTimeImmutable.
+     *
+     * @return array{\DateTimeImmutable, \DateTimeImmutable}
+     */
+    private function parseDateToPeriod(string $date): array
+    {
+        $parts = explode('T', $date, 2);
+        $datePart = $parts[0];
+        $timePart = $parts[1] ?? null;
+
+        $dateComponents = explode('-', $datePart);
+        $year = (int) $dateComponents[0];
+        $month = isset($dateComponents[1]) ? (int) $dateComponents[1] : null;
+        $day = isset($dateComponents[2]) ? (int) $dateComponents[2] : null;
+
+        $hour = null;
+        $minute = null;
+        $second = null;
+
+        if ($timePart !== null) {
+            $timeComponents = explode(':', $timePart);
+            $hour = (int) $timeComponents[0];
+            $minute = isset($timeComponents[1]) ? (int) $timeComponents[1] : null;
+            $second = isset($timeComponents[2]) ? (int) $timeComponents[2] : null;
+        }
+
+        $lastDay = (int) (new \DateTimeImmutable("{$year}-" . ($month ?? 12) . "-01"))->format('t');
+
+        $start = new \DateTimeImmutable(sprintf(
+            '%04d-%02d-%02dT%02d:%02d:%02d',
+            $year, $month ?? 1, $day ?? 1, $hour ?? 0, $minute ?? 0, $second ?? 0
+        ));
+
+        $end = new \DateTimeImmutable(sprintf(
+            '%04d-%02d-%02dT%02d:%02d:%02d',
+            $year, $month ?? 12, $day ?? $lastDay, $hour ?? 23, $minute ?? 59, $second ?? 59
+        ));
+
+        return [$start, $end];
     }
 
     /**
