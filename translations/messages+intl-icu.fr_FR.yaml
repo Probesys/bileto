@@ -55,6 +55,11 @@ advanced_search_syntax.tickets.qualifiers.actors.example4: "Les tickets attribu�
 advanced_search_syntax.tickets.qualifiers.actors.example5: 'Les tickets n’ayant pas d’agent attribué'
 advanced_search_syntax.tickets.qualifiers.actors.example6: 'Les tickets ayant un agent attribué'
 advanced_search_syntax.tickets.qualifiers.actors.title: Acteurs
+advanced_search_syntax.tickets.qualifiers.dates.example1: 'Les tickets créés le 23 mars 2026'
+advanced_search_syntax.tickets.qualifiers.dates.example2: 'Les tickets créés en mars 2026 ou après'
+advanced_search_syntax.tickets.qualifiers.dates.example3: 'Les tickets créés entre le 23 mars 2026 et le 25 mars 2026'
+advanced_search_syntax.tickets.qualifiers.dates.example4: 'Les tickets dont la dernière mise à jour est le 23 mars 2026'
+advanced_search_syntax.tickets.qualifiers.dates.title: Dates
 advanced_search_syntax.tickets.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
 advanced_search_syntax.tickets.qualifiers.labels.example1: "Les tickets avec l’étiquette «\_Bug\_» (insensible à la casse)"
 advanced_search_syntax.tickets.qualifiers.labels.example2: "Les tickets avec les étiquettes «\_Bug\_» et «\_Tickets topic\_»"
