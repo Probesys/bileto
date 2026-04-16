@@ -56,6 +56,11 @@ advanced_search_syntax.tickets.qualifiers.actors.example5: 'Tickets without an a
 advanced_search_syntax.tickets.qualifiers.actors.example6: 'Tickets with an assigned agent'
 advanced_search_syntax.tickets.qualifiers.actors.title: Actors
 advanced_search_syntax.tickets.qualifiers.description: 'Qualifiers are special keywords (e.g. <code>status:</code>) that take a value or a comma-separated list of values. They are used to target a particular property.'
+advanced_search_syntax.tickets.qualifiers.dates.example1: 'Tickets created on March 23, 2026'
+advanced_search_syntax.tickets.qualifiers.dates.example2: 'Tickets created on or after March 23, 2026'
+advanced_search_syntax.tickets.qualifiers.dates.example3: 'Tickets created between March 23, 2026 and March 25, 2026'
+advanced_search_syntax.tickets.qualifiers.dates.example4: 'Tickets last updated on March 23, 2026'
+advanced_search_syntax.tickets.qualifiers.dates.title: Dates
 advanced_search_syntax.tickets.qualifiers.labels.example1: 'Tickets with the label “Bug” (case insensitive)'
 advanced_search_syntax.tickets.qualifiers.labels.example2: 'Tickets with the labels “Bug” and “Tickets topic”'
 advanced_search_syntax.tickets.qualifiers.labels.example3: 'Tickets with the labels “Bug” or “Tickets topic”'

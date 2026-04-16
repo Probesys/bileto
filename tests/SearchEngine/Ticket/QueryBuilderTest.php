@@ -610,4 +610,131 @@ class QueryBuilderTest extends WebTestCase
 
         $this->ticketQueryBuilder->buildQuery($query);
     }
+
+    public function testBuildQueryWithQualifierDate(): void
+    {
+        $query = SearchEngine\Query::fromString('date:2026-03-23');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateExplicitEqual(): void
+    {
+        $query = SearchEngine\Query::fromString('date:=2026-03-23');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateAsYear(): void
+    {
+        $query = SearchEngine\Query::fromString('date:2026');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-01-01T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-12-31T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateGreaterOrEqual(): void
+    {
+        $query = SearchEngine\Query::fromString('date:>=2026-03-23');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            (t.createdAt >= :q0p0)
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T00:00:00'), $parameters['q0p0']);
+    }
+
+    public function testBuildQueryWithQualifierDateGreater(): void
+    {
+        $query = SearchEngine\Query::fromString('date:>2026-03-23');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            (t.createdAt > :q0p0)
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T23:59:59'), $parameters['q0p0']);
+    }
+
+    public function testBuildQueryWithQualifierDateLessOrEqual(): void
+    {
+        $query = SearchEngine\Query::fromString('date:<=2026-03-23');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            (t.createdAt <= :q0p0)
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T23:59:59'), $parameters['q0p0']);
+    }
+
+    public function testBuildQueryWithQualifierDateLess(): void
+    {
+        $query = SearchEngine\Query::fromString('date:<2026-03-23');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            (t.createdAt < :q0p0)
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T00:00:00'), $parameters['q0p0']);
+    }
+
+    public function testBuildQueryWithQualifierDateRange(): void
+    {
+        $query = SearchEngine\Query::fromString('date:2026-03-23..2026-03-25');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-25T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateAsArrayAndNot(): void
+    {
+        $query = SearchEngine\Query::fromString('-date:2026-03-23,>=2026-03-30');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            NOT ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1) OR t.createdAt >= :q0p2)
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T23:59:59'), $parameters['q0p1']);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-30T00:00:00'), $parameters['q0p2']);
+    }
+
+    public function testBuildQueryWithQualifierUpdate(): void
+    {
+        $query = SearchEngine\Query::fromString('update:2026-03-23');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        $this->assertSame(<<<SQL
+            ((t.updatedAt >= :q0p0 AND t.updatedAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-03-23T23:59:59'), $parameters['q0p1']);
+    }
 }
