@@ -322,6 +322,8 @@ organizations.index.none: 'Aucune organisation'
 organizations.index.number: '{count, plural, =0 {Aucune organisation} one {1 organisation} other {# organisations}}'
 organizations.index.title: Organisations
 organizations.name: Nom
+organizations.new.created: 'L’organisation a été créée.'
+organizations.new.created_no_access: 'L’organisation a été créée mais vous n’êtes pas autorisé à y accéder.'
 organizations.new.submit: 'Créer l’organisation'
 organizations.new.title: 'Nouvelle organisation'
 organizations.observers.add_user: 'Ajouter aux observateurs'

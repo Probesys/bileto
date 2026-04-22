@@ -56,6 +56,12 @@ class OrganizationsController extends BaseController
             $organization->normalizeDomains();
             $this->organizationRepository->save($organization, true);
 
+            if ($this->authorizer->isGranted('orga:see', $organization)) {
+                $this->addFlash('success', new TranslatableMessage('organizations.new.created'));
+            } else {
+                $this->addFlash('success', new TranslatableMessage('organizations.new.created_no_access'));
+            }
+
             if ($this->authorizer->isGranted('orga:manage:contracts', $organization)) {
                 return $this->redirectToRoute('new organization contract', [
                     'uid' => $organization->getUid(),
