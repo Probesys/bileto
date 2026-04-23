@@ -637,6 +637,8 @@ tickets.urgency.high: Haute
 tickets.urgency.low: Basse
 tickets.urgency.medium: Moyenne
 time_spents.edit.title: 'Modifier du temps passé'
+users.anonymization.confirm: "Êtes-vous sûr de vouloir anonymiser cet utilisateur\_?"
+users.anonymization.title: Anonymisation
 users.anonymous: 'Utilisateur anonyme'
 users.color_scheme: 'Schéma de couleurs'
 users.color_scheme.auto: Auto
@@ -655,6 +657,7 @@ users.form.password.empty_keep_current: 'Laissez vide pour conserver le mot de p
 users.form.prevent_login: 'Empêcher l’utilisateur de se connecter à l’interface Web'
 users.identifier: 'Adresse email ou identifiant'
 users.index.authorizations: '{count, plural, =0 {Aucune autorisation} one {1 autorisation} other {# autorisations}}'
+users.index.inactive_badge: Inactif
 users.index.new_user: 'Nouvel utilisateur'
 users.index.no_users: 'Aucun utilisateur'
 users.index.number: '{count, plural, =0 {Aucun utilisateur} one {1 utilisateur} other {# utilisateurs}}'
@@ -673,6 +676,7 @@ users.show.authorizations.title: Autorisations
 users.show.cannot_login: 'Cet utilisateur n’a pas la permission de se connecter à l’interface Web.'
 users.show.edit: 'Modifier l’utilisateur'
 users.show.email: "Email\_: {email}"
+users.show.inactive_warning: 'Cet utilisateur est inactif depuis longtemps. Vous devriez envisager de <a href="{edit_url}">l’anonymiser ou le supprimer</a>.'
 users.show.is_anonymized: 'Cet utilisateur a été anonymisé par {by} le {date}.'
 users.show.ldap_identifier: "Identifiant LDAP\_: {identifier}"
 users.show.name: "Nom\_: {name}"

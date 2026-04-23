@@ -112,6 +112,14 @@
                             {{ 'users.show.cannot_login' | trans }}
                         </p>
                     {% endif %}
+
+                    {% if user.isInactive(monthsThreshold, lastActivityAt) %}
+                        <p class="alert alert--warning" data-test="inactive-warning">
+                            {{ 'users.show.inactive_warning' | trans({
+                                edit_url: path('edit user', { uid: user.uid }),
+                            }) | raw }}
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>

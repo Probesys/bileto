@@ -10,6 +10,7 @@ use App\Entity;
 use App\Form;
 use App\Repository;
 use App\Service;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,10 +23,13 @@ class UsersController extends BaseController
         private readonly Service\Sorter\UserSorter $userSorter,
         private readonly Service\UserCreator $userCreator,
         private readonly Repository\AuthorizationRepository $authorizationRepository,
+        private readonly Repository\EntityEventRepository $entityEventRepository,
         private readonly Repository\SessionLogRepository $sessionLogRepository,
         private readonly Service\Sorter\AuthorizationSorter $authorizationSorter,
         private readonly Service\UserService $userService,
         private readonly TranslatorInterface $translator,
+        #[Autowire(env: 'int:APP_USERS_INACTIVITY_TIME')]
+        private readonly int $usersInactivityMonths,
     ) {
     }
 
@@ -37,8 +41,17 @@ class UsersController extends BaseController
         $users = $this->userRepository->findAllWithAuthorizations();
         $this->userSorter->sort($users);
 
+        $lastActivities = [];
+        if ($this->usersInactivityMonths > 0) {
+            foreach ($users as $user) {
+                $lastActivities[$user->getId()] = $this->entityEventRepository->findLastActivityAtForUser($user);
+            }
+        }
+
         return $this->render('users/index.html.twig', [
             'users' => $users,
+            'monthsThreshold' => $this->usersInactivityMonths,
+            'lastActivities' => $lastActivities,
         ]);
     }
 
@@ -80,11 +93,18 @@ class UsersController extends BaseController
 
         $sessionLogs = $this->sessionLogRepository->findByIdentifier($user->getUserIdentifier());
 
+        $lastActivityAt = null;
+        if ($this->usersInactivityMonths > 0) {
+            $lastActivityAt = $this->entityEventRepository->findLastActivityAtForUser($user);
+        }
+
         return $this->render('users/show.html.twig', [
             'user' => $user,
             'defaultOrganization' => $defaultOrganization,
             'authorizations' => $authorizations,
             'sessionLogs' => $sessionLogs,
+            'monthsThreshold' => $this->usersInactivityMonths,
+            'lastActivityAt' => $lastActivityAt,
         ]);
     }
 
