@@ -44,6 +44,30 @@
 
         {% if user != app.user %}
             <div class="panel">
+                <form action="{{ path('new user anonymization', { uid: user.uid }) }}" method="post" class="form--standard">
+                    <h2>{{ 'users.anonymization.title' | trans }}</h2>
+
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'warning',
+                        title: 'common.caution' | trans,
+                        message: 'anonymizations.new.information' | trans({ user: user.displayName }),
+                    }, with_context = false) }}
+
+                    <div class="form__actions">
+                        <button
+                            class="button--primary"
+                            type="submit"
+                            data-turbo-confirm="{{ 'users.anonymization.confirm' | trans }}"
+                        >
+                            {{ 'users.show.anonymize' | trans }}
+                        </button>
+                    </div>
+
+                    <input type="hidden" name="anonymization[_token]" value="{{ csrf_token('anonymization') }}">
+                </form>
+            </div>
+
+            <div class="panel">
                 <form action="{{ path('delete user', { uid: user.uid }) }}" method="post" class="form--standard">
                     <h2>{{ 'users.deletion.title' | trans }}</h2>
 

@@ -10,6 +10,7 @@ use App\Entity\Organization;
 use App\Entity\User;
 use App\Uid\UidGeneratorInterface;
 use App\Uid\UidGeneratorTrait;
+use App\Utils;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
@@ -31,8 +32,10 @@ class UserRepository extends ServiceEntityRepository implements
     /** @phpstan-use FindOrCreateTrait<User> */
     use FindOrCreateTrait;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private EntityEventRepository $entityEventRepository,
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -143,6 +146,61 @@ class UserRepository extends ServiceEntityRepository implements
         $query->setParameter('types', $types);
 
         return $query->getResult();
+    }
+
+    /**
+     * Return the list of users considered inactive.
+     *
+     * A user is considered inactive when they are not anonymized, have
+     * no authorization (or only authorizations whose role type is "user"),
+     * and their last activity is older than $monthsThreshold months. The
+     * last activity is the createdAt of the most recent EntityEvent they
+     * created, or their own createdAt as a fallback when they have no
+     * event.
+     *
+     * The feature is disabled when $monthsThreshold is zero or negative,
+     * in which case this method returns an empty list.
+     *
+     * @return User[]
+     */
+    public function findInactive(int $monthsThreshold): array
+    {
+        if ($monthsThreshold <= 0) {
+            return [];
+        }
+
+        $threshold = Utils\Time::ago($monthsThreshold, 'months');
+
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT u
+            FROM App\Entity\User u
+            WHERE u.anonymizedAt IS NULL
+            AND NOT EXISTS (
+                SELECT 1
+                FROM App\Entity\Authorization a
+                JOIN a.role r
+                WHERE a.holder = u
+                AND r.type != :roleTypeUser
+            )
+        SQL);
+
+        $query->setParameter('roleTypeUser', 'user');
+
+        $candidates = $query->getResult();
+
+        $inactiveUsers = [];
+        foreach ($candidates as $user) {
+            $lastActivityAt = $this->entityEventRepository->findLastActivityAtForUser($user);
+            $referenceDate = $lastActivityAt ?? $user->getCreatedAt();
+
+            if ($referenceDate !== null && $referenceDate < $threshold) {
+                $inactiveUsers[] = $user;
+            }
+        }
+
+        return $inactiveUsers;
     }
 
     public function findOneByResetPasswordToken(string $token): ?User
