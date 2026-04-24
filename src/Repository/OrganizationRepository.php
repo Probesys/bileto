@@ -207,4 +207,24 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
 
         return $query->getOneOrNullResult();
     }
+
+    /**
+     * Return the organizations whose deleted_at is reached.
+     *
+     * @return Entity\Organization[]
+     */
+    public function findToDelete(\DateTimeImmutable $now): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT o
+            FROM App\Entity\Organization o
+            WHERE o.deletedAt IS NOT NULL
+            AND o.deletedAt <= :now
+        SQL);
+        $query->setParameter('now', $now);
+
+        return $query->getResult();
+    }
 }
