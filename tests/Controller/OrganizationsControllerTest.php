@@ -400,6 +400,60 @@ class OrganizationsControllerTest extends WebTestCase
         ]);
     }
 
+    public function testGetIndexExcludesArchivedOrganizations(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        OrganizationFactory::createOne(['name' => 'active-one']);
+        OrganizationFactory::createOne([
+            'name' => 'archived-one',
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, '/organizations');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="organization-item"]', 'active-one');
+        $this->assertSelectorNotExists('[data-test="organization-item"]:nth-child(2)');
+    }
+
+    public function testGetIndexShowsArchivedCountLinkWhenApplicable(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        OrganizationFactory::createOne(['name' => 'active-one']);
+        OrganizationFactory::createOne([
+            'name' => 'archived-one',
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, '/organizations');
+
+        $this->assertSelectorExists('[data-test="archived-organizations-link"]');
+        $this->assertSelectorTextContains('[data-test="archived-organizations-link"]', '1 archived organization');
+    }
+
+    public function testGetIndexHidesArchivedCountLinkWhenUserCannotManageArchive(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
+        OrganizationFactory::createOne(['name' => 'active-one']);
+        OrganizationFactory::createOne([
+            'name' => 'archived-one',
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, '/organizations');
+
+        $this->assertSelectorNotExists('[data-test="archived-organizations-link"]');
+    }
+
     public function testGetEditIsReachableByArchivePermissionAlone(): void
     {
         $client = static::createClient();

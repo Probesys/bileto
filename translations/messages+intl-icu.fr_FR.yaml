@@ -315,8 +315,11 @@ message_templates.type.confidential: 'Réponse confidentielle'
 message_templates.type.normal: Réponse
 message_templates.type.solution: Solution
 notifications.saved: 'Vos changements ont été sauvegardés.'
+organizations.archived.banner.deletion: 'Elle sera supprimée le {date}.'
+organizations.archived.banner.title: 'Cette organisation a été archivée le {date}.'
 organizations.domains: 'Domaines liés'
 organizations.domains.caption: "Les utilisateurs dont l’adresse email correspond à l’un de ces domaines seront associés à cette organisation par défaut. Utilisez le caractère «\_*\_» pour prendre en charge tous les domaines."
+organizations.index.archived_count: '{count, plural, =0 {Aucune organisation archivée} one {1 organisation archivée} other {# organisations archivées}}'
 organizations.index.new_organization: 'Nouvelle organisation'
 organizations.index.none: 'Aucune organisation'
 organizations.index.number: '{count, plural, =0 {Aucune organisation} one {1 organisation} other {# organisations}}'
