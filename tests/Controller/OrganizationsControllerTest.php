@@ -685,4 +685,24 @@ class OrganizationsControllerTest extends WebTestCase
             $organization->getArchivedAt()->getTimestamp(),
         );
     }
+
+    public function testSuperAdminCanArchiveWithoutAgentGrant(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:*']);
+        $organization = OrganizationFactory::createOne();
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => $this->generateCsrfToken($client, 'archive organization'),
+                'deletedAt' => '',
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
+        $organization->_refresh();
+        $this->assertTrue($organization->isArchived());
+    }
 }

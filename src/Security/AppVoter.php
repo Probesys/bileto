@@ -87,6 +87,19 @@ class AppVoter extends Voter
             }
         }
 
+        // Super-admins can always archive an organization, without needing a
+        // specific agent role on it.
+        if ($attribute === 'orga:manage:archive') {
+            $adminAuthorizations = $this->authorizationRepository->getAdminAuthorizations($user);
+            $isSuperAdmin = Utils\ArrayHelper::any(
+                $adminAuthorizations,
+                fn (Entity\Authorization $auth): bool => $auth->getRole()->hasPermission('admin:*'),
+            );
+            if ($isSuperAdmin) {
+                return true;
+            }
+        }
+
         $authorizations = $this->authorizationRepository->getAuthorizations(
             $authorizationType,
             $user,
