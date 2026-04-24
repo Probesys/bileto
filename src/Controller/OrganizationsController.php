@@ -11,7 +11,9 @@ use App\Form;
 use App\Repository;
 use App\Security;
 use App\Service;
+use App\Utils;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -36,8 +38,16 @@ class OrganizationsController extends BaseController
         $user = $this->getUser();
         $organizations = $this->organizationRepository->findAuthorizedOrganizations($user);
         $this->orgaSorter->sort($organizations);
+
+        $archivedOrganizations = $this->organizationRepository->findAuthorizedArchivedOrganizations($user);
+        $archivedCount = count(array_filter(
+            $archivedOrganizations,
+            fn (Entity\Organization $org): bool => $this->authorizer->isGranted('orga:manage:archive', $org),
+        ));
+
         return $this->render('organizations/index.html.twig', [
             'organizations' => $organizations,
+            'archivedCount' => $archivedCount,
         ]);
     }
 
@@ -83,27 +93,94 @@ class OrganizationsController extends BaseController
     #[Route('/organizations/{uid:organization}/settings', name: 'organization settings')]
     public function edit(Entity\Organization $organization, Request $request): Response
     {
-        $this->denyAccessUnlessGranted('orga:manage', $organization);
+        $canManage = $this->authorizer->isGranted('orga:manage', $organization);
+        $canArchive = $this->authorizer->isGranted('orga:manage:archive', $organization);
 
-        $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
+        if (!$canManage && !$canArchive) {
+            throw $this->createAccessDeniedException();
+        }
 
-        $form->handleRequest($request);
+        $form = null;
+        if ($canManage) {
+            $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $organization = $form->getData();
-            $organization->normalizeDomains();
-            $this->organizationRepository->save($organization, true);
+            $form->handleRequest($request);
 
-            $this->addFlash('success', new TranslatableMessage('notifications.saved'));
+            if ($form->isSubmitted() && $form->isValid()) {
+                $organization = $form->getData();
+                $organization->normalizeDomains();
+                $this->organizationRepository->save($organization, true);
+
+                $this->addFlash('success', new TranslatableMessage('notifications.saved'));
+
+                return $this->redirectToRoute('organization settings', [
+                    'uid' => $organization->getUid(),
+                ]);
+            }
+        }
+
+        $archiveForm = null;
+        if ($canArchive && !$organization->isArchived()) {
+            $archiveForm = $this->createArchiveForm($organization);
+        }
+
+        return $this->render('organizations/settings.html.twig', [
+            'organization' => $organization,
+            'form' => $form,
+            'archiveForm' => $archiveForm,
+        ]);
+    }
+
+    #[Route('/organizations/{uid:organization}/archive', name: 'archive organization', methods: ['POST'])]
+    public function archive(
+        Entity\Organization $organization,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('orga:manage:archive', $organization);
+
+        if ($organization->isArchived()) {
+            $this->addFlash('error', new TranslatableMessage(
+                'organizations.settings.archive.already_archived'
+            ));
 
             return $this->redirectToRoute('organization settings', [
                 'uid' => $organization->getUid(),
             ]);
         }
 
+        $archiveForm = $this->createArchiveForm($organization);
+        $archiveForm->handleRequest($request);
+
+        if ($archiveForm->isSubmitted() && $archiveForm->isValid()) {
+            $organization->setArchivedAt(Utils\Time::now());
+
+            /** @var Entity\User[] */
+            $usersToArchive = $archiveForm->get('usersToArchive')->getData();
+            foreach ($usersToArchive as $userToArchive) {
+                $userToArchive->archive();
+            }
+
+            $entityManager->flush();
+
+            $this->addFlash('success', new TranslatableMessage(
+                'organizations.settings.archive.archived'
+            ));
+
+            return $this->redirectToRoute('organization tickets', [
+                'uid' => $organization->getUid(),
+            ]);
+        }
+
+        $form = null;
+        if ($this->authorizer->isGranted('orga:manage', $organization)) {
+            $form = $this->createNamedForm('organization', Form\OrganizationForm::class, $organization);
+        }
+
         return $this->render('organizations/settings.html.twig', [
             'organization' => $organization,
             'form' => $form,
+            'archiveForm' => $archiveForm,
         ]);
     }
 
@@ -133,5 +210,22 @@ class OrganizationsController extends BaseController
         $this->organizationRepository->remove($organization, true);
 
         return $this->redirectToRoute('organizations');
+    }
+
+    /**
+     * @return FormInterface<Entity\Organization>
+     */
+    private function createArchiveForm(Entity\Organization $organization): FormInterface
+    {
+        return $this->createNamedForm(
+            'archive_organization',
+            Form\ArchiveOrganizationForm::class,
+            $organization,
+            [
+                'action' => $this->generateUrl('archive organization', [
+                    'uid' => $organization->getUid(),
+                ]),
+            ],
+        );
     }
 }
