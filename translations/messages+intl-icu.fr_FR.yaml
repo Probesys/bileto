@@ -396,6 +396,7 @@ roles.permissions.orga.create.tickets.messages.confidential: 'Répondre confiden
 roles.permissions.orga.create.tickets.tasks: 'Planifier des tâches'
 roles.permissions.orga.create.tickets.time_spent: 'Saisir du temps passé'
 roles.permissions.orga.manage: 'Gérer l’organisation'
+roles.permissions.orga.manage.archive: 'Archiver l’organisation'
 roles.permissions.orga.manage.contracts: 'Gérer les contrats'
 roles.permissions.orga.see.contracts: 'Voir les contrats'
 roles.permissions.orga.see.contracts.notes: 'Voir les notes privées des contrats'
