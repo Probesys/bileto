@@ -17,6 +17,7 @@ use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -398,4 +399,38 @@ class OrganizationsControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
         ]);
     }
+
+    public function testVoterBlocksOrgaManageOnArchivedOrganization(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage']);
+        $organization = OrganizationFactory::createOne([
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
+        ]);
+    }
+
+    public function testVoterAllowsOrgaSeeOnArchivedOrganization(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
+        $organization = OrganizationFactory::createOne([
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}");
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
+    }
+
 }

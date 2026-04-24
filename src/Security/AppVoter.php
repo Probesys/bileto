@@ -71,6 +71,22 @@ class AppVoter extends Voter
             $ticket = null;
         }
 
+        if (
+            $authorizationType === 'orga' &&
+            $scope instanceof Entity\Organization &&
+            $scope->isArchived()
+        ) {
+            $allowed = str_starts_with($attribute, 'orga:see')
+                || $attribute === 'orga:manage:archive';
+            if (!$allowed) {
+                $vote?->addReason(
+                    "Organization (id: {$scope->getId()}) is archived; " .
+                    "permission {$attribute} is blocked"
+                );
+                return false;
+            }
+        }
+
         $authorizations = $this->authorizationRepository->getAuthorizations(
             $authorizationType,
             $user,
