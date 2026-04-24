@@ -315,8 +315,16 @@ message_templates.type.confidential: 'Réponse confidentielle'
 message_templates.type.normal: Réponse
 message_templates.type.solution: Solution
 notifications.saved: 'Vos changements ont été sauvegardés.'
+organizations.archived.banner.deletion: 'Elle sera supprimée le {date}.'
+organizations.archived.banner.title: 'Cette organisation a été archivée le {date}.'
+organizations.archived.index.archived_on: 'Archivée le {date}'
+organizations.archived.index.deletion_on: 'Suppression le {date}'
+organizations.archived.index.none: 'Aucune organisation archivée'
+organizations.archived.index.number: '{count, plural, =0 {Aucune organisation archivée} one {1 organisation archivée} other {# organisations archivées}}'
+organizations.archived.index.title: 'Organisations archivées'
 organizations.domains: 'Domaines liés'
 organizations.domains.caption: "Les utilisateurs dont l’adresse email correspond à l’un de ces domaines seront associés à cette organisation par défaut. Utilisez le caractère «\_*\_» pour prendre en charge tous les domaines."
+organizations.index.archived_count: '{count, plural, =0 {Aucune organisation archivée} one {1 organisation archivée} other {# organisations archivées}}'
 organizations.index.new_organization: 'Nouvelle organisation'
 organizations.index.none: 'Aucune organisation'
 organizations.index.number: '{count, plural, =0 {Aucune organisation} one {1 organisation} other {# organisations}}'
@@ -332,6 +340,16 @@ organizations.pinned_information.caption: 'Partagez des informations importantes
 organizations.responsible_team: 'Équipe responsable'
 organizations.responsible_team.auto: Automatique
 organizations.responsible_team.caption: 'L’équipe responsable de l’organisation sera attribuée par défaut aux tickets ouverts dans cette organisation.'
+organizations.settings.archive.already_archived: 'Cette organisation est déjà archivée.'
+organizations.settings.archive.archived: 'L’organisation a été archivée.'
+organizations.settings.archive.confirm: "Êtes-vous sûr de vouloir archiver cette organisation\_?"
+organizations.settings.archive.delete_on: 'Supprimer le'
+organizations.settings.archive.delete_on.caption: 'Optionnel. Laissez vide pour conserver l’archive indéfiniment.'
+organizations.settings.archive.submit: 'Archiver l’organisation'
+organizations.settings.archive.title: 'Archiver une organisation'
+organizations.settings.archive.users.caption: 'Les utilisateurs archivés ne pourront plus se connecter et ne seront plus affichés dans les listes d’utilisateurs.'
+organizations.settings.archive.users.label: 'Utilisateurs à archiver'
+organizations.settings.archive.warning: "Vous êtes sur le point d’archiver l’organisation «\_{organization}\_». Ses tickets seront gelés et aucun nouveau ticket ne pourra être créé. L’organisation deviendra en lecture seule."
 organizations.settings.deletion.confirm: "Êtes-vous sûr de vouloir supprimer cette organisation\_?"
 organizations.settings.deletion.going_delete: "Vous êtes sur le point de supprimer l’organisation «\_{organization}\_». Cela supprimera également les tickets et contrats associés."
 organizations.settings.deletion.submit: 'Supprimer l’organisation'
@@ -396,6 +414,7 @@ roles.permissions.orga.create.tickets.messages.confidential: 'Répondre confiden
 roles.permissions.orga.create.tickets.tasks: 'Planifier des tâches'
 roles.permissions.orga.create.tickets.time_spent: 'Saisir du temps passé'
 roles.permissions.orga.manage: 'Gérer l’organisation'
+roles.permissions.orga.manage.archive: 'Archiver l’organisation'
 roles.permissions.orga.manage.contracts: 'Gérer les contrats'
 roles.permissions.orga.see.contracts: 'Voir les contrats'
 roles.permissions.orga.see.contracts.notes: 'Voir les notes privées des contrats'
