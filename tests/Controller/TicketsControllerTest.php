@@ -42,6 +42,159 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test="ticket-item"]', "#{$ticket->getId()} My ticket");
     }
 
+    public function testGetCsvRendersCsv(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all'], $organization->_real());
+        $ticket1 = Factory\TicketFactory::createOne([
+            'title' => 'First ticket',
+            'organization' => $organization,
+            'status' => 'new',
+        ]);
+        $ticket2 = Factory\TicketFactory::createOne([
+            'title' => 'Second ticket',
+            'organization' => $organization,
+            'status' => 'new',
+        ]);
+
+        $client->request(Request::METHOD_GET, '/tickets.csv');
+        $content = $client->getInternalResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('Content-Type', 'text/csv; charset=utf-8');
+        $contentDisposition = $client->getResponse()->headers->get('Content-Disposition') ?? '';
+        $this->assertStringStartsWith('attachment; filename="bileto-tickets-', $contentDisposition);
+        $this->assertStringContainsString('First ticket', $content);
+        $this->assertStringContainsString('Second ticket', $content);
+        $this->assertStringContainsString((string) $ticket1->getId(), $content);
+        $this->assertStringContainsString((string) $ticket2->getId(), $content);
+    }
+
+    public function testGetCsvIsScopedToUserOrganizations(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization1 = Factory\OrganizationFactory::createOne();
+        $organization2 = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all'], $organization1->_real());
+        Factory\TicketFactory::createOne([
+            'title' => 'Authorized ticket',
+            'organization' => $organization1,
+            'status' => 'new',
+        ]);
+        Factory\TicketFactory::createOne([
+            'title' => 'Forbidden ticket',
+            'organization' => $organization2,
+            'status' => 'new',
+        ]);
+
+        $client->request(Request::METHOD_GET, '/tickets.csv');
+        $content = $client->getInternalResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('Authorized ticket', $content);
+        $this->assertStringNotContainsString('Forbidden ticket', $content);
+    }
+
+    public function testGetCsvAppliesQueryAndSort(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all'], $organization->_real());
+        Factory\TicketFactory::createOne([
+            'title' => 'Apple ticket',
+            'organization' => $organization,
+            'status' => 'closed',
+        ]);
+        Factory\TicketFactory::createOne([
+            'title' => 'Banana ticket',
+            'organization' => $organization,
+            'status' => 'closed',
+        ]);
+        Factory\TicketFactory::createOne([
+            'title' => 'Cherry ticket',
+            'organization' => $organization,
+            'status' => 'new',
+        ]);
+
+        $client->request(Request::METHOD_GET, '/tickets.csv?q=status%3Aclosed&sort=title-asc');
+        $content = $client->getInternalResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('Apple ticket', $content);
+        $this->assertStringContainsString('Banana ticket', $content);
+        $this->assertStringNotContainsString('Cherry ticket', $content);
+        $this->assertLessThan(strpos($content, 'Banana ticket'), strpos($content, 'Apple ticket'));
+    }
+
+    public function testGetCsvAppliesView(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all'], $organization->_real());
+        Factory\TicketFactory::createOne([
+            'title' => 'Ticket owned by me',
+            'organization' => $organization,
+            'requester' => $user,
+            'status' => 'new',
+        ]);
+        Factory\TicketFactory::createOne([
+            'title' => 'Ticket owned by other',
+            'organization' => $organization,
+            'status' => 'new',
+        ]);
+
+        $client->request(Request::METHOD_GET, '/tickets.csv?view=owned');
+        $content = $client->getInternalResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('Ticket owned by me', $content);
+        $this->assertStringNotContainsString('Ticket owned by other', $content);
+    }
+
+    public function testGetCsvUsesUserLocale(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne(['locale' => 'fr_FR']);
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all'], $organization->_real());
+        Factory\TicketFactory::createOne([
+            'title' => 'My ticket',
+            'organization' => $organization,
+            'status' => 'new',
+        ]);
+        $session = $this->getSession($client);
+        $session->set('_locale', 'fr_FR');
+        $session->save();
+
+        $client->request(Request::METHOD_GET, '/tickets.csv');
+        $content = $client->getInternalResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('Référence', $content);
+        $this->assertStringContainsString('Créé le', $content);
+        $this->assertStringNotContainsString('Reference', $content);
+        $this->assertStringNotContainsString('Created at', $content);
+    }
+
+    public function testGetCsvRedirectsToLoginIfNotConnected(): void
+    {
+        $client = static::createClient();
+
+        $client->request(Request::METHOD_GET, '/tickets.csv');
+
+        $this->assertResponseRedirects('/login', 302);
+    }
+
     public function testGetNewRendersCorrectly(): void
     {
         $client = static::createClient();

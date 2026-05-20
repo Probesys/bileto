@@ -10,6 +10,7 @@ use App\Entity;
 use App\SearchEngine;
 use App\Security;
 use App\Utils;
+use Doctrine\ORM;
 
 /**
  * @phpstan-import-type PaginationOptions from Utils\Pagination
@@ -96,21 +97,20 @@ class Searcher
             ];
         }
 
-        $sort = $this->processSort($sort);
-
-        $queries = [$this->orgaQuery];
-
-        if ($query) {
-            $queries[] = $query;
-        }
-
-        $queryBuilder = $this->ticketQueryBuilder->create($queries);
-        $queryBuilder->orderBy("t.{$sort[0]}", $sort[1]);
+        $queryBuilder = $this->buildTicketsQueryBuilder($query, $sort);
 
         /** @var Utils\Pagination<Entity\Ticket> */
         $pagination = Utils\Pagination::paginate($queryBuilder->getQuery(), $paginationOptions);
 
         return $pagination;
+    }
+
+    /**
+     * @return ORM\Query<null, Entity\Ticket>
+     */
+    public function getTicketsQuery(?SearchEngine\Query $query = null, string $sort = ''): ORM\Query
+    {
+        return $this->buildTicketsQueryBuilder($query, $sort)->getQuery();
     }
 
     public function countTickets(?SearchEngine\Query $query = null): int
@@ -144,6 +144,22 @@ class Searcher
     public static function queryUnassigned(): SearchEngine\Query
     {
         return SearchEngine\Query::fromString(self::QUERY_UNASSIGNED);
+    }
+
+    private function buildTicketsQueryBuilder(?SearchEngine\Query $query, string $sort): ORM\QueryBuilder
+    {
+        $sort = $this->processSort($sort);
+
+        $queries = [$this->orgaQuery];
+
+        if ($query) {
+            $queries[] = $query;
+        }
+
+        $queryBuilder = $this->ticketQueryBuilder->create($queries);
+        $queryBuilder->orderBy("t.{$sort[0]}", $sort[1]);
+
+        return $queryBuilder;
     }
 
     /**

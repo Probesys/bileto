@@ -71,14 +71,24 @@
                             {{ 'tickets.index.number' | trans({ count: ticketsPagination.countAll }) }}
                         </p>
 
-                        {{ include(
-                            'tickets/_sort_button.html.twig',
-                            {
-                                currentPath: path('tickets', { q: query }),
-                                currentSort: sort,
-                            },
-                            with_context = false
-                        ) }}
+                        <div class="cols cols--always cols--center flow">
+                            {{ include(
+                                'tickets/_sort_button.html.twig',
+                                {
+                                    currentPath: path('tickets', { q: query }),
+                                    currentSort: sort,
+                                },
+                                with_context = false
+                            ) }}
+
+                            <a
+                                class="button button--discreet"
+                                href="{{ path('tickets csv', { q: query, sort: sort, view: view }) }}"
+                            >
+                                {{ icon('file-excel') }}
+                                {{ 'tickets.export.csv' | trans }}
+                            </a>
+                        </div>
                     </div>
 
                     {% if is_granted('orga:create:tickets', 'any') %}

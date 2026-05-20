@@ -16,6 +16,7 @@ use App\Service;
 use App\Utils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -28,6 +29,7 @@ class TicketsController extends BaseController
         private readonly Security\Authorizer $authorizer,
         private readonly Service\UserService $userService,
         private readonly Service\TicketTimeline $ticketTimeline,
+        private readonly Service\TicketCsvExporter $ticketCsvExporter,
     ) {
     }
 
@@ -102,6 +104,48 @@ class TicketsController extends BaseController
             'mustSelectOrganization' => $mustSelectOrganization,
             'defaultOrganization' => $defaultOrganization,
         ]);
+    }
+
+    #[Route('/tickets.csv', name: 'tickets csv', methods: ['GET'])]
+    public function csv(Request $request): Response
+    {
+        $view = $request->query->getString('view', 'all');
+        $sort = $request->query->getString('sort', 'updated-desc');
+
+        if ($view === 'unassigned') {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryUnassigned();
+        } elseif ($view === 'assigned-me') {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryAssignedMe();
+        } elseif ($view === 'owned') {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryOwned();
+        } else {
+            $defaultQuery = SearchEngine\Ticket\Searcher::queryDefault();
+        }
+
+        $advancedSearchForm = $this->createNamedForm('', Form\AdvancedSearchForm::class, [
+            'q' => $defaultQuery,
+        ]);
+        $advancedSearchForm->handleRequest($request);
+
+        $query = $advancedSearchForm->get('q')->getData();
+
+        /** @var Entity\User */
+        $user = $this->getUser();
+        $organizations = $this->organizationRepository->findAuthorizedOrganizations($user);
+
+        $this->ticketSearcher->setOrganizations($organizations);
+
+        /** @var iterable<Entity\Ticket> */
+        $tickets = $this->ticketSearcher->getTicketsQuery($query, $sort)->toIterable();
+
+        $response = new StreamedResponse($this->ticketCsvExporter->stream($tickets, $request->getLocale()));
+
+        $filename = sprintf('bileto-tickets-%s.csv', date('Y-m-d'));
+
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
+
+        return $response;
     }
 
     #[Route('/tickets/new', name: 'new ticket')]

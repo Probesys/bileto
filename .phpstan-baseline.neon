@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method App\\Service\\TicketCsvExporter\:\:sanitizeField\(\) should return TField of int\|string\|null but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Service/TicketCsvExporter.php

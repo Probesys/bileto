@@ -513,6 +513,32 @@ tickets.events.title: "<strong>{username}</strong> a renommé le ticket de «\_<
 tickets.events.type.to_incident: '<strong>{username}</strong> a changé le ticket en incident'
 tickets.events.type.to_request: '<strong>{username}</strong> a changé le ticket en demande'
 tickets.events.urgency: '<strong>{username}</strong> a changé l’urgence de <i>{oldValue}</i> à <i>{newValue}</i>'
+tickets.export.column.assignee: 'Attribué à'
+tickets.export.column.contracts: Contrats
+tickets.export.column.created_at: 'Créé le'
+tickets.export.column.created_by: 'Créé par'
+tickets.export.column.id: ID
+tickets.export.column.impact: Impact
+tickets.export.column.labels: Étiquettes
+tickets.export.column.observers: Observateurs
+tickets.export.column.organization: Organisation
+tickets.export.column.priority: Priorité
+tickets.export.column.requester: Demandeur
+tickets.export.column.solution: Solution
+tickets.export.column.status: Statut
+tickets.export.column.team: 'Équipe responsable'
+tickets.export.column.time_spent.accounted: 'Temps passé comptabilisé (minutes)'
+tickets.export.column.time_spent.real: 'Temps passé (minutes)'
+tickets.export.column.time_spent.unaccounted: 'Temps passé non comptabilisé (minutes)'
+tickets.export.column.title: Titre
+tickets.export.column.type: Type
+tickets.export.column.uid: Référence
+tickets.export.column.updated_at: 'Mis à jour le'
+tickets.export.column.updated_by: 'Mis à jour par'
+tickets.export.column.urgency: Urgence
+tickets.export.csv: 'Exporter en CSV'
+tickets.export.solution.no: Non
+tickets.export.solution.yes: Oui
 tickets.filters.actors.title: 'Filtrer par acteurs'
 tickets.filters.assignee.no: 'Non attribués seulement'
 tickets.filters.labels.title: 'Filtrer par étiquettes'

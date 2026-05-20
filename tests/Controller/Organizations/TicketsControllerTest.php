@@ -179,6 +179,73 @@ class TicketsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets");
     }
 
+    public function testGetCsvRendersCsv(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all'], $organization->_real());
+        $ticket = Factory\TicketFactory::createOne([
+            'title' => 'My ticket',
+            'organization' => $organization,
+            'status' => 'new',
+        ]);
+
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets.csv");
+        $content = $client->getInternalResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('Content-Type', 'text/csv; charset=utf-8');
+        $contentDisposition = $client->getResponse()->headers->get('Content-Disposition') ?? '';
+        $this->assertStringContainsString("bileto-tickets-{$organization->getUid()}-", $contentDisposition);
+        $this->assertStringContainsString('My ticket', $content);
+        $this->assertStringContainsString((string) $ticket->getId(), $content);
+    }
+
+    public function testGetCsvIsScopedToTheOrganization(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization1 = Factory\OrganizationFactory::createOne();
+        $organization2 = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all'], $organization1->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:see:tickets:all'], $organization2->_real());
+        Factory\TicketFactory::createOne([
+            'title' => 'Targeted ticket',
+            'organization' => $organization1,
+            'status' => 'new',
+        ]);
+        Factory\TicketFactory::createOne([
+            'title' => 'Other organization ticket',
+            'organization' => $organization2,
+            'status' => 'new',
+        ]);
+
+        $client->request(Request::METHOD_GET, "/organizations/{$organization1->getUid()}/tickets.csv");
+        $content = $client->getInternalResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $contentDisposition = $client->getResponse()->headers->get('Content-Disposition') ?? '';
+        $this->assertStringContainsString("bileto-tickets-{$organization1->getUid()}-", $contentDisposition);
+        $this->assertStringContainsString('Targeted ticket', $content);
+        $this->assertStringNotContainsString('Other organization ticket', $content);
+    }
+
+    public function testGetCsvFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/tickets.csv");
+    }
+
     public function testGetNewRendersCorrectly(): void
     {
         $client = static::createClient();
