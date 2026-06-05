@@ -5,8 +5,6 @@
 when@prod:
     sentry:
         dsn: '%env(string:SENTRY_DSN)%'
-        register_error_listener: false
-        register_error_handler: false
         options:
             release: '%app.version%'
             send_default_pii: '%env(bool:SENTRY_SEND_DEFAULT_PII)%'
@@ -15,3 +13,18 @@ when@prod:
                 - 'Symfony\Component\Debug\Exception\FatalErrorException'
                 - 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException'
                 - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
+        # If you are using Monolog, you also need this additional configuration to log the errors correctly:
+        # https://docs.sentry.io/platforms/php/guides/symfony/integrations/monolog/
+        register_error_listener: false
+        register_error_handler: false
+
+    monolog:
+        handlers:
+            sentry_logs:
+                type: service
+                id: Sentry\SentryBundle\Monolog\LogsHandler
+
+    services:
+        Sentry\SentryBundle\Monolog\LogsHandler:
+            arguments:
+                - !php/const Monolog\Logger::INFO

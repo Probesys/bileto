@@ -590,7 +590,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
      */
     public function getUnaccountedTimeSpents(): Collection
     {
-        $criteria = Criteria::create();
+        $criteria = Criteria::create(true);
         $expr = Criteria::expr()->isNull('contract');
         $criteria->where($expr);
         $criteria->orderBy(['createdAt' => Order::Ascending]);
@@ -671,7 +671,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
         $timeSpents = $this->timeSpents;
 
         if ($type === 'accounted') {
-            $criteria = Criteria::create();
+            $criteria = Criteria::create(true);
             $expr = Criteria::expr()->neq('contract', null);
             $criteria->where($expr);
 
@@ -680,7 +680,7 @@ class Ticket implements EntityInterface, MonitorableEntityInterface, UidEntityIn
                 return $timeSpent->getTime();
             }, $timeSpents);
         } elseif ($type === 'unaccounted') {
-            $criteria = Criteria::create();
+            $criteria = Criteria::create(true);
             $expr = Criteria::expr()->isNull('contract');
             $criteria->where($expr);
 
