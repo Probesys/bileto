@@ -26,7 +26,7 @@ trait CommandTestsHelper
 
     /**
      * @param array<string, mixed> $args
-     * @param array<string> $inputs
+     * @param list<string> $inputs
      */
     protected static function executeCommand(
         string $command,

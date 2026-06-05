@@ -58,12 +58,6 @@ class BaseController extends AbstractController
         mixed $data = null,
         array $options = [],
     ): Form\FormInterface {
-        // PHPStan complains about template type TData on class
-        // Symfony\Component\Form\FormInterface not being covariant. I'm not
-        // comfortable with covariant problems to fix this issue. Also, I
-        // assume that the problem comes from phpstan-symfony.
-        // @see https://github.com/phpstan/phpstan-symfony/issues/363
-        // @phpstan-ignore return.type
         return $this->container->get('form.factory')->createNamed($name, $type, $data, $options);
     }
 
