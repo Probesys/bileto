@@ -41,6 +41,11 @@ abstract class QueryBuilder
         $queryBuilder->select(static::getFromAlias());
         $queryBuilder->from(static::getFrom(), static::getFromAlias());
 
+        // Marking the query as distinct shouldn't be necessary, but it seems
+        // to be required to get an iterable from the query.
+        // @see https://github.com/doctrine/orm/issues/5868
+        $queryBuilder->distinct();
+
         $this->subBuilderSequence = 0;
 
         foreach ($queries as $sequence => $query) {
