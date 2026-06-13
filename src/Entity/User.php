@@ -393,7 +393,25 @@ class User implements
         return $this->anonymizedAt !== null;
     }
 
-    public function anonymize(string $name, self $by): static
+    public function isInactive(
+        int $monthsThreshold,
+        ?\DateTimeImmutable $lastActivityAt,
+    ): bool {
+        if ($monthsThreshold <= 0) {
+            return false;
+        }
+
+        if ($this->isAnonymized()) {
+            return false;
+        }
+
+        $threshold = Utils\Time::ago($monthsThreshold, 'months');
+        $reference = $lastActivityAt ?? $this->createdAt;
+
+        return $reference < $threshold;
+    }
+
+    public function anonymize(string $name, ?self $by): static
     {
         $this->disableLogin();
 

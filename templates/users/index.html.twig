@@ -67,6 +67,12 @@
                             </span>
 
                             <div class="col--noshrink">
+                                {% if user.isInactive(monthsThreshold, lastActivities[user.id] ?? null) %}
+                                    <span class="badge badge--orange" data-test="inactive-badge">
+                                        {{ 'users.index.inactive_badge' | trans }}
+                                    </span>
+                                {% endif %}
+
                                 <span class="badge badge--grey">
                                     {{ 'users.index.authorizations' | trans({ count: user.authorizations|length }) }}
                                 </span>

@@ -8,9 +8,12 @@ namespace App\Tests\MessageHandler;
 
 use App\Entity;
 use App\Message;
+use App\MessageHandler\CleanDataHandler;
 use App\Repository;
+use App\Service;
 use App\Tests\Factory;
 use App\Utils;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Zenstruck\Foundry\Test\Factories;
@@ -120,5 +123,103 @@ class CleanDataHandlerTest extends WebTestCase
         $this->assertContains($entityEventNotTooOldExpired->getId(), $entityEventIds);
         $this->assertContains($entityEventDeleteExpired->getId(), $entityEventIds);
         $this->assertContains($entityEventNotExpired->getId(), $entityEventIds);
+    }
+
+    public function testInvokeDoesNothingWhenAutoIsNone(): void
+    {
+        $inactiveUser = Factory\UserFactory::createOne([
+            'createdAt' => Utils\Time::ago(2, 'years'),
+        ]);
+
+        $handler = $this->buildHandler(12, 'none');
+        $handler(new Message\CleanData());
+
+        $this->assertSame(1, Factory\UserFactory::count());
+        $inactiveUser->_refresh();
+        $this->assertFalse($inactiveUser->isAnonymized());
+    }
+
+    public function testInvokeAnonymizesInactiveUsers(): void
+    {
+        $inactiveUser = Factory\UserFactory::createOne([
+            'createdAt' => Utils\Time::ago(2, 'years'),
+        ]);
+        $activeUser = Factory\UserFactory::createOne([
+            'createdAt' => Utils\Time::ago(3, 'months'),
+        ]);
+
+        $handler = $this->buildHandler(12, 'anonymize');
+        $handler(new Message\CleanData());
+
+        $inactiveUser->_refresh();
+        $this->assertTrue($inactiveUser->isAnonymized());
+        $this->assertNull($inactiveUser->getAnonymizedBy());
+
+        $activeUser->_refresh();
+        $this->assertFalse($activeUser->isAnonymized());
+    }
+
+    public function testInvokeDeletesInactiveUsers(): void
+    {
+        $inactiveUser = Factory\UserFactory::createOne([
+            'createdAt' => Utils\Time::ago(2, 'years'),
+        ]);
+        $activeUser = Factory\UserFactory::createOne([
+            'createdAt' => Utils\Time::ago(3, 'months'),
+        ]);
+        $inactiveUserId = $inactiveUser->getId();
+        $activeUserId = $activeUser->getId();
+
+        $handler = $this->buildHandler(12, 'delete');
+        $handler(new Message\CleanData());
+
+        $this->assertSame(1, Factory\UserFactory::count());
+        /** @var Repository\UserRepository */
+        $userRepository = Factory\UserFactory::repository();
+        $this->assertNull($userRepository->find($inactiveUserId));
+        $this->assertNotNull($userRepository->find($activeUserId));
+    }
+
+    public function testInvokeDoesNothingWhenThresholdIsDisabled(): void
+    {
+        $inactiveUser = Factory\UserFactory::createOne([
+            'createdAt' => Utils\Time::ago(2, 'years'),
+        ]);
+
+        $handler = $this->buildHandler(0, 'anonymize');
+        $handler(new Message\CleanData());
+
+        $this->assertSame(1, Factory\UserFactory::count());
+        $inactiveUser->_refresh();
+        $this->assertFalse($inactiveUser->isAnonymized());
+    }
+
+    public function testInvokeDoesNothingWhenAutoIsInvalid(): void
+    {
+        $inactiveUser = Factory\UserFactory::createOne([
+            'createdAt' => Utils\Time::ago(2, 'years'),
+        ]);
+
+        $handler = $this->buildHandler(12, 'banana');
+        $handler(new Message\CleanData());
+
+        $this->assertSame(1, Factory\UserFactory::count());
+        $inactiveUser->_refresh();
+        $this->assertFalse($inactiveUser->isAnonymized());
+    }
+
+    private function buildHandler(int $monthsThreshold, string $auto): CleanDataHandler
+    {
+        $container = static::getContainer();
+        return new CleanDataHandler(
+            $container->get(Repository\EntityEventRepository::class),
+            $container->get(Repository\TokenRepository::class),
+            $container->get(Repository\SessionLogRepository::class),
+            $container->get(Repository\UserRepository::class),
+            $container->get(Service\UserService::class),
+            new NullLogger(),
+            $monthsThreshold,
+            $auto,
+        );
     }
 }

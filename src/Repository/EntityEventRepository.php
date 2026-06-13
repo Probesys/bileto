@@ -27,6 +27,26 @@ class EntityEventRepository extends ServiceEntityRepository implements Uid\UidGe
         parent::__construct($registry, Entity\EntityEvent::class);
     }
 
+    public function findLastActivityAtForUser(Entity\User $user): ?\DateTimeImmutable
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT MAX(ee.createdAt)
+            FROM App\Entity\EntityEvent ee
+            WHERE ee.createdBy = :user
+        SQL);
+        $query->setParameter('user', $user);
+
+        $result = $query->getSingleScalarResult();
+
+        if ($result === null) {
+            return null;
+        }
+
+        return new \DateTimeImmutable((string) $result);
+    }
+
     public function removeByEntity(ActivityMonitor\RecordableEntityInterface $entity): int
     {
         $entityManager = $this->getEntityManager();
