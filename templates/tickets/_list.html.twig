@@ -20,30 +20,23 @@
                     </h3>
 
                     <p class="text--small">
-                        {% if ticket.createdAt == ticket.updatedAt %}
-                            {% if ticket.type == 'request' %}
-                                {{ 'tickets.list.request_opened_on' | trans({
-                                    'date': ticket.createdAt | dateFull,
-                                    'dateIso': ticket.createdAt | dateIso,
-                                }) | raw }}
-                            {% else %}
-                                {{ 'tickets.list.incident_opened_on' | trans({
-                                    'date': ticket.createdAt | dateFull,
-                                    'dateIso': ticket.createdAt | dateIso,
-                                }) | raw }}
-                            {% endif %}
+                        {% if ticket.type == 'request' %}
+                            {{ 'tickets.list.request_opened_on' | trans({
+                                'date': ticket.createdAt | dateFull,
+                                'dateIso': ticket.createdAt | dateIso,
+                            }) | raw }}
                         {% else %}
-                            {% if ticket.type == 'request' %}
-                                {{ 'tickets.list.request_updated_on' | trans({
-                                    'date': ticket.updatedAt | dateFull,
-                                    'dateIso': ticket.updatedAt | dateIso,
-                                }) | raw }}
-                            {% else %}
-                                {{ 'tickets.list.incident_updated_on' | trans({
-                                    'date': ticket.updatedAt | dateFull,
-                                    'dateIso': ticket.updatedAt | dateIso,
-                                }) | raw }}
-                            {% endif %}
+                            {{ 'tickets.list.incident_opened_on' | trans({
+                                'date': ticket.createdAt | dateFull,
+                                'dateIso': ticket.createdAt | dateIso,
+                            }) | raw }}
+                        {% endif %}
+
+                        {% if ticket.createdAt != ticket.updatedAt %}
+                            {{ 'tickets.list.updated_on' | trans({
+                                'date': ticket.updatedAt | dateFull,
+                                'dateIso': ticket.updatedAt | dateIso,
+                            }) | raw }}
                         {% endif %}
                     </p>
 
