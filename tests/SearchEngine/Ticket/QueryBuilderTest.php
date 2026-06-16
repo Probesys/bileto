@@ -10,6 +10,7 @@ use App\Entity;
 use App\SearchEngine;
 use App\Tests;
 use App\Tests\Factory;
+use App\Utils;
 use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
@@ -709,6 +710,118 @@ class QueryBuilderTest extends WebTestCase
             SQL, $dql);
         $this->assertEquals(new \DateTimeImmutable('2026-03-23T00:00:00'), $parameters['q0p0']);
         $this->assertEquals(new \DateTimeImmutable('2026-03-25T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateCurrentYear(): void
+    {
+        $now = new \DateTimeImmutable('2026-06-16T16:45:00');
+        Utils\Time::freeze($now);
+        $query = SearchEngine\Query::fromString('date:current-year');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        Utils\Time::unfreeze();
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-01-01T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-12-31T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateCurrentMonth(): void
+    {
+        $now = new \DateTimeImmutable('2026-06-16T16:45:00');
+        Utils\Time::freeze($now);
+        $query = SearchEngine\Query::fromString('date:current-month');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        Utils\Time::unfreeze();
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-01T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-30T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateCurrentDay(): void
+    {
+        $now = new \DateTimeImmutable('2026-06-16T16:45:00');
+        Utils\Time::freeze($now);
+        $query = SearchEngine\Query::fromString('date:current-day');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        Utils\Time::unfreeze();
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateToday(): void
+    {
+        $now = new \DateTimeImmutable('2026-06-16T16:45:00');
+        Utils\Time::freeze($now);
+        $query = SearchEngine\Query::fromString('date:today');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        Utils\Time::unfreeze();
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T00:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T23:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateCurrentHour(): void
+    {
+        $now = new \DateTimeImmutable('2026-06-16T16:45:00');
+        Utils\Time::freeze($now);
+        $query = SearchEngine\Query::fromString('date:current-hour');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        Utils\Time::unfreeze();
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T16:00:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T16:59:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateCurrentMinute(): void
+    {
+        $now = new \DateTimeImmutable('2026-06-16T16:45:00');
+        Utils\Time::freeze($now);
+        $query = SearchEngine\Query::fromString('date:current-minute');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        Utils\Time::unfreeze();
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T16:45:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T16:45:59'), $parameters['q0p1']);
+    }
+
+    public function testBuildQueryWithQualifierDateNow(): void
+    {
+        $now = new \DateTimeImmutable('2026-06-16T16:45:00');
+        Utils\Time::freeze($now);
+        $query = SearchEngine\Query::fromString('date:now');
+
+        list($dql, $parameters) = $this->ticketQueryBuilder->buildQuery($query);
+
+        Utils\Time::unfreeze();
+        $this->assertSame(<<<SQL
+            ((t.createdAt >= :q0p0 AND t.createdAt <= :q0p1))
+            SQL, $dql);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T16:45:00'), $parameters['q0p0']);
+        $this->assertEquals(new \DateTimeImmutable('2026-06-16T16:45:59'), $parameters['q0p1']);
     }
 
     public function testBuildQueryWithQualifierDateAsArrayAndNot(): void

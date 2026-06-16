@@ -59,6 +59,9 @@ advanced_search_syntax.tickets.qualifiers.dates.example1: 'Les tickets créés l
 advanced_search_syntax.tickets.qualifiers.dates.example2: 'Les tickets créés en mars 2026 ou après'
 advanced_search_syntax.tickets.qualifiers.dates.example3: 'Les tickets créés entre le 23 mars 2026 et le 25 mars 2026'
 advanced_search_syntax.tickets.qualifiers.dates.example4: 'Les tickets dont la dernière mise à jour est le 23 mars 2026'
+advanced_search_syntax.tickets.qualifiers.dates.formats: "Le format des dates est le suivant\_: <code>année-mois-jour</code> (ex. <code>2026-03-23</code>). Il peut également inclure les heures et/ou les minutes en les séparant par la lettre «\_T\_»\_: <code>année-mois-jourTheure-minute</code> (ex. <code>2026-03-23T14:00</code>). Chaque partie est optionnelle (ex. <code>2026-03</code> ou <code>2026-03-23T14</code>)."
+advanced_search_syntax.tickets.qualifiers.dates.operators: "Les opérateurs de comparaison possibles sont\_: <code>&equals;</code> (par défaut), <code>&gt;</code>, <code>&gt;&equals;</code>, <code>&lt;</code>, <code>&lt;&equals;</code> et <code>..</code>."
+advanced_search_syntax.tickets.qualifiers.dates.special_values: "Les dates peuvent également prendre les valeurs suivantes\_: <code>current-year</code>, <code>current-month</code>, <code>current-day</code>/<code>today</code>, <code>current-hour</code>, <code>current-minute</code>/<code>now</code>."
 advanced_search_syntax.tickets.qualifiers.dates.title: Dates
 advanced_search_syntax.tickets.qualifiers.description: 'Les qualificateurs sont des mots-clés particuliers (ex. <code>status:</code>) qui prennent une valeur ou une liste de valeurs séparées par des virgules. Ils permettent de cibler une propriété en particulier.'
 advanced_search_syntax.tickets.qualifiers.labels.example1: "Les tickets avec l’étiquette «\_Bug\_» (insensible à la casse)"

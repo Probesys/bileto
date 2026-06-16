@@ -7,6 +7,7 @@
 namespace App\SearchEngine;
 
 use App\Entity;
+use App\Utils;
 use Doctrine\ORM;
 
 /**
@@ -272,24 +273,51 @@ abstract class QueryBuilder
      */
     private function parseDateToPeriod(string $date): array
     {
-        $parts = explode('T', $date, 2);
-        $datePart = $parts[0];
-        $timePart = $parts[1] ?? null;
+        $now = Utils\Time::now();
 
-        $dateComponents = explode('-', $datePart);
-        $year = (int) $dateComponents[0];
-        $month = isset($dateComponents[1]) ? (int) $dateComponents[1] : null;
-        $day = isset($dateComponents[2]) ? (int) $dateComponents[2] : null;
-
+        $year = null;
+        $month = null;
+        $day = null;
         $hour = null;
         $minute = null;
         $second = null;
 
-        if ($timePart !== null) {
-            $timeComponents = explode(':', $timePart);
-            $hour = (int) $timeComponents[0];
-            $minute = isset($timeComponents[1]) ? (int) $timeComponents[1] : null;
-            $second = isset($timeComponents[2]) ? (int) $timeComponents[2] : null;
+        if ($date === 'current-year') {
+            $year = (int) $now->format('Y');
+        } elseif ($date === 'current-month') {
+            $year = (int) $now->format('Y');
+            $month = (int) $now->format('m');
+        } elseif ($date === 'current-day' || $date === 'today') {
+            $year = (int) $now->format('Y');
+            $month = (int) $now->format('m');
+            $day = (int) $now->format('d');
+        } elseif ($date === 'current-hour') {
+            $year = (int) $now->format('Y');
+            $month = (int) $now->format('m');
+            $day = (int) $now->format('d');
+            $hour = (int) $now->format('H');
+        } elseif ($date === 'current-minute' || $date === 'now') {
+            $year = (int) $now->format('Y');
+            $month = (int) $now->format('m');
+            $day = (int) $now->format('d');
+            $hour = (int) $now->format('H');
+            $minute = (int) $now->format('i');
+        } else {
+            $parts = explode('T', $date, 2);
+            $datePart = $parts[0];
+            $timePart = $parts[1] ?? null;
+
+            $dateComponents = explode('-', $datePart);
+            $year = (int) $dateComponents[0];
+            $month = isset($dateComponents[1]) ? (int) $dateComponents[1] : null;
+            $day = isset($dateComponents[2]) ? (int) $dateComponents[2] : null;
+
+            if ($timePart !== null) {
+                $timeComponents = explode(':', $timePart);
+                $hour = (int) $timeComponents[0];
+                $minute = isset($timeComponents[1]) ? (int) $timeComponents[1] : null;
+                $second = isset($timeComponents[2]) ? (int) $timeComponents[2] : null;
+            }
         }
 
         // "t" is the number of days in the month, which is equivalent to the

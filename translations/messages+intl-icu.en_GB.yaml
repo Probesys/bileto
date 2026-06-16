@@ -59,6 +59,9 @@ advanced_search_syntax.tickets.qualifiers.dates.example1: 'Tickets created on Ma
 advanced_search_syntax.tickets.qualifiers.dates.example2: 'Tickets created on or after March, 2026'
 advanced_search_syntax.tickets.qualifiers.dates.example3: 'Tickets created between March 23, 2026 and March 25, 2026'
 advanced_search_syntax.tickets.qualifiers.dates.example4: 'Tickets last updated on March 23, 2026'
+advanced_search_syntax.tickets.qualifiers.dates.formats: 'The date format is: <code>year-month-day</code> (e.g. <code>2026-03-23</code>). It can include the hours and/or the minutes by separating them with the letter “T”: <code>year-month-dayThour-minute</code> (e.g. <code>2026-03-23T14:00</code>). Each part is optional (e.g. <code>2026-03</code> or <code>2026-03-23T14</code>).'
+advanced_search_syntax.tickets.qualifiers.dates.operators: 'The available comparison operators are: <code>&equals;</code> (by default), <code>&gt;</code>, <code>&gt;&equals;</code>, <code>&lt;</code>, <code>&lt;&equals;</code> and <code>..</code>.'
+advanced_search_syntax.tickets.qualifiers.dates.special_values: 'The dates also can take the following values: <code>current-year</code>, <code>current-month</code>, <code>current-day</code>/<code>today</code>, <code>current-hour</code>, <code>current-minute</code>/<code>now</code>.'
 advanced_search_syntax.tickets.qualifiers.dates.title: Dates
 advanced_search_syntax.tickets.qualifiers.description: 'Qualifiers are special keywords (e.g. <code>status:</code>) that take a value or a comma-separated list of values. They are used to target a particular property.'
 advanced_search_syntax.tickets.qualifiers.labels.example1: 'Tickets with the label “Bug” (case insensitive)'
