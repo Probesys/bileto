@@ -126,23 +126,25 @@
     {%- set required = required|default(false) -%}
     {%- set no_optional = no_optional|default(false) -%}
 
-    {%- if disabled %}
-        <small class="text--secondary">
-            {{ 'forms.read_only' | trans }}
-        </small>
-    {%- elseif not no_optional %}
-        {%- if not required and attr.maxlength is defined -%}
+    {%- if 'button' not in form.vars.block_prefixes -%}
+        {%- if disabled %}
             <small class="text--secondary">
-                {{ 'forms.optional_max_chars' | trans({ number: attr.maxlength }) }}
+                {{ 'forms.read_only' | trans }}
             </small>
-        {%- elseif not required -%}
-            <small class="text--secondary">
-                {{ 'forms.optional' | trans }}
-            </small>
-        {%- elseif attr.maxlength is defined -%}
-            <small class="text--secondary">
-                {{ 'forms.max_chars' | trans({ number: attr.maxlength }) }}
-            </small>
+        {%- elseif not no_optional %}
+            {%- if not required and attr.maxlength is defined -%}
+                <small class="text--secondary">
+                    {{ 'forms.optional_max_chars' | trans({ number: attr.maxlength }) }}
+                </small>
+            {%- elseif not required -%}
+                <small class="text--secondary">
+                    {{ 'forms.optional' | trans }}
+                </small>
+            {%- elseif attr.maxlength is defined -%}
+                <small class="text--secondary">
+                    {{ 'forms.max_chars' | trans({ number: attr.maxlength }) }}
+                </small>
+            {%- endif %}
         {%- endif %}
     {%- endif %}
 {%- endblock -%}
