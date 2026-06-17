@@ -1,6 +1,6 @@
 # Changelog of Bileto
 
-## unreleased
+## 2026-06-17 - 0.16.0
 
 ### Migration notes
 
@@ -10,6 +10,59 @@ If you had some sort of "read only" roles in Bileto, make sure to revise the per
 Note that answering by email doesn't require the user to have the authorization to access the organization, while it is required when answering using the Web interface.
 
 A new `LDAP_DEBUG` environment variable is available to enable the debug mode when using LDAP.
+
+### New
+
+- Ensure email recipients are added as ticket observers ([c398a43a](https://github.com/Probesys/bileto/commit/c398a43a))
+- Allow to pin information in organizations ([87279a3e](https://github.com/Probesys/bileto/commit/87279a3e))
+- Add answer templates ([8eb3c284](https://github.com/Probesys/bileto/commit/8eb3c284))
+- Allow to plan ticket tasks ([c3636d8c](https://github.com/Probesys/bileto/commit/c3636d8c))
+- Allow to export tickets to a CSV file ([94a90c71](https://github.com/Probesys/bileto/commit/94a90c71))
+- Allow to search tickets by dates in advanced mode ([8312337b](https://github.com/Probesys/bileto/commit/8312337b), [368276ed](https://github.com/Probesys/bileto/commit/368276ed), [eeb5845c](https://github.com/Probesys/bileto/commit/eeb5845c))
+
+### Improvements
+
+- Include the ticket title in the receipt email ([1b2d00de](https://github.com/Probesys/bileto/commit/1b2d00de))
+- Improve detecting auto-replies ([586fd4d0](https://github.com/Probesys/bileto/commit/586fd4d0))
+- Always show the creation date of tickets in lists ([c4cd9d08](https://github.com/Probesys/bileto/commit/c4cd9d08))
+- Clarify the anonymization warning message ([e24f6c4e](https://github.com/Probesys/bileto/commit/e24f6c4e))
+- Warn when creating organization without having access to it ([431e0b5c](https://github.com/Probesys/bileto/commit/431e0b5c))
+- Improve the look of the fieldsets ([b471ba51](https://github.com/Probesys/bileto/commit/b471ba51))
+
+### Bug fixes
+
+- Fix "scroll to top" button going under the editor ([b5086b02](https://github.com/Probesys/bileto/commit/b5086b02))
+- Fix getting preferred language for disconnected users ([39433d42](https://github.com/Probesys/bileto/commit/39433d42))
+- Fix importing data without any default role ([84fca27f](https://github.com/Probesys/bileto/commit/84fca27f))
+
+### Documentation
+
+- Update the roadmap ([0001d932](https://github.com/Probesys/bileto/commit/0001d932))
+- Change the command to run worker in admin documentation ([39ab00dd](https://github.com/Probesys/bileto/commit/39ab00dd))
+- Add PGSQL instruction when creating the database ([76f9987b](https://github.com/Probesys/bileto/commit/76f9987b))
+- Highlight the "read changelog" instruction in the update documentation ([311125a5](https://github.com/Probesys/bileto/commit/311125a5))
+- Change `git switch` by `git checkout` in the deploy documentation ([835090b1](https://github.com/Probesys/bileto/commit/835090b1))
+
+### Maintenance
+
+- Add official support for PHP 8.5 ([dc0df9c9](https://github.com/Probesys/bileto/commit/dc0df9c9))
+- Update the dependencies
+    - Update the dependencies ([c07f9963](https://github.com/Probesys/bileto/commit/c07f9963), [5dbb1330](https://github.com/Probesys/bileto/commit/5dbb1330), [299b6c46](https://github.com/Probesys/bileto/commit/299b6c46), [2f0c15ff](https://github.com/Probesys/bileto/commit/2f0c15ff))
+    - Upgrade Symfony to 7.4 ([fc17c56e](https://github.com/Probesys/bileto/commit/fc17c56e))
+    - Upgrade to TinyMCE 8.6 ([8f6b0b4b](https://github.com/Probesys/bileto/commit/8f6b0b4b))
+    - Upgrade to monolog-bundle 4 ([dc1624e6](https://github.com/Probesys/bileto/commit/dc1624e6))
+- Remove the permission to allow to answer ([7f2ea63e](https://github.com/Probesys/bileto/commit/7f2ea63e))
+- Drop the imap PHP extension requirement ([4a26b12b](https://github.com/Probesys/bileto/commit/4a26b12b))
+- Allow to debug LDAP connection issues ([2769e2f2](https://github.com/Probesys/bileto/commit/2769e2f2))
+- Log notices and erros in a file in production ([097260d1](https://github.com/Probesys/bileto/commit/097260d1))
+- Ignore NotFound and AccessDenied exceptions in Sentry ([3f68213e](https://github.com/Probesys/bileto/commit/3f68213e))
+
+### Developers
+
+- Allow to open modals by copying an HTML template ([70d30090](https://github.com/Probesys/bileto/commit/70d30090))
+- Refactor PHPIMAP configuration ([ea78c78f](https://github.com/Probesys/bileto/commit/ea78c78f))
+- Add `var/share` to gitignore ([513b1d1b](https://github.com/Probesys/bileto/commit/513b1d1b))
+- Update the copyright year ([e4a0c400](https://github.com/Probesys/bileto/commit/e4a0c400))
 
 ## 2025-11-21 - 0.15.4
 
