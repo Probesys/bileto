@@ -11,6 +11,7 @@
 /var/cache
 /var/data
 /var/log
+/var/share
 /var/settings/*
 !/var/settings/.keep
 /var/uploads/*
