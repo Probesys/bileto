@@ -135,8 +135,20 @@ class Contract implements EntityInterface, MonitorableEntityInterface, UidEntity
     public function getRenewedName(): ?string
     {
         if (preg_match('/\d$/', $this->name) === 1) {
+            /** @var non-empty-string */
             $name = $this->name;
-            return strval(++$name);
+
+            if (function_exists('str_increment')) {
+                return str_increment($name);
+            } else {
+                // With PHP 8.5, PHPStan complains for ++ operator being
+                // deprecated with non-numeric strings. However, str_increment
+                // will be used with this version, so the deprecation is never
+                // triggered. The error is ignored in .phpstan-8.5-baseline.neon.
+                // We'll be able to remove it when we'll drop support of PHP
+                // 8.2 as str_increment exists since PHP 8.3.
+                return strval(++$name);
+            }
         } else {
             return $this->name;
         }

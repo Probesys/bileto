@@ -1,8 +1,8 @@
 includes:
-    - .phpstan-baseline.neon
     - vendor/phpstan/phpstan-doctrine/extension.neon
     - vendor/phpstan/phpstan-symfony/extension.neon
     - vendor/phpstan/phpstan-symfony/rules.neon
+    - .phpstan-by-php-version.neon.php
 
 parameters:
     level: 7

@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Cannot use \+\+ on non\-empty\-string\.$#'
+			identifier: preInc.type
+			count: 1
+			path: src/Entity/Contract.php

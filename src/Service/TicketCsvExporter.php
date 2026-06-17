@@ -174,6 +174,12 @@ class TicketCsvExporter
             $field = substr($field, 1);
         }
 
+        // PHPStan complains because we always return a string, and not the
+        // TField type. However, as we already returned $field based on its
+        // type (int or null) earlier in the method, it is fine to always
+        // return a string here as the TField return type contract is not
+        // broken.
+        // @phpstan-ignore return.type
         return $field;
     }
 }
