@@ -140,6 +140,9 @@ class User implements
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?self $anonymizedBy = null;
 
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $archivedAt = null;
+
     public function __construct()
     {
         $this->name = '';
@@ -428,6 +431,33 @@ class User implements
     public function setAnonymizedBy(?self $anonymizedBy): static
     {
         $this->anonymizedBy = $anonymizedBy;
+
+        return $this;
+    }
+
+    public function getArchivedAt(): ?\DateTimeImmutable
+    {
+        return $this->archivedAt;
+    }
+
+    public function setArchivedAt(?\DateTimeImmutable $archivedAt): static
+    {
+        $this->archivedAt = $archivedAt;
+
+        return $this;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archivedAt !== null;
+    }
+
+    public function archive(): static
+    {
+        if (!$this->archivedAt) {
+            $this->archivedAt = Utils\Time::now();
+            $this->disableLogin();
+        }
 
         return $this;
     }

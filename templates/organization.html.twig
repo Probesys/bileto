@@ -12,8 +12,10 @@
     {% set canSeeContracts = is_granted('orga:see:contracts', organization) %}
     {% set canSeeUsers = is_granted('orga:see:users', organization) %}
     {% set canManage = is_granted('orga:manage', organization) %}
+    {% set canManageArchive = is_granted('orga:manage:archive', organization) %}
+    {% set canSeeSettings = canManage or canManageArchive %}
 
-    {% set canSeeSubMenu = canSeeContracts or canSeeUsers or canManage %}
+    {% set canSeeSubMenu = canSeeContracts or canSeeUsers or canSeeSettings %}
 
     {% if canSeeSubMenu %}
         <nav class="layout__submenu submenu" data-controller="submenu" aria-labelledby="submenu-title">
@@ -84,7 +86,7 @@
                     </li>
                 {% endif %}
 
-                {% if canManage %}
+                {% if canSeeSettings %}
                     <li class="submenu__item">
                         <a
                             class="submenu__anchor"
@@ -106,6 +108,31 @@
             countAssignedMe: countAssignedMe,
             countToAssign: countToAssign,
         }, with_context = false) }}
+    {% endif %}
+
+    {% if organization.archivedAt %}
+        <div
+            class="pinned-information pinned-information--warning"
+            role="status"
+            data-test="organization-archived-banner"
+        >
+            <div class="pinned-information__container">
+                {{ icon('triangle-exclamation-warning') }}
+
+                <p class="pinned-information__title">
+                    {{ 'organizations.archived.banner.title' | trans({ date: organization.archivedAt | dateTrans('dd MMM yyyy') }) }}
+
+                    {% if organization.deletedAt %}
+                        <span class="pinned-information__message">
+                            &middot;
+                            {{ 'organizations.archived.banner.deletion' | trans({ date: organization.deletedAt | dateTrans('dd MMM yyyy') }) }}
+                        </span>
+                    {% endif %}
+                </p>
+
+                {{ icon('triangle-exclamation-warning') }}
+            </div>
+        </div>
     {% endif %}
 
     {% if organization.pinnedInformation and is_granted('orga:see:pinned_information', organization) %}
