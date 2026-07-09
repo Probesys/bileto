@@ -1,0 +1,831 @@
+---
+about.authors: Auteurs
+about.authors_description: Bileto is ontwikkeld door <a href="https://probesys.coop">Probesys</a>.
+about.license: Licentie
+about.short: De ergonomische ticketingtool voor het beheren van uw Help Desk.
+about.source_code: broncode
+about.title: Over Bileto
+about.version: Versie
+admin.index.no_access: U heeft geen toegang tot de administratie.
+admin.index.no_access_advice: Uw administrator-rol heeft waarschijnlijk geen
+  rechten. Neem contact op met een andere administrator om dit op te lossen.
+admin.index.title: Admin
+advanced_search_syntax.contracts.intro1: De geavanceerde zoeksyntax stelt u in
+  staat om nauwkeurig te zoeken naar de contracten waarin u geïnteresseerd bent.
+advanced_search_syntax.contracts.intro2: Hieronder vindt u enkele voorbeelden van wat de zoekmachine kan doen.
+advanced_search_syntax.contracts.keywords.example1: Contracten die het woord
+  “contract” <strong>en</strong> het woord “2024” in hun naam bevatten
+advanced_search_syntax.contracts.keywords.example2: Contracten die het woord
+  “contract” <strong>of</strong> het woord “2024” in hun naam bevatten
+advanced_search_syntax.contracts.keywords.example3: Contracten die de woordreeks “contract 2024” in hun naam bevatten
+advanced_search_syntax.contracts.keywords.title: Zoeken op trefwoorden
+advanced_search_syntax.contracts.not.example1: Contracten die het woord
+  “contract” bevatten, maar niet het woord “2024” in hun naam
+advanced_search_syntax.contracts.not.example2: Contracten die geen status
+  “finished” hebben (gelijk aan “<code>NOT status:finished</code>”). Deze syntax
+  is alleen geldig met kwalificaties.
+advanced_search_syntax.contracts.not.title: Zoeken via negatie
+advanced_search_syntax.contracts.qualifiers.alert.example1: Contracten waarvan het tijdverbruik de alert-drempel heeft bereikt
+advanced_search_syntax.contracts.qualifiers.alert.example2: Contracten die hun einddatum naderen
+advanced_search_syntax.contracts.qualifiers.alert.example3: Contracten met een lopende alert
+advanced_search_syntax.contracts.qualifiers.alert.example4: Contracten zonder lopende alerts
+advanced_search_syntax.contracts.qualifiers.alert.title: Alert
+advanced_search_syntax.contracts.qualifiers.description: Kwalificaties zijn
+  speciale trefwoorden (bijv. <code>status:</code>) die een waarde of een door
+  komma's gescheiden lijst van waarden accepteren. Ze worden gebruikt om een
+  specifieke eigenschap te targeten.
+advanced_search_syntax.contracts.qualifiers.renewal.example1: Contracten die zijn vernieuwd
+advanced_search_syntax.contracts.qualifiers.renewal.title: Contractverlenging
+advanced_search_syntax.contracts.qualifiers.status.example1: Contracten met de status “ongoing”
+advanced_search_syntax.contracts.qualifiers.status.example2: Contracten met de status “coming” of “ongoing”
+advanced_search_syntax.contracts.qualifiers.status.title: Status
+advanced_search_syntax.contracts.qualifiers.status.values: "De mogelijke waarden
+  voor status zijn: <code>coming</code>, <code>ongoing</code>,
+  <code>finished</code>."
+advanced_search_syntax.contracts.qualifiers.title: Zoeken op kwalificaties
+advanced_search_syntax.contracts.title: Snelreferentie voor de geavanceerde zoekfunctie van contracten
+advanced_search_syntax.description: Beschrijving
+advanced_search_syntax.example: Voorbeeld
+advanced_search_syntax.tickets.complex.example1: Tickets met het woord “emails” in hun titel en een prioriteit van “high”.
+advanced_search_syntax.tickets.complex.example2: Tickets met de status “new”, of tickets die aan u zijn toegewezen
+advanced_search_syntax.tickets.complex.example3: Tickets met het woord “emails”
+  in hun titel die een “high” prioriteit hebben of die aan u zijn toegewezen
+advanced_search_syntax.tickets.complex.title: Complex zoeken
+advanced_search_syntax.tickets.identifier.example1: Het ticket met de identificatie “42”
+advanced_search_syntax.tickets.identifier.title: Zoeken op identificatie
+advanced_search_syntax.tickets.intro1: De geavanceerde zoeksyntax stelt u in
+  staat om nauwkeurig te zoeken naar de tickets waarin u geïnteresseerd bent.
+advanced_search_syntax.tickets.intro2: Hieronder vindt u enkele voorbeelden van wat de zoekmachine kan doen.
+advanced_search_syntax.tickets.keywords.example1: Tickets die het woord “email”
+  <strong>en</strong> het woord “spam” in hun titel bevatten
+advanced_search_syntax.tickets.keywords.example2: Tickets die het woord “email”
+  <strong>of</strong> het woord “spam” in hun titel bevatten
+advanced_search_syntax.tickets.keywords.example3: Tickets die de woordreeks “emails spam” in hun titel bevatten
+advanced_search_syntax.tickets.keywords.title: Zoeken op trefwoorden
+advanced_search_syntax.tickets.not.example1: Tickets die het woord “email” bevatten, maar niet het woord “spam” in hun titel
+advanced_search_syntax.tickets.not.example2: Tickets die geen status “open”
+  hebben (gelijk aan “<code>NOT status:open</code>”). Deze syntax is alleen
+  geldig met kwalificaties.
+advanced_search_syntax.tickets.not.title: Zoeken via negatie
+advanced_search_syntax.tickets.qualifiers.actors.example1: Tickets toegewezen aan een gebruiker wiens naam of e-mail “alix” bevat
+advanced_search_syntax.tickets.qualifiers.actors.example2: Tickets waarvoor u de aanvrager bent
+advanced_search_syntax.tickets.qualifiers.actors.example3: Tickets waarvoor u een waarnemer bent
+advanced_search_syntax.tickets.qualifiers.actors.example4: Tickets toegewezen aan gebruiker “alix”, of waarvoor hij de aanvrager is
+advanced_search_syntax.tickets.qualifiers.actors.example5: Tickets zonder toegewezen agent
+advanced_search_syntax.tickets.qualifiers.actors.example6: Tickets met een toegewezen agent
+advanced_search_syntax.tickets.qualifiers.actors.title: Actoren
+advanced_search_syntax.tickets.qualifiers.dates.example1: Tickets aangemaakt op 23 maart 2026
+advanced_search_syntax.tickets.qualifiers.dates.example2: Tickets aangemaakt op of na maart 2026
+advanced_search_syntax.tickets.qualifiers.dates.example3: Tickets aangemaakt tussen 23 maart 2026 en 25 maart 2026
+advanced_search_syntax.tickets.qualifiers.dates.example4: Tickets voor het laatst bijgewerkt op 23 maart 2026
+advanced_search_syntax.tickets.qualifiers.dates.formats: "Het datumformaat is:
+  <code>jaar-maand-dag</code> (bijv. <code>2026-03-23</code>). Het kan uren
+  en/of minuten bevatten door ze te scheiden met de letter “T”:
+  <code>jaar-maand-dagTuur-minuut</code> (bijv. <code>2026-03-23T14:00</code>).
+  Elk onderdeel is optioneel (bijv. <code>2026-03</code> of
+  <code>2026-03-23T14</code>)."
+advanced_search_syntax.tickets.qualifiers.dates.operators: "De beschikbare
+  vergelijkingsoperatoren zijn: <code>&equals;</code> (standaard),
+  <code>&gt;</code>, <code>&gt;&equals;</code>, <code>&lt;</code>,
+  <code>&lt;&equals;</code> en <code>..</code>."
+advanced_search_syntax.tickets.qualifiers.dates.special_values:
+  "Datums kunnen ook de volgende waarden aannemen: <code>current-year</code>,
+  <code>current-month</code>, <code>current-day</code>/<code>today</code>,
+  <code>current-hour</code>, <code>current-minute</code>/<code>now</code>."
+advanced_search_syntax.tickets.qualifiers.dates.title: Datums
+advanced_search_syntax.tickets.qualifiers.description: Kwalificaties zijn
+  speciale trefwoorden (bijv. <code>status:</code>) die een waarde of een door
+  komma's gescheiden lijst van waarden accepteren. Ze worden gebruikt om een
+  specifieke eigenschap te targeten.
+advanced_search_syntax.tickets.qualifiers.labels.example1: Tickets met het label “Bug” (hoofdletterongevoelig)
+advanced_search_syntax.tickets.qualifiers.labels.example2: Tickets met de labels “Bug” en “Tickets topic”
+advanced_search_syntax.tickets.qualifiers.labels.example3: Tickets met de labels “Bug” of “Tickets topic”
+advanced_search_syntax.tickets.qualifiers.labels.example4: Tickets met minstens één label
+advanced_search_syntax.tickets.qualifiers.labels.example5: Tickets zonder labels
+advanced_search_syntax.tickets.qualifiers.labels.title: Labels
+advanced_search_syntax.tickets.qualifiers.organization.example1: Tickets van organisaties met “probesys” in hun naam
+advanced_search_syntax.tickets.qualifiers.organization.title: Organisaties
+advanced_search_syntax.tickets.qualifiers.priority.example1: Tickets met een “lage” urgentie
+advanced_search_syntax.tickets.qualifiers.priority.example2: Tickets met een “lage” of “gemiddelde” impact
+advanced_search_syntax.tickets.qualifiers.priority.example3: Tickets met een “hoge” prioriteit
+advanced_search_syntax.tickets.qualifiers.priority.title: Prioriteit
+advanced_search_syntax.tickets.qualifiers.solution.example1: Tickets zonder oplossing
+advanced_search_syntax.tickets.qualifiers.solution.example2: Tickets die een oplossing hebben
+advanced_search_syntax.tickets.qualifiers.solution.title: Oplossing
+advanced_search_syntax.tickets.qualifiers.status.example1: Tickets met de status “new”
+advanced_search_syntax.tickets.qualifiers.status.example2: Tickets met de status “new” of “in progress”
+advanced_search_syntax.tickets.qualifiers.status.title: Status
+advanced_search_syntax.tickets.qualifiers.status.values: "De mogelijke waarden
+  voor status zijn: <code>new</code>, <code>in_progress</code>,
+  <code>planned</code>, <code>pending</code>, <code>resolved</code>,
+  <code>closed</code>, evenals de shortcuts <code>open</code> (bevat de eerste
+  4) en <code>finished</code> (bevat de laatste 2)."
+advanced_search_syntax.tickets.qualifiers.team.example1: Tickets toegewezen aan een team wiens naam “web” bevat
+advanced_search_syntax.tickets.qualifiers.team.example2: Tickets zonder toegewezen team
+advanced_search_syntax.tickets.qualifiers.team.example3: Tickets toegewezen aan een team
+advanced_search_syntax.tickets.qualifiers.team.title: Teams
+advanced_search_syntax.tickets.qualifiers.title: Zoeken op kwalificaties
+advanced_search_syntax.tickets.qualifiers.type.example1: Tickets van het type “incident”
+advanced_search_syntax.tickets.qualifiers.type.example2: Tickets van het type “request”
+advanced_search_syntax.tickets.qualifiers.type.title: Type
+advanced_search_syntax.tickets.title: Snelreferentie voor de geavanceerde zoekfunctie van tickets
+anonymizations.new.information: U staat op het punt om gebruiker {user} te
+  anonimiseren. Dit zal al hun persoonlijke gegevens verwijderen, maar hun
+  berichten (die mogelijk ook persoonlijke informatie bevatten) blijven
+  zichtbaar om de traceerbaarheid van tickets te garanderen.
+anonymizations.new.submit: Bevestigen
+anonymizations.new.title: Gebruiker anonimiseren
+authorizations.new.global: Globaal
+authorizations.new.organization_caption: De autorisatie kan beperkt worden tot
+  een specifieke organisatie, of globaal worden toegepast.
+authorizations.new.organization_scope: Organisatorisch bereik
+authorizations.new.role: Kies een rol
+authorizations.new.submit: De autorisatie aanmaken
+authorizations.new.title: Nieuwe autorisatie
+authorizations.revoke: Intrekken
+authorizations.revoke.confirm: Weet u zeker dat u deze autorisatie wilt intrekken?
+authorizations.revoke.disabled: U kunt deze autorisatie niet intrekken.
+common.actions: Acties
+common.caution: Let op!
+common.colors.blue: Blauw
+common.colors.green: Groen
+common.colors.grey: Grijs
+common.colors.orange: Oranje
+common.colors.primary: Primair
+common.colors.red: Rood
+common.delete: Verwijderen
+common.information: Informatie
+common.join.and: " en "
+common.join.glue: ", "
+common.system_user: Systeemgebruiker
+contracts.alerts.edit.date_alert.after: dagen voor het einde van het contract.
+contracts.alerts.edit.date_alert.before: Alert
+contracts.alerts.edit.hours_alert.after: "% van de uren is verbruikt."
+contracts.alerts.edit.hours_alert.before: Alert wanneer
+contracts.alerts.edit.title: Contractalerts instellen
+contracts.days_consumed: <strong>{days} d verbruikt</strong>
+contracts.edit.title: Een contract bewerken
+contracts.form.associate_tickets: Bestaande tickets koppelen die zijn aangemaakt tijdens de contractperiode
+contracts.form.associate_unaccounted_times: Bestaande niet-toegewezen bestede tijd koppelen
+contracts.form.end_at: Eindigt op
+contracts.form.max_hours: Maximaal aantal uren
+contracts.form.name: Naam
+contracts.form.new: Het contract aanmaken
+contracts.form.notes: Privénotities
+contracts.form.start_at: Start op
+contracts.form.time_accounting_unit: Tijdsregistratie-eenheid (minuten)
+contracts.form.time_accounting_unit.caption: De tijd besteed aan tickets wordt
+  naar boven afgerond voor contractuele doeleinden. Als de
+  tijdsregistratie-eenheid bijvoorbeeld 30 minuten is en een technicus 15
+  minuten aan een ticket besteedt, worden er 30 minuten in het contract
+  gerekend.
+contracts.hours_consumed: <strong>{hours} verbruikt</strong> van {maxHours} u
+  ({percentage, number, percent})
+contracts.index.alert: Alert
+contracts.index.new_contract: Nieuw contract
+contracts.index.no_contracts: Geen contracten
+contracts.index.number: "{count, plural, =0 {Geen contracten} one {1 contract} other {# contracten}}"
+contracts.index.renewed: vernieuwd
+contracts.index.tickets: "{count, plural, =0 {Geen tickets} one {1 ticket} other {# tickets}}"
+contracts.index.title: Contracten
+contracts.new.open_contract: Een contract openen
+contracts.new.title: Nieuw contract
+contracts.notes: Privénotities
+contracts.show.alert: Alert
+contracts.show.alert.before_end: "{days} dagen<br>voor einde"
+contracts.show.edit: Het contract bewerken
+contracts.show.notes_confidential: Vertrouwelijk
+contracts.show.renew: Vernieuwen
+contracts.show.renewed_by: Vernieuwd door
+contracts.show.set_up_alerts: Alerts instellen
+contracts.show.time_accounting_unit: "Tijdsregistratie-eenheid: {count, plural, one {1 minuut} other {# minuten}}"
+contracts.show.warning: Waarschuwing
+contracts.sort.alphabetical: Alfabetische volgorde
+contracts.sort.antichronological: Anti-chronologische eindvolgorde
+contracts.sort.chronological: Chronologische eindvolgorde
+contracts.sort.label: Sorteren op
+contracts.sort.reverse_alphabetical: Omgekeerde alfabetische volgorde
+contracts.status: Status
+contracts.status.coming: Komend
+contracts.status.finished: Beëindigd
+contracts.status.ongoing: Lopend
+emails.message.receiving: U ontvangt deze e-mail omdat u betrokken bent bij dit
+  { ticketType, select, request {verzoek} incident {incident} other {} }.
+emails.message.reply: Beantwoord deze e-mail rechtstreeks of <a
+  href="{url}">bekijk het op Bileto</a>.
+emails.message.reply_nolink: Beantwoord deze e-mail rechtstreeks.
+emails.message.reply_txt: "Beantwoord deze e-mail rechtstreeks of bekijk het op Bileto: {url}"
+emails.politeness.hello: Hallo,
+emails.politeness.regards: Met vriendelijke groeten,
+emails.politeness.support_team: Het supportteam
+emails.receipt.received: We hebben uw supportverzoek met de titel
+  “<strong>{title}</strong>” ontvangen. Dit zal zo snel mogelijk worden bekeken
+  en verwerkt.
+emails.receipt.received_txt: We hebben uw supportverzoek met de titel “{title}”
+  ontvangen. Dit zal zo snel mogelijk worden bekeken en verwerkt.
+emails.receipt.subject: Supportverzoek ontvangen
+emails.receipt.view: U kunt het <a href="{url}">bekijken op Bileto.</a>
+emails.receipt.view_txt: "U kunt het bekijken op Bileto: {url}"
+emails.reset_password.expiration: Als u deze link niet voor die tijd gebruikt, verloopt deze over 2 uur.
+emails.reset_password.intro: U ontvangt deze e-mail omdat er een verzoek is
+  ingediend om het wachtwoord van uw account te resetten.
+emails.reset_password.reset: Reset uw wachtwoord
+emails.reset_password.subject: Reset uw Bileto-wachtwoord
+emails.transactional.sent: Deze e-mail is verzonden door <a href="{url}">Bileto</a>.
+emails.transactional.sent_txt: "Deze e-mail is verzonden door Bileto: {url}"
+errors.404.description: De opgevraagde pagina kon niet worden gevonden.
+  Controleer of de URL correct is gespeld.
+errors.404.title: Pagina niet gevonden!
+errors.back_home: Terug naar de homepage
+errors.generic.description: Meld aan uw administrator wat u aan het doen was
+  toen de fout optrad. Dit zal zo snel mogelijk worden opgelost.
+errors.generic.sorry: Onze excuses voor het ongemak.
+errors.generic.title: Er is een fout opgetreden!
+forms.actors.group.agents: Agenten
+forms.actors.group.users: Gebruikers
+forms.error: Fout
+forms.max_chars: (max. {number} tekens)
+forms.multiselect.select_actor: Selecteer een actor
+forms.multiselect.select_team: Selecteer een team
+forms.multiselect.unselect: Deselecteren
+forms.multitext.remove: Verwijderen
+forms.optional: (optioneel)
+forms.optional_max_chars: (optioneel, max. {number} tekens)
+forms.organization.select.choose: Kies een organisatie
+forms.read_only: (alleen-lezen)
+forms.save_changes: Wijzigingen opslaan
+forms.search.advanced_help: Toon syntax-hulp
+forms.search.advanced_label: Zoeken met trefwoorden of via de geavanceerde syntax
+forms.search.advanced_title: Geavanceerd zoeken
+forms.search.quick_label: "Zoeken met trefwoorden of #id"
+forms.search.quick_placeholder: "Trefwoorden of #id"
+forms.search.quick_title: Snel zoeken
+forms.search.submit: Zoeken
+forms.show_password: "Wachtwoord weergeven als platte tekst. Let op: dit maakt
+  uw wachtwoord zichtbaar."
+forms.task.end_at.label: Einde
+forms.task.label.label: Label
+forms.task.start_at.label: Start
+forms.task.task_number: Taak __number__
+forms.time_spent.must_not_be_accounted.label: Markeer deze tijd als niet te verrekenen
+forms.time_spent.real_time.help: U kunt deze tijd verwijderen door deze op 0 te zetten.
+forms.time_spent.real_time.label: Besteede tijd (in minuten)
+home.all_your_tickets: Bekijk al uw tickets
+home.new_ticket: Nieuw ticket
+home.no_tickets: Geen tickets
+home.title: Welkom bij Bileto
+home.your_assigned_tickets: Uw toegewezen tickets
+home.your_tickets: Uw tickets
+hours_formatter.hours.long: "{ hours, plural, one {1 uur} other {# uren} }"
+hours_formatter.hours.short: "{hours} u"
+hours_formatter.hours_and_minutes.long: "{ hours, plural, one {1 uur} other
+  {# uren} } { minutes, plural, one {1 minuut} other {# minuten} }"
+hours_formatter.hours_and_minutes.short: "{hours} u {minutes} m"
+hours_formatter.minutes.long: "{ minutes, plural, one {1 minuut} other {# minuten} }"
+hours_formatter.minutes.short: "{minutes} m"
+labels.color: Kleur
+labels.deletion.confirm: Weet u zeker dat u dit label wilt verwijderen?
+labels.deletion.going_delete: U staat op het punt het label “{label}” te
+  verwijderen. Dit label wordt verwijderd uit de betreffende tickets.
+labels.deletion.submit: Het label verwijderen
+labels.deletion.title: Verwijdering
+labels.description: Beschrijving
+labels.edit.title: Een label bewerken
+labels.index.edit: Bewerken
+labels.index.new_label: Nieuw label
+labels.index.none: Geen labels
+labels.index.number: "{count, plural, =0 {Geen labels} one {1 label} other {# labels}}"
+labels.index.title: Labels
+labels.name: Naam
+labels.new.submit: Het label aanmaken
+labels.new.title: Nieuw label
+layout.activate_javascript: U moet JavaScript activeren om Bileto te kunnen gebruiken.
+layout.breadcrumb: Broodkruimelpad
+layout.contracts: Contracten
+layout.home: Home
+layout.logout: Uitloggen
+layout.main_navigation: Hoofdnavigatie
+layout.main_navigation.open: Open het hoofdmenu
+layout.modal.close: Dit venster sluiten
+layout.my_account: Mijn account
+layout.notifications.close: Melding sluiten
+layout.notifications.error: Fout
+layout.notifications.success: Succes
+layout.organizations: Organisaties
+layout.scroll_to_top: Naar boven scrollen
+layout.skip_to_main_content: Spring naar hoofdinhoud
+layout.tickets: Tickets
+login.forgot_password: Wachtwoord vergeten?
+login.intro: Beheer uw support<br><b>met gemak</b>
+login.password_changed.message: Uw wachtwoord is gewijzigd. U kunt nu inloggen.
+login.password_changed.title: Wachtwoord gewijzigd
+login.remember_me: Onthoud mij
+login.submit: Inloggen
+login.title: Inloggen
+mailboxes.deletion.confirm: Weet u zeker dat u deze mailbox wilt verwijderen?
+mailboxes.deletion.going_delete: U staat op het punt de mailbox “{mailbox}” te
+  verwijderen. E-mails uit deze mailbox zullen niet langer worden opgehaald.
+mailboxes.deletion.submit: De mailbox verwijderen
+mailboxes.deletion.title: Verwijdering
+mailboxes.edit.leave_password_empty: Laat leeg om het huidige wachtwoord te behouden.
+mailboxes.edit.test_mailbox: Verbinding testen
+mailboxes.edit.title: Een mailbox bewerken
+mailboxes.encryption: Versleutelingsmethode
+mailboxes.encryption.none: Geen
+mailboxes.encryption.ssl: SSL/TLS
+mailboxes.encryption.starttls: StartTLS
+mailboxes.folder: Map
+mailboxes.host: Hostnaam
+mailboxes.index.collect: Mailboxen ophalen
+mailboxes.index.edit: Bewerken
+mailboxes.index.emails.delete: Verwijderen
+mailboxes.index.emails.delete.confirm: Weet u zeker dat u deze e-mail wilt verwijderen?
+mailboxes.index.emails.desc: Zodra u de fouten heeft hersteld, worden deze
+  e-mails automatisch opnieuw verwerkt. Anders kunt u ze verwijderen.
+mailboxes.index.emails.error: "Fout:"
+mailboxes.index.emails.title: E-mails met fouten
+mailboxes.index.error: (fout)
+mailboxes.index.new_mailbox: Nieuwe mailbox
+mailboxes.index.none: Geen mailboxen
+mailboxes.index.number: "{count, plural, =0 {Geen mailboxen} one {1 mailbox} other {# mailboxen}}"
+mailboxes.index.title: Mailboxen
+mailboxes.name: Naam mailbox
+mailboxes.new.submit: De mailbox aanmaken
+mailboxes.new.title: Nieuwe mailbox
+mailboxes.password: Wachtwoord
+mailboxes.port: IMAP-poort
+mailboxes.post_action: Actie voor e-mails
+mailboxes.post_action.delete: Verwijderen
+mailboxes.post_action.mark_as_read: Markeren als gelezen
+mailboxes.test.success: De verbinding werkt.
+mailboxes.username: Gebruikersnaam
+message_documents.attachments: Bijlagen
+message_documents.attachments.attach: Een document toevoegen
+message_documents.remove: Bijlage verwijderen
+message_templates.applier.apply_template: Een antwoordsjabloon toepassen
+message_templates.applier.modal.title: Selecteer een antwoordsjabloon
+message_templates.deletion.confirm: Weet u zeker dat u dit antwoordsjabloon wilt verwijderen?
+message_templates.deletion.going_delete: U gaat het antwoordsjabloon “{name}” verwijderen.
+message_templates.deletion.submit: Sjabloon verwijderen
+message_templates.deletion.title: Verwijdering
+message_templates.edit.title: Een antwoordsjabloon bewerken
+message_templates.index.edit: Bewerken
+message_templates.index.new_template: Nieuw sjabloon
+message_templates.index.none: Geen sjablonen
+message_templates.index.number: "{count, plural, =0 {Geen sjablonen} one {1 sjabloon} other {# sjablonen}}"
+message_templates.index.title: Antwoordsjablonen
+message_templates.name: Naam van het sjabloon
+message_templates.new.submit: Sjabloon aanmaken
+message_templates.new.title: Nieuw antwoordsjabloon
+message_templates.type: Antwoordtype
+message_templates.type.confidential: Vertrouwelijk antwoord
+message_templates.type.normal: Antwoord
+message_templates.type.solution: Oplossing
+notifications.saved: Uw wijzigingen zijn succesvol opgeslagen.
+organizations.domains: Gekoppelde domeinen
+organizations.domains.caption: Gebruikers wiens e-mailadres overeenkomt met een
+  van deze domeinen worden standaard gekoppeld aan deze organisatie. Gebruik het
+  “*”-teken om alle domeinen te behandelen.
+organizations.index.new_organization: Nieuwe organisatie
+organizations.index.none: Geen organisaties
+organizations.index.number: "{count, plural, =0 {Geen organisaties} one {1
+  organisatie} other {# organisaties}}"
+organizations.index.title: Organisaties
+organizations.name: Naam
+organizations.new.created: De organisatie is aangemaakt.
+organizations.new.created_no_access: De organisatie is aangemaakt, maar u bent
+  niet gemachtigd om erop toegang te krijgen.
+organizations.new.submit: Organisatie aanmaken
+organizations.new.title: Nieuwe organisatie
+organizations.observers.add_user: Toevoegen aan waarnemers
+organizations.observers.confirm_add_user: Door deze gebruiker toe te voegen aan
+  de waarnemers van de organisatie, geeft u hem toegang tot alle toekomstige
+  tickets die in de organisatie worden geopend. Kunt u dit bevestigen?
+organizations.observers.remove_user: Verwijderen uit waarnemers
+organizations.pinned_information: Vastgezette informatie
+organizations.pinned_information.caption: Deel belangrijke informatie over deze
+  organisatie met alle agenten die over de nodige rechten beschikken.
+organizations.responsible_team: Verantwoordelijk team
+organizations.responsible_team.auto: Automatisch
+organizations.responsible_team.caption: Het team dat verantwoordelijk is voor de
+  organisatie wordt standaard toegewezen aan de tickets die in die organisatie
+  worden geopend.
+organizations.settings.deletion.confirm: Weet u zeker dat u deze organisatie wilt verwijderen?
+organizations.settings.deletion.going_delete: U gaat de organisatie
+  “{organization}” verwijderen. Dit zal ook de bijbehorende tickets en
+  contracten verwijderen.
+organizations.settings.deletion.submit: Organisatie verwijderen
+organizations.settings.deletion.title: Een organisatie verwijderen
+organizations.settings.title: Instellingen
+pagination.next: Volgende
+pagination.previous: Vorige
+passwords.edit.form.password: Nieuw wachtwoord
+passwords.edit.form.submit: Wachtwoord wijzigen
+passwords.edit.short: "U staat op het punt het wachtwoord te wijzigen voor het
+  account <strong>{email}</strong>. "
+passwords.edit.title: Wachtwoord wijzigen
+passwords.reset.form.email: E-mailadres
+passwords.reset.form.submit: E-mail voor herstel verzenden
+passwords.reset.sent.message: Als het ingevoerde adres correct is, hebben we u
+  een e-mail gestuurd met een link om uw wachtwoord te herstellen. Heeft u deze
+  na enkele minuten nog niet ontvangen? Controleer dan uw map met ongewenste
+  e-mail.
+passwords.reset.sent.title: E-mail verzonden
+passwords.reset.short: Voer uw e-mailadres in en we sturen u een link om uw wachtwoord te herstellen.
+passwords.reset.title: Uw wachtwoord herstellen
+preferences.title: Voorkeuren
+profile.current_password: Huidig wachtwoord
+profile.ldap.managed: U kunt uw profiel niet wijzigen omdat uw account wordt beheerd via LDAP.
+profile.leave_password: Laat deze velden leeg om uw huidige wachtwoord te behouden.
+profile.new_password: Nieuw wachtwoord
+profile.note: "Opmerking: de informatie in uw profiel kan zichtbaar zijn voor
+  andere gebruikers."
+profile.title: Profiel
+roles.deletion.confirm: Weet u zeker dat u deze rol wilt verwijderen?
+roles.deletion.going_delete: U gaat de rol “{role}” verwijderen. Dit zal ook de
+  bijbehorende machtigingen verwijderen.
+roles.deletion.submit: Rol verwijderen
+roles.deletion.title: Verwijdering
+roles.description: Beschrijving
+roles.edit.title.admin: Beheerdersrol bewerken
+roles.edit.title.agent: Agentrol bewerken
+roles.edit.title.user: Gebruikersrol bewerken
+roles.index.admin_roles.desc: De beheerdersrollen geven toegang tot de instellingen van de applicatie.
+roles.index.admin_roles.new: Nieuwe beheerdersrol
+roles.index.admin_roles.title: Beheerdersrollen
+roles.index.agent_roles.desc: De agentrollen geven toegang tot de backoffice (bijv. de technici).
+roles.index.agent_roles.new: Nieuwe agentrol
+roles.index.agent_roles.title: Agentrollen
+roles.index.title: Rollen
+roles.index.user_roles.desc: De gebruikersrollen geven eindgebruikers toegang
+  tot de ondersteuningshulpmiddelen.
+roles.index.user_roles.new: Nieuwe gebruikersrol
+roles.index.user_roles.title: Gebruikersrollen
+roles.is_default: Standaard gebruikersrol
+roles.name: Naam
+roles.new.submit: Rol aanmaken
+roles.new.title.admin: Nieuwe beheerdersrol
+roles.new.title.agent: Nieuwe agentrol
+roles.new.title.user: Nieuwe gebruikersrol
+roles.permissions: Machtigingen
+roles.permissions.admin.create.organizations: Organisaties aanmaken
+roles.permissions.admin.manage.agents: Agenten beheren
+roles.permissions.admin.manage.labels: Labels beheren
+roles.permissions.admin.manage.mailboxes: Postvakken beheren
+roles.permissions.admin.manage.roles: Rollen beheren
+roles.permissions.admin.manage.templates: Sjablonen beheren
+roles.permissions.admin.manage.users: Gebruikers beheren
+roles.permissions.be_assigned_to_tickets: Toegewezen worden aan tickets
+roles.permissions.check_all: Alles aanvinken
+roles.permissions.orga.create.tickets: Tickets aanmaken
+roles.permissions.orga.create.tickets.messages: Antwoorden op tickets
+roles.permissions.orga.create.tickets.messages.confidential: Vertrouwelijk antwoorden op tickets
+roles.permissions.orga.create.tickets.tasks: Taken plannen
+roles.permissions.orga.create.tickets.time_spent: Tijdregistratie bijhouden
+roles.permissions.orga.manage: De organisatie beheren
+roles.permissions.orga.manage.contracts: Contracten beheren
+roles.permissions.orga.see.contracts: Contracten bekijken
+roles.permissions.orga.see.contracts.notes: Privénotities van contracten bekijken
+roles.permissions.orga.see.pinned_information: Vastgezette informatie bekijken
+roles.permissions.orga.see.tickets.all: Alle tickets van de organisatie bekijken
+roles.permissions.orga.see.tickets.contracts: Het contract van de tickets bekijken
+roles.permissions.orga.see.tickets.messages.confidential: Vertrouwelijke antwoorden bekijken
+roles.permissions.orga.see.tickets.tasks: Taken van tickets bekijken
+roles.permissions.orga.see.tickets.time_spent.accounted: Toegerekende tijd voor contracten bekijken
+roles.permissions.orga.see.tickets.time_spent.real: Werkelijke bestede tijd bekijken
+roles.permissions.orga.see.users: Gebruikers bekijken
+roles.permissions.orga.update.tickets.actors: Betrokkenen van een ticket bijwerken
+roles.permissions.orga.update.tickets.contracts: Het contract van een ticket bijwerken
+roles.permissions.orga.update.tickets.labels: De labels van een ticket bijwerken
+roles.permissions.orga.update.tickets.organization: Tickets overdragen naar een andere organisatie
+roles.permissions.orga.update.tickets.priority: De prioriteit van een ticket bijwerken
+roles.permissions.orga.update.tickets.status: De status van een ticket bijwerken
+roles.permissions.orga.update.tickets.title: De titel van een ticket bijwerken
+roles.permissions.orga.update.tickets.type: Het type van een ticket bijwerken
+roles.permissions.uncheck_all: Alles uitvinken
+roles.scope_global: "* globaal *"
+roles.super_admin: Super-beheerder
+roles.super_admin.description: Een speciale rol met toegang tot het volledige
+  beheer (kan niet worden gewijzigd).
+roles.type.admin: Beheerder
+roles.type.agent: Agent
+roles.type.user: Gebruiker
+session_logs.changed_password: heeft het wachtwoord gewijzigd
+session_logs.ip: IP
+session_logs.login_failure: heeft geprobeerd in te loggen, maar dit is mislukt
+session_logs.login_success: heeft ingelogd
+session_logs.logout: heeft uitgelogd
+session_logs.reset_password: heeft gevraagd het wachtwoord te herstellen
+session_logs.session_hash_id: Sessie-identificatiehash
+session_logs.someone: Iemand
+submenu.scroller.scroll_to_left: Scroll het menu naar links
+submenu.scroller.scroll_to_right: Scroll het menu naar rechts
+tasks.deletion.confirm: Weet u zeker dat u deze taak wilt verwijderen?
+tasks.deletion.going_delete: U gaat de taak “{task}” verwijderen.
+tasks.deletion.submit: Taak verwijderen
+tasks.deletion.title: Verwijdering
+tasks.edit.title: De taak bewerken
+teams.agents.new.add_agent: Agent toevoegen
+teams.agents.new.enter_agent_email: Voer het e-mailadres van de agent in
+teams.agents.new.go_to_create_agent: Maak in plaats daarvan een nieuwe agent aan
+teams.agents.new.go_to_select_agent: Selecteer in plaats daarvan een agent
+teams.agents.new.select_agent: Selecteer een agent
+teams.agents.new.title: Nieuwe agent
+teams.deletion.confirm: Weet u zeker dat u dit team wilt verwijderen?
+teams.deletion.going_delete: U gaat het team “{team}” verwijderen. Dit zal ook
+  de bijbehorende machtigingen verwijderen. Tickets waarvoor dit team
+  verantwoordelijk is, zullen niet langer aan dit team worden toegewezen.
+teams.deletion.submit: Team verwijderen
+teams.deletion.title: Verwijdering
+teams.edit.title: Een team bewerken
+teams.index.agents: "{count, plural, =0 {Geen agenten} one {1 agent} other {# agenten}}"
+teams.index.authorizations: "{count, plural, =0 {Geen machtigingen} one {1
+  machtiging} other {# machtigingen}}"
+teams.index.new_team: Nieuw team
+teams.index.none: Geen teams
+teams.index.number: "{count, plural, =0 {Geen teams} one {1 team} other {# teams}}"
+teams.index.title: Teams & Agenten
+teams.is_responsible: Verantwoordelijk team (kan automatisch aan tickets worden toegewezen)
+teams.name: Naam
+teams.new.submit: Team aanmaken
+teams.new.title: Nieuw team
+teams.show.agents.new: Nieuwe agent
+teams.show.agents.none: Geen agenten
+teams.show.agents.number: "{count, plural, =0 {Geen agenten} one {1 agent} other {# agenten}}"
+teams.show.agents.remove: Verwijderen
+teams.show.agents.remove.confirm: Weet u zeker dat u deze agent uit het team wilt verwijderen?
+teams.show.agents.title: Agenten
+teams.show.authorizations.new: Machtiging geven
+teams.show.authorizations.title: Machtigingen
+teams.show.edit: Het team bewerken
+teams.show.team_responsible: Verantwoordelijk team
+tickets.actors: Betrokkenen
+tickets.actors.edit.no_access: De betrokkenen zijn bijgewerkt, maar u heeft geen toegang meer tot het ticket.
+tickets.actors.edit.title: Betrokkenen bewerken
+tickets.assignee: Toegewezen aan
+tickets.contracts.edit.associate_unaccounted_times: Bestaande niet-toegerekende tijden koppelen
+tickets.contracts.edit.title: Het contract bewerken
+tickets.contracts.none: Geen contract
+tickets.contracts.ongoing: Lopend contract
+tickets.events.assignee.assigned: <strong>{username}</strong> heeft het ticket toegewezen aan <i>{newValue}</i>
+tickets.events.assignee.changed: <strong>{username}</strong> heeft de toegewezen
+  persoon gewijzigd van <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.events.assignee.unassigned: <strong>{username}</strong> heeft de
+  toegewezen persoon <i>{oldValue}</i> verwijderd
+tickets.events.contracts.added: <strong>{username}</strong> heeft <i>{added}</i> contract(en) toegevoegd
+tickets.events.contracts.added_and_removed: <strong>{username}</strong> heeft
+  <i>{added} toegevoegd en <i>{removed}</i> contract(en) verwijderd
+tickets.events.contracts.removed: <strong>{username}</strong> heeft <i>{removed}</i> contract(en) verwijderd
+tickets.events.default.changed: <strong>{username}</strong> heeft de {field}
+  gewijzigd van <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.events.default.new: <strong>{username}</strong> heeft de {field} gewijzigd naar <i>{newValue}</i>
+tickets.events.default.removed: <strong>{username}</strong> heeft de {field} verwijderd van <i>{oldValue}</i>
+tickets.events.impact: <strong>{username}</strong> heeft de impact gewijzigd van
+  <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.events.labels.added: <strong>{username}</strong> heeft {added} label(s) toegevoegd
+tickets.events.labels.added_and_removed: <strong>{username}</strong> heeft
+  {added} label(s) toegevoegd en {removed} verwijderd
+tickets.events.labels.removed: <strong>{username}</strong> heeft {removed} label(s) verwijderd
+tickets.events.observers.added: <strong>{username}</strong> heeft <i>{added}</i> toegevoegd aan de waarnemers
+tickets.events.observers.added_and_removed: <strong>{username}</strong> heeft
+  {added}</i> toegevoegd en <i>{removed}</i> verwijderd uit de waarnemers
+tickets.events.observers.removed: <strong>{username}</strong> heeft <i>{removed}</i> verwijderd uit de waarnemers
+tickets.events.organization: <strong>{username}</strong> heeft het ticket
+  overgedragen van <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.events.organization.deleted: verwijderde organisatie
+tickets.events.priority: <strong>{username}</strong> heeft de prioriteit
+  gewijzigd van <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.events.requester: <strong>{username}</strong> heeft de aanvrager
+  gewijzigd van <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.events.solution.changed: <strong>{username}</strong> heeft de oplossing gewijzigd
+tickets.events.solution.new: <strong>{username}</strong> heeft een oplossing toegevoegd
+tickets.events.solution.removed: <strong>{username}</strong> heeft de oplossing verwijderd
+tickets.events.status: <strong>{username}</strong> heeft de status gewijzigd van
+  <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.events.team.changed: <strong>{username}</strong> heeft het team
+  gewijzigd van <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.events.team.deleted: verwijderd team
+tickets.events.team.set: <strong>{username}</strong> heeft het ticket toegewezen
+  aan het team <i>{newValue}</i>
+tickets.events.team.unset: <strong>{username}</strong> heeft de toewijzing aan
+  het team <i>{oldValue}</i> verwijderd
+tickets.events.title: <strong>{username}</strong> heeft het ticket hernoemd van
+  “<i>{oldValue}</i>” naar “<i>{newValue}</i>”
+tickets.events.type.to_incident: <strong>{username}</strong> heeft het ticket gewijzigd naar incident
+tickets.events.type.to_request: <strong>{username}</strong> heeft het ticket gewijzigd naar aanvraag
+tickets.events.urgency: <strong>{username}</strong> heeft de urgentie gewijzigd
+  van <i>{oldValue}</i> naar <i>{newValue}</i>
+tickets.export.column.assignee: Toegewezen aan
+tickets.export.column.contracts: Contracten
+tickets.export.column.created_at: Aangemaakt op
+tickets.export.column.created_by: Aangemaakt door
+tickets.export.column.id: ID
+tickets.export.column.impact: Impact
+tickets.export.column.labels: Labels
+tickets.export.column.observers: Waarnemers
+tickets.export.column.organization: Organisatie
+tickets.export.column.priority: Prioriteit
+tickets.export.column.requester: Aanvrager
+tickets.export.column.solution: Oplossing
+tickets.export.column.status: Status
+tickets.export.column.team: Verantwoordelijk team
+tickets.export.column.time_spent.accounted: Toegerekende bestede tijd (minuten)
+tickets.export.column.time_spent.real: Bestede tijd (minuten)
+tickets.export.column.time_spent.unaccounted: Niet-toegerekende bestede tijd (minuten)
+tickets.export.column.title: Titel
+tickets.export.column.type: Type
+tickets.export.column.uid: Referentie
+tickets.export.column.updated_at: Bijgewerkt op
+tickets.export.column.updated_by: Bijgewerkt door
+tickets.export.column.urgency: Urgentie
+tickets.export.csv: Exporteren als CSV
+tickets.export.solution.no: Nee
+tickets.export.solution.yes: Ja
+tickets.filters.actors.title: Filteren op betrokkenen
+tickets.filters.assignee.no: Alleen niet-toegewezen
+tickets.filters.labels.title: Filteren op labels
+tickets.filters.priority.title: 'Filter op prioriteit'
+tickets.filters.status.title: 'Filter op status'
+tickets.filters.type.all: 'Alle tickets'
+tickets.filters.type.incident: 'Enkel de incidenten'
+tickets.filters.type.label: 'Type van tickets'
+tickets.filters.type.request: 'Enkel de aanvragen'
+tickets.filters.type.title: 'Filter op type'
+tickets.impact: Impact
+tickets.impact.high: Hoog
+tickets.impact.low: Laag
+tickets.impact.medium: Gemiddeld
+tickets.index.new_ticket: Nieuw ticket
+tickets.index.no_tickets: Geen tickets
+tickets.index.number: "{count, plural, =0 {Geen tickets} one {1 ticket} other {# tickets}}"
+tickets.index.tickets: Tickets
+tickets.index.title: Tickets
+tickets.index.title.all: Alle tickets
+tickets.index.title.to_assign: Tickets om toe te wijzen
+tickets.index.title.your_assigned_tickets: Uw toegewezen tickets
+tickets.index.title.your_tickets: Uw tickets
+tickets.index.views.title: Uw weergaven
+tickets.involves: Betrokkenen
+tickets.labels: Labels
+tickets.labels.edit.title: Labels bewerken
+tickets.labels.none: Geen label
+tickets.list.incident_opened_on: Incident geopend op <time datetime="{dateIso}">{date}</time>
+tickets.list.request_opened_on: Aanvraag geopend op <time datetime="{dateIso}">{date}</time>
+tickets.list.time_spent: "{ count } besteed"
+tickets.list.time_spent.unaccounted: "{ count } niet-toegerekend"
+tickets.list.updated_on: (bijgewerkt op <time datetime="{dateIso}">{date}</time>)
+tickets.new.open_ticket: Ticket openen
+tickets.new.submit: Ticket aanmaken
+tickets.new.title: Nieuw ticket
+tickets.observers: Waarnemers
+tickets.organization: Organisatie
+tickets.organization.edit.information: U staat op het punt een ticket over te
+  dragen naar een andere organisatie. <strong>Houd er rekening mee dat u hiermee
+  mogelijk toegang tot dit ticket geeft aan nieuwe personen.</strong> Bovendien
+  worden de betrokkenen van het ticket die niet tot de bestemmingsorganisatie
+  behoren, verwijderd. Als het ticket gekoppeld is aan contracten, worden deze
+  ook verwijderd.
+tickets.organization.edit.title: Ticket overdragen
+tickets.organization.edit.transfer: Overdragen
+tickets.priority: Prioriteit
+tickets.priority.edit.title: Prioriteit bewerken
+tickets.priority.high: Hoog
+tickets.priority.low: Laag
+tickets.priority.medium: Gemiddeld
+tickets.requester: Aanvrager
+tickets.show.actions.rename: Ticket hernoemen
+tickets.show.actions.reopen: Ticket heropenen
+tickets.show.actions.reopen.confirm: Het ticket is momenteel gesloten. Het is
+  vaak beter om een nieuw ticket te openen, tenzij er sprake is van een fout.
+  Weet u zeker dat u dit ticket wilt heropenen?
+tickets.show.actions.transfer: Ticket overdragen
+tickets.show.actions.turn_into_incident: Omzetten naar incident
+tickets.show.actions.turn_into_request: Omzetten naar aanvraag
+tickets.show.actions.update_status: Status bewerken
+tickets.show.answer: Antwoord
+tickets.show.answer_solution: Wat vindt u van de voorgestelde oplossing?
+tickets.show.answer_solution.approve: Oplossing goedkeuren
+tickets.show.answer_solution.nothing: Geen beslissing
+tickets.show.answer_solution.refuse: Oplossing weigeren
+tickets.show.answer_type: Antwoordtype
+tickets.show.answer_type.confidential: Vertrouwelijk antwoord
+tickets.show.answer_type.normal: Antwoord
+tickets.show.answer_type.solution: Oplossing
+tickets.show.assign_yourself: wijs het ticket aan uzelf toe
+tickets.show.assignee: "Toegewezen aan:"
+tickets.show.hide_history: Wijzigingsgeschiedenis verbergen
+tickets.show.impact: "Impact:"
+tickets.show.message.confidential: Vertrouwelijk
+tickets.show.message.solution: Oplossing
+tickets.show.message.via_email: Dit bericht is via e-mail verzonden
+tickets.show.minutes: minuten
+tickets.show.number_messages: "{count, plural, =0 {Geen berichten} one {1 bericht} other {# berichten}}"
+tickets.show.observers: "Waarnemers:"
+tickets.show.observers.none: Geen
+tickets.show.opened_incident: heeft dit <strong>incident</strong> geopend
+tickets.show.opened_on: op {date}
+tickets.show.opened_request: heeft deze <strong>aanvraag</strong> geopend
+tickets.show.requester: "Aanvrager:"
+tickets.show.show_history: Wijzigingsgeschiedenis tonen
+tickets.show.time_spent: "{count} besteed"
+tickets.show.time_spent.accounted: "{ count } toegerekend"
+tickets.show.time_spent.edit: Tijd bewerken
+tickets.show.time_spent.unaccounted: niet-toegerekend
+tickets.show.urgency: "Urgentie:"
+tickets.sort.alphabetical: Alfabetische volgorde
+tickets.sort.label: Sorteren op
+tickets.sort.newest: Nieuwste
+tickets.sort.oldest: Oudste
+tickets.sort.oldest_activity: Oudste activiteit
+tickets.sort.recent_activity: Recente activiteit
+tickets.sort.reverse_alphabetical: Omgekeerde alfabetische volgorde
+tickets.status: Status
+tickets.status.closed: Gesloten
+tickets.status.edit.title: Status bewerken
+tickets.status.finished: Voltooid
+tickets.status.in_progress: In behandeling
+tickets.status.new: Nieuw
+tickets.status.open: Open
+tickets.status.pending: In afwachting
+tickets.status.planned: Gepland
+tickets.status.resolved: Opgelost
+tickets.tasks.add_to_calendar: Toevoegen aan uw agenda
+tickets.tasks.edit: Taak bewerken
+tickets.tasks.finish: Markeren als voltooid
+tickets.tasks.finished: Voltooid
+tickets.tasks.finished_at: Voltooid op {date}
+tickets.tasks.ongoing: Lopend
+tickets.tasks.plan: Taak plannen
+tickets.tasks.planned: Gepland
+tickets.team: Verantwoordelijk team
+tickets.team.none: Geen team
+tickets.time_spent: Bestede tijd
+tickets.time_spent.accounted: "Toegerekende tijd:"
+tickets.time_spent.real: "Werkelijke tijd:"
+tickets.time_spent.total: "Totale tijd:"
+tickets.time_spent.unaccounted: "Niet-toegerekende tijd:"
+tickets.timeline.diff_days: "{days} dagen later"
+tickets.timeline.today: (vandaag)
+tickets.title: Titel
+tickets.title.edit.title: Ticket hernoemen
+tickets.type.incident: Incident
+tickets.type.request: Aanvraag
+tickets.unassigned: Niet toegewezen
+tickets.urgency: Urgentie
+tickets.urgency.high: Hoog
+tickets.urgency.low: Laag
+tickets.urgency.medium: Gemiddeld
+time_spents.edit.title: Bestede tijd bewerken
+users.anonymous: Anonieme gebruiker
+users.color_scheme: Kleurenschema
+users.color_scheme.auto: Automatisch
+users.color_scheme.dark: Donker
+users.color_scheme.light: Licht
+users.deleted: Verwijderde gebruiker
+users.deletion.confirm: Weet u zeker dat u deze gebruiker wilt verwijderen?
+users.deletion.going_delete: U gaat de gebruiker {user} verwijderen. Dit zal ook
+  al zijn tickets, berichten, documenten en bestede tijd verwijderen. Dit kan de
+  traceerbaarheid van de betreffende tickets beïnvloeden, evenals de
+  contractuele opvolging (indien dit een probleem is, kunt u de gebruiker in
+  plaats daarvan anonimiseren).
+users.deletion.submit: Gebruiker verwijderen
+users.deletion.title: Verwijdering
+users.edit.title: Een gebruiker bewerken
+users.email: E-mailadres
+users.form.ldap.managed: U kunt sommige informatie niet wijzigen omdat dit
+  account wordt beheerd via LDAP.
+users.form.organization_caption: De tickets die door deze gebruiker via e-mail
+  worden geopend, worden gekoppeld aan deze organisatie.
+users.form.password.empty_keep_current: Laat leeg om het huidige wachtwoord te behouden.
+users.form.prevent_login: De gebruiker beletten in te loggen op de webinterface
+users.identifier: E-mailadres of identificatie
+users.index.authorizations: "{count, plural, =0 {Geen machtigingen} one {1
+  machtiging} other {# machtigingen}}"
+users.index.new_user: Nieuwe gebruiker
+users.index.no_users: Geen gebruikers
+users.index.number: "{count, plural, =0 {Geen gebruikers} one {1 gebruiker} other {# gebruikers}}"
+users.index.title: Gebruikers
+users.language: Taal
+users.ldap_identifier: LDAP-identificatie
+users.name: Naam
+users.new.submit: Gebruiker aanmaken
+users.new.title: Nieuwe gebruiker
+users.organization: Organisatie
+users.organization.auto: Automatisch
+users.password: Wachtwoord
+users.show.anonymize: Gebruiker anonimiseren
+users.show.authorizations.new: Machtiging geven
+users.show.authorizations.title: Machtigingen
+users.show.cannot_login: Deze gebruiker heeft geen toestemming om in te loggen op de webinterface.
+users.show.edit: Gebruiker bewerken
+users.show.email: "E-mail: {email}"
+users.show.is_anonymized: Deze gebruiker is geanonimiseerd door {by} op {date}.
+users.show.ldap_identifier: "LDAP-identificatie: {identifier}"
+users.show.name: "Naam: {name}"
+users.show.no_organization: "Organisatie: Geen"
+users.show.organization: "Organisatie: {name}"
+users.show.organization_automatic: "Organisatie: {name} (automatisch)"
+users.show.profile: Gebruikersprofiel
+users.show.sessions_activity.none: Geen activiteit
+users.show.sessions_activity.title: Sessieactiviteit
+users.yourself: jezelf

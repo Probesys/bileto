@@ -13,6 +13,7 @@ class Locales
     public const SUPPORTED_LOCALES = [
         'en_GB' => 'English',
         'fr_FR' => 'Français',
+        'nl_BE' => 'Nederlands',
     ];
 
     /** @var key-of<self::SUPPORTED_LOCALES> */
