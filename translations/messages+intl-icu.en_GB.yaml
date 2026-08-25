@@ -351,7 +351,7 @@ pagination.next: Next
 pagination.previous: Previous
 passwords.edit.form.password: 'New password'
 passwords.edit.form.submit: 'Change the password'
-passwords.edit.short: 'You are about to change the password for the account <strong>alix@example.com</strong>. '
+passwords.edit.short: 'You are about to change the password for the account <strong>{email}</strong>.'
 passwords.edit.title: 'Changing password'
 passwords.reset.form.email: 'Email address'
 passwords.reset.form.submit: 'Send reset email'
