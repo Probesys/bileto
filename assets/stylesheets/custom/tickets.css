@@ -2,21 +2,50 @@
 /* Copyright 2022-2026 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
+.list-tickets__item {
+    display: grid;
+
+    gap: var(--space-medium);
+
+    grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 800px) {
+    .list-tickets__item {
+        gap: var(--space-larger);
+
+        grid-template-columns: minmax(0, 7fr) minmax(0, 3fr) minmax(0, 2fr);
+    }
+}
+
+.list-tickets__content {
+    min-width: 0;
+}
+
 .list-tickets__id {
     color: var(--color-primary12);
     font-weight: 700;
 }
 
-@media (min-width: 800px) {
-    .list-tickets__id {
-        min-width: 3rem;
-    }
+.list-tickets__title {
+    word-break: break-all;
 }
 
 .list-tickets__organization {
     color: var(--color-primary12);
     text-decoration: none;
     text-transform: uppercase;
+    word-break: break-all;
+}
+
+.list-tickets__requester,
+.list-tickets__assignee {
+    word-break: break-all;
+}
+
+.list-tickets__badge {
+    text-align: left;
+    white-space: normal;
 }
 
 .ticket__info-separator {
