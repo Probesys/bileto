@@ -72,6 +72,7 @@ document.addEventListener('turbo:frame-missing', (event) => {
 // Submitting forms with a `data-turbo-preserve-scroll` attribute will keep the
 // scroll position at the current position.
 let disableScroll = false;
+let scrollPositionToRestore = null;
 
 document.addEventListener('turbo:submit-start', (event) => {
     if (event.detail.formSubmission.formElement.hasAttribute('data-turbo-preserve-scroll')) {
@@ -80,7 +81,13 @@ document.addEventListener('turbo:submit-start', (event) => {
 });
 
 document.addEventListener('turbo:before-render', () => {
-    if (disableScroll && Turbo.navigator.currentVisit) {
+    if (!disableScroll) {
+        return;
+    }
+
+    disableScroll = true;
+
+    if (Turbo.navigator.currentVisit) {
         // As explained on GitHub, `Turbo.navigator.currentVisit.scrolled`
         // is internal and private attribute: we should NOT access it.
         // Unfortunately, there is no good alternative yet to maintain the
@@ -88,8 +95,28 @@ document.addEventListener('turbo:before-render', () => {
         // upgrading Turbo.
         // Reference: https://github.com/hotwired/turbo/issues/37#issuecomment-979466543
         Turbo.navigator.currentVisit.scrolled = true;
-        disableScroll = false;
+    } else {
+        // Error responses (e.g. 422 on form error) are rendered without
+        // starting a visit. In this case, Turbo scrolls to the top of the page
+        // *after* the render. Remember the position so we can restore it.
+        scrollPositionToRestore = { x: window.scrollX, y: window.scrollY };
     }
+});
+
+document.addEventListener('turbo:render', () => {
+    if (!scrollPositionToRestore) {
+        return;
+    }
+
+    const { x, y } = scrollPositionToRestore;
+
+    scrollPositionToRestore = null;
+
+    // Wait for the next frame as Turbo scrolls to the top right after the
+    // render.
+    requestAnimationFrame(() => {
+        window.scrollTo(x, y);
+    });
 });
 
 // The most important feature of Bileto
