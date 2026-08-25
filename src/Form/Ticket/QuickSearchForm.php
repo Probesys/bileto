@@ -176,7 +176,7 @@ class QuickSearchForm extends AbstractType
                 'class' => 'button',
             ],
             'row_attr' => [
-                'class' => 'text--right',
+                'class' => 'form__actions-search',
             ],
         ]);
 

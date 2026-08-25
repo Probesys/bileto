@@ -344,6 +344,25 @@ legend {
     text-align: center;
 }
 
+.form__actions-search {
+    position: sticky;
+    bottom: 0;
+
+    padding: var(--space-smaller);
+
+    text-align: right;
+
+    background-color: var(--color-grey3);
+    border-radius: var(--border-radius);
+}
+
+@media (min-width: 800px) {
+    .form__actions-search {
+        margin-right: calc(-1 * var(--space-small));
+        margin-left: calc(-1 * var(--space-small));
+    }
+}
+
 .input-container {
     --button-size: 2.5rem;
 
