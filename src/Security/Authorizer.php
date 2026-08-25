@@ -42,6 +42,7 @@ class Authorizer
         $user->addAuthorization($authorization);
 
         $this->authorizationRepository->save($authorization, $flush);
+        $this->authorizationRepository->clearCacheAuthorizations();
     }
 
     public function ungrant(Entity\User $user, Entity\Authorization $authorization): void
@@ -51,6 +52,7 @@ class Authorizer
         }
 
         $this->authorizationRepository->remove($authorization, true);
+        $this->authorizationRepository->clearCacheAuthorizations();
         $this->refreshDefaultOrganization($user);
     }
 
@@ -70,6 +72,7 @@ class Authorizer
         }
 
         $this->authorizationRepository->save($authorizations, true);
+        $this->authorizationRepository->clearCacheAuthorizations();
     }
 
     public function ungrantFromTeam(Entity\User $user, Entity\Team $team): void
@@ -82,6 +85,7 @@ class Authorizer
         ]);
 
         $this->authorizationRepository->remove($authorizations, true);
+        $this->authorizationRepository->clearCacheAuthorizations();
         $this->refreshDefaultOrganization($user);
     }
 
@@ -101,6 +105,7 @@ class Authorizer
         }
 
         $this->authorizationRepository->save($authorizations, true);
+        $this->authorizationRepository->clearCacheAuthorizations();
     }
 
     /**

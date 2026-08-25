@@ -148,4 +148,14 @@ class AuthorizationRepository extends ServiceEntityRepository implements Uid\Uid
 
         return $this->cacheAuthorizations[$keyCache][1];
     }
+
+    /**
+     * Clear the cache of authorizations.
+     *
+     * It should be used after (un)granting authorizations.
+     */
+    public function clearCacheAuthorizations(): void
+    {
+        $this->cacheAuthorizations = [];
+    }
 }
