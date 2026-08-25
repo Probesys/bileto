@@ -15,7 +15,7 @@ class EsbuildAssetExtension
 {
     public function __construct(
         private string $pathToAssets,
-        #[Autowire('%app.public_directory%')]
+        #[Autowire(param: 'app.public_directory')]
         private string $pathToPublic,
     ) {
     }

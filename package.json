@@ -15,7 +15,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.0",
     "@stylistic/stylelint-plugin": "^5.0.0",
-    "esbuild": "0.28.1",
+    "esbuild": "0.28.2",
     "eslint": "^10.0.0",
     "globals": "^17.4.0",
     "stylelint": "^17.4.0",
