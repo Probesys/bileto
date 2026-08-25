@@ -28,7 +28,7 @@ For each `MailboxEmail`:
 2. it gets the default organization of the requester;
 3. it detects a potential ticket to which the email might reply;
 4. if it detects a ticket, it checks that the requester can answer to it and that it is not closed;
-5. otherwise it checks the requester has the permission to create tickets in the organization and it creates one based on the `Subject` and the `Body` of the email;
+5. otherwise it checks the requester has the permission to create tickets in the organization (and grants a default authorization if required and possible), then it creates a ticket based on the `Subject` and the `Body` of the email;
 6. it saves attachments as `MessageDocument`s;
 7. finally, it deletes the `MailboxEmail` from the database.
 

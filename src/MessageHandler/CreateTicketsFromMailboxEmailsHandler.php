@@ -214,6 +214,16 @@ class CreateTicketsFromMailboxEmailsHandler
 
         $defaultOrganization = $this->userService->getDefaultOrganization($sender);
 
+        if (!$defaultOrganization && $this->userService->grantDefaultAuthorization($sender)) {
+            $this->logger->notice(
+                "MailboxEmail #{$mailboxEmail->getId()}: " .
+                "granted a default authorization to {$sender->getEmail()}"
+            );
+
+            $defaultOrganization = $this->userService->getDefaultOrganization($sender);
+        }
+
+
         if (!$defaultOrganization) {
             // By definition, the default organization is an organization in
             // which the user can create tickets. If he has none, then he

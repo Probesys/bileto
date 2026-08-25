@@ -19,6 +19,7 @@ class UserService
     public function __construct(
         private Repository\EntityEventRepository $entityEventRepository,
         private Repository\OrganizationRepository $organizationRepository,
+        private Repository\RoleRepository $roleRepository,
         private Repository\SessionLogRepository $sessionLogRepository,
         private Repository\UserRepository $userRepository,
         private ActivityMonitor\ActiveUser $activeUser,
@@ -28,6 +29,16 @@ class UserService
     ) {
     }
 
+    /**
+     * Return the default organization in which the user can create tickets.
+     *
+     * It defaults to the organization set on the user, then to the
+     * organization corresponding to his email's domain (if any), then finally,
+     * it looks for the first organization in which the user can create tickets.
+     *
+     * This method requires that the user has at least one authorization.
+     * Otherwise, it returns null.
+     */
     public function getDefaultOrganization(Entity\User $user): ?Entity\Organization
     {
         $organization = $user->getOrganization();
@@ -65,6 +76,47 @@ class UserService
                 );
             }
         );
+    }
+
+    /**
+     * Grant a default authorization (default role on the user's default
+     * organization if any).
+     *
+     * The authorization is not granted if the user already has at least one
+     * authorization.
+     */
+    public function grantDefaultAuthorization(Entity\User $user, bool $flush = true): bool
+    {
+        if (!$user->getAuthorizations()->isEmpty()) {
+            return false;
+        }
+
+
+        $defaultRole = $this->roleRepository->findDefault();
+
+        if (!$defaultRole) {
+            return false;
+        }
+
+        $defaultOrganization = $user->getOrganization();
+
+        if (!$defaultOrganization) {
+            $domain = Utils\Email::extractDomain($user->getEmail());
+            $defaultOrganization = $this->organizationRepository->findOneByDomainOrDefault($domain);
+        }
+
+        if (!$defaultOrganization) {
+            return false;
+        }
+
+        $this->authorizer->grant(
+            $user,
+            $defaultRole,
+            $defaultOrganization,
+            $flush,
+        );
+
+        return true;
     }
 
     public function anonymize(Entity\User $user): void

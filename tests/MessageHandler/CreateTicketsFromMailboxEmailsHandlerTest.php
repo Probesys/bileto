@@ -614,6 +614,57 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
     }
 
+    public function testInvokeGrantsDefaultAuthorizationIfRequesterHasNoneYet(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $email = 'alix@example.com';
+        $domain = 'example.com';
+        $organization = OrganizationFactory::createOne([
+            'domains' => [$domain],
+        ]);
+        $user = UserFactory::createOne([
+            'email' => $email,
+            'organization' => null,
+        ]);
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $email,
+        ]);
+        $role = RoleFactory::createOne([
+            'type' => 'user',
+            'isDefault' => true,
+            'permissions' => [
+                'orga:see',
+                'orga:create:tickets',
+            ],
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+        $this->assertSame(1, UserFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+        $this->assertSame(1, UserFactory::count());
+
+        $authorizations = $user->getAuthorizations()->toArray();
+        $this->assertSame(1, count($authorizations));
+        $this->assertSame($organization->getId(), $authorizations[0]->getOrganization()->getId());
+        $this->assertSame($role->getId(), $authorizations[0]->getRole()->getId());
+        $this->assertSame($user->getId(), $authorizations[0]->getHolder()->getId());
+
+        $ticket = TicketFactory::first();
+        $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
+        $this->assertSame($user->getId(), $ticket->getRequester()->getId());
+        $this->assertSame($organization->getId(), $ticket->getOrganization()->getId());
+    }
+
     public function testInvokeAddsAdditionalRecipientsAsObservers(): void
     {
         $container = static::getContainer();

@@ -8,20 +8,16 @@ namespace App\Service;
 
 use App\Entity;
 use App\Repository;
-use App\Security;
 use App\Service;
-use App\Utils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserCreator
 {
     public function __construct(
-        private Repository\OrganizationRepository $organizationRepository,
-        private Repository\RoleRepository $roleRepository,
         private Repository\UserRepository $userRepository,
-        private Security\Authorizer $authorizer,
         private Service\Locales $locales,
+        private Service\UserService $userService,
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $passwordHasher,
     ) {
@@ -45,17 +41,7 @@ class UserCreator
         $this->userRepository->save($user, $flush);
 
         if ($grantDefaultAuthorizations) {
-            $defaultRole = $this->roleRepository->findDefault();
-            $defaultOrganization = $this->getDefaultOrganization($user);
-
-            if ($defaultRole && $defaultOrganization) {
-                $this->authorizer->grant(
-                    $user,
-                    $defaultRole,
-                    $defaultOrganization,
-                    $flush,
-                );
-            }
+            $this->userService->grantDefaultAuthorization($user, $flush);
         }
     }
 
@@ -84,18 +70,5 @@ class UserCreator
         $this->createUser($user, $grantDefaultAuthorizations, $flush);
 
         return $user;
-    }
-
-    public function getDefaultOrganization(Entity\User $user): ?Entity\Organization
-    {
-        $organization = $user->getOrganization();
-
-        if ($organization) {
-            return $organization;
-        }
-
-        $domain = Utils\Email::extractDomain($user->getEmail());
-
-        return $this->organizationRepository->findOneByDomainOrDefault($domain);
     }
 }
