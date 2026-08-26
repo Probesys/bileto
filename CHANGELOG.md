@@ -1,5 +1,24 @@
 # Changelog of Bileto
 
+## 2026-08-26 - 0.16.1
+
+### Features
+
+- Make the quick search submit button always visible ([5e7e6977](https://github.com/Probesys/bileto/commit/5e7e6977))
+- Add Dutch translation ([f0258e68](https://github.com/Probesys/bileto/commit/f0258e68))
+
+### Bug fixes
+
+- Fix scroll preservation on form errors ([dc67c52f](https://github.com/Probesys/bileto/commit/dc67c52f))
+- Grant default authorization if needed (and possible) when receiving an email from an existing user ([5a9f31a3](https://github.com/Probesys/bileto/commit/5a9f31a3))
+- Fix the sizes of the list columns (tickets and contracts) ([3e348bbe](https://github.com/Probesys/bileto/commit/3e348bbe))
+- Fix English placeholder on the "edit password" page ([8d65791b](https://github.com/Probesys/bileto/commit/8d65791b))
+
+### Maintenance
+
+- Make sure to clear authorization cache on (un)granting actions ([889bd76b](https://github.com/Probesys/bileto/commit/889bd76b))
+- Update the dependencies ([8848cfde](https://github.com/Probesys/bileto/commit/8848cfde))
+
 ## 2026-06-17 - 0.16.0
 
 ### Migration notes
