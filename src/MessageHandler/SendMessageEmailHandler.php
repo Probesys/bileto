@@ -152,8 +152,8 @@ class SendMessageEmailHandler
         // Set correct references headers so email clients can add the email to
         // the conversation thread.
         $emailReferences = [];
-        foreach ($ticket->getMessages(confidential: false) as $message) {
-            $references = $message->getEmailNotificationsReferences();
+        foreach ($ticket->getMessages(confidential: false) as $ticketMessage) {
+            $references = $ticketMessage->getEmailNotificationsReferences();
             if ($references) {
                 $emailReferences = array_merge($emailReferences, $references);
             }
