@@ -1,5 +1,13 @@
 # Changelog of Bileto
 
+## 2026-08-27 - 0.16.2
+
+### Bug fixes
+
+- Prevent Bileto to fall in a notification infinite loop ([85b11268](https://github.com/Probesys/bileto/commit/85b11268))
+- Normalize addresses during emails handling ([5b0f9c67](https://github.com/Probesys/bileto/commit/5b0f9c67))
+- Make sure to not erase message variable in SendMessageEmailHandler ([78c8851c](https://github.com/Probesys/bileto/commit/78c8851c))
+
 ## 2026-08-26 - 0.16.1
 
 ### Features
