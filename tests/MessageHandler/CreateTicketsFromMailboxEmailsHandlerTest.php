@@ -760,6 +760,81 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame(0, MessageFactory::count());
     }
 
+    public function testInvokeIgnoresSelfEmail(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $email = $_ENV['MAILER_FROM'];
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+            'email' => $email,
+        ]);
+        // While this user SHOULD NOT have any permission, it CAN have one. We
+        // want to be sure the email is not processed even in this case.
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+    }
+
+    public function testInvokeIgnoresAlreadyProcessed(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $messageId = 'foobar@example.com';
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $ticket = TicketFactory::createOne([
+            'organization' => $organization,
+            'requester' => $user,
+        ]);
+        $message = MessageFactory::createOne([
+            'ticket' => $ticket,
+            'createdBy' => $user,
+            'notificationsReferences' => ["email:{$messageId}"],
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = \Zenstruck\Foundry\faker()->words(3, true);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'id' => $messageId,
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+    }
+
     public function testInvokeFailsIfRequesterDoesNotExists(): void
     {
         $container = static::getContainer();

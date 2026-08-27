@@ -88,10 +88,27 @@ class CreateTicketsFromMailboxEmailsHandler
             return;
         }
 
+        if ($this->isSelfEmail($mailboxEmail)) {
+            $this->logger->notice("MailboxEmail #{$mailboxEmail->getId()} ignored: detected as sent by Bileto itself");
+
+            $this->mailboxEmailRepository->remove($mailboxEmail, true);
+
+            return;
+        }
+
+        if ($this->isAlreadyProcessed($mailboxEmail)) {
+            $this->logger->notice("MailboxEmail #{$mailboxEmail->getId()} ignored: detected as already processed");
+
+            $this->mailboxEmailRepository->remove($mailboxEmail, true);
+
+            return;
+        }
+
         // First, get the user matching with the sender of the email.
         $sender = $this->getSender($mailboxEmail);
 
         if (!$sender) {
+            // Don't log or mark the mail in error as it is done by `getSender()`.
             return;
         }
 
@@ -137,6 +154,28 @@ class CreateTicketsFromMailboxEmailsHandler
         $this->mailboxEmailRepository->remove($mailboxEmail, true);
 
         $this->activeUser->change(null);
+    }
+
+    /**
+     * Return true if the mail is detected as sent by Bileto itself (based on
+     * the "From" address).
+     */
+    private function isSelfEmail(Entity\MailboxEmail $mailboxEmail): bool
+    {
+        $senderEmail = $mailboxEmail->getFrom();
+        return $senderEmail === $this->mailerFrom;
+    }
+
+    /**
+     * Return true if the mail has already been processed (or sent by Bileto
+     * based on the Message-Id).
+     */
+    private function isAlreadyProcessed(Entity\MailboxEmail $mailboxEmail): bool
+    {
+        $messageId = $mailboxEmail->getMessageId();
+        $reference = "email:{$messageId}";
+        $existingMessage = $this->messageRepository->findOneByNotificationReference($reference);
+        return $existingMessage !== null;
     }
 
     /**

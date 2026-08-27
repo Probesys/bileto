@@ -24,6 +24,7 @@ This is the job of the [`CreateTicketsFromMailboxEmailsHandler`](/src/MessageHan
 
 For each `MailboxEmail`:
 
+0. it ignores autoreply emails, emails sent by Bileto itself, or emails already processed;
 1. it gets the requester (i.e. the `From` header);
 2. it gets the default organization of the requester;
 3. it detects a potential ticket to which the email might reply;
