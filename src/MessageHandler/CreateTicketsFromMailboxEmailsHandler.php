@@ -46,6 +46,7 @@ class CreateTicketsFromMailboxEmailsHandler
         #[Autowire(env: 'MAILER_FROM')]
         private string $mailerFrom,
     ) {
+        $this->mailerFrom = Utils\Email::normalize($this->mailerFrom);
     }
 
     public function __invoke(Message\CreateTicketsFromMailboxEmails $message): void

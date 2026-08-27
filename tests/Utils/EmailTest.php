@@ -11,6 +11,15 @@ use PHPUnit\Framework\TestCase;
 
 class EmailTest extends TestCase
 {
+    public function testNormalize(): void
+    {
+        $email = "\nAlix@Example.com\t ";
+
+        $normalizedEmail = Email::normalize($email);
+
+        $this->assertEquals('alix@example.com', $normalizedEmail);
+    }
+
     public function testExtractDomain(): void
     {
         $email = 'alix@example.com';

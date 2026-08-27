@@ -8,6 +8,11 @@ namespace App\Utils;
 
 class Email
 {
+    public static function normalize(string $email): string
+    {
+        return mb_strtolower(trim($email));
+    }
+
     public static function extractDomain(string $email): string
     {
         $domain = mb_strrchr($email, '@');

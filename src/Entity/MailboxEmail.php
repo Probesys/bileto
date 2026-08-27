@@ -12,6 +12,7 @@ use App\Repository\MailboxEmailRepository;
 use App\Service;
 use App\Uid\UidEntityInterface;
 use App\Uid\UidEntityTrait;
+use App\Utils\Email;
 use App\Utils\Time;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -131,12 +132,13 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
 
     public function getMessageId(): string
     {
-        return $this->getEmail()->getMessageId()->first();
+        $messageId = $this->getEmail()->getMessageId()->first();
+        return str_replace(['<', '>'], '', $messageId);
     }
 
     public function getFrom(): string
     {
-        return $this->getEmail()->getFrom()->first()->mail;
+        return Email::normalize($this->getEmail()->getFrom()->first()->mail);
     }
 
     /**
@@ -148,7 +150,7 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
         $ccAddresses = $email->getTo()->all();
 
         return array_map(function (PHPIMAP\Address $address): string {
-            return $address->mail;
+            return Email::normalize($address->mail);
         }, $ccAddresses);
     }
 
@@ -161,7 +163,7 @@ class MailboxEmail implements EntityInterface, MonitorableEntityInterface, UidEn
         $ccAddresses = $email->getCc()->all();
 
         return array_map(function (PHPIMAP\Address $address): string {
-            return $address->mail;
+            return Email::normalize($address->mail);
         }, $ccAddresses);
     }
 
