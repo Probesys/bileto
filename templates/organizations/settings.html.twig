@@ -34,37 +34,72 @@
     <main class="layout__body">
         <h1>{{ 'organizations.settings.title' | trans }}</h1>
 
-        <div class="panel">
-            {{ include('organizations/_form.html.twig', { 'form': form }) }}
-        </div>
+        {% if form is not null %}
+            <div class="panel">
+                {{ include('organizations/_form.html.twig', { 'form': form }) }}
+            </div>
+        {% endif %}
 
-        <div class="panel">
-            <form action="{{ path('delete organization', { uid: organization.uid }) }}" method="post" class="form--standard">
-                <h2>{{ 'organizations.settings.deletion.title' | trans }}</h2>
+        {% if archiveForm is not null %}
+            <div class="panel">
+                {{ form_start(archiveForm) }}
+                    <h2>{{ 'organizations.settings.archive.title' | trans }}</h2>
 
-                {{ include('alerts/_alert.html.twig', {
-                    type: 'warning',
-                    title: 'common.caution' | trans,
-                    message: 'organizations.settings.deletion.going_delete' | trans({ organization: organization.name }),
-                }, with_context = false) }}
+                    {{ form_errors(archiveForm) }}
 
-                {% if error %}
-                    {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
-                {% endif %}
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'warning',
+                        title: 'common.caution' | trans,
+                        message: 'organizations.settings.archive.warning' | trans({ organization: organization.name }),
+                    }, with_context = false) }}
 
-                <div class="form__actions">
-                    <button
-                        id="form-delete-organization-submit"
-                        class="button--primary"
-                        type="submit"
-                        data-turbo-confirm="{{ 'organizations.settings.deletion.confirm' | trans }}"
-                    >
-                        {{ 'organizations.settings.deletion.submit' | trans }}
-                    </button>
-                </div>
+                    {{ form_row(archiveForm.deletedAt) }}
 
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete organization') }}">
-            </form>
-        </div>
+                    {{ form_row(archiveForm.usersToArchive) }}
+
+                    <div class="form__actions">
+                        <button
+                            id="form-archive-organization-submit"
+                            class="button--primary"
+                            type="submit"
+                            data-turbo-confirm="{{ 'organizations.settings.archive.confirm' | trans }}"
+                        >
+                            {{ 'organizations.settings.archive.submit' | trans }}
+                        </button>
+                    </div>
+                {{ form_end(archiveForm) }}
+            </div>
+        {% endif %}
+
+        {% if form is not null %}
+            <div class="panel">
+                <form action="{{ path('delete organization', { uid: organization.uid }) }}" method="post" class="form--standard">
+                    <h2>{{ 'organizations.settings.deletion.title' | trans }}</h2>
+
+                    {{ include('alerts/_alert.html.twig', {
+                        type: 'warning',
+                        title: 'common.caution' | trans,
+                        message: 'organizations.settings.deletion.going_delete' | trans({ organization: organization.name }),
+                    }, with_context = false) }}
+
+                    {% if error %}
+                        {{ include('alerts/_error.html.twig', { message: error }, with_context = false) }}
+                    {% endif %}
+
+                    <div class="form__actions">
+                        <button
+                            id="form-delete-organization-submit"
+                            class="button--primary"
+                            type="submit"
+                            data-turbo-confirm="{{ 'organizations.settings.deletion.confirm' | trans }}"
+                        >
+                            {{ 'organizations.settings.deletion.submit' | trans }}
+                        </button>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete organization') }}">
+                </form>
+            </div>
+        {% endif %}
     </main>
 {% endblock %}

@@ -54,12 +54,19 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
      * user has access to an organization as a "user", it will not be returned
      * if role type is set to "agent".
      *
+     * By default, archived organizations are excluded. Set $includeArchived
+     * to true to include them, or use findAuthorizedArchivedOrganizations to
+     * fetch only the archived ones.
+     *
      * @param 'any'|'user'|'agent' $roleType
      *
      * @return Entity\Organization[]
      */
-    public function findAuthorizedOrganizations(Entity\User $user, string $roleType = 'any'): array
-    {
+    public function findAuthorizedOrganizations(
+        Entity\User $user,
+        string $roleType = 'any',
+        bool $includeArchived = false,
+    ): array {
         $entityManager = $this->getEntityManager();
         /** @var AuthorizationRepository */
         $authorizationRepository = $entityManager->getRepository(Entity\Authorization::class);
@@ -74,10 +81,47 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
             // If "null" is in the list of the scoped organizations, it means
             // that an authorization is applied globally and grants a global
             // access to the user. We can return all the organizations then.
-            return $this->findAll();
-        } else {
-            return $scopedOrganizations;
+            if ($includeArchived) {
+                return $this->findAll();
+            }
+
+            $query = $entityManager->createQuery(<<<SQL
+                SELECT o
+                FROM App\Entity\Organization o
+                WHERE o.archivedAt IS NULL
+            SQL);
+
+            return $query->getResult();
         }
+
+        if (!$includeArchived) {
+            $scopedOrganizations = array_values(array_filter(
+                $scopedOrganizations,
+                fn (?Entity\Organization $org): bool => $org !== null && !$org->isArchived(),
+            ));
+        }
+
+        /** @var Entity\Organization[] */
+        return $scopedOrganizations;
+    }
+
+    /**
+     * Return the list of archived organizations that the user has access to.
+     *
+     * @param 'any'|'user'|'agent' $roleType
+     *
+     * @return Entity\Organization[]
+     */
+    public function findAuthorizedArchivedOrganizations(
+        Entity\User $user,
+        string $roleType = 'any',
+    ): array {
+        $organizations = $this->findAuthorizedOrganizations($user, $roleType, includeArchived: true);
+
+        return array_values(array_filter(
+            $organizations,
+            fn (Entity\Organization $org): bool => $org->isArchived(),
+        ));
     }
 
     /**
@@ -94,7 +138,7 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
         Entity\Organization $organization,
         string $roleType = 'any',
     ): bool {
-        $authorizedOrganizations = $this->findAuthorizedOrganizations($user, $roleType);
+        $authorizedOrganizations = $this->findAuthorizedOrganizations($user, $roleType, includeArchived: true);
         return in_array($organization, $authorizedOrganizations);
     }
 
@@ -137,6 +181,7 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
             SELECT o
             FROM App\Entity\Organization o
             WHERE JSON_CONTAINS(o.domains, :domain) = true
+            AND o.archivedAt IS NULL
         SQL);
         $query->setParameter('domain', '"' . $domain . '"');
 
@@ -157,8 +202,29 @@ class OrganizationRepository extends ServiceEntityRepository implements Uid\UidG
             SELECT o
             FROM App\Entity\Organization o
             WHERE JSON_CONTAINS(o.domains, '"*"') = true
+            AND o.archivedAt IS NULL
         SQL);
 
         return $query->getOneOrNullResult();
+    }
+
+    /**
+     * Return the organizations whose deleted_at is reached.
+     *
+     * @return Entity\Organization[]
+     */
+    public function findToDelete(\DateTimeImmutable $now): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(<<<SQL
+            SELECT o
+            FROM App\Entity\Organization o
+            WHERE o.deletedAt IS NOT NULL
+            AND o.deletedAt <= :now
+        SQL);
+        $query->setParameter('now', $now);
+
+        return $query->getResult();
     }
 }
