@@ -209,7 +209,7 @@
                             </span>
 
                             <strong>
-                                {{ ticket.requester.displayName }}
+                                {{ ticket.requester?.displayName }}
                             </strong>
                         </p>
 
@@ -243,7 +243,7 @@
                                             data-turbo-preserve-scroll
                                         >
                                             <input type="hidden" name="ticket_actors[_token]" value="{{ csrf_token('ticket actors') }}">
-                                            <input type="hidden" name="ticket_actors[requester]" value="{{ ticket.requester.id }}">
+                                            <input type="hidden" name="ticket_actors[requester]" value="{{ ticket.requester?.id }}">
                                             <input type="hidden" name="ticket_actors[team]" value="{{ ticket.team ? ticket.team.id }}">
                                             {% for observer in ticket.observers %}
                                                 <input type="hidden" name="ticket_actors[observers][]" value="{{ observer.id }}">

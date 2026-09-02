@@ -50,7 +50,7 @@ class AnswerForm extends AbstractType
             $currentUser = $this->security->getUser();
 
             $userIsAgent = $this->authorizer->isAgent($organization);
-            $userIsRequester = $requester->getId() === $currentUser->getId();
+            $userIsRequester = $requester?->getId() === $currentUser->getId();
             $userIsAssignee = $assignee?->getId() === $currentUser->getId();
 
             if ($userIsAgent) {

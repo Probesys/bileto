@@ -199,8 +199,17 @@ class TicketEventChangesFormatterExtension
     private function formatRequesterChanges(?Entity\User $user, array $changes): string
     {
         $username = $this->formatUserName($user);
-        $oldRequester = $this->userRepository->find($changes[0]);
-        $oldRequesterUsername = $this->formatUserName($oldRequester);
+
+        if ($changes[0]) {
+            $oldRequester = $this->userRepository->find($changes[0]);
+            $oldRequesterUsername = $this->formatUserName($oldRequester);
+        } else {
+            // This should never happens, unless a ticket without any requester
+            // was _imported_. The case could be better handled, but it's so
+            // specific that we don't feel the need to spend more time on it.
+            $oldRequesterUsername = 'null';
+        }
+
         $newRequester = $this->userRepository->find($changes[1]);
         $newRequesterUsername = $this->formatUserName($newRequester);
 
