@@ -20,11 +20,13 @@ when@prod:
 
     monolog:
         handlers:
-            sentry_logs:
+            sentry:
                 type: service
-                id: Sentry\SentryBundle\Monolog\LogsHandler
+                id: Sentry\Monolog\Handler
 
     services:
-        Sentry\SentryBundle\Monolog\LogsHandler:
+        Sentry\Monolog\Handler:
             arguments:
-                - !php/const Monolog\Logger::INFO
+                $hub: '@Sentry\State\HubInterface'
+                $level: !php/const Monolog\Logger::ERROR
+                $fillExtraContext: true
