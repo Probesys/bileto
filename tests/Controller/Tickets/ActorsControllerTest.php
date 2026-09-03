@@ -147,10 +147,16 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
                 'team' => $team->getId(),
-                'assignee' => $assignee->getId(),
-                'observers' => [$observer1->getId(), $observer2->getId()],
+                'assignee' => [
+                    'select' => $assignee->getId(),
+                ],
+                'observers' => [
+                    'select' => [$observer1->getId(), $observer2->getId()],
+                ],
             ],
         ]);
 
@@ -187,8 +193,12 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
-                'assignee' => '',
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
+                'assignee' => [
+                    'select' => '',
+                ],
             ],
         ]);
 
@@ -218,8 +228,12 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
-                'observers' => [$observer->getId()],
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
+                'observers' => [
+                    'select' => [$observer->getId()],
+                ],
             ],
         ]);
 
@@ -229,6 +243,51 @@ class ActorsControllerTest extends WebTestCase
         $observers = $ticket->getObservers();
         $this->assertSame(1, count($observers));
         $this->assertSame($observer->getId(), $observers[0]->getId());
+    }
+
+    public function testPostEditAcceptsEmailAndCreatesUserAccordingly(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:update:tickets:actors']);
+        $ticket = TicketFactory::createOne([
+            'status' => 'in_progress',
+            'createdBy' => $user,
+            'requester' => null,
+            'team' => null,
+            'assignee' => null,
+            'observers' => [],
+        ]);
+
+        $this->assertSame(1, UserFactory::count());
+
+        $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
+            'ticket_actors' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket actors'),
+                'requester' => [
+                    'email' => 'alix@example.com',
+                ],
+                'observers' => [
+                    'emails' => ['benedict@example.com'],
+                ],
+            ],
+        ]);
+
+        $this->assertSame(3, UserFactory::count());
+
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $ticket->_refresh();
+        $requester = UserFactory::find([
+            'email' => 'alix@example.com',
+        ]);
+        $this->assertSame($requester->getUid(), $ticket->getRequester()->getUid());
+        $observer = UserFactory::find([
+            'email' => 'benedict@example.com',
+        ]);
+        $observers = $ticket->getObservers();
+        $this->assertSame(1, count($observers));
+        $this->assertSame($observer->getUid(), $observers[0]->getUid());
     }
 
     public function testPostEditFailsIfRequesterIsNotInOrganization(): void
@@ -250,8 +309,12 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
-                'assignee' => $user->getId(),
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
+                'assignee' => [
+                    'select' => $user->getId(),
+                ],
             ],
         ]);
 
@@ -283,9 +346,15 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $user->getId(),
-                'assignee' => $user->getId(),
-                'observers' => [$observer->getId()],
+                'requester' => [
+                    'select' => $user->getId(),
+                ],
+                'assignee' => [
+                    'select' => $user->getId(),
+                ],
+                'observers' => [
+                    'select' => [$observer->getId()],
+                ],
             ],
         ]);
 
@@ -320,8 +389,12 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
-                'assignee' => $assignee->getId(),
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
+                'assignee' => [
+                    'select' => $assignee->getId(),
+                ],
             ],
         ]);
 
@@ -358,9 +431,13 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
                 'team' => $team->getId(),
-                'assignee' => $assignee->getId(),
+                'assignee' => [
+                    'select' => $assignee->getId(),
+                ],
             ],
         ]);
 
@@ -402,9 +479,13 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => $this->generateCsrfToken($client, 'ticket actors'),
-                'requester' => $requester->getId(),
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
                 'team' => $newTeam->getId(),
-                'assignee' => $assignee->getId(),
+                'assignee' => [
+                    'select' => $assignee->getId(),
+                ],
             ],
         ]);
 
@@ -439,8 +520,12 @@ class ActorsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/tickets/{$ticket->getUid()}/actors/edit", [
             'ticket_actors' => [
                 '_token' => 'not the token',
-                'requester' => $requester->getId(),
-                'assignee' => $assignee->getId(),
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
+                'assignee' => [
+                    'select' => $assignee->getId(),
+                ],
             ],
         ]);
 

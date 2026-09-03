@@ -6,6 +6,147 @@
 
 {% use 'form_div_layout.html.twig' %}
 
+{%- block actor_row -%}
+    <div
+        class="flow flow--small"
+        data-controller="actor-selector"
+        {% if multiple and allow_email %}
+            data-actor-selector-index-value="{{ form.emails|length > 0 ? form.emails|last.vars.name + 1 : 0 }}"
+            data-actor-selector-name-template-value="{{ field_name(form.emails.vars.prototype) }}"
+        {% endif %}
+    >
+        <div class="cols cols--always cols--center flow flow--smaller">
+            {{ form_label(form, null, {
+                label_attr: {
+                    'for': field_id(form.select),
+                    'class': 'col--extend',
+                    'data-actor-selector-target': 'label',
+                }
+             }) }}
+
+            {% if allow_email %}
+                <button
+                    type="button"
+                    class="button--icon button--discreet"
+                    data-actor-selector-target="showEmailButton"
+                    data-action="actor-selector#showEmail"
+                >
+                    {{ icon('pencil') }}
+                    <span class="sr-only">{{ 'forms.actors.go_to_enter_email' | trans }}</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="button--icon button--discreet"
+                    hidden
+                    data-actor-selector-target="showSelectButton"
+                    data-action="actor-selector#showSelect"
+                >
+                    {{ icon('close') }}
+                    <span class="sr-only">{{ 'forms.actors.go_to_select' | trans }}</span>
+                </button>
+            {% endif %}
+        </div>
+
+        {{- form_errors(form) -}}
+        {{- form_widget(form) -}}
+    </div>
+{%- endblock actor_row -%}
+
+{%- block actor_widget -%}
+    {%- set invalid_attr = valid ? {} : { 'aria-invalid': 'true', 'aria-errormessage': field_id(form, 'error') } -%}
+
+    {% if not allow_email and not multiple %}
+        {{ form_widget(form.select, { attr: form.select.vars.attr|merge(invalid_attr) }) }}
+    {% else %}
+        <div class="actor flow flow--smaller">
+            {% if multiple %}
+                {{ form_widget(form.select, {
+                    id: field_id(form.select, 'data'),
+                    attr: form.select.vars.attr|merge({
+                        'hidden': true,
+                        'data-actor-selector-target': 'data',
+                        'data-action': 'actor-selector#refresh',
+                    }),
+                }) }}
+            {% endif %}
+
+            <div data-actor-selector-target="sectionSelect">
+                {% if multiple %}
+                    <select
+                        id="{{ field_id(form.select) }}"
+                        class="widget--small"
+                        data-actor-selector-target="select"
+                        data-action="actor-selector#select"
+                        data-placeholder="{{ 'forms.multiselect.select_actor' | trans }}"
+                        {% with { attr: invalid_attr } %}{{ block('attributes') }}{% endwith %}
+                    ></select>
+                {% else %}
+                    {{ form_widget(form.select, {
+                        attr: form.select.vars.attr|merge(invalid_attr)|merge({
+                            'data-actor-selector-target': 'select',
+                        }),
+                    }) }}
+                {% endif %}
+            </div>
+
+            {% if allow_email %}
+                <div data-actor-selector-target="sectionEmail" class="flow flow--smaller" hidden>
+                    {% if multiple %}
+                        <input
+                            type="email"
+                            id="{{ field_id(form.emails) }}"
+                            data-actor-selector-target="emailInput"
+                            data-action="keydown->actor-selector#handleEmailInput blur->actor-selector#addEmail"
+                        >
+                    {% else %}
+                        {{ form_widget(form.email, { attr: invalid_attr|merge({
+                            'data-actor-selector-target': 'emailInput',
+                        }) }) }}
+                    {% endif %}
+                </div>
+
+                {% if multiple %}
+                    {% for child in form.emails %}
+                        <input
+                            type="hidden"
+                            name="{{ field_name(child) }}"
+                            value="{{ field_value(child) }}"
+                            data-actor-selector-target="emailData"
+                            {% if field_has_errors(child) %}
+                                aria-invalid="true"
+                                aria-errormessage="{{ field_id(child, 'error') }}"
+                            {% endif %}
+                        >
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+
+            {% if multiple %}
+                <div class="cols cols--always cols--wrap flow flow--smaller" data-actor-selector-target="list"></div>
+
+                <template data-actor-selector-target="template">
+                    <button
+                        type="button"
+                        class="button--discreet-alt cols cols--always cols--baseline flow flow--smaller text--small text--left"
+                        data-action="actor-selector#unselect"
+                        data-value=""
+                        data-kind=""
+                        aria-label="{{ 'forms.multiselect.unselect' | trans }}"
+                    >
+                        <span data-target="name" class="col--extend">
+                        </span>
+
+                        <span>
+                            {{ icon('close') }}
+                        </span>
+                    </button>
+                </template>
+            {% endif %}
+        </div>
+    {% endif %}
+{%- endblock actor_widget -%}
+
 {%- block button_row -%}
     <div{% with {attr: row_attr|merge({class: row_attr.class|default('form__actions')|trim})} %}{{ block('attributes') }}{% endwith %}>
         {{- form_widget(form) -}}

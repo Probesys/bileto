@@ -17,7 +17,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -27,7 +26,6 @@ class TicketForm extends AbstractType
 {
     public function __construct(
         private Security\Authorizer $authorizer,
-        private TranslatorInterface $translator,
     ) {
     }
 
@@ -41,6 +39,7 @@ class TicketForm extends AbstractType
             if ($this->authorizer->isGranted('orga:update:tickets:actors', $organization)) {
                 $form->add('requester', AppType\ActorType::class, [
                     'with_access_to' => $organization,
+                    'allow_email' => true,
                     'label' => new TranslatableMessage('tickets.requester'),
                 ]);
 
@@ -68,14 +67,11 @@ class TicketForm extends AbstractType
 
                 $form->add('observers', AppType\ActorType::class, [
                     'with_access_to' => $organization,
+                    'allow_email' => true,
                     'multiple' => true,
                     'by_reference' => false,
                     'required' => false,
                     'label' => new TranslatableMessage('tickets.observers'),
-                    'attr' => [
-                        'data-placeholder' => $this->translator->trans('forms.multiselect.select_actor'),
-                    ],
-                    'block_prefix' => 'multiselect',
                 ]);
             }
 

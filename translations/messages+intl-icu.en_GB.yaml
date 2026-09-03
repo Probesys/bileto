@@ -187,6 +187,8 @@ errors.back_home: 'Back to the homepage'
 errors.generic.description: 'Please tell your administrator what you were doing when the error occurred. This will be fixed as soon as possible.'
 errors.generic.sorry: 'Sorry for any inconvenience caused.'
 errors.generic.title: 'An error has occured!'
+forms.actors.go_to_enter_email: 'Enter an email address.'
+forms.actors.go_to_select: 'Select from a list.'
 forms.actors.group.agents: Agents
 forms.actors.group.users: Users
 forms.error: Error

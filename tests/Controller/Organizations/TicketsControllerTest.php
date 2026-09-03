@@ -314,8 +314,12 @@ class TicketsControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'ticket'),
                 'title' => $title,
                 'content' => $messageContent,
-                'requester' => $requester->getId(),
-                'observers' => [$observer->getId()],
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
+                'observers' => [
+                    'select' => [$observer->getId()],
+                ],
                 'type' => 'incident',
                 'urgency' => 'high',
                 'impact' => 'high',
@@ -484,6 +488,56 @@ class TicketsControllerTest extends WebTestCase
         $this->assertSame($message->getUid(), $messageDocument2->getMessage()->getUid());
     }
 
+    public function testPostNewAcceptsEmailAndCreatesUserAccordingly(): void
+    {
+        $client = static::createClient();
+        $user = Factory\UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = Factory\OrganizationFactory::createOne();
+        $this->grantOrga($user->_real(), [
+            'orga:create:tickets',
+            'orga:update:tickets:actors',
+        ], $organization->_real());
+        $title = 'My ticket';
+        $messageContent = 'My message';
+
+        $this->assertSame(1, Factory\UserFactory::count());
+        $this->assertSame(0, Factory\TicketFactory::count());
+        $this->assertSame(0, Factory\MessageFactory::count());
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [
+            'ticket' => [
+                '_token' => $this->generateCsrfToken($client, 'ticket'),
+                'title' => $title,
+                'content' => $messageContent,
+                'requester' => [
+                    'email' => 'alix@example.com',
+                ],
+                'observers' => [
+                    'emails' => ['benedict@example.com'],
+                ],
+            ],
+        ]);
+
+        $this->assertSame(3, Factory\UserFactory::count());
+        $this->assertSame(1, Factory\TicketFactory::count());
+        $this->assertSame(1, Factory\MessageFactory::count());
+
+        $ticket = Factory\TicketFactory::last();
+        $this->assertResponseRedirects("/tickets/{$ticket->getUid()}", 302);
+        $this->assertSame($user->getId(), $ticket->getCreatedBy()->getId());
+        $requester = Factory\UserFactory::find([
+            'email' => 'alix@example.com',
+        ]);
+        $this->assertSame($requester->getId(), $ticket->getRequester()->getId());
+        $observer = Factory\UserFactory::find([
+            'email' => 'benedict@example.com',
+        ]);
+        $observers = $ticket->getObservers();
+        $this->assertSame(1, count($observers));
+        $this->assertSame($observer->getId(), $observers[0]->getId());
+    }
+
     public function testPostNewAssignAResponsibleTeamByDefault(): void
     {
         $client = static::createClient();
@@ -541,9 +595,13 @@ class TicketsControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'ticket'),
                 'title' => $title,
                 'content' => $messageContent,
-                'requester' => $user->getId(),
+                'requester' => [
+                    'select' => $user->getId(),
+                ],
+                'assignee' => [
+                    'select' => $assignee->getId(),
+                ],
                 'team' => $team->getId(),
-                'assignee' => $assignee->getId(),
             ],
         ]);
 
@@ -611,8 +669,12 @@ class TicketsControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'ticket'),
                 'title' => $title,
                 'content' => $messageContent,
-                'requester' => $user->getId(),
-                'assignee' => $assignee->getId(),
+                'requester' => [
+                    'select' => $user->getId(),
+                ],
+                'assignee' => [
+                    'select' => $assignee->getId(),
+                ],
             ],
         ]);
 
@@ -683,7 +745,9 @@ class TicketsControllerTest extends WebTestCase
                 'title' => $title,
                 'content' => $messageContent,
                 'team' => $team->getId(),
-                'assignee' => $assignee->getId(),
+                'assignee' => [
+                    'select' => $assignee->getId(),
+                ],
             ],
         ]);
 
@@ -713,7 +777,9 @@ class TicketsControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'ticket'),
                 'title' => $title,
                 'content' => $messageContent,
-                'requester' => $requester->getId(),
+                'requester' => [
+                    'select' => $requester->getId(),
+                ],
             ],
         ]);
 
@@ -740,7 +806,10 @@ class TicketsControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'ticket'),
                 'title' => $title,
                 'content' => $messageContent,
-                'requester' => 'not an id',
+                'requester' => [
+                    'select' => 'not an id',
+                    'email' => '',
+                ],
             ],
         ]);
 

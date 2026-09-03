@@ -188,7 +188,7 @@ class QuickSearchForm extends AbstractType
             $form = $event->getForm();
             $organization = $options['organization'];
 
-            $form->add('involves', AppType\ActorType::class, [
+            $form->add('involves', AppType\ActorSelectType::class, [
                 'multiple' => true,
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.involves'),
@@ -216,7 +216,7 @@ class QuickSearchForm extends AbstractType
                 'block_prefix' => 'multiselect',
             ]);
 
-            $form->add('assignees', AppType\ActorType::class, [
+            $form->add('assignees', AppType\ActorSelectType::class, [
                 'multiple' => true,
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.assignee'),
@@ -241,7 +241,7 @@ class QuickSearchForm extends AbstractType
                 ],
             ]);
 
-            $form->add('requesters', AppType\ActorType::class, [
+            $form->add('requesters', AppType\ActorSelectType::class, [
                 'multiple' => true,
                 'required' => false,
                 'label' => new TranslatableMessage('tickets.requester'),
