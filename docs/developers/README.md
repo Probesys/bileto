@@ -17,6 +17,7 @@ Dedicated to the backend:
 - [Importing data](/docs/developers/import-data.md)
 - [Cleaning data](/docs/developers/clean-data.md)
 - [Sending emails](/docs/developers/send-emails.md)
+- [Logging information](/docs/developers/logger.md)
 
 Dedicated to the frontend:
 
