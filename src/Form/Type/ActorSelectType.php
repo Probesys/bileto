@@ -88,7 +88,10 @@ class ActorSelectType extends AbstractType
             'choice_label' => function (Entity\User $user) use ($currentUser): string {
                 $label = $user->getDisplayName();
 
-                if ($user->getDisplayName() !== $user->getEmail()) {
+                if (
+                    $user->getDisplayName() !== $user->getEmail() &&
+                    !$user->isAnonymized()
+                ) {
                     $label .= " ({$user->getEmail()})";
                 }
 
