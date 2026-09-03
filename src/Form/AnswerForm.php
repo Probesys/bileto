@@ -124,6 +124,9 @@ class AnswerForm extends AbstractType
                 'trim' => true,
                 'sanitize_html' => true,
                 'sanitizer' => 'app.message_sanitizer',
+                'attr' => [
+                    'data-context' => "ticket-{$ticket->getUid()}",
+                ],
                 'block_prefix' => 'editor',
             ]);
 

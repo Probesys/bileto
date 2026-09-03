@@ -127,6 +127,9 @@ class MessageDocument implements EntityInterface, MonitorableEntityInterface, Ui
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Message $message = null;
 
+    #[ORM\Column(length: 255, options: ['default' => ''])]
+    private string $context = '';
+
     public function getName(): ?string
     {
         return $this->name;
@@ -272,6 +275,18 @@ class MessageDocument implements EntityInterface, MonitorableEntityInterface, Ui
     public function setMessage(?Message $message): static
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getContext(): string
+    {
+        return $this->context;
+    }
+
+    public function setContext(string $context): static
+    {
+        $this->context = $context;
 
         return $this;
     }

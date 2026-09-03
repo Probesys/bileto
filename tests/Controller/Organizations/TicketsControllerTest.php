@@ -471,6 +471,7 @@ class TicketsControllerTest extends WebTestCase
         list($messageDocument1, $messageDocument2) = Factory\MessageDocumentFactory::createMany(2, [
             'createdBy' => $user->_real(),
             'message' => null,
+            'context' => "organization-{$organization->getUid()}",
         ]);
 
         $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/tickets/new", [

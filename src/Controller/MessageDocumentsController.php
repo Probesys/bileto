@@ -37,10 +37,10 @@ class MessageDocumentsController extends BaseController
     {
         $this->denyAccessUnlessGranted('orga:see', 'any');
 
+        $context = trim($request->query->getString('context', ''));
         $file = $request->files->get('document');
 
-        /** @var string */
-        $csrfToken = $request->request->get('_csrf_token', '');
+        $csrfToken = $request->request->getString('_csrf_token', '');
 
         if (!$this->isCsrfTokenValid('create message document', $csrfToken)) {
             return new JsonResponse([
@@ -85,6 +85,8 @@ class MessageDocumentsController extends BaseController
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
+
+        $messageDocument->setContext($context);
 
         $this->messageDocumentRepository->save($messageDocument, true);
 
@@ -243,6 +245,9 @@ class MessageDocumentsController extends BaseController
             $conditions['message'] = null;
         }
 
+        $context = $request->query->get('context', '');
+        $conditions['context'] = $context;
+
         $messageDocuments = $this->messageDocumentRepository->findBy(
             $conditions,
             ['createdAt' => 'ASC'],
@@ -250,6 +255,7 @@ class MessageDocumentsController extends BaseController
 
         return $this->render('message_documents/index.html.twig', [
             'messageDocuments' => $messageDocuments,
+            'context' => $context,
         ]);
     }
 }

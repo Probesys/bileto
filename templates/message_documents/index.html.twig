@@ -30,7 +30,7 @@
                     hidden
                     data-message-documents-target="filesSelector"
                     data-action="message-documents#uploadFiles"
-                    data-upload-url="{{ path('create message document') }}"
+                    data-upload-url="{{ path('create message document', { context: context }) }}"
                     data-upload-csrf="{{ csrf_token('create message document') }}"
                 />
             </div>

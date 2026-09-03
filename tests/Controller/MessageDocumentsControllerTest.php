@@ -449,6 +449,36 @@ class MessageDocumentsControllerTest extends WebTestCase
         );
     }
 
+    public function testGetIndexFiltersOnContext(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $message = MessageFactory::createOne();
+        $messageDocument1 = MessageDocumentFactory::createOne([
+            'createdAt' => Time::ago(2, 'hour'),
+            'createdBy' => $user->_real(),
+            'name' => 'foo.txt',
+            'message' => $message,
+            'context' => 'foo',
+        ]);
+        $messageDocument2 = MessageDocumentFactory::createOne([
+            'createdAt' => Time::ago(1, 'hour'),
+            'createdBy' => $user->_real(),
+            'name' => 'bar.txt',
+            'message' => null,
+            'context' => 'bar',
+        ]);
+
+        $client->request(Request::METHOD_GET, '/messages/documents?context=bar');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains(
+            '[data-target="document-item"]:nth-child(1) [data-target="document-name"]',
+            'bar.txt'
+        );
+    }
+
     public function testGetIndexCanFilterUnattachedDocuments(): void
     {
         $client = static::createClient();

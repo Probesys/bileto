@@ -198,7 +198,7 @@
             'required': false,
             'attr': {
                 'data-controller': 'tinymce',
-                'data-tinymce-upload-url-value': path('create message document'),
+                'data-tinymce-upload-url-value': path('create message document', { context: form.vars.attr['data-context'] | default('') }),
                 'data-tinymce-upload-csrf-value': csrf_token('create message document'),
                 'data-editor-target': 'tinymce',
                 'data-action': 'new-document->editor#newDocument remove-document->tinymce#removeImage',
@@ -208,7 +208,7 @@
         <div class="editor__documents">
             <turbo-frame
                 id="message-documents"
-                src="{{ path('message documents', { filter: 'unattached' }) }}"
+                src="{{ path('message documents', { filter: 'unattached', context: form.vars.attr['data-context'] | default('') }) }}"
                 data-controller="message-documents"
                 data-editor-target="messageDocuments"
                 data-action="remove-document->editor#removeDocument new-document->message-documents#reload"

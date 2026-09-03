@@ -44,6 +44,9 @@ class MessageTemplateForm extends AbstractType
             'trim' => true,
             'sanitize_html' => true,
             'sanitizer' => 'app.message_sanitizer',
+            'attr' => [
+                'data-context' => 'template',
+            ],
             'block_prefix' => 'editor',
         ]);
 

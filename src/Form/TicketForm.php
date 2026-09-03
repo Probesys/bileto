@@ -152,6 +152,9 @@ class TicketForm extends AbstractType
                 'trim' => true,
                 'sanitize_html' => true,
                 'sanitizer' => 'app.message_sanitizer',
+                'attr' => [
+                    'data-context' => "organization-{$organization->getUid()}",
+                ],
                 'block_prefix' => 'editor',
                 'constraints' => [
                     new Assert\NotBlank(
