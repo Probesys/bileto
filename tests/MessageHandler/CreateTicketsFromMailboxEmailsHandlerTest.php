@@ -185,6 +185,77 @@ class CreateTicketsFromMailboxEmailsHandlerTest extends WebTestCase
         $this->assertSame($team->getUid(), $assignedTeam->getUid());
     }
 
+    public function testInvokeCreatesATicketAndForcesATitle(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+        $emailDate = Time::ago(1, 'hour');
+
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = ' ';
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+            'date' => $emailDate,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $this->assertSame('No title', $ticket->getTitle());
+    }
+
+    public function testInvokeCreatesATicketAndShrinksTheTitle(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+        $emailDate = Time::ago(1, 'hour');
+
+        $organization = OrganizationFactory::createOne();
+        $user = UserFactory::createOne([
+            'organization' => $organization,
+        ]);
+        $this->grantOrga($user->_real(), ['orga:create:tickets'], $organization->_real());
+        $subject = str_repeat('a', Entity\Ticket::TITLE_MAX_LENGTH + 1);
+        $body = \Zenstruck\Foundry\faker()->randomHtml();
+        $mailboxEmail = MailboxEmailFactory::createOne([
+            'from' => $user->getEmail(),
+            'subject' => $subject,
+            'htmlBody' => $body,
+            'date' => $emailDate,
+        ]);
+
+        $this->assertSame(1, MailboxEmailFactory::count());
+        $this->assertSame(0, TicketFactory::count());
+        $this->assertSame(0, MessageFactory::count());
+
+        $bus->dispatch(new CreateTicketsFromMailboxEmails());
+
+        $this->assertSame(0, MailboxEmailFactory::count());
+        $this->assertSame(1, TicketFactory::count());
+        $this->assertSame(1, MessageFactory::count());
+
+        $ticket = TicketFactory::first();
+        $expectedTitle = str_repeat('a', Entity\Ticket::TITLE_MAX_LENGTH - 1) . '…';
+        $this->assertSame($expectedTitle, $ticket->getTitle());
+    }
+
     public function testInvokeAnswersToTicketIfTicketIdIsGiven(): void
     {
         $container = static::getContainer();

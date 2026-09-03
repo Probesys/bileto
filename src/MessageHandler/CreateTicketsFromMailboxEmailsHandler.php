@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Webklex\PHPIMAP;
 
 #[AsMessageHandler]
@@ -37,12 +38,14 @@ class CreateTicketsFromMailboxEmailsHandler
         private Service\TicketAssigner $ticketAssigner,
         private Service\UserCreator $userCreator,
         private Service\UserService $userService,
+        private Service\Locales $locales,
         private ActivityMonitor\ActiveUser $activeUser,
         private HtmlSanitizerInterface $appMessageSanitizer,
         private LoggerInterface $logger,
         private UrlGeneratorInterface $urlGenerator,
         private EventDispatcherInterface $eventDispatcher,
         private LockFactory $lockFactory,
+        private TranslatorInterface $translator,
         #[Autowire(env: 'MAILER_FROM')]
         private string $mailerFrom,
     ) {
@@ -272,11 +275,22 @@ class CreateTicketsFromMailboxEmailsHandler
             return null;
         }
 
-        // Finally, build a ticket.
-        $subject = $mailboxEmail->getSubject();
+        // Get a valid title from the mail subject.
+        $title = $mailboxEmail->getSubject();
+        $title = trim($title);
 
+        if (!$title) {
+            $title = $this->translator->trans(
+                'ticket.title.missing',
+                locale: $this->locales->getDefaultLocale()
+            );
+        } elseif (mb_strlen($title) > Entity\Ticket::TITLE_MAX_LENGTH) {
+            $title = mb_substr($title, 0, Entity\Ticket::TITLE_MAX_LENGTH - 1) . '…';
+        }
+
+        // Finally, build a ticket.
         $ticket = new Entity\Ticket();
-        $ticket->setTitle($subject);
+        $ticket->setTitle($title);
         $ticket->setOrganization($defaultOrganization);
         $ticket->setRequester($sender);
 
