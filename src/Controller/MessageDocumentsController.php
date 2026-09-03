@@ -28,6 +28,7 @@ class MessageDocumentsController extends BaseController
         private readonly Repository\MessageDocumentRepository $messageDocumentRepository,
         private readonly Service\MessageDocumentStorage $messageDocumentStorage,
         private readonly TranslatorInterface $translator,
+        private readonly Service\Logger $logger,
     ) {
     }
 
@@ -124,6 +125,10 @@ class MessageDocumentsController extends BaseController
             if ($message === null) {
                 // The message of the document is not posted yet, only its author
                 // can see it.
+                $this->logger->warning(
+                    message: 'Document is not posted yet.',
+                    entities: [$user, $messageDocument],
+                );
                 throw $this->createAccessDeniedException();
             } else {
                 // The message of the document is posted, check that the user has
@@ -141,6 +146,14 @@ class MessageDocumentsController extends BaseController
         // The extension parameter is only decorative, but at least check that
         // it corresponds to the real extension!
         if ($extension !== $messageDocument->getExtension()) {
+            $message = 'Extensions do not match: ';
+            $message .= "{$extension} (url) vs. {$messageDocument->getExtension()} (document)";
+
+            $this->logger->warning(
+                message: $message,
+                entities: [$user, $messageDocument],
+            );
+
             throw $this->createNotFoundException('The file does not exist.');
         }
 
@@ -148,6 +161,10 @@ class MessageDocumentsController extends BaseController
             $content = $this->messageDocumentStorage->read($messageDocument);
             $contentLength = $this->messageDocumentStorage->size($messageDocument);
         } catch (Service\MessageDocumentStorageError $e) {
+            $this->logger->warning(
+                message: 'The file cannot be read from the storage',
+                entities: [$user, $messageDocument],
+            );
             throw $this->createNotFoundException('The file does not exist.');
         }
 
