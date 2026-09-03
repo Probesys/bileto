@@ -184,6 +184,18 @@
                                             </a>
                                         </li>
                                     {% endif %}
+
+                                    {% if is_granted('admin:manage:mailboxes') and have_mailbox_in_error() %}
+                                        <li class="layout__header-item">
+                                            <a
+                                                class="layout__header-notification"
+                                                href="{{ path('mailboxes') }}"
+                                                title="{{ 'mailboxes.errors_must_be_treated' | trans }}"
+                                            >
+                                                {{ icon('inbox') }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                 {% endif %}
                             </ul>
                         </nav>

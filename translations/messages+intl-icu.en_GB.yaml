@@ -276,6 +276,7 @@ mailboxes.encryption: 'Encryption method'
 mailboxes.encryption.none: None
 mailboxes.encryption.ssl: SSL/TLS
 mailboxes.encryption.starttls: StartTLS
+mailboxes.errors_must_be_treated: 'Emails in error must be treated.'
 mailboxes.folder: Folder
 mailboxes.host: Hostname
 mailboxes.index.collect: 'Collect the mailboxes'

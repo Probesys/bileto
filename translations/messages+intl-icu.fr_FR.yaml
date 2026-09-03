@@ -276,6 +276,7 @@ mailboxes.encryption: 'Méthode de chiffrement'
 mailboxes.encryption.none: Aucune
 mailboxes.encryption.ssl: SSL/TLS
 mailboxes.encryption.starttls: StartTLS
+mailboxes.errors_must_be_treated: 'Des emails en erreur doivent être traités.'
 mailboxes.folder: Répertoire
 mailboxes.host: 'Nom d’hôte'
 mailboxes.index.collect: 'Collecter les boites'

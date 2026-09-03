@@ -143,6 +143,34 @@
     height: 100%;
 }
 
+.layout__header-notification {
+    position: relative;
+
+    display: block;
+    padding: var(--space-small);
+
+    color: currentcolor;
+    font-size: 1.2rem;
+    text-decoration: none;
+
+    border-radius: var(--border-radius);
+}
+
+.layout__header-notification::after {
+    content: ' ';
+
+    position: absolute;
+    top: 0.5rem;
+    left: 1.4rem;
+
+    display: block;
+    width: 0.7rem;
+    height: 0.7rem;
+
+    background-color: var(--color-error9);
+    border-radius: 50%;
+}
+
 .layout__header-account {
     width: var(--header-base-height);
     height: var(--header-base-height);
