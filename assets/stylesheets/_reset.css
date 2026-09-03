@@ -11,3 +11,7 @@ ol {
     margin-top: 0;
     margin-bottom: 0;
 }
+
+[hidden]:not([hidden="until-found"]) {
+    display: none !important;
+}
