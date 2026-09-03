@@ -15,7 +15,11 @@
                 <div class="col--extend flow flow--small">
                     <h3 class="list-tickets__title list__item-title">
                         <a class="list-tickets__anchor" href="{{ path('ticket', {'uid': ticket.uid}) }}">
-                            {{ ticket.title }}
+                            {% if ticket.title %}
+                                {{ ticket.title }}
+                            {% else %}
+                                {{ 'ticket.title.missing' | trans }}
+                            {% endif %}
                         </a>
                     </h3>
 

@@ -39,7 +39,12 @@
         <div class="flow flow--small text--center">
             <div class="cols cols--center text--center flow flow--small">
                 <h1>
-                    #{{ ticket.id }} {{ ticket.title }}
+                    #{{ ticket.id }}
+                    {% if ticket.title %}
+                        {{ ticket.title }}
+                    {% else %}
+                        {{ 'ticket.title.missing' | trans }}
+                    {% endif %}
                 </h1>
 
                 <span class="ticket__status badge badge--{{ ticket.statusBadgeColor }}" title="{{ 'tickets.status' | trans }}">
