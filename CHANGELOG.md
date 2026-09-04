@@ -1,5 +1,37 @@
 # Changelog of Bileto
 
+## 2026-09-04 - 0.16.3
+
+### Security
+
+- Limit unattached documents to organizations ([2823fc38](https://github.com/Probesys/bileto/commit/2823fc38))
+
+### New
+
+- Allow to enter an email in place of requester/observers ([b8a34db8](https://github.com/Probesys/bileto/commit/b8a34db8))
+- Add a warning about emails in error to the header ([a2621f6f](https://github.com/Probesys/bileto/commit/a2621f6f))
+
+### Bug fixes
+
+- Make sure ticket title is valid when created from email ([8b44d477](https://github.com/Probesys/bileto/commit/8b44d477))
+- Allow to access ticket with no title ([8dc7bf0d](https://github.com/Probesys/bileto/commit/8dc7bf0d))
+- Handle opening ticket if requester is null ([e6c04017](https://github.com/Probesys/bileto/commit/e6c04017))
+- Don't show anonymized emails in selectors ([aa43d730](https://github.com/Probesys/bileto/commit/aa43d730))
+
+### Maintenance
+
+- Update the dependencies ([0e221700](https://github.com/Probesys/bileto/commit/0e221700))
+- Log exceptions if errors happen when displaying a document ([dd0c24cd](https://github.com/Probesys/bileto/commit/dd0c24cd))
+- Fix the Sentry configuration ([ed61cf26](https://github.com/Probesys/bileto/commit/ed61cf26))
+
+### Developers
+
+- Provide a Logger service to log in a structured way ([5d6a474d](https://github.com/Probesys/bileto/commit/5d6a474d))
+- Provide a "pencil" icon ([35acfb64](https://github.com/Probesys/bileto/commit/35acfb64))
+- Provide an `actor-selector` Stimulus controller ([d052c521](https://github.com/Probesys/bileto/commit/d052c521))
+- Force display none on `[hidden]` elements ([11c9495d](https://github.com/Probesys/bileto/commit/11c9495d))
+- Clear useless import in several files ([d799ffe8](https://github.com/Probesys/bileto/commit/d799ffe8))
+
 ## 2026-08-27 - 0.16.2
 
 ### Bug fixes
