@@ -1,5 +1,12 @@
 # Changelog of Bileto
 
+## 2026-09-21 - 0.16.4
+
+### Bug fixes
+
+- Fix email attachments not being attached to messages ([1691adc9](https://github.com/Probesys/bileto/commit/1691adc9))
+- Fix the auto-assign button not working ([2c732d5e](https://github.com/Probesys/bileto/commit/2c732d5e))
+
 ## 2026-09-04 - 0.16.3
 
 ### Security
