@@ -11,6 +11,7 @@ use App\Tests\AuthorizationHelper;
 use App\Tests\Factory\OrganizationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -57,6 +58,43 @@ class UsersControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Users');
         $this->assertSelectorTextContains('[data-test="user-item"]', 'Alix Hambourg');
+        $this->assertSelectorNotExists('[data-test="user-item"]:nth-child(2)');
+    }
+
+    public function testGetIndexExcludesArchivedUsers(): void
+    {
+        $client = static::createClient();
+        $organization = OrganizationFactory::createOne();
+        $agent = UserFactory::createOne(['name' => 'Agent Smith']);
+        $archivedUser = UserFactory::createOne([
+            'name' => 'Archived User',
+            'archivedAt' => Utils\Time::now(),
+        ]);
+        $activeUser = UserFactory::createOne(['name' => 'Active User']);
+        $client->loginUser($agent->_real());
+        $this->grantOrga(
+            $agent->_real(),
+            ['orga:see:users'],
+            $organization->_real(),
+            'agent',
+        );
+        $this->grantOrga(
+            $archivedUser->_real(),
+            ['orga:see'],
+            $organization->_real(),
+            'user',
+        );
+        $this->grantOrga(
+            $activeUser->_real(),
+            ['orga:see'],
+            $organization->_real(),
+            'user',
+        );
+
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/users");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="user-item"]', 'Active User');
         $this->assertSelectorNotExists('[data-test="user-item"]:nth-child(2)');
     }
 

@@ -1,0 +1,72 @@
+{#
+ # This file is part of Bileto.
+ # Copyright 2022-2026 Probesys
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #}
+
+{% extends 'base.html.twig' %}
+
+{% set currentPage = 'organizations' %}
+
+{% block title %}{{ 'organizations.archived.index.title' | trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <nav class="layout__breadcrumb" aria-label="{{ 'layout.breadcrumb' | trans }}">
+        <a href="{{ path('home') }}">
+            {{ 'layout.home' | trans }}
+        </a>
+
+        <a href="{{ path('organizations') }}">
+            {{ 'organizations.index.title' | trans }}
+        </a>
+
+        <span aria-current="page">
+            {{ 'organizations.archived.index.title' | trans }}
+        </span>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <main class="layout__body">
+        <h1>{{ 'organizations.archived.index.title' | trans }}</h1>
+
+        <div class="flow">
+            {% if organizations|length > 0 %}
+                <p class="text--secondary">
+                    {{ 'organizations.archived.index.number' | trans({ count: organizations|length }) }}
+                </p>
+
+                <ul class="list--padded list--border list--nostyle">
+                    {% for organization in organizations %}
+                        <li class="cols" data-test="archived-organization-item">
+                            <div class="col--extend">
+                                <div class="list__item-title">
+                                    <a href="{{ path('organization', { uid: organization.uid }) }}">
+                                        {{ organization.name }}
+                                    </a>
+                                </div>
+
+                                <p class="text--secondary">
+                                    {{ 'organizations.archived.index.archived_on' | trans({ date: organization.archivedAt | dateTrans('dd MMM yyyy') }) }}
+
+                                    {% if organization.deletedAt %}
+                                        &middot;
+                                        {{ 'organizations.archived.index.deletion_on' | trans({ date: organization.deletedAt | dateTrans('dd MMM yyyy') }) }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="placeholder flow flow--larger">
+                    <img class="placeholder__image" src="{{ asset('illustration-placeholder.svg') }}" alt="" />
+
+                    <p class="placeholder__text">
+                        {{ 'organizations.archived.index.none' | trans }}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

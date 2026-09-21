@@ -65,6 +65,14 @@
                     </p>
                 </div>
             {% endif %}
+
+            {% if archivedCount > 0 %}
+                <p class="text--center" data-test="archived-organizations-link">
+                    <a href="{{ path('archived organizations') }}">
+                        {{ 'organizations.index.archived_count' | trans({ count: archivedCount }) }}
+                    </a>
+                </p>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

@@ -97,6 +97,7 @@ class UserRepository extends ServiceEntityRepository implements
             SELECT u
             FROM App\Entity\User u
             WHERE u.anonymizedAt IS NULL
+            AND u.archivedAt IS NULL
             AND (
                 LOWER(u.name) LIKE :value
                 OR LOWER(u.email) LIKE :value
@@ -131,6 +132,7 @@ class UserRepository extends ServiceEntityRepository implements
             WHERE (a.organization IN (:organizations) OR a.organization IS NULL)
             AND r.type IN (:types)
             AND u.anonymizedAt IS NULL
+            AND u.archivedAt IS NULL
         SQL);
 
         if ($roleType === 'any') {
