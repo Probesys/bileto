@@ -139,7 +139,7 @@ class CreateTicketsFromMailboxEmailsHandler
 
         // The important part: create the message by using the email
         // information and attach it to the ticket.
-        $message = $this->createMessage($mailboxEmail, $ticket);
+        $message = $this->createMessage($mailboxEmail, $ticket, $isNewTicket);
 
         // Finally, dispatch the different events corresponding to what happened.
         if ($isNewTicket) {
@@ -383,9 +383,16 @@ class CreateTicketsFromMailboxEmailsHandler
     private function createMessage(
         Entity\MailboxEmail $mailboxEmail,
         Entity\Ticket $ticket,
+        bool $isNewTicket,
     ): Entity\Message {
         // Extract the attachments and format the email body correctly.
-        $messageDocuments = $this->storeAttachments($mailboxEmail);
+        if ($isNewTicket) {
+            $organization = $ticket->getOrganization();
+            $context = "organization-{$organization->getUid()}";
+        } else {
+            $context = "ticket-{$ticket->getUid()}";
+        }
+        $messageDocuments = $this->storeAttachments($mailboxEmail, $context);
         $this->messageDocumentRepository->save($messageDocuments, true);
 
         $messageContent = $mailboxEmail->getBody();
@@ -473,7 +480,7 @@ class CreateTicketsFromMailboxEmailsHandler
      *
      * @return array<string, Entity\MessageDocument>
      */
-    private function storeAttachments(Entity\MailboxEmail $mailboxEmail): array
+    private function storeAttachments(Entity\MailboxEmail $mailboxEmail, string $context): array
     {
         $messageDocuments = [];
 
@@ -501,7 +508,9 @@ class CreateTicketsFromMailboxEmailsHandler
             $file = new File($filepath, false);
 
             try {
-                $messageDocuments[$id] = $this->messageDocumentStorage->store($file, $filename);
+                $messageDocument = $this->messageDocumentStorage->store($file, $filename);
+                $messageDocument->setContext($context);
+                $messageDocuments[$id] = $messageDocument;
             } catch (Service\MessageDocumentStorageError $e) {
                 $this->logger->warning(
                     "MailboxEmail #{$mailboxEmail->getId()} cannot import {$filename}: {$e->getMessage()}"

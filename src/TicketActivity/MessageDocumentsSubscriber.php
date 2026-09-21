@@ -32,11 +32,11 @@ class MessageDocumentsSubscriber implements EventSubscriberInterface
         $ticket = $message->getTicket();
 
         // We consider a ticket to be new if it and the message were both
-        // created within the same time window (arbitrarily set to 2 seconds
+        // created within the same time window (arbitrarily set to 5 seconds
         // which should be way enough).
         $ticketCreatedAt = $ticket->getCreatedAt()->getTimestamp();
         $messageCreatedAt = $message->getCreatedAt()->getTimestamp();
-        $isNewTicket = abs($ticketCreatedAt - $messageCreatedAt) <= 2;
+        $isNewTicket = abs($ticketCreatedAt - $messageCreatedAt) <= 5;
 
         $context = "ticket-{$ticket->getUid()}";
 
