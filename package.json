@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.1.0",
-    "@hotwired/turbo": "^8.0.4"
+    "@hotwired/turbo": "^8.0.4",
+    "tom-select": "^2.6.2"
   }
 }

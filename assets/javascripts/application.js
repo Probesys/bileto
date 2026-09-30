@@ -6,6 +6,7 @@ import * as Turbo from '@hotwired/turbo';
 import { Application } from '@hotwired/stimulus';
 
 import ActorSelectorController from './controllers/actor_selector_controller.js';
+import ContractSelectController from './controllers/contract_select_controller.js';
 import ButtonSelectController from './controllers/button_select_controller.js';
 import CheckboxesController from './controllers/checkboxes_controller.js';
 import ColorSchemeController from './controllers/color_scheme_controller.js';
@@ -36,6 +37,7 @@ import UserSelectorController from './controllers/user_selector_controller.js';
 const application = Application.start();
 application.register('actor-selector', ActorSelectorController);
 application.register('button-select', ButtonSelectController);
+application.register('contract-select', ContractSelectController);
 application.register('checkboxes', CheckboxesController);
 application.register('color-scheme', ColorSchemeController);
 application.register('editor', EditorController);
