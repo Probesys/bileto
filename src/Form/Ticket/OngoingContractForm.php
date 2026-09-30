@@ -23,17 +23,18 @@ class OngoingContractForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options): void {
             $form = $event->getForm();
             $ticket = $event->getData();
 
-            $organization = $ticket->getOrganization();
-
-            $form->add('ongoingContract', AppType\ContractType::class, [
-                'ongoing' => $organization,
+            $form->add('ongoingContract', AppType\ContractAutocompleteType::class, [
                 'required' => false,
+                'organization' => $ticket->getOrganization(),
+                'data' => $ticket->getOngoingContract() ?? $options['preferred_contract'],
                 'label' => new TranslatableMessage('tickets.contracts.ongoing'),
-                'placeholder' => new TranslatableMessage('tickets.contracts.none'),
+                'attr' => [
+                    'data-contract-select-target' => 'value',
+                ],
             ]);
 
             $form->add('includeUnaccountedTime', Type\CheckboxType::class, [
@@ -59,6 +60,9 @@ class OngoingContractForm extends AbstractType
                 'class' => 'form--standard',
                 'data-turbo-preserve-scroll' => true,
             ],
+            'preferred_contract' => null,
         ]);
+
+        $resolver->setAllowedTypes('preferred_contract', [Entity\Contract::class, 'null']);
     }
 }

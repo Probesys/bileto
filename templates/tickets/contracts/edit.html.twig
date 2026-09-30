@@ -9,7 +9,26 @@
 {% block title %}{{ 'tickets.contracts.edit.title' | trans }}{% endblock %}
 
 {% block body %}
-    {{ form(form, {
+    {{ form_start(form, {
         action: path('edit ticket contracts', { uid: ticket.uid }),
     }) }}
+        {{ form_errors(form) }}
+        <div class="flow flow--small contract-select" data-controller="contract-select" data-contract-select-url-value="{{ path('search ticket ongoing contracts', { uid: ticket.uid }) }}">
+            {{ form_label(form.ongoingContract, null, { id: 'ticket_ongoing_contract_search' }) }}
+            {{ form_errors(form.ongoingContract) }}
+            <input
+                type="text"
+                id="ticket_ongoing_contract_search"
+                class="widget"
+                placeholder="{{ 'tickets.contracts.search_placeholder' | trans }}"
+                autocomplete="off"
+                data-contract-select-target="search"
+                data-selected-name="{{ (ticket.ongoingContract ?? preferredContract) ? (ticket.ongoingContract ?? preferredContract).name : '' }}"
+            >
+            <button type="button" class="button--discreet" data-action="contract-select#clear">{{ 'tickets.contracts.none' | trans }}</button>
+            {{ form_widget(form.ongoingContract) }}
+        </div>
+        {{ form_row(form.includeUnaccountedTime) }}
+        {{ form_row(form.submit) }}
+    {{ form_end(form) }}
 {% endblock %}
