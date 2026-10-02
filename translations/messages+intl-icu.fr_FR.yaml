@@ -616,6 +616,7 @@ tickets.show.assignee: "Attribué à\_:"
 tickets.show.hide_history: 'Masquer l’historique des changements'
 tickets.show.impact: "Impact\_:"
 tickets.show.message.confidential: Confidentiel
+tickets.show.message.quoted_history: 'Historique cité'
 tickets.show.message.solution: Solution
 tickets.show.message.via_email: 'Ce message a été envoyé par email'
 tickets.show.minutes: minutes
