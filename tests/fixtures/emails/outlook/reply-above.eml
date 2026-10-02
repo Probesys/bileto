@@ -1,0 +1,151 @@
+Delivered-To: recipient@example.com
+Return-Path: <sender@example.com>
+Received: from smtp.example.com (smtp.example.com. [192.0.2.10])
+        by mx.google.com with ESMTPS id fixture-outlook-reply-above
+        for <recipient@example.com>;
+        Thu, 1 Jan 2026 00:34:31 -0800 (PST)
+From: Example Sender <sender@example.com>
+To: Example User <recipient@example.com>
+Subject: RE: Test billeto outlook
+Thread-Topic: Test billeto outlook
+Date: Thu, 1 Jan 2026 08:34:27 +0000
+Message-ID: <outlook-reply-above@example.com>
+References: <notification-outlook@example.com>
+In-Reply-To: <notification-outlook@example.com>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+Content-Type: multipart/alternative;
+	boundary="_000_fixture_outlook_reply_above_"
+MIME-Version: 1.0
+
+--_000_fixture_outlook_reply_above_
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+R=E9ponse outlook au dessus de la citation
+
+
+Cordialement,
+
+Example Sender,
+
+EXAMPLE, promotion 2000.
+
+Porteur de projet Example Project.
+
+Membre Example Association.
+
+Responsable relation externe Example Group.
+
+Tel: 00.00.00.00.00
+
+Mail: sender@example.com
+
+________________________________
+De : Example User <recipient@example.com>
+Envoy=E9 : jeudi 1 janvier 2026 09:33
+=C0 : Example Sender <sender@example.com>
+Objet : Test billeto outlook
+
+Ceci est un unique email de test envoy=E9 directement depuis le conteneur P=
+HP de Bileto local.
+
+Aucune notification en attente n=92a =E9t=E9 trait=E9e par cet envoi.
+
+Ce message v=E9rifie uniquement l=92envoi SMTP et la r=E9ception dans Spark=
+ ; il ne correspond pas =E0 un ticket Bileto.
+
+--_000_fixture_outlook_reply_above_
+Content-Type: text/html; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
+252">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+R=E9ponse outlook au dessus de la citation</div>
+<div id=3D"Signature" class=3D"elementToProof">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"divtagdefaultwrapper" class=3D"elementToProof">
+<p class=3D"elementToProof" style=3D"direction: ltr; margin-top: 1em; margi=
+n-bottom: 1em; font-family: Calibri, Helvetica, sans-serif, serif, EmojiFon=
+t; font-size: 16px;">
+<span style=3D"color: rgb(0, 0, 0);">Cordialement,</span></p>
+<p class=3D"elementToProof" style=3D"direction: ltr; margin-top: 1em; margi=
+n-bottom: 1em; font-family: Calibri, Helvetica, sans-serif, serif, EmojiFon=
+t; font-size: 16px;">
+<span style=3D"letter-spacing: -0.42px; font-family: Cambria, Georgia, seri=
+f, serif, EmojiFont; color: rgb(48, 48, 48);">Example Sender,</span></p>
+<p class=3D"elementToProof" style=3D"direction: ltr; margin-top: 1em; margi=
+n-bottom: 1em; font-family: Calibri, Helvetica, sans-serif, serif, EmojiFon=
+t; font-size: 16px;">
+<span style=3D"letter-spacing: -0.42px; font-family: Cambria, Georgia, seri=
+f; color: rgb(48, 48, 48);">EXAMPLE, promotion 2000.</span></p>
+<p class=3D"elementToProof" style=3D"direction: ltr; margin-top: 1em; margi=
+n-bottom: 1em; font-family: Calibri, Helvetica, sans-serif, serif, EmojiFon=
+t; font-size: 16px;">
+<span style=3D"letter-spacing: -0.42px; font-family: Cambria, Georgia, seri=
+f; color: rgb(48, 48, 48);">Porteur de projet Example Project.</span></p>
+<p class=3D"elementToProof" style=3D"direction: ltr; margin-top: 1em; margi=
+n-bottom: 1em; font-family: Calibri, Helvetica, sans-serif, serif, EmojiFon=
+t; font-size: 16px;">
+<span style=3D"letter-spacing: -0.42px; font-family: Cambria, Georgia, seri=
+f; color: rgb(48, 48, 48);">Membre&nbsp;Example Association.</span></p>
+<p class=3D"elementToProof" style=3D"direction: ltr; margin-top: 1em; margi=
+n-bottom: 1em; font-family: Calibri, Helvetica, sans-serif, serif, EmojiFon=
+t; font-size: 16px;">
+<span style=3D"letter-spacing: -0.42px; font-family: Cambria, Georgia, seri=
+f; color: rgb(48, 48, 48);">Responsable relation externe Example =
+Group.</span=
+></p>
+<p class=3D"elementToProof" style=3D"direction: ltr; margin-top: 1em; margi=
+n-bottom: 1em; font-family: Calibri, Helvetica, sans-serif, serif, EmojiFon=
+t; font-size: 16px;">
+<span style=3D"letter-spacing: -0.42px; font-family: Cambria, Georgia, seri=
+f; color: rgb(48, 48, 48);">Tel: 00.00.00.00.00</span></p>
+<p class=3D"elementToProof" style=3D"direction: ltr; margin-top: 1em; margi=
+n-bottom: 1em; font-family: Calibri, Helvetica, sans-serif, serif, EmojiFon=
+t; font-size: 16px;">
+<span style=3D"letter-spacing: -0.42px; font-family: Cambria, Georgia, seri=
+f; color: rgb(48, 48, 48);">Mail: sender@example.com</span></p>
+</div>
+</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>De :</b> Example User &lt;=
+recipient@example.com&gt;<br>
+<b>Envoy=E9 :</b> jeudi 1 janvier 2026 09:33<br>
+<b>=C0 :</b> Example Sender &lt;sender@example.com&gt;<br>
+<b>Objet :</b> Test billeto outlook</font>
+<div>&nbsp;</div>
+</div>
+<div style=3D"line-break:after-white-space">
+<div>
+<p>Ceci est un&nbsp;<strong>unique email de test</strong>&nbsp;envoy=E9 dir=
+ectement depuis le conteneur PHP de Bileto local.</p>
+<p>Aucune notification en attente n=92a =E9t=E9 trait=E9e par cet envoi.</p=
+>
+<p>Ce message v=E9rifie uniquement l=92envoi SMTP et la r=E9ception dans Sp=
+ark ; il ne correspond pas =E0 un ticket Bileto.</p>
+</div>
+</div>
+</body>
+</html>
+
+--_000_fixture_outlook_reply_above_--
