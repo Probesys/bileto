@@ -108,6 +108,101 @@
     mask-image: url("../../icons/close.svg");
 }
 
+.contract-select input[type="hidden"],
+.contract-select .ts-hidden-accessible {
+    display: none;
+}
+
+.contract-select .ts-wrapper {
+    position: relative;
+
+    width: 100%;
+}
+
+.contract-select .ts-control {
+    position: relative;
+
+    overflow: hidden;
+
+    display: flex;
+    min-height: 2.5rem;
+    padding: var(--form-padding-y) var(--form-padding-x);
+
+    flex-wrap: nowrap;
+
+    color: var(--form-color);
+
+    background-color: var(--form-background-color);
+    border: 1px solid var(--form-border-color);
+    border-radius: var(--border-radius);
+}
+
+.contract-select .ts-control > .item {
+    overflow: hidden;
+
+    min-width: 0;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.contract-select .ts-control:has(> input:not(:placeholder-shown)) > .item {
+    display: none;
+}
+
+.contract-select .ts-control > input {
+    min-width: 1rem;
+    padding: 0;
+
+    flex: 1;
+
+    color: inherit;
+
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+}
+
+.contract-select .ts-wrapper.input-hidden .ts-control > input {
+    position: absolute;
+    left: -10000px;
+
+    opacity: 0;
+}
+
+.contract-select .ts-wrapper.has-items .ts-control > input:placeholder-shown {
+    flex: 0 0 1rem;
+}
+
+.contract-select .ts-dropdown {
+    position: absolute;
+    z-index: 10;
+
+    width: 100%;
+    margin-top: var(--space-small);
+
+    color: var(--form-color);
+
+    background-color: var(--form-background-color);
+    border-color: var(--form-border-color);
+}
+
+.contract-select .option {
+    padding: var(--space-small) var(--space-medium);
+}
+
+.contract-select .option.active {
+    color: var(--color-primary12);
+
+    background-color: var(--color-primary3);
+}
+
+.contract-select .ts-control:focus-within {
+    border-color: var(--color-primary12);
+    outline: 2px solid var(--color-primary12);
+}
+
 @media (min-width: 800px) {
     .tickets-show .ticket__timeline .timeline::before {
         --timeline-bar-top: 5rem;
