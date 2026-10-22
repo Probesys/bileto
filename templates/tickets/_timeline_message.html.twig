@@ -66,7 +66,14 @@
             </a>
         </div>
 
-        <div class="message__content">
+        <div
+            class="message__content"
+            {% if message.via == 'email' %}
+                data-controller="email-quote"
+                data-email-quote-show-label-value="{{ 'tickets.show.message.show_quote' | trans }}"
+                data-email-quote-hide-label-value="{{ 'tickets.show.message.hide_quote' | trans }}"
+            {% endif %}
+        >
             {{ message.content | raw }}
         </div>
 
