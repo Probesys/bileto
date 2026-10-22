@@ -1,5 +1,18 @@
 # Changelog of Bileto
 
+## 2026-10-22 - 0.16.5
+
+### Security
+
+- Rebuild the Docker image with the PHP 8.2.35 security update to fix critical remote code execution vulnerabilities CVE-2026-109618 and CVE-2026-109619.
+
+See the [PHP security advisory](https://www.php.net/archive/2026.php#2026-10-21-5) for details.
+
+### Migration notes
+
+- Pull the updated Docker image and recreate the containers to apply the PHP security fixes. Restarting existing containers does not update PHP.
+- For installations outside Docker, update PHP separately to a patched version and restart all PHP workers.
+
 ## 2026-09-21 - 0.16.4
 
 ### Bug fixes
