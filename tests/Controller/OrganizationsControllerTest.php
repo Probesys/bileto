@@ -17,6 +17,7 @@ use App\Tests\Factory\TicketFactory;
 use App\Tests\Factory\TimeSpentFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\SessionHelper;
+use App\Utils;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -397,5 +398,311 @@ class OrganizationsControllerTest extends WebTestCase
         $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/deletion", [
             '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
         ]);
+    }
+
+    public function testGetIndexExcludesArchivedOrganizations(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        OrganizationFactory::createOne(['name' => 'active-one']);
+        OrganizationFactory::createOne([
+            'name' => 'archived-one',
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, '/organizations');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-test="organization-item"]', 'active-one');
+        $this->assertSelectorNotExists('[data-test="organization-item"]:nth-child(2)');
+    }
+
+    public function testGetIndexShowsArchivedCountLinkWhenApplicable(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        OrganizationFactory::createOne(['name' => 'active-one']);
+        OrganizationFactory::createOne([
+            'name' => 'archived-one',
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, '/organizations');
+
+        $this->assertSelectorExists('[data-test="archived-organizations-link"]');
+        $this->assertSelectorTextContains('[data-test="archived-organizations-link"]', '1 archived organization');
+    }
+
+    public function testGetIndexHidesArchivedCountLinkWhenUserCannotManageArchive(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
+        OrganizationFactory::createOne(['name' => 'active-one']);
+        OrganizationFactory::createOne([
+            'name' => 'archived-one',
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, '/organizations');
+
+        $this->assertSelectorNotExists('[data-test="archived-organizations-link"]');
+    }
+
+    public function testGetEditIsReachableByArchivePermissionAlone(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        $organization = OrganizationFactory::createOne();
+
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/settings");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h2', 'Archive an organization');
+    }
+
+    public function testGetEditHidesArchivePanelWhenAlreadyArchived(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        $organization = OrganizationFactory::createOne([
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}/settings");
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorNotExists('#form-archive-organization-submit');
+    }
+
+    public function testPostArchiveSetsArchivedAtAndDeletedAt(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        $organization = OrganizationFactory::createOne();
+        $deleteOn = Utils\Time::fromNow(30, 'days')->format('Y-m-d');
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => $this->generateCsrfToken($client, 'archive organization'),
+                'deletedAt' => $deleteOn,
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
+        $organization->_refresh();
+        $this->assertNotNull($organization->getArchivedAt());
+        $this->assertSame($deleteOn, $organization->getDeletedAt()->format('Y-m-d'));
+    }
+
+    public function testPostArchiveAcceptsEmptyDeletedAt(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        $organization = OrganizationFactory::createOne();
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => $this->generateCsrfToken($client, 'archive organization'),
+                'deletedAt' => '',
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
+        $organization->_refresh();
+        $this->assertNotNull($organization->getArchivedAt());
+        $this->assertNull($organization->getDeletedAt());
+    }
+
+    public function testPostArchiveArchivesSelectedUsers(): void
+    {
+        $client = static::createClient();
+        $organization = OrganizationFactory::createOne();
+        $admin = UserFactory::createOne();
+        $customer1 = UserFactory::createOne();
+        $customer2 = UserFactory::createOne();
+        $client->loginUser($admin->_real());
+        $this->grantOrga(
+            $admin->_real(),
+            ['orga:see', 'orga:manage:archive'],
+            $organization->_real(),
+        );
+        $this->grantOrga(
+            $customer1->_real(),
+            ['orga:see'],
+            $organization->_real(),
+            'user',
+        );
+        $this->grantOrga(
+            $customer2->_real(),
+            ['orga:see'],
+            $organization->_real(),
+            'user',
+        );
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => $this->generateCsrfToken($client, 'archive organization'),
+                'deletedAt' => '',
+                'usersToArchive' => [$customer1->getId()],
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
+        $customer1->_refresh();
+        $customer2->_refresh();
+        $this->assertTrue($customer1->isArchived());
+        $this->assertFalse($customer1->canLogin());
+        $this->assertFalse($customer2->isArchived());
+        $this->assertTrue($customer2->canLogin());
+    }
+
+    public function testPostArchiveRejectsPastDeletedAt(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        $organization = OrganizationFactory::createOne();
+        $deleteOn = Utils\Time::ago(1, 'day')->format('Y-m-d');
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => $this->generateCsrfToken($client, 'archive organization'),
+                'deletedAt' => $deleteOn,
+            ],
+        ]);
+
+        $this->assertSelectorTextContains('#archive_organization_deletedAt-error', 'date in the future');
+        $this->clearEntityManager();
+        $organization->_refresh();
+        $this->assertFalse($organization->isArchived());
+    }
+
+    public function testPostArchiveFailsIfCsrfTokenIsInvalid(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        $organization = OrganizationFactory::createOne();
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => 'not a token',
+            ],
+        ]);
+
+        $this->assertSelectorTextContains('#archive_organization-error', 'The security token is invalid');
+        $organization->_refresh();
+        $this->assertFalse($organization->isArchived());
+    }
+
+    public function testPostArchiveFailsIfAccessIsForbidden(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $organization = OrganizationFactory::createOne();
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => $this->generateCsrfToken($client, 'archive organization'),
+            ],
+        ]);
+    }
+
+    public function testVoterBlocksOrgaManageOnArchivedOrganization(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:manage']);
+        $organization = OrganizationFactory::createOne([
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->catchExceptions(false);
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/deletion", [
+            '_csrf_token' => $this->generateCsrfToken($client, 'delete organization'),
+        ]);
+    }
+
+    public function testVoterAllowsOrgaSeeOnArchivedOrganization(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see']);
+        $organization = OrganizationFactory::createOne([
+            'archivedAt' => Utils\Time::now(),
+        ]);
+
+        $client->request(Request::METHOD_GET, "/organizations/{$organization->getUid()}");
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
+    }
+
+    public function testPostArchiveRejectsAlreadyArchivedOrganization(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantOrga($user->_real(), ['orga:see', 'orga:manage:archive']);
+        $alreadyArchivedAt = Utils\Time::ago(5, 'days');
+        $organization = OrganizationFactory::createOne([
+            'archivedAt' => $alreadyArchivedAt,
+        ]);
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => $this->generateCsrfToken($client, 'archive organization'),
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/settings", 302);
+        $organization->_refresh();
+        $this->assertEquals(
+            $alreadyArchivedAt->getTimestamp(),
+            $organization->getArchivedAt()->getTimestamp(),
+        );
+    }
+
+    public function testSuperAdminCanArchiveWithoutAgentGrant(): void
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+        $this->grantAdmin($user->_real(), ['admin:*']);
+        $organization = OrganizationFactory::createOne();
+
+        $client->request(Request::METHOD_POST, "/organizations/{$organization->getUid()}/archive", [
+            'archive_organization' => [
+                '_token' => $this->generateCsrfToken($client, 'archive organization'),
+                'deletedAt' => '',
+            ],
+        ]);
+
+        $this->assertResponseRedirects("/organizations/{$organization->getUid()}/tickets", 302);
+        $organization->_refresh();
+        $this->assertTrue($organization->isArchived());
     }
 }

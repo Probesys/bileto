@@ -32,6 +32,7 @@ message_template.name.already_used: 'Enter a different name, a template already 
 message_template.name.max_chars: 'Enter a name of less than {limit} characters.'
 message_template.name.required: 'Enter a name.'
 message_template.type.invalid: 'Select a type from the list.'
+organization.deleted_at.in_future: 'Enter a date in the future.'
 organization.domains.already_used: 'The domain {domain} is already used by another organization ({organization}).'
 organization.domains.invalid: 'The domain {domain} is invalid, enter a valid domain.'
 organization.name.already_used: 'Enter a different name, an organization already has this name.'

@@ -67,6 +67,49 @@ class CleanDataHandlerTest extends WebTestCase
         $this->assertSame($sessionLogNotExpired->getId(), $sessionLog->getId());
     }
 
+    public function testInvokeDeletesOrganizationsWithDeletedAtInThePast(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $organizationExpired = Factory\OrganizationFactory::createOne([
+            'archivedAt' => Utils\Time::ago(10, 'days'),
+            'deletedAt' => Utils\Time::ago(1, 'hour'),
+        ]);
+        $organizationFuture = Factory\OrganizationFactory::createOne([
+            'archivedAt' => Utils\Time::ago(10, 'days'),
+            'deletedAt' => Utils\Time::fromNow(1, 'hour'),
+        ]);
+        $organizationKept = Factory\OrganizationFactory::createOne();
+
+        $bus->dispatch(new Message\CleanData());
+
+        Factory\OrganizationFactory::assert()->notExists(['id' => $organizationExpired->getId()]);
+        Factory\OrganizationFactory::assert()->exists(['id' => $organizationFuture->getId()]);
+        Factory\OrganizationFactory::assert()->exists(['id' => $organizationKept->getId()]);
+    }
+
+    public function testInvokeNullsOutDefaultOrganizationForAffectedUsers(): void
+    {
+        $container = static::getContainer();
+        /** @var MessageBusInterface */
+        $bus = $container->get(MessageBusInterface::class);
+
+        $organizationExpired = Factory\OrganizationFactory::createOne([
+            'archivedAt' => Utils\Time::ago(10, 'days'),
+            'deletedAt' => Utils\Time::ago(1, 'hour'),
+        ]);
+        $user = Factory\UserFactory::createOne([
+            'organization' => $organizationExpired,
+        ]);
+
+        $bus->dispatch(new Message\CleanData());
+
+        $user->_refresh();
+        $this->assertNull($user->getOrganization());
+    }
+
     public function testInvokeDeletesExpiredEntityEventsOlderThanAWeek(): void
     {
         $container = static::getContainer();

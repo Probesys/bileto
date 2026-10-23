@@ -71,6 +71,35 @@ class AppVoter extends Voter
             $ticket = null;
         }
 
+        if (
+            $authorizationType === 'orga' &&
+            $scope instanceof Entity\Organization &&
+            $scope->isArchived()
+        ) {
+            $allowed = str_starts_with($attribute, 'orga:see')
+                || $attribute === 'orga:manage:archive';
+            if (!$allowed) {
+                $vote?->addReason(
+                    "Organization (id: {$scope->getId()}) is archived; " .
+                    "permission {$attribute} is blocked"
+                );
+                return false;
+            }
+        }
+
+        // Super-admins can always archive an organization, without needing a
+        // specific agent role on it.
+        if ($attribute === 'orga:manage:archive') {
+            $adminAuthorizations = $this->authorizationRepository->getAdminAuthorizations($user);
+            $isSuperAdmin = Utils\ArrayHelper::any(
+                $adminAuthorizations,
+                fn (Entity\Authorization $auth): bool => $auth->getRole()->hasPermission('admin:*'),
+            );
+            if ($isSuperAdmin) {
+                return true;
+            }
+        }
+
         $authorizations = $this->authorizationRepository->getAuthorizations(
             $authorizationType,
             $user,

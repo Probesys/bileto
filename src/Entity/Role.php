@@ -57,6 +57,7 @@ class Role implements EntityInterface, MonitorableEntityInterface, UidEntityInte
             'orga:create:tickets:tasks',
             'orga:create:tickets:time_spent',
             'orga:manage',
+            'orga:manage:archive',
             'orga:manage:contracts',
             'orga:see',
             'orga:see:contracts',
