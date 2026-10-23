@@ -23,17 +23,22 @@ class OngoingContractForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options): void {
             $form = $event->getForm();
             $ticket = $event->getData();
 
-            $organization = $ticket->getOrganization();
-
             $form->add('ongoingContract', AppType\ContractType::class, [
-                'ongoing' => $organization,
                 'required' => false,
+                'ongoing' => $ticket->getOrganization(),
+                'autocomplete' => true,
+                'tom_select_options' => [
+                    'allowEmptyOption' => true,
+                    'plugins' => ['clear_button' => false],
+                ],
+                'data' => $ticket->getOngoingContract() ?? $options['preferred_contract'],
                 'label' => new TranslatableMessage('tickets.contracts.ongoing'),
                 'placeholder' => new TranslatableMessage('tickets.contracts.none'),
+                'invalid_message' => new TranslatableMessage('contract.invalid', domain: 'errors'),
             ]);
 
             $form->add('includeUnaccountedTime', Type\CheckboxType::class, [
@@ -57,8 +62,14 @@ class OngoingContractForm extends AbstractType
             'csrf_message' => 'csrf.invalid',
             'attr' => [
                 'class' => 'form--standard',
+                'autofocus' => true,
+                'tabindex' => '-1',
+                'aria-labelledby' => 'modal-title',
                 'data-turbo-preserve-scroll' => true,
             ],
+            'preferred_contract' => null,
         ]);
+
+        $resolver->setAllowedTypes('preferred_contract', [Entity\Contract::class, 'null']);
     }
 }
