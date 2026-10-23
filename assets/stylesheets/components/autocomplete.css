@@ -1,0 +1,68 @@
+/* This file is part of Bileto. */
+/* Copyright 2022-2026 Probesys */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.ts-wrapper {
+    --ts-pr-min: var(--form-padding-x);
+    --ts-pr-caret: var(--form-padding-x);
+}
+
+.ts-wrapper .ts-control,
+.ts-wrapper .ts-dropdown {
+    padding: var(--form-padding);
+
+    color: inherit;
+    font-size: var(--font-size-normal);
+    line-height: 1.5;
+
+    background: var(--form-background-color);
+    border: var(--form-border-width) solid var(--form-border-color);
+    border-radius: var(--form-border-radius);
+}
+
+.ts-wrapper .ts-control > input {
+    width: auto;
+
+    color: inherit;
+    font-size: inherit;
+}
+
+.ts-wrapper.focus .ts-control {
+    outline: var(--outline-width) solid var(--outline-color);
+    outline-offset: var(--outline-offset);
+}
+
+.ts-wrapper .ts-dropdown {
+    padding: 0;
+}
+
+.ts-wrapper .ts-dropdown .option,
+.ts-wrapper .ts-dropdown .no-results {
+    padding: var(--space-small) var(--form-padding-x);
+}
+
+.ts-wrapper .ts-dropdown .active,
+.ts-wrapper.multi .ts-control > div.active {
+    color: var(--color-primary12);
+
+    background: var(--color-primary3);
+}
+
+.ts-wrapper .ts-dropdown .highlight,
+.ts-wrapper.multi .ts-control > div {
+    color: inherit;
+
+    background: var(--color-grey3);
+}
+
+.ts-wrapper.disabled .ts-control {
+    color: var(--form-color-disabled);
+
+    background: var(--form-background-color-disabled);
+    border-color: var(--form-border-color-disabled);
+}
+
+select[aria-invalid] + .ts-wrapper .ts-control {
+    background: var(--form-background-color-error);
+    border-color: var(--form-border-color-error);
+}

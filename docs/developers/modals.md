@@ -55,3 +55,15 @@ The `<template>` node must be present in the current HTML document and must foll
     </div>
 </div>
 ```
+
+## Initial focus
+
+Set `autofocus` on a focusable element to override the modal's default initial focus.
+A container also needs `tabindex="-1"` to receive focus without adding a tab stop.
+The contract form uses this to keep its autocomplete closed until the user interacts with it.
+
+## Autocomplete dropdowns
+
+Modal bodies containing a `.ts-wrapper` allow overflow so autocomplete dropdowns
+can extend beyond the modal without being clipped. The dropdown keeps its own
+scrollable list.

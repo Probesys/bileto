@@ -21,3 +21,19 @@ $form->add('observers', AppType\ActorType::class, [
     'block_prefix' => 'multiselect',
 ]);
 ```
+
+## Searchable select fields
+
+Set `'autocomplete' => true` on an existing choice field to use Symfony UX Autocomplete.
+The ticket contract form uses this without Ajax: authorized ongoing contracts are loaded with the form and searched locally.
+It makes the empty "No contract" choice selectable and disables the clear button,
+so removing a contract uses the same keyboard controls as selecting one.
+Styling lives in `assets/stylesheets/components/autocomplete.css` and is shared by all autocomplete fields.
+
+An existing ongoing contract takes precedence.
+Otherwise, the form suggests an active contract from the most recently updated other ticket
+with the same organization, requester and assignee.
+The suggestion is only saved when the form is submitted.
+
+Install Composer dependencies before npm: the frontend package comes from `vendor/`.
+The `.npmrc` setting installs local packages as packed dependencies, without their development dependencies.

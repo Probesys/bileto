@@ -56,6 +56,14 @@ export default class extends Controller {
             }
         }
 
+        const autofocusElement = this.boxTarget.querySelector('[autofocus]');
+        if (autofocusElement) {
+            autofocusElement.focus();
+            if (document.activeElement === autofocusElement) {
+                return;
+            }
+        }
+
         // We want to give the focus to the "first" element of the modal which
         // is the close button in the header. But this is not the ideal
         // candidate for the focus because it's not part of the modal body.

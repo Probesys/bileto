@@ -4,6 +4,7 @@
 
 import * as Turbo from '@hotwired/turbo';
 import { Application } from '@hotwired/stimulus';
+import AutocompleteController from '@symfony/ux-autocomplete';
 
 import ActorSelectorController from './controllers/actor_selector_controller.js';
 import ButtonSelectController from './controllers/button_select_controller.js';
@@ -35,6 +36,7 @@ import UserSelectorController from './controllers/user_selector_controller.js';
 
 const application = Application.start();
 application.register('actor-selector', ActorSelectorController);
+application.register('symfony--ux-autocomplete--autocomplete', AutocompleteController);
 application.register('button-select', ButtonSelectController);
 application.register('checkboxes', CheckboxesController);
 application.register('color-scheme', ColorSchemeController);

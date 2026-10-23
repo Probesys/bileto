@@ -2,6 +2,7 @@
 /* Copyright 2022-2026 Probesys */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
+@import "tom-select/dist/css/tom-select.css" layer(autocomplete);
 @import "./_reset.css";
 @import "./_fonts.css";
 @import "./variables/colors.tokens.css";
@@ -17,6 +18,7 @@
 @import "./utils/wrapper.css";
 @import "./components/alerts.css";
 @import "./components/accordions.css";
+@import "./components/autocomplete.css";
 @import "./components/anchors.css";
 @import "./components/badges.css";
 @import "./components/buttons.css";
