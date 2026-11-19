@@ -12,10 +12,11 @@ The `edge` branch is used for our preproduction server, so we can test the new f
 
 The Dockerfile is located at [`docker/production/Dockerfile`](/docker/production/Dockerfile).
 
-The first stage builds the assets of the application so the `edge` version comes with the correct assets.
-
-Then, in a second stage, we install the application with its dependencies.
-The assets are copied in this second stage from the first one to replace the default assets.
+The `application` stage installs the PHP dependencies.
+The `assets` stage builds the frontend, including the Symfony UX package copied from `vendor/`.
+It also copies `.npmrc` so local npm packages use the same installation mode as in development.
+The final stage inherits from `application` and replaces the released assets with the newly built assets,
+so the `edge` version comes with the correct assets.
 The image is configured with the following aspects:
 
 - it uses Apache to serve the Web requests;

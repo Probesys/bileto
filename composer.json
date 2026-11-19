@@ -39,6 +39,7 @@
         "symfony/serializer": "7.4.*",
         "symfony/translation": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
+        "symfony/ux-autocomplete": "^2.36",
         "symfony/validator": "7.4.*",
         "symfony/yaml": "7.4.*",
         "twig/cssinliner-extra": "^3.6",

@@ -2,16 +2,8 @@
 # Copyright 2022-2026 Probesys
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# Build the assets
-FROM node:20-alpine AS assets
-
-WORKDIR /app
-COPY package*.json /app/
-COPY assets/ /app/assets
-RUN npm install && npm run build
-
 # Configure the application
-FROM php:8.2-apache-bookworm
+FROM php:8.2-apache-bookworm AS application
 
 WORKDIR /var/www/html
 ENV APP_ENV="prod"
@@ -67,7 +59,6 @@ RUN apt-get update \
 # Copy the code in the image
 COPY . .
 RUN rm -rf public/assets
-COPY --from=assets /app/public/assets/ public/assets/
 COPY docker/production/entrypoint.sh /entrypoint.sh
 
 # Set correct permissions
@@ -82,3 +73,16 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 VOLUME /var/www/html/var
 EXPOSE 80
+
+# Build the assets
+FROM node:20-alpine AS assets
+
+WORKDIR /app
+COPY package*.json .npmrc /app/
+COPY assets/ /app/assets
+COPY --from=application /var/www/html/vendor/symfony/ux-autocomplete/assets/ /app/vendor/symfony/ux-autocomplete/assets/
+RUN npm install && npm run build
+
+FROM application
+
+COPY --from=assets --chown=www-data:www-data /app/public/assets/ public/assets/

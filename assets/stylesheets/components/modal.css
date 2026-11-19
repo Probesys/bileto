@@ -72,6 +72,10 @@
     padding: var(--space-larger) var(--space-medium);
 }
 
+.modal__body:has(.ts-wrapper) {
+    overflow: visible;
+}
+
 @media (min-width: 800px) {
     .modal__body {
         padding-right: var(--space-larger);

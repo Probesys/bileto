@@ -2,6 +2,7 @@ authorization.cannot_revoke.managed_by_team: 'Vous n’êtes pas autorisé à r�
 authorization.cannot_revoke.super: 'Vous n’êtes pas autorisé à révoquer cette autorisation super-admin.'
 contract.end_at.greater_than_start_at: 'Saisissez une date plus grande que la date de début.'
 contract.end_at.required: 'Saisissez une date de fin.'
+contract.invalid: 'Sélectionnez un contrat en cours.'
 contract.max_hours.greater_than_zero: 'Saisissez un nombre d’heures supérieur à zéro.'
 contract.max_hours.required: 'Saisissez un nombre d’heures.'
 contract.name.max_chars: 'Saisissez un nom de moins de {limit} caractères.'

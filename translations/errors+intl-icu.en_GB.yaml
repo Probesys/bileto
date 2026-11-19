@@ -2,6 +2,7 @@ authorization.cannot_revoke.managed_by_team: 'You are not allowed to revoke a te
 authorization.cannot_revoke.super: 'You are not allowed to revoke this super-admin authorization.'
 contract.end_at.greater_than_start_at: 'Enter a date greater than the start date.'
 contract.end_at.required: 'Enter an end date.'
+contract.invalid: 'Select a valid ongoing contract.'
 contract.max_hours.greater_than_zero: 'Enter a number of hours greater than zero.'
 contract.max_hours.required: 'Enter a number of hours.'
 contract.name.max_chars: 'Enter a name of less than {limit} characters.'
