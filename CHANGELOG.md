@@ -1,5 +1,11 @@
 # Changelog of Bileto
 
+## 2026-11-19 - 0.16.6
+
+### Security
+
+- Rebuild the Docker images with PHP 8.2.36
+
 ## 2026-10-22 - 0.16.5
 
 ### Security
