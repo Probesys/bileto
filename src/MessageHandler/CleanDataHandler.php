@@ -19,6 +19,7 @@ class CleanDataHandler
         private Repository\EntityEventRepository $entityEventRepository,
         private Repository\TokenRepository $tokenRepository,
         private Repository\SessionLogRepository $sessionLogRepository,
+        private Repository\OrganizationRepository $organizationRepository,
         private LoggerInterface $logger,
     ) {
     }
@@ -28,6 +29,7 @@ class CleanDataHandler
         $this->cleanInvalidTokens();
         $this->cleanOldSessionLogs();
         $this->cleanExpiredEntityEvents();
+        $this->cleanOrganizationsToDelete();
     }
 
     private function cleanInvalidTokens(): void
@@ -58,5 +60,22 @@ class CleanDataHandler
         if ($countRemovedEvents > 0) {
             $this->logger->notice("[CleanData] {$countRemovedEvents} entity event(s) deleted");
         }
+    }
+
+    private function cleanOrganizationsToDelete(): void
+    {
+        $organizations = $this->organizationRepository->findToDelete(Utils\Time::now());
+
+        if (empty($organizations)) {
+            return;
+        }
+
+        // User.organization has ON DELETE SET NULL at the DB level, so any
+        // user whose default organization is in this batch has that reference
+        // cleared automatically.
+        $this->organizationRepository->remove($organizations, true);
+
+        $count = count($organizations);
+        $this->logger->notice("[CleanData] {$count} organization(s) deleted");
     }
 }
