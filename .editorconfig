@@ -12,3 +12,7 @@ trim_trailing_whitespace = true
 
 [Makefile]
 indent_style = tab
+
+[tests/fixtures/emails/**/*.eml]
+# RFC 3676 flowed text and signature separators contain significant trailing spaces.
+trim_trailing_whitespace = false

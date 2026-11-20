@@ -1,0 +1,6 @@
+# This file is part of Bileto.
+# Copyright 2022-2026 Probesys
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# RFC 3676 flowed text and signature separators contain significant trailing spaces.
+*.eml whitespace=-blank-at-eol

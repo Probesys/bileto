@@ -616,6 +616,8 @@ tickets.show.assignee: 'Assignee:'
 tickets.show.hide_history: 'Hide changes history'
 tickets.show.impact: 'Impact:'
 tickets.show.message.confidential: Confidential
+tickets.show.message.hide_quote: 'Hide the quote'
+tickets.show.message.show_quote: 'Show the quote'
 tickets.show.message.solution: Solution
 tickets.show.message.via_email: 'This message has been sent by email'
 tickets.show.minutes: minutes

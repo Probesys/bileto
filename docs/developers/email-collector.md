@@ -47,3 +47,13 @@ You don’t have to fetch the emails manually each time you receive an email to 
 Indeed, the previous jobs are scheduled to be executed every minute.
 
 It’s declared in the [`DefaultScheduleProvider`](/src/Scheduler/DefaultScheduleProvider.php).
+
+## Displaying quoted email history
+
+In the ticket timeline, messages received by email can be collapsed from the
+first recognized quote marker to the end, including any answers inserted there.
+If no non-whitespace text precedes the marker, or no marker is recognized, the
+entire message remains visible.
+
+This only changes the display: all content remains accessible when expanded,
+and stored content and outgoing emails are unchanged.

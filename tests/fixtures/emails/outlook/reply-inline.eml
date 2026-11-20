@@ -1,0 +1,76 @@
+Delivered-To: recipient@example.com
+Return-Path: <sender@example.com>
+Received: from smtp.example.com (smtp.example.com. [192.0.2.10])
+        by mx.google.com with ESMTPS id fixture-outlook-reply-inline
+        for <recipient@example.com>;
+        Thu, 1 Jan 2026 00:45:17 -0800 (PST)
+From: Example Sender <sender@example.com>
+To: Example User <recipient@example.com>
+Subject: RE: Test billeto outlook
+Thread-Topic: Test billeto outlook
+Date: Thu, 1 Jan 2026 08:45:14 +0000
+Message-ID: <outlook-reply-inline@example.com>
+References: <notification-outlook@example.com>
+In-Reply-To: <notification-outlook@example.com>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+Content-Type: multipart/alternative;
+	boundary="_000_fixture_outlook_reply_inline_"
+MIME-Version: 1.0
+
+--_000_fixture_outlook_reply_inline_
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+De : Example User <recipient@example.com>
+Envoy=E9 : jeudi 1 janvier 2026 09:33
+=C0 : Example Sender <sender@example.com>
+Objet : Test billeto outlook
+
+Ceci est un unique email de test envoy=E9 directement depuis le conteneur P=
+HP de Bileto local.
+
+Aucune notification en attente n=92a =E9t=E9 trait=E9e par cet envoi. JE RE=
+PONDS DANS LE MAIL
+
+Ce message v=E9rifie uniquement l=92envoi SMTP et la r=E9ception dans Spark=
+ ; il ne correspond pas =E0 un ticket Bileto.
+
+--_000_fixture_outlook_reply_inline_
+Content-Type: text/html; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
+252">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div id=3D"divRplyFwdMsg">
+<div style=3D"direction: ltr; font-family: Calibri, sans-serif; font-size: =
+11pt; color: rgb(0, 0, 0);">
+<b>De :</b> Example User &lt;recipient@example.com&gt;<br>
+<b>Envoy=E9 :</b> jeudi 1 janvier 2026 09:33<br>
+<b>=C0 :</b> Example Sender &lt;sender@example.com&gt;<br>
+<b>Objet :</b> Test billeto outlook</div>
+<div style=3D"direction: ltr;">&nbsp;</div>
+</div>
+<p style=3D"margin-top: 1em; margin-bottom: 1em;">Ceci est un <b>unique ema=
+il de test</b>&nbsp;envoy=E9 directement depuis le conteneur PHP de Bileto =
+local.</p>
+<p class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;">=
+Aucune notification en attente n=92a =E9t=E9 trait=E9e par cet envoi.<b> JE=
+ REPONDS DANS LE MAIL</b></p>
+<p style=3D"margin-top: 1em; margin-bottom: 1em;">Ce message v=E9rifie uniq=
+uement l=92envoi SMTP et la r=E9ception dans Spark ; il ne correspond pas =
+=E0 un ticket Bileto.</p>
+</body>
+</html>
+
+--_000_fixture_outlook_reply_inline_--

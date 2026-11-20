@@ -1,0 +1,150 @@
+Delivered-To: recipient@example.com
+Return-Path: <sender@example.com>
+Received: from smtp.example.com (smtp.example.com. [192.0.2.10])
+        by mx.google.com with ESMTPS id fixture-thunderbird-reply-below
+        for <recipient@example.com>;
+        Thu, 1 Jan 2026 00:27:07 -0800 (PST)
+Content-Type: multipart/alternative;
+ boundary="------------fixture-thunderbird-below"
+Message-ID: <thunderbird-reply-below@example.com>
+x-ms-reactions: disallow
+Date: Thu, 1 Jan 2026 09:27:06 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Test mail Bileto
+To: Example User <recipient@example.com>
+References: <notification-thunderbird@example.com>
+From: Example Sender <sender@example.com>
+Content-Language: fr
+In-Reply-To: <notification-thunderbird@example.com>
+
+This is a multi-part message in MIME format.
+--------------fixture-thunderbird-below
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+
+
+Le 01/01/2026 à 09:25, Example User a écrit :
+>
+> Ceci est un *unique email de test* envoyé directement depuis le 
+> conteneur PHP de Bileto local.
+>
+> Aucune notification en attente n’a été traitée par cet envoi.
+>
+> Ce message vérifie uniquement l’envoi SMTP et la réception dans Spark 
+> ; il ne correspond pas à un ticket Bileto.
+>
+
+Test thunderbird avec réponse sous la citation
+-- 
+
+<http://www.example.com/>Example logo <https://www.example.com/>
+
+	
+
+*Example Sender - EXAMPLE*
+10 Example Street, 75000 Example City
+*Standard :* 00 00 00 00 00
+
+
+
+--------------fixture-thunderbird-below
+Content-Type: multipart/related;
+ boundary="------------fixture-thunderbird-below-related"
+
+--------------fixture-thunderbird-below-related
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <p><br>
+    </p>
+    <div class="moz-cite-prefix">Le 01/01/2026 à 09:25, Example User a
+      écrit :<br>
+    </div>
+    <blockquote type="cite"
+      cite="mid:notification-thunderbird@example.com">
+      <p>Ceci est un <strong>unique email de test</strong> envoyé
+        directement depuis le conteneur PHP de Bileto local.</p>
+      <p>Aucune notification en attente n’a été traitée par cet envoi.</p>
+      <p>Ce message vérifie uniquement l’envoi SMTP et la réception dans
+        Spark ; il ne correspond pas à un ticket Bileto.</p>
+    </blockquote>
+    <div class="moz-signature"><br>
+    </div>
+    <div class="moz-signature">Test thunderbird avec réponse sous la
+      citation</div>
+    <div class="moz-signature">-- <br>
+      <div class="WordSection1"><br>
+        <table class="MsoNormalTable" style="width:637.5pt"
+          cellspacing="0" cellpadding="0" border="0" width="850">
+          <tbody>
+            <tr style="height:60.0pt">
+              <td
+style="width:187.5pt;padding:0cm 0cm 0cm
+              0cm;height:60.0pt" width="250">
+                <p class="MsoNormal"
+style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto"><a
+                    href="http://www.example.com/"
+                    moz-do-not-send="true"><span
+                      style="color:windowtext"></span></a><a
+                    href="https://www.example.com/" target="_blank"
+                    moz-do-not-send="true"><span
+                      style="color:black;text-decoration:none"><img
+                        id="Logo_Example"
+                        src="cid:signature-thunderbird-reply-below@example.com"
+                        alt="Example logo" class=""
+                        moz-do-not-send="false" hspace="10" height="77"
+                        border="0" width="250"></span></a><span
+style="font-size:12.0pt;font-family:&quot;Times New
+                  Roman&quot;,serif;color:windowtext"></span></p>
+              </td>
+              <td
+style="width:450.0pt;padding:0cm 0cm 0cm 0cm;height:60.0pt" width="600">
+                <p class="MsoNormal"
+style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto"> <font
+                    color="#1f2945"> <span
+style="font-size: 9pt; font-family: &quot;Verdana&quot;, sans-serif;"> <b>Example
+                        Sender - EXAMPLE</b><br>
+                      10 Example Street, 75000 Example City<br>
+                      <b>Standard :</b> 00 00 00 00 00<br>
+                    </span></font> </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p> <br>
+          <br>
+        </p>
+      </div>
+    </div>
+    <div id="grammalecte_menu_main_button_shadow_host"
+      style="width: 0px; height: 0px;"></div>
+  </body>
+</html>
+--------------fixture-thunderbird-below-related
+Content-Type: text/html; charset=windows-1252;
+ name="signature.png"
+Content-Disposition: inline; filename="signature.png"
+Content-Id: <signature-thunderbird-reply-below@example.com>
+Content-Location: https://assets.example.com/signature.png
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAASwAAABiCAYAAADqWO7dAAABc0lEQVR4nO3OoQ3AQBAEse+/6UsL
+y0aRDMz97u4B/EEeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjl
+AYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUB
+gFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGA
+VR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBV
+HgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUe
+AFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4AWOUBgFUeAFjlAYBVHgBY5QGAVR4A
+WOUBgFUeAFh9E2JDkgfCXiQAAAAASUVORK5CYII=
+
+--------------fixture-thunderbird-below-related--
+
+--------------fixture-thunderbird-below--

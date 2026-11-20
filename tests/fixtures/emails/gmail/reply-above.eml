@@ -1,0 +1,60 @@
+Return-Path: <sender@example.com>
+Received: from client.example.com (client.example.com. [192.0.2.10])
+        by smtp.gmail.com with ESMTPSA id fixture-reply-above
+        for <sender@example.com>;
+        Thu, 1 Jan 2026 00:35:31 -0800 (PST)
+From: Example User <sender@example.com>
+X-Google-Original-From: Example User <Sender@example.com>
+Content-Type: multipart/alternative;
+	boundary="Apple-Mail=_fixture-gmail-reply-above"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.600.51.1.1\))
+Subject: =?utf-8?Q?Re=3A_Bileto_=E2=80=94_test_de_citation?=
+Date: Thu, 1 Jan 2026 09:35:21 +0100
+References: <notification-gmail@example.com>
+To: sender@example.com
+In-Reply-To: <notification-gmail@example.com>
+Message-Id: <gmail-apple-mail-reply-above@example.com>
+X-Mailer: Apple Mail (2.3864.600.51.1.1)
+
+
+--Apple-Mail=_fixture-gmail-reply-above
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
+
+Test de r=C3=A9ponse 1 au dessus
+
+> Le 1 janv. 2026 =C3=A0 09:21, sender@example.com a =C3=A9crit :
+>=20
+> Ceci est un unique email de test envoy=C3=A9 directement depuis le =
+conteneur PHP de Bileto local.
+>=20
+> Aucune notification en attente n=E2=80=99a =C3=A9t=C3=A9 trait=C3=A9e =
+par cet envoi.
+>=20
+> Ce message v=C3=A9rifie uniquement l=E2=80=99envoi SMTP et la =
+r=C3=A9ception dans Spark ; il ne correspond pas =C3=A0 un ticket =
+Bileto.
+>=20
+
+
+--Apple-Mail=_fixture-gmail-reply-above
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
+	charset=utf-8
+
+<html aria-label=3D"message body"><head><meta http-equiv=3D"content-type" =
+content=3D"text/html; charset=3Dutf-8"></head><body =
+style=3D"overflow-wrap: break-word; -webkit-nbsp-mode: space; =
+line-break: after-white-space;">Test de r=C3=A9ponse 1 au dessus<br =
+id=3D"lineBreakAtBeginningOfMessage"><div><br><blockquote =
+type=3D"cite"><div>Le 1 janv. 2026 =C3=A0 09:21, sender@example.com a =
+=C3=A9crit :</div><br class=3D"Apple-interchange-newline"><div><p>Ceci =
+est un <strong>unique email de test</strong> envoy=C3=A9 directement =
+depuis le conteneur PHP de Bileto local.</p><p>Aucune notification en =
+attente n=E2=80=99a =C3=A9t=C3=A9 trait=C3=A9e par cet envoi.</p><p>Ce =
+message v=C3=A9rifie uniquement l=E2=80=99envoi SMTP et la r=C3=A9ception =
+dans Spark ; il ne correspond pas =C3=A0 un ticket =
+Bileto.</p></div></blockquote></div><br></body></html>=
+
+--Apple-Mail=_fixture-gmail-reply-above--

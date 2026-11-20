@@ -101,6 +101,27 @@
     overflow-wrap: anywhere;
 }
 
+.message__quoted-history {
+    margin-top: var(--space-medium);
+}
+
+.message__quote-toggle {
+    list-style: none;
+}
+
+.message__quote-toggle:focus-visible {
+    outline: var(--outline-width) solid var(--outline-color);
+    outline-offset: var(--outline-width);
+}
+
+.message__quote-toggle::-webkit-details-marker {
+    display: none;
+}
+
+.message__quoted-body {
+    margin-top: var(--space-medium);
+}
+
 .message__content h1 {
     margin-top: 1.17em;
     margin-bottom: 0.67em;
